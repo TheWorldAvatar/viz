@@ -63,8 +63,8 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
 
         {props.settings.modules.map && (
           <DefaultPageThumbnail
-            title={mapLinkProps?.title ?? "Explore"}
-            caption={mapLinkProps?.caption ?? "Discover geospatial relationships in our environment"}
+            title={mapLinkProps?.title ?? "Map"}
+            caption={mapLinkProps?.caption ?? "Geospatial data visualisation"}
             icon={mapLinkProps?.icon ?? Assets.MAP}
             url={Routes.MAP}
           />
