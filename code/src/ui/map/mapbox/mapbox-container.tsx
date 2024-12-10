@@ -72,11 +72,14 @@ export default function MapboxMapComponent(props: MapProperties) {
                             const proxyUrl = `${process.env.REACT_APP_SERVER_URL}/geoserver-proxy?url=${encodeURIComponent(url)}`;
                             return {
                                 url: proxyUrl
-                            }
+                            };
                         }
-                    } catch { }
+                    } catch (error) {
+                        console.error('Error processing URL with geoserver proxy:', error);
+                        return { url: url };
+                    }
                 } else {
-                    return { url: url }
+                    return { url: url };
                 }
             }
         });
