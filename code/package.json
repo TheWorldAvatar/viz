@@ -1,5 +1,5 @@
 {
-    "name": "twa-visualisation-platform",
+    "name": "viz",
     "version": "5.13.0",
     "private": true,
     "type": "module",
