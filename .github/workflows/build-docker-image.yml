@@ -1,5 +1,6 @@
-name: Build Docker Image
-
+name: Build and push Docker images
+uses: docker/build-push-action@v6.10.0
+            
 on:
   push:
     branches:
