@@ -34,7 +34,7 @@ fi
 # Update version in code/package.json
 PACKAGE_JSON="code/package.json"
 if [ -f "$PACKAGE_JSON" ]; then
-    jq --arg version "$VERSION" '.version = $version' "$PACKAGE_JSON" > tmp.$$.json && mv tmp.$$.json "$PACKAGE_JSON"
+    sed -i -E "s/\"version\": \"[^\"]+\"/\"version\": \"$VERSION\"/" "$PACKAGE_JSON"
     echo "Updated version in $PACKAGE_JSON to $VERSION"
 else
     echo -e "\e[31mError\e[0m: $PACKAGE_JSON not found"
@@ -51,7 +51,12 @@ else
     exit 1
 fi
 
-echo -e "\e[32mVersion incremented\e[0m, compose file and package.json updated"
+git config --global user.email "viz-bot@noreply.theworldavatar.io"
+git config --global user.name "twa-viz-bot"
+git add "$PACKAGE_JSON" "$DOCKER_COMPOSE"
+git commit -m "Update version to $VERSION in package.json and docker-compose.yml"
+git push
 
+echo -e "\e[32mVersion incremented\e[0m, compose file and package.json updated"
 
 exit 0
