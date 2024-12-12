@@ -7,6 +7,7 @@ on:
       - code/**
   pull_request:
     branches: ["main"]
+    types: [closed]
     paths:
       - code/**
 
@@ -26,7 +27,7 @@ jobs:
           echo "MAJOR=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_ENV
           echo "MINOR=$(echo $VERSION | cut -d. -f1).$(echo $VERSION | cut -d. -f2)" >> $GITHUB_ENV
 
-      - name: Login to GitHub Container Registry
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -38,8 +39,8 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/TheWorldAvatar/viz:latest
-            ghcr.io/TheWorldAvatar/viz:${{ env.VERSION }}
-            ghcr.io/TheWorldAvatar/viz:${{ env.MAJOR }}
-            ghcr.io/TheWorldAvatar/viz:${{ env.MINOR }}
+            ghcr.io/theworldavatar.io/viz:latest
+            ghcr.io/theworldavatar.io/viz:${{ env.VERSION }}
+            ghcr.io/theworldavatar.io/viz:${{ env.MAJOR }}
+            ghcr.io/theworldavatar.io/viz:${{ env.MINOR }}
 
