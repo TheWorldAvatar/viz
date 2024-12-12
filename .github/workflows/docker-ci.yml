@@ -38,7 +38,7 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr/theworldavatar/viz:latest
-            ghcr/theworldavatar/viz:${{ env.VERSION }}
-            ghcr/theworldavatar/viz:${{ env.MAJOR }}
-            ghcr/theworldavatar/viz:${{ env.MINOR }}
+            ghcr.io/theworldavatar/viz:latest
+            ghcr.io/theworldavatar/viz:${{ env.VERSION }}
+            ghcr.io/theworldavatar/viz:${{ env.MAJOR }}
+            ghcr.io/theworldavatar/viz:${{ env.MINOR }}
