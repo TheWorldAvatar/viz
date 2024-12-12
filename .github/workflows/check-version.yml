@@ -11,11 +11,14 @@ jobs:
   check-version:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }} 
+          ref: ${{ github.head_ref }}
 
       - name: Set up Git
         run: |
@@ -32,3 +35,5 @@ jobs:
           git add code/package.json docker-compose.yml
           git commit -m "Update version to $VERSION in package.json and docker-compose.yml"
           git push origin ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
