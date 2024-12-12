@@ -1,0 +1,45 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - code/**
+  pull_request:
+    branches: ["main"]
+    paths:
+      - code/**
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set version variables from file
+        id: read-version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MAJOR=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_ENV
+          echo "MINOR=$(echo $VERSION | cut -d. -f1).$(echo $VERSION | cut -d. -f2)" >> $GITHUB_ENV
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build docker image and push to ghcr
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ghcr.io/TheWorldAvatar/viz:latest
+            ghcr.io/TheWorldAvatar/viz:${{ env.VERSION }}
+            ghcr.io/TheWorldAvatar/viz:${{ env.MAJOR }}
+            ghcr.io/TheWorldAvatar/viz:${{ env.MINOR }}
+

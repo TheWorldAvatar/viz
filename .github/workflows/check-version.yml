@@ -1,0 +1,23 @@
+name: Check Version
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - code/**
+
+jobs:
+
+  check-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Run version check script
+        run: |
+          chmod +x .github/scripts/check-version.sh
+          .github/scripts/check-version.sh
+  
