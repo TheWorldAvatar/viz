@@ -31,6 +31,27 @@ if ! grep -q "$TOKEN" "$CHANGELOG"; then
     exit 1
 fi
 
-echo -e "\e[32mVersion incremented\e[0m"
+# Update version in code/package.json
+PACKAGE_JSON="code/package.json"
+if [ -f "$PACKAGE_JSON" ]; then
+    jq --arg version "$VERSION" '.version = $version' "$PACKAGE_JSON" > tmp.$$.json && mv tmp.$$.json "$PACKAGE_JSON"
+    echo "Updated version in $PACKAGE_JSON to $VERSION"
+else
+    echo -e "\e[31mError\e[0m: $PACKAGE_JSON not found"
+    exit 1
+fi
+
+# Update image version in docker-compose.yml
+DOCKER_COMPOSE="docker-compose.yml"
+if [ -f "$DOCKER_COMPOSE" ]; then
+    sed -i.bak -E "s|(image: .+:).+|\1$VERSION|" "$DOCKER_COMPOSE" && rm "$DOCKER_COMPOSE.bak"
+    echo "Updated image version in $DOCKER_COMPOSE to $VERSION"
+else
+    echo -e "\e[31mError\e[0m: $DOCKER_COMPOSE not found"
+    exit 1
+fi
+
+echo -e "\e[32mVersion incremented\e[0m, compose file and package.json updated"
+
 
 exit 0
