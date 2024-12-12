@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.14.1
+
+### Improvements
+
+- Improve CI actions and rename package
+
 ## 5.14.0
 
 ### Features
