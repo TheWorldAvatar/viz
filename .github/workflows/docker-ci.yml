@@ -8,8 +8,11 @@ on:
       - code/**
 
 jobs:
-  release:
+  build-and-push-image:
     runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
 
     steps:
       - name: Check out repository
@@ -35,7 +38,7 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/theworldavatar.io/viz:latest
-            ghcr.io/theworldavatar.io/viz:${{ env.VERSION }}
-            ghcr.io/theworldavatar.io/viz:${{ env.MAJOR }}
-            ghcr.io/theworldavatar.io/viz:${{ env.MINOR }}
+            ghcr/theworldavatar/viz:latest
+            ghcr/theworldavatar/viz:${{ env.VERSION }}
+            ghcr/theworldavatar/viz:${{ env.MAJOR }}
+            ghcr/theworldavatar/viz:${{ env.MINOR }}
