@@ -1,6 +1,6 @@
 {
-    "name": "twa-visualisation-platform",
-    "version": "5.13.0",
+    "name": "viz",
+    "version": "5.14.1",
     "private": true,
     "type": "module",
     "eslintConfig": {

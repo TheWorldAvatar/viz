@@ -1,0 +1,49 @@
+name: Check Version
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - code/**
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "viz-bot@noreply.theworldavatar.io"
+          git config --global user.name "twa-viz-bot"
+
+      - name: Check version incrementation
+        run: |
+          chmod +x .github/scripts/check-version.sh
+          .github/scripts/check-version.sh
+
+      - name: Save version to environment
+        run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git checkout ${{ github.head_ref }}
+          git add code/package.json docker-compose.yml
+          git diff-index --quiet HEAD -- || echo "changes"
+
+      - name: Push auto incremented version changes
+        if: steps.changes.outputs.changes == 'changes'
+        run: |
+          git commit -m "Update version to $VERSION in package.json and docker-compose.yml"
+          git push origin ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
