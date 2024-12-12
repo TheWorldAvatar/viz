@@ -1,7 +1,7 @@
 services:
   # Empty visualisation image for deployment.
   base:
-    image: ghcr.io/theworldavatar/viz:5.13.0
+    image: ghcr.io/theworldavatar/viz:5.14.1
     container_name: "viz"
     restart: "no"
     environment:
@@ -29,26 +29,6 @@ services:
       - ./code/public:/twa/public/
     ports:
       - "3000:3000"
-
-  latest:
-    extends: base
-    image: ghcr.io/theworldavatar/viz:latest
-    profiles: [ "build-only" ]
-
-  semantic-snapshot:
-    extends: base
-    image: ghcr.io/theworldavatar/viz:${MAJOR}.${MINOR}.${PATCH}-${SNAPSHOT}
-    profiles: [ "build-only" ]
-
-  major-snapshot:
-    extends: base
-    image: ghcr.io/theworldavatar/viz:${MAJOR}-${SNAPSHOT}
-    profiles: [ "build-only" ]
-
-  snapshot:
-    extends: base
-    image: ghcr.io/theworldavatar/viz:${SNAPSHOT}
-    profiles: [ "build-only" ]
 
 secrets:
   mapbox_username:
