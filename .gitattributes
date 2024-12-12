@@ -1,0 +1,8 @@
+# Git will decide which files are binary, this is usually correct but can be overridden.
+* text=auto
+
+# Shell scripts get Linux line endings
+*.sh text eol=lf
+
+# Batch files get Windows line endings
+*.bat text eol=crlf
