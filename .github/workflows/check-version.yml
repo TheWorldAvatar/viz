@@ -24,10 +24,15 @@ jobs:
         run: |
           git config --global user.email "viz-bot@noreply.theworldavatar.io"
           git config --global user.name "twa-viz-bot"
+
       - name: Check version incrementation
         run: |
           chmod +x .github/scripts/check-version.sh
           .github/scripts/check-version.sh
+
+      - name: Save version to environment
+        run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+
       - name: Push auto incremented version changes
         if: success()
         run: |
