@@ -33,6 +33,15 @@ jobs:
       - name: Save version to environment
         run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
+      - name: Check for changes
+        run: |
+          git checkout ${{ github.head_ref }}
+          git add code/package.json docker-compose.yml
+          if git diff-index --quiet HEAD --; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
       - name: Push auto incremented version changes
         if: success()
         run: |
