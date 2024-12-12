@@ -13,7 +13,7 @@
 
 ### Features
 
-- Added use of lifecycle in registry 
+- Added use of lifecycle in registry
 - Removal of scheduler configuration, which is part of the new lifecycle
 - General enhancements to forms in the registry
 
