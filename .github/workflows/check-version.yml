@@ -8,16 +8,14 @@ on:
       - code/**
 
 jobs:
-
   check-version:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
-        
-      - name: Run version check script
+
+      - name: Check version incrementation
         run: |
           chmod +x .github/scripts/check-version.sh
           .github/scripts/check-version.sh
-  
