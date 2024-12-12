@@ -51,12 +51,6 @@ else
     exit 1
 fi
 
-git config --global user.email "viz-bot@noreply.theworldavatar.io"
-git config --global user.name "twa-viz-bot"
-git add "$PACKAGE_JSON" "$DOCKER_COMPOSE"
-git commit -m "Update version to $VERSION in package.json and docker-compose.yml"
-git push
-
-echo -e "\e[32mVersion incremented\e[0m, compose file and package.json updated"
+echo -e "\e[32mVersion incremented\e[0m, compose file and package.json updated. Next step in this action will commit the changes"
 
 exit 0
