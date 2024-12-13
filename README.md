@@ -1,3 +1,5 @@
+[![Docker Image CI](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml)
+
 # The World Avatar (TWA) Visualisation Platform
 
 A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisation Platform, or TWA-ViP) has been created to standardise and simplify the visualisation process. The goal is that a developer does not have to worry about web design, and can set up a reasonable web visualisation displaying landing pages, descriptions, dashboards, and geospatial maps, with some basic configuration files. The platform is the next stage of the Visualisation Framework, and can be [almost deployed following the same steps](#1-precursor).
