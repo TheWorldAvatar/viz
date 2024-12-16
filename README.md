@@ -107,10 +107,10 @@ ROLE: viz:protected ## the role required for the above list
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.
 
-[!NOTE]  
+> [!NOTE]  
 > Crucial information necessary for users to succeed. The most important thing is that the Keycloak server IP address is routable from inside the viz docker container, and outside. The safest way to do this is to specify the IP directly. Sometimes `host.docker.internal` works, but it is often not set in the DNS hosts file of the host machine.
 
-[!NOTE]
+> [!NOTE]
 > Client roles work better for API-protecting resources than the realm roles. As in the example above, use a role like `<client>:<role>`. See the [documentation in the auth folder](./auth/README.md) to spin up a dev Keycloak server for testing.
 
 ## 5. Release
