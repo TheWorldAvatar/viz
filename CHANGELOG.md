@@ -3,6 +3,16 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.14.2
+
+### Improvements
+
+- Minor version bumps from dependabot
+
+### Bug Fixes
+
+- Fix empty catch statement in `mapbox-container.tsx` preventing build
+
 ## 5.14.1
 
 ### Improvements
