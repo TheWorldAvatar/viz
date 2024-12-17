@@ -61,7 +61,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
-    sendPostRequest(`${props.registryAgentApi}/contracts/service/schedule`, "{}");
     props.triggerRefresh();
   };
 
