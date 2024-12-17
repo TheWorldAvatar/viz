@@ -43,6 +43,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
 
   const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const [isDispatchAction, setIsDispatchAction] = useState<boolean>(false);
   const [isCompleteAction, setIsCompleteAction] = useState<boolean>(false);
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
@@ -99,7 +100,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <h2>{props.date}: {props.task.status}</h2>
         </section>
         <section className={styles["section-contents"]}>
-          {!(isReportAction || isCancelAction || isCompleteAction) && <FormComponent
+          {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction) && <FormComponent
             formRef={formRef}
             entityType={props.entityType}
             formType={Paths.REGISTRY}
@@ -123,31 +124,33 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             fields={[remarksShape]}
             submitAction={isReportAction ? reportTask : cancelTask}
           />}
-          {/*Show action buttons before they are clicked*/}
-          {props.task.status.toLowerCase().trim() == "pending execution" &&
-            !(isCancelAction || isCompleteAction || isReportAction) && <>
-              <ActionButton
-                icon={"done_outline"}
-                title={"COMPLETE"}
-                onClick={genBooleanClickHandler(setIsCompleteAction)}
-              />
-              <ActionButton
-                icon={"cancel"}
-                title={"CANCEL"}
-                onClick={genBooleanClickHandler(setIsCancelAction)}
-              />
-              <ActionButton
-                icon={"report"}
-                title={"REPORT"}
-                onClick={genBooleanClickHandler(setIsReportAction)}
-              />
-            </>
-          }
         </section>
         <section className={styles["section-footer"]}>
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
+            {props.task.status.toLowerCase().trim() == "pending execution" &&
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) &&
+              <ActionButton
+                icon={"done_outline"}
+                title={"COMPLETE"}
+                onClick={genBooleanClickHandler(setIsCompleteAction)}
+              />}
+            {!(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+              icon={"assignment"}
+              title={"ASSIGN"}
+              onClick={genBooleanClickHandler(setIsDispatchAction)}
+            />}
+            {!(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+              icon={"cancel"}
+              title={"CANCEL"}
+              onClick={genBooleanClickHandler(setIsCancelAction)}
+            />}
+            {!(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+              icon={"report"}
+              title={"REPORT"}
+              onClick={genBooleanClickHandler(setIsReportAction)}
+            />}
             <MaterialIconButton
               iconName={"keyboard_return"}
               className={styles["section-footer-button"]}
@@ -158,7 +161,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               }}
               onClick={onClose}
             />
-            {(isCancelAction || isCompleteAction || isReportAction) && <MaterialIconButton
+            {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <MaterialIconButton
               iconName={"publish"}
               className={styles["section-footer-button"]}
               iconStyles={[styles["icon"]]}
