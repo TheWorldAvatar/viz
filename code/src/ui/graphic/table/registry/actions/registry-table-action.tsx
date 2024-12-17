@@ -8,13 +8,13 @@ import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import { Routes } from 'io/config/routes';
 import { GridRowModel } from '@mui/x-data-grid';
 import { getAfterDelimiter, isValidIRI } from 'utils/client-utils';
+import { RegistryTaskOption } from 'types/form';
 
 interface RegistryRowActionsProps {
   recordType: string;
   isTaskPage: boolean;
   row: GridRowModel;
-  setTaskId: React.Dispatch<React.SetStateAction<string>>;
-  setTaskStatus: React.Dispatch<React.SetStateAction<string>>;
+  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
 
 /**
@@ -23,8 +23,7 @@ interface RegistryRowActionsProps {
  * @param {string} recordType The type of the record.
  * @param {boolean} isTaskPage Indicator if the table is currently on the task view.
  * @param {GridRowModel} row Row values.
- * @param setTaskId A dispatch method to set task id when required.
- * @param setTaskStatus A dispatch method to set task status when required.
+ * @param setTask A dispatch method to set the task option when required.
  */
 export default function RegistryRowActions(props: Readonly<RegistryRowActionsProps>) {
   const router = useRouter();
@@ -36,8 +35,11 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
 
   const handleClickView = (): void => {
     if (props.isTaskPage) {
-      props.setTaskId(recordId);
-      props.setTaskStatus(props.row.status);
+      props.setTask({
+        id: recordId,
+        status: props.row.status,
+        contract: props.row.contract,
+      });
     } else {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);

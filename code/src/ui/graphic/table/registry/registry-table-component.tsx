@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { getIsOpenState } from 'state/modal-slice';
-import { RegistryFieldValues } from 'types/form';
+import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import { parseWordsForLabels } from 'utils/client-utils';
 import { getLifecycleData, getServiceTasks } from 'utils/server-actions';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
@@ -32,8 +32,8 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
   const [refreshFlag, triggerRefresh] = useRefresh();
   const isModalOpen: boolean = useSelector(getIsOpenState);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
-  const [taskId, setTaskId] = useState<string>(null);
-  const [taskStatus, setTaskStatus] = useState<string>(null);
+
+  const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskPage, setIsTaskPage] = useState<boolean>(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -67,10 +67,10 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
   }, [isModalOpen, isTaskPage, selectedDate, refreshFlag]);
 
   useEffect(() => {
-    if (taskId) {
+    if (task) {
       setIsTaskModalOpen(true);
     }
-  }, [taskId])
+  }, [task])
 
   return (
     <div className={styles["container"]}>
@@ -90,22 +90,20 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <RegistryTable
             recordType={props.entityType}
             isTaskPage={isTaskPage}
-            setTaskId={setTaskId}
-            setTaskStatus={setTaskStatus}
+            setTask={setTask}
             instances={currentInstances}
             limit={3}
           />}
         </div>
       </div>
-      {taskId && <TaskModal
-        id={taskId}
-        taskStatus={taskStatus}
+      {task && <TaskModal
+        entityType={props.entityType}
         date={selectedDate}
         registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
+        task={task}
         setIsOpen={setIsTaskModalOpen}
-        setTaskId={setTaskId}
-        setTaskStatus={setTaskStatus}
+        setTask={setTask}
       />}
     </div>
   );

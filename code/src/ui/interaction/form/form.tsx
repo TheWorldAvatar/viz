@@ -23,6 +23,7 @@ interface FormComponentProps {
   formType: string;
   agentApi: string;
   setResponse: React.Dispatch<React.SetStateAction<HttpResponse>>;
+  id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
 }
@@ -35,11 +36,12 @@ interface FormComponentProps {
  * @param {string} formType The type of submission. Valid inputs include add and update.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {React.Dispatch<React.SetStateAction<HttpResponse>>} setResponse A dispatch function for setting the response after submission.
+ * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
-  const id: string = getAfterDelimiter(usePathname(), "/");
+  const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
   const [formTemplate, setFormTemplate] = useState<FormTemplate>(null);
   const [shapeToFieldName, setShapeToFieldName] = useState<Map<string, string>>(new Map<string, string>());

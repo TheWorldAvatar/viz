@@ -111,3 +111,9 @@ export const remarksShape: PropertyShape = {
   description: { "@value": "Reason for this action" },
   order: 1,
 };
+
+export interface RegistryTaskOption {
+  id: string;
+  contract: string;
+  status: string;
+}

@@ -5,38 +5,39 @@ import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
-import { remarksShape } from 'types/form';
+import { Paths } from 'io/config/routes';
+import { RegistryTaskOption, remarksShape } from 'types/form';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ActionButton from 'ui/interaction/action/action';
 import ResponseComponent from 'ui/text/response/response';
+import { FormComponent } from 'ui/interaction/form/form';
 import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
+import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { HttpResponse, sendPostRequest } from 'utils/server-actions';
 
 interface TaskModalProps {
-  id: string;
-  taskStatus: string;
+  entityType: string;
   date: string;
   registryAgentApi: string;
   isOpen: boolean;
+  task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setTaskId: React.Dispatch<React.SetStateAction<string>>;
-  setTaskStatus: React.Dispatch<React.SetStateAction<string>>;
+  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
 
 /**
  * A modal component for users to interact with their tasks while on the registry.
  * 
- * @param {string} id The identifier for the task.
- * @param {string} taskStatus The current status of the task.
+ * @param {string} entityType The type of entity for the task's contract.
  * @param {string} date The selected date.
  * @param {string} registryAgentApi The target endpoint for the default registry agent.
  * @param {boolean} isOpen Indicator if the this modal should be opened.
+ * @param {RegistryTaskOption} task The current task to display.
  * @param setIsOpen Method to close or open the modal.
- * @param setTaskId Method to update the task id state.
- * @param setTaskStatus Method to update the task status state.
+ * @param setTask A dispatch method to set the task option when required.
  */
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
@@ -51,8 +52,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Closes the modal on click
   const onClose: React.MouseEventHandler<HTMLDivElement> = () => {
     props.setIsOpen(false);
-    props.setTaskId(null);
-    props.setTaskStatus(null);
+    props.setTask(null);
   };
 
   // Lodges a new report
@@ -68,7 +68,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Reusable action method to report or cancel the service task
   const reportOrCancelAction = async (formData: FieldValues, endpoint: string) => {
     // Add contract and date field
-    formData[FORM_STATES.CONTRACT] = props.id;
+    formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.date;
     const response: HttpResponse = await sendPostRequest(endpoint, JSON.stringify(formData));
     setResponse(response);
@@ -96,8 +96,17 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       <div className={styles.container}>
         <section className={styles["section-title"]}>
           <h1>ACTIONS</h1>
+          <h2>{props.date}: {props.task.status}</h2>
         </section>
         <section className={styles["section-contents"]}>
+          {!(isReportAction || isCancelAction || isCompleteAction) && <FormComponent
+            formRef={formRef}
+            entityType={props.entityType}
+            formType={Paths.REGISTRY}
+            agentApi={props.registryAgentApi}
+            setResponse={setResponse}
+            id={getAfterDelimiter(props.task.contract, "/")}
+          />}
           {isCompleteAction && <p className={styles["instructions"]}>
             THIS ACTION IS UNDER CONSTRUCTION
           </p>}
@@ -115,9 +124,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             submitAction={isReportAction ? reportTask : cancelTask}
           />}
           {/*Show action buttons before they are clicked*/}
-          {props.taskStatus.toLowerCase().trim() == "in progress" &&
+          {props.task.status.toLowerCase().trim() == "pending execution" &&
             !(isCancelAction || isCompleteAction || isReportAction) && <>
-              <p className={styles["instructions"]}>Please choose an action for the service on {props.date}:</p>
               <ActionButton
                 icon={"done_outline"}
                 title={"COMPLETE"}
