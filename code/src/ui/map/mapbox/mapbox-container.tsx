@@ -74,7 +74,10 @@ export default function MapboxMapComponent(props: MapProperties) {
                                 url: proxyUrl
                             }
                         }
-                    } catch { }
+                    } catch (error) {
+                        console.error('Error processing URL with geoserver proxy:', error);
+                        return { url: url };
+                    }
                 } else {
                     return { url: url }
                 }

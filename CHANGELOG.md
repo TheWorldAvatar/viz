@@ -3,6 +3,22 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.14.2
+
+### Improvements
+
+- Minor version bumps from dependabot
+
+### Bug Fixes
+
+- Fix empty catch statement in `mapbox-container.tsx` preventing build
+
+## 5.14.1
+
+### Improvements
+
+- Improve CI actions and rename package
+
 ## 5.14.0
 
 ### Features
@@ -13,7 +29,7 @@
 
 ### Features
 
-- Added use of lifecycle in registry 
+- Added use of lifecycle in registry
 - Removal of scheduler configuration, which is part of the new lifecycle
 - General enhancements to forms in the registry
 
