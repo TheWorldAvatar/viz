@@ -35,9 +35,36 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
 
   const handleClickView = (): void => {
     if (props.isTaskPage) {
+      let status: string;
+      switch (props.row.priority) {
+        case "0": {
+          status = "pending dispatch";
+          break;
+        }
+        case "1": {
+          status = "pending execution";
+          break;
+        }
+        case "2": {
+          status = "completed";
+          break;
+        }
+        case "3": {
+          status = "cancelled";
+          break;
+        }
+        case "4": {
+          status = "incomplete";
+          break;
+        }
+        default: {
+          status = "";
+          break;
+        }
+      }
       props.setTask({
         id: recordId,
-        status: props.row.status,
+        status: status,
         contract: props.row.contract,
       });
     } else {
