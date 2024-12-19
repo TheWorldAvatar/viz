@@ -58,23 +58,24 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     props.setTask(null);
   };
 
+  // Assign dispatch details
+  const assignDispatch: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+    formData[FORM_STATES.ORDER] = props.task.id;
+    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/dispatch`);
+  }
+
   // Lodges a new report
   const reportTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    reportOrCancelAction(formData, `${props.registryAgentApi}/contracts/service/report`);
+    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/report`);
   }
 
   // Cancel a scheduled service
   const cancelTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    reportOrCancelAction(formData, `${props.registryAgentApi}/contracts/service/cancel`);
-  }
-
-  // Assign dispatch details
-  const assignDispatch: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    alert("Under construction");
+    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/cancel`);
   }
 
   // Reusable action method to report or cancel the service task
-  const reportOrCancelAction = async (formData: FieldValues, endpoint: string) => {
+  const submitLifecycleAction = async (formData: FieldValues, endpoint: string) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.date;
