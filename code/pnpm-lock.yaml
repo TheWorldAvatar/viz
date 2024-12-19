@@ -126,8 +126,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-toastify:
-        specifier: ^10.0.6
-        version: 10.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^11.0.1
+        version: 11.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       redis:
         specifier: ^4.7.0
         version: 4.7.0
@@ -3205,11 +3205,11 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
 
-  react-toastify@10.0.6:
-    resolution: {integrity: sha512-yYjp+omCDf9lhZcrZHKbSq7YMuK0zcYkDFTzfRFgTXkTFHZ1ToxwAonzA4JI5CxA91JpjFLmwEsZEgfYfOqI1A==}
+  react-toastify@11.0.1:
+    resolution: {integrity: sha512-ZALj1xpjOVlPPDKvdksGLemF9mM6FRltsykvv+JQpW9mildnBiy6nGz0685vo4+W8WitParsUfGk9qACArkZPA==}
     peerDependencies:
-      react: '>=18'
-      react-dom: '>=18'
+      react: ^18 || ^19
+      react-dom: ^18 || ^19
 
   react-transition-group@4.4.5:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
@@ -7666,7 +7666,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  react-toastify@10.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-toastify@11.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       clsx: 2.1.1
       react: 18.3.1
