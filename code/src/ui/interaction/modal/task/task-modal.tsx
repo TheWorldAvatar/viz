@@ -6,7 +6,7 @@ import Modal from 'react-modal';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { RegistryTaskOption, remarksShape } from 'types/form';
+import { PropertyShape, RegistryTaskOption, remarksShape, VALUE_KEY } from 'types/form';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ActionButton from 'ui/interaction/action/action';
@@ -16,7 +16,7 @@ import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { HttpResponse, sendPostRequest } from 'utils/server-actions';
+import { HttpResponse, sendGetRequest, sendPostRequest } from 'utils/server-actions';
 
 interface TaskModalProps {
   entityType: string;
@@ -43,11 +43,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
 
   const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  // Form actions
   const [isDispatchAction, setIsDispatchAction] = useState<boolean>(false);
   const [isCompleteAction, setIsCompleteAction] = useState<boolean>(false);
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
-  // Form actions
+  const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const [response, setResponse] = useState<HttpResponse>(null);
 
   // Closes the modal on click
@@ -66,6 +68,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     reportOrCancelAction(formData, `${props.registryAgentApi}/contracts/service/cancel`);
   }
 
+  // Assign dispatch details
+  const assignDispatch: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+    alert("Under construction");
+  }
+
   // Reusable action method to report or cancel the service task
   const reportOrCancelAction = async (formData: FieldValues, endpoint: string) => {
     // Add contract and date field
@@ -74,6 +81,26 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     const response: HttpResponse = await sendPostRequest(endpoint, JSON.stringify(formData));
     setResponse(response);
   }
+
+  // A hook that fetches the list of dependent entities for the dropdown selector
+  // If parent options are available, the list will be refetched on parent option change
+  useEffect(() => {
+    // Declare an async function to retrieve the list of dependent entities for the dropdown selector
+    const getFormTemplate = async (endpoint: string, eventType: string): Promise<void> => {
+      setIsFetching(true);
+      const url: string = `${endpoint}/contracts/service/${eventType}/form`;
+      const form: string = await sendGetRequest(url);
+      const template: PropertyShape[] = JSON.parse(form).property;
+      setFormFields(template);
+      setIsFetching(false);
+    }
+
+    if (isDispatchAction) {
+      getFormTemplate(props.registryAgentApi, "dispatch");
+    } else if (isReportAction || isCancelAction) {
+      setFormFields([remarksShape]);
+    }
+  }, [isDispatchAction, isReportAction, isCancelAction]);
 
   const onSubmit: React.MouseEventHandler<HTMLDivElement> = () => {
     if (formRef.current) {
@@ -100,6 +127,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <h2>{props.date}: {props.task.status}</h2>
         </section>
         <section className={styles["section-contents"]}>
+          {isFetching && <LoadingSpinner isSmall={false} />}
           {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction) && <FormComponent
             formRef={formRef}
             entityType={props.entityType}
@@ -108,21 +136,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             setResponse={setResponse}
             id={getAfterDelimiter(props.task.contract, "/")}
           />}
-          {isCompleteAction && <p className={styles["instructions"]}>
-            THIS ACTION IS UNDER CONSTRUCTION
+          {!isFetching && <p className={styles["instructions"]}>
+            {isCompleteAction && <>THIS ACTION IS UNDER CONSTRUCTION</>}
+            {isDispatchAction && <>Dispatch the resources for the scheduled service on {props.date}:</>}
+            {isCancelAction && <>Cancel the scheduled service on {props.date}. <br /> Please provide a reason for the cancellation:</>}
+            {isReportAction && <>Report an issue with the service on {props.date}. <br /> Please include the reason in your report:</>}
           </p>}
-          {isCancelAction && <p className={styles["instructions"]}>
-            Cancel the scheduled service on {props.date}. <br /> Please provide a reason for the cancellation:
-          </p>}
-          {isReportAction && <p className={styles["instructions"]}>
-            Report an issue with the service on {props.date}. <br /> Please include the reason in your report:
-          </p>}
-          {(isReportAction || isCancelAction) && <FormTemplate
+          {formFields.length > 0 && <FormTemplate
             agentApi={props.registryAgentApi}
-            entityType={isReportAction ? "report" : "cancellation"}
+            entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
             formRef={formRef}
-            fields={[remarksShape]}
-            submitAction={isReportAction ? reportTask : cancelTask}
+            fields={formFields}
+            submitAction={isReportAction ? reportTask : isCancelAction ? cancelTask : assignDispatch}
           />}
         </section>
         <section className={styles["section-footer"]}>
