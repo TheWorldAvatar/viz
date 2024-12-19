@@ -15,13 +15,13 @@ import { FormComponent } from 'ui/interaction/form/form';
 import ActionButton from 'ui/interaction/action/action';
 import ReturnButton from 'ui/navigation/return/return';
 import ResponseComponent from 'ui/text/response/response';
-import { HttpResponse, sendGetRequest, sendPostRequest } from 'utils/server-actions';
+import { getLifecycleFormTemplate, HttpResponse, sendGetRequest, sendPostRequest } from 'utils/server-actions';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { ENTITY_STATUS, FORM_STATES } from './form-utils';
 import { ApiResponse, JsonObject } from 'types/json';
 import { FormTemplate } from './template/form-template';
-import { remarksShape } from 'types/form';
+import { PropertyShape } from 'types/form';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
 interface FormContainerComponentProps {
@@ -49,6 +49,7 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<ApiResponse>(null);
   const [response, setResponse] = useState<HttpResponse>(null);
+  const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
 
   const id: string = getAfterDelimiter(usePathname(), "/");
@@ -85,6 +86,24 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
     const response: HttpResponse = await sendPostRequest(endpoint, JSON.stringify(formData));
     setResponse(response);
   }
+
+  // A hook that fetches the form template for executing an action
+  useEffect(() => {
+    // Declare an async function to retrieve the form template for executing the target action
+    const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string): Promise<void> => {
+      setIsLoading(true);
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType)
+      setFormFields(template);
+      setIsLoading(false);
+    }
+
+    if (isRescindAction) {
+      getFormTemplate(props.agentApi, "archive", "rescind");
+    } else if (isTerminateAction) {
+      getFormTemplate(props.agentApi, "archive", "terminate");
+    }
+  }, [isRescindAction, isTerminateAction]);
+
 
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLDivElement> = async () => {
@@ -149,11 +168,11 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
             primaryInstance={status?.iri}
             isPrimaryEntity={props.isPrimaryEntity}
           />)}
-        {(isRescindAction || isTerminateAction) && <FormTemplate
+        {formFields.length > 0 && <FormTemplate
           agentApi={props.agentApi}
           entityType={isRescindAction ? "rescission" : "termination"}
           formRef={formRef}
-          fields={[remarksShape]}
+          fields={formFields}
           submitAction={isRescindAction ? rescindContract : terminateContract}
         />}
       </div>
@@ -166,13 +185,14 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
         {formRef.current?.formState?.isSubmitting || isLoading && <LoadingSpinner isSmall={false} />}
         {!formRef.current?.formState?.isSubmitting && response && (<ResponseComponent response={response} />)}
         <div className={styles["form-row"]}>
-          {props.formType === Paths.REGISTRY && !response && status?.message === ENTITY_STATUS.ACTIVE && <ActionButton
-            icon={"error"}
-            title={"RESCIND"}
-            className={styles["footer-button"]}
-            onClick={genBooleanClickHandler(setIsRescindAction)}
-          />}
-          {props.formType === Paths.REGISTRY && !response && status?.message === ENTITY_STATUS.ACTIVE &&
+          {props.formType === Paths.REGISTRY && !response && status?.message === ENTITY_STATUS.ACTIVE && !(isRescindAction || isTerminateAction) &&
+            <ActionButton
+              icon={"error"}
+              title={"RESCIND"}
+              className={styles["footer-button"]}
+              onClick={genBooleanClickHandler(setIsRescindAction)}
+            />}
+          {props.formType === Paths.REGISTRY && !response && status?.message === ENTITY_STATUS.ACTIVE && !(isRescindAction || isTerminateAction) &&
             <ActionButton
               icon={"cancel"}
               title={"TERMINATE"}

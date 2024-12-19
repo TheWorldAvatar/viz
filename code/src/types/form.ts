@@ -102,12 +102,8 @@ export const defaultSearchOption: OntologyConcept = {
   }
 }
 
-export const remarksShape: PropertyShape = {
-  "@id": "string",
-  "@type": "http://www.w3.org/ns/shacl#PropertyShape",
-  name: { "@value": FORM_STATES.REMARKS },
-  fieldId: FORM_STATES.REMARKS,
-  datatype: "string",
-  description: { "@value": "Reason for this action" },
-  order: 1,
-};
+export interface RegistryTaskOption {
+  id: string;
+  contract: string;
+  status: string;
+}
