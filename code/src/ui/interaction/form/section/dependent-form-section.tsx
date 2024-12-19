@@ -3,7 +3,7 @@ import fieldStyles from '../field/field.module.css';
 
 import React, { useEffect, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
@@ -30,6 +30,8 @@ interface DependentFormSectionProps {
  */
 export function DependentFormSection(props: Readonly<DependentFormSectionProps>) {
   const router = useRouter();
+  const pathName: string = usePathname();
+
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = label.trim().replace(/\s+/g, "_"); // Ensure that all spaces are replaced with _
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -132,7 +134,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   // An event handler that will navigate to the required add form when clicked
   const openAddSubEntityModal = () => {
     let url: string = `../add/${queryEntityType}`;
-    if (formType != Paths.REGISTRY_ADD) {
+    if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
       url = `../${url}`;
     }
     router.push(url);
@@ -141,8 +143,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   // An event handler that will navigate to the required view form when clicked
   const openViewSubEntityModal = () => {
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
-    // Other form types will have an extra path for the entity id, except for ADD
-    if (formType != Paths.REGISTRY_ADD) {
+    // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
+    if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
       url = `../${url}`;
     }
     window.open(url, "_blank");

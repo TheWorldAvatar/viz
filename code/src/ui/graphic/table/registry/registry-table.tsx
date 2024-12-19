@@ -3,7 +3,7 @@ import styles from './registry.table.module.css';
 import React from 'react';
 import { FieldValues } from 'react-hook-form';
 
-import { RegistryFieldValues } from 'types/form';
+import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import { parseWordsForLabels } from 'utils/client-utils';
 import RegistryRowActions from './actions/registry-table-action';
 import StatusComponent from 'ui/text/status/status';
@@ -16,8 +16,7 @@ interface RegistryTableProps {
   recordType: string;
   isTaskPage: boolean;
   instances: RegistryFieldValues[];
-  setTaskId: React.Dispatch<React.SetStateAction<string>>;
-  setTaskStatus: React.Dispatch<React.SetStateAction<string>>;
+  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   limit?: number;
 }
 
@@ -27,8 +26,7 @@ interface RegistryTableProps {
  * @param {string} recordType The type of the record.
  * @param {boolean} isTaskPage Indicator if the table is currently on the task view.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
- * @param setTaskId A dispatch method to set task id when required.
- * @param setTaskStatus A dispatch method to set task status when required.
+ * @param setTask A dispatch method to set the task option when required.
  * @param {number} limit Optional limit to the number of columns shown.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
@@ -46,8 +44,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             recordType={props.recordType}
             isTaskPage={props.isTaskPage}
             row={params.row}
-            setTaskId={props.setTaskId}
-            setTaskStatus={props.setTaskStatus}
+            setTask={props.setTask}
           />);
         }
       },
