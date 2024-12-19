@@ -6,7 +6,7 @@ import Modal from 'react-modal';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { PropertyShape, RegistryTaskOption, remarksShape, VALUE_KEY } from 'types/form';
+import { PropertyShape, RegistryTaskOption } from 'types/form';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ActionButton from 'ui/interaction/action/action';
@@ -16,7 +16,7 @@ import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { HttpResponse, sendGetRequest, sendPostRequest } from 'utils/server-actions';
+import { getLifecycleFormTemplate, HttpResponse, sendPostRequest } from 'utils/server-actions';
 
 interface TaskModalProps {
   entityType: string;
@@ -82,23 +82,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setResponse(response);
   }
 
-  // A hook that fetches the list of dependent entities for the dropdown selector
-  // If parent options are available, the list will be refetched on parent option change
+  // A hook that fetches the form template for executing an action
   useEffect(() => {
-    // Declare an async function to retrieve the list of dependent entities for the dropdown selector
-    const getFormTemplate = async (endpoint: string, eventType: string): Promise<void> => {
+    // Declare an async function to retrieve the form template for executing the target action
+    const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string): Promise<void> => {
       setIsFetching(true);
-      const url: string = `${endpoint}/contracts/service/${eventType}/form`;
-      const form: string = await sendGetRequest(url);
-      const template: PropertyShape[] = JSON.parse(form).property;
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType)
       setFormFields(template);
       setIsFetching(false);
     }
 
     if (isDispatchAction) {
-      getFormTemplate(props.registryAgentApi, "dispatch");
-    } else if (isReportAction || isCancelAction) {
-      setFormFields([remarksShape]);
+      getFormTemplate(props.registryAgentApi, "service", "dispatch");
+    } else if (isReportAction) {
+      getFormTemplate(props.registryAgentApi, "service", "report");
+    } else if (isCancelAction) {
+      getFormTemplate(props.registryAgentApi, "service", "cancel");
     }
   }, [isDispatchAction, isReportAction, isCancelAction]);
 
