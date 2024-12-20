@@ -36,7 +36,7 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
   const handleClickView = (): void => {
     if (props.isTaskPage) {
       let status: string;
-      switch (props.row.priority) {
+      switch (props.row.order) {
         case "0": {
           status = "pending dispatch";
           break;
