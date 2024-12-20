@@ -1,4 +1,5 @@
 import styles from '../form.module.css';
+import fieldStyles from '../field/field.module.css';
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -6,6 +7,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { parseWordsForLabels } from 'utils/client-utils';
 import { PropertyGroup, VALUE_KEY } from 'types/form';
 import FormFieldComponent from '../field/form-field';
+import { DependentFormSection } from './dependent-form-section';
 
 interface FormSectionProps {
   entityType: string;
@@ -34,6 +36,16 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
           // If this is a hidden field, hide the field
           if (field.maxCount && parseInt(field.maxCount[VALUE_KEY]) === 0) {
             return <></>;
+          }
+          if (field.class) {
+            return <div className={fieldStyles["form-field-container"]}>
+              <DependentFormSection
+                key={field.name[VALUE_KEY] + index}
+                agentApi={props.agentApi}
+                dependentProp={field}
+                form={props.form}
+                shapeToFieldMap={new Map()}
+              /></div>
           }
           return <FormFieldComponent
             key={field.name[VALUE_KEY] + index}
