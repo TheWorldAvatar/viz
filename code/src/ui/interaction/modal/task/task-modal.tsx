@@ -57,6 +57,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const onClose: React.MouseEventHandler<HTMLDivElement> = () => {
     props.setIsOpen(false);
     props.setTask(null);
+    setIsDispatchAction(false);
+    setIsCompleteAction(false);
+    setIsCancelAction(false);
+    setIsReportAction(false);
+    setResponse(null);
   };
 
   // Assign dispatch details
@@ -140,7 +145,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Closes the modal only if response is successfull
   useEffect(() => {
     if (response?.success) {
-      setTimeout(() => props.setIsOpen(false), 2000);
+      setTimeout(() => {
+        setIsDispatchAction(false);
+        setIsCompleteAction(false);
+        setIsCancelAction(false);
+        setIsReportAction(false);
+        setResponse(null);
+        props.setIsOpen(false);
+      }, 2000);
     }
   }, [response]);
 
