@@ -23,8 +23,10 @@ interface FormComponentProps {
   formType: string;
   agentApi: string;
   setResponse: React.Dispatch<React.SetStateAction<HttpResponse>>;
+  id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
+  additionalFields?: PropertyShapeOrGroup[];
 }
 
 /**
@@ -35,11 +37,13 @@ interface FormComponentProps {
  * @param {string} formType The type of submission. Valid inputs include add and update.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {React.Dispatch<React.SetStateAction<HttpResponse>>} setResponse A dispatch function for setting the response after submission.
+ * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
+ * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
-  const id: string = getAfterDelimiter(usePathname(), "/");
+  const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
   const [formTemplate, setFormTemplate] = useState<FormTemplate>(null);
   const [shapeToFieldName, setShapeToFieldName] = useState<Map<string, string>>(new Map<string, string>());
@@ -62,18 +66,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For edit and view, get template with values
         template = await getFormTemplate(props.agentApi, props.entityType, id);
       }
-
+      if (props.additionalFields) {
+        props.additionalFields.map(field => template.property.push(field));
+      }
       const updatedProperties: PropertyShapeOrGroup[] = template.property.map(field => {
         // Properties as part of a group
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;
           const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
-            // For property shapes with no node kind property
+            // For property shapes with qualifiedValueShape but no node kind property
             // Add node shapes and their corresponding field name to the map to facilite parent dependencies links
-            if (!fieldProp.nodeKind) {
-              fieldProp.qualifiedValueShape?.map(nodeShape => {
-                setShapeToFieldName(new Map(shapeToFieldName).set(nodeShape[ID_KEY], fieldProp.name[VALUE_KEY]));
-              });
+            if (fieldProp.qualifiedValueShape && !fieldProp.nodeKind) {
+              const tempMap: Map<string, string> = new Map<string, string>(shapeToFieldName);
+              fieldProp.qualifiedValueShape?.map(nodeShape => tempMap.set(nodeShape[ID_KEY], fieldProp.name[VALUE_KEY]));
+              setShapeToFieldName(tempMap);
             }
             // Update and set property field ids to include their group name
             // Append field id with group name as prefix
@@ -87,12 +93,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           }
         } else {
           const fieldShape: PropertyShape = field as PropertyShape;
-          // For property shapes with no node kind property
+          // For property shapes with qualifiedValueShape but no node kind property
           // Add node shapes and their corresponding field name to the map to facilite parent dependencies links
-          if (!fieldShape.nodeKind) {
-            fieldShape.qualifiedValueShape?.map(nodeShape => {
-              setShapeToFieldName(new Map(shapeToFieldName).set(nodeShape[ID_KEY], fieldShape.name[VALUE_KEY]));
-            });
+          if (fieldShape.qualifiedValueShape && !fieldShape.nodeKind) {
+            const tempMap: Map<string, string> = new Map<string, string>(shapeToFieldName);
+            fieldShape.qualifiedValueShape?.map(nodeShape => tempMap.set(nodeShape[ID_KEY], fieldShape.name[VALUE_KEY]));
+            setShapeToFieldName(tempMap);
           }
           // For groupless properties, their field ID will be directly set without further parsing
           return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);

@@ -1,4 +1,3 @@
-import { FORM_STATES } from "ui/interaction/form/form-utils";
 
 export const SEARCH_FORM_TYPE = "search";
 export const CONTEXT_KEY = "@context";
@@ -7,6 +6,7 @@ export const TYPE_KEY = "@type";
 export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
+export const FORM_IDENTIFIER = "form";
 
 interface RegistryFieldValue {
   value: string;
@@ -102,12 +102,8 @@ export const defaultSearchOption: OntologyConcept = {
   }
 }
 
-export const remarksShape: PropertyShape = {
-  "@id": "string",
-  "@type": "http://www.w3.org/ns/shacl#PropertyShape",
-  name: { "@value": FORM_STATES.REMARKS },
-  fieldId: FORM_STATES.REMARKS,
-  datatype: "string",
-  description: { "@value": "Reason for this action" },
-  order: 1,
-};
+export interface RegistryTaskOption {
+  id: string;
+  contract: string;
+  status: string;
+}
