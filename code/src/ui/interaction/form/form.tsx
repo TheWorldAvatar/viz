@@ -26,6 +26,7 @@ interface FormComponentProps {
   id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
+  additionalFields?: PropertyShapeOrGroup[];
 }
 
 /**
@@ -39,6 +40,7 @@ interface FormComponentProps {
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
+ * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
@@ -64,7 +66,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For edit and view, get template with values
         template = await getFormTemplate(props.agentApi, props.entityType, id);
       }
-
+      if (props.additionalFields) {
+        props.additionalFields.map(field => template.property.push(field));
+      }
       const updatedProperties: PropertyShapeOrGroup[] = template.property.map(field => {
         // Properties as part of a group
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {

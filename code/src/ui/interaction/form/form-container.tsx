@@ -5,6 +5,7 @@ import styles from './form.module.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { usePathname, useRouter } from 'next/navigation';
+import { FieldValues, SubmitHandler } from 'react-hook-form';
 
 import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
@@ -21,8 +22,7 @@ import { genBooleanClickHandler } from 'utils/event-handler';
 import { ENTITY_STATUS, FORM_STATES } from './form-utils';
 import { ApiResponse, JsonObject } from 'types/json';
 import { FormTemplate } from './template/form-template';
-import { PropertyShape } from 'types/form';
-import { FieldValues, SubmitHandler } from 'react-hook-form';
+import { FORM_IDENTIFIER, PropertyShape } from 'types/form';
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -92,7 +92,7 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
     // Declare an async function to retrieve the form template for executing the target action
     const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string): Promise<void> => {
       setIsLoading(true);
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType)
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType, FORM_IDENTIFIER)
       setFormFields(template);
       setIsLoading(false);
     }

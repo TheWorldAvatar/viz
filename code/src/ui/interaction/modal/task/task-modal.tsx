@@ -6,7 +6,7 @@ import Modal from 'react-modal';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { PropertyShape, RegistryTaskOption } from 'types/form';
+import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ActionButton from 'ui/interaction/action/action';
@@ -50,6 +50,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
+  const [dispatchFields, setDispatchFields] = useState<PropertyShapeOrGroup[]>([]);
   const [response, setResponse] = useState<HttpResponse>(null);
 
   // Closes the modal on click
@@ -83,12 +84,40 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setResponse(response);
   }
 
+  // A hook that fetches the form template with dispatch details included
+  useEffect(() => {
+    // Declare an async function to retrieve the form template with dispatch details
+    const getFormTemplateWithDispatchDetails = async (endpoint: string, targetId: string): Promise<void> => {
+      setIsFetching(true);
+      const id: string = getAfterDelimiter(targetId, "/");
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, "service", "dispatch", id);
+      const group: PropertyGroup = {
+        "@id": "dispatch group",
+        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
+        label: {
+          "@value": "dispatch information"
+        },
+        comment: {
+          "@value": "The dispatch details specified for this service."
+        },
+        order: 1000,
+        property: template.filter(shape => shape.name[VALUE_KEY] != "id"), // Filter out id field
+      };
+      setDispatchFields([group]);
+      setIsFetching(false);
+    }
+    // Only execute this for orders that are pending execution or completed
+    if (props.task.status === "pending execution" || props.task.status === "completed") {
+      getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
+    }
+  }, []);
+
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType)
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType, FORM_IDENTIFIER);
       setFormFields(template);
       setIsFetching(false);
     }
@@ -128,13 +157,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         </section>
         <section className={styles["section-contents"]}>
           {isFetching && <LoadingSpinner isSmall={false} />}
-          {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction) && <FormComponent
+          {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && <FormComponent
             formRef={formRef}
             entityType={props.entityType}
             formType={Paths.REGISTRY}
             agentApi={props.registryAgentApi}
             setResponse={setResponse}
             id={getAfterDelimiter(props.task.contract, "/")}
+            additionalFields={dispatchFields}
           />}
           {!isFetching && <p className={styles["instructions"]}>
             {isCompleteAction && <>THIS ACTION IS UNDER CONSTRUCTION</>}

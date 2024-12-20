@@ -114,9 +114,10 @@ export async function getAvailableTypes(agentApi: string, entityType: string): P
 * @param {string} agentApi API endpoint.
 * @param {string} lifecycleStage The target lifecycle stage ie service or archive.
 * @param {string} eventType The target event type: dispatch, report, cancel, terminate, rescind.
+* @param {string} identifier The target identifier for a specific order OR use "form" if retrieving only a template.
 */
-export async function getLifecycleFormTemplate(endpoint: string, lifecycleStage: string, eventType: string): Promise<PropertyShape[]> {
-  const url: string = `${endpoint}/contracts/${lifecycleStage}/${eventType}/form`;
+export async function getLifecycleFormTemplate(endpoint: string, lifecycleStage: string, eventType: string, identifier: string): Promise<PropertyShape[]> {
+  const url: string = `${endpoint}/contracts/${lifecycleStage}/${eventType}/${identifier}`;
   const form: string = await sendGetRequest(url);
   return JSON.parse(form).property;
 }
