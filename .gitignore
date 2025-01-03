@@ -5,3 +5,6 @@
 # !/code/public/images/defaults/*
 # !/code/public/images/utils
 # !/code/public/optional-pages/help-page.md
+
+mapbox_api_key
+mapbox_username
