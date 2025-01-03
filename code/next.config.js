@@ -12,6 +12,9 @@ const nextConfig = {
     assetPrefix: process.env.ASSET_PREFIX ?? "",
     compiler: { removeConsole: false },
     images: {
+        dangerouslyAllowSVG: true,
+        contentDispositionType: 'attachment',
+        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
         loader: 'custom',
         loaderFile: './image-loader.js',
     },
