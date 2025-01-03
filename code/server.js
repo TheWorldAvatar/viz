@@ -18,7 +18,7 @@ import next from "next";
 
 import session, { MemoryStore } from 'express-session';
 import { createClient } from "redis"
-import RedisStore from 'connect-redis';
+import { RedisStore } from 'connect-redis';
 import Keycloak from 'keycloak-connect';
 import axios from 'axios';
 
