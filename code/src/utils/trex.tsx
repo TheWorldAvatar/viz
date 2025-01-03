@@ -1,7 +1,7 @@
 "use client";
 
 import Confetti from 'react-confetti';
-import React, { PureComponent } from 'react';
+import  { PureComponent } from 'react';
 import { easeInOut, motion} from 'framer-motion';
 import { Assets } from 'io/config/assets';
 
