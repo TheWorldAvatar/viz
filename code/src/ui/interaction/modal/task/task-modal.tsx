@@ -120,15 +120,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
-    const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string): Promise<void> => {
+    // Target id is optional, and will default to form
+    const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType, FORM_IDENTIFIER);
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType,
+        targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER // use the target id if available, else, default to an empty form
+      );
       setFormFields(template);
       setIsFetching(false);
     }
 
     if (isDispatchAction) {
-      getFormTemplate(props.registryAgentApi, "service", "dispatch");
+      getFormTemplate(props.registryAgentApi, "service", "dispatch", props.task.id);
     } else if (isReportAction) {
       getFormTemplate(props.registryAgentApi, "service", "report");
     } else if (isCancelAction) {
