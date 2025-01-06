@@ -49,7 +49,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isCompleteAction, setIsCompleteAction] = useState<boolean>(false);
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
-  const [formFields, setFormFields] = useState<PropertyShape[]>([]);
+  const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [dispatchFields, setDispatchFields] = useState<PropertyShapeOrGroup[]>([]);
   const [response, setResponse] = useState<HttpResponse>(null);
 
@@ -132,7 +132,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Target id is optional, and will default to form
     const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType,
+      const template: PropertyShapeOrGroup[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType,
         targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER // use the target id if available, else, default to an empty form
       );
       setFormFields(template);
