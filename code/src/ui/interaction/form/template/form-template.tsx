@@ -34,7 +34,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
     defaultValues: async (): Promise<FieldValues> => {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
-        formType: Paths.REGISTRY_ADD, // DEFAULT TO ADD TYPE
+        formType: Paths.REGISTRY_EDIT, // DEFAULT TO EDIT TYPE
       };
       const fields: PropertyShape[] = props.fields.map(field => {
         // For property shapes with qualifiedValueShape but no node kind property
