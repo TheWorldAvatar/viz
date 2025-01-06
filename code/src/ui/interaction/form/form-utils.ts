@@ -1,4 +1,5 @@
 import { FieldValues, RegisterOptions } from "react-hook-form";
+import { v4 as uuidv4 } from 'uuid';
 
 import { Paths } from "io/config/routes";
 import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, SEARCH_FORM_TYPE } from "types/form";
@@ -62,9 +63,9 @@ export function initFormField(field: PropertyShape, outputState: FieldValues, fi
  */
 export function getDefaultVal(field: string, defaultValue: string, formType: string): boolean | number | string {
   if (field == FORM_STATES.ID) {
-    // ID property should only be randomised for the add form type, else, use the default value
-    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE) {
-      return Math.random().toString(16).slice(2);
+    // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
+    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE || !defaultValue) {
+      return uuidv4();
     }
     // Retrieve only the ID without any prefix
     return defaultValue.split("/").pop();

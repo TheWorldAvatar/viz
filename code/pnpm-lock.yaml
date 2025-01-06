@@ -140,6 +140,9 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
+      uuid:
+        specifier: ^11.0.4
+        version: 11.0.4
     devDependencies:
       '@types/express':
         specifier: ^5.0.0
@@ -1353,8 +1356,8 @@ packages:
   cheap-ruler@4.0.0:
     resolution: {integrity: sha512-0BJa8f4t141BYKQyn9NSQt1PguFQXMXwZiA5shfoaBYHAb2fFk2RAX+tiWMoQU+Agtzt3mdt0JtuyshAXqZ+Vw==}
 
-  chromedriver@131.0.3:
-    resolution: {integrity: sha512-DKHFt0ilcA/RJzY1ApBiJAil6fh08f9mXM8XbdDE1u+S1V5YVUNTUi4bOtJFZoAwS9nlV0H5W6InWrpXqSs2xg==}
+  chromedriver@131.0.4:
+    resolution: {integrity: sha512-JgIkept8YrnqT05ldLaOzxxEJDUV1t3PFIIMO/gQz9AbnpZx7Pl1zq6tQTTz2HoY5T2JKZ5kyiEWwc48g4fJ5w==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -3754,6 +3757,10 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  uuid@11.0.4:
+    resolution: {integrity: sha512-IzL6VtTTYcAhA/oghbFJ1Dkmqev+FpQWnCBaKq/gUluLxliWvO8DPFWfIviRmYbtaavtSQe4WBL++rFjdcGWEg==}
+    hasBin: true
+
   v8-to-istanbul@9.3.0:
     resolution: {integrity: sha512-kiGUalWN+rgBJ/1OHZsBtU4rXZOfj/7rKQxULKlIzwzQSvMJUUNgPwJEEh7gU6xEVxC0ahoOBvN2YI8GH6FNgA==}
     engines: {node: '>=10.12.0'}
@@ -5273,7 +5280,7 @@ snapshots:
 
   cheap-ruler@4.0.0: {}
 
-  chromedriver@131.0.3:
+  chromedriver@131.0.4:
     dependencies:
       '@testim/chrome-version': 1.1.4
       axios: 1.7.9
@@ -6869,7 +6876,7 @@ snapshots:
     dependencies:
       jwk-to-pem: 2.0.7
     optionalDependencies:
-      chromedriver: 131.0.3
+      chromedriver: 131.0.4
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -8273,6 +8280,8 @@ snapshots:
       react: 18.3.1
 
   utils-merge@1.0.1: {}
+
+  uuid@11.0.4: {}
 
   v8-to-istanbul@9.3.0:
     dependencies:
