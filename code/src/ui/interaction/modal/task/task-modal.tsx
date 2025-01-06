@@ -16,7 +16,7 @@ import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { getLifecycleFormTemplate, HttpResponse, sendPostRequest } from 'utils/server-actions';
+import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
 
 interface TaskModalProps {
   entityType: string;
@@ -61,32 +61,41 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setIsCompleteAction(false);
     setIsCancelAction(false);
     setIsReportAction(false);
+    setFormFields([]);
+    setDispatchFields([]);
     setResponse(null);
   };
 
   // Assign dispatch details
   const assignDispatch: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
     formData[FORM_STATES.ORDER] = props.task.id;
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/dispatch`);
+    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/dispatch`, false);
   }
 
   // Lodges a new report
   const reportTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/report`);
+    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/report`, true);
   }
 
   // Cancel a scheduled service
   const cancelTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/cancel`);
+    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/cancel`, true);
   }
 
   // Reusable action method to report or cancel the service task
-  const submitLifecycleAction = async (formData: FieldValues, endpoint: string) => {
+  const submitLifecycleAction = async (formData: FieldValues, endpoint: string, isPost: boolean) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.date;
-    const response: HttpResponse = await sendPostRequest(endpoint, JSON.stringify(formData));
+    let response: HttpResponse;
+    if (isPost) {
+      response = await sendPostRequest(endpoint, JSON.stringify(formData));
+    } else {
+      response = await updateEntity(endpoint, JSON.stringify(formData));
+    }
     setResponse(response);
+    setFormFields([]);
+    setDispatchFields([]);
   }
 
   // A hook that fetches the form template with dispatch details included
