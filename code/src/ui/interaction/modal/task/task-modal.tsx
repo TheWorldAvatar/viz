@@ -72,6 +72,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/dispatch`, false);
   }
 
+  // Submit a completion request
+  const completeTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+    submitLifecycleAction({
+      dispatch: props.task.id,
+      ...formData
+    }, `${props.registryAgentApi}/contracts/service/complete`, true);
+  }
+
   // Lodges a new report
   const reportTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
     submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/report`, true);
@@ -141,12 +149,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
     if (isDispatchAction) {
       getFormTemplate(props.registryAgentApi, "service", "dispatch", props.task.id);
+    } else if (isCompleteAction) {
+      getFormTemplate(props.registryAgentApi, "service", "complete");
     } else if (isReportAction) {
       getFormTemplate(props.registryAgentApi, "service", "report");
     } else if (isCancelAction) {
       getFormTemplate(props.registryAgentApi, "service", "cancel");
     }
-  }, [isDispatchAction, isReportAction, isCancelAction]);
+  }, [isDispatchAction, isCompleteAction, isReportAction, isCancelAction]);
 
   const onSubmit: React.MouseEventHandler<HTMLDivElement> = () => {
     if (formRef.current) {
@@ -191,7 +201,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             additionalFields={dispatchFields}
           />}
           {!isFetching && <p className={styles["instructions"]}>
-            {isCompleteAction && <>THIS ACTION IS UNDER CONSTRUCTION</>}
+            {isCompleteAction && <>To complete the service, please input the following details:</>}
             {isDispatchAction && <>Dispatch the resources for the scheduled service on {props.date}:</>}
             {isCancelAction && <>Cancel the scheduled service on {props.date}. <br /> Please provide a reason for the cancellation:</>}
             {isReportAction && <>Report an issue with the service on {props.date}. <br /> Please include the reason in your report:</>}
@@ -201,7 +211,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
             formRef={formRef}
             fields={formFields}
-            submitAction={isReportAction ? reportTask : isCancelAction ? cancelTask : assignDispatch}
+            submitAction={isReportAction ? reportTask : isCancelAction ? cancelTask : isCompleteAction ? completeTask : assignDispatch}
           />}
         </section>
         <section className={styles["section-footer"]}>
