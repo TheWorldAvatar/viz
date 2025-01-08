@@ -56,8 +56,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
   };
 
+  const switchOverviewPage: React.MouseEventHandler<HTMLButtonElement> = () => {
+    props.setIsTaskPage(false);
+  };
+
   const switchTaskPage: React.MouseEventHandler<HTMLButtonElement> = () => {
-    props.setIsTaskPage(!props.isTaskPage);
+    props.setIsTaskPage(true);
   };
 
   const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
@@ -96,6 +100,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         }
         {props.lifecycleStage == Routes.REGISTRY_ACTIVE && <ActionButton
           icon={"task"}
+          title={"overview"}
+          onClick={switchOverviewPage}
+          className={props.isTaskPage ? "" : actionStyles["active"]}
+        />}
+        {props.lifecycleStage == Routes.REGISTRY_ACTIVE && <ActionButton
+          icon={"event"}
           title={"view tasks"}
           onClick={switchTaskPage}
           className={props.isTaskPage ? actionStyles["active"] : ""}
