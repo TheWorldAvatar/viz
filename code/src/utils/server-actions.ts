@@ -6,7 +6,7 @@
 import { Apis, Paths } from 'io/config/routes';
 import { FieldValues } from 'react-hook-form';
 
-import { RegistryFieldValues, FormTemplate, OntologyConcept } from 'types/form';
+import { RegistryFieldValues, FormTemplate, OntologyConcept, PropertyShape } from 'types/form';
 
 export interface HttpResponse {
   message: string;
@@ -106,6 +106,20 @@ export async function getServiceTasks(agentApi: string, time: number): Promise<R
 export async function getAvailableTypes(agentApi: string, entityType: string): Promise<OntologyConcept[]> {
   const res = await sendRequest(`${agentApi}/type/${entityType}`, "GET");
   return await res.json();
+}
+
+/**
+* Retrieves the form template for a specific lifecycle event.
+* 
+* @param {string} agentApi API endpoint.
+* @param {string} lifecycleStage The target lifecycle stage ie service or archive.
+* @param {string} eventType The target event type: dispatch, report, cancel, terminate, rescind.
+* @param {string} identifier The target identifier for a specific order OR use "form" if retrieving only a template.
+*/
+export async function getLifecycleFormTemplate(endpoint: string, lifecycleStage: string, eventType: string, identifier: string): Promise<PropertyShape[]> {
+  const url: string = `${endpoint}/contracts/${lifecycleStage}/${eventType}/${identifier}`;
+  const form: string = await sendGetRequest(url);
+  return JSON.parse(form).property;
 }
 
 /**
