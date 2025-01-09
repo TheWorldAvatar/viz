@@ -14,6 +14,7 @@ import ResponseComponent from 'ui/text/response/response';
 import { FormComponent } from 'ui/interaction/form/form';
 import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
+import { Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
@@ -128,8 +129,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setDispatchFields([group]);
       setIsFetching(false);
     }
-    // Only execute this for orders that are pending execution or completed
-    if (props.task.status === "pending execution" || props.task.status === "completed") {
+    // Only execute this for orders that are pending execution
+    if (props.task.status === Status.PENDING_EXECUTION) {
       getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
     }
   }, []);
@@ -218,28 +219,31 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
-            {props.task.status.toLowerCase().trim() == "pending execution" &&
+            {props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) &&
               <ActionButton
                 icon={"done_outline"}
                 title={"COMPLETE"}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
-            {!(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
-              icon={"assignment"}
-              title={"ASSIGN"}
-              onClick={genBooleanClickHandler(setIsDispatchAction)}
-            />}
-            {!(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
-              icon={"cancel"}
-              title={"CANCEL"}
-              onClick={genBooleanClickHandler(setIsCancelAction)}
-            />}
-            {!(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
-              icon={"report"}
-              title={"REPORT"}
-              onClick={genBooleanClickHandler(setIsReportAction)}
-            />}
+            {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+                icon={"assignment"}
+                title={"ASSIGN"}
+                onClick={genBooleanClickHandler(setIsDispatchAction)}
+              />}
+            {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+                icon={"cancel"}
+                title={"CANCEL"}
+                onClick={genBooleanClickHandler(setIsCancelAction)}
+              />}
+            {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+                icon={"report"}
+                title={"REPORT"}
+                onClick={genBooleanClickHandler(setIsReportAction)}
+              />}
             <MaterialIconButton
               iconName={"keyboard_return"}
               className={styles["section-footer-button"]}
