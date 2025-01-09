@@ -2,6 +2,20 @@ import styles from './status.module.css';
 
 import React from 'react';
 
+export const Status: {
+  [key: string]: string;
+} = {
+  AVAILABLE: "available",
+  UNAVAILABLE: "unavailable",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  INCOMPLETE: "incomplete",
+  RESCINDED: "rescinded",
+  TERMINATED: "terminated",
+  PENDING_DISPATCH: "pending dispatch",
+  PENDING_EXECUTION: "pending execution",
+};
+
 interface StatusComponentProps<> {
   status: string;
 }
@@ -15,15 +29,15 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusColor: string;
 
   switch (props.status.toLowerCase()) {
-    case "available":
-    case "completed":
+    case Status.AVAILABLE:
+    case Status.COMPLETED:
       statusColor = "#52B7A5";
       break;
-    case "unavailable":
-    case "cancelled":
-    case "incomplete":
-    case "rescinded":
-    case "terminated":
+    case Status.UNAVAILABLE:
+    case Status.CANCELLED:
+    case Status.INCOMPLETE:
+    case Status.RESCINDED:
+    case Status.TERMINATED:
       statusColor = "#D7653D";
       break;
     default:

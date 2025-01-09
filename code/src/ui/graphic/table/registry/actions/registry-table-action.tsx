@@ -3,12 +3,13 @@ import iconStyles from 'ui/graphic/icon/icon-button.module.css';
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { GridRowModel } from '@mui/x-data-grid';
 
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import { Routes } from 'io/config/routes';
-import { GridRowModel } from '@mui/x-data-grid';
 import { getAfterDelimiter, isValidIRI } from 'utils/client-utils';
 import { RegistryTaskOption } from 'types/form';
+import { Status } from 'ui/text/status/status';
 
 interface RegistryRowActionsProps {
   recordType: string;
@@ -38,23 +39,23 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
       let status: string;
       switch (props.row.order) {
         case "0": {
-          status = "pending dispatch";
+          status = Status.PENDING_DISPATCH;
           break;
         }
         case "1": {
-          status = "pending execution";
+          status = Status.PENDING_EXECUTION;
           break;
         }
         case "2": {
-          status = "completed";
+          status = Status.COMPLETED;
           break;
         }
         case "3": {
-          status = "cancelled";
+          status = Status.CANCELLED;
           break;
         }
         case "4": {
-          status = "incomplete";
+          status = Status.INCOMPLETE;
           break;
         }
         default: {
