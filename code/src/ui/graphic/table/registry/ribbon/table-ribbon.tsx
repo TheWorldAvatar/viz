@@ -8,6 +8,7 @@ import { useProtectedRole } from 'hooks/useProtectedRole';
 import { useRouter } from 'next/navigation';
 
 import { Routes } from 'io/config/routes';
+import { RegistryFieldValues } from 'types/form';
 import { DownloadButton } from 'ui/interaction/action/download/download';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import ActionButton from 'ui/interaction/action/action';
@@ -19,6 +20,7 @@ interface TableRibbonProps {
   registryAgentApi: string;
   lifecycleStage: string;
   selectedDate: string;
+  instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
   triggerRefresh: () => void;
 }
@@ -31,6 +33,7 @@ interface TableRibbonProps {
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} selectedDate The selected date in the date field input.
+ * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate Method to update selected date.
  * @param triggerRefresh Method to trigger refresh.
  */
@@ -114,7 +117,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             title={`back to ${props.entityType}s`}
           />}
         <DownloadButton
-          agentApi={`${props.registryAgentApi}/csv/${props.entityType}`}
+          instances = {props.instances}
         />
         {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_TASK_DATE && <>
           <div style={{ margin: "auto 0" }}>
