@@ -13,7 +13,7 @@ import { Status } from 'ui/text/status/status';
 
 interface RegistryRowActionsProps {
   recordType: string;
-  isTaskPage: boolean;
+  lifecycleStage: string;
   row: GridRowModel;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
@@ -22,7 +22,7 @@ interface RegistryRowActionsProps {
  * Renders the possible row actions for each row in the registry.
  * 
  * @param {string} recordType The type of the record.
- * @param {boolean} isTaskPage Indicator if the table is currently on the task view.
+ * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {GridRowModel} row Row values.
  * @param setTask A dispatch method to set the task option when required.
  */
@@ -35,7 +35,7 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
     : props.row.iri;
 
   const handleClickView = (): void => {
-    if (props.isTaskPage) {
+    if (props.lifecycleStage == Routes.REGISTRY_TASK_DATE) {
       let status: string;
       switch (props.row.order) {
         case "0": {

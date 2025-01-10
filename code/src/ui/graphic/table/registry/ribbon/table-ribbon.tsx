@@ -2,7 +2,6 @@
 
 import styles from './table.ribbon.module.css';
 import fieldStyles from 'ui/interaction/form/field/field.module.css';
-import actionStyles from 'ui/interaction/action/action.module.css';
 
 import React from 'react';
 import { useProtectedRole } from 'hooks/useProtectedRole';
@@ -13,16 +12,13 @@ import { DownloadButton } from 'ui/interaction/action/download/download';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import ActionButton from 'ui/interaction/action/action';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
-import { sendPostRequest } from 'utils/server-actions';
 
 interface TableRibbonProps {
   entityType: string;
   registryAgentApi: string;
   lifecycleStage: string;
   selectedDate: string;
-  isTaskPage: boolean;
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
-  setIsTaskPage: React.Dispatch<React.SetStateAction<boolean>>;
   triggerRefresh: () => void;
 }
 
@@ -33,9 +29,7 @@ interface TableRibbonProps {
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} selectedDate The selected date in the date field input.
- * @param {boolean} isTaskPage Indicator if the table is currently on the task view.
  * @param setSelectedDate Method to update selected date.
- * @param setIsTaskPage Method to update task page indicator.
  * @param triggerRefresh Method to trigger refresh.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
@@ -54,14 +48,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   const openAddModal: React.MouseEventHandler<HTMLButtonElement> = () => {
     router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-  };
-
-  const switchOverviewPage: React.MouseEventHandler<HTMLButtonElement> = () => {
-    props.setIsTaskPage(false);
-  };
-
-  const switchTaskPage: React.MouseEventHandler<HTMLButtonElement> = () => {
-    props.setIsTaskPage(true);
   };
 
   const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
@@ -98,22 +84,24 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             onClick={openAddModal}
           />
         }
-        {props.lifecycleStage == Routes.REGISTRY_ACTIVE && <ActionButton
-          icon={"task"}
-          title={"overview"}
-          onClick={switchOverviewPage}
-          className={props.isTaskPage ? "" : actionStyles["active"]}
-        />}
-        {props.lifecycleStage == Routes.REGISTRY_ACTIVE && <ActionButton
-          icon={"event"}
-          title={"view tasks"}
-          onClick={switchTaskPage}
-          className={props.isTaskPage ? actionStyles["active"] : ""}
-        />}
+        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
+          <RedirectButton
+            icon={"task"}
+            url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+            title={"overview"}
+          />}
+        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
+          <RedirectButton
+            icon={"event"}
+            url={`${Routes.REGISTRY_TASK_DATE}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+            title={"view tasks"}
+          />}
         <DownloadButton
           agentApi={`${props.registryAgentApi}/csv/${props.entityType}`}
         />
-        {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_ACTIVE && props.isTaskPage && <>
+        {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_TASK_DATE && <>
           <div style={{ margin: "auto 0" }}>
             <label className={fieldStyles["form-input-label"]} htmlFor={taskId}>
               Date:

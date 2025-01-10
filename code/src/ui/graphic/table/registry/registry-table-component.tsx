@@ -5,6 +5,7 @@ import styles from './registry.table.module.css';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { Paths } from 'io/config/routes';
 import { getIsOpenState } from 'state/modal-slice';
 import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import { parseWordsForLabels } from 'utils/client-utils';
@@ -34,7 +35,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
 
   const [task, setTask] = useState<RegistryTaskOption>(null);
-  const [isTaskPage, setIsTaskPage] = useState<boolean>(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
@@ -45,7 +45,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       setIsLoading(true);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (isTaskPage) {
+        if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
           // Create a Date object from the YYYY-MM-DD string
           const date = new Date(selectedDate);
           // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
@@ -64,7 +64,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
     if (!isModalOpen) {
       fetchData();
     }
-  }, [isModalOpen, isTaskPage, selectedDate, refreshFlag]);
+  }, [isModalOpen, selectedDate, refreshFlag]);
 
   useEffect(() => {
     if (task) {
@@ -81,15 +81,13 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           registryAgentApi={props.registryAgentApi}
           lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
-          isTaskPage={isTaskPage}
           setSelectedDate={setSelectedDate}
-          setIsTaskPage={setIsTaskPage}
           triggerRefresh={triggerRefresh}
         />
         <div className={styles["table-contents"]}>
           {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <RegistryTable
             recordType={props.entityType}
-            isTaskPage={isTaskPage}
+            lifecycleStage={props.lifecycleStage}
             setTask={setTask}
             instances={currentInstances}
             limit={3}
