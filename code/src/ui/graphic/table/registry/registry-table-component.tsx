@@ -102,6 +102,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       <div className={styles["contents-container"]}>
         <h1 className={styles["title"]}>{parseWordsForLabels(props.entityType)}</h1>
         <TableRibbon
+          path={pathNameEnd}
           entityType={props.entityType}
           registryAgentApi={props.registryAgentApi}
           lifecycleStage={props.lifecycleStage}

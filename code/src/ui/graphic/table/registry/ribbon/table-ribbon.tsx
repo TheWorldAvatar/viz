@@ -14,6 +14,7 @@ import ActionButton from 'ui/interaction/action/action';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 
 interface TableRibbonProps {
+  path: string;
   entityType: string;
   registryAgentApi: string;
   lifecycleStage: string;
@@ -25,6 +26,7 @@ interface TableRibbonProps {
 /**
  * Renders a ribbon for the view page
  * 
+ * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
@@ -75,7 +77,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
           title="Archive"
         />
-         <RedirectButton
+        <RedirectButton
           icon="assessment"
           url={`${Routes.REGISTRY_REPORT}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_REPORT}
@@ -103,6 +105,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             url={`${Routes.REGISTRY_TASK_DATE}`}
             isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
             title={"view tasks"}
+          />}
+        {(props.lifecycleStage == Routes.REGISTRY_REPORT && props.path != props.entityType) &&
+          <RedirectButton
+            icon={"first_page"}
+            url={`${Routes.REGISTRY_REPORT}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+            title={`back to ${props.entityType}s`}
           />}
         <DownloadButton
           agentApi={`${props.registryAgentApi}/csv/${props.entityType}`}
