@@ -7,6 +7,7 @@ export const Status: {
 } = {
   AVAILABLE: "available",
   UNAVAILABLE: "unavailable",
+  ACTIVE: "active",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
   INCOMPLETE: "incomplete",
@@ -30,7 +31,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
 
   switch (props.status.toLowerCase()) {
     case Status.AVAILABLE:
-    case Status.COMPLETED:
+    case Status.ACTIVE:
       statusColor = "#52B7A5";
       break;
     case Status.UNAVAILABLE:

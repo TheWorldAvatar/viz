@@ -86,13 +86,16 @@ export async function getLifecycleData(agentApi: string, currentStage: string, e
 
 
 /**
- * Retrieves all service tasks in a lifecycle on the specified day. Fields are returned with human-readable labels.
+ * Retrieves all service tasks in a lifecycle on the specified day or contract. Fields are returned with human-readable labels.
+ * Note that if time and id is provided, time will take precedence over id.
  * 
  * @param {string} agentApi API endpoint.
- * @param {number} time Target day in UNIX timestamp format.
+ * @param {string} id Optional contract ID associated with the tasks.
+ * @param {number} time Optional target day in UNIX timestamp format.
  */
-export async function getServiceTasks(agentApi: string, time: number): Promise<RegistryFieldValues[]> {
-  const res = await sendRequest(`${agentApi}/contracts/service/${time}`, "GET");
+export async function getServiceTasks(agentApi: string, id?: string, time?: number): Promise<RegistryFieldValues[]> {
+  const url: string = time ? `${agentApi}/contracts/service/${time}` : `${agentApi}/contracts/service/${id}`;
+  const res = await sendRequest(url, "GET");
   const responseData = await res.json();
   return responseData;
 }
