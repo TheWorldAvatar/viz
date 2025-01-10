@@ -18,7 +18,8 @@ interface GlobalContainerProps {
 }
 
 /**
- * Component representing a common global page container for all content.
+ * GlobalContainer - Main layout wrapper for the application
+ * Provides Redux context, navigation, context menu, and layout structure
  */
 export default function GlobalContainer(
   props: Readonly<GlobalContainerProps>
