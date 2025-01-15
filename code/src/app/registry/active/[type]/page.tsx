@@ -1,4 +1,3 @@
-import React from 'react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -26,23 +25,23 @@ export async function generateMetadata(): Promise<Metadata> {
     title: metadata?.title ?? PageTitles.REGISTRY,
   }
 }
-
 /**
  * Displays the registry page for contracts that are currently active.
  * 
  * @returns React component for display. 
  */
-export default function ActiveRegistryPage(props: Readonly<ActiveRegistryPageProps>) {
+export default async function Page(props : ActiveRegistryPageProps) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  if (uiSettings.modules.registry && uiSettings.resources?.registry) {
-    return (
-      <RegistryTableComponent
-        entityType={props.params?.type}
-        lifecycleStage={Paths.REGISTRY_ACTIVE}
-        registryAgentApi={uiSettings.resources?.registry?.url}
-      />
-    );
-  } else {
+
+  if (!uiSettings.modules.registry || !uiSettings.resources?.registry) {
     redirect(Paths.HOME);
   }
+
+  return (
+    <RegistryTableComponent
+      entityType={props.params?.type}
+      lifecycleStage={Paths.REGISTRY_ACTIVE}
+      registryAgentApi={uiSettings.resources?.registry?.url}
+    />
+  );
 }
