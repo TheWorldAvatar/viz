@@ -107,6 +107,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           registryAgentApi={props.registryAgentApi}
           lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
+          instances={currentInstances}
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
