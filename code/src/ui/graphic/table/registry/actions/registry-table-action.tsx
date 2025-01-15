@@ -42,7 +42,6 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
       router.push(`${Routes.REGISTRY_REPORT}/${recordId}`);
     } else if (props.lifecycleStage == Routes.REGISTRY_TASK_DATE || props.lifecycleStage == Routes.REGISTRY_REPORT) {
       let status: string;
-      console.log(props.row)
       if (props.row.order === "0" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent") {
         status = Status.PENDING_DISPATCH;
       } else if (props.row.order === "1" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") {
