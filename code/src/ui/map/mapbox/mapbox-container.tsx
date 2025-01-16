@@ -87,6 +87,7 @@ export default function MapboxMapComponent(props: MapProperties) {
 
         map.on("style.load", function () {
             // Update time if using new v3 standard style
+            togglePlacenames(mapSettings.imagery, map)
             if (defaultImagery.time != null) {
                 map.setConfigProperty(
                     "basemap",
