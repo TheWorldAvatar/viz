@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react/prop-types */
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './mapbox.css';
 
