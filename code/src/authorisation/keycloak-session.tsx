@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import styles from './keycloak-session.module.css';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const KeycloakSession = () => {
     const [displayName, setDisplayName] = useState(null);
