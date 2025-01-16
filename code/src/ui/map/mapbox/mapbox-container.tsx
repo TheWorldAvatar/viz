@@ -85,18 +85,16 @@ export default function MapboxMapComponent(props: MapProperties) {
         map.addControl(new mapboxgl.ScaleControl() as mapboxgl.IControl, "bottom-right");
         map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
-        console.info("Initialised a new Mapbox map object.");
-
         map.on("style.load", function () {
             // Update time if using new v3 standard style
             if (defaultImagery.time != null) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (map as any).setConfigProperty(
+                map.setConfigProperty(
                     "basemap",
                     "lightPreset",
                     defaultImagery.time
                 );
             }
+            map.setConfigProperty('basemap', 'showLabels', false)
             // Map is only settable after the styles have loaded
             props.setMap(map);
         });
