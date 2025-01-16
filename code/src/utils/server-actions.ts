@@ -3,7 +3,7 @@
  */
 'use server';
 
-import { Apis, Paths } from 'io/config/routes';
+import { Paths } from 'io/config/routes';
 import { FieldValues } from 'react-hook-form';
 
 import { RegistryFieldValues, FormTemplate, OntologyConcept, PropertyShape } from 'types/form';

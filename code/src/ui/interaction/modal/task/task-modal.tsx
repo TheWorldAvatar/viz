@@ -43,7 +43,7 @@ interface TaskModalProps {
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
 
-  const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   // Form actions
   const [isDispatchAction, setIsDispatchAction] = useState<boolean>(false);
