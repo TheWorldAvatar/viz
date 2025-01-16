@@ -41,7 +41,7 @@ interface TaskModalProps {
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
 
-  const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isCompleteAction, setIsCompleteAction] = useState<boolean>(false);
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);

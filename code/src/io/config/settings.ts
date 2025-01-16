@@ -105,8 +105,8 @@ export default class SettingsStore {
       // Wait for all promises to resolve, filter out null values, and stringify the resulting array
       const data: JsonObject[] = (await Promise.all(dataPromises)).filter(Boolean);
       this.MAP_DATA_SETTINGS = JSON.stringify(data);
-    } catch (_error) {
-      console.error("No local data files detected...");
+    } catch (error) {
+      console.error("No local data files detected:", error);
     }
   }
 
