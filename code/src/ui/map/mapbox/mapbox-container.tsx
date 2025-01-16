@@ -29,7 +29,7 @@ interface MapProperties {
  * @returns React component for display.
  */
 export default function MapboxMapComponent(props: MapProperties) {
-    const mapContainerRef = useRef();
+    const mapContainerRef = useRef(null);
 
     // Run when component loaded
     useEffect(() => {
