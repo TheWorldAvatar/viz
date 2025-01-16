@@ -5,8 +5,15 @@ import mapboxgl, { Map } from 'mapbox-gl';
 import React, { useEffect, useRef } from 'react';
 
 import { CameraPosition, ImageryOption } from 'types/settings';
-
-// Type definition of incoming properties
+import { togglePlacenames } from '../map-helper';
+import { useMapSettings } from './map-settings-context';
+/** 
+* @param {Map} map The reference to the current map (if any).
+* @param {string} styles The css styles for the mapbox container.
+* @param setMap Sets the reference for the created map.
+* @param {CameraPosition} defaultPosition The default camera position for the map.
+* @param {ImageryOption} imageryOption An optional imagery option for the default map setup.
+*/
 interface MapProperties {
     currentMap: Map;
     styles: string;
@@ -17,14 +24,6 @@ interface MapProperties {
 
 /**
  * Renders a mapbox map instance. 
- *
- * @param {Map} map The reference to the current map (if any).
- * @param {string} styles The css styles for the mapbox container.
- * @param setMap Sets the reference for the created map.
- * @param {CameraPosition} defaultPosition The default camera position for the map.
- * @param {ImageryOption} imageryOption An optional imagery option for the default map setup.
- *
- * @returns React component for display.
  */
 export default function MapboxMapComponent(props: MapProperties) {
     const mapContainerRef = useRef(null);
