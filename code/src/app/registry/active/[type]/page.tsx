@@ -8,9 +8,9 @@ import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 
 interface ActiveRegistryPageProps {
-  params: {
+  params: Promise<{
     type: string
-  }
+  }>
 }
 
 /**
@@ -32,14 +32,14 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function Page(props : ActiveRegistryPageProps) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-
+  const resolvedParams = await props.params;
   if (!uiSettings.modules.registry || !uiSettings.resources?.registry) {
     redirect(Paths.HOME);
   }
 
   return (
     <RegistryTableComponent
-      entityType={props.params?.type}
+      entityType={resolvedParams.type}
       lifecycleStage={Paths.REGISTRY_ACTIVE}
       registryAgentApi={uiSettings.resources?.registry?.url}
     />
