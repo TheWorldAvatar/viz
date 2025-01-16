@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * 
  * @returns React component for display. 
  */
-export default async function Page(props : ActiveRegistryPageProps) {
+export default async function ActiveRegistryPage(props : ActiveRegistryPageProps) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const resolvedParams = await props.params;
   if (!uiSettings.modules.registry || !uiSettings.resources?.registry) {
