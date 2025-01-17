@@ -1,6 +1,6 @@
 import Slider from '@mui/material/Slider';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDimensionSliderValue, setValue } from 'state/dimension-slider-slice';
 import { ScenarioDimensionsData, ScenarioDimensionStep } from 'types/timeseries';
