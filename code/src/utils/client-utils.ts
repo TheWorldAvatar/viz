@@ -48,7 +48,6 @@ export function parseMapDataSettings(dataSettings: JsonObject, mapType: string):
 export function setSelectedFeature(selectedFeature: MapFeaturePayload, dispatch: Dispatch): void {
     if (selectedFeature) {
         // Disable linting as we wish to remove layer but do not require it in this function
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _layer, stack, iri, ...selectedProperties } = selectedFeature;
         if (!iri) {
             console.warn("IRI is missing. Data fetching will be skipped.");

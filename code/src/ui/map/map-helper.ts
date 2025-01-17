@@ -250,13 +250,9 @@ export function togglePlacenames(imagerySettings: ImagerySettings, map: Map): vo
     const imageryOption: ImageryOption = getCurrentImageryOption(imagerySettings);
 
     if (imageryOption.time != null) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (map as Map).setConfigProperty('basemap', 'showPlaceLabels', !shouldHide);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (map as Map).setConfigProperty('basemap', 'showRoadLabels', !shouldHide);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (map as Map).setConfigProperty('basemap', 'showPointOfInterestLabels', !shouldHide);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (map as Map).setConfigProperty('basemap', 'showTransitLabels', !shouldHide);
     } else {
         // The above only works when using the "Standard" style from Mapbox v3, if using any
