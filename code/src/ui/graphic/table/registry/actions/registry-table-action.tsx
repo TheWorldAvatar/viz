@@ -22,8 +22,8 @@ interface RegistryRowActionsProps {
 /**
  * Renders the possible row actions for each row in the registry.
  * 
-  * @param {string} path The current path name mostly at the end.
-* @param {string} recordType The type of the record.
+ * @param {string} path The current path name mostly at the end.
+ * @param {string} recordType The type of the record.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {GridRowModel} row Row values.
  * @param setTask A dispatch method to set the task option when required.
@@ -50,7 +50,7 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
         status = Status.COMPLETED;
       } else if (props.row.order === "3" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent") {
         status = Status.CANCELLED;
-      } else if (props.row.order === "41" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent") {
+      } else if (props.row.order === "4" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent") {
         status = Status.INCOMPLETE;
       } else {
         status = "";
