@@ -39,7 +39,9 @@ jobs:
         run: |
           git checkout ${{ github.head_ref }}
           git add code/package.json docker-compose.yml
-          git diff-index --quiet HEAD -- || echo "changes"
+          if ! git diff-index --quiet HEAD --; then
+            echo "::set-output name=changes::changes"
+          fi
 
       - name: Push auto incremented version changes
         if: steps.changes.outputs.changes == 'changes'
