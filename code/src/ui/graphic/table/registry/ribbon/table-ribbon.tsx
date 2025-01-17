@@ -10,8 +10,8 @@ import { useRouter } from 'next/navigation';
 import { Routes } from 'io/config/routes';
 import { RegistryFieldValues } from 'types/form';
 import { DownloadButton } from 'ui/interaction/action/download/download';
+import ClickActionButton from 'ui/interaction/action/click/click-button';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
-import ActionButton from 'ui/interaction/action/action';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 
 interface TableRibbonProps {
@@ -51,10 +51,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.setSelectedDate(event.target.value);
   };
 
-  const openAddModal: React.MouseEventHandler<HTMLButtonElement> = () => {
-    router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-  };
-
   const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
     props.triggerRefresh();
   };
@@ -89,10 +85,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       </div>
       <div className={styles["ribbon-button-container"]}>
         {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_PENDING &&
-          <ActionButton
+          <ClickActionButton
             icon={"add"}
             title={"add " + props.entityType}
-            onClick={openAddModal}
+            onClick={() => {
+              router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+            }}
           />
         }
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
@@ -117,7 +115,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             title={`back to ${props.entityType}s`}
           />}
         <DownloadButton
-          instances = {props.instances}
+          instances={props.instances}
         />
         {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_TASK_DATE && <>
           <div style={{ margin: "auto 0" }}>
