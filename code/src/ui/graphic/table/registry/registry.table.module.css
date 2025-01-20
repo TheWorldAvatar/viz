@@ -26,6 +26,12 @@
   font-size: var(--font-size-h2);
 }
 
+.instructions {
+  font-size: var(--font-size-secondary-text);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
 .table-contents {
   height: 60vh;
   width: 100%;

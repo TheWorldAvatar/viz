@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { PropertyShape, VALUE_KEY } from 'types/form';
+import { ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { initFormField } from '../form-utils';
 import FormFieldComponent from '../field/form-field';
+import { DependentFormSection } from '../section/dependent-form-section';
+import FormSection from '../section/form-section';
 
 interface FormComponentProps {
   agentApi: string;
   entityType: string;
   formRef: React.MutableRefObject<HTMLFormElement>;
-  fields: PropertyShape[];
+  fields: PropertyShapeOrGroup[];
   submitAction: SubmitHandler<FieldValues>;
 }
 
@@ -21,18 +23,49 @@ interface FormComponentProps {
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {string} entityType The type of entity.
  * @param {React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
- * @param {PropertyShape[]} fields The fields to render.
+ * @param {PropertyShapeOrGroup[]} fields The fields to render.
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
+  const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
+  const [shapeToFieldName, setShapeToFieldName] = useState<Map<string, string>>(new Map<string, string>());
+
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
     defaultValues: async (): Promise<FieldValues> => {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
-        formType: Paths.REGISTRY_ADD, // DEFAULT TO ADD TYPE
+        formType: Paths.REGISTRY_EDIT, // DEFAULT TO EDIT TYPE
       };
-      props.fields.map(field => initFormField(field, initialState, field.name[VALUE_KEY]));
+      const fields: PropertyShapeOrGroup[] = props.fields.map(field => {
+        if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+          const fieldset: PropertyGroup = field as PropertyGroup;
+          // Ignore id for any groups
+          const properties: PropertyShape[] = fieldset.property.filter(field => field.name[VALUE_KEY] != "id").map(fieldProp => {
+            if (fieldProp.qualifiedValueShape && !fieldProp.nodeKind) {
+              const tempMap: Map<string, string> = new Map<string, string>(shapeToFieldName);
+              fieldProp.qualifiedValueShape?.map(nodeShape => tempMap.set(nodeShape[ID_KEY], fieldProp.name[VALUE_KEY]));
+              setShapeToFieldName(tempMap);
+            }
+            return initFormField(fieldProp, initialState, fieldProp.name[VALUE_KEY])
+          })
+          return {
+            ...fieldset,
+            property: properties,
+          }
+        } else {
+          const fieldShape: PropertyShape = field as PropertyShape;
+          // For property shapes with qualifiedValueShape but no node kind property
+          // Add node shapes and their corresponding field name to the map to facilite parent dependencies links
+          if (fieldShape.qualifiedValueShape && !fieldShape.nodeKind) {
+            const tempMap: Map<string, string> = new Map<string, string>(shapeToFieldName);
+            fieldShape.qualifiedValueShape?.map(nodeShape => tempMap.set(nodeShape[ID_KEY], fieldShape.name[VALUE_KEY]));
+            setShapeToFieldName(tempMap);
+          }
+          return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY])
+        }
+      });
+      setFormFields(fields);
       return initialState;
     }
   });
@@ -41,7 +74,27 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
     <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
       {form.formState.isLoading ?
         <LoadingSpinner isSmall={false} /> :
-        props.fields.map((field, index) => {
+        formFields.map((formField, index) => {
+          if (formField[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+            const fieldset: PropertyGroup = formField as PropertyGroup;
+            return <FormSection
+              key={fieldset[ID_KEY] + index}
+              entityType={props.entityType}
+              agentApi={props.agentApi}
+              group={fieldset}
+              form={form}
+            />
+          }
+          const field: PropertyShape = formField as PropertyShape;
+          if (field.class) {
+            return <DependentFormSection
+              key={field.name[VALUE_KEY] + index}
+              agentApi={props.agentApi}
+              dependentProp={field}
+              form={form}
+              shapeToFieldMap={shapeToFieldName}
+            />
+          }
           return <FormFieldComponent
             key={field.name[VALUE_KEY] + index}
             entityType={props.entityType}
