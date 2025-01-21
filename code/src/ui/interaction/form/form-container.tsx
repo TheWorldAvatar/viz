@@ -49,7 +49,7 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<ApiResponse>(null);
   const [response, setResponse] = useState<HttpResponse>(null);
-  const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
   const showReturnButton: boolean = props.formType === Paths.REGISTRY || !!response;
@@ -107,8 +107,10 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
     router.back();
   };
 
-  const closeTab: React.MouseEventHandler<HTMLDivElement> = () => {
-    window.close(); // Closes the tab
+    const closeTab: React.MouseEventHandler<HTMLDivElement> = () => {
+    if (typeof window !== 'undefined') {
+      window.close(); // Closes the tab
+    }
     router.back(); // Required to close the intercepted modal as the tab cannot be closed
   };
 

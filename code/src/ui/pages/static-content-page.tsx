@@ -10,7 +10,7 @@ import returnButtonStyles from '../navigation/return/return.module.css';
 
 import 'github-markdown-css/github-markdown.css';
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import ReturnButton from 'ui/navigation/return/return';
 

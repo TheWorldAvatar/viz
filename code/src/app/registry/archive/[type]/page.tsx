@@ -9,9 +9,9 @@ import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 
 interface ArchiveRegistryPageProps {
-  params: {
+  params: Promise<{
     type: string
-  }
+  }>
 }
 
 /**
@@ -32,12 +32,13 @@ export async function generateMetadata(): Promise<Metadata> {
  * 
  * @returns React component for display. 
  */
-export default function ArchiveRegistryPage(props: Readonly<ArchiveRegistryPageProps>) {
+export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistryPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const resolvedParams = await props.params
   if (uiSettings.modules.registry && uiSettings.resources?.registry) {
     return (
       <RegistryTableComponent
-        entityType={props.params?.type}
+        entityType={resolvedParams.type}
         lifecycleStage={Paths.REGISTRY_ARCHIVE}
         registryAgentApi={uiSettings.resources?.registry?.url}
       />
