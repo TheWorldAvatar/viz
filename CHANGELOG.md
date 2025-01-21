@@ -5,9 +5,10 @@
 
 ## 5.15.3
 
-### Changes
+### Improvements
 
-- Turn off placenames by default
+- Add an option to 'map-settings.ui' to allow place labels be hidden by default
+- Add a context provider for mapbox settings
 
 ## 5.15.2
 

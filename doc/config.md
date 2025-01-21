@@ -126,6 +126,7 @@ The `config/map-settings.json` file provides general map settings that are not s
 - `imagery` : Imagery options
 - `legend` : Optional custom legend settings
 - `icons` : A key-value map of the icon name and its corresponding url
+- `hidLabels` : true or false, whether to hide Labels on itial load
 
 Please note that Cesium has not been incorporated at the moment. It is intended that this file (along with other configuration files) are provided by the deploying developer via Docker volumes created with the standard TWA Stack. As such, there may be no off-the-shelf example file committed to this repository.
 
