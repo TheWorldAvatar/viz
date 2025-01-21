@@ -177,6 +177,7 @@ export default function MapContainer(props: MapContainerProps) {
             setMap={setMap}
             defaultPosition={defaultPosition}
             imageryOption={currentImageryOption}
+            hideLabels={mapSettings.hideLabels}
           />
         }
       </MapSettingsProvider>
