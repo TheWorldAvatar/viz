@@ -26,7 +26,7 @@ export type UISettings = {
 export type MapSettings = {
   type: string,
   camera: CameraSettings,
-  imagery: ImagerySettings,
+  imagery: ImageryOptions,
   legend?: LegendSettings,
   icons?: IconSettings,
 }
@@ -36,8 +36,8 @@ export type IconSettings = {
   [key: string]: string
 }
 
-// Imagery settings object
-export type ImagerySettings = {
+// Imagery options object
+export type ImageryOptions = {
   default: string,
   options: ImageryOption[]
 }
@@ -69,7 +69,7 @@ export type LegendSettings = {
   [groupName: string]: LegendGroup;
 }
 
-export type LegendGroup =  FillLegend[] | SymbolLegend[];
+export type LegendGroup = FillLegend[] | SymbolLegend[];
 
 type SymbolLegend = {
   heading: string;
@@ -80,7 +80,7 @@ type SymbolLegend = {
 
 type FillLegend = {
   heading: string;
-  content: string; 
+  content: string;
   type: "fill";
   fill: string;
 }
