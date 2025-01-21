@@ -9,6 +9,8 @@
 
 - Add an option to 'map-settings.ui' to allow place labels be hidden by default
 - Add a context provider for mapbox settings
+- Add current year to the footer
+- Improve toggled map control style
 
 ## 5.15.2
 
