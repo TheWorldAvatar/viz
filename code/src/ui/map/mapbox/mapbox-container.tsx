@@ -20,6 +20,7 @@ interface MapProperties {
     setMap: React.Dispatch<React.SetStateAction<Map>>;
     defaultPosition: CameraPosition;
     imageryOption?: ImageryOption;
+    hideLabels?: boolean;
 }
 
 /**
@@ -86,16 +87,10 @@ export default function MapboxMapComponent(props: MapProperties) {
         map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
         map.on("style.load", function () {
+            // Hide labels if specified
+            if (props.hideLabels) { togglePlacenames(mapSettings.imagery, map) }
             // Update time if using new v3 standard style
-            togglePlacenames(mapSettings.imagery, map)
-            if (defaultImagery.time != null) {
-                map.setConfigProperty(
-                    "basemap",
-                    "lightPreset",
-                    defaultImagery.time
-                );
-            }
-            map.setConfigProperty('basemap', 'showLabels', false)
+            if (defaultImagery.time != null) { map.setConfigProperty("basemap", "lightPreset", defaultImagery.time); }
             // Map is only settable after the styles have loaded
             props.setMap(map);
         });
