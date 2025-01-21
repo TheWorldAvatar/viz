@@ -25,12 +25,8 @@
 }
 
 
-.ribbonComponentInner.toggled {
+.ribbonComponent.toggled {
     background-color: var(--background-secondary);
-}
-
-.ribbonComponentInner:active {
-    outline: 1px solid var(--border-tertiary);
 }
 
 .ribbonComponentInnerDisabled {
