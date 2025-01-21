@@ -130,7 +130,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setIsFetching(false);
     }
     // Only execute this for orders that are pending execution
-    if (props.task.status === Status.PENDING_EXECUTION) {
+    if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
       getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
     }
   }, []);
