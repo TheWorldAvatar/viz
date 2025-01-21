@@ -29,6 +29,7 @@ export type MapSettings = {
   imagery: ImageryOptions,
   legend?: LegendSettings,
   icons?: IconSettings,
+  hideLabels?: boolean,
 }
 
 // Icon settings object
