@@ -15,7 +15,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <Image alt={"TWA Logo"} src={Assets.TWA} width={30} height={30} style={{ paddingRight: 5 }} />
       <span>Powered by&nbsp;
-        <Link href="https://theworldavatar.io">The World Avatar</Link>
+        <Link href="https://theworldavatar.io">The World Avatar&#8482;</Link>
         &nbsp;{currentYear}
       </span>
     </footer >
