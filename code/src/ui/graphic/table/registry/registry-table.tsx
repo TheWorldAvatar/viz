@@ -51,7 +51,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           />);
         }
       },
-      ...Object.keys(props.instances[0]).map(field => ({
+      // Get instances with the most number of fields
+      ...Object.keys(props.instances.reduce((prev, current) => {
+        const prevKeys = Object.keys(prev).length;
+        const currentKeys = Object.keys(current).length;
+        return prevKeys >= currentKeys ? prev : current;
+      })).map(field => ({
         field,
         headerName: parseWordsForLabels(field),
         width: 150, // Adjust the width as needed
