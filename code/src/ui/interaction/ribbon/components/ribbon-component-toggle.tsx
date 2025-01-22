@@ -22,7 +22,7 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
     const toggled = useSelector(getOption(props.id));
     const dispatch = useDispatch();
 
-    const classNames = [styles.ribbonComponentInner];
+    const classNames = [styles.ribbonComponent];
     if (props.icon && toggled?.selection != null && toggled.selection === true) {
         classNames.push(styles.toggled);
     } else if (toggled?.selection == null && props.initialState) {
@@ -39,7 +39,7 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
     }
 
     return (
-        <div className={styles.ribbonComponent} onClick={handleClick}>
+        <div className={classNames.join(" ")} onClick={handleClick}>
             <Tooltip
                 title={props.tooltip}
                 enterDelay={1000}
@@ -47,7 +47,7 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
                 placement="bottom-start">
 
                 <div>
-                    <div className={classNames.join(" ")}>
+                    <div className={styles.ribbonComponentInner}>
                         {props.icon &&
                             <div className={styles.ribbonComponentIcon}>
                                 <IconComponent icon={props.icon} />

@@ -10,13 +10,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import { reduxStore } from 'app/store';
 import { DataStore } from 'io/data/data-store';
 import { Map } from 'mapbox-gl';
-import { CameraPosition, CameraSettings, ImageryOption, ImagerySettings, MapSettings } from 'types/settings';
+import { CameraPosition, CameraSettings, ImageryOption, ImageryOptions, MapSettings } from 'types/settings';
 import { addIcons } from './mapbox/mapbox-icon-loader';
 import { addAllLayers, addLayer } from './mapbox/mapbox-layer-utils';
 import { addAllSources, addSource } from './mapbox/mapbox-source-utils';
 
 // Default imagery options if users do not include them in the "map-settings.json" file
-const DEFAULT_IMAGERY_OPTIONS: ImagerySettings = {
+const DEFAULT_IMAGERY_OPTIONS: ImageryOptions = {
     "default": "Light",
     "options": [
         {
@@ -142,25 +142,25 @@ export function getCameraPositions(cameraSettings: CameraSettings): string[] {
 /**
  * Returns the default imagery option.
  * 
- * @param imagerySettings Imagery settings object.
+ * @param imageryOptions Imagery settings object.
  * 
  * @returns Default ImageryOption object.
  */
-export function getDefaultImageryOption(imagerySettings: ImagerySettings): ImageryOption {
+export function getDefaultImageryOption(imageryOptions: ImageryOptions): ImageryOption {
     // If users do not specify imagery settings, use the defaults
-    if (!imagerySettings) {
-        imagerySettings = DEFAULT_IMAGERY_OPTIONS;
+    if (!imageryOptions) {
+        imageryOptions = DEFAULT_IMAGERY_OPTIONS;
     }
 
-    if (typeof window !== "undefined" && imagerySettings.default.toLowerCase() == "auto") {
+    if (typeof window !== "undefined" && imageryOptions.default.toLowerCase() == "auto") {
         // Auto detect browser theme
         if (window?.matchMedia && window?.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return getImageryOption("Dark", imagerySettings);
+            return getImageryOption("Dark", imageryOptions);
         } else {
-            return getImageryOption("Light", imagerySettings);
+            return getImageryOption("Light", imageryOptions);
         }
     } else {
-        return getImageryOption(imagerySettings.default, imagerySettings);
+        return getImageryOption(imageryOptions.default, imageryOptions);
     }
 }
 
@@ -168,45 +168,45 @@ export function getDefaultImageryOption(imagerySettings: ImagerySettings): Image
  * Returns the imagery option that matches the input name.
  * 
  * @param name Imagery option name.
- * @param imagerySettings Imagery settings object.
+ * @param imageryOptions Imagery settings object.
  * @returns Corresponding ImageryOption (or null).
  */
-function getImageryOption(name: string, imagerySettings: ImagerySettings): ImageryOption {
-    if (imagerySettings == null) {
-        imagerySettings = DEFAULT_IMAGERY_OPTIONS;
+function getImageryOption(name: string, imageryOptions: ImageryOptions): ImageryOption {
+    if (imageryOptions == null) {
+        imageryOptions = DEFAULT_IMAGERY_OPTIONS;
     }
 
-    const options = imagerySettings.options;
+    const options = imageryOptions.options;
     return options.find(item => item["name"] === name);
 }
 
 /**
  * Returns names of all available imagery options.
  * 
- * @param imagerySettings Imagery settings object.
+ * @param imageryOptions Imagery settings object.
  * @returns A list of the names for all available imagery options.
  */
-export function getImageryOptions(imagery: ImagerySettings): string[] {
+export function getImageryOptions(imagery: ImageryOptions): string[] {
     return imagery.options.map((option: ImageryOption) => option.name);
 }
 
 /**
  * Returns the currently selected ImageryOption object.
  * 
- * @param imagerySettings Imagery settings object.
+ * @param imageryOptions Imagery settings object.
  * @returns ImageryOption for current selection.
  */
-export function getCurrentImageryOption(imagerySettings: ImagerySettings): ImageryOption {
+export function getCurrentImageryOption(imageryOptions: ImageryOptions): ImageryOption {
     const reduxState = reduxStore.getState();
     const items = reduxState.ribbonComponents.items;
     if (items == null || items.length == 0) {
-        return getDefaultImageryOption(imagerySettings);
+        return getDefaultImageryOption(imageryOptions);
     } else {
         const match = items.find(option => option.id === "map-style");
         if (match == null) {
-            return getDefaultImageryOption(imagerySettings);
+            return getDefaultImageryOption(imageryOptions);
         } else {
-            return getImageryOption(match.selection, imagerySettings);
+            return getImageryOption(match.selection, imageryOptions);
         }
     }
 }
@@ -216,8 +216,8 @@ export function getCurrentImageryOption(imagerySettings: ImagerySettings): Image
  * 
  * @param {Map} map The current Mapbox map instance.
  */
-export function setImagery(imagerySettings: ImagerySettings, map: Map): void {
-    const imageryOption: ImageryOption = getCurrentImageryOption(imagerySettings);
+export function setImagery(imageryOptions: ImageryOptions, map: Map): void {
+    const imageryOption: ImageryOption = getCurrentImageryOption(imageryOptions);
 
     // Update map
     map.setStyle(imageryOption.url);
@@ -230,24 +230,24 @@ export function setImagery(imagerySettings: ImagerySettings, map: Map): void {
             (map as Map).setConfigProperty('basemap', 'lightPreset', imageryOption.time);
         }
         // Ensure placenames match previous state
-        togglePlacenames(imagerySettings, map);
+        togglePlacenames(imageryOptions, map);
     });
 }
 
 /**
  * Toggle the display of all placenames on the map based on the current imagery option.
  * 
- * @param {ImagerySettings} imageryOption Current imagery option object.
+ * @param {ImageryOptions} imageryOption Current imagery option object.
  * @param {Map} map The current Mapbox map instance.
  */
-export function togglePlacenames(imagerySettings: ImagerySettings, map: Map): void {
+export function togglePlacenames(imageryOptions: ImageryOptions, map: Map): void {
     const reduxState = reduxStore.getState();
     const items = reduxState.ribbonComponents.items;
     let shouldHide = true;
     if (items != null && items.length > 0) {
         shouldHide = items.find(option => option.id === "placenames")?.selection;
     }
-    const imageryOption: ImageryOption = getCurrentImageryOption(imagerySettings);
+    const imageryOption: ImageryOption = getCurrentImageryOption(imageryOptions);
 
     if (imageryOption.time != null) {
         (map as Map).setConfigProperty('basemap', 'showPlaceLabels', !shouldHide);
@@ -345,7 +345,7 @@ export function locateUser(map: Map): void {
     );
 }
 
-function refreshLiveData(map: Map, data: DataStore, imagerySettings: ImagerySettings): void {
+function refreshLiveData(map: Map, data: DataStore, imageryOptions: ImageryOptions): void {
     const refreshInterval = 30000;
     setInterval(() => {
         data?.getLayerList().forEach((layer) => {
@@ -358,7 +358,7 @@ function refreshLiveData(map: Map, data: DataStore, imagerySettings: ImagerySett
                     map.removeSource(source.id);
 
                     addSource(map, layer.source);
-                    addLayer(map, layer, getCurrentImageryOption(imagerySettings));
+                    addLayer(map, layer, getCurrentImageryOption(imageryOptions));
                 }
             }
         });
