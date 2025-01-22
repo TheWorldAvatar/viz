@@ -18,6 +18,7 @@ import TaskModal from 'ui/interaction/modal/task/task-modal';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import RegistryTable from './registry-table';
 import TableRibbon from './ribbon/table-ribbon';
+import SummarySection from './ribbon/summary';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -111,12 +112,20 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
+        {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
+          <div className={styles["instructions"]}>
+            <Icon className={`material-symbols-outlined`}>info</Icon>
+            Click on any {props.entityType} in the table to view its summary
+          </div>}
+        {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+          <h2 className={styles["instructions"]}>Service summary<hr/></h2>}
         <div className={styles["table-contents"]}>
-          {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
-            <div className={styles["instructions"]}>
-              <Icon className={`material-symbols-outlined`}>info</Icon>
-              Click on any {props.entityType} in the table to view its summary
-            </div>}
+        {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+            <SummarySection
+              id={pathNameEnd}
+              entityType={props.entityType}
+              registryAgentApi={props.registryAgentApi}
+            />}
           {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}

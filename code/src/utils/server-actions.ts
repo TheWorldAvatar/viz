@@ -21,10 +21,14 @@ export interface HttpResponse {
  * @param {string} entityType Type of entity to retrieve.
  * @param {string} identifier Optional identifier of the parent entity.
  * @param {string} subEntityType Optional type of sub entity to retrieve entities associated with the specific parent entity.
+ * @param {boolean} requireLabel Optional indicator to retrieve labelled data if requested.
  */
-export async function getData(agentApi: string, entityType: string, identifier?: string, subEntityType?: string): Promise<RegistryFieldValues[]> {
+export async function getData(agentApi: string, entityType: string, identifier?: string, subEntityType?: string, requireLabel?: boolean): Promise<RegistryFieldValues[]> {
   // Append identifier to the url if it exist
   let url: string = `${agentApi}/${entityType}`;
+  if (requireLabel) {
+    url += `/label`;
+  }
   if (identifier) {
     url += `/${identifier}`;
     if (subEntityType) {
