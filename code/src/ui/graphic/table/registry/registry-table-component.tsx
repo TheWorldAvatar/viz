@@ -112,13 +112,12 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           triggerRefresh={triggerRefresh}
         />
         <div className={styles["table-contents"]}>
-          {props.lifecycleStage == Paths.REGISTRY_REPORT && pathNameEnd === props.entityType &&
+          {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
             <div className={styles["instructions"]}>
               <Icon className={`material-symbols-outlined`}>info</Icon>
-              Click on any {props.entityType} in the table to view its summary.
+              Click on any {props.entityType} in the table to view its summary
             </div>}
           {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <RegistryTable
-            path={pathNameEnd}
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
             setTask={setTask}

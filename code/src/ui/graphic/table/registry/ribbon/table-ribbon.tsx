@@ -76,12 +76,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
           title="Archive"
         />
-        <RedirectButton
-          icon="assessment"
-          url={`${Routes.REGISTRY_REPORT}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_REPORT}
-          title="Summary"
-        />
       </div>
       <div className={styles["ribbon-button-container"]}>
         {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_PENDING &&
@@ -107,12 +101,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
             title={"view tasks"}
           />}
-        {(props.lifecycleStage == Routes.REGISTRY_REPORT && props.path != props.entityType) &&
-          <RedirectButton
+        {props.lifecycleStage == Routes.REGISTRY_REPORT &&
+          <ClickActionButton
             icon={"first_page"}
-            url={`${Routes.REGISTRY_REPORT}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
             title={`back to ${props.entityType}s`}
+            onClick={() => { router.back(); }}
           />}
         <DownloadButton
           instances={props.instances}

@@ -12,7 +12,6 @@ import { RegistryTaskOption } from 'types/form';
 import { Status } from 'ui/text/status/status';
 
 interface RegistryRowActionsProps {
-  path: string;
   recordType: string;
   lifecycleStage: string;
   row: GridRowModel;
@@ -22,7 +21,6 @@ interface RegistryRowActionsProps {
 /**
  * Renders the possible row actions for each row in the registry.
  * 
- * @param {string} path The current path name mostly at the end.
  * @param {string} recordType The type of the record.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {GridRowModel} row Row values.
@@ -37,7 +35,7 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
     : props.row.iri;
 
   const handleClickView = (): void => {
-    if (props.lifecycleStage == Routes.REGISTRY_REPORT && props.path == props.recordType) {
+    if (props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_ARCHIVE) {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY_REPORT}/${recordId}`);
     } else if (props.lifecycleStage == Routes.REGISTRY_TASK_DATE || props.lifecycleStage == Routes.REGISTRY_REPORT) {

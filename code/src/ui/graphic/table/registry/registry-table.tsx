@@ -13,7 +13,6 @@ import Box from '@mui/material/Box';
 import { RegistryTableTheme } from './registry-table-theme';
 
 interface RegistryTableProps {
-  path: string;
   recordType: string;
   lifecycleStage: string;
   instances: RegistryFieldValues[];
@@ -24,7 +23,6 @@ interface RegistryTableProps {
 /**
  * This component renders a registry of table based on the inputs.
  * 
- * @param {string} path The current path name mostly at the end.
  * @param {string} recordType The type of the record.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
@@ -43,7 +41,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         width: 100,
         renderCell: (params) => {
           return (<RegistryRowActions
-            path={props.path}
             recordType={props.recordType}
             lifecycleStage={props.lifecycleStage}
             row={params.row}
