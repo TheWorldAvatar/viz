@@ -1,10 +1,14 @@
+import styles from './summary.module.css';
+
 import { useEffect, useState } from 'react';
 
+import { Routes } from 'io/config/routes';
 import { RegistryFieldValues } from 'types/form';
 import { getData } from 'utils/server-actions';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
+import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 
 interface SummarySectionProps {
   id: string;
@@ -39,16 +43,26 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
   }, []);
 
   return (
-    <Accordion
-      title="Description"
-    >{isLoading ? <LoadingSpinner isSmall={true} /> : contract && Object.keys(contract).map((field, index) => {
-      if (field != "id" && contract[field].value) {
-        return <AccordionField
-          key={field + index}
-          name={field}
-          value={contract[field].value}
+    <div className={styles["container"]}>
+      <Accordion
+        title="Description"
+      >{isLoading ? <LoadingSpinner isSmall={true} /> : contract && Object.keys(contract).map((field, index) => {
+        if (field != "id" && contract[field].value) {
+          return <AccordionField
+            key={field + index}
+            name={field}
+            value={contract[field].value}
+          />
+        }
+      })}</Accordion>
+      <div className={styles["action"]}>
+        <RedirectButton
+          icon="read_more"
+          url={`${Routes.REGISTRY}/${props.entityType}/${props.id}`}
+          isActive={false}
+          title="view more"
         />
-      }
-    })}</Accordion>
+      </div>
+    </div>
   );
 }

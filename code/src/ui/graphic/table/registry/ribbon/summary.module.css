@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 1rem;
+}
+
+.action { 
+  height: 0.5rem;
+  width: 99%;
+  margin-top: -0.25rem !important;
+  margin-left: 0.5rem;
+  justify-content: start !important;
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .action { 
+    margin-top: 0.25rem !important;
+    margin-left: 0;
+  }
+}

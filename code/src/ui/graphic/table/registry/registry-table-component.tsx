@@ -100,8 +100,8 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
 
   return (
     <div className={styles["container"]}>
-      <div className={styles["contents-container"]}>
-        <h1 className={styles["title"]}>{parseWordsForLabels(props.entityType)}</h1>
+      <div className={styles["title"]}>
+        <h1>{parseWordsForLabels(props.entityType)}</h1>
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
@@ -112,27 +112,30 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
+      </div>
+      <div className={styles["contents-container"]}>
         {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
           <div className={styles["instructions"]}>
             <Icon className={`material-symbols-outlined`}>info</Icon>
             Click on any {props.entityType} in the table to view its summary
           </div>}
         {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-          <h2 className={styles["instructions"]}>Service summary<hr/></h2>}
+          <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
         <div className={styles["table-contents"]}>
-        {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+          {props.lifecycleStage == Paths.REGISTRY_REPORT &&
             <SummarySection
               id={pathNameEnd}
               entityType={props.entityType}
               registryAgentApi={props.registryAgentApi}
             />}
-          {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
-            instances={currentInstances}
-            limit={3}
-          />}
+          {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <div className={styles["instructions"]}>
+            <RegistryTable
+              recordType={props.entityType}
+              lifecycleStage={props.lifecycleStage}
+              setTask={setTask}
+              instances={currentInstances}
+              limit={3}
+            /></div>}
         </div>
       </div>
       {task && <TaskModal
