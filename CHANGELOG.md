@@ -17,6 +17,15 @@
 
 - Fix csv export of data by exporting the data directly instead of using a backend API
 
+## 5.15.3
+
+### Improvements
+
+- Add an option to 'map-settings.ui' to allow place labels be hidden by default
+- Add a context provider for mapbox settings
+- Add current year to the footer
+- Improve toggled map control style
+
 ## 5.15.2
 
 ### Improvements

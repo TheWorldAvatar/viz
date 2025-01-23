@@ -21,6 +21,7 @@ import { addData, getCurrentImageryOption, getDefaultCameraPosition } from 'ui/m
 import MapboxMapComponent from 'ui/map/mapbox/mapbox-container';
 import { parseMapDataSettings } from 'utils/client-utils';
 import { useScenarioDimensionsService } from 'utils/data-services';
+import { MapSettingsProvider } from './mapbox/map-settings-context';
 
 // Type definition of incoming properties
 interface MapContainerProps {
@@ -168,16 +169,19 @@ export default function MapContainer(props: MapContainerProps) {
         />}
 
       {/* Mapbox map */}
-      {mapSettings?.["type"] === "mapbox" &&
-        <MapboxMapComponent
-          currentMap={map}
-          styles="mapContainer"
-          setMap={setMap}
-          defaultPosition={defaultPosition}
-          imageryOption={currentImageryOption}
-        />
-      }
-
+      <MapSettingsProvider settings={mapSettings}>
+        {mapSettings?.["type"] === "mapbox" &&
+          <MapboxMapComponent
+            currentMap={map}
+            styles="mapContainer"
+            setMap={setMap}
+            defaultPosition={defaultPosition}
+            imageryOption={currentImageryOption}
+            hideLabels={mapSettings.hideLabels}
+          />
+        }
+      </MapSettingsProvider>
+      
       {/* Cesium map */}
       {mapSettings?.["type"] === "cesium" &&
         <div></div>
