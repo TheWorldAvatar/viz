@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { Routes } from 'io/config/routes';
 import { RegistryFieldValues } from 'types/form';
 import { getData } from 'utils/server-actions';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
@@ -46,7 +45,8 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     <div className={styles["container"]}>
       <Accordion
         title="Description"
-      >{isLoading ? <LoadingSpinner isSmall={true} /> : contract && Object.keys(contract).map((field, index) => {
+        isLoading={isLoading}
+      >{contract && Object.keys(contract).map((field, index) => {
         if (field != "id" && contract[field].value) {
           return <AccordionField
             key={field + index}
