@@ -2,7 +2,7 @@
 
 import styles from './registry.table.module.css';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@mui/material';
@@ -113,30 +113,28 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           triggerRefresh={triggerRefresh}
         />
       </div>
-      <div className={styles["contents-container"]}>
-        {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
-          <div className={styles["instructions"]}>
-            <Icon className={`material-symbols-outlined`}>info</Icon>
-            Click on any {props.entityType} in the table to view its summary
-          </div>}
+      {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
+        <div className={styles["instructions"]}>
+          <Icon className={`material-symbols-outlined`}>info</Icon>
+          Click on any {props.entityType} in the table to view its summary
+        </div>}
+      {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+        <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
+      <div className={styles["contents"]}>
         {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-          <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
-        <div className={styles["table-contents"]}>
-          {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-            <SummarySection
-              id={pathNameEnd}
-              entityType={props.entityType}
-              registryAgentApi={props.registryAgentApi}
-            />}
-          {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> : <div className={styles["instructions"]}>
-            <RegistryTable
-              recordType={props.entityType}
-              lifecycleStage={props.lifecycleStage}
-              setTask={setTask}
-              instances={currentInstances}
-              limit={3}
-            /></div>}
-        </div>
+          <SummarySection
+            id={pathNameEnd}
+            entityType={props.entityType}
+            registryAgentApi={props.registryAgentApi}
+          />}
+        {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
+          <RegistryTable
+            recordType={props.entityType}
+            lifecycleStage={props.lifecycleStage}
+            setTask={setTask}
+            instances={currentInstances}
+            limit={3}
+          />}
       </div>
       {task && <TaskModal
         entityType={props.entityType}

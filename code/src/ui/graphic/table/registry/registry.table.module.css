@@ -3,12 +3,7 @@
   align-self: center;
   flex-direction: column;
 
-  width: 90%;
-  height: 90vh;
-  margin: 1rem;
-}
-
-.contents-container {
+  height: 83vh;
   width: 90vw;
   padding: 1rem 2rem;
   margin: 1rem;
@@ -16,12 +11,13 @@
   background-color: var(--background-primary);
   border: 1px solid var(--border-primary) !important;
   border-radius: 20px;
-  flex-direction: column;
 }
 
 .title {
-  margin: 0.5rem 0;
+  margin: 0.5rem 0rem 0.3rem;
+}
 
+.title h1 {
   color: var(--text-color-primary);
   font-size: var(--font-size-h2);
 }
@@ -32,10 +28,10 @@
   padding-bottom: 0.5rem;
 }
 
-.table-contents {
-  height: 60vh;
-  width: 100%;
-  padding-bottom: 10vh;
+.contents {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
   overflow-y: auto;
   overflow-x: auto;
 }

@@ -1,7 +1,6 @@
 .container {
   display: flex;
   flex-direction: row;
-  padding-bottom: 1rem;
 }
 
 .action { 
@@ -14,11 +13,12 @@
 
 @media only screen and (max-width: 480px) {
   .container {
-    flex-direction: column;
+    flex-direction: column-reverse;
+    row-gap: 2.5rem;
   }
 
   .action { 
-    margin-top: 0.25rem !important;
+    width: 50%;
     margin-left: 0;
   }
 }
