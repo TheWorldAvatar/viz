@@ -6,7 +6,7 @@
 import { Paths } from 'io/config/routes';
 import { FieldValues } from 'react-hook-form';
 
-import { FormTemplate, OntologyConcept, RegistryFieldValues } from 'types/form';
+import { RegistryFieldValues, FormTemplate, OntologyConcept, PropertyShape } from 'types/form';
 
 export interface HttpResponse {
   message: string;
@@ -21,10 +21,14 @@ export interface HttpResponse {
  * @param {string} entityType Type of entity to retrieve.
  * @param {string} identifier Optional identifier of the parent entity.
  * @param {string} subEntityType Optional type of sub entity to retrieve entities associated with the specific parent entity.
+ * @param {boolean} requireLabel Optional indicator to retrieve labelled data if requested.
  */
-export async function getData(agentApi: string, entityType: string, identifier?: string, subEntityType?: string): Promise<RegistryFieldValues[]> {
+export async function getData(agentApi: string, entityType: string, identifier?: string, subEntityType?: string, requireLabel?: boolean): Promise<RegistryFieldValues[]> {
   // Append identifier to the url if it exist
   let url: string = `${agentApi}/${entityType}`;
+  if (requireLabel) {
+    url += `/label`;
+  }
   if (identifier) {
     url += `/${identifier}`;
     if (subEntityType) {
@@ -86,13 +90,16 @@ export async function getLifecycleData(agentApi: string, currentStage: string, e
 
 
 /**
- * Retrieves all service tasks in a lifecycle on the specified day. Fields are returned with human-readable labels.
+ * Retrieves all service tasks in a lifecycle on the specified day or contract. Fields are returned with human-readable labels.
+ * Note that if time and id is provided, time will take precedence over id.
  * 
  * @param {string} agentApi API endpoint.
- * @param {number} time Target day in UNIX timestamp format.
+ * @param {string} id Optional contract ID associated with the tasks.
+ * @param {number} time Optional target day in UNIX timestamp format.
  */
-export async function getServiceTasks(agentApi: string, time: number): Promise<RegistryFieldValues[]> {
-  const res = await sendRequest(`${agentApi}/contracts/service/${time}`, "GET");
+export async function getServiceTasks(agentApi: string, id?: string, time?: number): Promise<RegistryFieldValues[]> {
+  const url: string = time ? `${agentApi}/contracts/service/${time}` : `${agentApi}/contracts/service/${id}`;
+  const res = await sendRequest(url, "GET");
   const responseData = await res.json();
   return responseData;
 }
@@ -106,6 +113,20 @@ export async function getServiceTasks(agentApi: string, time: number): Promise<R
 export async function getAvailableTypes(agentApi: string, entityType: string): Promise<OntologyConcept[]> {
   const res = await sendRequest(`${agentApi}/type/${entityType}`, "GET");
   return await res.json();
+}
+
+/**
+* Retrieves the form template for a specific lifecycle event.
+* 
+* @param {string} agentApi API endpoint.
+* @param {string} lifecycleStage The target lifecycle stage ie service or archive.
+* @param {string} eventType The target event type: dispatch, report, cancel, terminate, rescind.
+* @param {string} identifier The target identifier for a specific order OR use "form" if retrieving only a template.
+*/
+export async function getLifecycleFormTemplate(endpoint: string, lifecycleStage: string, eventType: string, identifier: string): Promise<PropertyShape[]> {
+  const url: string = `${endpoint}/contracts/${lifecycleStage}/${eventType}/${identifier}`;
+  const form: string = await sendGetRequest(url);
+  return JSON.parse(form).property;
 }
 
 /**

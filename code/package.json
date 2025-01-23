@@ -1,6 +1,6 @@
 {
     "name": "viz",
-    "version": "5.15.3",
+    "version": "5.16.0",
     "private": true,
     "type": "module",
     "jest": {
@@ -57,7 +57,8 @@
         "redis": "^4.7.0",
         "redux": "^5.0.1",
         "redux-persist": "^6.0.0",
-        "typescript": "^5.7.3"
+        "typescript": "^5.7.3",
+        "uuid": "^11.0.4"
     },
     "devDependencies": {
         "@eslint/js": "^9.18.0",

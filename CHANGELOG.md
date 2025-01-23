@@ -3,6 +3,20 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.0
+
+### Improvements
+
+- Added contract information for each task
+- Added feature to retrieve form template for each stage or event transition eg cancel, dispatch, or completed
+- Improve the transition between different events from receiving a new order, assigning dispatch information, and completing the services
+- Added a summary page to show tasks associated with one contract
+- Separate pages
+
+### Bug Fixes
+
+- Fix csv export of data by exporting the data directly instead of using a backend API
+
 ## 5.15.3
 
 ### Improvements
