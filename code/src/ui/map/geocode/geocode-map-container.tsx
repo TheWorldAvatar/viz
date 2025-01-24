@@ -9,6 +9,7 @@ import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { CameraPosition } from 'types/settings';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
+import { MapSettingsProvider } from 'ui/map/mapbox/map-settings-context';
 import MapboxMapComponent from 'ui/map/mapbox/mapbox-container';
 
 interface GeocodeMapContainerProps {
@@ -72,11 +73,17 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
   }, [longitude, latitude, marker, map]);
 
   return (
-    <MapboxMapComponent
-      currentMap={map}
-      styles={styles["mapContainer"]}
-      setMap={setMap}
-      defaultPosition={defaultPosition}
-    />
+    <MapSettingsProvider settings={{
+      type: "mapbox",
+      camera: null,
+      imagery: null
+    }}>
+      <MapboxMapComponent
+        currentMap={map}
+        styles={styles["mapContainer"]}
+        setMap={setMap}
+        defaultPosition={defaultPosition}
+      />
+    </MapSettingsProvider>
   )
 }
