@@ -112,6 +112,9 @@ img {
     background-color: transparent !important;
 }
 
+ul {
+    list-style-type: none;
+}
 
 /**
     Constants for our own CSS classes (across all themes).

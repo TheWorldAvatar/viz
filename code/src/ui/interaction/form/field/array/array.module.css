@@ -1,0 +1,24 @@
+.array-row {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem 0.1rem;
+  margin: 0 0.5rem 1rem;
+  justify-content: space-between;
+
+  border-radius: 2px;
+  box-shadow: rgba(var(--background-inverse-primary-rgb), 0.4) 0px 1px 4px;
+}
+
+.cell-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0 1rem;
+}
+
+.cell {
+  margin: 0 0.25rem 0.1rem;
+  font-size: var(--font-size-tertiary-text);
+  color: var(--text-color-secondary);
+  white-space: nowrap;
+}

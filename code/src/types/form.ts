@@ -7,6 +7,7 @@ export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
+export const PRICING_IDENTIFIER = "pricing";
 
 interface RegistryFieldValue {
   value: string;
@@ -29,6 +30,12 @@ export type OntologyConcept = {
 export interface FormOptionType {
   label: string;
   value: string;
+}
+
+export interface FormArrayItemOption {
+  fieldId: string;
+  label: string;
+  placeholder?: string
 }
 
 export type FormTemplate = {

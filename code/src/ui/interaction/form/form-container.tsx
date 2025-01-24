@@ -126,7 +126,7 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
     router.back();
   };
 
-    const closeTab: React.MouseEventHandler<HTMLDivElement> = () => {
+  const closeTab: React.MouseEventHandler<HTMLDivElement> = () => {
     if (typeof window !== 'undefined') {
       window.close(); // Closes the tab
     }
@@ -146,8 +146,8 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
       setStatus(JSON.parse(response));
     }
 
-    if (props.isPrimaryEntity && !status &&
-      (props.formType === Paths.REGISTRY || props.formType === Paths.REGISTRY_DELETE || props.formType === Paths.REGISTRY_EDIT)
+    if (!status && ((props.entityType == "pricing") || (props.isPrimaryEntity &&
+      (props.formType === Paths.REGISTRY || props.formType === Paths.REGISTRY_DELETE || props.formType === Paths.REGISTRY_EDIT)))
     ) {
       getContractStatus();
     }
