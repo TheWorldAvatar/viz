@@ -42,7 +42,7 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
   const dispatch = useDispatch();
   const hasExistingData: boolean = useSelector(getHasExistingData);
 
-  const scrollRef = useRef<HTMLDivElement>();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
 
   useEffect(() => {

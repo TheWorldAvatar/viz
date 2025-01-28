@@ -54,27 +54,12 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
     const getEntityConcepts = async (): Promise<OptionsOrGroups<FormOptionType, GroupBase<FormOptionType>>> => {
       props.setIsFetching(true);
       let concepts: OntologyConcept[];
-      // WIP: Refactor to remove this as the data can be retrieved on the backend
       switch (props.field.name[VALUE_KEY].toLowerCase()) {
-        case "status":
-          concepts = await getAvailableTypes(props.agentApi, `${props.instanceType}/status`);
-          break;
         case "type":
           concepts = await getAvailableTypes(props.agentApi, props.instanceType);
           break;
-        case "country":
-        case "bin type":
-        case "service":
-        case "service type":
-        case "truck type":
-        case "waste category": {
-          // Remove the second half of field value to get required type
-          const typeRoute: string = props.field.name[VALUE_KEY].split(" ")[0];
-          concepts = await getAvailableTypes(props.agentApi, typeRoute);
-          break;
-        }
         default:
-          concepts = await getAvailableTypes(props.agentApi, props.field.name[VALUE_KEY].toLowerCase().replace(/\s+/g, ""));
+          concepts = await getAvailableTypes(props.agentApi, props.field.name[VALUE_KEY].toLowerCase().replace(/\s+/g, "_"));
           break;
       }
       if (concepts && concepts.length > 0) {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Metadata } from 'next';
 
 import { Paths, PageTitles, Modules } from 'io/config/routes';
