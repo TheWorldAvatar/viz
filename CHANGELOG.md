@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.2
+
+### Changes
+
+- Minor dependency bump of reduxjs, ESLint, uuid
+
 ## 5.16.1
 
 ### Bug Fixes
