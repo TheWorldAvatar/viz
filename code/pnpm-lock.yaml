@@ -130,8 +130,8 @@ importers:
         version: 11.0.5
     devDependencies:
       '@eslint/js':
-        specifier: ^9.18.0
-        version: 9.18.0
+        specifier: ^9.19.0
+        version: 9.19.0
       '@next/eslint-plugin-next':
         specifier: ^15.1.5
         version: 15.1.5
