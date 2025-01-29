@@ -1,0 +1,38 @@
+name: Tag Version
+
+env:
+    VERSION
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  tag-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "viz-bot@noreply.theworldavatar.io"
+          git config --global user.name "twa-viz-bot"
+
+      - name: Save version to environment
+        run: |
+          if [ -f VERSION ]; then
+            echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+          else
+            echo "VERSION file not found" && exit 1
+          fi
+
+      - name: Create tag
+        run: |
+          git tag -a "v${{ env.VERSION }}" -m "Version ${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
