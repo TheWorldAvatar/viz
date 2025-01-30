@@ -1,0 +1,31 @@
+name: Deploy to Remote Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: VPN to network with host
+        run: |
+          # sudo openvpn --config /path/to/your/vpn/config.ovpn --daemon --auth-user-pass /path/to/your/vpn/auth.txt
+
+      - name: Deploy application via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd xxxxxxxxxx
+            git pull origin main
+          #  docker compose pull, docker compose restart etc ./stack.sh start
+          EOF
