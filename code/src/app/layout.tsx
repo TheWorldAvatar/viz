@@ -8,7 +8,6 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Dosis } from 'next/font/google';
 
-import StartupLogging from 'io/startup-logging';
 import OptionalPages from 'io/config/optional-pages';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
@@ -48,7 +47,6 @@ export default function RootLayout({ children, modal }: { children: React.ReactN
     return (
         <html lang="en" className={dosis.className}>
             <body>
-                <StartupLogging />
                 <GlobalContainer settings={uiSettings}>
                     <BackgroundImage />
                     {children}

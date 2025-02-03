@@ -13,7 +13,7 @@ import { Status } from 'ui/text/status/status';
 
 interface RegistryRowActionsProps {
   recordType: string;
-  isTaskPage: boolean;
+  lifecycleStage: string;
   row: GridRowModel;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
@@ -22,7 +22,7 @@ interface RegistryRowActionsProps {
  * Renders the possible row actions for each row in the registry.
  * 
  * @param {string} recordType The type of the record.
- * @param {boolean} isTaskPage Indicator if the table is currently on the task view.
+ * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {GridRowModel} row Row values.
  * @param setTask A dispatch method to set the task option when required.
  */
@@ -35,33 +35,23 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
     : props.row.iri;
 
   const handleClickView = (): void => {
-    if (props.isTaskPage) {
+    if (props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_ARCHIVE) {
+      // Move to the view modal page for the specific record
+      router.push(`${Routes.REGISTRY_REPORT}/${recordId}`);
+    } else if (props.lifecycleStage == Routes.REGISTRY_TASK_DATE || props.lifecycleStage == Routes.REGISTRY_REPORT) {
       let status: string;
-      switch (props.row.order) {
-        case "0": {
-          status = Status.PENDING_DISPATCH;
-          break;
-        }
-        case "1": {
-          status = Status.PENDING_EXECUTION;
-          break;
-        }
-        case "2": {
-          status = Status.COMPLETED;
-          break;
-        }
-        case "3": {
-          status = Status.CANCELLED;
-          break;
-        }
-        case "4": {
-          status = Status.INCOMPLETE;
-          break;
-        }
-        default: {
-          status = "";
-          break;
-        }
+      if (props.row.order === "0" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent") {
+        status = Status.PENDING_DISPATCH;
+      } else if (props.row.order === "1" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") {
+        status = Status.PENDING_EXECUTION;
+      } else if (props.row.order === "2" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent") {
+        status = Status.COMPLETED;
+      } else if (props.row.order === "3" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent") {
+        status = Status.CANCELLED;
+      } else if (props.row.order === "4" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent") {
+        status = Status.INCOMPLETE;
+      } else {
+        status = "";
       }
       props.setTask({
         id: recordId,

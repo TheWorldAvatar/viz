@@ -4,7 +4,7 @@ import { Interactions } from 'io/config/interactions';
 import { DataLayer } from 'io/data/data-layer';
 import { DataStore } from 'io/data/data-store';
 import { JsonObject } from 'types/json';
-import { ImageryOption, ImagerySettings } from 'types/settings';
+import { ImageryOption, ImageryOptions } from 'types/settings';
 import { getCurrentImageryOption } from 'ui/map/map-helper';
 /**
  * Given a DataStore instance housing parsed DataLayer instances,
@@ -12,10 +12,10 @@ import { getCurrentImageryOption } from 'ui/map/map-helper';
  * 
  * @param {Map} map the Mapbox map.
  * @param {dataStore} dataStore Store containing parsed DataLayer instances.
- * @param {ImagerySettings} imagerySettings - The imagery settings for the map.
+ * @param {ImageryOptions} imageryOptions - The imagery settings for the map.
  */
-export async function addAllLayers(map: Map, dataStore: DataStore, imagerySettings: ImagerySettings) {
-    const currentStyle = getCurrentImageryOption(imagerySettings);
+export async function addAllLayers(map: Map, dataStore: DataStore, imageryOptions: ImageryOptions) {
+    const currentStyle = getCurrentImageryOption(imageryOptions);
 
     const layerArray: DataLayer[] = dataStore?.getLayerList();
     layerArray?.forEach((layer) => addLayer(map, layer, currentStyle));

@@ -2,23 +2,36 @@
 
 import React from 'react';
 
-import { sendGetRequest } from 'utils/server-actions';
 import ActionButton from '../action';
+import { RegistryFieldValues } from 'types/form';
 
 interface DownloadButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  agentApi: string;
+  instances: RegistryFieldValues[];
 }
 
 /**
- * This component renders a download button for downloading a CSV content .
+ * This component renders a download button for downloading CSV content .
  * 
- * @param {string} agentApi The target endpoint to retrieve the require csv contents.
+ * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  */
-export function DownloadButton({ agentApi, ...rest }: Readonly<DownloadButtonProps>) {
-  const handleCsvDownload = async () => {
-    // Fetch contents and transform it into a url for download
-    const csvContents: string = await sendGetRequest(agentApi);
-    const blob: Blob = new Blob([csvContents], { type: "text/csv;charset=utf-8;" });
+export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonProps>) {
+  const exportToCSV = () => {
+    if (instances.length === 0) {
+      console.error("No data to export.");
+      return;
+    }
+    // Extract unique column headers from all objects
+    const headers = Array.from(new Set(instances.flatMap(Object.keys)));
+    // Build CSV content
+    const csvRows: string[] = [];
+    csvRows.push(headers.join(",")); // Add headers
+
+    for (const row of instances) {
+      const values = headers.map(header => row[header]?.value ?? "");
+      csvRows.push(values.join(","));
+    }
+    // Transform contents into a url for download
+    const blob: Blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url: string = URL.createObjectURL(blob);
 
     // Create a temporary anchor element to activate download
@@ -38,7 +51,7 @@ export function DownloadButton({ agentApi, ...rest }: Readonly<DownloadButtonPro
       icon="download"
       className={`${rest.className}`}
       title="export data"
-      onClick={handleCsvDownload}
+      onClick={exportToCSV}
     />
   );
 }

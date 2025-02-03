@@ -38,9 +38,8 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
             return <></>;
           }
           if (field.class) {
-            return <div className={fieldStyles["form-field-container"]}>
+            return <div key={field.name[VALUE_KEY] + index} className={fieldStyles["form-field-container"]}>
               <DependentFormSection
-                key={field.name[VALUE_KEY] + index}
                 agentApi={props.agentApi}
                 dependentProp={field}
                 form={props.form}

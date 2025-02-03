@@ -43,7 +43,7 @@ interface TaskModalProps {
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
 
-  const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   // Form actions
   const [isDispatchAction, setIsDispatchAction] = useState<boolean>(false);
@@ -130,7 +130,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setIsFetching(false);
     }
     // Only execute this for orders that are pending execution
-    if (props.task.status === Status.PENDING_EXECUTION) {
+    if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
       getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
     }
   }, []);

@@ -3,6 +3,59 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.2
+
+### Changes
+
+- Minor dependency bump of reduxjs, ESLint, uuid
+
+## 5.16.1
+
+### Bug Fixes
+
+- Add missing context provider for form geocoder map
+
+## 5.16.0
+
+### Improvements
+
+- Added contract information for each task
+- Added feature to retrieve form template for each stage or event transition eg cancel, dispatch, or completed
+- Improve the transition between different events from receiving a new order, assigning dispatch information, and completing the services
+- Added a summary page to show tasks associated with one contract
+- Separate pages
+
+### Bug Fixes
+
+- Fix csv export of data by exporting the data directly instead of using a backend API
+
+## 5.15.3
+
+### Improvements
+
+- Add an option to 'map-settings.ui' to allow place labels be hidden by default
+- Add a context provider for mapbox settings
+- Add current year to the footer
+- Improve toggled map control style
+
+## 5.15.2
+
+### Improvements
+
+- Dependency upgrades
+
+## 5.15.1
+
+### Improvements
+
+- Patch to previous PR that removed ESLint's ajv dependency override
+
+## 5.15.0
+
+### Improvements
+
+- Major update of next and ESLint to improve code quality and optimisation
+
 ## 5.14.2
 
 ### Improvements

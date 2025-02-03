@@ -1,10 +1,10 @@
-# /code/public/
+/code/public/
 
-# !/code/public/images
-# !/code/public/images/defaults
-# !/code/public/images/defaults/*
-# !/code/public/images/utils
-# !/code/public/optional-pages/help-page.md
+!/code/public/images
+!/code/public/images/defaults
+!/code/public/images/defaults/*
+!/code/public/images/utils
+!/code/public/optional-pages/help-page.md
 
 mapbox_api_key
 mapbox_username

@@ -42,8 +42,10 @@ export function addSource(map: Map, source: LayerSource) {
     delete options["timeseriesFiles"];
 
     // Add attributions if missing
+    const currentYear = new Date().getFullYear();
+
     options["attribution"] = options["attribution"] ?? "CMCL";
-    options["attribution"] = `Powered by <a style="text-color:rgba(0,0,0,.5)" href="https://theworldavatar.io/" target = "_blank" title = "TWA" aria - label="TheWorldAvatar">The World Avatar&#8482;</a> | <a href="https://cmcl.io/" target = "_blank" title = "CMCL" aria - label="CMCL">${options["attribution"]} </a>`;
+    options["attribution"] = `Powered by <a style="text-color:rgba(0,0,0,.5)" href="https://theworldavatar.io/" target = "_blank" title = "TWA" aria - label="TheWorldAvatar">The World Avatar&#8482;</a> ${currentYear} | <a href="https://cmcl.io/" target = "_blank" title = "CMCL" aria - label="CMCL">${options["attribution"]} </a>`;
 
     // Have to cast to type specific object to meet Mapbox's API
 

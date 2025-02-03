@@ -29,7 +29,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
   Modal.setAppElement("#globalContainer");
   const dispatch = useDispatch();
   const [response, setResponse] = useState<HttpResponse>(null);
-  const formRef: React.MutableRefObject<HTMLFormElement> = useRef<HTMLFormElement>();
+  const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
   // Show all features upon click
   const showAllFeatures: React.MouseEventHandler<HTMLDivElement> = () => {
