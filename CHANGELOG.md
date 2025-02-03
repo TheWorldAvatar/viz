@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.3
+
+### Changes
+
+- Minor version bump for the docker image of node
+
 ## 5.16.2
 
 ### Changes
