@@ -16,10 +16,15 @@ RUN corepack enable
 WORKDIR /twa
 ENV NEXT_TELEMETRY_DISABLED 1
 COPY ./code/package.json  ./
+RUN npm install --global corepack@latest
 
 # ---- Development Image ----
 FROM base AS develop
+# Add antd and related packages to the container
+COPY ./code/package.json ./code/pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
+RUN pnpm add react@18.2.0 react-dom@18.2.0
+RUN pnpm add antd@5 @ant-design/icons dayjs
 COPY ./code ./
 # Script should not be at twa directory as volume mount will override any copied contents
 COPY ./dev-start.sh /dev-start.sh
@@ -30,6 +35,7 @@ CMD [ "/dev-start.sh" ]
 FROM base AS production
 COPY ./code/pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN pnpm add antd @ant-design/icons dayjs
 COPY ./code ./
 COPY check-build-start.sh /twa/check-build-start.sh
 RUN chmod +x /twa/check-build-start.sh

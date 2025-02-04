@@ -1,111 +1,146 @@
-import styles from './registry.table.module.css';
+import React from "react";
+import { Table, Button, Tooltip, theme } from "antd";
+import type { ColumnsType } from "antd/es/table";
 
-import React from 'react';
-import { FieldValues } from 'react-hook-form';
+// Import your custom utility and components
+import { parseWordsForLabels } from "utils/client-utils";
+import StatusComponent from "ui/text/status/status";
+import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 
-import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
-import { parseWordsForLabels } from 'utils/client-utils';
-import RegistryRowActions from './actions/registry-table-action';
-import StatusComponent from 'ui/text/status/status';
+// Define a type for the table's data rows
+type TableData = {
+  key: string;
+  [key: string]: string | number;
+};
 
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import Box from '@mui/material/Box';
-import { RegistryTableTheme } from './registry-table-theme';
-
-interface RegistryTableProps {
+interface AntRegistryTableProps {
   recordType: string;
   lifecycleStage: string;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  limit?: number;
+  isLoading?: boolean;
 }
 
-/**
- * This component renders a registry of table based on the inputs.
- * 
- * @param {string} recordType The type of the record.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {RegistryFieldValues[]} instances The instance values for the table.
- * @param setTask A dispatch method to set the task option when required.
- * @param {number} limit Optional limit to the number of columns shown.
- */
-export default function RegistryTable(props: Readonly<RegistryTableProps>) {
-  // Generate a list of column headings
-  // const columns: ColumnDef<Record<string, string>>[] = React.useMemo(() => {
-  const columns: GridColDef[] = React.useMemo(() => {
-    if (props.instances?.length === 0) return [];
-    return [
+export default function AntRegistryTable({
+  instances,
+  setTask,
+  isLoading = false,
+  ...props
+}: AntRegistryTableProps) {
+  const { token } = theme.useToken();
+
+  // Handler for the state of pagination
+  const [pageSize, setPageSize] = React.useState<number>(10);
+
+  // Handler for the row action button
+  const handleRowAction = React.useCallback(
+    (record: TableData) => {
+      setTask({
+        id: record.id?.toString() || record.iri?.toString(),
+        status: record.status?.toString(),
+        contract: record.contract?.toString(),
+      });
+    },
+    [setTask]
+  );
+
+  // Memoise columns and data so they only recalc when instances change
+  const [columns, data] = React.useMemo(() => {
+    if (!instances?.length) return [[], []];
+
+    // Determine the instance with the most fields to extract the column keys
+    const fieldKeys = Object.keys(
+      instances.reduce((a, b) =>
+        Object.keys(a).length > Object.keys(b).length ? a : b
+      )
+    );
+
+    // Build table columns
+    const columns: ColumnsType<TableData> = [
       {
-        field: "actions",
-        headerName: "",
+        title: "Actions",
+        key: "actions",
+        fixed: "left",
         width: 100,
-        renderCell: (params) => {
-          return (<RegistryRowActions
-            recordType={props.recordType}
-            lifecycleStage={props.lifecycleStage}
-            row={params.row}
-            setTask={props.setTask}
-          />);
-        }
+        render: (_, record) => (
+          <Tooltip title="View Details">
+            <Button
+              type="link"
+              icon={
+                <span className="material-symbols-outlined">
+                  expand_circle_right
+                </span>
+              }
+              onClick={() => handleRowAction(record)}
+            />
+          </Tooltip>
+        ),
       },
-      // Get instances with the most number of fields
-      ...Object.keys(props.instances.reduce((prev, current) => {
-        const prevKeys = Object.keys(prev).length;
-        const currentKeys = Object.keys(current).length;
-        return prevKeys >= currentKeys ? prev : current;
-      })).map(field => ({
-        field,
-        headerName: parseWordsForLabels(field),
-        width: 150, // Adjust the width as needed
-        renderCell: (params: GridRenderCellParams) => {
-          // Render status differently
-          if (field.toLowerCase() === "status") {
-            return (<StatusComponent status={`${params.value}`} />);
-          }
-          if (params.value) {
-            return parseWordsForLabels(`${params.value}`);
-          }
-          return "";
-        }
-      }))
+      ...fieldKeys.map((field) => ({
+        title: parseWordsForLabels(field),
+        dataIndex: field,
+        key: field,
+        sorter: {
+          compare: (a, b) => customSorter(a[field], b[field]),
+          multiple: 1,
+        },
+        render: (value: unknown) => renderCell(value, field),
+      })),
     ];
 
-  }, [props.instances]);
+    // Transform the instances into table data
+    const data = instances.map((instance) => ({
+      key: instance.id?.value || instance.iri?.value,
+      ...Object.fromEntries(
+        Object.entries(instance).map(([k, v]) => [k, v.value])
+      ),
+    }));
 
-  // Parse row values
-  const data: FieldValues[] = React.useMemo(() => {
-    if (props.instances?.length === 0) return [];
-    // Extract only the value into the data to simplify
-    return props.instances.map(instance => {
-      const flattenInstance: Record<string, string> = {};
-      Object.keys(instance).map(field => {
-        flattenInstance[field] = instance[field].value
-      })
-      return flattenInstance;
-    });
-  }, [props.instances]);
+    return [columns, data];
+  }, [instances, handleRowAction]);
 
   return (
-    <RegistryTableTheme >
-      <Box>
-        <DataGrid
-          className={styles["table"]}
-          rows={data}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
-            },
-          }}
-          pageSizeOptions={[5]}
-          checkboxSelection={false}
-          disableRowSelectionOnClick={false}
-          autosizeOnMount={true}
-          getRowId={(row) => row.id || row.iri}
-        />
-      </Box>
-    </RegistryTableTheme>
-  )
+    <Table
+      loading={isLoading}
+      columns={columns}
+      dataSource={data}
+      scroll={{ x: "max-content" }}
+      pagination={{
+        pageSize: pageSize,
+        pageSizeOptions: [5, 10, 20, 50],
+        showSizeChanger: true, // Allow users to change page size
+        showTotal: (total, range) =>
+          `${range[0]}-${range[1]} of ${total} items`,
+        showQuickJumper: true, // Add quick jump capability
+        responsive: true,
+        position: ["bottomRight"],
+        onChange: (page, newPageSize) => {
+          if (newPageSize !== pageSize) {
+            setPageSize(newPageSize);
+          }
+        },
+      }}
+      style={{
+        backgroundColor: token.colorBgContainer,
+        borderRadius: token.borderRadiusLG,
+      }}
+      size="middle"
+      bordered
+      {...props}
+    />
+  );
+}
+
+// Helper function for custom sorting
+function customSorter(a: unknown, b: unknown) {
+  if (typeof a === "number" && typeof b === "number") return a - b;
+  return String(a).localeCompare(String(b));
+}
+
+// Helper function to render cell content
+function renderCell(value: unknown, field: string) {
+  if (field.toLowerCase() === "status") {
+    return <StatusComponent status={String(value)} />;
+  }
+  return value ? parseWordsForLabels(String(value)) : null;
 }

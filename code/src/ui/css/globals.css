@@ -1,4 +1,5 @@
 @import "material-symbols";
+@import 'antd/dist/reset.css';
 
 /**
     Light theme detected (or no preference set).
@@ -26,6 +27,12 @@
         --border-secondary: #a5a5b3;
         --border-tertiary: #9898af;
     }
+
+   
+    .ant-btn-primary:hover {
+        background-color: var(--text-color-links-hover) !important;
+    }
+
 }
 
 /**
@@ -54,6 +61,10 @@
         --border-secondary: #6c7989;
         --border-tertiary: #7f8ea1;
     }
+   
+    .ant-btn-primary:hover {
+        background-color: var(--text-color-links-hover) !important;
+    }
 }
 
 /**
@@ -78,7 +89,6 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-
     font-family: var(--font-family-primary);
     font-size: var(--font-size-root);
 }

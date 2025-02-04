@@ -1,18 +1,16 @@
 "use client";
 
-import styles from './table.ribbon.module.css';
-import fieldStyles from 'ui/interaction/form/field/field.module.css';
+import styles from "./table.ribbon.module.css";
 
-import React from 'react';
-import { useProtectedRole } from 'hooks/useProtectedRole';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { useProtectedRole } from "hooks/useProtectedRole";
+import { useRouter } from "next/navigation";
+import { Button, DatePicker, Space, Tooltip } from "antd";
+import dayjs from "dayjs";
 
-import { Routes } from 'io/config/routes';
-import { RegistryFieldValues } from 'types/form';
-import { DownloadButton } from 'ui/interaction/action/download/download';
-import ClickActionButton from 'ui/interaction/action/click/click-button';
-import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
+import { Routes } from "io/config/routes";
+import { RegistryFieldValues } from "types/form";
+import { DownloadButton } from "ui/interaction/action/download/download";
 
 interface TableRibbonProps {
   path: string;
@@ -25,114 +23,139 @@ interface TableRibbonProps {
   triggerRefresh: () => void;
 }
 
-/**
- * Renders a ribbon for the view page
- * 
- * @param {string} path The current path name after the last /.
- * @param {string} entityType The type of entity.
- * @param {string} registryAgentApi The target endpoint for default registry agents.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {string} selectedDate The selected date in the date field input.
- * @param {RegistryFieldValues[]} instances The target instances to export into csv.
- * @param setSelectedDate Method to update selected date.
- * @param triggerRefresh Method to trigger refresh.
- */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const router = useRouter();
-
-  const isKeycloakEnabled = process.env.KEYCLOAK === 'true';
-
+  const isKeycloakEnabled = process.env.KEYCLOAK === "true";
   const authorised = useProtectedRole().authorised;
 
-  const taskId: string = "task date";
-
-  // Handle change event for the date input
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setSelectedDate(event.target.value);
-  };
-
-  const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
-    props.triggerRefresh();
+  const handleDateChange = (date: dayjs.Dayjs | null) => {
+    props.setSelectedDate(
+      date?.format("YYYY-MM-DD") || new Date().toISOString().split("T")[0]
+    );
   };
 
   return (
     <div className={styles.menu}>
-      <div className={styles["ribbon-button-container"]}>
-        <RedirectButton
-          icon="pending"
-          url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-          title="Pending"
-        />
-        <RedirectButton
-          icon="schedule"
-          url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-          title="Active"
-        />
-        <RedirectButton
-          icon="archive"
-          url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-          title="Archive"
-        />
-      </div>
-      <div className={styles["ribbon-button-container"]}>
-        {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_PENDING &&
-          <ClickActionButton
-            icon={"add"}
-            title={"add " + props.entityType}
-            onClick={() => {
-              router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-            }}
-          />
-        }
-        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
-          <RedirectButton
-            icon={"task"}
-            url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-            title={"overview"}
-          />}
-        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
-          <RedirectButton
-            icon={"event"}
-            url={`${Routes.REGISTRY_TASK_DATE}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-            title={"view tasks"}
-          />}
-        {props.lifecycleStage == Routes.REGISTRY_REPORT &&
-          <ClickActionButton
-            icon={"first_page"}
-            title={`back to ${props.entityType}s`}
-            onClick={() => { router.back(); }}
-          />}
-        <DownloadButton
-          instances={props.instances}
-        />
-        {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_TASK_DATE && <>
-          <div style={{ margin: "auto 0" }}>
-            <label className={fieldStyles["form-input-label"]} htmlFor={taskId}>
-              Date:
-            </label>
-            <input
-              id={taskId}
-              className={fieldStyles["dtpicker"]}
-              style={{ width: "5.5rem" }}
-              type={"date"}
-              defaultValue={props.selectedDate}
-              aria-label={taskId}
-              onChange={handleDateChange}
-            />
-          </div>
-          <MaterialIconButton
-            iconName={"cached"}
-            iconStyles={[styles["icon"]]}
-            onClick={triggerRefresh}
-          />
-        </>
-        }
-      </div>
+      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Space wrap>
+          <Button
+            type={
+              props.lifecycleStage === Routes.REGISTRY_PENDING
+                ? "primary"
+                : "default"
+            }
+            icon={<span className="material-symbols-outlined">pending</span>}
+            onClick={() =>
+              router.push(`${Routes.REGISTRY_PENDING}/${props.entityType}`)
+            }
+          >
+            Pending
+          </Button>
+          <Button
+            type={
+              props.lifecycleStage === Routes.REGISTRY_ACTIVE
+                ? "primary"
+                : "default"
+            }
+            icon={<span className="material-symbols-outlined">schedule</span>}
+            onClick={() =>
+              router.push(`${Routes.REGISTRY_ACTIVE}/${props.entityType}`)
+            }
+          >
+            Active
+          </Button>
+          <Button
+            type={
+              props.lifecycleStage === Routes.REGISTRY_ARCHIVE
+                ? "primary"
+                : "default"
+            }
+            icon={<span className="material-symbols-outlined">archive</span>}
+            onClick={() =>
+              router.push(`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`)
+            }
+          >
+            Archive
+          </Button>
+        </Space>
+
+        <Space wrap>
+          {(authorised || !isKeycloakEnabled) &&
+            props.lifecycleStage === Routes.REGISTRY_PENDING && (
+              <Button
+                type="primary"
+                icon={<span className="material-symbols-outlined">add</span>}
+                onClick={() =>
+                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`)
+                }
+              >
+                Add {props.entityType}
+              </Button>
+            )}
+
+          {(props.lifecycleStage === Routes.REGISTRY_ACTIVE ||
+            props.lifecycleStage === Routes.REGISTRY_TASK_DATE) && (
+            <>
+              <Button
+                type={
+                  props.lifecycleStage === Routes.REGISTRY_ACTIVE
+                    ? "primary"
+                    : "default"
+                }
+                icon={<span className="material-symbols-outlined">task</span>}
+                onClick={() =>
+                  router.push(`${Routes.REGISTRY_ACTIVE}/${props.entityType}`)
+                }
+              >
+                Overview
+              </Button>
+              <Button
+                type={
+                  props.lifecycleStage === Routes.REGISTRY_TASK_DATE
+                    ? "primary"
+                    : "default"
+                }
+                icon={<span className="material-symbols-outlined">event</span>}
+                onClick={() => router.push(Routes.REGISTRY_TASK_DATE)}
+              >
+                View Tasks
+              </Button>
+            </>
+          )}
+
+          {props.lifecycleStage === Routes.REGISTRY_REPORT && (
+            <Button
+              icon={
+                <span className="material-symbols-outlined">first_page</span>
+              }
+              onClick={() => router.back()}
+            >
+              Back to {props.entityType}s
+            </Button>
+          )}
+
+          <DownloadButton instances={props.instances} />
+
+          {(authorised || !isKeycloakEnabled) &&
+            props.lifecycleStage === Routes.REGISTRY_TASK_DATE && (
+              <Space>
+                <DatePicker
+                  value={dayjs(props.selectedDate)}
+                  onChange={handleDateChange}
+                  style={{ width: "150px" }}
+                />
+                <Tooltip title="Refresh">
+                  <Button
+                    icon={
+                      <span className="material-symbols-outlined">cached</span>
+                    }
+                    onClick={props.triggerRefresh}
+                  />
+                </Tooltip>
+              </Space>
+            )}
+        </Space>
+      </Space>
     </div>
   );
 }
