@@ -219,6 +219,7 @@ function recurseParseAttributeGroup(data: JsonObject, currentNode: string): Attr
 }
 
 const optionalUnitPattern: RegExp = /\[(.*?)\]/;
+const valuePattern: RegExp = /"(\d+(?:\.\d+)?)".*/;
 
 /**
  * Parses an attribute.
@@ -234,7 +235,6 @@ function parseAttribute(property: string, value: string, unit?: string): Attribu
   // For any RDF literals
   if (value.startsWith("\"")) {
     // Extract the value pattern first from the RDF literal
-    const valuePattern: RegExp = /"(\d+(?:\.\d+)?)".*/;
     let match: RegExpExecArray | null = valuePattern.exec(value);
     if (match) { parsedVal = match[1]; }
     // Extract the optional unit pattern from the RDF literal
