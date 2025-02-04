@@ -225,20 +225,19 @@ const optionalUnitPattern: RegExp = /\[(.*?)\]/;
  *
  * @param {string} property The attribute name.
  * @param {string} value The attribute value.
- * @param {string} unit The attribute unit if available.
+ * @param {string} unit Optional attribute unit.
  * @returns {Attribute} The parsed attribute.
  */
-function parseAttribute(property: string, value: string, unit: string = ""): Attribute {
+function parseAttribute(property: string, value: string, unit?: string): Attribute {
   let parsedVal: string = value;
   let parsedUnit: string = unit;
   // For any RDF literals
-  if (typeof value === "string" && value.startsWith("\"")) {
+  if (value.startsWith("\"")) {
     // Extract the value pattern first from the RDF literal
     const valuePattern: RegExp = /"(\d+(?:\.\d+)?)".*/;
     let match: RegExpExecArray | null = valuePattern.exec(value);
     if (match) { parsedVal = match[1]; }
     // Extract the optional unit pattern from the RDF literal
-    const optionalUnitPattern: RegExp = /\[(.*?)\]/;
     match = optionalUnitPattern.exec(value);
     if (match) { parsedUnit = match[1]; }
   }
