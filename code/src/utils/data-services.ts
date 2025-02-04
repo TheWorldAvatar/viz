@@ -218,6 +218,8 @@ function recurseParseAttributeGroup(data: JsonObject, currentNode: string): Attr
   return currentGroup;
 }
 
+const optionalUnitPattern: RegExp = /\[(.*?)\]/;
+
 /**
  * Parses an attribute.
  *
