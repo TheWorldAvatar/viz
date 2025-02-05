@@ -23,7 +23,18 @@ export default function ActionButton({
   children,
   ...rest
 }: Readonly<ActionButtonProps>) {
-  const iconElement = <span className="material-symbols-outlined">{icon}</span>;
+  const iconElement = (
+    <span
+      className="material-symbols-outlined"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        verticalAlign: "middle",
+      }}
+    >
+      {icon}
+    </span>
+  );
 
   if (useAntd) {
     return (

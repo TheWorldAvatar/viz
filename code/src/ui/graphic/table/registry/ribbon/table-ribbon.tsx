@@ -65,6 +65,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <ActionButton
               key={route}
               useAntd
+              className={styles.button}
               type={props.lifecycleStage === route ? "primary" : "default"}
               icon={icon}
               onClick={() => router.push(`${route}/${props.entityType}`)}
@@ -131,10 +132,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </ActionButton>
           )}
 
-          <DownloadButton
-            instances={props.instances}
-            size="middle" // or whatever size matches your design
-          />
+          <DownloadButton instances={props.instances} size="middle" />
 
           {(authorised || !isKeycloakEnabled) &&
             props.lifecycleStage === Routes.REGISTRY_TASK_DATE && (

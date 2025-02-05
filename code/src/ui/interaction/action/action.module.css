@@ -1,8 +1,9 @@
 .button-container {
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 
   width: fit-content;
   margin: 0.25rem 1rem 0.25rem 0;
@@ -27,11 +28,17 @@
 .icon {
   color: var(--text-color-primary);
   font-size: var(--small-icon-size) !important;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .text {
   font-size: var(--font-size-tertiary-text);
-  margin-left: 0.25rem;
+  margin: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 @media only screen and (max-width: 480px) {
