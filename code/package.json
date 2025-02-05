@@ -7,7 +7,7 @@
         "verbose": true
     },
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=18.0.0"
     },
     "scripts": {
         "dev": "NODE_ENV=development node --env-file='.env.local' server.js",
@@ -30,6 +30,7 @@
         "chart.js": "^4.4.7",
         "chartjs-adapter-moment": "^1.0.1",
         "connect-redis": "^8.0.1",
+        "@ant-design/v5-patch-for-react-19": "^1.0.0",
         "express": "^4.21.2",
         "express-session": "^1.18.1",
         "framer-motion": "^11.18.2",
@@ -58,7 +59,8 @@
         "redux": "^5.0.1",
         "redux-persist": "^6.0.0",
         "typescript": "^5.7.3",
-        "uuid": "^11.0.5"
+        "uuid": "^11.0.5",
+        "viz": "file:"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
@@ -68,8 +70,8 @@
         "@types/mapbox": "^1.6.45",
         "@types/mapbox-gl": "^3.4.1",
         "@types/node": "^22.10.7",
-        "@types/react": "^19.0.7",
-        "@types/react-dom": "^19.0.3",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
         "@types/react-modal": "^3.16.3",
         "eslint": "^9.19.0",
         "eslint-config-next": "^15.1.5",

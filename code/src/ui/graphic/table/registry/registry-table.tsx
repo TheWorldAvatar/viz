@@ -1,6 +1,7 @@
 import React from "react";
-import { Table, Button, Tooltip, theme } from "antd";
+import { Table, Button, Tooltip, theme, TreeSelect } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import type { FilterDropdownProps } from "antd/es/table/interface";
 
 // Import your custom utility and components
 import { parseWordsForLabels } from "utils/client-utils";
@@ -31,6 +32,27 @@ export default function AntRegistryTable({
 
   // Handler for the state of pagination
   const [pageSize, setPageSize] = React.useState<number>(10);
+
+  // Function to get unique values for a field to build filter tree
+  const getUniqueFieldValues = React.useCallback(
+    (field: string) => {
+      if (!instances?.length) return [];
+
+      const uniqueValues = new Set(
+        instances.map((instance) => instance[field]?.value).filter(Boolean)
+      );
+
+      // Convert to array and map to proper filter format with text and value
+      return Array.from(uniqueValues)
+        .sort((a, b) => String(a).localeCompare(String(b)))
+        .map((value) => ({
+          text: parseWordsForLabels(String(value)), // Changed from title to text
+          value: String(value),
+          key: String(value),
+        }));
+    },
+    [instances]
+  );
 
   // Handler for the row action button
   const handleRowAction = React.useCallback(
@@ -84,6 +106,17 @@ export default function AntRegistryTable({
           compare: (a, b) => customSorter(a[field], b[field]),
           multiple: 1,
         },
+        filterMode: "tree",
+        filterSearch: true,
+        filters: getUniqueFieldValues(field),
+        onFilter: (value: string, record: TableData) => {
+          const recordValue = record[field];
+          if (!recordValue) return false;
+          return (
+            String(recordValue).toLowerCase() === String(value).toLowerCase()
+          );
+        },
+        filterMultiple: true,
         render: (value: unknown) => renderCell(value, field),
       })),
     ];
@@ -97,7 +130,7 @@ export default function AntRegistryTable({
     }));
 
     return [columns, data];
-  }, [instances, handleRowAction]);
+  }, [instances, handleRowAction, getUniqueFieldValues]);
 
   return (
     <Table
