@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import { Routes } from "io/config/routes";
 import { RegistryFieldValues } from "types/form";
 import { DownloadButton } from "ui/interaction/action/download/download";
+import ActionButton from "ui/interaction/action/action";
 
 interface TableRibbonProps {
   path: string;
@@ -28,6 +29,28 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isKeycloakEnabled = process.env.KEYCLOAK === "true";
   const authorised = useProtectedRole().authorised;
 
+  // Memoize navigation buttons configuration
+  const navigationButtons = React.useMemo(
+    () => [
+      {
+        icon: "pending",
+        text: "Pending",
+        route: Routes.REGISTRY_PENDING,
+      },
+      {
+        icon: "schedule",
+        text: "Active",
+        route: Routes.REGISTRY_ACTIVE,
+      },
+      {
+        icon: "archive",
+        text: "Archive",
+        route: Routes.REGISTRY_ARCHIVE,
+      },
+    ],
+    []
+  );
+
   const handleDateChange = (date: dayjs.Dayjs | null) => {
     props.setSelectedDate(
       date?.format("YYYY-MM-DD") || new Date().toISOString().split("T")[0]
@@ -38,103 +61,80 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     <div className={styles.menu}>
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>
         <Space wrap>
-          <Button
-            type={
-              props.lifecycleStage === Routes.REGISTRY_PENDING
-                ? "primary"
-                : "default"
-            }
-            icon={<span className="material-symbols-outlined">pending</span>}
-            onClick={() =>
-              router.push(`${Routes.REGISTRY_PENDING}/${props.entityType}`)
-            }
-          >
-            Pending
-          </Button>
-          <Button
-            type={
-              props.lifecycleStage === Routes.REGISTRY_ACTIVE
-                ? "primary"
-                : "default"
-            }
-            icon={<span className="material-symbols-outlined">schedule</span>}
-            onClick={() =>
-              router.push(`${Routes.REGISTRY_ACTIVE}/${props.entityType}`)
-            }
-          >
-            Active
-          </Button>
-          <Button
-            type={
-              props.lifecycleStage === Routes.REGISTRY_ARCHIVE
-                ? "primary"
-                : "default"
-            }
-            icon={<span className="material-symbols-outlined">archive</span>}
-            onClick={() =>
-              router.push(`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`)
-            }
-          >
-            Archive
-          </Button>
+          {navigationButtons.map(({ icon, text, route }) => (
+            <ActionButton
+              key={route}
+              useAntd
+              type={props.lifecycleStage === route ? "primary" : "default"}
+              icon={icon}
+              onClick={() => router.push(`${route}/${props.entityType}`)}
+            >
+              {text}
+            </ActionButton>
+          ))}
         </Space>
 
         <Space wrap>
           {(authorised || !isKeycloakEnabled) &&
             props.lifecycleStage === Routes.REGISTRY_PENDING && (
-              <Button
+              <ActionButton
+                useAntd
                 type="primary"
-                icon={<span className="material-symbols-outlined">add</span>}
+                icon="add"
                 onClick={() =>
                   router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`)
                 }
               >
                 Add {props.entityType}
-              </Button>
+              </ActionButton>
             )}
 
           {(props.lifecycleStage === Routes.REGISTRY_ACTIVE ||
             props.lifecycleStage === Routes.REGISTRY_TASK_DATE) && (
             <>
-              <Button
+              <ActionButton
+                useAntd
                 type={
                   props.lifecycleStage === Routes.REGISTRY_ACTIVE
                     ? "primary"
                     : "default"
                 }
-                icon={<span className="material-symbols-outlined">task</span>}
+                icon="task"
                 onClick={() =>
                   router.push(`${Routes.REGISTRY_ACTIVE}/${props.entityType}`)
                 }
               >
                 Overview
-              </Button>
-              <Button
+              </ActionButton>
+              <ActionButton
+                useAntd
                 type={
                   props.lifecycleStage === Routes.REGISTRY_TASK_DATE
                     ? "primary"
                     : "default"
                 }
-                icon={<span className="material-symbols-outlined">event</span>}
+                icon="event"
                 onClick={() => router.push(Routes.REGISTRY_TASK_DATE)}
               >
                 View Tasks
-              </Button>
+              </ActionButton>
             </>
           )}
 
           {props.lifecycleStage === Routes.REGISTRY_REPORT && (
-            <Button
-              icon={
-                <span className="material-symbols-outlined">first_page</span>
-              }
+            <ActionButton
+              useAntd
+              icon="first_page"
               onClick={() => router.back()}
             >
               Back to {props.entityType}s
-            </Button>
+            </ActionButton>
           )}
 
-          <DownloadButton instances={props.instances} />
+          <DownloadButton
+            instances={props.instances}
+            size="middle" // or whatever size matches your design
+          />
 
           {(authorised || !isKeycloakEnabled) &&
             props.lifecycleStage === Routes.REGISTRY_TASK_DATE && (
@@ -145,10 +145,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   style={{ width: "150px" }}
                 />
                 <Tooltip title="Refresh">
-                  <Button
-                    icon={
-                      <span className="material-symbols-outlined">cached</span>
-                    }
+                  <ActionButton
+                    useAntd
+                    icon="cached"
                     onClick={props.triggerRefresh}
                   />
                 </Tooltip>
