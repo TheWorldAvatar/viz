@@ -7,7 +7,7 @@
 
 ### Changes
 
-- Minor version bump for the docker image of node
+- Update node base image from 22.11 to 23.7
 
 ## 5.16.2
 
