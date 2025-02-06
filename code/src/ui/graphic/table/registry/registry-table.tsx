@@ -1,9 +1,6 @@
 import React from "react";
-import { Table, Button, Tooltip, theme, TreeSelect } from "antd";
+import { Table, Button, Tooltip, theme } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-
-// Import your custom utility and components
 import { parseWordsForLabels } from "utils/client-utils";
 import StatusComponent from "ui/text/status/status";
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
@@ -57,10 +54,15 @@ export default function AntRegistryTable({
   // Handler for the row action button
   const handleRowAction = React.useCallback(
     (record: TableData) => {
+      if (!record.id && !record.iri) {
+        console.warn("Row lacks both id and iri - cannot create task");
+        return;
+      }
+
       setTask({
-        id: record.id?.toString() || record.iri?.toString(),
-        status: record.status?.toString(),
-        contract: record.contract?.toString(),
+        id: record.id || record.iri,
+        status: record.status || "",
+        contract: record.contract || "",
       });
     },
     [setTask]
