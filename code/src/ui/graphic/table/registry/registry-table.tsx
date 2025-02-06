@@ -80,10 +80,10 @@ export default function AntRegistryTable({
     // Build table columns
     const columns: ColumnsType<TableData> = [
       {
-        title: "Actions",
+        title: "",
         key: "actions",
         fixed: "left",
-        width: 100,
+        width: "auto",
         render: (_, record) => (
           <Tooltip title="View Details">
             <Button
