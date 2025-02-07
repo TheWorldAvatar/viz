@@ -20,7 +20,7 @@ jobs:
         with:
           ref: ${{ github.ref }}``
 
-      - uses: pnpm/action-setup@a7487c7 #v4 <- pinned commit for safety
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda #v4 <- pinned commit for safety
         name: Install pnpm
         with:
           version: 10
