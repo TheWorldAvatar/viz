@@ -25,12 +25,13 @@ jobs:
         with:
           run_install: true
           package_json_file: code/package.json
+          standalone: true
 
-      - uses: actions/setup-node@v4
-        name: Setup Node.js
-        with:
-          node-version-file: code/package.json
-          cache: "pnpm"
+      # - uses: actions/setup-node@v4
+      #   name: Setup Node.js
+      #   with:
+      #     node-version-file: code/package.json
+      #     cache: "pnpm"
 
       - name: Lint TypeScript code
         run: pnpm lint
