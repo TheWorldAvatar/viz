@@ -2,7 +2,9 @@ name: Tag Version
 
 permissions:
   contents: write
+
 env: VERSION
+
 on:
   push:
     branches:
