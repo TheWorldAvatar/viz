@@ -29,11 +29,13 @@ jobs:
       - name: Setup Node.js and cache dependencies
         uses: actions/setup-node@v4
         with:
-          node-version-file: package.json
+          node-version-file: code/package.json
           cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
+        working-directory: code
 
       - name: Lint TypeScript code
         run: pnpm lint
+        working-directory: code
