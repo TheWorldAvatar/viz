@@ -28,4 +28,4 @@ jobs:
 
       - name: Lint TypeScript code
         run: pnpm lint
-        working-directory: /home/runner/work/viz
+        working-directory: code
