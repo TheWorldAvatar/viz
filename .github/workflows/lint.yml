@@ -1,11 +1,11 @@
 name: Lint TypeScript code
 
 on:
-  workflow_dispatch:
-
   pull_request:
     branches:
       - main
+    paths:
+      - code/**
 
 permissions:
   contents: read
@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: code
+        working-directory: code 
 
       - name: Lint TypeScript code
         run: pnpm lint
