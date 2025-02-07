@@ -1,20 +1,21 @@
 name: Tag Version
 
-permissions:
-  contents: write
-
-env: VERSION
-
 on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+env:
+  VERSION
+  
 jobs:
   tag-version:
     runs-on: ubuntu-latest
+
 
     steps:
       - name: Check out repository
