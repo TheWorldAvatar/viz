@@ -1,13 +1,13 @@
 {
     "name": "viz",
-    "version": "5.16.3",
+    "version": "5.16.5",
     "private": true,
     "type": "module",
     "jest": {
         "verbose": true
     },
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=23.7.0"
     },
     "scripts": {
         "dev": "NODE_ENV=development node --env-file='.env.local' server.js",
@@ -79,5 +79,5 @@
         "ts-typed-json": "^0.3.2",
         "typescript-eslint": "^8.21.0"
     },
-    "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
+    "packageManager": "pnpm@10.2.1+sha512.398035c7bd696d0ba0b10a688ed558285329d27ea994804a52bad9167d8e3a72bcb993f9699585d3ca25779ac64949ef422757a6c31102c12ab932e5cbe5cc92"
 }
