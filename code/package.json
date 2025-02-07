@@ -7,7 +7,7 @@
         "verbose": true
     },
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=23.7.0"
     },
     "scripts": {
         "dev": "NODE_ENV=development node --env-file='.env.local' server.js",

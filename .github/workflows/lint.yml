@@ -23,14 +23,13 @@ jobs:
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda #v4 <- pinned commit for safety
         name: Install pnpm
         with:
-          version: 10
           run_install: true
 
       - uses: actions/setup-node@v4
         name: Setup Node.js
         with:
-          node-version: 23.7
-          cache: 'pnpm'
+          node-version-file: code/package.json
+          cache: "pnpm"
 
       - name: Lint TypeScript code
         run: pnpm lint
