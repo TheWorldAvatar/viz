@@ -1,7 +1,8 @@
 name: Tag Version
 
-env:
-    VERSION
+permissions:
+  contents: write
+env: VERSION
 on:
   push:
     branches:
