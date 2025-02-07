@@ -6,16 +6,15 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 env:
   VERSION
-  
+
 jobs:
   tag-version:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
 
     steps:
       - name: Check out repository
