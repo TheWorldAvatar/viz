@@ -54,6 +54,18 @@ const lightTheme = createTheme({
                 },
             },
         },
+        MuiPopover: {
+            styleOverrides: {
+              paper: {
+                maxHeight: "40vh",
+                minWidth: "10rem",
+                maxWidth: "20rem",
+                padding: "0.5rem",
+                backgroundColor: "var(--background-primary)",
+                color: "var(--text-color-primary)",
+              },
+            },
+          },
         MuiPaper: {
             styleOverrides: {
                 root: {
