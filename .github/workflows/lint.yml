@@ -18,9 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.ref }}``
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@a7487c7 #v4 <- pinned commit for safety
         name: Install pnpm
         with:
           version: 10
