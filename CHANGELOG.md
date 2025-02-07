@@ -3,6 +3,24 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.5
+
+### Changes
+
+- Update pnpm and node versions in package.json
+
+## 5.16.4
+
+### Changes
+
+- Update node base image from 22.11 to 23.7
+
+## 5.16.3
+
+## Bug fixes
+
+- Fixes issue where FIA responses were not decoded if not in 'utf-8'
+
 ## 5.16.2
 
 ### Changes

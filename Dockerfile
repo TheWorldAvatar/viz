@@ -11,7 +11,7 @@
 #
 
 # ---- Base Image ----
-FROM node:22.11-slim AS base
+FROM node:23.7-slim AS base
 RUN corepack enable
 WORKDIR /twa
 ENV NEXT_TELEMETRY_DISABLED 1
