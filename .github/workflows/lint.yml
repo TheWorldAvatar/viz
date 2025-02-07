@@ -33,7 +33,7 @@ jobs:
           node-version-file: package.json
           cache: "pnpm"
 
-      - name: install dependencies
+      - name: Install dependencies
         run: pnpm install
 
       - name: Lint TypeScript code
