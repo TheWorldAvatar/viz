@@ -30,6 +30,7 @@ jobs:
         name: Setup Node.js
         with:
           node-version: 23.7
+          cache: 'pnpm'
 
       - name: Lint TypeScript code
         run: pnpm lint
