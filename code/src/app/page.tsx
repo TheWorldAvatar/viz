@@ -29,6 +29,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+breakthelandingpage;
+
 /**
  * Handles the default route (i.e. "/") to display a home page
  * or redirect to another page.
