@@ -24,6 +24,7 @@ jobs:
         name: Install pnpm
         with:
           run_install: true
+          package_json_file: code/package.json
 
       - uses: actions/setup-node@v4
         name: Setup Node.js
