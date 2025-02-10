@@ -62,7 +62,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
-        "@next/eslint-plugin-next": "^15.1.5",
+        "@next/eslint-plugin-next": "^15.1.6",
         "@types/express": "^5.0.0",
         "@types/jest": "^29.5.14",
         "@types/mapbox": "^1.6.45",
