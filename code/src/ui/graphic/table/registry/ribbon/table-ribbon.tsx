@@ -57,7 +57,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className={styles.menu}>
-      <div className={styles["ribbon-button-container"]}>
+      {/* Top 3 buttons */}
+      <div className={styles["status-buttons"]}>
         <RedirectButton
           icon="pending"
           url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
@@ -76,6 +77,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
           title="Archive"
         />
+      </div>
+      {/* Divider Line */}
+      <div className={styles.divider} />
+
+      {/* Action Buttons Row */}
+      <div className={styles["action-buttons"]}>
         {(authorised || !isKeycloakEnabled) &&
           props.lifecycleStage == Routes.REGISTRY_PENDING && (
             <ClickActionButton
