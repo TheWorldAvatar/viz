@@ -1,9 +1,9 @@
-import styles from '../form.module.css';
 import fieldStyles from '../field/field.module.css';
+import styles from '../form.module.css';
 
-import React, { useEffect, useState } from 'react';
-import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
@@ -11,8 +11,8 @@ import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
-import { FORM_STATES } from '../form-utils';
 import DependentFormSelector from '../field/dependent-form-selector';
+import { FORM_STATES } from '../form-utils';
 
 interface DependentFormSectionProps {
   agentApi: string;

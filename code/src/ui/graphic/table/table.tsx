@@ -1,6 +1,5 @@
 import styles from './table.module.css';
 
-import React from 'react';
 
 import { TimeSeries, TimeSeriesGroup } from 'types/timeseries';
 

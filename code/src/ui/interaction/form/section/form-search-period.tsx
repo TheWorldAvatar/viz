@@ -1,10 +1,9 @@
 import styles from '../form.module.css';
 
-import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { FORM_STATES } from '../form-utils';
 import FormFieldComponent from '../field/form-field';
+import { FORM_STATES } from '../form-utils';
 
 interface FormSearchPeriodProps {
   form: UseFormReturn;

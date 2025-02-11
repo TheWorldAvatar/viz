@@ -1,12 +1,11 @@
-import React from 'react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { Paths, PageTitles, Modules } from 'io/config/routes';
 import { UISettings } from 'types/settings';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
+import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 interface PendingRegistryPageProps {
   params: Promise<{

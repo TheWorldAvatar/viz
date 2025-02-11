@@ -2,9 +2,8 @@
 
 import styles from './context-item.module.css';
 
-import React from 'react';
-import Icon from '@mui/material/Icon';
 import { Tooltip } from '@mui/material';
+import Icon from '@mui/material/Icon';
 
 export interface ContextItemDefinition {
     name: string,

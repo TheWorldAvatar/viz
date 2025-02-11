@@ -2,7 +2,7 @@
 
 import styles from './context-menu.module.css';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxState } from 'app/store';

@@ -1,12 +1,11 @@
 
-import React from 'react';
 import { Metadata } from 'next';
 
-import { Paths, PageTitles, Modules } from 'io/config/routes';
+import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import FormContainerComponent from 'ui/interaction/form/form-container';
+import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 interface ViewFormPageProps {
   params: Promise<{

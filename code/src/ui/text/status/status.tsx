@@ -1,7 +1,5 @@
 import styles from './status.module.css';
 
-import React from 'react';
-
 export const Status: {
   [key: string]: string;
 } = {

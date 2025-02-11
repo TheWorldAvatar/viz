@@ -1,11 +1,10 @@
-import React from 'react';
 import { Metadata } from 'next';
 
-import SettingsStore from 'io/config/settings';
 import { Modules, PageTitles, Paths } from 'io/config/routes';
+import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
-import FormModal from 'ui/interaction/modal/form/form-modal';
 import FormContainerComponent from 'ui/interaction/form/form-container';
+import FormModal from 'ui/interaction/modal/form/form-modal';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 interface InterceptAddFormPageProps {
