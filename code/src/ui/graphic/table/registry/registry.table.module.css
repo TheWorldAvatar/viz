@@ -20,6 +20,7 @@
 .title h1 {
   color: var(--text-color-primary);
   font-size: var(--font-size-h2);
+  text-align: center;
 }
 
 .instructions {
