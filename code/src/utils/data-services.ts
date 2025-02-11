@@ -229,11 +229,11 @@ const valuePattern: RegExp = /"(\d+(?:\.\d+)?)".*/;
  * @param {string} unit Optional attribute unit.
  * @returns {Attribute} The parsed attribute.
  */
-function parseAttribute(property: string, value: string, unit?: string): Attribute {
-  let parsedVal: string = value;
+function parseAttribute(property: string, value: string | number, unit?: string): Attribute {
+  let parsedVal: string | number = value;
   let parsedUnit: string = unit;
-  // For any RDF literals
-  if (value.startsWith("\"")) {
+
+  if (typeof value === "string" && value.startsWith("\"")) {
     // Extract the value pattern first from the RDF literal
     let match: RegExpExecArray | null = valuePattern.exec(value);
     if (match) { parsedVal = match[1]; }
@@ -241,6 +241,7 @@ function parseAttribute(property: string, value: string, unit?: string): Attribu
     match = optionalUnitPattern.exec(value);
     if (match) { parsedUnit = match[1]; }
   }
+
   return {
     name: property,
     value: parsedVal,
