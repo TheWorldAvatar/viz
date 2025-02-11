@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.6
+
+### Changes
+
+- Fix the bug that prevents the display of dependent form fields with conflicting similar names
+
 ## 5.16.5
 
 ### Changes
