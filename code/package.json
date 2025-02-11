@@ -36,7 +36,7 @@
         "github-markdown-css": "^5.8.1",
         "gray-matter": "^4.0.3",
         "keycloak-connect": "^26.1.0",
-        "mapbox-gl": "3.9.3",
+        "mapbox-gl": "3.9.4",
         "markdown-it": "^14.1.0",
         "material-symbols": "^0.28.1",
         "moment": "^2.30.1",
