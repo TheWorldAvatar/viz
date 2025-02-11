@@ -2,7 +2,7 @@ import { FieldValues, RegisterOptions } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 
 import { Paths } from "io/config/routes";
-import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, SEARCH_FORM_TYPE } from "types/form";
+import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, SEARCH_FORM_TYPE, PropertyShapeOrGroup, ID_KEY, TYPE_KEY, PROPERTY_GROUP_TYPE, PropertyGroup } from "types/form";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -103,6 +103,44 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
   const defaultVal: string = field.includes("city") ? "Singapore" : "";
   // Returns the default value if passed, or else, nothing
   return defaultValue ?? defaultVal;
+}
+
+
+/**
+ * Update the dependentOn field for the target property shape with the corresponding form field ID.
+ * 
+ * @param {PropertyShape} field The data model for the field of interest.
+ * @param {PropertyShapeOrGroup[]} properties A list of properties to search for the form field ID.
+ */
+export function updateDependentProperty(field: PropertyShape, properties: PropertyShapeOrGroup[]): PropertyShape {
+  if (field.dependentOn) {
+    const dependentIri: string = field.dependentOn[ID_KEY];
+    let dependentFieldId: string;
+    for (const property of properties) {
+      if (dependentFieldId) {
+        break;
+      }
+      if (property[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+        const fieldset: PropertyGroup = property as PropertyGroup;
+        const propertyLabel: string = fieldset.property.find((fieldProperty: PropertyShape) =>
+          dependentIri == fieldProperty[ID_KEY])?.name[VALUE_KEY];
+        if (propertyLabel) {
+          dependentFieldId = `${fieldset.label[VALUE_KEY]} ${propertyLabel}`;
+        }
+      } else {
+        const fieldProperty: PropertyShape = property as PropertyShape;
+        if (dependentIri == fieldProperty[ID_KEY]) {
+          dependentFieldId = fieldProperty.name[VALUE_KEY];
+        }
+      }
+    }
+    return {
+      ...field,
+      dependentOn: {
+        [ID_KEY]: dependentFieldId
+      }
+    }
+  } else { return field }
 }
 
 /**
