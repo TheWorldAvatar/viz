@@ -3,7 +3,19 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.7
+
+### Changes
+
+- Bump next.js, mapbox and several other dependencies
+
+### Bug Fixes
+
+- Fixed issue with metadata display for number values
+
 ## 5.16.6
+
+### Changes
 
 - Bump dependencies:
   - `material-symbols`
