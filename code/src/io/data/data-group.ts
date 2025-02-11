@@ -20,11 +20,11 @@ export class DataGroup {
      * The stack endpoint that stores the associated data for this data group. Note that the subgroups may have different endpoints.
      */
     public readonly stackEndpoint: string;
-        
+
     /**
      * Should this group be expanded in the layer tree?
      */
-    public readonly isExpanded: boolean; 
+    public readonly isExpanded: boolean;
 
     /**
      * Data sources.
@@ -74,7 +74,7 @@ export class DataGroup {
         this.stackEndpoint = stackEndpoint;
         this.isExpanded = isExpanded;
     }
-    
+
     /**
      * Returns the first LayerSource instance with the input ID if present.
      * 
@@ -90,7 +90,7 @@ export class DataGroup {
             results,
             (source: LayerSource) => source.id === targetID
         );
-        
+
         return (results.length === 1) ? results[0] : null;
     }
 
@@ -119,7 +119,7 @@ export class DataGroup {
      * 
      * @returns all data sources from this group and its children
      */
-     public getLayersFlat(): DataLayer[] {
+    public getLayersFlat(): DataLayer[] {
         const results: DataLayer[] = [];
 
         this.recurseFindLayers(
@@ -143,11 +143,11 @@ export class DataGroup {
     private recurseFindLayers(
         currentGroup: DataGroup,
         results: DataLayer[],
-        matchingFunction: (layer: DataLayer) => boolean) {
-        
+        matchingFunction: (_layer: DataLayer) => boolean) {
+
         // Get matching layers in this group
         const layer: DataLayer = currentGroup.dataLayers.find(layer => matchingFunction(layer));
-        if(layer != null) results.push(layer);
+        if (layer != null) results.push(layer);
 
         // Recurse deeper
         currentGroup.subGroups.forEach(subGroup => {
@@ -167,11 +167,11 @@ export class DataGroup {
     private recurseFindSources(
         currentGroup: DataGroup,
         results: LayerSource[],
-        matchingFunction: (source: LayerSource) => boolean) {
-        
+        matchingFunction: (_source: LayerSource) => boolean) {
+
         // Get matching source in this group
         const source: LayerSource = currentGroup.layerSources.find(source => matchingFunction(source));
-        if(source != null) results.push(source);
+        if (source != null) results.push(source);
 
         // Recurse deeper
         currentGroup.subGroups.forEach(subGroup => {
