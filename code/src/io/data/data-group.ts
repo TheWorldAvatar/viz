@@ -1,5 +1,5 @@
 import { DataLayer } from './data-layer';
-import { LayerSource as LayerSource } from './layer-source';
+import { LayerSource } from './layer-source';
 
 /**
  * This class represents a single source of geographical data within the visualisation.

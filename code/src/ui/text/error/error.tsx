@@ -1,7 +1,5 @@
 import styles from './error.module.css';
 
-import React from 'react';
-
 interface ErrorComponentProps {
   message: string;
 }
