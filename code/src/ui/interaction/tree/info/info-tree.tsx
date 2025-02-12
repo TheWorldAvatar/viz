@@ -51,6 +51,13 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
     }
   }, [scrollPosition]);
 
+  useEffect(() => {
+    // Update the active tab only if the time series is present but attributes are missing
+    if (!props.attributes && props.timeSeries) {
+      props.activeTab.setActiveTab(1);
+    }
+  }, []);
+
   // A function that renders the required contents for this panel
   const renderPanelContents: () => React.ReactElement = () => {
     // Render only the loading spinner if it is initially fetching data
