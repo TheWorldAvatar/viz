@@ -53,14 +53,19 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         }}
       />
       <ul>
+        <li className={styles["array-row"]}>
+          {props.arrayOptions.map((item, index) => {
+            return <p key={index} className={styles["cell"]}>
+              {parseWordsForLabels(item.label)}
+            </p>
+          })}
+          <span className={`${styles["cell"]}`}></span>
+        </li>
         {fields.map((field, index) => {
           return (
             <li key={field.id} className={styles["array-row"]}>
               {props.arrayOptions.map((item, secondaryIndex) => {
-                return <div key={field.id + index + secondaryIndex} className={styles["cell-container"]}>
-                  <p className={styles["cell"]}>
-                    {parseWordsForLabels(item.label)}
-                  </p>
+                return <div key={field.id + index + secondaryIndex} className={styles["cell"]}>
                   <input
                     id={item.label}
                     type="number"
@@ -73,8 +78,9 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                 </div>
               })}
               <ClickActionButton
-                icon={"delete_outline"}
+                icon={"remove"}
                 title={""}
+                className={`${styles["cell"]} ${styles["delete-button"]}`}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   remove(index);

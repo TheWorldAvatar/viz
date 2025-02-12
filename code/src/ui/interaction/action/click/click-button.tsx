@@ -22,7 +22,7 @@ export default function ClickActionButton({ icon, isActive, ...rest }: Readonly<
   return (
     <ActionButton
       icon={icon}
-      className={`${isActive ? styles["active"] : ""}`}
+      className={`${isActive ? styles["active"] : ""} ${rest.className}`}
       title={rest.title}
       onClick={rest.onClick}
     />

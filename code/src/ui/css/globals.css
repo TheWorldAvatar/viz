@@ -72,6 +72,8 @@
     --icon-size: 1.5rem;
     --small-icon-size: 1rem;
     --smallest-icon-size: 0.6rem;
+
+    --alert-color: #BF4A2A;
 }
 
 * {
