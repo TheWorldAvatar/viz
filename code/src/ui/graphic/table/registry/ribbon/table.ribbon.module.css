@@ -17,6 +17,30 @@
   margin-bottom: -1.0rem;
 }
 
+.button-container-2 {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.75rem 1.25rem;  /* slightly more padding for better spacing */
+  margin: 0;  /* remove margin for cleaner alignment */
+  border: none;
+  background-color: transparent;
+  color: var(--text-color-primary);
+  transition: color 0.2s ease;  /* smooth color transition */
+}
+
+.button-container-2:hover {
+  color: var(--text-color-links);  /* use theme color instead of pink */
+}
+
+.active-button {
+  border-bottom: 2px solid var(--text-color-links);  /* use theme color for underline */
+  background-color: transparent;
+  font-weight: 500;  /* slightly bolder when active */
+}
+
 .action-buttons {
   display: flex;
   gap: 0.5rem;
