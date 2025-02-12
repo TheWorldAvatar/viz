@@ -1,7 +1,7 @@
 import styles from '../form.module.css';
 import fieldStyles from '../field/field.module.css';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
@@ -84,7 +84,6 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
         form={props.form}
       />
       {selectedModel != flatFeeModel && <FormArray
-        addText="pricing tier"
         field={{
           "@id": "string",
           "@type": "http://www.w3.org/ns/shacl#PropertyShape",
@@ -97,10 +96,9 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
           },
           order: 0,
         }}
-        newArrayRow={{ rate: 0.01, lowerBound: 0, upperBound: null }}
         arrayOptions={[
-          { fieldId: "rate", label: FORM_STATES.UNIT_RATE },
-          { fieldId: "lowerBound", label: FORM_STATES.UNIT_LOWER_BOUND },
+          { fieldId: "rate", label: FORM_STATES.UNIT_RATE, placeholder: "Add new rate" },
+          { fieldId: "lowerBound", label: FORM_STATES.UNIT_LOWER_BOUND, placeholder: "Add new lower bound" },
           { fieldId: "upperBound", label: FORM_STATES.UNIT_UPPER_BOUND, placeholder: "Leave empty if w/o range" }
         ]}
         form={props.form}

@@ -1,8 +1,8 @@
 import styles from './array.module.css';
 import fieldStyles from '../field.module.css';
 
-import React from 'react';
-import { FieldError, useFieldArray, UseFormReturn } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { FieldError, useFieldArray, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { FormArrayItemOption, PropertyShape } from 'types/form';
 import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
@@ -11,11 +11,9 @@ import FormInputContainer from 'ui/interaction/form/field/form-input-container';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 
 export interface FormArrayProps {
-  addText: string;
   field: PropertyShape;
   form: UseFormReturn;
   arrayOptions: FormArrayItemOption[];
-  newArrayRow: Record<string, number>;
   options?: {
     disabled?: boolean;
   };
@@ -24,7 +22,6 @@ export interface FormArrayProps {
 /**
  * This component renders an array of inputs for a form.
  * 
- * @param {string} addText The text label for the add button to append a new array item. 
  * @param {PropertyShape} field The SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormArrayItemOption[]} arrayOptions An array of field(s) to be rendered for each array row.
@@ -32,10 +29,33 @@ export interface FormArrayProps {
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
   const { control } = props.form;
-  const { fields, append, remove, } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: props.field.fieldId,
   });
+  // Retrieve the live view of the last element in the array
+  const lastRow: Record<string, string> = useWatch({
+    control,
+    name: `${props.field.fieldId}.${fields.length - 1}`,
+  });
+
+  useEffect(() => {
+    const newRow: Record<string, object> = {};
+    // If a user adds an input into the last row
+    // Append a new row
+    let allNullOrEmpty: boolean = true;
+    for (const key in lastRow) {
+      if (key != "id" && (lastRow[key] && lastRow[key] != "")) {
+        allNullOrEmpty = false;
+        break;
+      }
+      newRow[key] = null;
+    }
+    if (!allNullOrEmpty) {
+      append(newRow);
+    }
+  }, [lastRow])
+
   return (
     <div style={{ width: "100%", margin: "0 0.75rem 1vh" }}>
       <FormInputContainer
@@ -44,14 +64,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         labelStyles={[fieldStyles["form-input-label"]]}
       > <></>
       </FormInputContainer>
-      <ClickActionButton
-        icon={"add"}
-        title={props.addText}
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-          event.preventDefault();
-          append(props.newArrayRow);
-        }}
-      />
       <ul>
         <li className={styles["array-row"]}>
           {props.arrayOptions.map((item, index) => {
