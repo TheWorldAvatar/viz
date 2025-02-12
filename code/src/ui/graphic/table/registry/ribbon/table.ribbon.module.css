@@ -6,7 +6,7 @@
 
 .divider {
   width: 100%;
-  height: 3px;
+  height: 1px;
   background-color: var(--border-primary);
   margin: 0 0;
 }
@@ -23,9 +23,10 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  padding: 0.75rem 1.25rem;  /* slightly more padding for better spacing */
+  padding: 0.5rem 1.0rem;  /* slightly more padding for better spacing */
   margin: 0;  /* remove margin for cleaner alignment */
   border: none;
+  border-radius: 0;
   background-color: transparent;
   color: var(--text-color-primary);
   transition: color 0.2s ease;  /* smooth color transition */
@@ -36,7 +37,7 @@
 }
 
 .active-button {
-  border-bottom: 2px solid var(--text-color-links);  /* use theme color for underline */
+  border-bottom: 4px solid var(--text-color-links);  /* use theme color for underline */
   background-color: transparent;
   font-weight: 500;  /* slightly bolder when active */
 }
