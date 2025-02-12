@@ -72,6 +72,8 @@
     --icon-size: 1.5rem;
     --small-icon-size: 1rem;
     --smallest-icon-size: 0.6rem;
+
+    --alert-color: 191, 74, 42;
 }
 
 * {
@@ -112,6 +114,9 @@ img {
     background-color: transparent !important;
 }
 
+ul {
+    list-style-type: none;
+}
 
 /**
     Constants for our own CSS classes (across all themes).

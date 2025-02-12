@@ -27,6 +27,11 @@ export const FORM_STATES: Record<string, string> = {
   TIME_SLOT_END: "time slot end",
   LATITUDE: "latitude",
   LONGITUDE: "longitude",
+  FLAT_FEE: "base fee",
+  UNIT_PRICE: "unit price",
+  UNIT_RATE: "rate ($)",
+  UNIT_LOWER_BOUND: "from (unit)",
+  UNIT_UPPER_BOUND: "to (unit)",
 };
 
 export const ENTITY_STATUS: Record<string, string> = {

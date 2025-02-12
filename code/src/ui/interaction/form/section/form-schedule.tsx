@@ -106,7 +106,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       </legend>
       {isLoading && <LoadingSpinner isSmall={true} />}
       {!isLoading && <div className={styles["form-fieldset-contents"]}>
-        <div className={styles["schedule-occurrence-container"]}>
+        <div className={styles["section-selector-container"]}>
           <label className={fieldStyles["field-text"]} htmlFor="select-input">Service type:</label>
           <Select
             styles={selectorStyles}
@@ -152,7 +152,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           form={props.form}
           options={isDisabledOption}
         />}
-        {selectedServiceOption === regularService && <div className={styles["schedule-occurrence-container"]}>
+        {selectedServiceOption === regularService && <div className={styles["section-selector-container"]}>
           <span className={fieldStyles["field-text"]}>Repeat once every</span>
           <input
             id={FORM_STATES.RECURRENCE}
