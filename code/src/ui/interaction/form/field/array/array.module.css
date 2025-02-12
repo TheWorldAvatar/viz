@@ -31,3 +31,12 @@
   font-size: var(--font-size-primary-text) !important;
   color: var(--background-primary) !important;
 }
+
+.delete-button-background {
+  background-color: rgb(var(--alert-color)) !important;
+}
+
+.delete-button-background-disabled {
+  cursor: default !important;
+  background-color: rgba(var(--alert-color), 0.2) !important;
+}

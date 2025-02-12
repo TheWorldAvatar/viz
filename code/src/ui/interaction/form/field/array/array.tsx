@@ -33,10 +33,11 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     control,
     name: props.field.fieldId,
   });
+  const fieldSize: number = fields.length - 1;
   // Retrieve the live view of the last element in the array
   const lastRow: Record<string, string> = useWatch({
     control,
-    name: `${props.field.fieldId}.${fields.length - 1}`,
+    name: `${props.field.fieldId}.${fieldSize}`,
   });
 
   useEffect(() => {
@@ -89,15 +90,20 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                   />
                 </div>
               })}
-              <ClickActionButton
+              {index < fieldSize && <ClickActionButton
                 icon={"remove"}
                 title={""}
-                className={`${styles["cell"]} ${styles["delete-button"]}`}
+                className={`${styles["cell"]} ${styles["delete-button"]} ${styles["delete-button-background"]}`}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   remove(index);
                 }}
-              />
+              />}
+              {index == fieldSize && <ClickActionButton
+                icon={""}
+                title={""}
+                className={`${styles["cell"]} ${styles["delete-button"]} ${styles["delete-button-background-disabled"]}`}
+              />}
             </li>
           );
         })}

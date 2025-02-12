@@ -73,7 +73,7 @@
     --small-icon-size: 1rem;
     --smallest-icon-size: 0.6rem;
 
-    --alert-color: #BF4A2A;
+    --alert-color: 191, 74, 42;
 }
 
 * {
