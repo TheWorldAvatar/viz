@@ -1,16 +1,16 @@
-import styles from './field.module.css';
 import generalStyles from '../form.module.css';
+import styles from './field.module.css';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import FormInputField from './form-input';
+import { FORM_STATES } from '../form-utils';
 import FormDateTimePicker from './form-date-time-picker';
+import FormInputField from './form-input';
 import FormInputMinMaxField from './input/form-min-max-input';
 import FormSelector from './input/form-selector';
-import { FORM_STATES } from '../form-utils';
 
 interface FormFieldProps {
   entityType: string;

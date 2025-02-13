@@ -10,6 +10,6 @@ export type AttributeGroup = {
 
 export type Attribute = {
   name: string;
-  value: string;
+  value: string | number;
   unit?: string;
 };

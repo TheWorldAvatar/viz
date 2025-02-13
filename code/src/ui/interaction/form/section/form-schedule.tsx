@@ -1,19 +1,19 @@
-import styles from '../form.module.css';
 import fieldStyles from '../field/field.module.css';
+import styles from '../form.module.css';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
+import { Paths } from 'io/config/routes';
 import { FormOptionType, RegistryFieldValues, SEARCH_FORM_TYPE } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
-import { parseWordsForLabels } from 'utils/client-utils';
-import FormCheckboxField from '../field/form-checkbox-field';
-import { FORM_STATES, getDefaultVal } from '../form-utils';
-import FormFieldComponent from '../field/form-field';
-import { Paths } from 'io/config/routes';
-import { sendGetRequest } from 'utils/server-actions';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
+import { parseWordsForLabels } from 'utils/client-utils';
+import { sendGetRequest } from 'utils/server-actions';
+import FormCheckboxField from '../field/form-checkbox-field';
+import FormFieldComponent from '../field/form-field';
+import { FORM_STATES, getDefaultVal } from '../form-utils';
 
 interface FormScheduleProps {
   fieldId: string;

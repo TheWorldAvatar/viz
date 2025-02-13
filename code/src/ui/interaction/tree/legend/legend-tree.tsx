@@ -1,12 +1,12 @@
-import styles from './legend-tree.module.css';
 import parentStyles from '../floating-panel.module.css';
+import styles from './legend-tree.module.css';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import { LegendSettings, LegendGroup } from 'types/settings';
-import HeaderField from 'ui/text/header';
-import IconComponent from 'ui/graphic/icon/icon';
+import { LegendGroup, LegendSettings } from 'types/settings';
 import DecagonIconComponent from 'ui/graphic/icon/decagon';
+import IconComponent from 'ui/graphic/icon/icon';
+import HeaderField from 'ui/text/header';
 
 // Incoming parameters for component.
 interface LegendTreeProps {

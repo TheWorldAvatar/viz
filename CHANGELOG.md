@@ -3,6 +3,68 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.10
+
+### Bug Fixes
+
+- Fix missing time series panel when only time series data is returned with no attributes
+
+## 5.16.9
+
+### Bug Fixes
+
+- Fix the bug that prevents the display of dependent form fields with conflicting similar names
+
+## 5.16.8
+
+### Improvements
+
+- Address unused imports warned by ESLint
+
+## 5.16.7
+
+### Changes
+
+- Bump next.js, mapbox and several other dependencies
+
+### Bug Fixes
+
+- Fixed issue with metadata display for number values
+
+## 5.16.6
+
+### Changes
+
+- Bump dependencies:
+  - `material-symbols`
+  - `react-select`
+  - `@next/eslint-plugin-next`
+- Remove redundant `react-map-gl` dependency
+
+## 5.16.5
+
+### Changes
+
+- Update pnpm and node versions in package.json
+
+## 5.16.4
+
+### Changes
+
+- Update node base image from 22.11 to 23.7
+
+## 5.16.3
+
+## Bug fixes
+
+- Fixes issue where FIA responses were not decoded if not in 'utf-8'
+
+## 5.16.2
+
+### Changes
+
+- Minor dependency bump of reduxjs, ESLint, uuid
+
 ## 5.16.1
 
 ### Bug Fixes
