@@ -1,10 +1,9 @@
-import React from 'react';
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
 import { FormOptionType, PropertyShape } from 'types/form';
-import FormInputContainer from './form-input-container';
 import { selectorStyles } from 'ui/css/selector-style';
+import FormInputContainer from './form-input-container';
 
 interface FormSelectorProps {
   field: PropertyShape;

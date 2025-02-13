@@ -1,6 +1,5 @@
 import styles from './field.module.css';
 
-import React from 'react';
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 
 import FormErrorComponent from 'ui/text/error/form-error';
