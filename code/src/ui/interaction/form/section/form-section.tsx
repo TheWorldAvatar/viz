@@ -42,7 +42,6 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
                 agentApi={props.agentApi}
                 dependentProp={field}
                 form={props.form}
-                shapeToFieldMap={new Map()}
               /></div>
           }
           return <FormFieldComponent

@@ -9,7 +9,7 @@ import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { HttpResponse, addEntity, deleteEntity, getFormTemplate, getMatchingInstances, updateEntity } from 'utils/server-actions';
-import { FORM_STATES, initFormField } from './form-utils';
+import { FORM_STATES, initFormField, updateDependentProperty } from './form-utils';
 import FormFieldComponent from './field/form-field';
 import FormSection from './section/form-section';
 import { DependentFormSection } from './section/dependent-form-section';
@@ -46,7 +46,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
   const [formTemplate, setFormTemplate] = useState<FormTemplate>(null);
-  const [shapeToFieldName, setShapeToFieldName] = useState<Map<string, string>>(new Map<string, string>());
   const disableAllInputs: boolean = props.formType === Paths.REGISTRY || props.formType === Paths.REGISTRY_DELETE;
 
   // Sets the default value with the requested function call
@@ -74,17 +73,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;
           const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
-            // For property shapes with qualifiedValueShape but no node kind property
-            // Add node shapes and their corresponding field name to the map to facilite parent dependencies links
-            if (fieldProp.qualifiedValueShape && !fieldProp.nodeKind) {
-              const tempMap: Map<string, string> = new Map<string, string>(shapeToFieldName);
-              fieldProp.qualifiedValueShape?.map(nodeShape => tempMap.set(nodeShape[ID_KEY], fieldProp.name[VALUE_KEY]));
-              setShapeToFieldName(tempMap);
-            }
+            const updatedProp: PropertyShape = updateDependentProperty(fieldProp, template.property);
             // Update and set property field ids to include their group name
             // Append field id with group name as prefix
-            const fieldId: string = `${fieldset.label[VALUE_KEY]} ${fieldProp.name[VALUE_KEY]}`;
-            return initFormField(fieldProp, initialState, fieldId);
+            const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+            return initFormField(updatedProp, initialState, fieldId);
           })
           // Update the property group with updated properties
           return {
@@ -92,14 +85,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             property: properties,
           }
         } else {
-          const fieldShape: PropertyShape = field as PropertyShape;
-          // For property shapes with qualifiedValueShape but no node kind property
-          // Add node shapes and their corresponding field name to the map to facilite parent dependencies links
-          if (fieldShape.qualifiedValueShape && !fieldShape.nodeKind) {
-            const tempMap: Map<string, string> = new Map<string, string>(shapeToFieldName);
-            fieldShape.qualifiedValueShape?.map(nodeShape => tempMap.set(nodeShape[ID_KEY], fieldShape.name[VALUE_KEY]));
-            setShapeToFieldName(tempMap);
-          }
+          const fieldShape: PropertyShape = updateDependentProperty(field as PropertyShape, template.property);
           // For groupless properties, their field ID will be directly set without further parsing
           return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);
         }
@@ -271,7 +257,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
                 agentApi={props.agentApi}
                 dependentProp={fieldProp}
                 form={form}
-                shapeToFieldMap={shapeToFieldName}
               />
             }
             return <FormFieldComponent

@@ -18,7 +18,6 @@ interface DependentFormSectionProps {
   agentApi: string;
   dependentProp: PropertyShape;
   form: UseFormReturn;
-  shapeToFieldMap: Map<string, string>;
 }
 
 /**
@@ -37,15 +36,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);
-  // If there is a need, retrieve the parent field name. Parent field depends on the shape to field mappings.
-  // Else, it should remain as an empty string
-  const firstRelevantShapeKey: string = props.dependentProp.nodeKind ? props.dependentProp.qualifiedValueShape.find(shape => {
-    const parentField: string | undefined = props.shapeToFieldMap.get(shape[ID_KEY]);
-    return parentField && parentField.trim() !== "";
-  })[ID_KEY] : "";
-  const parentField: string = firstRelevantShapeKey != "" ? props.shapeToFieldMap.get(firstRelevantShapeKey)
-    : firstRelevantShapeKey;
+  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);;
+  const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
     control,
@@ -65,7 +57,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       setIsFetching(true);
       let entities: RegistryFieldValues[] = [];
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
-      if (field.nodeKind) {
+      if (field.dependentOn) {
         if (currentParentOption) {
           entities = await getData(props.agentApi, parentField, getAfterDelimiter(currentParentOption, "/"), entityType);
         }
@@ -150,9 +142,9 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     window.open(url, "_blank");
   };
 
-  // The fieldset should only be displayed if it either does not have parent elements (no nodekind) or 
+  // The fieldset should only be displayed if it either does not have parent elements (no dependentOn property) or 
   // the parent element has been queried and selected
-  if ((!props.dependentProp.nodeKind) || (props.dependentProp.nodeKind && currentParentOption && currentParentOption != "")) {
+  if (!props.dependentProp.dependentOn || (currentParentOption && parentField != "")) {
     return (
       <fieldset className={styles["form-dependent-fieldset"]}>
         {isFetching &&
