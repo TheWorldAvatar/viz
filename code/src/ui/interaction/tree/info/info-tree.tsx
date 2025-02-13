@@ -56,7 +56,7 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
     if (!props.attributes && props.timeSeries) {
       props.activeTab.setActiveTab(1);
     }
-  }, []);
+  }, [props.attributes, props.timeSeries]);
 
   // A function that renders the required contents for this panel
   const renderPanelContents: () => React.ReactElement = () => {
