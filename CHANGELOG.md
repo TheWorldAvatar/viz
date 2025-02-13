@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.10
+
+### Bug Fixes
+
+- Fix missing time series panel when only time series data is returned with no attributes
+
 ## 5.16.9
 
 ### Bug Fixes
