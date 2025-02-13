@@ -2,9 +2,8 @@
 
 import styles from './navbar-component.module.css';
 
-import React from 'react';
-import Icon from '@mui/material/Icon';
 import { Tooltip } from '@mui/material';
+import Icon from '@mui/material/Icon';
 import Link from 'next/link';
 
 

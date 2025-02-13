@@ -1,6 +1,5 @@
 import styles from './error.module.css';
 
-import React from 'react';
 import { FieldError } from 'react-hook-form';
 
 interface FormErrorComponentProps {

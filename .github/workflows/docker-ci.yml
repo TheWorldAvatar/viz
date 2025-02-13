@@ -7,11 +7,6 @@ on:
       - code/**
   workflow_dispatch:
 
-env:
-  VERSION
-  MAJOR
-  MINOR
-
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest

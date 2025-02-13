@@ -1,11 +1,11 @@
 import styles from './info-tree.module.css';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
+import { TimeSeriesGroup } from 'types/timeseries';
 import Chart from 'ui/graphic/chart/chart';
 import Table from 'ui/graphic/table/table';
 import DropdownField, { DropdownFieldOption } from 'ui/interaction/dropdown/dropdown';
-import { TimeSeriesGroup } from 'types/timeseries';
 
 interface TimeSeriesPanelProps {
   data: TimeSeriesGroup;
