@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.8
+
+### Improvements
+
+- Address unused imports warned by ESLint
+
 ## 5.16.7
 
 ### Changes

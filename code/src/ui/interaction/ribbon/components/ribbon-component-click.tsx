@@ -2,7 +2,6 @@
 
 import styles from './ribbon-component.module.css';
 
-import React from 'react';
 import { Tooltip } from '@mui/material';
 
 import IconComponent from 'ui/graphic/icon/icon';
