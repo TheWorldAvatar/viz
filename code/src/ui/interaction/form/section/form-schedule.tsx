@@ -37,6 +37,7 @@ export const daysOfWeek: string[] = [FORM_STATES.SUN, FORM_STATES.MON, FORM_STAT
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const daysOfWeekLabel: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const affectedByPublicHoliday: string = "Affected By Public Holiday";
   const singleService: string = "Single Service";
   const regularService: string = "Regular Service";
   const alternateService: string = "Alternate Day Service";
@@ -179,6 +180,16 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 />
               </div>
             })}
+          </div>
+
+          {/* Affected By Public Holiday Checkbox */}
+          <div className={fieldStyles["form-input-container"]}>
+                  <FormCheckboxField
+                    field="affectedByPublicHoliday"
+                    label={affectedByPublicHoliday}
+                    form={props.form}
+                    options={isDisabledOption}
+                  />
           </div>
         </div>
         }
