@@ -2,8 +2,8 @@
 
 import styles from './ribbon-component.module.css';
 
-import React, { useEffect, useState } from 'react';
 import { Icon, Tooltip } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOption, setOption } from 'state/ribbon-component-slice';
 import IconComponent from 'ui/graphic/icon/icon';

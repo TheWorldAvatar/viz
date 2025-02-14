@@ -1,11 +1,10 @@
-import styles from '../form.module.css';
 import fieldStyles from '../field/field.module.css';
+import styles from '../form.module.css';
 
-import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { parseWordsForLabels } from 'utils/client-utils';
 import { PropertyGroup, VALUE_KEY } from 'types/form';
+import { parseWordsForLabels } from 'utils/client-utils';
 import FormFieldComponent from '../field/form-field';
 import { DependentFormSection } from './dependent-form-section';
 
@@ -43,7 +42,6 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
                 agentApi={props.agentApi}
                 dependentProp={field}
                 form={props.form}
-                shapeToFieldMap={new Map()}
               /></div>
           }
           return <FormFieldComponent

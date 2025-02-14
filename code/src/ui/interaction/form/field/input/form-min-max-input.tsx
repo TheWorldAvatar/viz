@@ -1,7 +1,6 @@
-import styles from './input.module.css';
 import fieldStyles from '../field.module.css';
+import styles from './input.module.css';
 
-import React from 'react';
 import { FieldError, UseFormReturn } from 'react-hook-form';
 
 import { PropertyShape, VALUE_KEY } from 'types/form';
