@@ -26,6 +26,10 @@
         --border-primary: #b6b6bf;
         --border-secondary: #a5a5b3;
         --border-tertiary: #9898af;
+
+        /* Button colors */
+        --button-color-primary: #83C38D;
+        --button-color-primary-active: #65A671;
     }
 }
 
@@ -55,6 +59,10 @@
         --border-primary: #434b55;
         --border-secondary: #6c7989;
         --border-tertiary: #7f8ea1;
+
+        /* Button colors */
+        --button-color-primary: #83C38D;
+        --button-color-primary-active: #65A671;
     }
 }
 

@@ -8,20 +8,20 @@
   padding: 0.5rem 1rem;
   border-radius: 0.1rem;
   border: 1px solid transparent;
-  background-color: #83C38D;
+  background-color: var(--button-color-primary);
   color: var(--text-color-primary);
   transition: all 0.2s ease-in-out;
 }
 
 .button-container:hover {
-  background-color: var(--background-tertiary);
+  background-color: var(--button-color-primary-active);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .active {
   border: 1px solid var(--background-inverse-primary);
-  background-color: var(--background-tertiary);
+  background-color: var(--button-color-primary-active);
 }
 
 .icon {
@@ -31,7 +31,7 @@
 }
 
 .text {
-  font-size: var(--font-size-tertiary-text);
+  font-size: var(--font-size-primary-text);
   margin-left: 0.5rem;
   font-weight: 500;
 }

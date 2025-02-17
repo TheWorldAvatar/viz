@@ -63,7 +63,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           icon="pending"
           url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-          className={styles["button-container-2"]}
+          className={styles["status-button-container"]}
           activeStyle={styles["active-button"]}
           title="Pending"
         />
@@ -71,7 +71,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           icon="schedule"
           url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-          className={styles["button-container-2"]}
+          className={styles["status-button-container"]}
           activeStyle={styles["active-button"]}
           title="Active"
         />
@@ -79,7 +79,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           icon="archive"
           url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-          className={styles["button-container-2"]}
+          className={styles["status-button-container"]}
           activeStyle={styles["active-button"]}
           title="Archive"
         />

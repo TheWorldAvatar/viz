@@ -17,29 +17,33 @@
   margin-bottom: -1.0rem;
 }
 
-.button-container-2 {
+.status-button-container {
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   width: fit-content;
-  padding: 0.5rem 1.0rem;  /* slightly more padding for better spacing */
-  margin: 0;  /* remove margin for cleaner alignment */
+  padding: 0.5rem 1.0rem;
+  margin: 0;
   border: none;
   border-radius: 0;
   background-color: transparent;
   color: var(--text-color-primary);
-  transition: color 0.2s ease;  /* smooth color transition */
+  transition: color 0.2s ease;
 }
 
-.button-container-2:hover {
-  color: var(--text-color-links);  /* use theme color instead of pink */
+.status-button-container:hover {
+  color: var(--text-color-primary);
+  /* Reset unwanted hover effects */
+  background-color: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .active-button {
-  border-bottom: 4px solid var(--text-color-links);  /* use theme color for underline */
+  border-bottom: 4px solid var(--text-color-links);
   background-color: transparent;
-  font-weight: 500;  /* slightly bolder when active */
+  font-weight: 500;
 }
 
 .action-buttons {

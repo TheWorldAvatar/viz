@@ -57,7 +57,7 @@
 
 .table th {
   padding: 0.5rem 1rem 0.5rem 0.4rem;
-  font-size: var(--font-size-secondary-text);
+  font-size: var(--font-size-primary-text);
   color: var(--text-color-primary);
 
   border-style: solid;
