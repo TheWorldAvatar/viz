@@ -31,7 +31,7 @@
 }
 
 .text {
-  font-size: var(--font-size-primary-text);
+  font-size: var(--font-size-tertiary-text);
   margin-left: 0.5rem;
   font-weight: 500;
 }

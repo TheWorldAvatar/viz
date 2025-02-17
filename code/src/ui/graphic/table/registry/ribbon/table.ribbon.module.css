@@ -32,6 +32,11 @@
   transition: color 0.2s ease;
 }
 
+.status-button-container p {
+  font-size: var(--font-size-secondary-text) !important;
+}
+
+
 .status-button-container:hover {
   color: var(--text-color-primary);
   /* Reset unwanted hover effects */
