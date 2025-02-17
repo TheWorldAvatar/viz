@@ -1,8 +1,22 @@
+/**
+ * This component file provdies a customised Material-UI theme for the registry table.
+ * It includes:
+ *  - Light and dark mode themes
+ *  - Custom styling for DataGrid components
+ *  - Responsive design configurations
+ *  - Typography and colour palette settings
+ *
+ * The theme respects system preferences for dark/light mode and integrates with global css variables.
+ */
+
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { ReactNode, useMemo } from "react";
 
+/**
+ * Light theme configuration
+ */
 const lightTheme = createTheme({
   palette: {
     mode: "light",
@@ -179,6 +193,9 @@ const lightTheme = createTheme({
   },
 });
 
+/**
+ * Dark theme configuration
+ */
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -317,6 +334,11 @@ const darkTheme = createTheme({
   },
 });
 
+/**
+ * Theme provider wrapper for registry table components
+ * @param {ReactNode} children - Child components to be wrapped with the theme
+ * @returns {JSX.Element} Themed component tree
+ */
 export const RegistryTableTheme = ({ children }: { children: ReactNode }) => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
