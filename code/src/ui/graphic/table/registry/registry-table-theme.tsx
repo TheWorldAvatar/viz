@@ -36,25 +36,6 @@ const lightTheme = createTheme({
     },
     divider: "#b6b6bf",
   },
-  typography: {
-    fontFamily: '"Helvetica Now", sans-serif',
-    fontSize: 12,
-    h1: {
-      fontSize: "1.8rem",
-    },
-    h2: {
-      fontSize: "1.3rem",
-    },
-    body1: {
-      fontSize: "0.95rem",
-    },
-    body2: {
-      fontSize: "0.8rem",
-    },
-    caption: {
-      fontSize: "0.7rem",
-    },
-  },
   components: {
     MuiContainer: {
       styleOverrides: {
@@ -93,99 +74,12 @@ const lightTheme = createTheme({
         },
       },
     },
-    MuiTypography: {
-      styleOverrides: {
-        h2: {
-          margin: "0.5rem 0",
-          color: "var(--text-color-primary)",
-          fontSize: "var(--font-size-h2)",
-        },
-      },
-    },
-    MuiTableContainer: {
-      styleOverrides: {
-        root: {
-          height: "60vh",
-          width: "100%",
-          overflowY: "auto",
-          overflowX: "auto",
-        },
-      },
-    },
-    MuiTable: {
-      styleOverrides: {
-        root: {
-          width: "100%",
-          overflowX: "hidden",
-          borderSpacing: 0,
-          borderCollapse: "separate",
-        },
-      },
-    },
-    MuiTableHead: {
-      styleOverrides: {
-        root: {
-          position: "sticky",
-          top: 0,
-          backgroundColor: "var(--background-inverse-tertiary)",
-          textAlign: "left",
-          textWrap: "nowrap",
-        },
-      },
-    },
-    MuiTableCell: {
-      styleOverrides: {
-        head: {
-          padding: "0.5rem 1rem 0.5rem 0.4rem",
-          fontSize: "var(--font-size-secondary-text)",
-          color: "var(--text-color-primary)",
-          borderStyle: "solid",
-          borderColor: "var(--border-primary)",
-          borderWidth: "0.1rem 0",
-        },
-        body: {
-          whiteSpace: "nowrap",
-          padding: "0.5rem 0.4rem",
-          fontSize: "var(--font-size-tertiary-text)",
-          color: "var(--text-color-secondary)",
-          borderStyle: "solid",
-          borderColor: "var(--border-secondary)",
-          borderWidth: "0 0 0.025rem",
-        },
-      },
-    },
     MuiIconButton: {
       styleOverrides: {
         root: {
-          color: "var(--text-color-links) !important",
+          color: "var(--background-primary)",
           "&:hover": {
-            color: "var(--text-color-links-hover) !important",
-          },
-        },
-      },
-    },
-    MuiDataGrid: {
-      styleOverrides: {
-        root: {
-          "--DataGrid-containerBackground": "transparent",
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "rgba(11, 68, 82)",
-            color: "#FFFFFF",
-          },
-          "& .MuiDataGrid-container--top": {
-            backgroundColor: "#18677A",
-          },
-          "& .MuiDataGrid-row:nth-of-type(odd)": {
-            backgroundColor: "rgba(124, 203, 219, 0.3)",
-          },
-          "& .MuiDataGrid-row:nth-of-type(even)": {
-            backgroundColor: "rgba(131, 195, 141, 0.3)",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-columnHeader": {
-            borderBottom: "none",
+            color: "var(--text-color-links-hover)",
           },
         },
       },
@@ -215,25 +109,6 @@ const darkTheme = createTheme({
     },
     divider: "#434b55",
   },
-  typography: {
-    fontFamily: '"Helvetica Now", sans-serif',
-    fontSize: 14,
-    h1: {
-      fontSize: "1.8rem",
-    },
-    h2: {
-      fontSize: "1.3rem",
-    },
-    body1: {
-      fontSize: "0.95rem",
-    },
-    body2: {
-      fontSize: "0.8rem",
-    },
-    caption: {
-      fontSize: "0.7rem",
-    },
-  },
   components: {
     MuiContainer: {
       styleOverrides: {
@@ -260,73 +135,12 @@ const darkTheme = createTheme({
         },
       },
     },
-    MuiTypography: {
-      styleOverrides: {
-        h2: {
-          margin: "0.5rem 0",
-          color: "var(--text-color-primary)",
-          fontSize: "var(--font-size-h2)",
-        },
-      },
-    },
-    MuiTableContainer: {
-      styleOverrides: {
-        root: {
-          height: "60vh",
-          width: "100%",
-          overflowY: "auto",
-          overflowX: "auto",
-        },
-      },
-    },
-    MuiTable: {
-      styleOverrides: {
-        root: {
-          width: "100%",
-          overflowX: "hidden",
-          borderSpacing: 0,
-          borderCollapse: "separate",
-        },
-      },
-    },
-    MuiTableHead: {
-      styleOverrides: {
-        root: {
-          position: "sticky",
-          top: 0,
-          backgroundColor: "var(--background-primary)",
-          textAlign: "left",
-          textWrap: "nowrap",
-        },
-      },
-    },
-    MuiTableCell: {
-      styleOverrides: {
-        head: {
-          padding: "0.5rem 1rem 0.5rem 0.4rem",
-          fontSize: "var(--font-size-secondary-text)",
-          color: "var(--text-color-primary)",
-          borderStyle: "solid",
-          borderColor: "var(--border-primary)",
-          borderWidth: "0.1rem 0",
-        },
-        body: {
-          whiteSpace: "nowrap",
-          padding: "0.5rem 0.4rem",
-          fontSize: "var(--font-size-tertiary-text)",
-          color: "var(--text-color-secondary)",
-          borderStyle: "solid",
-          borderColor: "var(--border-secondary)",
-          borderWidth: "0 0 0.025rem",
-        },
-      },
-    },
     MuiIconButton: {
       styleOverrides: {
         root: {
-          color: "var(--text-color-links) !important",
+          color: "var(--background-primary)",
           "&:hover": {
-            color: "var(--text-color-links-hover) !important",
+            color: "var(--text-color-links-hover)",
           },
         },
       },

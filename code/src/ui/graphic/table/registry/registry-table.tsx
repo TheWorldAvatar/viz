@@ -1,3 +1,5 @@
+import styles from "./registry.table.module.css";
+
 import React from "react";
 import { FieldValues } from "react-hook-form";
 
@@ -6,10 +8,9 @@ import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
 import StatusComponent from "ui/text/status/status";
 
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import { RegistryTableTheme } from "./registry-table-theme";
-import styles from "./registry.table.module.css";
 
 interface RegistryTableProps {
   recordType: string;
@@ -37,7 +38,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       {
         field: "actions",
         headerName: "",
-        width: 100,
+        width: 25,
+        headerClassName: styles["header"],
+        cellClassName: styles["header-text"],
         renderCell: (params) => {
           return (
             <RegistryRowActions
@@ -59,7 +62,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       ).map((field) => ({
         field,
         headerName: parseWordsForLabels(field),
-        width: 150, // Adjust the width as needed
+        width: 100, // Adjust the width as needed
+        headerClassName: styles["header"],
+        cellClassName: styles["header-text"],
         renderCell: (params: GridRenderCellParams) => {
           // Render status differently
           if (field.toLowerCase() === "status") {
@@ -106,6 +111,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           disableRowSelectionOnClick={false}
           autosizeOnMount={true}
           getRowId={(row) => row.id || row.iri}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? styles["even-row"] : styles["odd-row"]
+          }
+          getCellClassName={() => styles["body-cell"]}
         />
       </Box>
     </RegistryTableTheme>
