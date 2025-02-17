@@ -1,6 +1,7 @@
 import styles from './summary.module.css';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Routes } from 'io/config/routes';
 import { RegistryFieldValues } from 'types/form';
@@ -8,6 +9,7 @@ import { getData } from 'utils/server-actions';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
+import ClickActionButton from 'ui/interaction/action/click/click-button';
 
 interface SummarySectionProps {
   id: string;
@@ -23,6 +25,7 @@ interface SummarySectionProps {
  * @param {string} registryAgentApi The target endpoint for the registry agent.
  */
 export default function SummarySection(props: Readonly<SummarySectionProps>) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [contract, setContract] = useState<RegistryFieldValues>(null);
 
@@ -55,6 +58,15 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
           />
         }
       })}</Accordion>
+      <div className={styles["action"]}>
+        <ClickActionButton
+          icon={"print"}
+          title={"generate report"}
+          onClick={() => {
+            router.push(`${Routes.REGISTRY_EDIT}/pricing/${props.id}`);
+          }}
+        />
+      </div>
       <div className={styles["action"]}>
         <RedirectButton
           icon="read_more"
