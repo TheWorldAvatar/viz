@@ -169,8 +169,8 @@ importers:
         specifier: 0.0.1-security
         version: 0.0.1-security
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^15.15.0
+        version: 15.15.0
       ts-typed-json:
         specifier: ^0.3.2
         version: 0.3.2
@@ -1156,8 +1156,8 @@ packages:
   cheap-ruler@4.0.0:
     resolution: {integrity: sha512-0BJa8f4t141BYKQyn9NSQt1PguFQXMXwZiA5shfoaBYHAb2fFk2RAX+tiWMoQU+Agtzt3mdt0JtuyshAXqZ+Vw==}
 
-  chromedriver@133.0.0:
-    resolution: {integrity: sha512-7arRrtD9WGSlemMLE4IOoD42OSKKyOtQP/Z0x/WB5jYSaCzcI95j67EK0wQ2w1y5IjSJnYvnmXOJM6Nla4OG2w==}
+  chromedriver@133.0.1:
+    resolution: {integrity: sha512-Z9VrJ9547daetazzP4k+7COj0PTtkomvtt8OZr8swTzsqDOzG0Xymdxg0dUtptc4da3X9Zts1iZoxOkm7blx/g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -1751,8 +1751,8 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@15.14.0:
-    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
+  globals@15.15.0:
+    resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -4160,7 +4160,7 @@ snapshots:
 
   cheap-ruler@4.0.0: {}
 
-  chromedriver@133.0.0:
+  chromedriver@133.0.1:
     dependencies:
       '@testim/chrome-version': 1.1.4
       axios: 1.7.9
@@ -4942,7 +4942,7 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@15.14.0: {}
+  globals@15.15.0: {}
 
   globalthis@1.0.4:
     dependencies:
@@ -5325,7 +5325,7 @@ snapshots:
     dependencies:
       jwk-to-pem: 2.0.7
     optionalDependencies:
-      chromedriver: 133.0.0
+      chromedriver: 133.0.1
     transitivePeerDependencies:
       - debug
       - supports-color

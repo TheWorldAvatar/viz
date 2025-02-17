@@ -74,7 +74,7 @@
         "eslint-config-next": "^15.1.7",
         "eslint-plugin-react": "^7.37.4",
         "fs": "0.0.1-security",
-        "globals": "^15.14.0",
+        "globals": "^15.15.0",
         "ts-typed-json": "^0.3.2",
         "typescript-eslint": "^8.24.0"
     },
