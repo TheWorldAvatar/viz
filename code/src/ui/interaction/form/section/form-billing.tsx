@@ -71,7 +71,7 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
           {pricingModelDescription}
         </p>
       </div>
-      {!props.form.formState.isLoading && <FormFieldComponent
+      <FormFieldComponent
         entityType={pricingType}
         field={{
           "@id": "string",
@@ -83,7 +83,7 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
           order: 0,
         }}
         form={props.form}
-      />}
+      />
       {selectedModel != flatFeeModel && <FormArray
         field={{
           "@id": "string",

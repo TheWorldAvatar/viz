@@ -231,80 +231,79 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   return (
     <form ref={props.formRef} onSubmit={onSubmit}>
-      {props.entityType == PRICING_IDENTIFIER &&
+      {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
+      {!form.formState.isLoading && props.entityType == PRICING_IDENTIFIER &&
         <FormBilling
           id={id}
           agentApi={props.agentApi}
           form={form}
         />
       }
-      {form.formState.isLoading ?
-        <LoadingSpinner isSmall={false} /> :
-        formTemplate.property.map((field, index) => {
-          if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-            const fieldset: PropertyGroup = field as PropertyGroup;
-            return <FormSection
-              key={fieldset[ID_KEY] + index}
-              entityType={props.entityType}
-              agentApi={props.agentApi}
-              group={fieldset}
-              form={form}
-              options={{
-                disabled: disableAllInputs,
-              }}
-            />
-          } else {
-            const fieldProp: PropertyShape = field as PropertyShape;
-            // If this is a hidden field, hide the field
-            if (fieldProp.maxCount && parseInt(fieldProp.maxCount[VALUE_KEY]) === 0) {
-              return <></>;
-            }
-            const disableId: boolean = props.formType === Paths.REGISTRY_EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
-            if (fieldProp.class) {
-              if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule") {
-                return <FormSchedule
-                  key={fieldProp.name[VALUE_KEY] + index}
-                  fieldId={fieldProp.name[VALUE_KEY]}
-                  agentApi={props.agentApi}
-                  form={form}
-                  options={{
-                    disabled: disableAllInputs,
-                  }}
-                />
-              }
-              if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation") {
-                return <FormGeocoder
-                  key={fieldProp.name[VALUE_KEY] + index}
-                  agentApi={props.agentApi}
-                  field={fieldProp}
-                  form={form}
-                />;
-              }
-              if (props.formType === SEARCH_FORM_TYPE && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
-                return <FormSearchPeriod
-                  key={fieldProp.name[VALUE_KEY] + index}
-                  form={form}
-                />;
-              }
-              return <DependentFormSection
+      {!form.formState.isLoading && formTemplate.property.map((field, index) => {
+        if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+          const fieldset: PropertyGroup = field as PropertyGroup;
+          return <FormSection
+            key={fieldset[ID_KEY] + index}
+            entityType={props.entityType}
+            agentApi={props.agentApi}
+            group={fieldset}
+            form={form}
+            options={{
+              disabled: disableAllInputs,
+            }}
+          />
+        } else {
+          const fieldProp: PropertyShape = field as PropertyShape;
+          // If this is a hidden field, hide the field
+          if (fieldProp.maxCount && parseInt(fieldProp.maxCount[VALUE_KEY]) === 0) {
+            return <></>;
+          }
+          const disableId: boolean = props.formType === Paths.REGISTRY_EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
+          if (fieldProp.class) {
+            if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule") {
+              return <FormSchedule
                 key={fieldProp.name[VALUE_KEY] + index}
+                fieldId={fieldProp.name[VALUE_KEY]}
                 agentApi={props.agentApi}
-                dependentProp={fieldProp}
                 form={form}
+                options={{
+                  disabled: disableAllInputs,
+                }}
               />
             }
-            return <FormFieldComponent
+            if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation") {
+              return <FormGeocoder
+                key={fieldProp.name[VALUE_KEY] + index}
+                agentApi={props.agentApi}
+                field={fieldProp}
+                form={form}
+              />;
+            }
+            if (props.formType === SEARCH_FORM_TYPE && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+              return <FormSearchPeriod
+                key={fieldProp.name[VALUE_KEY] + index}
+                form={form}
+              />;
+            }
+            return <DependentFormSection
               key={fieldProp.name[VALUE_KEY] + index}
-              entityType={props.entityType}
               agentApi={props.agentApi}
-              field={fieldProp}
+              dependentProp={fieldProp}
               form={form}
-              options={{
-                disabled: disableId,
-              }}
             />
           }
-        })}
+          return <FormFieldComponent
+            key={fieldProp.name[VALUE_KEY] + index}
+            entityType={props.entityType}
+            agentApi={props.agentApi}
+            field={fieldProp}
+            form={form}
+            options={{
+              disabled: disableId,
+            }}
+          />
+        }
+      })}
     </form>
   );
 }
