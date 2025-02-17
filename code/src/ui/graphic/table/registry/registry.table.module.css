@@ -64,7 +64,7 @@
   background-color: rgba(131, 195, 141, 0.3);
 
   &:hover {
-    background-color: #83c38d80 !important;
+    background-color: var(--button-color-primary) !important;
   }
 }
 
