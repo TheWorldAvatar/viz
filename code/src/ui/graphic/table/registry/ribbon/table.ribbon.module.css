@@ -28,20 +28,21 @@
   border: none;
   border-radius: 0;
   background-color: transparent;
-  color: var(--text-color-primary);
   transition: color 0.2s ease;
 }
 
-.registry-nav-button p {
-  font-size: var(--font-size-secondary-text) !important;
+.registry-nav-button:hover {
+  border-bottom: 2px solid var(--text-color-links);
+  background-color: transparent;
 }
 
-.registry-nav-button:hover {
+.registry-nav-button-text {
+  font-size: var(--font-size-secondary-text);
   color: var(--text-color-primary);
-  /* Reset unwanted hover effects */
-  background-color: transparent !important;
-  transform: none !important;
-  box-shadow: none !important;
+}
+
+.registry-nav-button-hover:hover {
+  color: var(--text-color-links-hover);
 }
 
 .action-ribbon {
@@ -53,9 +54,8 @@
 }
 
 .active-state {
-  border-bottom: 4px solid var(--text-color-links);
+  border-bottom: 4px solid var(--text-color-links) !important;
   background-color: transparent;
-  font-weight: 500;
 }
 
 .icon {

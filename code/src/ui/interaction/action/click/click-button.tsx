@@ -2,13 +2,11 @@
 
 import styles from '../action.module.css';
 
-import React from 'react';
+import ActionButton, { ActionButtonProps, ActionStyles } from '../action';
 
-import ActionButton from '../action';
-
-interface ClickActionButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  icon: string;
+interface ClickActionButtonProps extends ActionButtonProps {
   isActive?: boolean;
+  styling?: ActionStyles;
 }
 
 /**
@@ -17,14 +15,20 @@ interface ClickActionButtonProps extends React.HTMLAttributes<HTMLButtonElement>
  * 
  * @param {string} icon The Material icon name.
  * @param {boolean} isActive Optional indicator to put the button in an active state if true.
+ * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
+ * @param {string} styling.active An optional styling object for the active state when active.
+ * @param {string} styling.hover An optional styling object for hover effects on text and icon.
+ * @param {string} styling.text An optional styling object for text and icon.
  */
-export default function ClickActionButton({ icon, isActive, ...rest }: Readonly<ClickActionButtonProps>) {
+export default function ClickActionButton({ icon, isActive, isHoverableDisabled, styling, ...rest }: Readonly<ClickActionButtonProps>) {
   return (
     <ActionButton
       icon={icon}
-      className={`${isActive ? styles["active"] : ""}`}
+      className={`${isActive ? styling?.active ?? styles["active"] : ""}`}
       title={rest.title}
       onClick={rest.onClick}
+      isHoverableDisabled={isHoverableDisabled}
+      styling={styling}
     />
   );
 }

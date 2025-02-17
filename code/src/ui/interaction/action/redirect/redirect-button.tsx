@@ -5,13 +5,12 @@ import styles from "../action.module.css";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-import ActionButton from "../action";
+import ActionButton, { ActionButtonProps, ActionStyles } from "../action";
 
-interface RedirectButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-  icon: string;
+interface RedirectButtonProps extends ActionButtonProps {
   url: string;
   isActive: boolean;
-  activeStyle?: string;
+  styling?: ActionStyles;
 }
 
 /**
@@ -20,12 +19,17 @@ interface RedirectButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
  * @param {string} icon The Material icon name.
  * @param {string} url The redirect target url.
  * @param {boolean} isActive Indicates if the redirect button is active and should be highlighted.
+ * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
+ * @param {string} styling.active An optional styling object for the active state when active.
+ * @param {string} styling.hover An optional styling object for hover effects on text and icon.
+ * @param {string} styling.text An optional styling object for text and icon.
  */
 export default function RedirectButton({
   icon,
   url,
   isActive,
-  activeStyle,
+  isHoverableDisabled,
+  styling,
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
@@ -35,11 +39,12 @@ export default function RedirectButton({
   return (
     <ActionButton
       icon={icon}
-      className={`${isActive ? activeStyle ?? styles["active"] : ""} ${
-        rest.className
-      }`}
+      className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className
+        }`}
       title={rest.title}
       onClick={handleClick}
+      isHoverableDisabled={isHoverableDisabled}
+      styling={styling}
     />
   );
 }

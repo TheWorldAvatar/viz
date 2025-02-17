@@ -59,28 +59,43 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     <div className={styles.menu}>
       <div className={styles["registry-nav-ribbon"]}>
         <RedirectButton
+          title="Pending"
           icon="pending"
           url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
+          isHoverableDisabled={true}
           className={styles["registry-nav-button"]}
-          activeStyle={styles["active-state"]}
-          title="Pending"
+          styling={{
+            active: styles["active-state"],
+            text: styles["registry-nav-button-text"],
+            hover: styles["registry-nav-button-hover"],
+          }}
         />
         <RedirectButton
+          title="Active"
           icon="schedule"
           url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+          isHoverableDisabled={true}
           className={styles["registry-nav-button"]}
-          activeStyle={styles["active-state"]}
-          title="Active"
+          styling={{
+            active: styles["active-state"],
+            text: styles["registry-nav-button-text"],
+            hover: styles["registry-nav-button-hover"],
+          }}
         />
         <RedirectButton
+          title="Archive"
           icon="archive"
           url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
+          isHoverableDisabled={true}
           className={styles["registry-nav-button"]}
-          activeStyle={styles["active-state"]}
-          title="Archive"
+          styling={{
+            active: styles["active-state"],
+            text: styles["registry-nav-button-text"],
+            hover: styles["registry-nav-button-hover"],
+          }}
         />
       </div>
 
@@ -99,22 +114,22 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-          <RedirectButton
-            icon={"task"}
-            url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-            title={"overview"}
-          />
-        )}
+            <RedirectButton
+              icon={"task"}
+              url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+              isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+              title={"overview"}
+            />
+          )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-          <RedirectButton
-            icon={"event"}
-            url={`${Routes.REGISTRY_TASK_DATE}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-            title={"view tasks"}
-          />
-        )}
+            <RedirectButton
+              icon={"event"}
+              url={`${Routes.REGISTRY_TASK_DATE}`}
+              isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+              title={"view tasks"}
+            />
+          )}
         {props.lifecycleStage == Routes.REGISTRY_REPORT && (
           <ClickActionButton
             icon={"first_page"}

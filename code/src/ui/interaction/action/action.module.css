@@ -13,7 +13,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.button-container:hover {
+.hover-button-container:hover {
   background-color: var(--button-color-primary-active);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -25,12 +25,13 @@
 }
 
 .icon {
-  color: var(--text-color-primary);
+  color: var(--background-primary);
   font-size: var(--small-icon-size) !important;
   transition: color 0.2s ease;
 }
 
 .text {
+  color: var(--background-primary);
   font-size: var(--font-size-tertiary-text);
   margin-left: 0.5rem;
   font-weight: 500;
