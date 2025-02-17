@@ -9,22 +9,22 @@ export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 export const PRICING_IDENTIFIER = "pricing";
 
-interface RegistryFieldValue {
+export interface SparqlResponseField {
   value: string;
   type: string;
   dataType: string;
   lang: string;
 }
 
-export type RegistryFieldValues = Record<string, RegistryFieldValue>;
+export type RegistryFieldValues = Record<string, SparqlResponseField | SparqlResponseField[]>;
 
 export type OntologyConceptMappings = Record<string, OntologyConcept[]>;
 
 export type OntologyConcept = {
-  type: RegistryFieldValue;
-  label: RegistryFieldValue;
-  description: RegistryFieldValue;
-  parent?: RegistryFieldValue;
+  type: SparqlResponseField;
+  label: SparqlResponseField;
+  description: SparqlResponseField;
+  parent?: SparqlResponseField;
 };
 
 export interface FormOptionType {
@@ -52,7 +52,7 @@ export interface PropertyShape {
   description: JsonLdLiteral;
   order: number;
   fieldId?: string; // Not present but appended after
-  defaultValue?: RegistryFieldValue;
+  defaultValue?: SparqlResponseField;
   group?: JsonLdInstance;
   datatype?: string;
   class?: JsonLdInstance;

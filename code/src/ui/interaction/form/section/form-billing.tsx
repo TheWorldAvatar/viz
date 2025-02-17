@@ -29,7 +29,8 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
   const variablePricingModel: string = "Variable Pricing";
   const pricingType: string = "pricing";
   // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] = useState<string>(flatFeeModel);
+  const [selectedModel, setSelectedModel] = useState<string>(Object.hasOwn(props.form.getValues(), FORM_STATES.unitPrice)
+    ? variablePricingModel : flatFeeModel);
 
   // Updates the pricing model description whenever the pricing model option changes
   const pricingModelDescription = useMemo((): string => {
@@ -70,7 +71,7 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
           {pricingModelDescription}
         </p>
       </div>
-      <FormFieldComponent
+      {!props.form.formState.isLoading && <FormFieldComponent
         entityType={pricingType}
         field={{
           "@id": "string",
@@ -82,7 +83,7 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
           order: 0,
         }}
         form={props.form}
-      />
+      />}
       {selectedModel != flatFeeModel && <FormArray
         field={{
           "@id": "string",

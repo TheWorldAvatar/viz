@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation';
 
 import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
-import { FormTemplate, ID_KEY, PRICING_IDENTIFIER, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { FormTemplate, ID_KEY, PRICING_IDENTIFIER, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryFieldValues, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { getAfterDelimiter } from 'utils/client-utils';
-import { HttpResponse, addEntity, deleteEntity, getFormTemplate, getMatchingInstances, updateEntity } from 'utils/server-actions';
+import { getAfterDelimiter, getSparqlResponseValue, initPricingModel } from 'utils/client-utils';
+import { HttpResponse, addEntity, deleteEntity, getData, getFormTemplate, getMatchingInstances, updateEntity } from 'utils/server-actions';
 import { FORM_STATES, initFormField, updateDependentProperty } from './form-utils';
 import FormFieldComponent from './field/form-field';
 import FormSection from './section/form-section';
@@ -57,14 +57,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
       };
       if (props.entityType == PRICING_IDENTIFIER) {
+        const pricingModelArray: RegistryFieldValues[] = await getData(props.agentApi, "contracts/pricing", id);
         setFormTemplate({
           "@context": {},
           property: []
         });
         return {
           id: id,
-          [FORM_STATES.FLAT_FEE]: 0.01,
-          ...initialState
+          ...initPricingModel(initialState, pricingModelArray),
         };
       }
       // Retrieve template from APIs
