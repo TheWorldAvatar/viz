@@ -57,38 +57,36 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className={styles.menu}>
-      {/* Top 3 buttons */}
-      <div className={styles["status-buttons"]}>
+      <div className={styles["registry-nav-ribbon"]}>
         <RedirectButton
           icon="pending"
           url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-          className={styles["status-button-container"]}
-          activeStyle={styles["active-button"]}
+          className={styles["registry-nav-button"]}
+          activeStyle={styles["active-state"]}
           title="Pending"
         />
         <RedirectButton
           icon="schedule"
           url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-          className={styles["status-button-container"]}
-          activeStyle={styles["active-button"]}
+          className={styles["registry-nav-button"]}
+          activeStyle={styles["active-state"]}
           title="Active"
         />
         <RedirectButton
           icon="archive"
           url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-          className={styles["status-button-container"]}
-          activeStyle={styles["active-button"]}
+          className={styles["registry-nav-button"]}
+          activeStyle={styles["active-state"]}
           title="Archive"
         />
       </div>
-      {/* Divider Line */}
+
       <div className={styles.divider} />
 
-      {/* Action Buttons Row */}
-      <div className={styles["action-buttons"]}>
+      <div className={styles["action-ribbon"]}>
         {(authorised || !isKeycloakEnabled) &&
           props.lifecycleStage == Routes.REGISTRY_PENDING && (
             <ClickActionButton

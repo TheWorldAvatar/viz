@@ -11,13 +11,13 @@
   margin: 0 0;
 }
 
-.status-buttons {
+.registry-nav-ribbon {
   display: flex;
   gap: 0.5rem;
   margin-bottom: -1.0rem;
 }
 
-.status-button-container {
+.registry-nav-button {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -32,12 +32,11 @@
   transition: color 0.2s ease;
 }
 
-.status-button-container p {
+.registry-nav-button p {
   font-size: var(--font-size-secondary-text) !important;
 }
 
-
-.status-button-container:hover {
+.registry-nav-button:hover {
   color: var(--text-color-primary);
   /* Reset unwanted hover effects */
   background-color: transparent !important;
@@ -45,13 +44,7 @@
   box-shadow: none !important;
 }
 
-.active-button {
-  border-bottom: 4px solid var(--text-color-links);
-  background-color: transparent;
-  font-weight: 500;
-}
-
-.action-buttons {
+.action-ribbon {
   display: flex;
   gap: 0.5rem;
   margin-left: auto;
@@ -59,12 +52,13 @@
   margin-top: -1.0rem;
 }
 
-.ribbon-button-container {
-  display: flex;
-  flex-direction: row;
+.active-state {
+  border-bottom: 4px solid var(--text-color-links);
+  background-color: transparent;
+  font-weight: 500;
 }
 
-.icon{
+.icon {
   color: var(--text-color-links);
   margin-left: 0.45rem;
 }
@@ -78,13 +72,9 @@
     justify-content: flex-start;
   }
 
-  .ribbon-button-container {
-    flex-direction: column;
-  }
-
   .action-buttons {
     margin-left: 0;
     width: 100%;
-    justify-content: flex-start; 
+    justify-content: flex-start;
   }
 }
