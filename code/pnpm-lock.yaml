@@ -66,8 +66,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0
       material-symbols:
-        specifier: ^0.28.1
-        version: 0.28.1
+        specifier: ^0.28.2
+        version: 0.28.2
       moment:
         specifier: ^2.30.1
         version: 2.30.1
@@ -1156,8 +1156,8 @@ packages:
   cheap-ruler@4.0.0:
     resolution: {integrity: sha512-0BJa8f4t141BYKQyn9NSQt1PguFQXMXwZiA5shfoaBYHAb2fFk2RAX+tiWMoQU+Agtzt3mdt0JtuyshAXqZ+Vw==}
 
-  chromedriver@133.0.0:
-    resolution: {integrity: sha512-7arRrtD9WGSlemMLE4IOoD42OSKKyOtQP/Z0x/WB5jYSaCzcI95j67EK0wQ2w1y5IjSJnYvnmXOJM6Nla4OG2w==}
+  chromedriver@133.0.1:
+    resolution: {integrity: sha512-Z9VrJ9547daetazzP4k+7COj0PTtkomvtt8OZr8swTzsqDOzG0Xymdxg0dUtptc4da3X9Zts1iZoxOkm7blx/g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2137,8 +2137,8 @@ packages:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
 
-  material-symbols@0.28.1:
-    resolution: {integrity: sha512-oLaBgTunF04BQEcUP5z+6FStqdfXrNVnYo2CB4Ej8d2RqrhYxSKllcHvXRYWjNNl/hRmlHJF9B62YWuZ4kHYpA==}
+  material-symbols@0.28.2:
+    resolution: {integrity: sha512-JLK+Bgtfg5Dn9V2WYk6lSwmxciNNF2zmqc/V8MLmH0K9LttUhPCaauJzrS1Vw3mJPs/Tyfi/tszynNRX6nWQOA==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -4160,7 +4160,7 @@ snapshots:
 
   cheap-ruler@4.0.0: {}
 
-  chromedriver@133.0.0:
+  chromedriver@133.0.1:
     dependencies:
       '@testim/chrome-version': 1.1.4
       axios: 1.7.9
@@ -5325,7 +5325,7 @@ snapshots:
     dependencies:
       jwk-to-pem: 2.0.7
     optionalDependencies:
-      chromedriver: 133.0.0
+      chromedriver: 133.0.1
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -5408,7 +5408,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  material-symbols@0.28.1: {}
+  material-symbols@0.28.2: {}
 
   math-intrinsics@1.1.0: {}
 
