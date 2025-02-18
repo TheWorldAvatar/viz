@@ -33,7 +33,17 @@ jobs:
             echo "VERSION file not found" && exit 1
           fi
 
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+          fi
+
       - name: Create tag
+        if: env.TAG_EXISTS == 'false'
         run: |
           git tag -a "v${{ env.VERSION }}" -m "Version ${{ env.VERSION }}"
           git push origin "v${{ env.VERSION }}"
