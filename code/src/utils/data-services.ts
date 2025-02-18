@@ -263,7 +263,7 @@ function parseTimeSeries(data: JsonObject): TimeSeries[] {
     const timeData: JsonArray = JSON.parse(JSON.stringify(data.time));
 
     timeData.forEach(ts => {
-        let rawTimeArray: number[] = JSON.parse(JSON.stringify(ts.time));
+        const rawTimeArray: number[] = JSON.parse(JSON.stringify(ts.time));
         let momentArray: moment.Moment[];
         if (ts.timeClass === "dateTime" || ts.timeClass === "Instant") {
             momentArray = rawTimeArray.map(t => moment(t, "YYYY-MM-DD HH:mm:ss"));
@@ -273,10 +273,10 @@ function parseTimeSeries(data: JsonObject): TimeSeries[] {
             momentArray = [];
         }
 
-        let tsNames: Array<string> = JSON.parse(JSON.stringify(ts.data));
-        let tsValues: Array<Array<number>> = JSON.parse(JSON.stringify(ts.values));
-        let tsValuesClass: Array<string> = JSON.parse(JSON.stringify(ts.valuesClass));
-        let tsUnits: Array<string> = JSON.parse(JSON.stringify(ts.units));
+        const tsNames: Array<string> = JSON.parse(JSON.stringify(ts.data));
+        const tsValues: Array<Array<number>> = JSON.parse(JSON.stringify(ts.values));
+        const tsValuesClass: Array<string> = JSON.parse(JSON.stringify(ts.valuesClass));
+        const tsUnits: Array<string> = JSON.parse(JSON.stringify(ts.units));
 
         tsNames.forEach((name, index) => {
             timeSeriesArray.push({
