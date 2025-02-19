@@ -112,4 +112,5 @@ export interface RegistryTaskOption {
   id: string;
   contract: string;
   status: string;
+  date: string;
 }

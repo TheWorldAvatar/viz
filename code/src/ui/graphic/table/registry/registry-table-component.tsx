@@ -138,7 +138,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       </div>
       {task && <TaskModal
         entityType={props.entityType}
-        date={selectedDate}
         registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
         task={task}
