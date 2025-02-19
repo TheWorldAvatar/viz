@@ -29,7 +29,7 @@ export default function FormBilling(props: Readonly<FormBillingProps>) {
   const variablePricingModel: string = "Variable Pricing";
   const pricingType: string = "pricing";
   // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] = useState<string>(Object.hasOwn(props.form.getValues(), FORM_STATES.unitPrice)
+  const [selectedModel, setSelectedModel] = useState<string>(Object.hasOwn(props.form.getValues(), FORM_STATES.UNIT_PRICE)
     ? variablePricingModel : flatFeeModel);
 
   // Updates the pricing model description whenever the pricing model option changes
