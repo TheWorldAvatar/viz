@@ -64,6 +64,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       props.form.setValue(FORM_STATES.END_DATE, getDefaultVal(FORM_STATES.END_DATE, jsonResponse[FORM_STATES.END_DATE.replace(/\s+/g, "_")].value, formType));
       props.form.setValue(FORM_STATES.TIME_SLOT_START, getDefaultVal(FORM_STATES.TIME_SLOT_START, jsonResponse["start_time"].value, formType));
       props.form.setValue(FORM_STATES.TIME_SLOT_END, getDefaultVal(FORM_STATES.TIME_SLOT_END, jsonResponse["end_time"].value, formType));
+      props.form.setValue(FORM_STATES.AFFECTED_BY_PUBLIC_HOLIDAY, getDefaultVal(FORM_STATES.AFFECTED_BY_PUBLIC_HOLIDAY, jsonResponse["affected_by_public_holiday"].value, formType))
+      
       daysOfWeek.map(dayOfWeek => {
         props.form.setValue(dayOfWeek, getDefaultVal(dayOfWeek, jsonResponse[dayOfWeek].value, formType));
       });

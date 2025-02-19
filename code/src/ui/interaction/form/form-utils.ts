@@ -18,6 +18,7 @@ export const FORM_STATES: Record<string, string> = {
   FRI: "friday",
   SAT: "saturday",
   SUN: "sunday",
+  AFFECTED_BY_PUBLIC_HOLIDAY: "affected by public holiday",
   DATE: "date",
   START_DATE: "start date",
   END_DATE: "end date",
