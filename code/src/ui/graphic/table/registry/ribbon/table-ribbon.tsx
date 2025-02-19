@@ -139,6 +139,14 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             }}
           />
         )}
+        {props.lifecycleStage == Routes.REGISTRY_REPORT && (
+          <ClickActionButton
+            icon={"print"}
+            title={"generate report"}
+            onClick={() => {
+              router.push(`${Routes.REGISTRY_EDIT}/pricing/${props.path}`);
+            }}
+          />)}
         <DownloadButton instances={props.instances} />
         {(authorised || !isKeycloakEnabled) &&
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
