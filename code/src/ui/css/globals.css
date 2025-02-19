@@ -20,6 +20,7 @@
         --text-color-secondary: #7f7f80;
         --text-color-links: #146a7d;
         --text-color-links-hover: #20aac9;
+        --text-color-title-primary: #0B4452;
 
         /* Border colors */
         --border-primary: #b6b6bf;
@@ -48,6 +49,7 @@
         --text-color-secondary: deepskyblue;
         --text-color-links: #146a7d;
         --text-color-links-hover: #20aac9;
+        --text-color-title-primary: #0B4452;
 
         /* Border colors */
         --border-primary: #434b55;
@@ -73,6 +75,9 @@
     --small-icon-size: 1rem;
     --smallest-icon-size: 0.6rem;
 
+    /* Button colors */
+    --button-color-primary: #83C38D;
+    --button-color-primary-active: #65A671;
     --alert-color: 191, 74, 42;
 }
 

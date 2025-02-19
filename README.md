@@ -51,15 +51,18 @@ In order to modify the uploaded documents or configurations, the container will 
 
 This deployment section is for a standalone Docker container:
 
-1. Create files within this directory (containing the docker configurations) for `mapbox_username` and `mapbox_api_key` according to your [Mapbox](https://www.mapbox.com/) credentials. This will be passed as Docker secrets when the container is started.
-2. Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly.
-3. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
-4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment  variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
+1. You will need a mapbox username and api token. Create files within this directory (containing the docker configurations) for `mapbox_username` and `mapbox_api_key` according to your [Mapbox](https://www.mapbox.com/) credentials. This will be passed as Docker secrets when the container is started.
+
+To view the example configuration, simply run `docker compose up` in this directory when the mapbox secrets are created. Allow a few minutes for the viz to build and start up, you will see a message in the terminal when this is completed, as well as your docker container's status. When this has started you should see a visualisation at `http://localhost:3000` if you are running locally. For further configuration, look at the following steps.
+
+2. (optional) Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly. Skip this step to use the default example config.
+3. (optional) Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
+4. (optional) If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment  variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above
 
-1. Start the container by running the command `docker compose up -d`. The container will be running on the host machine (whichever the command was run from) at port `80`.
+1. Start the container by running the command `docker compose up`. The container will be running on the host machine (whichever the command was run from) at port `3000`.
 
 ### 3.2 Stack Deployment
 
