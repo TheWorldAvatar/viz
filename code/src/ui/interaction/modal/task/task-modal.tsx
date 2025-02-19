@@ -67,28 +67,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setResponse(null);
   };
 
-  // Assign dispatch details
-  const assignDispatch: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+  const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
     formData[FORM_STATES.ORDER] = props.task.id;
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/dispatch`, false);
-  }
-
-  // Submit a completion request
-  const completeTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction({
-      dispatch: props.task.id,
-      ...formData
-    }, `${props.registryAgentApi}/contracts/service/complete`, true);
-  }
-
-  // Lodges a new report
-  const reportTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/report`, true);
-  }
-
-  // Cancel a scheduled service
-  const cancelTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/cancel`, true);
+    let url = `${props.registryAgentApi}/contracts/service/`;
+    if (isReportAction) {
+      url += "report";
+    } else if (isCancelAction) {
+      url += "cancel";
+    } else if (isCompleteAction) {
+      url += "complete";
+    } else if (isDispatchAction) {
+      url += "dispatch";
+    } else {
+      return;
+    }
+    // Submit post requests if they are not dispatch action
+    submitLifecycleAction(formData, url, !isDispatchAction);
   }
 
   // Reusable action method to report or cancel the service task
@@ -212,7 +206,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
             formRef={formRef}
             fields={formFields}
-            submitAction={isReportAction ? reportTask : isCancelAction ? cancelTask : isCompleteAction ? completeTask : assignDispatch}
+            submitAction={taskSubmitAction}
           />}
         </section>
         <section className={styles["section-footer"]}>
