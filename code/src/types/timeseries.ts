@@ -18,3 +18,5 @@ export type ScenarioDimensionStep = {
 export type ScenarioDimensionsData = {
     [key: string]: ScenarioDimensionStep[];
 };
+
+export const TIME_CLASSES = ["LocalDateTime", "ZonedDateTime", "Instant", "OffsetDateTime", "LocalDate"];

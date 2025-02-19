@@ -6,7 +6,7 @@ import { useFetchDataQuery, useFetchDimensionsQuery } from 'state/api/fia-api';
 import { getHasExistingData, setHasExistingData } from 'state/floating-panel-slice';
 import { Attribute, AttributeGroup } from 'types/attribute';
 import { JsonArray, JsonObject } from 'types/json';
-import { ScenarioDimensionsData, TimeSeries } from 'types/timeseries';
+import { ScenarioDimensionsData, TIME_CLASSES, TimeSeries } from 'types/timeseries';
 
 const rootKey: string = "meta";
 const displayOrderKey: string = "display_order";
@@ -265,10 +265,8 @@ function parseTimeSeries(data: JsonObject): TimeSeries[] {
     timeData.forEach(ts => {
         const rawTimeArray: number[] = JSON.parse(JSON.stringify(ts.time));
         let momentArray: moment.Moment[];
-        if (ts.timeClass === "dateTime" || ts.timeClass === "Instant") {
-            momentArray = rawTimeArray.map(t => moment(t, "YYYY-MM-DD HH:mm:ss"));
-        } else if (ts.timeClass === "offsetTime") {
-            momentArray = rawTimeArray.map(t => moment(t, "HH:mm:ss"));
+        if (TIME_CLASSES.includes(ts.timeClass as string)) {
+            momentArray = rawTimeArray.map(t => moment(t));
         } else {
             momentArray = [];
         }

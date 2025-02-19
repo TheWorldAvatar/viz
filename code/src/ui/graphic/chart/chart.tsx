@@ -4,7 +4,7 @@ import styles from './chart.module.css';
 import React, { useEffect, useRef } from 'react';
 import { Chart as ChartJS } from 'chart.js/auto';
 
-import { TimeSeries } from 'types/timeseries';
+import { TimeSeries, TIME_CLASSES } from 'types/timeseries';
 import 'chartjs-adapter-moment';
 
 // Interface for properties
@@ -34,8 +34,7 @@ export default function Chart(props: ChartProps) {
 
             const timeSeriesArray: TimeSeries[] = props.data;
             const currentTimeSeries: TimeSeries = timeSeriesArray[props.selectedIndex];
-            const timeClasses = ["dateTime", "offsetTime", "Instant"];
-            const xAxisType = timeClasses.includes(currentTimeSeries.timeClass) ? "time" : "linear";
+            const xAxisType = TIME_CLASSES.includes(currentTimeSeries.timeClass) ? "time" : "linear";
             const yAxisType = ("Boolean" === currentTimeSeries.valuesClass) ? "category" : "linear";
 
             // There is a weird interaction in ChartJS with passing dynamic properties
