@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getHasExistingData } from 'state/floating-panel-slice';
-import { TimeSeriesGroup } from 'types/timeseries';
+import { TimeSeries } from 'types/timeseries';
 import { AttributeGroup } from 'types/attribute';
 import { MapFeaturePayload } from 'state/map-feature-slice';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
@@ -16,7 +16,7 @@ import TimeSeriesPanel from './time-series-panel';
 
 interface InfoTreeProps {
   attributes: AttributeGroup;
-  timeSeries: TimeSeriesGroup;
+  timeSeries: TimeSeries[];
   featureName: string;
   isFetching: boolean;
   isUpdating: boolean;
@@ -33,7 +33,7 @@ interface InfoTreeProps {
  * the existing state is persisted even if this component is removed.
  * 
  * @param {AttributeGroup} attributes The processed attributes for user interaction.
- * @param {TimeSeriesGroup} timeSeries The processed time series for user interaction.
+ * @param {TimeSeries[]} timeSeries The processed time series for user interaction.
  * @param {string} featureName The name of the currently selected feature.
  * @param {boolean} isFetching An indicator if the query is still running.
  * @param {MapFeaturePayload[]} features A list of selected features.

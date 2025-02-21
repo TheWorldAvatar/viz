@@ -1,21 +1,19 @@
 import styles from './table.module.css';
 
 
-import { TimeSeries, TimeSeriesGroup } from 'types/timeseries';
+import { TimeSeries } from 'types/timeseries';
 
 interface TableProps {
-  group: TimeSeriesGroup;
-  selectedIndex: number;
+  data: TimeSeries;
 }
 
 /**
  * This component renders a table populated with the time series data.
  * 
- * @param {TimeSeriesGroup} group The group to render.
- * @param {number} selectedIndex The currently selected index.
+ * @param {TimeSeries} data The group to render.
  */
 export default function Table(props: Readonly<TableProps>) {
-  const currentTimeSeries: TimeSeries = props.group.data[props.selectedIndex];
+  const currentTimeSeries: TimeSeries = props.data;
   return (
     <div className={styles["table"]}>
       <p>Data series</p>
@@ -24,7 +22,7 @@ export default function Table(props: Readonly<TableProps>) {
           <div key={index} className={styles["entry"]}>
             <span className={styles["entry-header"]}>{value}</span>
             <span>at date/time:</span>
-            <span>{props.group.times[index]}</span>
+            <span>{currentTimeSeries.times[index]}</span>
           </div>
         ))}
       </div>
