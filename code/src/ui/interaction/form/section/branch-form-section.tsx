@@ -6,7 +6,7 @@ import { UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
 import { Routes } from 'io/config/routes';
-import { FormOptionType, NodeShape, PropertyShapeOrGroup, VALUE_KEY } from 'types/form';
+import { FormOptionType, NodeShape, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
 import { parseWordsForLabels } from 'utils/client-utils';
 import { renderFormField } from '../form';
@@ -19,14 +19,15 @@ interface OptionBasedFormSectionProps {
   form: UseFormReturn;
 }
 /**
- * This component renders a form section that displays different form fields based on the selected option in a separate selector.
+ * This component renders a branch form section that displays different form fields based on the selected branch option
+ * in a separate selector.
  * 
  * @param {string} entityType The type of entity.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {NodeShape[]} node A list containing the potential form field configurations available.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
-export default function OptionBasedFormSection(props: Readonly<OptionBasedFormSectionProps>) {
+export default function BranchFormSection(props: Readonly<OptionBasedFormSectionProps>) {
   // Define the state to store the selected value
   const [selectedModel, setSelectedModel] = useState<NodeShape>(props.node[0]);
   const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(parsePropertyShapeOrGroupList({}, props.node[0].property));
@@ -41,9 +42,26 @@ export default function OptionBasedFormSection(props: Readonly<OptionBasedFormSe
 
   const formOptions = useMemo(() => (props.node.map(nodeShape => convertNodeShapeToFormOption(nodeShape))
   ), []);
-  // Handle change event for the select input
+
+  // Handle change event for the branch selection
   const handleModelChange = (formOption: FormOptionType) => {
     const matchingNode: NodeShape = props.node.find(nodeShape => nodeShape.label[VALUE_KEY] === formOption.value);
+    // Before updating the current form branch, unregister all current fields
+    selectedModel.property.forEach(field => {
+      if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+        const fieldset: PropertyGroup = field as PropertyGroup;
+        // Unregister any group level property like array
+        props.form.unregister(fieldset.label[VALUE_KEY]);
+        // Unregister all fields associated with group
+        fieldset.property.forEach(fieldProp => {
+          const fieldId: string = `${fieldset.label[VALUE_KEY]} ${fieldProp.name[VALUE_KEY]}`;
+          props.form.unregister(fieldId);
+        });
+      } else {
+        props.form.unregister((field as PropertyShape).name[VALUE_KEY]);
+      }
+    });
+    // Update form branch
     setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
     setSelectedModel(matchingNode);
   };

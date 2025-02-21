@@ -51,13 +51,24 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
     // Properties as part of a group
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
       const fieldset: PropertyGroup = field as PropertyGroup;
+      // Initialise multiple property
+      fieldset.multipleProperty = [];
       const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
         const updatedProp: PropertyShape = updateDependentProperty(fieldProp, fields);
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
         return initFormField(updatedProp, initialState, fieldId);
-      })
+      }).filter(updatedShape => {
+        // When multiple fields for the same property is possible ie no max count or at least more than 1, 
+        // the property must be pushed into a separate set
+        if (!updatedShape.maxCount || (updatedShape.maxCount && parseInt(updatedShape.maxCount?.[VALUE_KEY]) > 1)) {
+          fieldset.multipleProperty.push(updatedShape);
+          return false; // Filter out from the 'properties' array
+        } else {
+          return true; // Keep in the 'properties' array
+        }
+      });
       // Update the property group with updated properties
       return {
         ...fieldset,

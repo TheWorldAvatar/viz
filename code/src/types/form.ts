@@ -83,6 +83,7 @@ export interface PropertyGroup {
   comment: JsonLdLiteral;
   order: number;
   property: PropertyShape[];
+  multipleProperty?: PropertyShape[];
 }
 
 interface JsonLdInstance {

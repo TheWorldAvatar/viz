@@ -17,7 +17,7 @@ import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
 import FormSection from './section/form-section';
-import OptionBasedFormSection from './section/option-based-form-section';
+import BranchFormSection from './section/branch-form-section';
 
 interface FormComponentProps {
   formRef: React.MutableRefObject<HTMLFormElement>;
@@ -222,7 +222,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       {!form.formState.isLoading && formTemplate.property.map((field, index) => {
         return renderFormField(props.entityType, props.agentApi, field, form, index);
       })}
-      {!form.formState.isLoading && formTemplate.node.length > 0 && <OptionBasedFormSection
+      {!form.formState.isLoading && formTemplate.node.length > 0 && <BranchFormSection
         entityType={props.entityType}
         agentApi={props.agentApi}
         node={formTemplate.node}

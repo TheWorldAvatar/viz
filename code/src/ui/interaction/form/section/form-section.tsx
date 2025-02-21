@@ -5,6 +5,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { PropertyGroup, VALUE_KEY } from 'types/form';
 import { parseWordsForLabels } from 'utils/client-utils';
 import { renderFormField } from '../form';
+import FormArray from '../field/array/array';
 
 interface FormSectionProps {
   entityType: string;
@@ -31,6 +32,12 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
       <div className={styles["form-fieldset-contents"]}>
         {props.group.property.map((field, index) =>
           renderFormField(props.entityType, props.agentApi, field, props.form, index))}
+        {props.group.multipleProperty.length > 0 && <FormArray
+          fieldId={props.group.label[VALUE_KEY]}
+          fieldConfigs={props.group.multipleProperty}
+          form={props.form}
+          options={props.options}
+        />}
       </div>
     </fieldset>);
 }
