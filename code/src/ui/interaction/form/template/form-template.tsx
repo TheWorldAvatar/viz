@@ -8,6 +8,7 @@ import { initFormField, updateDependentProperty } from '../form-utils';
 import FormFieldComponent from '../field/form-field';
 import { DependentFormSection } from '../section/dependent-form-section';
 import FormSection from '../section/form-section';
+import { renderFormField } from '../form';
 
 interface FormComponentProps {
   agentApi: string;
@@ -63,32 +64,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       {form.formState.isLoading ?
         <LoadingSpinner isSmall={false} /> :
         formFields.map((formField, index) => {
-          if (formField[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-            const fieldset: PropertyGroup = formField as PropertyGroup;
-            return <FormSection
-              key={fieldset[ID_KEY] + index}
-              entityType={props.entityType}
-              agentApi={props.agentApi}
-              group={fieldset}
-              form={form}
-            />
-          }
-          const field: PropertyShape = formField as PropertyShape;
-          if (field.class) {
-            return <DependentFormSection
-              key={field.name[VALUE_KEY] + index}
-              agentApi={props.agentApi}
-              dependentProp={field}
-              form={form}
-            />
-          }
-          return <FormFieldComponent
-            key={field.name[VALUE_KEY] + index}
-            entityType={props.entityType}
-            agentApi={props.agentApi}
-            field={field}
-            form={form}
-          />
+          return renderFormField(props.entityType, props.agentApi, formField, form, index)
         })}
     </form>
   );
