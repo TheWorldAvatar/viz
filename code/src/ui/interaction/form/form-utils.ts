@@ -90,7 +90,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
     }
   }
 
-  if ([FORM_STATES.SUN, FORM_STATES.MON, FORM_STATES.TUES, FORM_STATES.WED, FORM_STATES.THURS, FORM_STATES.FRI, FORM_STATES.SAT].includes(field)) {
+  if ([FORM_STATES.SUN, FORM_STATES.MON, FORM_STATES.TUES, FORM_STATES.WED, FORM_STATES.THURS, FORM_STATES.FRI, FORM_STATES.SAT, FORM_STATES.AFFECTED_BY_PUBLIC_HOLIDAY].includes(field)) {
     // Any day of week property should default to false for add form type, else, use the default value
     if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE) {
       return false;
