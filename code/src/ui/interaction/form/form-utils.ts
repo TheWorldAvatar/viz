@@ -27,6 +27,11 @@ export const FORM_STATES: Record<string, string> = {
   TIME_SLOT_END: "time slot end",
   LATITUDE: "latitude",
   LONGITUDE: "longitude",
+  FLAT_FEE: "base fee",
+  UNIT_PRICE: "unit price",
+  UNIT_RATE: "rate ($)",
+  UNIT_LOWER_BOUND: "from (unit)",
+  UNIT_UPPER_BOUND: "to (unit)",
 };
 
 export const ENTITY_STATUS: Record<string, string> = {
@@ -36,6 +41,48 @@ export const ENTITY_STATUS: Record<string, string> = {
 };
 
 /**
+ * Parses a list of property shape or group into a format compliant with the viz.
+ * 
+ * @param {FieldValues} initialState The initial state to store any field configuration.
+ * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
+ */
+export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields: PropertyShapeOrGroup[]): PropertyShapeOrGroup[] {
+  return fields.map(field => {
+    // Properties as part of a group
+    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+      const fieldset: PropertyGroup = field as PropertyGroup;
+      // Initialise multiple property
+      fieldset.multipleProperty = [];
+      const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
+        const updatedProp: PropertyShape = updateDependentProperty(fieldProp, fields);
+        // Update and set property field ids to include their group name
+        // Append field id with group name as prefix
+        const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        return initFormField(updatedProp, initialState, fieldId);
+      }).filter(updatedShape => {
+        // When multiple fields for the same property is possible ie no max count or at least more than 1, 
+        // the property must be pushed into a separate set
+        if (!updatedShape.maxCount || (updatedShape.maxCount && parseInt(updatedShape.maxCount?.[VALUE_KEY]) > 1)) {
+          fieldset.multipleProperty.push(updatedShape);
+          return false; // Filter out from the 'properties' array
+        } else {
+          return true; // Keep in the 'properties' array
+        }
+      });
+      // Update the property group with updated properties
+      return {
+        ...fieldset,
+        property: properties,
+      }
+    } else {
+      const fieldShape: PropertyShape = updateDependentProperty(field as PropertyShape, fields);
+      // For groupless properties, their field ID will be directly set without further parsing
+      return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);
+    }
+  });
+}
+
+/**
  * Initialises a form field based on the property shape. This function will retrieve the default value
  * as well as append the field ID based on the input.
  * 
@@ -43,7 +90,7 @@ export const ENTITY_STATUS: Record<string, string> = {
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
  */
-export function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string): PropertyShape {
+function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string): PropertyShape {
   // If no default value is available, value will default to null
   outputState[fieldId] = getDefaultVal(fieldId, field.defaultValue?.value, outputState.formType);
   // Update property shape with field ID property
@@ -112,7 +159,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
  * @param {PropertyShape} field The data model for the field of interest.
  * @param {PropertyShapeOrGroup[]} properties A list of properties to search for the form field ID.
  */
-export function updateDependentProperty(field: PropertyShape, properties: PropertyShapeOrGroup[]): PropertyShape {
+function updateDependentProperty(field: PropertyShape, properties: PropertyShapeOrGroup[]): PropertyShape {
   if (field.dependentOn) {
     const dependentIri: string = field.dependentOn[ID_KEY];
     let dependentFieldId: string;

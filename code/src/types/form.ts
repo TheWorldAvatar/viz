@@ -7,23 +7,24 @@ export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
+export const PRICING_IDENTIFIER = "pricing";
 
-interface RegistryFieldValue {
+export interface SparqlResponseField {
   value: string;
   type: string;
   dataType: string;
   lang: string;
 }
 
-export type RegistryFieldValues = Record<string, RegistryFieldValue>;
+export type RegistryFieldValues = Record<string, SparqlResponseField | SparqlResponseField[]>;
 
 export type OntologyConceptMappings = Record<string, OntologyConcept[]>;
 
 export type OntologyConcept = {
-  type: RegistryFieldValue;
-  label: RegistryFieldValue;
-  description: RegistryFieldValue;
-  parent?: RegistryFieldValue;
+  type: SparqlResponseField;
+  label: SparqlResponseField;
+  description: SparqlResponseField;
+  parent?: SparqlResponseField;
 };
 
 export interface FormOptionType {
@@ -31,8 +32,21 @@ export interface FormOptionType {
   value: string;
 }
 
+export interface FormArrayItemOption {
+  fieldId: string;
+  label: string;
+  placeholder?: string
+}
+
 export type FormTemplate = {
   "@context": Record<string, string>;
+  node: NodeShape[];
+  property: PropertyShapeOrGroup[];
+};
+
+export interface NodeShape {
+  label: JsonLdLiteral;
+  comment: JsonLdLiteral;
   property: PropertyShapeOrGroup[];
 };
 
@@ -45,12 +59,12 @@ export interface PropertyShape {
   description: JsonLdLiteral;
   order: number;
   fieldId?: string; // Not present but appended after
-  defaultValue?: RegistryFieldValue;
+  defaultValue?: SparqlResponseField;
   group?: JsonLdInstance;
   datatype?: string;
   class?: JsonLdInstance;
   dependentOn?: JsonLdInstance;
-  in?: JsonLdInstance;
+  in?: JsonLdInstance[];
   minCount?: JsonLdLiteral;
   maxCount?: JsonLdLiteral;
   minInclusive?: JsonLdLiteral;
@@ -69,6 +83,7 @@ export interface PropertyGroup {
   comment: JsonLdLiteral;
   order: number;
   property: PropertyShape[];
+  multipleProperty?: PropertyShape[];
 }
 
 interface JsonLdInstance {
@@ -105,4 +120,5 @@ export interface RegistryTaskOption {
   id: string;
   contract: string;
   status: string;
+  date: string;
 }

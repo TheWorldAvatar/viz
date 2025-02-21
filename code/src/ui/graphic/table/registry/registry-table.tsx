@@ -85,8 +85,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     // Extract only the value into the data to simplify
     return props.instances.map((instance) => {
       const flattenInstance: Record<string, string> = {};
-      Object.keys(instance).map((field) => {
-        flattenInstance[field] = instance[field].value;
+      Object.keys(instance).forEach((field) => {
+        const fieldValue = instance[field];
+        if (Array.isArray(fieldValue)) {
+          flattenInstance[field] = fieldValue[0]?.value; // Handle array of SparqlResponseField
+        } else {
+          flattenInstance[field] = fieldValue?.value;
+        }
       });
       return flattenInstance;
     });

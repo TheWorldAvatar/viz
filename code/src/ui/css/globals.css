@@ -78,6 +78,7 @@
     /* Button colors */
     --button-color-primary: #83C38D;
     --button-color-primary-active: #65A671;
+    --alert-color: 191, 74, 42;
 }
 
 * {
@@ -118,6 +119,9 @@ img {
     background-color: transparent !important;
 }
 
+ul {
+    list-style-type: none;
+}
 
 /**
     Constants for our own CSS classes (across all themes).

@@ -1,6 +1,7 @@
 import styles from './summary.module.css';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Routes } from 'io/config/routes';
 import { RegistryFieldValues } from 'types/form';
@@ -47,7 +48,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
         title="Description"
         isLoading={isLoading}
       >{contract && Object.keys(contract).map((field, index) => {
-        if (field != "id" && contract[field].value) {
+        if (field != "id" && !Array.isArray(contract[field]) && contract[field].value) {
           return <AccordionField
             key={field + index}
             name={field}
