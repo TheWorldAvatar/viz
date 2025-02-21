@@ -101,7 +101,7 @@ The following are applicable for all form types:
 - **Number**: `decimal`, `integer`
 - **Date**: `date`, `time`, `dateTime`
 
-2. `in`: Generates a select input field with options containing the **subclasses** on the associated class `{"@id": "class"}`
+2. `in`: Generates a select input field with options containing the **subclasses** on the associated list of class(es) `{"@id": "class"}`
 3. `class`: Generates a form section based on a select input field, containing the **instances** of the associated class `{"@id": "class"}`. Additional buttons are available to either add a new instance or view more details about the selected instance. This property can be used as a standalone without any dependency capabilities enabled. In enabling dependencies, please also include the following properties:
 
 - `https://theworldavatar.io/kg/form/dependentOn`: An optional property that must be included with `class` to enable dependencies between two fields. For instance, an employee must always be linked to a specific employer. This property must target the associated independent property shape in the format `{"@id": "IRI of the independent property shape ie employer"}`.
