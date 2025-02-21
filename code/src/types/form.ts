@@ -40,6 +40,13 @@ export interface FormArrayItemOption {
 
 export type FormTemplate = {
   "@context": Record<string, string>;
+  node: NodeShape[];
+  property: PropertyShapeOrGroup[];
+};
+
+export interface NodeShape {
+  label: JsonLdLiteral;
+  comment: JsonLdLiteral;
   property: PropertyShapeOrGroup[];
 };
 

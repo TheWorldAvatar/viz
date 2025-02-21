@@ -59,7 +59,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         const pricingModelArray: RegistryFieldValues[] = await getData(props.agentApi, "contracts/pricing", id);
         setFormTemplate({
           "@context": {},
-          property: []
+          node: [],
+          property: [],
         });
         return {
           id: id,
