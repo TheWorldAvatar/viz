@@ -79,7 +79,7 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
  */
-export function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string): PropertyShape {
+function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string): PropertyShape {
   // If no default value is available, value will default to null
   outputState[fieldId] = getDefaultVal(fieldId, field.defaultValue?.value, outputState.formType);
   // Update property shape with field ID property
@@ -148,7 +148,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
  * @param {PropertyShape} field The data model for the field of interest.
  * @param {PropertyShapeOrGroup[]} properties A list of properties to search for the form field ID.
  */
-export function updateDependentProperty(field: PropertyShape, properties: PropertyShapeOrGroup[]): PropertyShape {
+function updateDependentProperty(field: PropertyShape, properties: PropertyShapeOrGroup[]): PropertyShape {
   if (field.dependentOn) {
     const dependentIri: string = field.dependentOn[ID_KEY];
     let dependentFieldId: string;

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { PropertyShapeOrGroup } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { initFormField, updateDependentProperty } from '../form-utils';
 import { renderFormField } from '../form';
+import { parsePropertyShapeOrGroupList } from '../form-utils';
 
 interface FormComponentProps {
   agentApi: string;
@@ -34,23 +34,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       const initialState: FieldValues = {
         formType: Paths.REGISTRY_EDIT, // DEFAULT TO EDIT TYPE
       };
-      const fields: PropertyShapeOrGroup[] = props.fields.map(field => {
-        if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-          const fieldset: PropertyGroup = field as PropertyGroup;
-          // Ignore id for any groups
-          const properties: PropertyShape[] = fieldset.property.filter(field => field.name[VALUE_KEY] != "id").map(fieldProp => {
-            const updatedProp: PropertyShape = updateDependentProperty(fieldProp, props.fields);
-            return initFormField(updatedProp, initialState, updatedProp.name[VALUE_KEY])
-          })
-          return {
-            ...fieldset,
-            property: properties,
-          }
-        } else {
-          const updatedProp: PropertyShape = updateDependentProperty(field as PropertyShape, props.fields);
-          return initFormField(updatedProp, initialState, updatedProp.name[VALUE_KEY])
-        }
-      });
+      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields);
       setFormFields(fields);
       return initialState;
     }
