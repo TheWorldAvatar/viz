@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Control, Controller, FieldError, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import Select, { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { defaultSearchOption, FormOptionType, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, FormOptionType, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
 import { getAvailableTypes } from 'utils/server-actions';
@@ -37,7 +37,7 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
     control,
     name: props.field.fieldId,
   });
-
+  console.log(props)
   const effectRan = useRef(false);
   const [conceptMappings, setConceptMappings] = useState<OntologyConceptMappings>({});
   const [options, setOptions] = useState<OptionsOrGroups<FormOptionType, GroupBase<FormOptionType>>>([]);
@@ -51,76 +51,78 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
   // A hook that fetches all concepts for select input on first render
   useEffect(() => {
     // Declare an async function that retrieves all entity concepts for specific attributes
-    const getEntityConcepts = async (): Promise<OptionsOrGroups<FormOptionType, GroupBase<FormOptionType>>> => {
+    const getEntityConcepts = async (): Promise<void> => {
       props.setIsFetching(true);
-      let concepts: OntologyConcept[];
-      switch (props.field.name[VALUE_KEY].toLowerCase()) {
-        case "type":
-          concepts = await getAvailableTypes(props.agentApi, props.instanceType);
-          break;
-        default:
-          concepts = await getAvailableTypes(props.agentApi, props.field.name[VALUE_KEY].toLowerCase().replace(/\s+/g, "_"));
-          break;
-      }
-      if (concepts && concepts.length > 0) {
-        let firstOption: string = props.form.getValues(props.field.fieldId);
-        // WIP: Set default value Singapore for any Country Field temporarily
-        // Default values should not be hardcoded here but retrieved in a config instead
-        if (props.field.name[VALUE_KEY].toLowerCase() === "country" && !firstOption) {
-          firstOption = "Singapore";
-        }
-        // Add the default search option only if this is the search form
-        if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
-          firstOption = defaultSearchOption.label.value;
-          concepts.unshift(defaultSearchOption);
-        }
-        const sortedConceptMappings: OntologyConceptMappings = parseConcepts(concepts, firstOption);
-        setConceptMappings(sortedConceptMappings);
-        // First option should be set if available, else the first parent value should be prioritised
-        const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
-        props.form.setValue(props.field.fieldId,
-          sortedConceptMappings[firstRootOption.type.value] ? sortedConceptMappings[firstRootOption.type.value][0]?.type?.value
-            : firstRootOption?.type?.value);
+      try {
+        // Extract all the concept types and extract all the types from the endpoint
+        const conceptTypes: string[] = props.field.in.map(subClass => subClass[ID_KEY])
+        const conceptsArrays: OntologyConcept[][] = await Promise.all(
+          conceptTypes.map(conceptType => getAvailableTypes(props.agentApi, encodeURIComponent(conceptType)))
+        );
+        const concepts: OntologyConcept[] = conceptsArrays.flat();
+        if (concepts && concepts.length > 0) {
+          let firstOption: string = props.form.getValues(props.field.fieldId);
+          // WIP: Set default value Singapore for any Country Field temporarily
+          // Default values should not be hardcoded here but retrieved in a config instead
+          if (props.field.name[VALUE_KEY].toLowerCase() === "country" && !firstOption) {
+            firstOption = "Singapore";
+          }
+          // Add the default search option only if this is the search form
+          if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+            firstOption = defaultSearchOption.label.value;
+            concepts.unshift(defaultSearchOption);
+          }
+          const sortedConceptMappings: OntologyConceptMappings = parseConcepts(concepts, firstOption);
+          setConceptMappings(sortedConceptMappings);
+          // First option should be set if available, else the first parent value should be prioritised
+          const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
+          props.form.setValue(props.field.fieldId,
+            sortedConceptMappings[firstRootOption.type.value] ? sortedConceptMappings[firstRootOption.type.value][0]?.type?.value
+              : firstRootOption?.type?.value);
 
-        // Parse the mappings to generate the format for select options
-        const formOptions: FormOptionType[] = [];
-        const formGroups: GroupBase<FormOptionType>[] = [];
-        const flattenedFormOptions: FormOptionType[] = [];
+          // Parse the mappings to generate the format for select options
+          const formOptions: FormOptionType[] = [];
+          const formGroups: GroupBase<FormOptionType>[] = [];
+          const flattenedFormOptions: FormOptionType[] = [];
 
-        sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT].map((option) => {
-          const parentKey: string = option.type.value;
-          // If there are children options, return the opt group with the children options
-          if (sortedConceptMappings[parentKey]) {
-            const formChildrenOptions: FormOptionType[] = [];
+          sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT].forEach((option) => {
+            const parentKey: string = option.type.value;
+            // If there are children options, return the opt group with the children options
+            if (sortedConceptMappings[parentKey]) {
+              const formChildrenOptions: FormOptionType[] = [];
 
-            sortedConceptMappings[parentKey].map(childOption => {
+              sortedConceptMappings[parentKey].forEach(childOption => {
+                const formOption: FormOptionType = {
+                  value: childOption.type.value,
+                  label: childOption.label.value,
+                };
+                flattenedFormOptions.push(formOption);
+                formChildrenOptions.push(formOption);
+              });
+              const groupOption: GroupBase<FormOptionType> = {
+                label: option.label.value + " ↓",
+                options: formChildrenOptions,
+              };
+              formGroups.push(groupOption);
+
+            } else {
               const formOption: FormOptionType = {
-                value: childOption.type.value,
-                label: childOption.label.value,
+                value: option.type.value,
+                label: option.label.value,
               };
               flattenedFormOptions.push(formOption);
-              formChildrenOptions.push(formOption);
-            });
-            const groupOption: GroupBase<FormOptionType> = {
-              label: option.label.value + " ↓",
-              options: formChildrenOptions,
-            };
-            formGroups.push(groupOption);
-
-          } else {
-            const formOption: FormOptionType = {
-              value: option.type.value,
-              label: option.label.value,
-            };
-            flattenedFormOptions.push(formOption);
-            formOptions.push(formOption);
-          }
-        });
-        setOptions([...formOptions, ...formGroups]);
-        setFlattenedOptions(flattenedFormOptions);
+              formOptions.push(formOption);
+            }
+          });
+          setOptions([...formOptions, ...formGroups]);
+          setFlattenedOptions(flattenedFormOptions);
+        }
       }
-      props.setIsFetching(false);
-      return [];
+      catch (error) {
+        console.error("Error fetching concepts:", error);
+      } finally {
+        props.setIsFetching(false);
+      }
     }
 
     if (!effectRan.current) {

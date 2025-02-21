@@ -57,7 +57,7 @@ export interface PropertyShape {
   datatype?: string;
   class?: JsonLdInstance;
   dependentOn?: JsonLdInstance;
-  in?: JsonLdInstance;
+  in?: JsonLdInstance[];
   minCount?: JsonLdLiteral;
   maxCount?: JsonLdLiteral;
   minInclusive?: JsonLdLiteral;
