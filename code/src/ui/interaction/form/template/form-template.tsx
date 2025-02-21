@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { initFormField, updateDependentProperty } from '../form-utils';
-import FormFieldComponent from '../field/form-field';
-import { DependentFormSection } from '../section/dependent-form-section';
-import FormSection from '../section/form-section';
 import { renderFormField } from '../form';
 
 interface FormComponentProps {
