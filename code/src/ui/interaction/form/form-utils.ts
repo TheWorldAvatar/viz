@@ -41,6 +41,37 @@ export const ENTITY_STATUS: Record<string, string> = {
 };
 
 /**
+ * Parses a list of property shape or group into a format compliant with the viz.
+ * 
+ * @param {FieldValues} initialState The initial state to store any field configuration.
+ * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
+ */
+export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields: PropertyShapeOrGroup[]): PropertyShapeOrGroup[] {
+  return fields.map(field => {
+    // Properties as part of a group
+    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+      const fieldset: PropertyGroup = field as PropertyGroup;
+      const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
+        const updatedProp: PropertyShape = updateDependentProperty(fieldProp, fields);
+        // Update and set property field ids to include their group name
+        // Append field id with group name as prefix
+        const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        return initFormField(updatedProp, initialState, fieldId);
+      })
+      // Update the property group with updated properties
+      return {
+        ...fieldset,
+        property: properties,
+      }
+    } else {
+      const fieldShape: PropertyShape = updateDependentProperty(field as PropertyShape, fields);
+      // For groupless properties, their field ID will be directly set without further parsing
+      return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);
+    }
+  });
+}
+
+/**
  * Initialises a form field based on the property shape. This function will retrieve the default value
  * as well as append the field ID based on the input.
  * 

@@ -1,22 +1,23 @@
-import React, { ReactNode, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { usePathname } from 'next/navigation';
+import React, { ReactNode, useState } from 'react';
+import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 
 import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
 import { FormTemplate, ID_KEY, PRICING_IDENTIFIER, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryFieldValues, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter, initPricingModel } from 'utils/client-utils';
-import { HttpResponse, addEntity, deleteEntity, getData, getFormTemplate, getMatchingInstances, updateEntity } from 'utils/server-actions';
-import { FORM_STATES, initFormField, updateDependentProperty } from './form-utils';
+import { addEntity, deleteEntity, getData, getFormTemplate, getMatchingInstances, HttpResponse, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
-import FormSection from './section/form-section';
+import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import { DependentFormSection } from './section/dependent-form-section';
+import FormBilling from './section/form-billing';
+import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
-import FormGeocoder from './section/form-geocoder';
-import FormBilling from './section/form-billing';
+import FormSection from './section/form-section';
+import OptionBasedFormSection from './section/option-based-form-section';
 
 interface FormComponentProps {
   formRef: React.MutableRefObject<HTMLFormElement>;
@@ -77,30 +78,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         template = await getFormTemplate(props.agentApi, props.entityType, id);
       }
       if (props.additionalFields) {
-        props.additionalFields.map(field => template.property.push(field));
+        props.additionalFields.forEach(field => template.property.push(field));
       }
-      const updatedProperties: PropertyShapeOrGroup[] = template.property.map(field => {
-        // Properties as part of a group
-        if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-          const fieldset: PropertyGroup = field as PropertyGroup;
-          const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
-            const updatedProp: PropertyShape = updateDependentProperty(fieldProp, template.property);
-            // Update and set property field ids to include their group name
-            // Append field id with group name as prefix
-            const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
-            return initFormField(updatedProp, initialState, fieldId);
-          })
-          // Update the property group with updated properties
-          return {
-            ...fieldset,
-            property: properties,
-          }
-        } else {
-          const fieldShape: PropertyShape = updateDependentProperty(field as PropertyShape, template.property);
-          // For groupless properties, their field ID will be directly set without further parsing
-          return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);
-        }
-      });
+      const updatedProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, template.property);
       setFormTemplate({
         ...template,
         property: updatedProperties
@@ -240,8 +220,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         />
       }
       {!form.formState.isLoading && formTemplate.property.map((field, index) => {
-        return renderFormField(props.entityType, props.agentApi, field, form, index)
+        return renderFormField(props.entityType, props.agentApi, field, form, index);
       })}
+      {!form.formState.isLoading && formTemplate.node.length > 0 && <OptionBasedFormSection
+        entityType={props.entityType}
+        agentApi={props.agentApi}
+        node={formTemplate.node}
+        form={form}
+      />}
     </form>
   );
 }
