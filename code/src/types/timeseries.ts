@@ -19,4 +19,5 @@ export type ScenarioDimensionsData = {
   [key: string]: ScenarioDimensionStep[];
 };
 
+// majority are the names of Java date time classes, last two are for CReDoAccessAgent
 export const TIME_CLASSES = ["LocalDateTime", "ZonedDateTime", "Instant", "OffsetDateTime", "LocalDate", "offsetTime", "dateTime"];

@@ -9,8 +9,7 @@ import 'chartjs-adapter-moment';
 
 // Interface for properties
 interface ChartProps {
-  data: TimeSeries[];
-  selectedIndex: number;
+  data: TimeSeries;
 }
 
 ChartJS.defaults.font.family = "Dosis";
@@ -18,10 +17,9 @@ ChartJS.defaults.font.family = "Dosis";
 /** 
  * A chart component that is based on Chart.js library.
  * 
- * @param {TimeSeries[]} data The processed TimeSeries data.
- * @param {number} selectedIndex The currently selected index.
+ * @param {TimeSeries} data The processed TimeSeries data.
 */
-export default function Chart(props: ChartProps) {
+export default function Chart(props: Readonly<ChartProps>) {
   const canvasRef: React.MutableRefObject<HTMLCanvasElement> = useRef(null);
   const chartInstance: React.MutableRefObject<ChartJS> = useRef(null);
   useEffect(() => {
@@ -32,8 +30,7 @@ export default function Chart(props: ChartProps) {
       }
       const context: CanvasRenderingContext2D = canvasRef.current.getContext('2d');
 
-      const timeSeriesArray: TimeSeries[] = props.data;
-      const currentTimeSeries: TimeSeries = timeSeriesArray[props.selectedIndex];
+      const currentTimeSeries: TimeSeries = props.data;
       const xAxisType = TIME_CLASSES.includes(currentTimeSeries.timeClass) ? "time" : "linear";
       const yAxisType = ("Boolean" === currentTimeSeries.valuesClass) ? "category" : "linear";
 
@@ -117,7 +114,7 @@ export default function Chart(props: ChartProps) {
         }
       };
     }
-  }, [props.selectedIndex]);
+  }, [props.data]);
 
   return (
     <>
