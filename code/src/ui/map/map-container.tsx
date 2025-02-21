@@ -153,7 +153,6 @@ export default function MapContainer(props: MapContainerProps) {
       // Reset the filter features after usage
       dispatch(setFilterFeatureIris([]));
       dispatch(setFilterLayerIds([]));
-      dispatch(setFilterTimes([]));
     }
   }, [map, dataStore, filterLayerIds, filterFeatureIris, filterTimes]);
 
@@ -181,7 +180,7 @@ export default function MapContainer(props: MapContainerProps) {
           />
         }
       </MapSettingsProvider>
-      
+
       {/* Cesium map */}
       {mapSettings?.["type"] === "cesium" &&
         <div></div>
