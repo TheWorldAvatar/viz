@@ -37,7 +37,7 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
     control,
     name: props.field.fieldId,
   });
-  console.log(props)
+
   const effectRan = useRef(false);
   const [conceptMappings, setConceptMappings] = useState<OntologyConceptMappings>({});
   const [options, setOptions] = useState<OptionsOrGroups<FormOptionType, GroupBase<FormOptionType>>>([]);
