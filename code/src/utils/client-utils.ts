@@ -156,3 +156,18 @@ export function initPricingModel(initialState: FieldValues, response: RegistryFi
     }
     return initialState;
 }
+
+/**
+ * Extract the target field as a Response Field Object from the response.
+ *
+ * @param {RegistryFieldValues} response The response.
+ * @param {string} field The target field of interest.
+ */
+export function extractResponseField(response: RegistryFieldValues, field: string): SparqlResponseField {
+    if (Array.isArray(response[field])) {
+        console.warn(`Detected that field ${field} is an array! Skipping field...`)
+        return null;
+    } else {
+        return response[field];
+    }
+}

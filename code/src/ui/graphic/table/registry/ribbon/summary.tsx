@@ -1,14 +1,13 @@
 import styles from './summary.module.css';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { Routes } from 'io/config/routes';
 import { RegistryFieldValues } from 'types/form';
-import { getData } from 'utils/server-actions';
+import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
-import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
+import { getData } from 'utils/server-actions';
 
 interface SummarySectionProps {
   id: string;
@@ -32,8 +31,8 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const contract: RegistryFieldValues[] = await getData(props.registryAgentApi, props.entityType, props.id, null, true);
-        setContract(contract[0]);
+        const contractRes: RegistryFieldValues[] = await getData(props.registryAgentApi, props.entityType, props.id, null, true);
+        setContract(contractRes[0]);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching instances", error);

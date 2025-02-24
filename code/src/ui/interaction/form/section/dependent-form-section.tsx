@@ -9,7 +9,7 @@ import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { getAfterDelimiter } from 'utils/client-utils';
+import { extractResponseField, getAfterDelimiter } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
 import DependentFormSelector from '../field/dependent-form-selector';
 import { FORM_STATES } from '../form-utils';
@@ -70,14 +70,16 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       }
 
       // By default, use the first option's id
-      let defaultId: string = entities[0]?.id.value;
+      let defaultId: string = extractResponseField(entities[0], FORM_STATES.ID)?.value;
       // Search form should always target default value
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
         defaultId = defaultSearchOption.type.value;
         // If there is a default value, search and use the option matching the default instance's local name
       } else if (field.defaultValue) {
         const defaultValueId: string = getAfterDelimiter(field.defaultValue.value, "/");
-        defaultId = entities.find(entity => getAfterDelimiter(entity.id.value, "/") === defaultValueId).id.value;
+        defaultId = extractResponseField(entities.find(entity =>
+          getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
+        ), FORM_STATES.ID)?.value;
       }
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
@@ -95,10 +97,10 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         } else {
           displayField = Object.keys(fields).find((key => key != "id" && key != "iri"));
         }
-        entities.map(entity => {
+        entities.forEach(entity => {
           const formOption: FormOptionType = {
-            value: entity.id.value,
-            label: entity[displayField]?.value,
+            value: extractResponseField(entity, FORM_STATES.ID)?.value,
+            label: extractResponseField(entity, displayField)?.value,
           };
           formFields.push(formOption);
         })

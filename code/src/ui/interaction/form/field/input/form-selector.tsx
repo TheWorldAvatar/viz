@@ -77,7 +77,7 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
           // First option should be set if available, else the first parent value should be prioritised
           const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
           props.form.setValue(props.field.fieldId,
-            sortedConceptMappings[firstRootOption.type.value] ? sortedConceptMappings[firstRootOption.type.value][0]?.type?.value
+            sortedConceptMappings[firstRootOption?.type.value] ? sortedConceptMappings[firstRootOption.type.value][0]?.type?.value
               : firstRootOption?.type?.value);
 
           // Parse the mappings to generate the format for select options
