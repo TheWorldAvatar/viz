@@ -183,18 +183,20 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             })}
           </div>
-
-          {/* Affected By Public Holiday Checkbox */}
-          <div className={fieldStyles["form-input-container"]}>
-                  <FormCheckboxField
-                    field="affectedByPublicHoliday"
-                    label={affectedByPublicHoliday}
-                    form={props.form}
-                    options={isDisabledOption}
-                  />
-          </div>
         </div>
         }
+
+        {(selectedServiceOption === regularService || selectedServiceOption === alternateService) && (
+          <div className={fieldStyles["form-input-container"]}>
+            <FormCheckboxField
+              field="affectedByPublicHoliday"
+              label={affectedByPublicHoliday}
+              form={props.form}
+              options={isDisabledOption}
+            />
+          </div>
+        )}
+
         <div className={styles["time-slot-container"]}>
           <h1 className={fieldStyles["field-text"]} style={{ margin: "0.5rem 0.75rem" }}>Time Slot</h1>
           <div className={styles["form-fieldset-contents"]}>
