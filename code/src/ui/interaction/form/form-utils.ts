@@ -273,7 +273,7 @@ export function parseConcepts(concepts: OntologyConcept[], priority: string): On
   // Store the parent key value
   const parentNodes: string[] = [];
 
-  concepts.map(concept => {
+  concepts.forEach(concept => {
     // Store the priority option if found
     if (concept.label.value === priority || concept.type.value === priority) {
       priorityConcept = concept;
@@ -293,8 +293,8 @@ export function parseConcepts(concepts: OntologyConcept[], priority: string): On
       results[ONTOLOGY_CONCEPT_ROOT].push(concept);
     }
   });
-  sortRootConcepts(results, priorityConcept, parentNodes);
   sortChildrenConcepts(results, priorityConcept);
+  sortRootConcepts(results, priorityConcept, parentNodes);
   return results;
 }
 
@@ -310,7 +310,7 @@ function sortRootConcepts(mappings: OntologyConceptMappings, priority: OntologyC
   let parentConcepts: OntologyConcept[] = [];
   let childlessConcepts: OntologyConcept[] = [];
   // Process the concepts to map them
-  mappings[ONTOLOGY_CONCEPT_ROOT].map(concept => {
+  mappings[ONTOLOGY_CONCEPT_ROOT].forEach(concept => {
     // Priority may either be a child or parent concept and we should store the right concept
     if (priority && (concept.type.value == priority.parent?.value || concept.label.value == priority.parent?.value
       || concept.label.value == priority.label?.value
@@ -341,18 +341,28 @@ function sortRootConcepts(mappings: OntologyConceptMappings, priority: OntologyC
   * @param {OntologyConcept} priority The priority concept that we must find and separate.
   */
 function sortChildrenConcepts(mappings: OntologyConceptMappings, priority: OntologyConcept): void {
-  Object.keys(mappings).map(parentKey => {
+  // Extract an immutable list of parents to prevent further modifications
+  const parents: string[] = mappings[ONTOLOGY_CONCEPT_ROOT].map((concept) => concept.type.value);
+  Object.keys(mappings).forEach(parentKey => {
     // Ensure that this is not the root
     if (parentKey != ONTOLOGY_CONCEPT_ROOT) {
-      // Attempt to find the match concept
-      const matchedConcept: OntologyConcept = mappings[parentKey].find(concept => concept.type?.value == priority?.type?.value);
-      // Filter out the matching concept if it is present, and sort the children out
-      const sortedChildren: OntologyConcept[] = mappings[parentKey].filter(concept => concept.type?.value != priority?.type?.value)
-        .sort((a, b) => a.label.value.localeCompare(b.label.value));
-      // Append the matching concept to the start if it is present
-      if (matchedConcept) { sortedChildren.unshift(matchedConcept); }
-      // Overwrite the mappings with the sorted mappings
-      mappings[parentKey] = sortedChildren;
+      // If the parent object does exist, sort the children
+      if (parents.includes(parentKey)) {
+        // Attempt to find the match concept
+        const matchedConcept: OntologyConcept = mappings[parentKey].find(concept => concept.type?.value == priority?.type?.value);
+        // Filter out the matching concept if it is present, and sort the children out
+        const sortedChildren: OntologyConcept[] = mappings[parentKey].filter(concept => concept.type?.value != priority?.type?.value)
+          .sort((a, b) => a.label.value.localeCompare(b.label.value));
+        // Append the matching concept to the start if it is present
+        if (matchedConcept) { sortedChildren.unshift(matchedConcept); }
+        // Overwrite the mappings with the sorted mappings
+        mappings[parentKey] = sortedChildren;
+      } else {
+        // If there is no parent object, these children should be at the root instead
+        mappings[parentKey].forEach(concept => mappings[ONTOLOGY_CONCEPT_ROOT].push(concept));
+        // Remove the key
+        delete mappings[parentKey];
+      }
     }
   })
 }
@@ -365,7 +375,7 @@ function sortChildrenConcepts(mappings: OntologyConceptMappings, priority: Ontol
  */
 export function getMatchingConcept(mappings: OntologyConceptMappings, targetValue: string): OntologyConcept {
   let match: OntologyConcept;
-  Object.keys(mappings).map(key => {
+  Object.keys(mappings).forEach(key => {
     const matchedConcept: OntologyConcept = mappings[key].find(concept => concept.type?.value == targetValue);
     if (matchedConcept) {
       match = matchedConcept;
