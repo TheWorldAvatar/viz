@@ -33,7 +33,6 @@ export default function TimeSeriesPanel(props: Readonly<TimeSeriesPanelProps>) {
     <div className={styles["time-series-panel"]}>
       <DropdownField options={parseTimeSeriesIntoOptions(tsData)} selectedIndex={selectedTimeSeriesOption} setSelectedIndex={setSelectedTimeSeriesOption} />
       <Chart data={tsData[selectedTimeSeriesOption]} />
-      <Table data={tsData[selectedTimeSeriesOption]} />
     </div>
   );
 }
