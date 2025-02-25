@@ -43,6 +43,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--background-secondary);
+  width: 100%;
 }
 
 .section-footer {

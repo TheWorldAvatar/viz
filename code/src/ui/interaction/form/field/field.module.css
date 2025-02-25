@@ -1,8 +1,8 @@
 .form-field-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin: 0 0.25rem 1vh;
-  flex: 45%;
+  flex: 100%;
 }
 
 .form-input-container {
@@ -16,11 +16,12 @@
   margin-bottom: 0.2rem;
   font-size: var(--font-size-tertiary-text);
   white-space: nowrap;
+  text-align: left; 
 }
 
 .form-input-value {
-  width: fit-content;
-  max-width: 40vw;
+  width: 100%;
+  max-width: none;
   padding: 0.2rem;
 
   background-color: var(--background-primary);
