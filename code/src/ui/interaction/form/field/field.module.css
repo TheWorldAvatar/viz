@@ -3,12 +3,14 @@
   flex-direction: column;
   margin: 0 0.25rem 1vh;
   flex: 100%;
+  width: calc(100% - 1rem);
 }
 
 .form-input-container {
   display: flex;
   flex-direction: column;
   margin: 0 0.5rem;
+  width: 100%;
 }
 
 .form-input-label {
@@ -67,6 +69,7 @@
   background-color: var(--background-tertiary);
   font-size: var(--font-size-tertiary-text);
   color: var(--text-color-secondary);
+  width: 100%;
 }
 
 .form-checkbox-hover:hover {
