@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { TimeSeries } from 'types/timeseries';
 import Chart from 'ui/graphic/chart/chart';
-import Table from 'ui/graphic/table/table';
 import DropdownField, { DropdownFieldOption } from 'ui/interaction/dropdown/dropdown';
 
 interface TimeSeriesPanelProps {
