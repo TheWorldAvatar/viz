@@ -1,6 +1,6 @@
 {
     "name": "viz",
-    "version": "5.16.10",
+    "version": "5.16.13",
     "private": true,
     "type": "module",
     "jest": {
@@ -22,7 +22,7 @@
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
         "@mui/icons-material": "^6.4.3",
-        "@mui/material": "^6.4.3",
+        "@mui/material": "^6.4.5",
         "@mui/x-data-grid": "^7.26.0",
         "@reduxjs/toolkit": "^2.5.1",
         "@types/markdown-it": "^14.1.2",
@@ -70,11 +70,11 @@
         "@types/react": "^19.0.8",
         "@types/react-dom": "^19.0.3",
         "@types/react-modal": "^3.16.3",
-        "eslint": "^9.20.0",
+        "eslint": "^9.21.0",
         "eslint-config-next": "^15.1.7",
         "eslint-plugin-react": "^7.37.4",
         "fs": "0.0.1-security",
-        "globals": "^15.14.0",
+        "globals": "^16.0.0",
         "ts-typed-json": "^0.3.2",
         "typescript-eslint": "^8.24.0"
     },
