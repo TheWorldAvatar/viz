@@ -7,9 +7,9 @@ export const selectorStyles: StylesConfig<FormOptionType | GroupBase<FormOptionT
   control: (provided, { isDisabled }) => ({
     ...provided,
     outline: "1px solid var(--border-primary)",
-    borderRadius: "5px",
     minHeight: "3vh",
     maxHeight: "3vh",
+    height: "1.8rem",
     width: "100%",
     maxWidth: "100%",
     padding: "0 0.5rem",
