@@ -60,8 +60,8 @@ importers:
         specifier: ^26.1.1
         version: 26.1.1
       mapbox-gl:
-        specifier: 3.9.4
-        version: 3.9.4
+        specifier: 3.10.0
+        version: 3.10.0
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -1160,8 +1160,8 @@ packages:
   cheap-ruler@4.0.0:
     resolution: {integrity: sha512-0BJa8f4t141BYKQyn9NSQt1PguFQXMXwZiA5shfoaBYHAb2fFk2RAX+tiWMoQU+Agtzt3mdt0JtuyshAXqZ+Vw==}
 
-  chromedriver@133.0.2:
-    resolution: {integrity: sha512-Ku4JqyzMNyla2t2z40/Or2tTH/FrRBp2xXhg3LUM7/Qi9tN7mk9uB1xtkmoP33S977FJuhkKenHBCEMH67lD2g==}
+  chromedriver@133.0.3:
+    resolution: {integrity: sha512-wGZUtrSdyqnbweXEDIbn+ndu7memG4SEqG6/D+mSabKUEic0hveMYepAPAhlYtvyOc0X8JbsARYtEalVD3R/Vg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2134,8 +2134,8 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
 
-  mapbox-gl@3.9.4:
-    resolution: {integrity: sha512-IxfpdyNzjCMzkqj/q5OUamlF1QcS+IFEARteygEgao2B8l8+UF2ahpNRgHT2EpMSE8ma1bq4LKvr+EuJ6gqniw==}
+  mapbox-gl@3.10.0:
+    resolution: {integrity: sha512-YnQxjlthuv/tidcxGYU2C8nRDVXMlAHa3qFhuOJeX4AfRP72OMRBf9ApL+M+k5VWcAXi2fcNOUVgphknjLumjA==}
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
@@ -4166,7 +4166,7 @@ snapshots:
 
   cheap-ruler@4.0.0: {}
 
-  chromedriver@133.0.2:
+  chromedriver@133.0.3:
     dependencies:
       '@testim/chrome-version': 1.1.4
       axios: 1.7.9
@@ -5331,7 +5331,7 @@ snapshots:
     dependencies:
       jwk-to-pem: 2.0.7
     optionalDependencies:
-      chromedriver: 133.0.2
+      chromedriver: 133.0.3
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -5374,7 +5374,7 @@ snapshots:
   lru-cache@7.18.3:
     optional: true
 
-  mapbox-gl@3.9.4:
+  mapbox-gl@3.10.0:
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.2
       '@mapbox/mapbox-gl-supported': 3.0.0
