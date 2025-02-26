@@ -125,6 +125,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
     }
 
+    // Remove form type state before sending to backend
+    delete formData[FORM_STATES.FORM_TYPE];
+
     switch (props.formType.toLowerCase()) {
       case Paths.REGISTRY_ADD: {
         pendingResponse = await addEntity(props.agentApi, formData, props.entityType);
