@@ -3,25 +3,23 @@ import styles from './chart.module.css';
 
 import React, { useEffect, useRef } from 'react';
 import { Chart as ChartJS } from 'chart.js/auto';
-import moment from 'moment';
 
-import { TimeSeriesGroup, TimeSeries } from 'types/timeseries';
+import { TimeSeries, TIME_CLASSES } from 'types/timeseries';
+import 'chartjs-adapter-moment';
 
 // Interface for properties
 interface ChartProps {
-  data: TimeSeriesGroup;
-  selectedIndex: number;
+  data: TimeSeries;
 }
 
 ChartJS.defaults.font.family = "Dosis";
 
-/**
+/** 
  * A chart component that is based on Chart.js library.
  * 
- * @param {TimeSeriesGroup} data The processed TimeSeries data.
- * @param {number} selectedIndex The currently selected index.
+ * @param {TimeSeries} data The processed TimeSeries data.
 */
-export default function Chart(props: ChartProps) {
+export default function Chart(props: Readonly<ChartProps>) {
   const canvasRef: React.MutableRefObject<HTMLCanvasElement> = useRef(null);
   const chartInstance: React.MutableRefObject<ChartJS> = useRef(null);
   useEffect(() => {
@@ -32,18 +30,17 @@ export default function Chart(props: ChartProps) {
       }
       const context: CanvasRenderingContext2D = canvasRef.current.getContext('2d');
 
-      const data: TimeSeriesGroup = props.data;
-      const xAxisType = data.timeClass === "dateTime" || data.timeClass === "offsetTime" ? "time" : "linear";
-      const currentTimeSeries: TimeSeries = data.data[props.selectedIndex];
+      const currentTimeSeries: TimeSeries = props.data;
+      const xAxisType = TIME_CLASSES.includes(currentTimeSeries.timeClass) ? "time" : "linear";
       const yAxisType = ("Boolean" === currentTimeSeries.valuesClass) ? "category" : "linear";
 
       // There is a weird interaction in ChartJS with passing dynamic properties
       // My only working solution at the moment is to generate different charts with different types for the data.labels property
-      if (data.momentTimes.length > 0) {
+      if (currentTimeSeries.momentTimes.length > 0) {
         chartInstance.current = new ChartJS(context, {
           type: "line",
           data: {
-            labels: data.momentTimes as moment.Moment[],
+            labels: currentTimeSeries.momentTimes,
             datasets: [{
               label: currentTimeSeries.name,
               pointBorderColor: "rgba(33, 150, 243, 0.70)",
@@ -56,7 +53,7 @@ export default function Chart(props: ChartProps) {
         chartInstance.current = new ChartJS(context, {
           type: "line",
           data: {
-            labels: data.times as number[],
+            labels: currentTimeSeries.times,
             datasets: [{
               label: currentTimeSeries.name,
               pointBorderColor: "rgba(33, 150, 243, 0.70)",
@@ -117,7 +114,7 @@ export default function Chart(props: ChartProps) {
         }
       };
     }
-  }, [props.selectedIndex]);
+  }, [props.data]);
 
   return (
     <>
