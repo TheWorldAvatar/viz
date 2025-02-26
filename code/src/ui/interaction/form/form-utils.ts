@@ -92,7 +92,7 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
  */
 function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string): PropertyShape {
   // If no default value is available, value will default to null
-  outputState[fieldId] = getDefaultVal(fieldId, field.defaultValue?.value, outputState.formType);
+  outputState[fieldId] = getDefaultVal(fieldId, field.defaultValue?.value ?? outputState.id, outputState.formType);
   // Update property shape with field ID property
   return {
     ...field,

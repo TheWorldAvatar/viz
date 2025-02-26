@@ -55,6 +55,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
         formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
+        id: id,
       };
       if (props.entityType == PRICING_IDENTIFIER) {
         const pricingModelArray: RegistryFieldValues[] = await getData(props.agentApi, "contracts/pricing", id);
