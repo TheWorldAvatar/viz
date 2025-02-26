@@ -99,13 +99,13 @@
   padding: 0.25rem 0.5rem;
   margin: 0.75rem 0 0.5rem;
   height: 1.8rem;
+  display: flex;
+  align-items: center;
   font-size: var(--font-size-tertiary-text);
-  background-color: var(--button-color-primary);
+  background-color: #a9d9d1;
   transition: all 0.2s ease-in;
   transition-property: max-height padding margin;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-  display: flex;
-  align-items: center;
   line-height: 1.2;
 }
 
@@ -116,7 +116,7 @@
   top: -1rem;
 
   border: solid transparent;
-  border-bottom-color: var(--button-color-primary);
+  border-bottom-color: #a9d9d1;
   border-width: 0.5rem;
 }
 
@@ -131,8 +131,10 @@
 
 .info-text-show {
   display: block;
-  max-height: fit-content;
+  height: 1.8rem;
   opacity: 1;
+  display: flex;
+  align-items: center;
 }
 
 .field-text {
