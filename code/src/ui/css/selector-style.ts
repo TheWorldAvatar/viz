@@ -11,7 +11,7 @@ export const selectorStyles: StylesConfig<FormOptionType | GroupBase<FormOptionT
     minHeight: "3vh",
     maxHeight: "3vh",
     width: "100%",
-    maxWidth: "6rem",
+    maxWidth: "100%",
     padding: "0 0.5rem",
     margin: "0",
 

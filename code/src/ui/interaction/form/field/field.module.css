@@ -47,8 +47,8 @@
 
 .dtpicker {
   height: 1.5rem;
-  width: 7.5rem;
-  max-width: 7.5rem;
+  width: 100%;
+  max-width: 100%;
   padding-left: 0.25rem;
 
   background-color: var(--background-primary);
