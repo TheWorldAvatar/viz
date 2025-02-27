@@ -51,7 +51,7 @@ export default function FormInputContainer(
       {props.children}
       {props.field.description[VALUE_KEY] != "" && (
         <p className={`${styles["info-text"]} ${styles["info-text-show"]}`}>
-          <b className={styles["field-text"]}>Description:</b>{" "}
+          <b className={styles["field-text"]}>Description:&nbsp;</b>{" "}
           {props.field.description[VALUE_KEY]}
           {props.selectedOption && (
             <>
