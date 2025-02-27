@@ -64,6 +64,8 @@
 }
 
 .form-fieldset {
+  border-color:black;
+  border-style: solid;
   border-width: 1px 0 0;
 }
 
@@ -79,6 +81,8 @@
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 .form-dependent-fieldset {
