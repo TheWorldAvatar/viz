@@ -5,14 +5,13 @@ import { useDispatch } from 'react-redux';
 
 import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
-import { FormTemplate, ID_KEY, PRICING_IDENTIFIER, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryFieldValues, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { getAfterDelimiter, initPricingModel } from 'utils/client-utils';
-import { addEntity, deleteEntity, getData, getFormTemplate, getMatchingInstances, HttpResponse, updateEntity } from 'utils/server-actions';
+import { getAfterDelimiter } from 'utils/client-utils';
+import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, HttpResponse, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import { DependentFormSection } from './section/dependent-form-section';
-import FormBilling from './section/form-billing';
 import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
@@ -57,18 +56,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
         id: id,
       };
-      if (props.entityType == PRICING_IDENTIFIER) {
-        const pricingModelArray: RegistryFieldValues[] = await getData(props.agentApi, "contracts/pricing", id);
-        setFormTemplate({
-          "@context": {},
-          node: [],
-          property: [],
-        });
-        return {
-          id: id,
-          ...initPricingModel(initialState, pricingModelArray),
-        };
-      }
       // Retrieve template from APIs
       let template: FormTemplate;
       // For add form, get a blank template
@@ -154,12 +141,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             contract: props.primaryInstance,
           });
           url = `${props.agentApi}/contracts/draft`;
-        } else if (props.entityType == "pricing") {
-          reqBody = JSON.stringify({
-            ...formData,
-            contract: props.primaryInstance,
-          });
-          url = `${props.agentApi}/contracts/pricing`;
         } else {
           reqBody = JSON.stringify({
             ...formData,
@@ -216,13 +197,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   return (
     <form ref={props.formRef} onSubmit={onSubmit}>
       {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
-      {!form.formState.isLoading && props.entityType == PRICING_IDENTIFIER &&
-        <FormBilling
-          id={id}
-          agentApi={props.agentApi}
-          form={form}
-        />
-      }
       {!form.formState.isLoading && formTemplate.property.map((field, index) => {
         return renderFormField(props.entityType, props.agentApi, field, form, index);
       })}

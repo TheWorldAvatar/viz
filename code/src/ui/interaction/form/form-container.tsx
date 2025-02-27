@@ -146,8 +146,8 @@ export default function FormContainerComponent(props: Readonly<FormContainerComp
       setStatus(JSON.parse(response));
     }
 
-    if (!status && ((props.entityType == "pricing") || (props.isPrimaryEntity &&
-      (props.formType === Paths.REGISTRY || props.formType === Paths.REGISTRY_DELETE || props.formType === Paths.REGISTRY_EDIT)))
+    if (!status && props.isPrimaryEntity &&
+      (props.formType === Paths.REGISTRY || props.formType === Paths.REGISTRY_DELETE || props.formType === Paths.REGISTRY_EDIT)
     ) {
       getContractStatus();
     }

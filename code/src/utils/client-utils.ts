@@ -112,52 +112,6 @@ export function getSparqlResponseValue(response: SparqlResponseField): string {
 }
 
 /**
- * Initialise the pricing model.
- *
- * @param {FieldValues} initialState The initial state object.
- * @param {SparqlResponseField} response The target SPARQL response.
- */
-export function initPricingModel(initialState: FieldValues, response: RegistryFieldValues[]): FieldValues {
-    // An empty response indicates that no pricing model is available and set to default
-    if (Object.keys(response[0]).length === 0) {
-        initialState[FORM_STATES.FLAT_FEE] = 0.01;
-    } else {
-        // parse an existing pricing model into the required format
-        const pricingModel: RegistryFieldValues = response[0];
-        const flatFee: SparqlResponseField | SparqlResponseField[] = pricingModel[FORM_STATES.FLAT_FEE.replaceAll(" ", "_")];
-        if (!Array.isArray(flatFee)) {
-            initialState[FORM_STATES.FLAT_FEE] = getSparqlResponseValue(flatFee);
-        }
-        // If variable model is set
-        if (Object.hasOwn(pricingModel, "rate") && Array.isArray(pricingModel["rate"]) && Array.isArray(pricingModel["lowerBound"]) && Array.isArray(pricingModel["upperBound"])) {
-            const unitPrice: FieldValues[] = [];
-            // Iterate and push value into objects within an array
-            for (let i = 0; i < pricingModel["rate"].length; i++) {
-                unitPrice.push({
-                    rate: getSparqlResponseValue(pricingModel["rate"][i]) || "",
-                    lowerBound: getSparqlResponseValue(pricingModel["lowerBound"][i]) || "",
-                    upperBound: getSparqlResponseValue(pricingModel["upperBound"][i]) || "",
-                });
-            }
-            // Sort array by their lowerbounds
-            unitPrice.sort((currItem, nextItem) => {
-                const currVal = currItem.lowerBound;
-                const nextVal = nextItem.lowerBound;
-                if (currVal < nextVal) {
-                    return -1; // currItem comes before nextItem
-                } else if (currVal > nextVal) {
-                    return 1; // currItem comes after nextItem
-                } else {
-                    return 0; // currItem and nextItem are equal
-                }
-            });
-            initialState[FORM_STATES.UNIT_PRICE] = unitPrice;
-        }
-    }
-    return initialState;
-}
-
-/**
  * Extract the target field as a Response Field Object from the response.
  *
  * @param {RegistryFieldValues} response The response.
