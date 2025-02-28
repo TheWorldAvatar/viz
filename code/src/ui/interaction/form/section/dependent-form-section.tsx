@@ -36,7 +36,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);;
+  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -59,7 +59,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await getData(props.agentApi, parentField, getAfterDelimiter(currentParentOption, "/"), entityType);
+          entities = await getData(props.agentApi, field.dependentOn.label, getAfterDelimiter(currentParentOption, "/"), entityType);
         }
         // If there is no valid parent option, there should be no entity
       } else if (formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) {

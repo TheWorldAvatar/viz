@@ -62,7 +62,7 @@ export interface PropertyShape {
   group?: JsonLdInstance;
   datatype?: string;
   class?: JsonLdInstance;
-  dependentOn?: JsonLdInstance;
+  dependentOn?: DependentInstance;
   in?: JsonLdInstance[];
   minCount?: JsonLdLiteral;
   maxCount?: JsonLdLiteral;
@@ -83,6 +83,11 @@ export interface PropertyGroup {
   order: number;
   property: PropertyShape[];
   multipleProperty?: PropertyShape[];
+}
+
+interface DependentInstance {
+  "@id": string;
+  label?: string;
 }
 
 interface JsonLdInstance {
