@@ -64,7 +64,7 @@
 }
 
 .form-fieldset {
-  border-color:black;
+  border-color: var(--border-tertiary);
   border-style: solid;
   border-width: 1px 0 0;
 }
