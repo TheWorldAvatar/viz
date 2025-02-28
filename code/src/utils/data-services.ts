@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFetchDataQuery, useFetchDimensionsQuery } from 'state/api/fia-api';
 import { getHasExistingData, setHasExistingData } from 'state/floating-panel-slice';
 import { Attribute, AttributeGroup } from 'types/attribute';
-import { JsonObject } from 'types/json';
-import { ScenarioDimensionsData, TimeSeries, TimeSeriesGroup } from 'types/timeseries';
+import { JsonArray, JsonObject } from 'types/json';
+import { ScenarioDimensionsData, TIME_CLASSES, TimeSeries } from 'types/timeseries';
 
 const rootKey: string = "meta";
 const displayOrderKey: string = "display_order";
@@ -72,14 +72,14 @@ export const useScenarioDimensionsService = (stack: string, scenario: string): {
  * @param {object} featureProperties The selected feature's inherent properties, which is used as a fallback.
  * 
  */
-export const useFeatureInfoAgentService = (endpoint: string, selectedIri: string, featureProperties: object): { attributes: AttributeGroup; timeSeries: TimeSeriesGroup; isFetching: boolean, isUpdating: boolean } => {
+export const useFeatureInfoAgentService = (endpoint: string, selectedIri: string, featureProperties: object): { attributes: AttributeGroup; timeSeries: TimeSeries[]; isFetching: boolean, isUpdating: boolean } => {
   const dispatch = useDispatch();
   const { data, isFetching } = useFetchDataQuery(endpoint);
 
   const [queriedData, setQueriedData] = useState(null);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [attributes, setAttributes] = useState<AttributeGroup>(null);
-  const [timeSeries, setTimeSeries] = useState<TimeSeriesGroup>(null);
+  const [timeSeries, setTimeSeries] = useState<TimeSeries[]>(null);
 
   const hasExistingData: boolean = useSelector(getHasExistingData);
 
@@ -116,7 +116,7 @@ export const useFeatureInfoAgentService = (endpoint: string, selectedIri: string
     }
 
     if (queriedData?.time && Object.keys(queriedData.time).length > 0) {
-      const timeSeriesData: TimeSeriesGroup = parseTimeSeries(queriedData);
+      const timeSeriesData: TimeSeries[] = parseTimeSeries(queriedData);
       setTimeSeries(timeSeriesData);
     }
 
@@ -260,46 +260,43 @@ function parseAttribute(property: string, value: string | number, unit?: string)
  * Parse the time series data returned into the time series group data model.
  *
  * @param {JsonObject} data The JSON data to parse.
- * @returns {TimeSeriesGroup} The required data model.
+ * @returns {TimeSeries[]} The required data model.
  */
-function parseTimeSeries(data: JsonObject): TimeSeriesGroup {
+function parseTimeSeries(data: JsonObject): TimeSeries[] {
   // Initialise new empty array to store the values
-  const timeSeries: TimeSeries[] = [];
-  const times: moment.Moment[] = [];
+  const timeSeriesArray: TimeSeries[] = [];
 
   // Parse data response to comply with typescript
-  const timeData: JsonObject = JSON.parse(JSON.stringify(data.time))[0];
-  const tsNames: Array<string> = JSON.parse(JSON.stringify(timeData.data));
-  const tsUnits: Array<string> = JSON.parse(JSON.stringify(timeData.units));
-  const tsValues: Array<Array<number>> = JSON.parse(JSON.stringify(timeData.values));
-  const tsValueClass: Array<string> = JSON.parse(JSON.stringify(timeData.valuesClass));
-  const timeClass: string = timeData.timeClass as string;
-  const rawTimes: number[] = JSON.parse(JSON.stringify(timeData.time));
+  const timeData: JsonArray = JSON.parse(JSON.stringify(data.time));
 
-  for (let t = 0; t < rawTimes.length; t++) {
-    if (timeClass === "dateTime" || timeClass === "Instant") {
-      times.push(moment(rawTimes[t], "YYYY-MM-DD HH:mm:ss"));
-    } else if (timeClass === "offsetTime") {
-      times.push(moment(rawTimes[t], "HH:mm:ss"));
+  timeData.forEach(ts => {
+    const rawTimeArray: number[] = JSON.parse(JSON.stringify(ts.time));
+    let momentArray: moment.Moment[];
+    if (TIME_CLASSES.includes(ts.timeClass as string)) {
+      momentArray = rawTimeArray.map(t => moment(t));
+    } else {
+      momentArray = [];
     }
-  }
 
-  // Extract the current values and unit for each time series
-  tsNames.map((name, index) => {
-    timeSeries.push({
-      name: name,
-      unit: tsUnits[index],
-      values: tsValues[index],
-      valuesClass: tsValueClass[index],
+    const tsNames: Array<string> = JSON.parse(JSON.stringify(ts.data));
+    const tsValues: Array<Array<number>> = JSON.parse(JSON.stringify(ts.values));
+    const tsValuesClass: Array<string> = JSON.parse(JSON.stringify(ts.valuesClass));
+    const tsUnits: Array<string> = JSON.parse(JSON.stringify(ts.units));
+
+    tsNames.forEach((name, index) => {
+      timeSeriesArray.push({
+        name: name,
+        momentTimes: momentArray,
+        times: rawTimeArray,
+        values: tsValues[index],
+        valuesClass: tsValuesClass[index],
+        timeClass: ts.timeClass as string,
+        unit: tsUnits[index]
+      });
     });
-  })
-  return {
-    id: timeData.id as number,
-    timeClass: timeData.timeClass as string,
-    momentTimes: times,
-    times: rawTimes,
-    data: timeSeries,
-  };
+  });
+
+  return timeSeriesArray;
 }
 
 /**

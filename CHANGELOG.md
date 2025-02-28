@@ -3,6 +3,24 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.13
+
+### Changes
+
+ This PR was created by the Combine PRs action by combining the following PRs:
+
+- #106 build(deps-dev): bump eslint from 9.20.0 to 9.21.0 in /code
+- #105 build(deps): bump @mui/material from 6.4.3 to 6.4.5 in /code
+- #104 build(deps-dev): bump globals from 15.14.0 to 16.0.0 in /code
+- #102 build(deps): bump actions/github-script from 6 to 7
+- #101 build(deps): bump node from 23.7-slim to 23.8-slim
+
+## 5.16.12
+
+### Bug Fixes
+
+- Account for multiple time series returned by the feature info agent
+
 ## 5.16.11
 
 ### Improvements
