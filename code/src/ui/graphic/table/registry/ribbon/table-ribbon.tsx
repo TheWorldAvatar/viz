@@ -59,7 +59,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     <div className={styles.menu}>
       <div className={styles["registry-nav-ribbon"]}>
         <RedirectButton
-          title="Pending"
+          label="Pending"
           icon="pending"
           url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
@@ -72,7 +72,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           }}
         />
         <RedirectButton
-          title="Active"
+          label="Active"
           icon="schedule"
           url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
@@ -85,7 +85,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           }}
         />
         <RedirectButton
-          title="Archive"
+          label="Archive"
           icon="archive"
           url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
@@ -106,7 +106,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           props.lifecycleStage == Routes.REGISTRY_PENDING && (
             <ClickActionButton
               icon={"add"}
-              title={"add " + props.entityType}
+              label={"add " + props.entityType}
               onClick={() => {
                 router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
               }}
@@ -118,7 +118,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               icon={"task"}
               url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
               isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-              title={"overview"}
+              label={"overview"}
             />
           )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
@@ -127,13 +127,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               icon={"event"}
               url={`${Routes.REGISTRY_TASK_DATE}`}
               isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-              title={"view tasks"}
+              label={"view tasks"}
             />
           )}
         {props.lifecycleStage == Routes.REGISTRY_REPORT && (
           <ClickActionButton
             icon={"first_page"}
-            title={`back to ${props.entityType}s`}
+            label={`back to ${props.entityType}s`}
             onClick={() => {
               router.back();
             }}

@@ -42,8 +42,11 @@
 }
 
 .form-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-direction: row-reverse;
-  padding-left: 1rem;
+  padding-left: 0rem;
 }
 
 .form-button-text {
@@ -61,6 +64,24 @@
 
 .form-button-icon:hover {
   color: var(--text-color-links-hover);
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 0.4rem;
+  background-color: var(--background-primary);
+  margin: 0 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.icon-button:hover {
+  background-color: var(--background-tertiary);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-fieldset {

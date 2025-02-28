@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import useRefresh from "hooks/useRefresh";
-import { Paths } from "io/config/routes";
+import { Paths, Routes } from "io/config/routes";
 import { setIsOpen } from "state/modal-slice";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -28,6 +28,7 @@ import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
 import { ApiResponse, JsonObject } from "types/json";
 import { FormTemplate } from "./template/form-template";
 import { FORM_IDENTIFIER, PropertyShape } from "types/form";
+import ClickActionButton from "../action/click/click-button";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -161,19 +162,19 @@ export default function FormContainerComponent(
     }, 2000);
   };
 
-  const onReturn: React.MouseEventHandler<HTMLDivElement> = () => {
+  const onReturn: React.MouseEventHandler<HTMLButtonElement> = () => {
     dispatch(setIsOpen(false));
     router.back();
   };
 
-  const closeTab: React.MouseEventHandler<HTMLDivElement> = () => {
+  const closeTab: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (typeof window !== "undefined") {
       window.close(); // Closes the tab
     }
     router.back(); // Required to close the intercepted modal as the tab cannot be closed
   };
 
-  const onSubmit: React.MouseEventHandler<HTMLDivElement> = () => {
+  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
       formRef.current.requestSubmit();
     }
@@ -252,7 +253,7 @@ export default function FormContainerComponent(
             !(isRescindAction || isTerminateAction) && (
               <ActionButton
                 icon={"error"}
-                title={"RESCIND"}
+                label={"RESCIND"}
                 className={styles["footer-button"]}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
@@ -263,7 +264,7 @@ export default function FormContainerComponent(
             !(isRescindAction || isTerminateAction) && (
               <ActionButton
                 icon={"cancel"}
-                title={"TERMINATE"}
+                label={"TERMINATE"}
                 className={styles["footer-button"]}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
@@ -271,52 +272,50 @@ export default function FormContainerComponent(
           {props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
-              <MaterialIconButton
-                iconName={"done_outline"}
-                className={styles["form-button"]}
-                iconStyles={[styles["form-button-icon"]]}
-                onClick={onApproval}
+              <ClickActionButton // Approvel button
+                icon={"done_outline"}
+                onClick={() => {
+                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+                }}
               />
             )}
           {props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <MaterialIconButton
-                iconName={"edit"}
-                className={styles["form-button"]}
-                iconStyles={[styles["form-button-icon"]]}
-                onClick={openEditModal}
+              <ClickActionButton // Edit button
+                icon={"edit"}
+                onClick={() => {
+                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+                }}
               />
             )}
           {props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <MaterialIconButton
-                iconName={"delete"}
-                className={styles["form-button"]}
-                iconStyles={[styles["form-button-icon"]]}
-                onClick={openDeleteModal}
+              <ClickActionButton // Delete button
+                icon={"delete"}
+                onClick={() => {
+                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+                }}
               />
             )}
-          <MaterialIconButton
-            iconName={
+          <ClickActionButton
+            icon={
               (isRescindAction || isTerminateAction || !showReturnButton) &&
-              !response
+                !response
                 ? "publish"
                 : "logout"
             }
-            className={styles["form-button"]}
-            iconStyles={[styles["form-button-icon"]]}
             onClick={
               (isRescindAction || isTerminateAction) && !response
                 ? onSubmit
                 : showReturnButton
-                ? props.formType === Paths.REGISTRY_DELETE
-                  ? closeTab
-                  : onReturn
-                : onSubmit
+                  ? props.formType === Paths.REGISTRY_DELETE
+                    ? closeTab
+                    : onReturn
+                  : onSubmit
             }
           />
         </div>
