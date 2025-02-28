@@ -69,8 +69,12 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         entities = await getData(props.agentApi, entityType);
       }
 
-      // By default, use the first option's id
-      let defaultId: string = extractResponseField(entities[0], FORM_STATES.ID)?.value;
+      // By default, id is empty
+      let defaultId: string = "";
+      // Only update the id if there are any entities
+      if (entities.length > 0) {
+        defaultId = extractResponseField(entities[0], FORM_STATES.ID)?.value;
+      }
       // Search form should always target default value
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
         defaultId = defaultSearchOption.type.value;
@@ -122,7 +126,9 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       setIsFetching(false);
     }
 
-    getDependencies(queryEntityType, props.dependentProp, props.form);
+    if (parentField !== "" || currentParentOption !== null) {
+      getDependencies(queryEntityType, props.dependentProp, props.form);
+    }
   }, [currentParentOption]);
 
   // An event handler that will navigate to the required add form when clicked
