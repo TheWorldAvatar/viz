@@ -133,22 +133,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case Paths.REGISTRY_EDIT: {
-        let reqBody: string;
-        let url: string;
-        if (props.isPrimaryEntity) {
-          reqBody = JSON.stringify({
-            ...formData,
-            contract: props.primaryInstance,
-          });
-          url = `${props.agentApi}/contracts/draft`;
-        } else {
-          reqBody = JSON.stringify({
+        pendingResponse = await updateEntity(`${props.agentApi}/${props.entityType}/${formData.id}`,
+          JSON.stringify({
             ...formData,
             entity: props.entityType,
-          });
-          url = `${props.agentApi}/${props.entityType}/${formData.id}`;
+          })
+        );
+        if (props.isPrimaryEntity && pendingResponse.success) {
+          pendingResponse = await updateEntity(`${props.agentApi}/contracts/draft`, JSON.stringify({
+            ...formData,
+            contract: props.primaryInstance,
+          }));
         }
-        pendingResponse = await updateEntity(url, reqBody);
         break;
       }
       case SEARCH_FORM_TYPE: {
