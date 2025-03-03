@@ -127,8 +127,8 @@ importers:
         version: 11.0.5
     devDependencies:
       '@eslint/js':
-        specifier: ^9.20.0
-        version: 9.20.0
+        specifier: ^9.21.0
+        version: 9.21.0
       '@next/eslint-plugin-next':
         specifier: ^15.1.7
         version: 15.1.7
@@ -302,10 +302,6 @@ packages:
 
   '@eslint/eslintrc@3.3.0':
     resolution: {integrity: sha512-yaVPAiNAalnCZedKLdR21GOGILMLKPyqSLWaAjQFvYA2i/ciDi8ArYVr69Anohb6cH2Ukhqti4aFnYyPm8wdwQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@eslint/js@9.20.0':
-    resolution: {integrity: sha512-iZA07H9io9Wn836aVTytRaNqh00Sad+EamwOVJT12GTLw1VGMFV/4JaME+JjLtr9fiGaoWgYnS54wrfWsSs4oQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/js@9.21.0':
@@ -1160,8 +1156,8 @@ packages:
   cheap-ruler@4.0.0:
     resolution: {integrity: sha512-0BJa8f4t141BYKQyn9NSQt1PguFQXMXwZiA5shfoaBYHAb2fFk2RAX+tiWMoQU+Agtzt3mdt0JtuyshAXqZ+Vw==}
 
-  chromedriver@133.0.2:
-    resolution: {integrity: sha512-Ku4JqyzMNyla2t2z40/Or2tTH/FrRBp2xXhg3LUM7/Qi9tN7mk9uB1xtkmoP33S977FJuhkKenHBCEMH67lD2g==}
+  chromedriver@133.0.3:
+    resolution: {integrity: sha512-wGZUtrSdyqnbweXEDIbn+ndu7memG4SEqG6/D+mSabKUEic0hveMYepAPAhlYtvyOc0X8JbsARYtEalVD3R/Vg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -3308,8 +3304,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint/js@9.20.0': {}
-
   '@eslint/js@9.21.0': {}
 
   '@eslint/object-schema@2.1.6': {}
@@ -4166,7 +4160,7 @@ snapshots:
 
   cheap-ruler@4.0.0: {}
 
-  chromedriver@133.0.2:
+  chromedriver@133.0.3:
     dependencies:
       '@testim/chrome-version': 1.1.4
       axios: 1.7.9
@@ -5331,7 +5325,7 @@ snapshots:
     dependencies:
       jwk-to-pem: 2.0.7
     optionalDependencies:
-      chromedriver: 133.0.2
+      chromedriver: 133.0.3
     transitivePeerDependencies:
       - debug
       - supports-color
