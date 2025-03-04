@@ -100,7 +100,7 @@ export const useFeatureInfoAgentService = (endpoint: string, selectedIri: string
         setQueriedData(builtInData);
       }
     }
-  }, [data, featureProperties, isFetching]);
+  }, [data, featureProperties, isFetching, endpoint]);
 
   useEffect(() => {
     setIsUpdating(true);
