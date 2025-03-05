@@ -48,7 +48,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
           const fieldVal = nodeState[nodeField];
           // Increment the counter when it is non-empty
           // Field arrays are stored as group.index.field in react-hook-form
-          if (typeof fieldVal === "string" && fieldVal.length > 0) {
+          if (typeof fieldVal === "string" && fieldVal.length > 0 && fieldVal != "-0.01") {
             currentNonEmptyCount++;
           }
         }
