@@ -170,18 +170,6 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
           </div>
         )}
         <div className={styles["form-dependent-button-layout"]}>
-          {!isFetching && formType != SEARCH_FORM_TYPE && (selectElements.length > 0 ? <MaterialIconButton
-            iconName={"expand_circle_right"}
-            className={styles["button"] + " " + styles["button-layout"]}
-            text={{
-              styles: [styles["button-text"]],
-              content: `View more details`
-            }}
-            onClick={openViewSubEntityModal}
-          /> : <p style={{ margin: "0 0.75rem", padding: "0.2rem 0.25rem" }} className={styles["button-text"]}>
-            No {label} detected
-          </p>
-          )}
           {(formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE) && (
             <MaterialIconButton
               iconName={"add"}
