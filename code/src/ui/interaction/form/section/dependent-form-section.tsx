@@ -162,6 +162,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
                 options={{
                   disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
                 }}
+                onViewDetails={!isFetching && formType != SEARCH_FORM_TYPE && selectElements.length > 0 ? openViewSubEntityModal : null}
                 styles={{
                   label: [styles["form-input-label"]],
                 }} />
