@@ -114,20 +114,22 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-            <RedirectButton
+            <ClickActionButton
               icon={"task"}
-              url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-              isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
               label={"overview"}
+              onClick={() => {
+                router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+              }}
             />
           )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-            <RedirectButton
+            <ClickActionButton
               icon={"event"}
-              url={`${Routes.REGISTRY_TASK_DATE}`}
-              isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
               label={"view tasks"}
+              onClick={() => {
+                router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+              }}
             />
           )}
         {props.lifecycleStage == Routes.REGISTRY_REPORT && (
