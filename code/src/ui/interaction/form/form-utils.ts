@@ -110,7 +110,7 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
       });
     } else {
       // If no existing values exist, add an initial value
-      outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = field.datatype === "decimal" ? "0.01" : "";
+      outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = field.datatype === "decimal" ? "-0.01" : "";
     }
     currentIndex++; // increment the counter
     outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = ""; // add an empty field at the end
