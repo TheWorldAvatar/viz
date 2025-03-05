@@ -7,14 +7,21 @@ import { Icon } from "@mui/material";
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
+import ActionButton from 'ui/interaction/action/action';
 
 export interface FormInputContainerProps {
   field: PropertyShape;
   error: FieldError;
   children: React.ReactNode;
+  instance?: {
+    entityType: string;
+    currentOption: string;
+  },
   formatLabel?: string;
   labelStyles?: string[];
   selectedOption?: OntologyConcept;
+
+  onViewDetails?: () => void;
 }
 
 /**
@@ -50,20 +57,30 @@ export default function FormInputContainer(
       </label>
       {props.children}
       {props.field.description[VALUE_KEY] != "" && (
-        <p className={`${styles["info-text"]} ${styles["info-text-show"]}`}>
-          <b className={styles["field-text"]}>Description:&nbsp;</b>{" "}
-          {props.field.description[VALUE_KEY]}
-          {props.selectedOption && (
-            <>
-              <br />
-              <br />
-              <b className={styles["field-text"]}>
-                {props.selectedOption?.label.value}:
-              </b>{" "}
-              {props.selectedOption?.description.value}
-            </>
+        <div style={{ position: 'relative' }}>  {/* This is a comment, not code */}
+          <p className={`${styles["info-text"]} ${styles["info-text-show"]}`}>
+            <b className={styles["field-text"]}>Description:&nbsp;</b>{" "}
+            {props.field.description[VALUE_KEY]}
+            {props.selectedOption && (
+              <>
+                <br />
+                <br />
+                <b className={styles["field-text"]}>
+                  {props.selectedOption?.label.value}:
+                </b>{" "}
+                {props.selectedOption?.description.value}
+              </>
+            )}
+          </p>
+          {props.onViewDetails && (
+            <ActionButton
+              icon="arrow_forward"
+              className={styles["info-navigate-button"]}
+              onClick={props.onViewDetails}
+              isHoverableDisabled={false}
+            />
           )}
-        </p>
+        </div>
       )}
       <FormErrorComponent error={props.error} />
     </>

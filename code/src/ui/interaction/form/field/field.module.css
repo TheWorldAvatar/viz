@@ -94,6 +94,12 @@
   color: var(--text-color-links-hover);
 }
 
+.info-text-container {
+  position: relative;
+  margin: 0.75rem 0 0.5rem;
+  width: 100%;
+}
+
 .info-text {
   position: relative;
   padding: 0.25rem 0.5rem;
@@ -135,6 +141,26 @@
   opacity: 1;
   display: flex;
   align-items: center;
+}
+
+.info-navigate-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  border: none;
+  background-color: teal; 
+  color: white; 
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.info-navigate-button:hover {
+  background-color: darkturquoise;
 }
 
 .field-text {

@@ -1,9 +1,11 @@
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
+import { useRouter } from 'next/navigation';
 
 import { FormOptionType, PropertyShape } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
 import FormInputContainer from './form-input-container';
+import { getAfterDelimiter } from 'utils/client-utils';
 
 interface FormSelectorProps {
   field: PropertyShape;
@@ -27,11 +29,24 @@ interface FormSelectorProps {
  * @param {string[]} styles.label Optional styles for the label element.
  */
 export default function DependentFormSelector(props: Readonly<FormSelectorProps>) {
+  const router = useRouter();
+
+  // Handle view details navigation
+  const handleViewDetails = () => {
+    const value = props.form.getValues(props.field.fieldId);
+    if (value) {
+      const entityId = getAfterDelimiter(value, "/");
+      const entityType = props.field.name[VALUE_KEY].toLowerCase().replace(/\s+/g, "_");
+      router.push(`/view/${entityType}/${entityId}`);
+    }
+  };
+
   return (
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.styles?.label}
+      onViewDetails={handleViewDetails}
     >
       <Controller
         name={props.field.fieldId}
