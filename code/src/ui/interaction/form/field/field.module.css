@@ -95,7 +95,6 @@
 }
 
 .info-text-container {
-  position: relative;
   margin: 0.75rem 0 0.5rem;
   width: 100%;
 }
@@ -144,11 +143,8 @@
 }
 
 .info-navigate-button {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 75%;
-  width: 40px;
+  height: 35px;
+  width: 50px;
   border: none;
   background-color: teal; 
   color: white; 
@@ -156,11 +152,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  border-radius: 50%;
+  float: right;
+  transform: translate(10px, -43px);
 }
 
 .info-navigate-button:hover {
-  background-color: darkturquoise;
+  background-color: teal;
 }
 
 .field-text {

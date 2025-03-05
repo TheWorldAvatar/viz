@@ -57,7 +57,7 @@ export default function FormInputContainer(
       </label>
       {props.children}
       {props.field.description[VALUE_KEY] != "" && (
-        <div style={{ position: 'relative' }}>  {/* This is a comment, not code */}
+        <div className={styles["info-text-container"]}>
           <p className={`${styles["info-text"]} ${styles["info-text-show"]}`}>
             <b className={styles["field-text"]}>Description:&nbsp;</b>{" "}
             {props.field.description[VALUE_KEY]}
@@ -77,7 +77,7 @@ export default function FormInputContainer(
               icon="arrow_forward"
               className={styles["info-navigate-button"]}
               onClick={props.onViewDetails}
-              isHoverableDisabled={false}
+              isHoverableDisabled={true}
             />
           )}
         </div>
