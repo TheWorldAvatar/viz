@@ -2,7 +2,7 @@ import { FieldValues, RegisterOptions } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 
 import { Paths } from "io/config/routes";
-import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, SEARCH_FORM_TYPE, PropertyShapeOrGroup, ID_KEY, TYPE_KEY, PROPERTY_GROUP_TYPE, PropertyGroup } from "types/form";
+import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, SEARCH_FORM_TYPE, PropertyShapeOrGroup, ID_KEY, TYPE_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, SparqlResponseField } from "types/form";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -53,21 +53,24 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
       const fieldset: PropertyGroup = field as PropertyGroup;
       // Initialise multiple property
       fieldset.multipleProperty = [];
-      const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
+      const properties: PropertyShape[] = fieldset.property.filter(propertyShape => {
+        // When multiple fields for the same property is possible ie no max count or at least more than 1, 
+        // the property must be initialised as an array and pushed into a separate set
+        if (!propertyShape.maxCount || (propertyShape.maxCount && parseInt(propertyShape.maxCount?.[VALUE_KEY]) > 1)) {
+          fieldset.multipleProperty.push(
+            initFormField(propertyShape, initialState, fieldset.label[VALUE_KEY], true)
+          );
+          return false; // Filter out from the 'properties' array
+        } else {
+          return true; // Keep in the 'properties' array
+        }
+      }).map(fieldProp => {
+        // Iterate after filtering the property so that non-array fields are not parsed
         const updatedProp: PropertyShape = updateDependentProperty(fieldProp, fields);
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
         return initFormField(updatedProp, initialState, fieldId);
-      }).filter(updatedShape => {
-        // When multiple fields for the same property is possible ie no max count or at least more than 1, 
-        // the property must be pushed into a separate set
-        if (!updatedShape.maxCount || (updatedShape.maxCount && parseInt(updatedShape.maxCount?.[VALUE_KEY]) > 1)) {
-          fieldset.multipleProperty.push(updatedShape);
-          return false; // Filter out from the 'properties' array
-        } else {
-          return true; // Keep in the 'properties' array
-        }
       });
       // Update the property group with updated properties
       return {
@@ -89,18 +92,40 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
  * @param {PropertyShape} field The data model for the field of interest.
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
+ * @param {boolean} isArray Optional state to initialise array fields.
  */
-function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string): PropertyShape {
-  let defaultVal: string = field.defaultValue?.value;
-  // If no default value is available for id, value will default to the id
-  if (field.name[VALUE_KEY] == "id" && !defaultVal) {
-    defaultVal = outputState.id;
+function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string, isArray?: boolean): PropertyShape {
+  let parsedFieldId: string = fieldId;
+  if (isArray) {
+    // Update field ID, the fieldId for an array should be its group name
+    parsedFieldId = `${fieldId} ${field.name[VALUE_KEY]}`;
+    let currentIndex: number = 0;
+    // Append existing values if they exist
+    if (field.defaultValue) {
+      const defaultArray: SparqlResponseField[] = Array.isArray(field.defaultValue) ?
+        field.defaultValue : [field.defaultValue];
+      defaultArray.forEach((defaultValue, index) => {
+        outputState[`${fieldId}.${index}.${parsedFieldId}`] = defaultValue.value;
+        currentIndex = index; // Always update the current index following default values
+      });
+    } else {
+      // If no existing values exist, add an initial value
+      outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = field.datatype === "decimal" ? "0.01" : "";
+    }
+    currentIndex++; // increment the counter
+    outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = ""; // add an empty field at the end
+  } else {
+    let defaultVal: string = !Array.isArray(field.defaultValue) ? field.defaultValue?.value : "";
+    // If no default value is available for id, value will default to the id
+    if (field.name[VALUE_KEY] == "id" && !defaultVal) {
+      defaultVal = outputState.id;
+    }
+    outputState[fieldId] = getDefaultVal(fieldId, defaultVal, outputState.formType);
   }
-  outputState[fieldId] = getDefaultVal(fieldId, defaultVal, outputState.formType);
   // Update property shape with field ID property
   return {
     ...field,
-    fieldId
+    fieldId: parsedFieldId,
   };
 }
 

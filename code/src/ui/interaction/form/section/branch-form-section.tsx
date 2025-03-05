@@ -2,7 +2,7 @@ import fieldStyles from '../field/field.module.css';
 import styles from '../form.module.css';
 
 import { useCallback, useMemo, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
 import { Routes } from 'io/config/routes';
@@ -28,9 +28,53 @@ interface OptionBasedFormSectionProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
 export default function BranchFormSection(props: Readonly<OptionBasedFormSectionProps>) {
+  // Declare a function to get the most suitablebranch node and set default values if present
+  const getBranchNode = useCallback((nodeShapes: NodeShape[]): NodeShape => {
+    // Iterate to find and store any default values in these node states
+    const nodeStates: FieldValues[] = [];
+    nodeShapes.forEach(shape => {
+      const nodeState: FieldValues = {};
+      parsePropertyShapeOrGroupList(nodeState, shape.property);
+      nodeStates.push(nodeState);
+    });
+    // Find the best matched node states with non-empty values
+    let nodeWithMostNonEmpty: NodeShape = nodeShapes[0];
+    let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
+    let maxNonEmptyCount: number = 0;
+    nodeStates.forEach((nodeState, index) => {
+      let currentNonEmptyCount: number = 0;
+      for (const nodeField in nodeState) {
+        if (Object.hasOwn(nodeState, nodeField)) {
+          const fieldVal = nodeState[nodeField];
+          // Increment the counter when it is non-empty
+          // Field arrays are stored as group.index.field in react-hook-form
+          if (typeof fieldVal === "string" && fieldVal.length > 0) {
+            currentNonEmptyCount++;
+          }
+        }
+      }
+      // update the best match
+      if (currentNonEmptyCount > maxNonEmptyCount) {
+        nodeWithMostNonEmpty = props.node[index];
+        nodeStateWithMostNonEmpty = nodeState;
+        maxNonEmptyCount = currentNonEmptyCount;
+      }
+    });
+    // For setting the branch value, attempt this
+    Object.keys(nodeStateWithMostNonEmpty).forEach(nodeField => {
+      props.form.setValue(nodeField, nodeStateWithMostNonEmpty[nodeField]);
+    });
+    return nodeWithMostNonEmpty;
+  }, []);
+
+  // Extract the initial node shape
+  const initialNodeShape: NodeShape = useMemo(() => {
+    return getBranchNode(props.node);
+  }, []);
+
   // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] = useState<NodeShape>(props.node[0]);
-  const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(parsePropertyShapeOrGroupList({}, props.node[0].property));
+  const [selectedModel, setSelectedModel] = useState<NodeShape>(initialNodeShape);
+  const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(parsePropertyShapeOrGroupList({}, initialNodeShape.property));
 
   // Declare a function to transform node shape to a form option
   const convertNodeShapeToFormOption = useCallback((nodeShape: NodeShape): FormOptionType => {
@@ -61,6 +105,8 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
         props.form.unregister((field as PropertyShape).name[VALUE_KEY]);
       }
     });
+    // update branch node fields with existing values if present
+    getBranchNode([matchingNode]);
     // Update form branch
     setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
     setSelectedModel(matchingNode);

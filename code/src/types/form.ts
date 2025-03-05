@@ -58,7 +58,7 @@ export interface PropertyShape {
   description: JsonLdLiteral;
   order: number;
   fieldId?: string; // Not present but appended after
-  defaultValue?: SparqlResponseField;
+  defaultValue?: SparqlResponseField | SparqlResponseField[];
   group?: JsonLdInstance;
   datatype?: string;
   class?: JsonLdInstance;

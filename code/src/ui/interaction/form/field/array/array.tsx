@@ -2,7 +2,7 @@ import fieldStyles from '../field.module.css';
 import styles from './array.module.css';
 
 import React, { useEffect } from 'react';
-import { FieldError, FieldValues, useFieldArray, UseFormReturn, useWatch } from 'react-hook-form';
+import { FieldError, useFieldArray, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { PropertyShape, VALUE_KEY } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
@@ -39,18 +39,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     control,
     name: `${props.fieldId}.${fieldSize}`,
   });
-
-  useEffect(() => {
-    const newArrayField: FieldValues = {};
-    props.fieldConfigs.forEach(config => {
-      if (config.minCount[VALUE_KEY] == "0") {
-        newArrayField[config.fieldId] = "";
-      } else {
-        newArrayField[config.fieldId] = config.datatype === "decimal" ? "0.01" : "";
-      }
-    })
-    append(newArrayField);
-  }, [])
 
   useEffect(() => {
     const newRow: Record<string, object> = {};
