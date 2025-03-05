@@ -26,6 +26,7 @@ interface RedirectButtonProps extends ActionButtonProps {
  */
 export default function RedirectButton({
   icon,
+  label,
   url,
   isActive,
   isHoverableDisabled,
@@ -39,6 +40,7 @@ export default function RedirectButton({
   return (
     <ActionButton
       icon={icon}
+      label={label}
       className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className
         }`}
       title={rest.title}
