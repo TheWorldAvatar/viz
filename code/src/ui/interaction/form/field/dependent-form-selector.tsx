@@ -15,7 +15,7 @@ interface FormSelectorProps {
   styles?: {
     label?: string[],
   };
-  onViewDetails?: () => void;
+  onRedirect?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
@@ -26,6 +26,7 @@ interface FormSelectorProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
  * @param {string[]} styles.label Optional styles for the label element.
+ * @param {React.MouseEventHandler<HTMLButtonElement>} onRedirect Optional redirect event in the description box.
  */
 export default function DependentFormSelector(props: Readonly<FormSelectorProps>) {
   return (
@@ -33,7 +34,7 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.styles?.label}
-      onViewDetails={props.onViewDetails}
+      onRedirect={props.onRedirect}
     >
       <Controller
         name={props.field.fieldId}

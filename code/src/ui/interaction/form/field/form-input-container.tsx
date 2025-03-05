@@ -1,13 +1,12 @@
 import styles from "./field.module.css";
 
-import React, { useState } from "react";
+import React from "react";
 import { FieldError } from "react-hook-form";
-import { Icon } from "@mui/material";
 
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
+import ClickActionButton from "ui/interaction/action/click/click-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import ActionButton from 'ui/interaction/action/action';
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -20,8 +19,7 @@ export interface FormInputContainerProps {
   formatLabel?: string;
   labelStyles?: string[];
   selectedOption?: OntologyConcept;
-
-  onViewDetails?: () => void;
+  onRedirect?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
@@ -32,17 +30,13 @@ export interface FormInputContainerProps {
  * @param {React.ReactNode} children Children elements for the container.
  * @param {OntologyConcept} selectedOption Optional selected option description.
  * @param {string[]} labelStyles Optional styles for the label element.
+ * @param {React.MouseEventHandler<HTMLButtonElement>} onRedirect Optional redirect event in the description box.
  */
 export default function FormInputContainer(
   props: Readonly<FormInputContainerProps>
 ) {
-  const [showDescription, setShowDescription] = useState<boolean>(false);
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
-
-  const toggleDescription = () => {
-    setShowDescription(!showDescription);
-  };
 
   return (
     <>
@@ -58,7 +52,7 @@ export default function FormInputContainer(
       {props.children}
       {props.field.description[VALUE_KEY] != "" && (
         <div className={styles["info-text-container"]}>
-          <p className={`${styles["info-text"]} ${styles["info-text-show"]}`}>
+          <p className={styles["info-text"]}>
             <b className={styles["field-text"]}>Description:&nbsp;</b>{" "}
             {props.field.description[VALUE_KEY]}
             {props.selectedOption && (
@@ -72,12 +66,11 @@ export default function FormInputContainer(
               </>
             )}
           </p>
-          {props.onViewDetails && (
-            <ActionButton
+          {props.onRedirect && (
+            <ClickActionButton
               icon="arrow_forward"
-              className={styles["info-navigate-button"]}
-              onClick={props.onViewDetails}
-              isHoverableDisabled={true}
+              className={styles["info-text-redirect-button"]}
+              onClick={props.onRedirect}
             />
           )}
         </div>

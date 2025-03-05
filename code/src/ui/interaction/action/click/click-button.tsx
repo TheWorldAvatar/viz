@@ -31,7 +31,7 @@ export default function ClickActionButton({
   return (
     <ActionButton
       icon={icon}
-      className={`${isActive ? styling?.active ?? styles["active"] : ""}`}
+      className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className}`}
       label={label}
       onClick={rest.onClick}
       isHoverableDisabled={isHoverableDisabled}

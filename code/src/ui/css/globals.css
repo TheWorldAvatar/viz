@@ -78,6 +78,7 @@
     /* Button colors */
     --button-color-primary: #83C38D;
     --button-color-primary-active: #65A671;
+    --description-box: #a9d9d1;
 }
 
 * {
