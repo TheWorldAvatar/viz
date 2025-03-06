@@ -54,6 +54,7 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
             isMulti={false}
             isSearchable={true}
             isDisabled={props.options.disabled}
+            noOptionsMessage={() => "No instances available. Please create a new instance."}
           />
         )}
       />
