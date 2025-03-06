@@ -37,7 +37,7 @@ export default function FormInputContainer(
 ) {
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
-  console.log(labelClassNames)
+
   return (
     <>
       <label className={labelClassNames} htmlFor={props.field.fieldId}>

@@ -8,7 +8,6 @@ import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { extractResponseField, getAfterDelimiter } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
 import DependentFormSelector from '../field/dependent-form-selector';
@@ -158,7 +157,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
             <LoadingSpinner isSmall={true} />
           </div>
         }
-        {!isFetching && selectElements.length > 0 && (
+        {!isFetching && (
           <div className={fieldStyles["form-input-container"]}>
             <DependentFormSelector
               field={props.dependentProp}
