@@ -50,7 +50,7 @@ export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonPr
     <ActionButton
       icon="download"
       className={`${rest.className}`}
-      title="export data"
+      label="export data"
       onClick={exportToCSV}
     />
   );

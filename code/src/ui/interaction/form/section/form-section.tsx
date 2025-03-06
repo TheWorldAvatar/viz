@@ -1,12 +1,12 @@
-import fieldStyles from '../field/field.module.css';
-import styles from '../form.module.css';
+import fieldStyles from "../field/field.module.css";
+import styles from "../form.module.css";
 
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn } from "react-hook-form";
 
-import { PropertyGroup, VALUE_KEY } from 'types/form';
-import { parseWordsForLabels } from 'utils/client-utils';
-import FormFieldComponent from '../field/form-field';
-import { DependentFormSection } from './dependent-form-section';
+import { PropertyGroup, VALUE_KEY } from "types/form";
+import { parseWordsForLabels } from "utils/client-utils";
+import FormFieldComponent from "../field/form-field";
+import { DependentFormSection } from "./dependent-form-section";
 
 interface FormSectionProps {
   entityType: string;
@@ -19,7 +19,7 @@ interface FormSectionProps {
 }
 /**
  * This component renders a form section.
- * 
+ *
  * @param {string} entityType The type of entity.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyGroup} group Fieldset group model.
@@ -29,22 +29,30 @@ interface FormSectionProps {
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
     <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>{parseWordsForLabels(props.group.label[VALUE_KEY])}</legend>
-      <div className={styles["form-fieldset-contents"]}>
-        {props.group.property.map((field, index) => {
-          // If this is a hidden field, hide the field
-          if (field.maxCount && parseInt(field.maxCount[VALUE_KEY]) === 0) {
-            return <></>;
-          }
-          if (field.class) {
-            return <div key={field.name[VALUE_KEY] + index} className={fieldStyles["form-field-container"]}>
+      <legend className={styles["form-fieldset-label"]}>
+        {parseWordsForLabels(props.group.label[VALUE_KEY])}
+      </legend>
+      {props.group.property.map((field, index) => {
+        // If this is a hidden field, hide the field
+        if (field.maxCount && parseInt(field.maxCount[VALUE_KEY]) === 0) {
+          return <></>;
+        }
+        if (field.class) {
+          return (
+            <div
+              key={field.name[VALUE_KEY] + index}
+              className={fieldStyles["form-field-container"]}
+            >
               <DependentFormSection
                 agentApi={props.agentApi}
                 dependentProp={field}
                 form={props.form}
-              /></div>
-          }
-          return <FormFieldComponent
+              />
+            </div>
+          );
+        }
+        return (
+          <FormFieldComponent
             key={field.name[VALUE_KEY] + index}
             entityType={props.entityType}
             agentApi={props.agentApi}
@@ -52,8 +60,8 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
             form={props.form}
             options={props.options}
           />
-        })
-        }
-      </div>
-    </fieldset>);
+        );
+      })}
+    </fieldset>
+  );
 }

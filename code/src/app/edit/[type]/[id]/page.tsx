@@ -35,13 +35,11 @@ export default async function EditFormPage(props: Readonly<EditFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   return (
-    <div className="formContainer">
-      <FormContainerComponent
-        entityType={resolvedParams?.type}
-        formType={Paths.REGISTRY_EDIT}
-        agentApi={uiSettings?.resources?.registry?.url}
-        isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
-      />
-    </div>
+    <FormContainerComponent
+      entityType={resolvedParams?.type}
+      formType={Paths.REGISTRY_EDIT}
+      agentApi={uiSettings?.resources?.registry?.url}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+    />
   );
 }
