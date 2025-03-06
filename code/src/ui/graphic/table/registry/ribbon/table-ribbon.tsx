@@ -104,32 +104,29 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       <div className={styles["action-ribbon"]}>
         {(authorised || !isKeycloakEnabled) &&
           props.lifecycleStage == Routes.REGISTRY_PENDING && (
-            <ClickActionButton
-              icon={"add"}
+            <RedirectButton
+              icon="add"
               label={"add " + props.entityType}
-              onClick={() => {
-                router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-              }}
+              url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
+              isActive={false}
             />
           )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-            <ClickActionButton
-              icon={"task"}
+            <RedirectButton
+              icon="task"
               label={"overview"}
-              onClick={() => {
-                router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-              }}
+              url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+              isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
             />
           )}
         {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
           props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-            <ClickActionButton
-              icon={"event"}
+            <RedirectButton
+              icon="event"
               label={"view tasks"}
-              onClick={() => {
-                router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-              }}
+              url={Routes.REGISTRY_TASK_DATE}
+              isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
             />
           )}
         {props.lifecycleStage == Routes.REGISTRY_REPORT && (

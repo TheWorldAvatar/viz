@@ -8,7 +8,7 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import useRefresh from "hooks/useRefresh";
-import { Paths, Routes } from "io/config/routes";
+import { Paths } from "io/config/routes";
 import { setIsOpen } from "state/modal-slice";
 import { FORM_IDENTIFIER, PropertyShape } from "types/form";
 import { ApiResponse, JsonObject } from "types/json";
@@ -26,6 +26,7 @@ import {
   sendPostRequest,
 } from "utils/server-actions";
 import ClickActionButton from "../action/click/click-button";
+import RedirectButton from "../action/redirect/redirect-button";
 import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
@@ -63,23 +64,6 @@ export default function FormContainerComponent(
   const id: string = getAfterDelimiter(usePathname(), "/");
   const showReturnButton: boolean =
     props.formType === Paths.REGISTRY || !!response;
-
-  // An event handler that will navigate to the required form when clicked
-  const openDeleteModal: React.MouseEventHandler<HTMLDivElement> = (
-    e: React.MouseEvent
-  ) => {
-    e.preventDefault();
-    const url: string = `../../delete/${props.entityType}/${id}`;
-    router.push(url);
-  };
-
-  const openEditModal: React.MouseEventHandler<HTMLDivElement> = (
-    e: React.MouseEvent
-  ) => {
-    e.preventDefault();
-    const url: string = `../../edit/${props.entityType}/${id}`;
-    router.push(url);
-  };
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -143,7 +127,7 @@ export default function FormContainerComponent(
   }, [isRescindAction, isTerminateAction]);
 
   // Action when approve button is clicked
-  const onApproval: React.MouseEventHandler<HTMLDivElement> = async () => {
+  const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
     const reqBody: JsonObject = {
       contract: status.iri,
@@ -267,33 +251,29 @@ export default function FormContainerComponent(
           {props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
-              <ClickActionButton // Approvel button
+              <ClickActionButton // Approval button
                 icon={"done_outline"}
-                onClick={() => {
-                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-                }}
+                onClick={onApproval}
               />
             )}
           {props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <ClickActionButton // Edit button
-                icon={"edit"}
-                onClick={() => {
-                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-                }}
+              <RedirectButton // Edit button
+                icon="edit"
+                url={`../../edit/${props.entityType}/${id}`}
+                isActive={false}
               />
             )}
           {props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <ClickActionButton // Delete button
-                icon={"delete"}
-                onClick={() => {
-                  router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
-                }}
+              <RedirectButton // Delete button
+                icon="delete"
+                url={`../../delete/${props.entityType}/${id}`}
+                isActive={false}
               />
             )}
           <ClickActionButton
