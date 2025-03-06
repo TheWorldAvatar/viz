@@ -136,15 +136,6 @@ img {
     background-color: white;
 }
 
-.formContainer {
-    display: flex;
-    align-self: center;
-    flex-direction: column;
-
-    width: 90%;
-    height: 75vh;
-}
-
 .partner-button {
     width: 50%;
 

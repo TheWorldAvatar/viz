@@ -1,4 +1,6 @@
 .container {
+  display: flex;
+  align-self: center;
   width: 90vw;
   padding: 1rem 2rem 0.5rem;
   margin: 1rem;
