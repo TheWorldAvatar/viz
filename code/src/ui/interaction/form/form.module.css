@@ -122,7 +122,6 @@
   flex-direction: column;
   margin: 0.5rem 0;
   width: fit-content;
-
 }
 
 .form-menu-item {
@@ -149,7 +148,7 @@
 
 .schedule-occurrence-container {
   width: 100%;
-  margin: 0 1rem 0.5rem;
+  margin: 0 0.25rem 0.5rem;
 }
 
 .schedule-occurrence-input {
@@ -169,6 +168,7 @@
   flex-wrap: wrap;
   justify-content: space-evenly;
   row-gap: 0.5rem;
+  column-gap: 5rem;
   width: 90%;
 }
 

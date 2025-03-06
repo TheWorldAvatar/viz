@@ -70,8 +70,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     props.form.getValues(FORM_STATES.RECURRENCE) == 0
       ? singleService
       : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-      ? alternateService
-      : regularService
+        ? alternateService
+        : regularService
   );
 
   useEffect(() => {
@@ -91,8 +91,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         recurrence == 0
           ? singleService
           : recurrence == -1
-          ? alternateService
-          : regularService
+            ? alternateService
+            : regularService
       );
       props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
 
@@ -180,7 +180,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         <>
           <div className={fieldStyles["form-field-container"]}>
             <label className={fieldStyles["field-text"]} htmlFor="select-input">
-              Service type:
+              Service Type
             </label>
             <Select
               styles={selectorStyles}
@@ -241,40 +241,34 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           )}
           {selectedServiceOption === regularService && (
             <div className={styles["schedule-occurrence-container"]}>
-              <span className={fieldStyles["field-text"]}>
-                Repeat once every
-              </span>
-              <input
-                id={FORM_STATES.RECURRENCE}
-                type={"number"}
-                className={`${styles["schedule-occurrence-input"]} ${
-                  props.options?.disabled && styles["field-disabled"]
-                }`}
-                step={"1"}
-                readOnly={
-                  formType == Paths.REGISTRY ||
-                  formType == Paths.REGISTRY_DELETE
-                }
-                aria-label={FORM_STATES.RECURRENCE}
-                {...props.form.register(FORM_STATES.RECURRENCE)}
-              />
-              <span className={fieldStyles["field-text"]}>week</span>
-              <br />
-              <br />
+              <div style={{ margin: "0 0 0.75rem" }}>
+                <span className={fieldStyles["field-text"]}>
+                  Repeat once every
+                </span>
+                <input
+                  id={FORM_STATES.RECURRENCE}
+                  type={"number"}
+                  className={`${styles["schedule-occurrence-input"]} ${props.options?.disabled && styles["field-disabled"]}`}
+                  step={"1"}
+                  readOnly={
+                    formType == Paths.REGISTRY ||
+                    formType == Paths.REGISTRY_DELETE
+                  }
+                  aria-label={FORM_STATES.RECURRENCE}
+                  {...props.form.register(FORM_STATES.RECURRENCE)}
+                />
+                <span className={fieldStyles["field-text"]}>week</span>
+              </div>
               <div className={styles["schedule-day-container"]}>
                 {daysOfWeek.map((dayOfWeek, index) => {
                   return (
-                    <div
+                    <FormCheckboxField
                       key={dayOfWeek + index}
-                      className={fieldStyles["form-input-container"]}
-                    >
-                      <FormCheckboxField
-                        field={dayOfWeek}
-                        label={daysOfWeekLabel[index]}
-                        form={props.form}
-                        options={isDisabledOption}
-                      />
-                    </div>
+                      field={dayOfWeek}
+                      label={daysOfWeekLabel[index]}
+                      form={props.form}
+                      options={isDisabledOption}
+                    />
                   );
                 })}
               </div>
@@ -283,7 +277,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           <div className={styles["time-slot-container"]}>
             <h1
               className={fieldStyles["field-text"]}
-              style={{ margin: "0.5rem 0.75rem" }}
+              style={{ margin: "0 0.25rem" }}
             >
               Time Slot
             </h1>

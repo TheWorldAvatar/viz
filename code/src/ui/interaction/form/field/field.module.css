@@ -70,7 +70,7 @@
   background-color: var(--background-tertiary);
   font-size: var(--font-size-tertiary-text);
   color: var(--text-color-secondary);
-  width: 100%;
+  width: 10vw;
 }
 
 .form-checkbox-hover:hover {
@@ -141,6 +141,6 @@
 
 @media only screen and (max-width: 480px) {
   .form-checkbox {
-    width: 25vw;
+    width: 100%;
   }
 }
