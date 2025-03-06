@@ -152,12 +152,18 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
               />
             )}
-          {props.lifecycleStage == Routes.REGISTRY_REPORT && (
+          {props.lifecycleStage == Routes.REGISTRY_REPORT && (<>
             <ReturnButton
               icon="first_page"
               label={`back to ${props.entityType}s`}
             />
-          )}
+            <RedirectButton
+              icon="print"
+              label="generate report"
+              url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
+              isActive={false}
+            />
+          </>)}
           <DownloadButton instances={props.instances} />
         </div>
       </div>

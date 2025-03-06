@@ -9,7 +9,7 @@ import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
-import {extractResponseField, getAfterDelimiter } from 'utils/client-utils';
+import { extractResponseField, getAfterDelimiter } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
 import DependentFormSelector from '../field/dependent-form-selector';
 import { FORM_STATES } from '../form-utils';
@@ -47,7 +47,6 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     name: props.dependentProp.fieldId,
   });
 
-
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
   useEffect(() => {
@@ -63,7 +62,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         // If there is no valid parent option, there should be no entity
       } else if (formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
-        entities = await getData(props.agentApi, entityType, getAfterDelimiter(field.defaultValue.value, "/"));
+        entities = await getData(props.agentApi, entityType, getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/"));
       } else {
         entities = await getData(props.agentApi, entityType);
       }
@@ -79,7 +78,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         defaultId = defaultSearchOption.type.value;
         // If there is a default value, search and use the option matching the default instance's local name
       } else if (field.defaultValue) {
-        const defaultValueId: string = getAfterDelimiter(field.defaultValue.value, "/");
+        const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
         defaultId = extractResponseField(entities.find(entity =>
           getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
         ), FORM_STATES.ID)?.value;
