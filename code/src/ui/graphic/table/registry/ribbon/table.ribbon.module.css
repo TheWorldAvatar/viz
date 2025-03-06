@@ -20,9 +20,9 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  padding: 0.25rem 1.0rem;
-  margin: 0;
-  border: none;
+  padding: 0.25rem 1.0rem !important;
+  margin: 0 !important;
+  border: none !important;
   border-radius: 0;
   background: none !important;
   transition: color 0.2s ease;
@@ -43,29 +43,29 @@
   gap: 0.5rem;
 }
 
-.transparent-button-text {
-  font-size: var(--font-size-secondary-text);
-  color: var(--text-color-primary);
-}
-
-.transparent-button-text:hover {
-  color: var(--text-color-links-hover);
-}
-
 .active-state {
   border-bottom: 4px solid var(--text-color-links) !important;
   background: transparent;
 }
 
 .transparent-button {
-  background: none;
-  border: none;
+  background: none !important;
+  border: none !important;
 }
 
 .transparent-button:hover {
   background: none !important;
   transform: none !important;
   box-shadow: none !important;
+}
+
+.transparent-button-text {
+  font-size: var(--font-size-secondary-text);
+  color: var(--text-color-primary) !important;
+}
+
+.transparent-button-text:hover {
+  color: var(--text-color-links-hover) !important;
 }
 
 @media only screen and (max-width: 480px) {
