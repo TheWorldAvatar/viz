@@ -5,6 +5,7 @@ import { FieldError } from "react-hook-form";
 
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
 import ClickActionButton from "ui/interaction/action/click/click-button";
+import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
 
@@ -12,14 +13,13 @@ export interface FormInputContainerProps {
   field: PropertyShape;
   error: FieldError;
   children: React.ReactNode;
-  instance?: {
-    entityType: string;
-    currentOption: string;
-  },
   formatLabel?: string;
   labelStyles?: string[];
   selectedOption?: OntologyConcept;
-  onRedirect?: React.MouseEventHandler<HTMLButtonElement>;
+  redirectOptions?: {
+    addUrl?: string;
+    view?: React.MouseEventHandler<HTMLButtonElement>;
+  };
 }
 
 /**
@@ -30,14 +30,14 @@ export interface FormInputContainerProps {
  * @param {React.ReactNode} children Children elements for the container.
  * @param {OntologyConcept} selectedOption Optional selected option description.
  * @param {string[]} labelStyles Optional styles for the label element.
- * @param {React.MouseEventHandler<HTMLButtonElement>} onRedirect Optional redirect event in the description box.
+ * @param redirectOptions Optional redirect options for adding a new entity or viewing an existing entity.
  */
 export default function FormInputContainer(
   props: Readonly<FormInputContainerProps>
 ) {
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
-
+  console.log(labelClassNames)
   return (
     <>
       <label className={labelClassNames} htmlFor={props.field.fieldId}>
@@ -47,6 +47,17 @@ export default function FormInputContainer(
         </span>
         {props.formatLabel && (
           <span className={styles["format-label"]}>{props.formatLabel}</span>
+        )}
+        {props.redirectOptions?.addUrl && (
+          <RedirectButton
+            icon="add"
+            url={props.redirectOptions.addUrl}
+            isActive={false}
+            className={styles["transparent-button"]}
+            styling={{
+              text: styles["transparent-button-text"],
+            }}
+          />
         )}
       </label>
       {props.children}
@@ -66,11 +77,11 @@ export default function FormInputContainer(
               </>
             )}
           </p>
-          {props.onRedirect && (
+          {props.redirectOptions?.view && (
             <ClickActionButton
-              icon="arrow_forward"
+              icon={"arrow_forward"}
+              onClick={props.redirectOptions.view}
               className={styles["info-text-redirect-button"]}
-              onClick={props.onRedirect}
             />
           )}
         </div>

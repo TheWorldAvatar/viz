@@ -12,10 +12,13 @@ interface FormSelectorProps {
   options?: {
     disabled?: boolean;
   };
+  redirectOptions?: {
+    addUrl?: string;
+    view?: React.MouseEventHandler<HTMLButtonElement>;
+  };
   styles?: {
     label?: string[],
   };
-  onRedirect?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
@@ -26,7 +29,7 @@ interface FormSelectorProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
  * @param {string[]} styles.label Optional styles for the label element.
- * @param {React.MouseEventHandler<HTMLButtonElement>} onRedirect Optional redirect event in the description box.
+ * @param redirectOptions Optional redirect options for adding a new entity or viewing an existing entity.
  */
 export default function DependentFormSelector(props: Readonly<FormSelectorProps>) {
   return (
@@ -34,7 +37,7 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.styles?.label}
-      onRedirect={props.onRedirect}
+      redirectOptions={props.redirectOptions}
     >
       <Controller
         name={props.field.fieldId}
@@ -54,6 +57,6 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
           />
         )}
       />
-    </FormInputContainer>
+    </FormInputContainer >
   );
 }
