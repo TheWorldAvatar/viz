@@ -71,7 +71,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           label="Active"
           icon="schedule"
           url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+          isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
           isHoverableDisabled={true}
           className={styles["registry-nav-button"]}
           styling={{
