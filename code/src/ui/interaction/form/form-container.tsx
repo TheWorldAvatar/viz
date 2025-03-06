@@ -2,33 +2,32 @@
 
 import styles from "./form.module.css";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 import useRefresh from "hooks/useRefresh";
 import { Paths, Routes } from "io/config/routes";
 import { setIsOpen } from "state/modal-slice";
+import { FORM_IDENTIFIER, PropertyShape } from "types/form";
+import { ApiResponse, JsonObject } from "types/json";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
-import ActionButton from "ui/interaction/action/action";
 import ReturnButton from "ui/navigation/return/return";
 import ResponseComponent from "ui/text/response/response";
+import { getAfterDelimiter } from "utils/client-utils";
+import { genBooleanClickHandler } from "utils/event-handler";
 import {
   getLifecycleFormTemplate,
   HttpResponse,
   sendGetRequest,
   sendPostRequest,
 } from "utils/server-actions";
-import { getAfterDelimiter } from "utils/client-utils";
-import { genBooleanClickHandler } from "utils/event-handler";
-import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
-import { ApiResponse, JsonObject } from "types/json";
-import { FormTemplate } from "./template/form-template";
-import { FORM_IDENTIFIER, PropertyShape } from "types/form";
 import ClickActionButton from "../action/click/click-button";
+import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
+import { FormTemplate } from "./template/form-template";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -251,10 +250,8 @@ export default function FormContainerComponent(
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
-              <ActionButton
+              <ClickActionButton // Rescind Button
                 icon={"error"}
-                label={"RESCIND"}
-                className={styles["footer-button"]}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
@@ -262,10 +259,8 @@ export default function FormContainerComponent(
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
-              <ActionButton
+              <ClickActionButton // Terminate Button
                 icon={"cancel"}
-                label={"TERMINATE"}
-                className={styles["footer-button"]}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
@@ -306,7 +301,7 @@ export default function FormContainerComponent(
               (isRescindAction || isTerminateAction || !showReturnButton) &&
                 !response
                 ? "publish"
-                : "logout"
+                : "keyboard_return"
             }
             onClick={
               (isRescindAction || isTerminateAction) && !response
