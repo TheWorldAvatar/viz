@@ -153,24 +153,22 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
           </div>
         }
         {!isFetching && selectElements.length > 0 && (
-          <div className={fieldStyles["form-field-container"]}>
-            <div className={fieldStyles["form-input-container"]}>
-              <DependentFormSelector
-                field={props.dependentProp}
-                form={props.form}
-                fieldOptions={selectElements}
-                options={{
-                  disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
-                }}
-                onRedirect={!isFetching && formType != SEARCH_FORM_TYPE && selectElements.length > 0 ? openViewSubEntityModal : null}
-                styles={{
-                  label: [styles["form-input-label"]],
-                }} />
-            </div>
+          <div className={fieldStyles["form-input-container"]}>
+            <DependentFormSelector
+              field={props.dependentProp}
+              form={props.form}
+              fieldOptions={selectElements}
+              options={{
+                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
+              }}
+              onRedirect={!isFetching && formType != SEARCH_FORM_TYPE && selectElements.length > 0 ? openViewSubEntityModal : null}
+              styles={{
+                label: [styles["form-input-label"]],
+              }} />
           </div>
         )}
-        <div className={styles["form-dependent-button-layout"]}>
-          {(formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE) && (
+        {(formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE) && (
+          <div className={styles["form-dependent-button-layout"]}>
             <MaterialIconButton
               iconName={"add"}
               className={styles["button"] + " " + styles["button-layout"]}
@@ -180,8 +178,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
               }}
               onClick={openAddSubEntityModal}
             />
-          )}
-        </div>
+          </div>
+        )}
       </fieldset>);
   }
 }
