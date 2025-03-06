@@ -1,9 +1,13 @@
-import styles from '../form.module.css';
 
-import { UseFormReturn } from 'react-hook-form';
+import fieldStyles from "../field/field.module.css";
+import styles from "../form.module.css";
 
-import { PropertyGroup, VALUE_KEY } from 'types/form';
-import { parseWordsForLabels } from 'utils/client-utils';
+import { UseFormReturn } from "react-hook-form";
+
+import { PropertyGroup, VALUE_KEY } from "types/form";
+import { parseWordsForLabels } from "utils/client-utils";
+import FormFieldComponent from "../field/form-field";
+import { DependentFormSection } from "./dependent-form-section";
 import { renderFormField } from '../form';
 import FormArray from '../field/array/array';
 
@@ -18,7 +22,7 @@ interface FormSectionProps {
 }
 /**
  * This component renders a form section.
- * 
+ *
  * @param {string} entityType The type of entity.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyGroup} group Fieldset group model.

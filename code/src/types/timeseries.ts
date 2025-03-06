@@ -1,15 +1,10 @@
 import moment from 'moment';
 
-export type TimeSeriesGroup = {
-  id: number;
+export type TimeSeries = {
+  name: string;
   timeClass: string;
   momentTimes: moment.Moment[];
   times: number[];
-  data: TimeSeries[];
-};
-
-export type TimeSeries = {
-  name: string;
   unit: string;
   values: number[];
   valuesClass: string;
@@ -23,3 +18,6 @@ export type ScenarioDimensionStep = {
 export type ScenarioDimensionsData = {
   [key: string]: ScenarioDimensionStep[];
 };
+
+// majority are the names of Java date time classes, last two are for CReDoAccessAgent
+export const TIME_CLASSES = ["LocalDateTime", "ZonedDateTime", "Instant", "OffsetDateTime", "LocalDate", "offsetTime", "dateTime"];

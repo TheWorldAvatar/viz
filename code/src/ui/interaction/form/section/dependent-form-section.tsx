@@ -1,15 +1,15 @@
 import fieldStyles from '../field/field.module.css';
 import styles from '../form.module.css';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { extractResponseField, getAfterDelimiter } from 'utils/client-utils';
+import ClickActionButton from 'ui/interaction/action/click/click-button';
+import {extractResponseField, getAfterDelimiter } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
 import DependentFormSelector from '../field/dependent-form-selector';
 import { FORM_STATES } from '../form-utils';
@@ -28,7 +28,6 @@ interface DependentFormSectionProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
 export function DependentFormSection(props: Readonly<DependentFormSectionProps>) {
-  const router = useRouter();
   const pathName: string = usePathname();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
@@ -131,17 +130,17 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     }
   }, [currentParentOption]);
 
-  // An event handler that will navigate to the required add form when clicked
-  const openAddSubEntityModal = () => {
-    let url: string = `../add/${queryEntityType}`;
+  // An event handler to generate the url to reach the required add form
+  const genAddSubEntityUrl = (entityType: string): string => {
+    let url: string = `../add/${entityType}`;
     if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
       url = `../${url}`;
     }
-    router.push(url);
+    return (url);
   };
 
   // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal = () => {
+  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = () => {
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
     if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
@@ -161,46 +160,25 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
           </div>
         }
         {!isFetching && selectElements.length > 0 && (
-          <div className={fieldStyles["form-field-container"]}>
-            <div className={fieldStyles["form-input-container"]}>
-              <DependentFormSelector
-                field={props.dependentProp}
-                form={props.form}
-                fieldOptions={selectElements}
-                options={{
-                  disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
-                }}
-                styles={{
-                  label: [styles["form-input-label"]],
-                }} />
-            </div>
+          <div className={fieldStyles["form-input-container"]}>
+            <DependentFormSelector
+              field={props.dependentProp}
+              form={props.form}
+              fieldOptions={selectElements}
+              options={{
+                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
+              }}
+              redirectOptions={{
+                addUrl: formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE ?
+                  genAddSubEntityUrl(queryEntityType) : undefined,
+                view: !isFetching && formType != SEARCH_FORM_TYPE && selectElements.length > 0 ?
+                  openViewSubEntityModal : undefined,
+              }}
+              styles={{
+                label: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
+              }} />
           </div>
         )}
-        <div className={styles["form-dependent-button-layout"]}>
-          {!isFetching && formType != SEARCH_FORM_TYPE && (selectElements.length > 0 ? <MaterialIconButton
-            iconName={"expand_circle_right"}
-            className={styles["button"] + " " + styles["button-layout"]}
-            text={{
-              styles: [styles["button-text"]],
-              content: `View more details`
-            }}
-            onClick={openViewSubEntityModal}
-          /> : <p style={{ margin: "0 0.75rem", padding: "0.2rem 0.25rem" }} className={styles["button-text"]}>
-            No {label} detected
-          </p>
-          )}
-          {(formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE) && (
-            <MaterialIconButton
-              iconName={"add"}
-              className={styles["button"] + " " + styles["button-layout"]}
-              text={{
-                styles: [styles["button-text"]],
-                content: `New ${label}`
-              }}
-              onClick={openAddSubEntityModal}
-            />
-          )}
-        </div>
       </fieldset>);
   }
 }

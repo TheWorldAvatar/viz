@@ -1,7 +1,11 @@
 version: 2
 updates:
-  - package-ecosystem: "npm" 
-    directory: "/code" 
+  - package-ecosystem: "npm"
+    groups:
+      all:
+        patterns:
+          - "*"
+    directory: "/code"
     schedule:
       interval: "weekly"
   - package-ecosystem: "docker"

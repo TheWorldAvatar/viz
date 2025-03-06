@@ -6,7 +6,7 @@
 .divider {
   width: 100%;
   height: 1px;
-  background-color: var(--border-primary);
+  background: var(--border-primary);
   margin: 0;
 }
 
@@ -20,47 +20,52 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  padding: 0.25rem 1.0rem;
-  margin: 0;
-  border: none;
+  padding: 0.25rem 1.0rem !important;
+  margin: 0 !important;
+  border: none !important;
   border-radius: 0;
-  background-color: transparent;
+  background: none !important;
   transition: color 0.2s ease;
 }
 
 .registry-nav-button:hover {
   border-bottom: 2px solid var(--text-color-links);
-  background-color: transparent;
+  background: none !important;
 }
 
-.registry-nav-button-text {
-  font-size: var(--font-size-secondary-text);
-  color: var(--text-color-primary);
-}
-
-.registry-nav-button-hover:hover {
-  color: var(--text-color-links-hover);
+.action-ribbon-container {
+  display: flex;
+  justify-content: space-between;
 }
 
 .action-ribbon {
   display: flex;
   gap: 0.5rem;
-  margin-left: auto;
-  justify-content: flex-end;
 }
 
 .active-state {
   border-bottom: 4px solid var(--text-color-links) !important;
-  background-color: transparent;
+  background: transparent;
 }
 
-.icon {
-  color: var(--text-color-links);
-  margin-left: 0.45rem;
+.transparent-button {
+  background: none !important;
+  border: none !important;
 }
 
-.icon:hover {
-  color: var(--text-color-links-hover);
+.transparent-button:hover {
+  background: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.transparent-button-text {
+  font-size: var(--font-size-secondary-text);
+  color: var(--text-color-primary) !important;
+}
+
+.transparent-button-text:hover {
+  color: var(--text-color-links-hover) !important;
 }
 
 @media only screen and (max-width: 480px) {
