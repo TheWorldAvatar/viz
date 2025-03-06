@@ -15,7 +15,6 @@ import { ApiResponse, JsonObject } from "types/json";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
-import ReturnButton from "ui/navigation/return/return";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
@@ -27,6 +26,7 @@ import {
 } from "utils/server-actions";
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
+import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
@@ -186,7 +186,9 @@ export default function FormContainerComponent(
   return (
     <div className={styles["container"]}>
       <div className={`${styles["form-title"]} ${styles["form-row"]}`}>
-        <ReturnButton />
+        <ReturnButton
+          icon="first_page"
+        />
         <span>{`${props.formType.toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>

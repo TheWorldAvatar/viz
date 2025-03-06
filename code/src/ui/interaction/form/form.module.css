@@ -16,6 +16,7 @@
 
 .form-title {
   text-wrap: nowrap;
+  justify-content: space-between;
 }
 
 .form-contents {

@@ -1,18 +1,17 @@
 "use client";
 
-import styles from "./table.ribbon.module.css";
 import fieldStyles from "ui/interaction/form/field/field.module.css";
+import styles from "./table.ribbon.module.css";
 
-import React from "react";
 import { useProtectedRole } from "hooks/useProtectedRole";
-import { useRouter } from "next/navigation";
+import React from "react";
 
 import { Routes } from "io/config/routes";
 import { RegistryFieldValues } from "types/form";
-import { DownloadButton } from "ui/interaction/action/download/download";
-import ClickActionButton from "ui/interaction/action/click/click-button";
-import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
+import { DownloadButton } from "ui/interaction/action/download/download";
+import RedirectButton from "ui/interaction/action/redirect/redirect-button";
+import ReturnButton from "ui/interaction/action/redirect/return-button";
 
 interface TableRibbonProps {
   path: string;
@@ -38,8 +37,6 @@ interface TableRibbonProps {
  * @param triggerRefresh Method to trigger refresh.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
-  const router = useRouter();
-
   const isKeycloakEnabled = process.env.KEYCLOAK === "true";
 
   const authorised = useProtectedRole().authorised;
@@ -130,12 +127,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />
           )}
         {props.lifecycleStage == Routes.REGISTRY_REPORT && (
-          <ClickActionButton
-            icon={"first_page"}
+          <ReturnButton
+            icon="first_page"
             label={`back to ${props.entityType}s`}
-            onClick={() => {
-              router.back();
-            }}
           />
         )}
         <DownloadButton instances={props.instances} />
