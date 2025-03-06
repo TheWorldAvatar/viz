@@ -6,7 +6,7 @@
 .divider {
   width: 100%;
   height: 1px;
-  background-color: var(--border-primary);
+  background: var(--border-primary);
   margin: 0;
 }
 
@@ -24,43 +24,48 @@
   margin: 0;
   border: none;
   border-radius: 0;
-  background-color: transparent;
+  background: none !important;
   transition: color 0.2s ease;
 }
 
 .registry-nav-button:hover {
   border-bottom: 2px solid var(--text-color-links);
-  background-color: transparent;
+  background: none !important;
 }
 
-.registry-nav-button-text {
-  font-size: var(--font-size-secondary-text);
-  color: var(--text-color-primary);
-}
-
-.registry-nav-button-hover:hover {
-  color: var(--text-color-links-hover);
+.action-ribbon-container {
+  display: flex;
+  justify-content: space-between;
 }
 
 .action-ribbon {
   display: flex;
   gap: 0.5rem;
-  margin-left: auto;
-  justify-content: flex-end;
+}
+
+.transparent-button-text {
+  font-size: var(--font-size-secondary-text);
+  color: var(--text-color-primary);
+}
+
+.transparent-button-text:hover {
+  color: var(--text-color-links-hover);
 }
 
 .active-state {
   border-bottom: 4px solid var(--text-color-links) !important;
-  background-color: transparent;
+  background: transparent;
 }
 
-.icon {
-  color: var(--text-color-links);
-  margin-left: 0.45rem;
+.transparent-button {
+  background: none;
+  border: none;
 }
 
-.icon:hover {
-  color: var(--text-color-links-hover);
+.transparent-button:hover {
+  background: none !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 @media only screen and (max-width: 480px) {

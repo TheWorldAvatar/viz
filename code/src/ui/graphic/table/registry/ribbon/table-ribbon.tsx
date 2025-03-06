@@ -8,10 +8,10 @@ import React from "react";
 
 import { Routes } from "io/config/routes";
 import { RegistryFieldValues } from "types/form";
-import MaterialIconButton from "ui/graphic/icon/icon-button";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
+import ClickActionButton from "ui/interaction/action/click/click-button";
 
 interface TableRibbonProps {
   path: string;
@@ -48,7 +48,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.setSelectedDate(event.target.value);
   };
 
-  const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
+  const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
 
@@ -64,8 +64,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           className={styles["registry-nav-button"]}
           styling={{
             active: styles["active-state"],
-            text: styles["registry-nav-button-text"],
-            hover: styles["registry-nav-button-hover"],
+            text: styles["transparent-button-text"],
           }}
         />
         <RedirectButton
@@ -77,8 +76,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           className={styles["registry-nav-button"]}
           styling={{
             active: styles["active-state"],
-            text: styles["registry-nav-button-text"],
-            hover: styles["registry-nav-button-hover"],
+            text: styles["transparent-button-text"],
           }}
         />
         <RedirectButton
@@ -90,52 +88,25 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           className={styles["registry-nav-button"]}
           styling={{
             active: styles["active-state"],
-            text: styles["registry-nav-button-text"],
-            hover: styles["registry-nav-button-hover"],
+            text: styles["transparent-button-text"],
           }}
         />
       </div>
 
       <div className={styles.divider} />
 
-      <div className={styles["action-ribbon"]}>
-        {(authorised || !isKeycloakEnabled) &&
-          props.lifecycleStage == Routes.REGISTRY_PENDING && (
-            <RedirectButton
-              icon="add"
-              label={"add " + props.entityType}
-              url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
-              isActive={false}
-            />
-          )}
-        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-          props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-            <RedirectButton
-              icon="task"
-              label={"overview"}
-              url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-              isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-            />
-          )}
-        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-          props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
-            <RedirectButton
-              icon="event"
-              label={"view tasks"}
-              url={Routes.REGISTRY_TASK_DATE}
-              isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-            />
-          )}
-        {props.lifecycleStage == Routes.REGISTRY_REPORT && (
-          <ReturnButton
-            icon="first_page"
-            label={`back to ${props.entityType}s`}
-          />
-        )}
-        <DownloadButton instances={props.instances} />
-        {(authorised || !isKeycloakEnabled) &&
-          props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
-            <>
+      <div className={styles["action-ribbon-container"]}>
+        <ClickActionButton
+          icon={"cached"}
+          onClick={triggerRefresh}
+          className={styles["transparent-button"]}
+          styling={{
+            text: styles["transparent-button-text"],
+          }}
+        />
+        <div className={styles["action-ribbon"]}>
+          {(authorised || !isKeycloakEnabled) &&
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
               <div style={{ margin: "auto 0" }}>
                 <label
                   className={fieldStyles["form-input-label"]}
@@ -153,13 +124,42 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   onChange={handleDateChange}
                 />
               </div>
-              <MaterialIconButton
-                iconName={"cached"}
-                iconStyles={[styles["icon"]]}
-                onClick={triggerRefresh}
+            )}
+          {(authorised || !isKeycloakEnabled) &&
+            props.lifecycleStage == Routes.REGISTRY_PENDING && (
+              <RedirectButton
+                icon="add"
+                label={"add " + props.entityType}
+                url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
+                isActive={false}
               />
-            </>
+            )}
+          {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+              <RedirectButton
+                icon="task"
+                label={"overview"}
+                url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+                isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+              />
+            )}
+          {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+              <RedirectButton
+                icon="event"
+                label={"view tasks"}
+                url={Routes.REGISTRY_TASK_DATE}
+                isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+              />
+            )}
+          {props.lifecycleStage == Routes.REGISTRY_REPORT && (
+            <ReturnButton
+              icon="first_page"
+              label={`back to ${props.entityType}s`}
+            />
           )}
+          <DownloadButton instances={props.instances} />
+        </div>
       </div>
     </div>
   );
