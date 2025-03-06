@@ -58,56 +58,56 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   }, [lastRow])
 
   return (
-    <div style={{ width: "100%", margin: "0 0.75rem 1vh" }}>
+    <div className={fieldStyles["form-field-container"]}>
       <FormInputContainer
         field={props.fieldConfigs[0]}
         error={props.form.formState.errors[props.fieldId] as FieldError}
         labelStyles={[fieldStyles["form-input-label"]]}
-      > <></>
-      </FormInputContainer>
-      <ul>
-        <li className={styles["array-row"]}>
-          {props.fieldConfigs.map((field, index) => {
-            return <p key={field.name[VALUE_KEY] + index} className={styles["cell"]}>
-              {parseWordsForLabels(field.name[VALUE_KEY])}
-            </p>
+      >
+        <ul className={styles["row-container"]}>
+          <li className={styles["array-row"]}>
+            {props.fieldConfigs.map((field, index) => {
+              return <p key={field.name[VALUE_KEY] + index} className={styles["cell"]}>
+                {parseWordsForLabels(field.name[VALUE_KEY])}
+              </p>
+            })}
+            <span className={`${styles["cell"]}`}></span>
+          </li>
+          {fields.map((field, index) => {
+            return (
+              <li key={field.id} className={styles["array-row"]}>
+                {props.fieldConfigs.map((config, secondaryIndex) => {
+                  return <div key={field.id + index + secondaryIndex} className={styles["cell"]}>
+                    <input
+                      id={config.name[VALUE_KEY]}
+                      type={props.options?.disabled || config.datatype === "string" ? "text" : "number"}
+                      className={fieldStyles["form-input-value"]}
+                      step={"0.01"}
+                      aria-label={config.name[VALUE_KEY]}
+                      placeholder={config.minCount[VALUE_KEY] == "0" ? "May be left blank" : "Please add an input"}
+                      {...props.form.register(`${props.fieldId}.${index}.${config.fieldId}`, getRegisterOptions(config, props.form.getValues(FORM_STATES.FORM_TYPE)))}
+                    />
+                  </div>
+                })}
+                {index < fieldSize && <ClickActionButton
+                  icon={"remove"}
+                  title={""}
+                  className={`${styles["cell"]} ${styles["delete-button"]} ${styles["delete-button-background"]}`}
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    remove(index);
+                  }}
+                />}
+                {index == fieldSize && <ClickActionButton
+                  icon={""}
+                  title={""}
+                  className={`${styles["cell"]} ${styles["delete-button"]} ${styles["delete-button-background-disabled"]}`}
+                />}
+              </li>
+            );
           })}
-          <span className={`${styles["cell"]}`}></span>
-        </li>
-        {fields.map((field, index) => {
-          return (
-            <li key={field.id} className={styles["array-row"]}>
-              {props.fieldConfigs.map((config, secondaryIndex) => {
-                return <div key={field.id + index + secondaryIndex} className={styles["cell"]}>
-                  <input
-                    id={config.name[VALUE_KEY]}
-                    type={props.options?.disabled || config.datatype === "string" ? "text" : "number"}
-                    className={fieldStyles["form-input-value"]}
-                    step={"0.01"}
-                    aria-label={config.name[VALUE_KEY]}
-                    placeholder={config.minCount[VALUE_KEY] == "0" ? "May be left blank" : "Please add an input"}
-                    {...props.form.register(`${props.fieldId}.${index}.${config.fieldId}`, getRegisterOptions(config, props.form.getValues(FORM_STATES.FORM_TYPE)))}
-                  />
-                </div>
-              })}
-              {index < fieldSize && <ClickActionButton
-                icon={"remove"}
-                title={""}
-                className={`${styles["cell"]} ${styles["delete-button"]} ${styles["delete-button-background"]}`}
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  remove(index);
-                }}
-              />}
-              {index == fieldSize && <ClickActionButton
-                icon={""}
-                title={""}
-                className={`${styles["cell"]} ${styles["delete-button"]} ${styles["delete-button-background-disabled"]}`}
-              />}
-            </li>
-          );
-        })}
-      </ul>
+        </ul>
+      </FormInputContainer>
     </div>
   );
 }
