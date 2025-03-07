@@ -62,7 +62,7 @@ services:
   #     - auth-network
 
   dragonfly:
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    image: ghcr.io/dragonflydb/dragonfly:v1.27.1
     container_name: "session-store"
     restart: always
     ulimits:
