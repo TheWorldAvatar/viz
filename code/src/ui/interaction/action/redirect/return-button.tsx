@@ -28,7 +28,8 @@ export default function ReturnButton({
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
-  const handleReturnClick: React.MouseEventHandler<HTMLButtonElement> = (): void => {
+  const handleReturnClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
     router.back();
   };
   return (

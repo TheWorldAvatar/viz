@@ -34,7 +34,8 @@ export default function RedirectButton({
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (): void => {
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
     router.push(url);
   };
   return (
