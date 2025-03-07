@@ -30,6 +30,7 @@
         /* Button */
         --description-box: #a9d9d1;
         --button-color-secondary: #18677a;
+        --button-color-secondary-hover: #0B4452;
     }
 }
 
@@ -63,6 +64,7 @@
         /* Button */
         --description-box: #2B816F;
         --button-color-secondary: #7ACADB;
+        --button-color-secondary-hover: #35A7C0;
     }
 }
 
