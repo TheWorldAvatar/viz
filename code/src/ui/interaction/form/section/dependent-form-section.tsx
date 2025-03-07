@@ -71,16 +71,17 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // Only update the id if there are any entities
       if (entities.length > 0) {
         defaultId = extractResponseField(entities[0], FORM_STATES.ID)?.value;
+        // If there is a default value, search and use the option matching the default instance's local name
+        if (field.defaultValue) {
+          const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
+          defaultId = extractResponseField(entities.find(entity =>
+            getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
+          ), FORM_STATES.ID)?.value;
+        }
       }
       // Search form should always target default value
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
         defaultId = defaultSearchOption.type.value;
-        // If there is a default value, search and use the option matching the default instance's local name
-      } else if (field.defaultValue) {
-        const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
-        defaultId = extractResponseField(entities.find(entity =>
-          getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
-        ), FORM_STATES.ID)?.value;
       }
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
