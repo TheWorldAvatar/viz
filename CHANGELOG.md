@@ -3,6 +3,20 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.17.0
+
+### Changes
+
+- Added form branches and arrays
+- Added option to generate report
+- Updated form extraction workflow following changes in the backend
+- Consolidation of form parsing methods
+- Improve dark mode design for the registry
+
+### Bug Fixes
+
+- Fix missing functions for action buttons
+
 ## 5.16.15
 
 ### Bug Fixes
