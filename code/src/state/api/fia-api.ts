@@ -7,9 +7,22 @@ import { ScenarioDimensionsData } from 'types/timeseries';
  * Define a service that fetches supporting data for a given feature based on its IRI, stack endpoint, and a specified scenario ID.
  * This data includes, but is not limited to, metadata and timeseries data associated with the feature. 
  * It will require the feature's IRI, stack name, and the scenario ID in this sequence.
- */
+*/
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
+
+  prepareHeaders: (headers) => {
+
+    const token: string = ''; // get the damn thing
+
+    // If we have a token set in state, pass it to the FIA
+    if (token) {
+      headers.set('authorization', `Bearer ${token}`)
+    }
+
+    return headers
+  },
+
   fetchFn: async (input, init) => {
     const response = await fetch(input, init);
     const contentType = response.headers.get('content-type');
