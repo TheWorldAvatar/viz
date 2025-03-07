@@ -26,6 +26,10 @@
         --border-primary: #b6b6bf;
         --border-secondary: #a5a5b3;
         --border-tertiary: #9898af;
+
+        /* Button */
+        --description-box: #a9d9d1;
+        --button-color-secondary: #18677a;
     }
 }
 
@@ -55,6 +59,10 @@
         --border-primary: #434b55;
         --border-secondary: #6c7989;
         --border-tertiary: #7f8ea1;
+
+        /* Button */
+        --description-box: #2B816F;
+        --button-color-secondary: #7ACADB;
     }
 }
 
@@ -79,7 +87,6 @@
     --button-color-primary: #83C38D;
     --button-color-primary-active: #65A671;
     --alert-color: 191, 74, 42;
-    --description-box: #a9d9d1;
 }
 
 * {
