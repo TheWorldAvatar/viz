@@ -64,6 +64,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setResponse(null);
   };
 
+  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit();
+    }
+  };
+
   const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
     formData[FORM_STATES.ORDER] = props.task.id;
     let url = `${props.registryAgentApi}/contracts/service/`;
