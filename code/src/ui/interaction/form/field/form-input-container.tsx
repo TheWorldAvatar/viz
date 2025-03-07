@@ -53,10 +53,7 @@ export default function FormInputContainer(
             icon="add"
             url={props.redirectOptions.addUrl}
             isActive={false}
-            className={styles["transparent-button"]}
-            styling={{
-              text: styles["transparent-button-text"],
-            }}
+            isTransparent= {true}
           />
         )}
       </label>

@@ -61,10 +61,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
           isHoverableDisabled={true}
+          isTransparent={true}
           className={styles["registry-nav-button"]}
           styling={{
             active: styles["active-state"],
-            text: styles["transparent-button-text"],
           }}
         />
         <RedirectButton
@@ -73,10 +73,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
           isHoverableDisabled={true}
+          isTransparent={true}
           className={styles["registry-nav-button"]}
           styling={{
             active: styles["active-state"],
-            text: styles["transparent-button-text"],
           }}
         />
         <RedirectButton
@@ -85,10 +85,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
           isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
           isHoverableDisabled={true}
+          isTransparent={true}
           className={styles["registry-nav-button"]}
           styling={{
             active: styles["active-state"],
-            text: styles["transparent-button-text"],
           }}
         />
       </div>
@@ -99,10 +99,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         <ClickActionButton
           icon={"cached"}
           onClick={triggerRefresh}
-          className={styles["transparent-button"]}
-          styling={{
-            text: styles["transparent-button-text"],
-          }}
+          isTransparent={true}
         />
         <div className={styles["action-ribbon"]}>
           {(authorised || !isKeycloakEnabled) &&
@@ -152,12 +149,18 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
               />
             )}
-          {props.lifecycleStage == Routes.REGISTRY_REPORT && (
+          {props.lifecycleStage == Routes.REGISTRY_REPORT && (<>
             <ReturnButton
               icon="first_page"
               label={`back to ${props.entityType}s`}
             />
-          )}
+            <RedirectButton
+              icon="print"
+              label="generate report"
+              url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
+              isActive={false}
+            />
+          </>)}
           <DownloadButton instances={props.instances} />
         </div>
       </div>
