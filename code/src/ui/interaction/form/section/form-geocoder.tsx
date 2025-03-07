@@ -167,7 +167,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       getAddressShapes(props.agentApi, props.field.name[VALUE_KEY]);
     }
     if (formType == Paths.REGISTRY || formType == Paths.REGISTRY_EDIT) {
-      getGeoCoordinates(props.agentApi, props.field.defaultValue.value);
+      getGeoCoordinates(props.agentApi,
+        Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
     }
   }, []);
 
@@ -187,9 +188,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     const searchParams: URLSearchParams = new URLSearchParams();
     searchParams.append(postalCodeUnderscored, data[postalCode]);
 
-    const url: string = `${
-      props.agentApi
-    }/location/addresses?${searchParams.toString()}`;
+    const url: string = `${props.agentApi
+      }/location/addresses?${searchParams.toString()}`;
     const results = await sendGetRequest(url);
     if (
       results ==
