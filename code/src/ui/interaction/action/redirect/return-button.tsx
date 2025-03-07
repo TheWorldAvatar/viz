@@ -30,6 +30,9 @@ export default function ReturnButton({
   const router = useRouter();
   const handleReturnClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
+    if (typeof window !== "undefined") {
+      window.close(); // Closes the tab
+    }
     router.back();
   };
   return (

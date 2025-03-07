@@ -62,8 +62,6 @@ export default function FormContainerComponent(
     useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
-  const showReturnButton: boolean =
-    props.formType === Paths.REGISTRY || !!response;
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -143,18 +141,6 @@ export default function FormContainerComponent(
       dispatch(setIsOpen(false));
       router.back();
     }, 2000);
-  };
-
-  const onReturn: React.MouseEventHandler<HTMLButtonElement> = () => {
-    dispatch(setIsOpen(false));
-    router.back();
-  };
-
-  const closeTab: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (typeof window !== "undefined") {
-      window.close(); // Closes the tab
-    }
-    router.back(); // Required to close the intercepted modal as the tab cannot be closed
   };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -278,22 +264,12 @@ export default function FormContainerComponent(
                 isActive={false}
               />
             )}
-          <ClickActionButton
-            icon={
-              (isRescindAction || isTerminateAction || !showReturnButton) &&
-                !response
-                ? "publish"
-                : "keyboard_return"
-            }
-            onClick={
-              (isRescindAction || isTerminateAction) && !response
-                ? onSubmit
-                : showReturnButton
-                  ? props.formType === Paths.REGISTRY_DELETE
-                    ? closeTab
-                    : onReturn
-                  : onSubmit
-            }
+          {props.formType != Paths.REGISTRY && !response && <ClickActionButton
+            icon="publish"
+            onClick={onSubmit}
+          />}
+          <ReturnButton
+            icon="keyboard_return"
           />
         </div>
       </div>

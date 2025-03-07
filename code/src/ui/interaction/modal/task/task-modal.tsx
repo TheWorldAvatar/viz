@@ -64,6 +64,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setResponse(null);
   };
 
+  // Return back to the non-action page
+  const onReturnInAction: React.MouseEventHandler<HTMLButtonElement> = () => {
+    setIsDispatchAction(false);
+    setIsCompleteAction(false);
+    setIsCancelAction(false);
+    setIsReportAction(false);
+    setFormFields([]);
+  };
+
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
       formRef.current.requestSubmit();
@@ -234,16 +243,16 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 icon={"report"}
                 onClick={genBooleanClickHandler(setIsReportAction)}
               />}
-            <ClickActionButton
-              // Return Button
-              icon={"keyboard_return"}
-              onClick={onClose}
-            />
             {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
               // Submit Button
               icon={"publish"}
               onClick={onSubmit}
             />}
+            <ClickActionButton
+              // Return Button
+              icon={"keyboard_return"}
+              onClick={isCancelAction || isCompleteAction || isDispatchAction || isReportAction ? onReturnInAction : onClose}
+            />
           </div>
         </section>
       </div>
