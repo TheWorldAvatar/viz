@@ -60,7 +60,10 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   return (
     <div className={fieldStyles["form-field-container"]}>
       <FormInputContainer
-        field={props.fieldConfigs[0]}
+        field={{
+          ...props.fieldConfigs[0],
+          name: { "@value": "" },
+        }}
         error={props.form.formState.errors[props.fieldId] as FieldError}
         labelStyles={[fieldStyles["form-input-label"]]}
       >

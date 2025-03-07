@@ -12,6 +12,11 @@
   display: flex;
   flex-direction: row;
   border-radius: 2px;
+  column-gap: .5rem;
+}
+
+.array-row:first-child .cell {
+  color: var(--text-color-primary);
 }
 
 .cell {
