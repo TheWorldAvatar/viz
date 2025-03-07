@@ -12,7 +12,6 @@ import { Paths } from "io/config/routes";
 import { setIsOpen } from "state/modal-slice";
 import { FORM_IDENTIFIER, PropertyShape } from "types/form";
 import { ApiResponse, JsonObject } from "types/json";
-import MaterialIconButton from "ui/graphic/icon/icon-button";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
 import ResponseComponent from "ui/text/response/response";
@@ -206,10 +205,10 @@ export default function FormContainerComponent(
       </div>
       <div className={styles["form-footer"]}>
         {!formRef.current?.formState?.isSubmitting && !response && (
-          <MaterialIconButton
-            iconName={"cached"}
-            iconStyles={[styles["form-button-icon"]]}
+          <ClickActionButton
+            icon={"cached"}
             onClick={triggerRefresh}
+            isTransparent={true}
           />
         )}
         {formRef.current?.formState?.isSubmitting ||
