@@ -100,20 +100,25 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
     // Update field ID, the fieldId for an array should be its group name
     parsedFieldId = `${fieldId} ${field.name[VALUE_KEY]}`;
     let currentIndex: number = 0;
+    if (!outputState[fieldId]) {
+      outputState[fieldId] = [{}];
+    }
     // Append existing values if they exist
     if (field.defaultValue) {
       const defaultArray: SparqlResponseField[] = Array.isArray(field.defaultValue) ?
         field.defaultValue : [field.defaultValue];
       defaultArray.forEach((defaultValue, index) => {
-        outputState[`${fieldId}.${index}.${parsedFieldId}`] = defaultValue.value;
+        if (!outputState[fieldId][index]) {
+          outputState[fieldId][index] = {};
+        }
+        outputState[fieldId][index][parsedFieldId] = defaultValue.value;
         currentIndex = index; // Always update the current index following default values
       });
     } else {
       // If no existing values exist, add an initial value
-      outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = field.datatype === "decimal" ? "-0.01" : "";
+      outputState[fieldId][currentIndex][parsedFieldId] = field.datatype === "decimal" ? "-0.01" : "";
     }
     currentIndex++; // increment the counter
-    outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = ""; // add an empty field at the end
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue) ? field.defaultValue?.value : "";
     // If no default value is available for id, value will default to the id
