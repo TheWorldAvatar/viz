@@ -60,7 +60,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const singleService: string = "Single Service";
   const regularService: string = "Regular Service";
   const alternateService: string = "Alternate Day Service";
-  const scheduleType: string = "schedule";
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
   };
@@ -210,7 +209,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             </p>
           </div>
           <FormFieldComponent
-            entityType={scheduleType}
             field={{
               "@id": "string",
               "@type": "http://www.w3.org/ns/shacl#PropertyShape",
@@ -225,7 +223,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           />
           {selectedServiceOption != singleService && (
             <FormFieldComponent
-              entityType={scheduleType}
               field={{
                 "@id": "string",
                 "@type": "http://www.w3.org/ns/shacl#PropertyShape",
@@ -282,7 +279,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               Time Slot
             </h1>
             <FormFieldComponent
-              entityType={scheduleType}
               field={{
                 "@id": "string",
                 "@type": "http://www.w3.org/ns/shacl#PropertyShape",
@@ -296,7 +292,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               options={isDisabledOption}
             />
             <FormFieldComponent
-              entityType={scheduleType}
               field={{
                 "@id": "string",
                 "@type": "http://www.w3.org/ns/shacl#PropertyShape",

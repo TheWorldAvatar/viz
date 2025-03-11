@@ -270,7 +270,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       )}
       {postalCodeShape && (
         <FormFieldComponent
-          entityType={props.field.name[VALUE_KEY]}
           field={postalCodeShape}
           form={props.form}
         />
@@ -314,7 +313,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           {addressShapes.map((shape, index) => (
             <FormFieldComponent
               key={shape.fieldId + index}
-              entityType={props.field.name[VALUE_KEY]}
               agentApi={props.agentApi}
               field={shape}
               form={props.form}
@@ -341,7 +339,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             fieldId={props.field.fieldId}
           />
           <FormFieldComponent
-            entityType={props.field.name[VALUE_KEY]}
             field={latitudeShape}
             form={props.form}
             options={{
@@ -350,7 +347,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             }}
           />
           <FormFieldComponent
-            entityType={props.field.name[VALUE_KEY]}
             field={longitudeShape}
             form={props.form}
             options={{

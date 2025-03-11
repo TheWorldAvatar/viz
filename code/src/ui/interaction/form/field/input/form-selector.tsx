@@ -9,7 +9,6 @@ import { getAvailableTypes } from 'utils/server-actions';
 import FormInputContainer from '../form-input-container';
 
 interface FormSelectorProps {
-  instanceType: string;
   agentApi: string;
   field: PropertyShape;
   form: UseFormReturn;
@@ -25,7 +24,6 @@ interface FormSelectorProps {
 /**
  * This component renders a dropdown selector for the form.
  * 
- * @param {string} instanceType The type of entity.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
