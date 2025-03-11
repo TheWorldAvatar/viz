@@ -6,6 +6,7 @@ import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, Ontol
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
+  IRI: "iri",
   FORM_TYPE: "formType",
   CONTRACT: "contract",
   ORDER: "order",
