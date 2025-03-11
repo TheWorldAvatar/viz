@@ -1,15 +1,12 @@
 
-import fieldStyles from "../field/field.module.css";
 import styles from "../form.module.css";
 
 import { UseFormReturn } from "react-hook-form";
 
 import { PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
-import FormFieldComponent from "../field/form-field";
-import { DependentFormSection } from "./dependent-form-section";
-import { renderFormField } from '../form';
 import FormArray from '../field/array/array';
+import { renderFormField } from '../form';
 
 interface FormSectionProps {
   entityType: string;
@@ -37,6 +34,7 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
         {props.group.property.map((field, index) =>
           renderFormField(props.entityType, props.agentApi, field, props.form, index))}
         {props.group.multipleProperty.length > 0 && <FormArray
+          agentApi={props.agentApi}
           fieldId={props.group.label[VALUE_KEY]}
           fieldConfigs={props.group.multipleProperty}
           form={props.form}
