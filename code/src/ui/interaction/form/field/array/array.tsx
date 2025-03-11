@@ -6,6 +6,7 @@ import { useFieldArray, UseFormReturn, useWatch } from 'react-hook-form';
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
+import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
 import { isValidIRI } from 'utils/client-utils';
 import FormFieldComponent from '../form-field';
 
@@ -85,7 +86,15 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             </span>
             {props.fieldConfigs.map((config, secondaryIndex) => {
               return <div key={field.id + index + secondaryIndex} className={styles["cell"]}>
-                <FormFieldComponent
+                {config.class && <DependentFormSection
+                  agentApi={props.agentApi}
+                  dependentProp={{
+                    ...config,
+                    fieldId: `${props.fieldId}.${index}.${config.fieldId}`,
+                  }}
+                  form={props.form}
+                />}
+                {!config.class && <FormFieldComponent
                   agentApi={props.agentApi}
                   field={{
                     ...config,
@@ -93,10 +102,9 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                   }}
                   form={props.form}
                   options={props.options}
-                />
+                />}
               </div>
             })}
-
           </li>
         );
       })}

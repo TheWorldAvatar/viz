@@ -58,8 +58,9 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
         // When multiple fields for the same property is possible ie no max count or at least more than 1, 
         // the property must be initialised as an array and pushed into a separate set
         if (!propertyShape.maxCount || (propertyShape.maxCount && parseInt(propertyShape.maxCount?.[VALUE_KEY]) > 1)) {
+          const updatedPropShape: PropertyShape = updateDependentProperty(propertyShape, fields);
           fieldset.multipleProperty.push(
-            initFormField(propertyShape, initialState, fieldset.label[VALUE_KEY], true)
+            initFormField(updatedPropShape, initialState, fieldset.label[VALUE_KEY], true)
           );
           return false; // Filter out from the 'properties' array
         } else {
