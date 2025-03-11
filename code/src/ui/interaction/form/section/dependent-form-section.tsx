@@ -139,7 +139,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   };
 
   // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
     if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
