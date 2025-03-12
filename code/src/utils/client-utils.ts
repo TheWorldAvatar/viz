@@ -116,11 +116,16 @@ export function getSparqlResponseValue(response: SparqlResponseField): string {
  *
  * @param {RegistryFieldValues} response The response.
  * @param {string} field The target field of interest.
+ * @param {boolean} getFirstArrayField Optional indicator to retrieve the first array field if required.
  */
-export function extractResponseField(response: RegistryFieldValues, field: string): SparqlResponseField {
+export function extractResponseField(response: RegistryFieldValues, field: string, getFirstArrayField?: boolean): SparqlResponseField {
     if (Array.isArray(response[field])) {
-        console.warn(`Detected that field ${field} is an array! Skipping field...`)
-        return null;
+        if (getFirstArrayField) {
+            return response[field][0];
+        } else {
+            console.warn(`Detected that field ${field} is an array! Skipping field...`)
+            return null;
+        }
     } else {
         return response[field];
     }

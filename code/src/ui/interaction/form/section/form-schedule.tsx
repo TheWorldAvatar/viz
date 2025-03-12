@@ -13,7 +13,7 @@ import {
 } from "types/form";
 import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { parseWordsForLabels } from "utils/client-utils";
+import { extractResponseField, parseWordsForLabels } from "utils/client-utils";
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
@@ -81,11 +81,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       const jsonResponse: RegistryFieldValues = JSON.parse(response);
 
       // Retrieve recurrence and selected service option
-      const recurrence: number = getDefaultVal(
-        FORM_STATES.RECURRENCE,
-        jsonResponse[FORM_STATES.RECURRENCE].value,
-        formType
-      ) as number;
+      const recurrence: number = getDefaultVal(FORM_STATES.RECURRENCE, extractResponseField(jsonResponse, FORM_STATES.RECURRENCE, true).value, formType) as number;
       setSelectedServiceOption(
         recurrence == 0
           ? singleService
@@ -97,40 +93,24 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
       props.form.setValue(
         FORM_STATES.START_DATE,
-        getDefaultVal(
-          FORM_STATES.START_DATE,
-          jsonResponse[FORM_STATES.START_DATE.replace(/\s+/g, "_")].value,
-          formType
-        )
+        getDefaultVal(FORM_STATES.START_DATE, extractResponseField(jsonResponse, FORM_STATES.START_DATE.replace(/\s+/g, "_"), true).value, formType)
       );
       props.form.setValue(
         FORM_STATES.END_DATE,
-        getDefaultVal(
-          FORM_STATES.END_DATE,
-          jsonResponse[FORM_STATES.END_DATE.replace(/\s+/g, "_")].value,
-          formType
-        )
+        getDefaultVal(FORM_STATES.END_DATE, extractResponseField(jsonResponse, FORM_STATES.END_DATE.replace(/\s+/g, "_"), true).value, formType)
       );
       props.form.setValue(
         FORM_STATES.TIME_SLOT_START,
-        getDefaultVal(
-          FORM_STATES.TIME_SLOT_START,
-          jsonResponse["start_time"].value,
-          formType
-        )
+        getDefaultVal(FORM_STATES.TIME_SLOT_START, extractResponseField(jsonResponse, "start_time", true).value, formType)
       );
       props.form.setValue(
         FORM_STATES.TIME_SLOT_END,
-        getDefaultVal(
-          FORM_STATES.TIME_SLOT_END,
-          jsonResponse["end_time"].value,
-          formType
-        )
+        getDefaultVal(FORM_STATES.TIME_SLOT_END, extractResponseField(jsonResponse, "end_time", true).value, formType)
       );
-      daysOfWeek.map((dayOfWeek) => {
+      daysOfWeek.forEach((dayOfWeek) => {
         props.form.setValue(
           dayOfWeek,
-          getDefaultVal(dayOfWeek, jsonResponse[dayOfWeek].value, formType)
+          getDefaultVal(dayOfWeek, extractResponseField(jsonResponse, dayOfWeek, true).value, formType)
         );
       });
       setIsLoading(false);
