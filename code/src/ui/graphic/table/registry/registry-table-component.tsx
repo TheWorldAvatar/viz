@@ -87,7 +87,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       }
     };
 
-    if (!isModalOpen) {
+    if (!isModalOpen || refreshFlag) {
       fetchData();
     }
   }, [isModalOpen, selectedDate, refreshFlag]);
