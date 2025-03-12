@@ -3,6 +3,7 @@
   flex-direction: column;
   row-gap: 1.5rem;
   width: 100%;
+  margin: 0 .5rem;
 }
 
 .row {
