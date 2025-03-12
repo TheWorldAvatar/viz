@@ -269,7 +269,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             <ClickActionButton
               // Return Button
               icon={"keyboard_return"}
-              onClick={isCancelAction || isCompleteAction || isDispatchAction || isReportAction ? onReturnInAction : onClose}
+              // Closes the modal if there is a response in any action
+              onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
+                onReturnInAction : onClose}
             />
           </div>
         </section>

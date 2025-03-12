@@ -267,9 +267,19 @@ export default function FormContainerComponent(
             icon="publish"
             onClick={onSubmit}
           />}
-          <ReturnButton
+          {!!response || (!isRescindAction && !isTerminateAction) && <ReturnButton
+            // Closes the modal given a response in the rescind or terminate action states or other states
             icon="keyboard_return"
-          />
+          />}
+          {!response && (isRescindAction || isTerminateAction) &&
+            <ClickActionButton
+              // Remove the rescind and terminate action view back to original view if no response
+              icon={"keyboard_return"}
+              onClick={() => {
+                setIsRescindAction(false);
+                setIsTerminateAction(false);
+              }}
+            />}
         </div>
       </div>
     </div>

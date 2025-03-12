@@ -1,13 +1,11 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
+import React from "react";
 
-import ActionButton, { ActionButtonProps, ActionStyles } from "../action";
-
-interface RedirectButtonProps extends ActionButtonProps {
-  styling?: ActionStyles;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { getIsOpenState, setIsOpen } from "state/modal-slice";
+import ActionButton, { ActionButtonProps } from "../action";
 
 /**
  * An action button that redirects to the target url.
@@ -26,12 +24,15 @@ export default function ReturnButton({
   isTransparent,
   styling,
   ...rest
-}: Readonly<RedirectButtonProps>) {
+}: Readonly<ActionButtonProps>) {
   const router = useRouter();
+  const isOpen: boolean = useSelector(getIsOpenState);
+  const dispatch = useDispatch();
+
   const handleReturnClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
-    if (typeof window !== "undefined") {
-      window.close(); // Closes the tab
+    if (isOpen) {
+      dispatch(setIsOpen(false));
     }
     router.back();
   };
