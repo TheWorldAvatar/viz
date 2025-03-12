@@ -12,6 +12,8 @@
 - Updated form extraction workflow following changes in the backend
 - Consolidation of form parsing methods
 - Improve dark mode design for the registry
+- Abstracted background image into a hook
+- Updated `VisBackend Agent` from `v1.2.2` to `v1.3.0`
 
 ### Bug Fixes
 
