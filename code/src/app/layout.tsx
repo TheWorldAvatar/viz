@@ -12,7 +12,6 @@ import OptionalPages from 'io/config/optional-pages';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import GlobalContainer from 'ui/global-container';
-import BackgroundImage from 'ui/graphic/image/background';
 
 /**
  * Performs initialisation when the platform is
@@ -48,7 +47,6 @@ export default function RootLayout({ children, modal }: { children: React.ReactN
         <html lang="en" className={dosis.className}>
             <body>
                 <GlobalContainer settings={uiSettings}>
-                    <BackgroundImage />
                     {children}
                     {modal}
                 </GlobalContainer>

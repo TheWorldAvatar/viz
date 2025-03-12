@@ -58,14 +58,6 @@
   color: var(--text-color-links-hover);
 }
 
-.form-button-icon {
-  color: var(--text-color-links);
-}
-
-.form-button-icon:hover {
-  color: var(--text-color-links-hover);
-}
-
 .icon-button {
   display: flex;
   align-items: center;
@@ -91,7 +83,7 @@
 }
 
 .form-fieldset-label {
-  margin: 0 0.25rem 0.5rem;
+  margin: 0 0.25rem;
   padding: 0.25rem;
   font-weight: bold;
   font-size: var(--font-size-secondary-text);
@@ -146,7 +138,7 @@
   color: var(--text-color-links-hover);
 }
 
-.schedule-occurrence-container {
+.section-selector-container {
   width: 100%;
   margin: 0 0.25rem 0.5rem;
 }

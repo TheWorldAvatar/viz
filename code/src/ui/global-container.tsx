@@ -8,6 +8,7 @@ import Trex from 'utils/trex';
 import ContextMenu from './interaction/context-menu/context-menu';
 import Navbar from './navigation/navbar/navbar';
 import { reduxStore } from 'app/store';
+import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { UISettings } from 'types/settings';
 import Footer from './text/footer';
 
@@ -26,6 +27,7 @@ export default function GlobalContainer(
   const [popup, setPopup] = useState<boolean>(false);
   const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const backgroundImageUrl: string = useBackgroundImageUrl();
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -43,13 +45,17 @@ export default function GlobalContainer(
     setContextMenuVisible(false);
   };
 
-
   return (
     <Provider store={reduxStore}>
       <div
         id="globalContainer"
         onContextMenu={handleContextMenu}
         onClick={closeContextMenu} // Close context menu when clicking elsewhere
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
         {contextMenuVisible && (

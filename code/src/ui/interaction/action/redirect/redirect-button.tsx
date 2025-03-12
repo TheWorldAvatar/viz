@@ -20,6 +20,7 @@ interface RedirectButtonProps extends ActionButtonProps {
  * @param {string} url The redirect target url.
  * @param {boolean} isActive Indicates if the redirect button is active and should be highlighted.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
+ * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.active An optional styling object for the active state when active.
  * @param {string} styling.hover An optional styling object for hover effects on text and icon.
  * @param {string} styling.text An optional styling object for text and icon.
@@ -30,11 +31,13 @@ export default function RedirectButton({
   url,
   isActive,
   isHoverableDisabled,
+  isTransparent,
   styling,
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (): void => {
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
     router.push(url);
   };
   return (
@@ -46,6 +49,7 @@ export default function RedirectButton({
       title={rest.title}
       onClick={handleClick}
       isHoverableDisabled={isHoverableDisabled}
+      isTransparent={isTransparent}
       styling={styling}
     />
   );

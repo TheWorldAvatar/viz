@@ -1,12 +1,12 @@
-import fieldStyles from "../field/field.module.css";
+
 import styles from "../form.module.css";
 
 import { UseFormReturn } from "react-hook-form";
 
 import { PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
-import FormFieldComponent from "../field/form-field";
-import { DependentFormSection } from "./dependent-form-section";
+import FormArray from '../field/array/array';
+import { renderFormField } from '../form';
 
 interface FormSectionProps {
   entityType: string;
@@ -29,39 +29,17 @@ interface FormSectionProps {
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
     <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>
-        {parseWordsForLabels(props.group.label[VALUE_KEY])}
-      </legend>
-      {props.group.property.map((field, index) => {
-        // If this is a hidden field, hide the field
-        if (field.maxCount && parseInt(field.maxCount[VALUE_KEY]) === 0) {
-          return <></>;
-        }
-        if (field.class) {
-          return (
-            <div
-              key={field.name[VALUE_KEY] + index}
-              className={fieldStyles["form-field-container"]}
-            >
-              <DependentFormSection
-                agentApi={props.agentApi}
-                dependentProp={field}
-                form={props.form}
-              />
-            </div>
-          );
-        }
-        return (
-          <FormFieldComponent
-            key={field.name[VALUE_KEY] + index}
-            entityType={props.entityType}
-            agentApi={props.agentApi}
-            field={field}
-            form={props.form}
-            options={props.options}
-          />
-        );
-      })}
-    </fieldset>
-  );
+      <legend className={styles["form-fieldset-label"]}>{parseWordsForLabels(props.group.label[VALUE_KEY])}</legend>
+      <div className={styles["form-fieldset-contents"]}>
+        {props.group.property.map((field, index) =>
+          renderFormField(props.entityType, props.agentApi, field, props.form, index))}
+        {props.group.multipleProperty.length > 0 && <FormArray
+          agentApi={props.agentApi}
+          fieldId={props.group.label[VALUE_KEY]}
+          fieldConfigs={props.group.multipleProperty}
+          form={props.form}
+          options={props.options}
+        />}
+      </div>
+    </fieldset>);
 }

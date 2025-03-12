@@ -87,7 +87,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       }
     };
 
-    if (!isModalOpen) {
+    if (!isModalOpen || refreshFlag) {
       fetchData();
     }
   }, [isModalOpen, selectedDate, refreshFlag]);
@@ -138,7 +138,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       </div>
       {task && <TaskModal
         entityType={props.entityType}
-        date={selectedDate}
         registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
         task={task}
