@@ -3,6 +3,18 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.16.15
+
+### Bug Fixes
+
+- Fix missing dependent form field if no instances are found
+
+## 5.16.14
+
+### Improvements
+
+- Updated design for the registry table and forms
+
 ## 5.16.13
 
 ### Changes

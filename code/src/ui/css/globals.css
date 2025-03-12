@@ -78,6 +78,7 @@
     /* Button colors */
     --button-color-primary: #83C38D;
     --button-color-primary-active: #65A671;
+    --description-box: #a9d9d1;
 }
 
 * {
@@ -133,15 +134,6 @@ img {
     flex-grow: 0;
     pointer-events: all;
     background-color: white;
-}
-
-.formContainer {
-    display: flex;
-    align-self: center;
-    flex-direction: column;
-
-    width: 90%;
-    height: 75vh;
 }
 
 .partner-button {

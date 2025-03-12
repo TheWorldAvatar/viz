@@ -2,18 +2,17 @@
 import styles from './task.modal.module.css';
 
 import React, { useEffect, useRef, useState } from 'react';
-import Modal from 'react-modal';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
+import Modal from 'react-modal';
 
 import { Paths } from 'io/config/routes';
 import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import ActionButton from 'ui/interaction/action/action';
-import ResponseComponent from 'ui/text/response/response';
+import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
-import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
+import { FormTemplate } from 'ui/interaction/form/template/form-template';
+import ResponseComponent from 'ui/text/response/response';
 import { Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
@@ -55,7 +54,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [response, setResponse] = useState<HttpResponse>(null);
 
   // Closes the modal on click
-  const onClose: React.MouseEventHandler<HTMLDivElement> = () => {
+  const onClose: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.setIsOpen(false);
     props.setTask(null);
     setIsDispatchAction(false);
@@ -65,6 +64,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setFormFields([]);
     setDispatchFields([]);
     setResponse(null);
+  };
+
+
+  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit();
+    }
   };
 
   // Assign dispatch details
@@ -159,12 +165,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   }, [isDispatchAction, isCompleteAction, isReportAction, isCancelAction]);
 
-  const onSubmit: React.MouseEventHandler<HTMLDivElement> = () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit();
-    }
-  };
-
   // Closes the modal only if response is successfull
   useEffect(() => {
     if (response?.success) {
@@ -220,48 +220,37 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
             {props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) &&
-              <ActionButton
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+                // Complete Button
                 icon={"done_outline"}
-                title={"COMPLETE"}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+                // Assign Button
                 icon={"assignment"}
-                title={"ASSIGN"}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+                // Cancel Button
                 icon={"cancel"}
-                title={"CANCEL"}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ActionButton
+              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+                // Report Button
                 icon={"report"}
-                title={"REPORT"}
                 onClick={genBooleanClickHandler(setIsReportAction)}
               />}
-            <MaterialIconButton
-              iconName={"keyboard_return"}
-              className={styles["section-footer-button"]}
-              iconStyles={[styles["icon"]]}
-              text={{
-                styles: [styles["button-text"]],
-                content: "RETURN"
-              }}
+            <ClickActionButton
+              // Return Button
+              icon={"keyboard_return"}
               onClick={onClose}
             />
-            {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <MaterialIconButton
-              iconName={"publish"}
-              className={styles["section-footer-button"]}
-              iconStyles={[styles["icon"]]}
-              text={{
-                styles: [styles["button-text"]],
-                content: "SUBMIT"
-              }}
+            {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+              // Submit Button
+              icon={"publish"}
               onClick={onSubmit}
             />}
           </div>

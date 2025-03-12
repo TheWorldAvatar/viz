@@ -37,13 +37,11 @@ export default async function ViewFormPage(props: Readonly<ViewFormPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
 
   return (
-    <div className="formContainer">
-      <FormContainerComponent
-        entityType={resolvedParams?.type}
-        formType={Paths.REGISTRY}
-        agentApi={uiSettings?.resources?.registry?.url}
-        isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
-      />
-    </div>
+    <FormContainerComponent
+      entityType={resolvedParams?.type}
+      formType={Paths.REGISTRY}
+      agentApi={uiSettings?.resources?.registry?.url}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+    />
   );
 }

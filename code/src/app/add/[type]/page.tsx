@@ -32,13 +32,11 @@ export default async function AddFormPage(props: Readonly<AddFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   return (
-    <div className="formContainer">
-      <FormContainerComponent
-        entityType={resolvedParams?.type}
-        formType={Paths.REGISTRY_ADD}
-        agentApi={uiSettings?.resources?.registry?.url}
-        isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
-      />
-    </div>
+    <FormContainerComponent
+      entityType={resolvedParams?.type}
+      formType={Paths.REGISTRY_ADD}
+      agentApi={uiSettings?.resources?.registry?.url}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+    />
   );
 }
