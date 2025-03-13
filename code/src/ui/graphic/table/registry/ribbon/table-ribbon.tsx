@@ -53,7 +53,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
+
     <div className={styles.menu}>
+      { props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
       <div className={styles["registry-nav-ribbon"]}>
         <RedirectButton
           label="Pending"
@@ -92,9 +94,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           }}
         />
       </div>
-
+      )}
+      
       <div className={styles.divider} />
 
+      { props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
       <div className={styles["action-ribbon-container"]}>
         <ClickActionButton
           icon={"cached"}
@@ -161,6 +165,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           <DownloadButton instances={props.instances} />
         </div>
       </div>
+      )}
     </div>
   );
 }
