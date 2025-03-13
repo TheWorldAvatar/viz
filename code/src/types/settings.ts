@@ -18,7 +18,7 @@ export type UISettings = {
     [key: string]: {
       url: string;
       data?: string;
-      registry?: string[];
+      ids?: string[];
     };
   }
 }

@@ -93,6 +93,15 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
           />
         )}
+        {props.settings.modules.registry && props.settings.resources?.registry?.ids?.map((id) => (
+          <DefaultPageThumbnail
+            key={id} // Don’t forget the key prop when rendering lists!
+            title={id}
+            caption={registryLinkProps?.caption ?? "Manage and view your records"}
+            icon={registryLinkProps?.icon ?? Assets.REGISTRY}
+            url={`${Routes.REGISTRY_GENERAL}/${id}`}
+          />
+        ))}
 
         <DefaultPageThumbnail
           title={helpLinkProps?.title ?? "Help Centre"}

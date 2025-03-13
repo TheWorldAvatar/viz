@@ -129,6 +129,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </div>
             )}
+          {//RETAIN THE ADD AGREEMENT BUTTON in the conditions
+          }
           {(authorised || !isKeycloakEnabled) &&
             props.lifecycleStage == Routes.REGISTRY_PENDING && (
               <RedirectButton
