@@ -1,0 +1,6 @@
+.tooltip {
+    background-color: var(--background-inverse-primary);
+    color: var(--background-primary);
+    font-size: var(--font-size-tertiary-text);
+}
+
