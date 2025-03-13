@@ -7,6 +7,9 @@ import { DataParser } from 'io/data/data-parser';
 import { DataStore } from 'io/data/data-store';
 import { MapFeaturePayload, clearFeatures, setIri, setProperties, setStack } from 'state/map-feature-slice';
 import { JsonObject } from "types/json";
+import { RegistryFieldValues, SparqlResponseField } from 'types/form';
+import { FieldValues } from 'react-hook-form';
+import { FORM_STATES } from 'ui/interaction/form/form-utils';
 
 /**
  * Open full screen mode.
@@ -97,4 +100,33 @@ export function isValidIRI(iri: string): boolean {
  */
 export function getAfterDelimiter(str: string, delimiter: string): string {
     return str.includes(delimiter) ? str.split(delimiter).pop() : str;
+}
+
+/**
+ * Get the value from the target SPARQL response.
+ *
+ * @param {SparqlResponseField} response The target SPARQL response.
+ */
+export function getSparqlResponseValue(response: SparqlResponseField): string {
+    return response.value;
+}
+
+/**
+ * Extract the target field as a Response Field Object from the response.
+ *
+ * @param {RegistryFieldValues} response The response.
+ * @param {string} field The target field of interest.
+ * @param {boolean} getFirstArrayField Optional indicator to retrieve the first array field if required.
+ */
+export function extractResponseField(response: RegistryFieldValues, field: string, getFirstArrayField?: boolean): SparqlResponseField {
+    if (Array.isArray(response[field])) {
+        if (getFirstArrayField) {
+            return response[field][0];
+        } else {
+            console.warn(`Detected that field ${field} is an array! Skipping field...`)
+            return null;
+        }
+    } else {
+        return response[field];
+    }
 }

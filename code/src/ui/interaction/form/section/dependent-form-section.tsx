@@ -8,7 +8,7 @@ import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { getAfterDelimiter } from 'utils/client-utils';
+import { extractResponseField, getAfterDelimiter } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
 import DependentFormSelector from '../field/dependent-form-selector';
 import { FORM_STATES } from '../form-utils';
@@ -34,7 +34,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);;
+  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -46,7 +46,6 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     name: props.dependentProp.fieldId,
   });
 
-
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
   useEffect(() => {
@@ -57,25 +56,32 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await getData(props.agentApi, parentField, getAfterDelimiter(currentParentOption, "/"), entityType);
+          entities = await getData(props.agentApi, field.dependentOn.label, getAfterDelimiter(currentParentOption, "/"), entityType);
         }
         // If there is no valid parent option, there should be no entity
       } else if (formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
-        entities = await getData(props.agentApi, entityType, getAfterDelimiter(field.defaultValue.value, "/"));
+        entities = await getData(props.agentApi, entityType, getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/"));
       } else {
         entities = await getData(props.agentApi, entityType);
       }
 
-      // By default, use the first option's id
-      let defaultId: string = entities[0]?.id.value;
+      // By default, id is empty
+      let defaultId: string = "";
+      // Only update the id if there are any entities
+      if (entities.length > 0) {
+        defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
+        // If there is a default value, search and use the option matching the default instance's local name
+        if (field.defaultValue) {
+          const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
+          defaultId = extractResponseField(entities.find(entity =>
+            getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
+          ), FORM_STATES.IRI)?.value;
+        }
+      }
       // Search form should always target default value
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
         defaultId = defaultSearchOption.type.value;
-        // If there is a default value, search and use the option matching the default instance's local name
-      } else if (field.defaultValue) {
-        const defaultValueId: string = getAfterDelimiter(field.defaultValue.value, "/");
-        defaultId = entities.find(entity => getAfterDelimiter(entity.id.value, "/") === defaultValueId).id.value;
       }
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
@@ -93,10 +99,10 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         } else {
           displayField = Object.keys(fields).find((key => key != "id" && key != "iri"));
         }
-        entities.map(entity => {
+        entities.forEach(entity => {
           const formOption: FormOptionType = {
-            value: entity.id.value,
-            label: entity[displayField]?.value,
+            value: extractResponseField(entity, FORM_STATES.IRI)?.value,
+            label: extractResponseField(entity, displayField)?.value,
           };
           formFields.push(formOption);
         })
@@ -118,7 +124,9 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       setIsFetching(false);
     }
 
-    getDependencies(queryEntityType, props.dependentProp, props.form);
+    if (parentField !== "" || currentParentOption !== null) {
+      getDependencies(queryEntityType, props.dependentProp, props.form);
+    }
   }, [currentParentOption]);
 
   // An event handler to generate the url to reach the required add form
@@ -131,7 +139,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   };
 
   // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
     if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {

@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 import Modal from 'react-modal';
 
+import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
 import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
@@ -20,7 +21,6 @@ import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity }
 
 interface TaskModalProps {
   entityType: string;
-  date: string;
   registryAgentApi: string;
   isOpen: boolean;
   task: RegistryTaskOption;
@@ -32,7 +32,6 @@ interface TaskModalProps {
  * A modal component for users to interact with their tasks while on the registry.
  * 
  * @param {string} entityType The type of entity for the task's contract.
- * @param {string} date The selected date.
  * @param {string} registryAgentApi The target endpoint for the default registry agent.
  * @param {boolean} isOpen Indicator if the this modal should be opened.
  * @param {RegistryTaskOption} task The current task to display.
@@ -53,6 +52,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [dispatchFields, setDispatchFields] = useState<PropertyShapeOrGroup[]>([]);
   const [response, setResponse] = useState<HttpResponse>(null);
 
+  const [refreshFlag, triggerRefresh] = useRefresh();
+
   // Closes the modal on click
   const onClose: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.setIsOpen(false);
@@ -66,6 +67,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setResponse(null);
   };
 
+  // Return back to the non-action page
+  const onReturnInAction: React.MouseEventHandler<HTMLButtonElement> = () => {
+    setIsDispatchAction(false);
+    setIsCompleteAction(false);
+    setIsCancelAction(false);
+    setIsReportAction(false);
+    setFormFields([]);
+  };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
@@ -73,35 +82,37 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   };
 
-  // Assign dispatch details
-  const assignDispatch: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+  const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
     formData[FORM_STATES.ORDER] = props.task.id;
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/dispatch`, false);
+    let url = `${props.registryAgentApi}/contracts/service/`;
+    if (isReportAction) {
+      url += "report";
+    } else if (isCancelAction) {
+      url += "cancel";
+    } else if (isCompleteAction) {
+      url += "complete";
+    } else if (isDispatchAction) {
+      url += "dispatch";
+    } else {
+      return;
+    }
+    // Submit post requests if they are not dispatch action
+    submitLifecycleAction(formData, url, !isDispatchAction);
   }
 
-  // Submit a completion request
-  const completeTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction({
-      dispatch: props.task.id,
-      ...formData
-    }, `${props.registryAgentApi}/contracts/service/complete`, true);
-  }
-
-  // Lodges a new report
-  const reportTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/report`, true);
-  }
-
-  // Cancel a scheduled service
-  const cancelTask: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    submitLifecycleAction(formData, `${props.registryAgentApi}/contracts/service/cancel`, true);
-  }
-
-  // Reusable action method to report or cancel the service task
+  // Reusable action method to report, cancel, dispatch, or complete the service task
   const submitLifecycleAction = async (formData: FieldValues, endpoint: string, isPost: boolean) => {
+    // Remove last item in any field array before submission
+    for (const key in formData) {
+      const field = formData[key];
+      if (Array.isArray(field)) {
+        field.pop();
+      }
+    }
+
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
-    formData[FORM_STATES.DATE] = props.date;
+    formData[FORM_STATES.DATE] = props.task.date;
     let response: HttpResponse;
     if (isPost) {
       response = await sendPostRequest(endpoint, JSON.stringify(formData));
@@ -188,11 +199,17 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       <div className={styles.container}>
         <section className={styles["section-title"]}>
           <h1>ACTIONS</h1>
-          <h2>{props.date}: {props.task.status}</h2>
+          <h2>{props.task.date}: {props.task.status}</h2>
         </section>
         <section className={styles["section-contents"]}>
-          {isFetching && <LoadingSpinner isSmall={false} />}
-          {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && <FormComponent
+          {!isFetching && <p className={styles["instructions"]}>
+            {isCompleteAction && <>To complete the service, please input the following details:</>}
+            {isDispatchAction && <>Dispatch the resources for the scheduled service on {props.task.date}:</>}
+            {isCancelAction && <>Cancel the scheduled service on {props.task.date}. <br /> Please provide a reason for the cancellation:</>}
+            {isReportAction && <>Report an issue with the service on {props.task.date}. <br /> Please include the reason in your report:</>}
+          </p>}
+          {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
+          {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
             formRef={formRef}
             entityType={props.entityType}
             formType={Paths.REGISTRY}
@@ -201,21 +218,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             id={getAfterDelimiter(props.task.contract, "/")}
             additionalFields={dispatchFields}
           />}
-          {!isFetching && <p className={styles["instructions"]}>
-            {isCompleteAction && <>To complete the service, please input the following details:</>}
-            {isDispatchAction && <>Dispatch the resources for the scheduled service on {props.date}:</>}
-            {isCancelAction && <>Cancel the scheduled service on {props.date}. <br /> Please provide a reason for the cancellation:</>}
-            {isReportAction && <>Report an issue with the service on {props.date}. <br /> Please include the reason in your report:</>}
-          </p>}
-          {formFields.length > 0 && <FormTemplate
+          {formFields.length > 0 && !refreshFlag && <FormTemplate
             agentApi={props.registryAgentApi}
             entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
             formRef={formRef}
             fields={formFields}
-            submitAction={isReportAction ? reportTask : isCancelAction ? cancelTask : isCompleteAction ? completeTask : assignDispatch}
+            submitAction={taskSubmitAction}
           />}
         </section>
         <section className={styles["section-footer"]}>
+          {!formRef.current?.formState?.isSubmitting && !response && (
+            <ClickActionButton
+              icon={"cached"}
+              onClick={triggerRefresh}
+              isTransparent={true}
+            />
+          )}
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
@@ -243,16 +261,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 icon={"report"}
                 onClick={genBooleanClickHandler(setIsReportAction)}
               />}
-            <ClickActionButton
-              // Return Button
-              icon={"keyboard_return"}
-              onClick={onClose}
-            />
             {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
               // Submit Button
               icon={"publish"}
               onClick={onSubmit}
             />}
+            <ClickActionButton
+              // Return Button
+              icon={"keyboard_return"}
+              // Closes the modal if there is a response in any action
+              onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
+                onReturnInAction : onClose}
+            />
           </div>
         </section>
       </div>

@@ -24,7 +24,6 @@ export default function FormSearchPeriod(
     >
       <legend className={styles["form-fieldset-label"]}>Search Period</legend>
       <FormFieldComponent
-        entityType={""}
         field={{
           "@id": "string",
           "@type": "http://www.w3.org/ns/shacl#PropertyShape",
@@ -39,7 +38,6 @@ export default function FormSearchPeriod(
         form={props.form}
       />
       <FormFieldComponent
-        entityType={""}
         field={{
           "@id": "string",
           "@type": "http://www.w3.org/ns/shacl#PropertyShape",

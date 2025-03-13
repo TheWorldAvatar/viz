@@ -10,7 +10,7 @@
   width: 99%;
   padding: 0.5rem 1rem;
 
-  background-color: var(--background-secondary);
+  background: var(--button-color-secondary);
   border-radius: 5px;
   border: none;
   outline: none;
@@ -18,21 +18,17 @@
 }
 
 .header:hover {
-  background-color: var(--background-tertiary);
+  background: var(--button-color-secondary-hover);
 }
 
 .header p {
   font-size: var(--font-size-secondary-text);
-  color: var(--text-color-primary);
+  color: var(--background-primary);
 }
 
 .icon {
   font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-links);
-}
-
-.icon:hover {
-  color: var(--text-color-links-hover);
+  color: var(--background-primary);
 }
 
 .content {

@@ -167,7 +167,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       getAddressShapes(props.agentApi, props.field.name[VALUE_KEY]);
     }
     if (formType == Paths.REGISTRY || formType == Paths.REGISTRY_EDIT) {
-      getGeoCoordinates(props.agentApi, props.field.defaultValue.value);
+      getGeoCoordinates(props.agentApi,
+        Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
     }
   }, []);
 
@@ -187,9 +188,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     const searchParams: URLSearchParams = new URLSearchParams();
     searchParams.append(postalCodeUnderscored, data[postalCode]);
 
-    const url: string = `${
-      props.agentApi
-    }/location/addresses?${searchParams.toString()}`;
+    const url: string = `${props.agentApi
+      }/location/addresses?${searchParams.toString()}`;
     const results = await sendGetRequest(url);
     if (
       results ==
@@ -270,7 +270,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       )}
       {postalCodeShape && (
         <FormFieldComponent
-          entityType={props.field.name[VALUE_KEY]}
           field={postalCodeShape}
           form={props.form}
         />
@@ -314,7 +313,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           {addressShapes.map((shape, index) => (
             <FormFieldComponent
               key={shape.fieldId + index}
-              entityType={props.field.name[VALUE_KEY]}
               agentApi={props.agentApi}
               field={shape}
               form={props.form}
@@ -341,7 +339,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             fieldId={props.field.fieldId}
           />
           <FormFieldComponent
-            entityType={props.field.name[VALUE_KEY]}
             field={latitudeShape}
             form={props.form}
             options={{
@@ -350,7 +347,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             }}
           />
           <FormFieldComponent
-            entityType={props.field.name[VALUE_KEY]}
             field={longitudeShape}
             form={props.form}
             options={{
