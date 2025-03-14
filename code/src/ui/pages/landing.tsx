@@ -69,6 +69,14 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={Routes.MAP}
           />
         )}
+          {props.settings.resources.registry && (
+          <DefaultPageThumbnail
+            title={mapLinkProps?.title ?? "Map"}
+            caption={mapLinkProps?.caption ?? "Geospatial data visualisation"}
+            icon={mapLinkProps?.icon ?? Assets.MAP}
+            url={Routes.MAP}
+          />
+        )}
         {props.settings.modules.dashboard && (
           <DefaultPageThumbnail
             title={dashboardLinkProps?.title ?? "Analyse"}
@@ -85,6 +93,15 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
           />
         )}
+        {props.settings.modules.registry && props.settings.resources?.registry?.paths?.map((path) => (
+          <DefaultPageThumbnail
+            key={path} // Don’t forget the key prop when rendering lists!
+            title={path.charAt(0).toUpperCase() + path.slice(1)}
+            caption={registryLinkProps?.caption ?? "Manage and view your records"}
+            icon={registryLinkProps?.icon ?? Assets.REGISTRY}
+            url={`${Routes.REGISTRY_GENERAL}/${path}`}
+          />
+        ))}
 
         <DefaultPageThumbnail
           title={helpLinkProps?.title ?? "Help Centre"}
