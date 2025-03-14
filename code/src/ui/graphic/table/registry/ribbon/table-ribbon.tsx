@@ -98,7 +98,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       
       <div className={styles.divider} />
 
-      { props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+      
       <div className={styles["action-ribbon-container"]}>
         <ClickActionButton
           icon={"cached"}
@@ -109,8 +109,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           }}
         />
         <div className={styles["action-ribbon"]}>
-          {(authorised || !isKeycloakEnabled) &&
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
+          {(authorised || !isKeycloakEnabled) && 
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
               <div style={{ margin: "auto 0" }}>
                 <label
                   className={fieldStyles["form-input-label"]}
@@ -129,10 +129,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </div>
             )}
-          {//RETAIN THE ADD AGREEMENT BUTTON in the conditions
-          }
+
           {(authorised || !isKeycloakEnabled) &&
-            props.lifecycleStage == Routes.REGISTRY_PENDING && (
+            (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL ) && (
               <RedirectButton
                 icon="add"
                 label={"add " + props.entityType}
@@ -141,7 +140,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE ) && props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
               <RedirectButton
                 icon="task"
                 label={"overview"}
@@ -150,7 +149,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
               <RedirectButton
                 icon="event"
                 label={"view tasks"}
@@ -164,10 +163,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={`back to ${props.entityType}s`}
             />
           )}
-          <DownloadButton instances={props.instances} />
+          {(props.lifecycleStage !== Routes.REGISTRY_GENERAL) && <DownloadButton instances={props.instances} /> }
+          
         </div>
       </div>
-      )}
     </div>
   );
 }
