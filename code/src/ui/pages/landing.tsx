@@ -93,13 +93,13 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
           />
         )}
-        {props.settings.modules.registry && props.settings.resources?.registry?.ids?.map((id) => (
+        {props.settings.modules.registry && props.settings.resources?.registry?.paths?.map((path) => (
           <DefaultPageThumbnail
-            key={id} // Don’t forget the key prop when rendering lists!
-            title={id}
+            key={path} // Don’t forget the key prop when rendering lists!
+            title={path.charAt(0).toUpperCase() + path.slice(1)}
             caption={registryLinkProps?.caption ?? "Manage and view your records"}
             icon={registryLinkProps?.icon ?? Assets.REGISTRY}
-            url={`${Routes.REGISTRY_GENERAL}/${id}`}
+            url={`${Routes.REGISTRY_GENERAL}/${path}`}
           />
         ))}
 
