@@ -22,7 +22,7 @@ export const Paths: {
   MAP: `${ASSET_PREFIX}/map`,
   DASHBOARD: `${ASSET_PREFIX}/analytics`,
   REGISTRY: `${ASSET_PREFIX}/view`,
-  REGISTRY_GENERAL: `${ASSET_PREFIX}/registry/general`,
+  REGISTRY_GENERAL: `${ASSET_PREFIX}/registry/`,
   REGISTRY_PENDING: `${ASSET_PREFIX}/registry/pending`,
   REGISTRY_ACTIVE: `${ASSET_PREFIX}/registry/active`,
   REGISTRY_ARCHIVE: `${ASSET_PREFIX}/registry/archive`,
