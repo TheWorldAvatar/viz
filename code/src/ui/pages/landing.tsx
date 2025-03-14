@@ -14,6 +14,8 @@ import { Modules, Routes } from 'io/config/routes';
 import LandingImage from 'ui/graphic/image/landing';
 import { DefaultPageThumbnail, DefaultPageThumbnailProps, MarkdownPageThumbnail } from './page-thumbnail';
 import { UISettings } from 'types/settings';
+import { Button } from '@mui/material';
+import Link from 'next/link';
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -92,6 +94,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           icon={helpLinkProps?.icon ?? Assets.HELP}
           url={Routes.HELP}
         />
+
 
         {props.settings.links?.map((externalLink, index) => {
           if (![Modules.MAP, Modules.DASHBOARD, Modules.HELP, Modules.REGISTRY].includes(externalLink.url)) {

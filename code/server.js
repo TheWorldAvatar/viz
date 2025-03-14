@@ -54,6 +54,7 @@ app.prepare().then(() => {
     if (keycloakEnabled) { // do keycloak auth stuff if env var is set
         console.info('the following pages require keycloak authentication', process.env.PROTECTED_PAGES ? colourYellow : colourRed, process.env.PROTECTED_PAGES, colourReset)
         console.info('the following pages require the', process.env.ROLE ? colourYellow : colourRed, process.env.ROLE, colourReset, 'role: ', process.env.ROLE_PROTECTED_PAGES ? colourYellow : colourRed, process.env.ROLE_PROTECTED_PAGES, colourReset)
+        console.info('the following external URLs will be passed the Keycloak bearer token as an authorization header', process.env.PROTECTED_EXTERNAL_URLS ? colourYellow : colourRed, process.env.PROTECTED_EXTERNAL_URLS, colourReset);
 
         server.set('trust proxy', true); // the client’s IP address is understood as the left-most entry in the X-Forwarded-For header.
 
@@ -106,7 +107,20 @@ app.prepare().then(() => {
         const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES.split(',');
         roleProtectedPages.forEach(page => {
             server.get(page, keycloak.protect(process.env.ROLE));
-            console.info('protecting page', page, 'with role', process.env.ROLE);
+        });
+
+        const protectedExternalURLs = process.env.PROTECTED_EXTERNAL_URLS.split(',');
+        protectedExternalURLs.forEach(url => {  // protect external URLs e.g. CentralStackAgent
+
+            server.use(url, (req, res) => {
+                console.log('accessing protected external URL', url);
+                if (req.kauth?.grant) {
+                    req.headers.Authorization = `Bearer ${req.kauth.grant.access_token.token}`;
+                    handle(req, res);
+                } else {
+                    res.status(401).send('Unauthorised');
+                }
+            })
         });
 
         const useGeoServerProxy = process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true';
@@ -140,6 +154,27 @@ app.prepare().then(() => {
                 }
             });
         }
+
+        server.use('/api/scenarios', async (req, res) => {
+            console.log('GREMBLIN');
+            if (req.kauth?.grant) {
+                req.headers.Authorization = `Bearer ${req.kauth.grant.access_token.token}`;
+                const targetUrl = process.env.SCENARIOS_URL + "/getScenarios";
+                try {
+                    const response = await fetch(targetUrl, {
+                        method: req.method,
+                        headers: req.headers,
+                    });
+                    const data = await response.json();
+                    res.json(data);
+                } catch (err) {
+                    console.error(err);
+                    res.status(500).send("Error forwarding request");
+                }
+            } else {
+                res.status(401).send("Unauthorised");
+            }
+        });
     }
 
     // Handle all other requests using Next.js

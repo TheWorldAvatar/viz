@@ -37,7 +37,7 @@ export default async function VisualisationPage() {
     // When scenarios are available, retrieve their definitions on the server side
     if (uiSettings.resources?.scenario) {
       try {
-        scenarios = await getScenarios(uiSettings.resources?.scenario?.url);
+        scenarios = await getScenarios();
         scenarios = scenarios.map((scenario) => ({
           ...scenario,
           url: uiSettings.resources.scenario.url,
