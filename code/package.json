@@ -1,13 +1,13 @@
 {
     "name": "viz",
-    "version": "5.17.1",
+    "version": "5.17.2",
     "private": true,
     "type": "module",
     "jest": {
         "verbose": true
     },
     "engines": {
-        "node": ">=23.7.0"
+        "node": ">=23.10.0"
     },
     "scripts": {
         "dev": "NODE_ENV=development node --env-file='.env.local' server.js",
