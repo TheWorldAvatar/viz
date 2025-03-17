@@ -1,0 +1,74 @@
+.row-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1.5rem;
+  width: 100%;
+  margin: 0 .5rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  background: var(--background-tertiary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.row-text {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-size-tertiary-text);
+  color: var(--text-color-secondary);
+}
+
+.row-marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 1rem;
+  width: 1rem;
+  margin: .25rem;
+
+  font-size: var(--font-size-tertiary-text);
+  color: var(--border-tertiary);
+  border-radius: 2px;
+  border: 1px solid var(--border-tertiary);
+}
+
+.cell {
+  flex: 1;
+  font-size: var(--font-size-tertiary-text);
+  color: var(--text-color-primary);
+  white-space: nowrap;
+}
+
+.delete-button {
+  margin: 0 !important;
+  padding: 0.25rem !important;
+  border-radius: 0.1rem !important;
+  background-color: var(--alert-color) !important;
+  max-width: 5% !important;
+}
+
+.delete-button span {
+  font-size: var(--font-size-primary-text) !important;
+  color: var(--background-primary) !important;
+}
+
+.delete-button-background {
+  background-color: rgb(var(--alert-color)) !important;
+}

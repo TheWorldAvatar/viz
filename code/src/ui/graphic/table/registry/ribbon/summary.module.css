@@ -1,14 +1,12 @@
 .container {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .action { 
-  height: 0.5rem;
-  width: 99%;
-  margin-top: -0.25rem !important;
-  margin-left: 0.5rem;
-  justify-content: start !important;
+  margin-left: 0;
 }
 
 @media only screen and (max-width: 480px) {
@@ -19,6 +17,5 @@
 
   .action { 
     width: 50%;
-    margin-left: 0;
   }
 }

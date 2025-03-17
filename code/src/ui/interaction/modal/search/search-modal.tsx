@@ -7,9 +7,9 @@ import { useDispatch } from 'react-redux';
 
 import { setFilterFeatureIris } from 'state/map-feature-slice';
 import { SEARCH_FORM_TYPE } from 'types/form';
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
-import { FormComponent } from 'ui/interaction/form/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
+import ClickActionButton from 'ui/interaction/action/click/click-button';
+import { FormComponent } from 'ui/interaction/form/form';
 import ResponseComponent from 'ui/text/response/response';
 import { HttpResponse } from 'utils/server-actions';
 
@@ -32,12 +32,12 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
   // Show all features upon click
-  const showAllFeatures: React.MouseEventHandler<HTMLDivElement> = () => {
+  const showAllFeatures: React.MouseEventHandler<HTMLButtonElement> = () => {
     dispatch(setFilterFeatureIris([SHOW_ALL_FEATURE_INDICATOR]));
     setTimeout(() => props.setShowState(false), 1000);
   };
 
-  const onSubmit: React.MouseEventHandler<HTMLDivElement> = () => {
+  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
       formRef.current.requestSubmit();
     }
@@ -59,12 +59,10 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
       <div className={styles.container}>
         <section className={styles["section-title"]}>
           <h1>SEARCH CRITERIA</h1>
-          <button type="button" className={styles["close-button"]} onClick={() => props.setShowState(false)}>
-            <MaterialIconButton
-              iconName="cancel"
-              iconStyles={[styles["icon"]]}
-            />
-          </button>
+          <ClickActionButton
+            icon={"cancel"}
+            onClick={() => props.setShowState(false)}
+          />
         </section>
         <section className={styles["section-contents"]}>
           <FormComponent
@@ -79,24 +77,14 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
-            <MaterialIconButton
-              iconName={"search"}
-              className={styles["section-footer-button"]}
-              iconStyles={[styles["icon"]]}
-              text={{
-                styles: [styles["button-text"]],
-                content: "SEARCH"
-              }}
+            <ClickActionButton
+              icon={"search"}
+              label={"SEARCH"}
               onClick={onSubmit}
             />
-            <MaterialIconButton
-              iconName={"select_all"}
-              className={styles["section-footer-button"]}
-              iconStyles={[styles["icon"]]}
-              text={{
-                styles: [styles["button-text"]],
-                content: "SHOW ALL"
-              }}
+            <ClickActionButton
+              icon={"select_all"}
+              label={"SHOW ALL"}
               onClick={showAllFeatures}
             />
           </div>

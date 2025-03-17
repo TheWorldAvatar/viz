@@ -18,7 +18,10 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
 
 ## 1. Precursor
 
-As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections.
+As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
+
+1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.2.3`
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
@@ -51,15 +54,18 @@ In order to modify the uploaded documents or configurations, the container will 
 
 This deployment section is for a standalone Docker container:
 
-1. Create files within this directory (containing the docker configurations) for `mapbox_username` and `mapbox_api_key` according to your [Mapbox](https://www.mapbox.com/) credentials. This will be passed as Docker secrets when the container is started.
-2. Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly.
-3. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
-4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment  variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
+1. You will need a mapbox username and api token. Create files within this directory (containing the docker configurations) for `mapbox_username` and `mapbox_api_key` according to your [Mapbox](https://www.mapbox.com/) credentials. This will be passed as Docker secrets when the container is started.
+
+To view the example configuration, simply run `docker compose up` in this directory when the mapbox secrets are created. Allow a few minutes for the viz to build and start up, you will see a message in the terminal when this is completed, as well as your docker container's status. When this has started you should see a visualisation at `http://localhost:3000` if you are running locally. For further configuration, look at the following steps.
+
+2. (optional) Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly. Skip this step to use the default example config.
+3. (optional) Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
+4. (optional) If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above
 
-1. Start the container by running the command `docker compose up -d`. The container will be running on the host machine (whichever the command was run from) at port `80`.
+1. Start the container by running the command `docker compose up`. The container will be running on the host machine (whichever the command was run from) at port `3000`.
 
 ### 3.2 Stack Deployment
 
@@ -68,12 +74,12 @@ For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAva
 1. The `mapbox_username` and `mapbox_api_key` are available as Docker secrets
 2. Copy the [custom visualisation service config](./example/vip.json) to the `stack-manager/inputs/config/services` directory
 3. In the stack config file, `visualisation` is included as part of the `services` `includes` list
-4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment  variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
+4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above.
 
->[!NOTE]
+> [!NOTE]
 > For typical self-hosted TWA deployment, `ASSET_PREFIX` must contain both the top level nginx path, and the stack level nginx path. e.g. if the app is deployed in a stack at `theworldavatar.io/demos/app`, then `ASSET_PREFIX` should be set to `demos/app/visualisation` to account for the `visualisation` path added by the stack level nginx.
 
 5. Specify the directory holding the configuration files that should be mapped to a volume called `webspace` or your preference

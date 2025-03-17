@@ -87,7 +87,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       }
     };
 
-    if (!isModalOpen) {
+    if (!isModalOpen || refreshFlag) {
       fetchData();
     }
   }, [isModalOpen, selectedDate, refreshFlag]);
@@ -128,17 +128,16 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          <RegistryTable
+          currentInstances.length > 0 ? <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
             setTask={setTask}
             instances={currentInstances}
             limit={3}
-          />}
+          /> : <div className={styles["instructions"]}>No results found</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}
-        date={selectedDate}
         registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
         task={task}
