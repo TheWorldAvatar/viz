@@ -3,6 +3,36 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.17.3
+
+- Dependabot version updates
+
+## 5.17.2
+
+- Update node version
+
+## 5.17.1
+
+### Security Update
+
+- Bump version of `axios` to address server side forgery vulnerability
+
+## 5.17.0
+
+### Changes
+
+- Added form branches and arrays
+- Added option to generate report
+- Updated form extraction workflow following changes in the backend
+- Consolidation of form parsing methods
+- Improve dark mode design for the registry
+- Abstracted background image into a hook
+- Updated `VisBackend Agent` from `v1.2.2` to `v1.3.0`
+
+### Bug Fixes
+
+- Fix missing functions for action buttons
+
 ## 5.16.15
 
 ### Bug Fixes
