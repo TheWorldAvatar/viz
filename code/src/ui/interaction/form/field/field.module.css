@@ -27,26 +27,6 @@
   align-items: center;
 }
 
-.transparent-button {
-  background: none !important;
-  border: none !important;
-}
-
-.transparent-button:hover {
-  background: none !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.transparent-button-text {
-  font-size: var(--font-size-secondary-text);
-  color: var(--text-color-primary) !important;
-}
-
-.transparent-button-text:hover {
-  color: var(--text-color-links-hover) !important;
-}
-
 .form-input-value {
   width: 100%;
   height: 1.8rem;

@@ -6,6 +6,7 @@ import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, Ontol
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
+  IRI: "iri",
   FORM_TYPE: "formType",
   CONTRACT: "contract",
   ORDER: "order",
@@ -57,8 +58,9 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
         // When multiple fields for the same property is possible ie no max count or at least more than 1, 
         // the property must be initialised as an array and pushed into a separate set
         if (!propertyShape.maxCount || (propertyShape.maxCount && parseInt(propertyShape.maxCount?.[VALUE_KEY]) > 1)) {
+          const updatedPropShape: PropertyShape = updateDependentProperty(propertyShape, fields);
           fieldset.multipleProperty.push(
-            initFormField(propertyShape, initialState, fieldset.label[VALUE_KEY], true)
+            initFormField(updatedPropShape, initialState, fieldset.label[VALUE_KEY], true)
           );
           return false; // Filter out from the 'properties' array
         } else {
@@ -100,20 +102,25 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
     // Update field ID, the fieldId for an array should be its group name
     parsedFieldId = `${fieldId} ${field.name[VALUE_KEY]}`;
     let currentIndex: number = 0;
+    if (!outputState[fieldId]) {
+      outputState[fieldId] = [{}];
+    }
     // Append existing values if they exist
     if (field.defaultValue) {
       const defaultArray: SparqlResponseField[] = Array.isArray(field.defaultValue) ?
         field.defaultValue : [field.defaultValue];
       defaultArray.forEach((defaultValue, index) => {
-        outputState[`${fieldId}.${index}.${parsedFieldId}`] = defaultValue.value;
+        if (!outputState[fieldId][index]) {
+          outputState[fieldId][index] = {};
+        }
+        outputState[fieldId][index][parsedFieldId] = defaultValue.value;
         currentIndex = index; // Always update the current index following default values
       });
     } else {
       // If no existing values exist, add an initial value
-      outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = field.datatype === "decimal" ? "-0.01" : "";
+      outputState[fieldId][currentIndex][parsedFieldId] = "";
     }
     currentIndex++; // increment the counter
-    outputState[`${fieldId}.${currentIndex}.${parsedFieldId}`] = ""; // add an empty field at the end
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue) ? field.defaultValue?.value : "";
     // If no default value is available for id, value will default to the id

@@ -109,9 +109,6 @@ body {
 body {
     background-color: var(--background-primary);
     color: var(--text-color-primary);
-
-    background-position: center;
-    background-size: cover;
     overflow: hidden;
 }
 

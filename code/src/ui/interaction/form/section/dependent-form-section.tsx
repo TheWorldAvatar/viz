@@ -70,17 +70,18 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       let defaultId: string = "";
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        defaultId = extractResponseField(entities[0], FORM_STATES.ID)?.value;
+        defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
+        // If there is a default value, search and use the option matching the default instance's local name
+        if (field.defaultValue) {
+          const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
+          defaultId = extractResponseField(entities.find(entity =>
+            getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
+          ), FORM_STATES.IRI)?.value;
+        }
       }
       // Search form should always target default value
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
         defaultId = defaultSearchOption.type.value;
-        // If there is a default value, search and use the option matching the default instance's local name
-      } else if (field.defaultValue) {
-        const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
-        defaultId = extractResponseField(entities.find(entity =>
-          getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
-        ), FORM_STATES.ID)?.value;
       }
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
@@ -100,7 +101,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         }
         entities.forEach(entity => {
           const formOption: FormOptionType = {
-            value: extractResponseField(entity, FORM_STATES.ID)?.value,
+            value: extractResponseField(entity, FORM_STATES.IRI)?.value,
             label: extractResponseField(entity, displayField)?.value,
           };
           formFields.push(formOption);
@@ -138,7 +139,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   };
 
   // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
     if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {

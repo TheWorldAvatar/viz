@@ -280,7 +280,6 @@ export function renderFormField(
     }
     return <FormFieldComponent
       key={fieldProp.name[VALUE_KEY] + currentIndex}
-      entityType={entityType}
       agentApi={agentApi}
       field={fieldProp}
       form={form}
