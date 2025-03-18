@@ -2,13 +2,12 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { Paths, PageTitles, Modules } from 'io/config/routes';
 import { ScenarioDefinition } from 'types/scenario';
 import { UISettings } from 'types/settings';
-import { getScenarios } from 'utils/getScenarios';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import MapContainer from 'ui/map/map-container';
+import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,7 +36,7 @@ export default async function VisualisationPage() {
     // When scenarios are available, retrieve their definitions on the server side
     if (uiSettings.resources?.scenario) {
       try {
-        scenarios = await getScenarios();
+        scenarios = await fetch('/api/scenarios').then((response) => response.json());
         scenarios = scenarios.map((scenario) => ({
           ...scenario,
           url: uiSettings.resources.scenario.url,
