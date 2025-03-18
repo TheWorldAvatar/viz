@@ -1,20 +1,24 @@
 import { ScenarioDefinition } from "../types/scenario";
 
-export async function getScenarios(): Promise<ScenarioDefinition[]> {
-  // Build the absolute URL using the BASE_URL environment variable.
-  // Ensure BASE_URL is defined in your environment.
-  const proxyUrl = `${process.env.BASE_URL}/api/scenarios`;
-  console.info(`Fetching scenarios via proxy at: ${proxyUrl}`);
-  let response;
-  let data: ScenarioDefinition[];
+export async function getScenarios(token?: string): Promise<ScenarioDefinition[]> {
+  const targetUrl = `${process.env.SCENARIOS_URL}/getScenarios`;
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   try {
-    response = await fetch(proxyUrl, { cache: 'no-store' });
-    console.log('grumblin', response.text)
-    data = await response.json();
-    console.info('Responded with scenarios:', data);
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      headers
+    });
+    if (!response.ok) {
+      throw new Error(`Response not OK: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error(`Failed to fetch scenarios via proxy at: ${proxyUrl}\n`, error);
+    console.error(`Failed to fetch scenarios from ${targetUrl}:`, error);
     throw error;
   }
-  return data;
 }
