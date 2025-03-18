@@ -1,6 +1,6 @@
 import { ScenarioDefinition } from "../types/scenario";
 
-export async function getScenarios(token?: string): Promise<ScenarioDefinition[]> {
+export async function fetchScenarios(token?: string): Promise<ScenarioDefinition[]> {
   const targetUrl = `${process.env.SCENARIOS_URL}/getScenarios`;
   const headers: Record<string, string> = {};
   if (token) {
