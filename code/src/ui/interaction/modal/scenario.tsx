@@ -7,13 +7,11 @@ import Dialog from '@mui/material/Dialog';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getScenarioDefinitions, setScenarioID, setScenarioName, setScenarioType, setScenarioDefinitions } from 'state/map-feature-slice';
+import { getScenarioDefinitions, setScenarioDefinitions, setScenarioID, setScenarioName, setScenarioType } from 'state/map-feature-slice';
 import { ScenarioDefinition } from 'types/scenario';
 import IconComponent from 'ui/graphic/icon/icon';
-import { getScenarios } from '../../../utils/getScenarios';
 
 interface ScenarioModalProperties {
-  scenarioURL: string,
   scenarios: ScenarioDefinition[],
   show: boolean,
   setShowState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +27,6 @@ export function scenarioTypeIcon(scenarioType: string) {
  */
 export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) {
   const scenarioDefinitions = useSelector(getScenarioDefinitions);
-  const scenarioUrl = JSON.parse(props.scenarioURL).resources.scenario.url;
   const dispatch = useDispatch();
 
   const handleChange = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,7 +39,10 @@ export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) 
   };
 
   const onClick = async () => {
-    const data = await getScenarios(scenarioUrl)
+    const response = await fetch('/api/scenarios', {
+      credentials: 'include', // ensure cookies are sent, if applicable
+    });
+    const data = await response.json();
     dispatch(setScenarioDefinitions(data)); // can't do this in getsScenarios code bc server
   };
 
