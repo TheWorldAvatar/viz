@@ -7,7 +7,7 @@ import { UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
-interface PendingRegistryPageProps {
+interface GeneralRegistryPageProps {
   params: Promise<{
     type: string
   }>
@@ -27,11 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the registry page for contracts that are pending approval.
+ * Displays the registry page for any items based on the dynamic type parameter.
  * 
  * @returns React component for display. 
  */
-export default async function PendingRegistryPage(props: Readonly<PendingRegistryPageProps>) {
+export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const resolvedParams = await props.params;
   if (uiSettings.modules.registry && uiSettings.resources?.registry) {
