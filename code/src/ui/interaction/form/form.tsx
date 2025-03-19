@@ -242,7 +242,7 @@ export function renderFormField(
     const fieldProp: PropertyShape = field as PropertyShape;
     // If this is a hidden field, hide the field
     if (fieldProp.maxCount && parseInt(fieldProp.maxCount[VALUE_KEY]) === 0) {
-      return <></>;
+      return;
     }
     const disableId: boolean = formType === Paths.REGISTRY_EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
     if (fieldProp.class) {
