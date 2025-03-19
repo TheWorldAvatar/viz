@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ActiveRegistryPage(props : ActiveRegistryPageProps) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const resolvedParams = await props.params;
-  if (!uiSettings.modules.registry || !uiSettings.resources?.registry) {
+  if (!uiSettings.modules.registry || !uiSettings.resources?.registry?.data) {
     redirect(Paths.HOME);
   }
 
