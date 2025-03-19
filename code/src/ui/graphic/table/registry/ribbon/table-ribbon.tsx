@@ -53,52 +53,50 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-
     <div className={styles.menu}>
-      { props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
-      <div className={styles["registry-nav-ribbon"]}>
-        <RedirectButton
-          label="Pending"
-          icon="pending"
-          url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-          isHoverableDisabled={true}
-          isTransparent={true}
-          className={styles["registry-nav-button"]}
-          styling={{
-            active: styles["active-state"],
-          }}
-        />
-        <RedirectButton
-          label="Active"
-          icon="schedule"
-          url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-          isHoverableDisabled={true}
-          isTransparent={true}
-          className={styles["registry-nav-button"]}
-          styling={{
-            active: styles["active-state"],
-          }}
-        />
-        <RedirectButton
-          label="Archive"
-          icon="archive"
-          url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-          isHoverableDisabled={true}
-          isTransparent={true}
-          className={styles["registry-nav-button"]}
-          styling={{
-            active: styles["active-state"],
-          }}
-        />
-      </div>
+      {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+        <div className={styles["registry-nav-ribbon"]}>
+          <RedirectButton
+            label="Pending"
+            icon="pending"
+            url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+          <RedirectButton
+            label="Active"
+            icon="schedule"
+            url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+          <RedirectButton
+            label="Archive"
+            icon="archive"
+            url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+        </div>
       )}
-      
+
       <div className={styles.divider} />
 
-      
       <div className={styles["action-ribbon-container"]}>
         <ClickActionButton
           icon={"cached"}
@@ -106,8 +104,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           isTransparent={true}
         />
         <div className={styles["action-ribbon"]}>
-          {(authorised || !isKeycloakEnabled) && 
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+          {(authorised || !isKeycloakEnabled) &&
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
               <div style={{ margin: "auto 0" }}>
                 <label
                   className={fieldStyles["form-input-label"]}
@@ -128,7 +126,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
 
           {(authorised || !isKeycloakEnabled) &&
-            (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL ) && (
+            (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
                 icon="add"
                 label={"add " + props.entityType}
@@ -137,7 +135,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE ) && props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
                 icon="task"
                 label={"overview"}
@@ -146,7 +144,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
                 icon="event"
                 label={"view tasks"}
@@ -166,8 +164,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               isActive={false}
             />
           </>)}
-          {(props.lifecycleStage !== Routes.REGISTRY_GENERAL) && <DownloadButton instances={props.instances} /> }
-          
+          {<DownloadButton instances={props.instances} />}
         </div>
       </div>
     </div>
