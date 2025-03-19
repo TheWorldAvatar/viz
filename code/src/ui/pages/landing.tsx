@@ -69,14 +69,6 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={Routes.MAP}
           />
         )}
-          {props.settings.resources.registry && (
-          <DefaultPageThumbnail
-            title={mapLinkProps?.title ?? "Map"}
-            caption={mapLinkProps?.caption ?? "Geospatial data visualisation"}
-            icon={mapLinkProps?.icon ?? Assets.MAP}
-            url={Routes.MAP}
-          />
-        )}
         {props.settings.modules.dashboard && (
           <DefaultPageThumbnail
             title={dashboardLinkProps?.title ?? "Analyse"}
@@ -85,7 +77,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={Routes.DASHBOARD}
           />
         )}
-        {props.settings.modules.registry && (
+        {props.settings.modules.registry && (!props.settings.resources?.registry?.paths?.length) && (
           <DefaultPageThumbnail
             title={registryLinkProps?.title ?? "Registry"}
             caption={registryLinkProps?.caption ?? "Manage and view your records"}
