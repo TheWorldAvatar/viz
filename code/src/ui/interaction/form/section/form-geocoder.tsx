@@ -12,7 +12,7 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { parseWordsForLabels } from "utils/client-utils";
+import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import {
   getFormTemplate,
   getGeolocation,
@@ -107,7 +107,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       // The location resource must mapped to the field name on the backend
       const template: FormTemplate = await getFormTemplate(
         agentApi,
-        locationIdentifier.replace(/\s+/g, "_")
+        parseStringsForUrls(locationIdentifier)
       );
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {

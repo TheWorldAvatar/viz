@@ -6,10 +6,8 @@ import { Dispatch } from 'redux';
 import { DataParser } from 'io/data/data-parser';
 import { DataStore } from 'io/data/data-store';
 import { MapFeaturePayload, clearFeatures, setIri, setProperties, setStack } from 'state/map-feature-slice';
-import { JsonObject } from "types/json";
 import { RegistryFieldValues, SparqlResponseField } from 'types/form';
-import { FieldValues } from 'react-hook-form';
-import { FORM_STATES } from 'ui/interaction/form/form-utils';
+import { JsonObject } from "types/json";
 
 /**
  * Open full screen mode.
@@ -79,6 +77,15 @@ export function parseWordsForLabels(str: string): string {
         .split(" ")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
+}
+
+/**
+ * Replaces all white spaces with _ to ensure it is valid for urls
+ * 
+ * @param {string} str input string.
+ */
+export function parseStringsForUrls(str: string): string {
+    return str.trim().replace(/\s+/g, "_");
 }
 
 /**

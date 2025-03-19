@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistryPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const resolvedParams = await props.params
-  if (uiSettings.modules.registry && uiSettings.resources?.registry) {
+  if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={resolvedParams.type}

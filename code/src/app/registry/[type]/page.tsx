@@ -6,6 +6,13 @@ import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { parseStringsForUrls } from 'utils/client-utils';
+
+interface GeneralRegistryPageProps {
+  params: Promise<{
+    type: string
+  }>
+}
 
 /**
  * Set page metadata.
@@ -21,17 +28,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the registry page that provides a summary for active and archived contracts.
+ * Displays the registry page for any items based on the dynamic type parameter.
  * 
  * @returns React component for display. 
  */
-export default function RegistryReportPage() {
+export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
+  const resolvedParams = await props.params;
+  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path) == resolvedParams.type)) {
     return (
       <RegistryTableComponent
-        entityType={uiSettings.resources?.registry?.data}
-        lifecycleStage={Paths.REGISTRY_REPORT}
+        entityType={resolvedParams.type}
+        lifecycleStage={Paths.REGISTRY_GENERAL}
         registryAgentApi={uiSettings.resources?.registry?.url}
       />
     );
