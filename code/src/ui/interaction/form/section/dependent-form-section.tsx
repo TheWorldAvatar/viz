@@ -8,7 +8,7 @@ import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { Paths } from 'io/config/routes';
 import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { extractResponseField, getAfterDelimiter } from 'utils/client-utils';
+import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
 import DependentFormSelector from '../field/dependent-form-selector';
 import { FORM_STATES } from '../form-utils';
@@ -30,7 +30,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   const pathName: string = usePathname();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
-  const queryEntityType: string = label.trim().replace(/\s+/g, "_"); // Ensure that all spaces are replaced with _
+  const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
