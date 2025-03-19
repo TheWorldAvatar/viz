@@ -6,6 +6,7 @@ import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { parseStringsForUrls } from 'utils/client-utils';
 
 interface GeneralRegistryPageProps {
   params: Promise<{
@@ -34,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const resolvedParams = await props.params;
-  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => path == resolvedParams.type)) {
+  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path) == resolvedParams.type)) {
     return (
       <RegistryTableComponent
         entityType={resolvedParams.type}

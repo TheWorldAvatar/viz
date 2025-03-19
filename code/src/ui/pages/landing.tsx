@@ -14,7 +14,7 @@ import { Modules, Routes } from 'io/config/routes';
 import LandingImage from 'ui/graphic/image/landing';
 import { DefaultPageThumbnail, DefaultPageThumbnailProps, MarkdownPageThumbnail } from './page-thumbnail';
 import { UISettings } from 'types/settings';
-import { parseWordsForLabels } from 'utils/client-utils';
+import { parseStringsForUrls, parseWordsForLabels } from 'utils/client-utils';
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -92,7 +92,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             title={parseWordsForLabels(path)}
             caption={`Manage and view your ${path}s`}
             icon={Assets.REGISTRY}
-            url={`${Routes.REGISTRY_GENERAL}/${path}`}
+            url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
           />
         ))}
 
