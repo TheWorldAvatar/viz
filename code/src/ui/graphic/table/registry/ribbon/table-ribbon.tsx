@@ -129,7 +129,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
                 icon="add"
-                label={"add " + props.entityType}
+                label={"add " + props.entityType.replace("_", " ")}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
                 isActive={false}
               />
@@ -155,7 +155,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {props.lifecycleStage == Routes.REGISTRY_REPORT && (<>
             <ReturnButton
               icon="first_page"
-              label={`back to ${props.entityType}s`}
+              label={`back to ${props.entityType.replace("_", " ")}s`}
             />
             <RedirectButton
               icon="print"
