@@ -14,6 +14,7 @@ import { Modules, Routes } from 'io/config/routes';
 import LandingImage from 'ui/graphic/image/landing';
 import { DefaultPageThumbnail, DefaultPageThumbnailProps, MarkdownPageThumbnail } from './page-thumbnail';
 import { UISettings } from 'types/settings';
+import { parseWordsForLabels } from 'utils/client-utils';
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -77,7 +78,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={Routes.DASHBOARD}
           />
         )}
-        {props.settings.modules.registry && (!props.settings.resources?.registry?.paths?.length) && (
+        {props.settings.modules.registry && props.settings.resources?.registry?.data && (
           <DefaultPageThumbnail
             title={registryLinkProps?.title ?? "Registry"}
             caption={registryLinkProps?.caption ?? "Manage and view your records"}
@@ -85,12 +86,12 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
           />
         )}
-        {props.settings.modules.registry && props.settings.resources?.registry?.paths?.map((path) => (
+        {props.settings.modules.registry && props.settings.resources?.registry?.paths?.map((path, index) => (
           <DefaultPageThumbnail
-            key={path} // Don’t forget the key prop when rendering lists!
-            title={path.charAt(0).toUpperCase() + path.slice(1)}
-            caption={registryLinkProps?.caption ?? "Manage and view your records"}
-            icon={registryLinkProps?.icon ?? Assets.REGISTRY}
+            key={path + index}
+            title={parseWordsForLabels(path)}
+            caption={`Manage and view your ${path}s`}
+            icon={Assets.REGISTRY}
             url={`${Routes.REGISTRY_GENERAL}/${path}`}
           />
         ))}
