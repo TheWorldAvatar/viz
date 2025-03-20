@@ -5,6 +5,8 @@ import React from 'react';
 import { RegistryFieldValues } from 'types/form';
 import { extractResponseField } from 'utils/client-utils';
 import ActionButton from '../action';
+import { Tooltip, TooltipTrigger, TooltipContent } from '../../tooltip/tooltip';
+import tooltipStyles from '../../tooltip/tooltip.module.css';
 
 interface DownloadButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   instances: RegistryFieldValues[];
@@ -52,6 +54,7 @@ export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonPr
       icon="download"
       className={`${rest.className}`}
       label="export data"
+      tooltipText="Export data"
       onClick={exportToCSV}
     />
   );

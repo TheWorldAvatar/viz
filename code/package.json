@@ -21,6 +21,7 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
+        "@floating-ui/react": "^0.27.5",
         "@mui/icons-material": "^6.4.3",
         "@mui/material": "^6.4.5",
         "@mui/x-data-grid": "^7.26.0",
@@ -57,7 +58,8 @@
         "redux": "^5.0.1",
         "redux-persist": "^6.0.0",
         "typescript": "^5.7.3",
-        "uuid": "^11.0.5"
+        "uuid": "^11.0.5",
+        "viz": "file:"
     },
     "devDependencies": {
         "@eslint/js": "^9.20.0",

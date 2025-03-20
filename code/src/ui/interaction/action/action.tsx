@@ -4,11 +4,13 @@ import styles from "./action.module.css";
 
 import React from "react";
 import { Icon } from "@mui/material";
+import { useTooltip, renderTooltip } from "../tooltip/tooltip";
 
 export interface ActionButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
   icon: string;
-  label?: string
+  label?: string;
+  tooltipText?: string;
   isHoverableDisabled?: boolean;
   isTransparent?: boolean;
   styling?: ActionStyles;
@@ -34,32 +36,42 @@ export interface ActionStyles {
 export default function ActionButton({
   icon,
   label,
+  tooltipText,
   isHoverableDisabled,
   isTransparent,
   styling,
   ...rest
 }: Readonly<ActionButtonProps>) {
+  const tooltipProps = useTooltip(tooltipText);
+
   return (
-    <button
-      className={`${rest.className ?? ""} ${isHoverableDisabled ? "" : styles["hover-button-container"]
-        } ${label ? styles["button-container"] : styles["icon-only-button"]
-        } ${isTransparent ? styles["background-transparent"] : label ? styles["background"] : styles["background-secondary"]}`}
-      onClick={rest.onClick}
-    >
-      <Icon
-        className={`material-symbols-outlined ${styles["icon"]
-          } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
-          } ${styling?.hover} ${styling?.text}`}
+    <>
+      <button
+        className={`${rest.className ?? ""} ${isHoverableDisabled ? "" : styles["hover-button-container"]
+          } ${label ? styles["button-container"] : styles["icon-only-button"]
+          } ${isTransparent ? styles["background-transparent"] : label ? styles["background"] : styles["background-secondary"]}`}
+        onClick={rest.onClick}
+        ref={tooltipProps.refs.setReference}
+        {...tooltipProps.getReferenceProps()}
       >
-        {icon}
-      </Icon>
-      {label && (
-        <p className={`${styles["text"]
-          } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
-          } ${styling?.hover} ${styling?.text}`}>
-          {label}
-        </p>
-      )}
-    </button>
+        <Icon
+          className={`material-symbols-outlined ${styles["icon"]
+            } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
+            } ${styling?.hover} ${styling?.text}`}
+        >
+          {icon}
+        </Icon>
+        {label && (
+          <p className={`${styles["text"]
+            } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
+            } ${styling?.hover} ${styling?.text}`}>
+            {label}
+          </p>
+        )}
+      </button>
+
+      {/* Render the tooltip */}
+      {renderTooltip(tooltipProps)}
+    </>
   );
 }
