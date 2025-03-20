@@ -1,6 +1,4 @@
-import { ScenarioDefinition } from "../types/scenario";
-
-
+import { ScenarioDefinition } from "types/scenario";
 
 export async function getScenarios(scenarioUrl: string): Promise<ScenarioDefinition[]> {
   const url: string = scenarioUrl + "/getScenarios";
@@ -13,7 +11,7 @@ export async function getScenarios(scenarioUrl: string): Promise<ScenarioDefinit
     console.info(`Responded with scenarios: `, data);
   } catch (error) {
     console.error(`Failed to fetch scenarios from URL specified in 'ui-settings': ${scenarioUrl}\n`, error);
-    return;
+    return [];
   }
   return data;
 }
