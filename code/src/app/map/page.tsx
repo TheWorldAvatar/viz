@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function MapPage() {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   if (uiSettings.modules.map) {
-    let scenarios: ScenarioDefinition[];
+    let scenarios: ScenarioDefinition[] = [];
     // When scenarios are available, retrieve their definitions on the server side
     if (uiSettings.resources?.scenario) {
       try {
