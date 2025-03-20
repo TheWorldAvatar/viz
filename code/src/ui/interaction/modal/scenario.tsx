@@ -65,6 +65,7 @@ export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) 
           <div className={styles.header}>
             <h1>Select a scenario:</h1>
             <Button style={{ marginLeft: 'auto', textTransform: 'none' }} className={styles.refreshButton} onClick={onClick}>Refresh</Button>
+            {selectedScenario && <Button style={{ textTransform: 'none' }} className={styles.closeButton} onClick={() => props.setShowState(false)}>Close</Button>}
           </div>
         </div>
         <div className={styles.contentContainer}>
