@@ -7,7 +7,7 @@ import Dialog from '@mui/material/Dialog';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getScenarioDefinitions, setScenarioID, setScenarioName, setScenarioType, setScenarioDefinitions } from 'state/map-feature-slice';
+import { getScenarioDefinitions, setScenarioID, getScenarioID, setScenarioName, setScenarioType, setScenarioDefinitions } from 'state/map-feature-slice';
 import { ScenarioDefinition } from 'types/scenario';
 import IconComponent from 'ui/graphic/icon/icon';
 import { getScenarios } from '../../../utils/getScenarios';
@@ -46,11 +46,18 @@ export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) 
     dispatch(setScenarioDefinitions(data)); // can't do this in getsScenarios code bc server
   };
 
+  const selectedScenario = useSelector(getScenarioID);
 
   return (
     <Dialog
       sx={{ '& .MuiDialog-paper': { maxWidth: "80vw", maxHeight: "70vh" } }}
       open={props.show}
+      onClose={(event, reason) => {
+        if (!selectedScenario && event && (reason === 'escapeKeyDown' || reason === 'backdropClick')) {
+          return;
+        }
+        props.setShowState(false);
+      }}
     >
 
       <div className={styles.globalContainer}>
