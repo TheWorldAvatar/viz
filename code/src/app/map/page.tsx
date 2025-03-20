@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * A server component that handles the explore  route (i.e. images/defaultsexplore") to display the map container and its components.
  * 
  */
-export default async function VisualisationPage() {
+export default async function MapPage() {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   if (uiSettings.modules.map) {
     let scenarios: ScenarioDefinition[];
