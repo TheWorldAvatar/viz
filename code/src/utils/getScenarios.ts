@@ -7,7 +7,7 @@ export async function getScenarios(scenarioUrl: string): Promise<ScenarioDefinit
   let response;
   let data: ScenarioDefinition[];
   try {
-    response = await fetch(url, { cache: 'no-store' });
+    response = await fetch(url, { cache: 'no-store', credentials: 'include' });
     data = await response.json();
     console.info(`Fetching scenarios from URL specified in 'ui-settings': ${scenarioUrl}`);
     console.info(`Responded with scenarios: `, data);
