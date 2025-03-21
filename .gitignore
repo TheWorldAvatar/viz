@@ -8,3 +8,7 @@
 
 mapbox_api_key
 mapbox_username
+
+.env
+.env.local
+postgres-password
