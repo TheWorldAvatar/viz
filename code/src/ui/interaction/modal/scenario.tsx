@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getScenarioDefinitions, setScenarioID, getScenarioID, setScenarioName, setScenarioType, setScenarioDefinitions } from 'state/map-feature-slice';
 import { ScenarioDefinition } from 'types/scenario';
 import IconComponent from 'ui/graphic/icon/icon';
-import { getScenarios } from '../../../utils/getScenarios';
+import { getScenarios } from 'utils/getScenarios';
 
 interface ScenarioModalProperties {
   scenarioURL: string,
