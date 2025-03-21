@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.19.0
+
+### Changes
+
+- Allow scenario selector box to render if no scenarios are returned from the API
+  
 ## 5.18.0
 
 ### Changes
