@@ -78,7 +78,7 @@ export default function MapContainer(props: MapContainerProps) {
         // Await the new definitions from the server
         const reqScenario: ScenarioDefinition = props.scenarios.find((scenario) => scenario.id === selectedScenario);
         setCurrentScenario(reqScenario);
-        fetch(`${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`)
+        fetch(`${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`, { credentials: 'include'})
           .then((res) => res.json())
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
