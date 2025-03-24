@@ -207,6 +207,7 @@ export default function FormContainerComponent(
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}
+            tooltipText="Refresh"
             onClick={triggerRefresh}
             isTransparent={true}
           />
@@ -223,6 +224,7 @@ export default function FormContainerComponent(
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
+                tooltipText="Rescind Contract"
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
@@ -232,6 +234,7 @@ export default function FormContainerComponent(
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Terminate Button
                 icon={"cancel"}
+                tooltipText="Cancel"
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
@@ -240,6 +243,7 @@ export default function FormContainerComponent(
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
                 icon={"done_outline"}
+                tooltipText="Approve"
                 onClick={onApproval}
               />
             )}
@@ -249,6 +253,7 @@ export default function FormContainerComponent(
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 icon="edit"
+                tooltipText="Edit"
                 url={`../../edit/${props.entityType}/${id}`}
                 isActive={false}
               />
@@ -259,22 +264,26 @@ export default function FormContainerComponent(
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 icon="delete"
+                tooltipText="Delete"
                 url={`../../delete/${props.entityType}/${id}`}
                 isActive={false}
               />
             )}
           {props.formType != Paths.REGISTRY && !response && <ClickActionButton
             icon="publish"
+            tooltipText="Submit"
             onClick={onSubmit}
           />}
           {!!response || (!isRescindAction && !isTerminateAction) && <ReturnButton
             // Closes the modal given a response in the rescind or terminate action states or other states
             icon="keyboard_return"
+            tooltipText="Return"
           />}
           {!response && (isRescindAction || isTerminateAction) &&
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
               icon={"keyboard_return"}
+              tooltipText="Cancel"
               onClick={() => {
                 setIsRescindAction(false);
                 setIsTerminateAction(false);

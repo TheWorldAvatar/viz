@@ -20,6 +20,7 @@ import ActionButton, { ActionButtonProps } from "../action";
 export default function ReturnButton({
   icon,
   label,
+  tooltipText,
   isHoverableDisabled,
   isTransparent,
   styling,
@@ -40,6 +41,7 @@ export default function ReturnButton({
     <ActionButton
       icon={icon}
       label={label}
+      tooltipText={tooltipText}
       className={rest.className}
       title={rest.title}
       onClick={handleReturnClick}

@@ -30,6 +30,7 @@ export default function RedirectButton({
   label,
   url,
   isActive,
+  tooltipText,
   isHoverableDisabled,
   isTransparent,
   styling,
@@ -44,6 +45,7 @@ export default function RedirectButton({
     <ActionButton
       icon={icon}
       label={label}
+      tooltipText={tooltipText}
       className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className
         }`}
       title={rest.title}

@@ -24,6 +24,7 @@ interface ClickActionButtonProps extends ActionButtonProps {
 export default function ClickActionButton({
   icon,
   label,
+  tooltipText,
   isActive,
   isHoverableDisabled,
   isTransparent,
@@ -35,6 +36,7 @@ export default function ClickActionButton({
       icon={icon}
       className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className}`}
       label={label}
+      tooltipText={tooltipText}
       onClick={rest.onClick}
       isHoverableDisabled={isHoverableDisabled}
       isTransparent={isTransparent}
