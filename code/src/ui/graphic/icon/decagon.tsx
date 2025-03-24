@@ -1,6 +1,5 @@
 import styles from './decagon.module.css';
 
-import React from 'react';
 
 interface DecagonIconComponentProps {
   readonly color: string;

@@ -3,6 +3,124 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.0
+
+### Changes
+
+- Added a simple registry pages to view records of entities specified in the configuration
+
+## 5.17.3
+
+- Dependabot version updates
+
+## 5.17.2
+
+- Update node version
+
+## 5.17.1
+
+### Security Update
+
+- Bump version of `axios` to address server side forgery vulnerability
+
+## 5.17.0
+
+### Changes
+
+- Added form branches and arrays
+- Added option to generate report
+- Updated form extraction workflow following changes in the backend
+- Consolidation of form parsing methods
+- Improve dark mode design for the registry
+- Abstracted background image into a hook
+- Updated `VisBackend Agent` from `v1.2.2` to `v1.3.0`
+
+### Bug Fixes
+
+- Fix missing functions for action buttons
+
+## 5.16.15
+
+### Bug Fixes
+
+- Fix missing dependent form field if no instances are found
+
+## 5.16.14
+
+### Improvements
+
+- Updated design for the registry table and forms
+
+## 5.16.13
+
+### Changes
+
+ This PR was created by the Combine PRs action by combining the following PRs:
+
+- #106 build(deps-dev): bump eslint from 9.20.0 to 9.21.0 in /code
+- #105 build(deps): bump @mui/material from 6.4.3 to 6.4.5 in /code
+- #104 build(deps-dev): bump globals from 15.14.0 to 16.0.0 in /code
+- #102 build(deps): bump actions/github-script from 6 to 7
+- #101 build(deps): bump node from 23.7-slim to 23.8-slim
+
+## 5.16.12
+
+### Bug Fixes
+
+- Account for multiple time series returned by the feature info agent
+
+## 5.16.11
+
+### Improvements
+
+- Updated design of registry table
+- Change the default row size for registry
+- Added a simple no results found overlay
+
+## 5.16.10
+
+### Bug Fixes
+
+- Fix missing time series panel when only time series data is returned with no attributes
+
+## 5.16.9
+
+### Bug Fixes
+
+- Fix the bug that prevents the display of dependent form fields with conflicting similar names
+
+## 5.16.8
+
+### Improvements
+
+- Address unused imports warned by ESLint
+
+## 5.16.7
+
+### Changes
+
+- Bump next.js, mapbox and several other dependencies
+
+### Bug Fixes
+
+- Fixed issue with metadata display for number values
+
+## 5.16.6
+
+### Changes
+
+- Bump dependencies:
+  - `material-symbols`
+  - `react-select`
+  - `@next/eslint-plugin-next`
+- Remove redundant `react-map-gl` dependency
+
+## 5.16.5
+
+### Changes
+
+- Update pnpm and node versions in package.json
+
 ## 5.16.4
 
 ### Changes

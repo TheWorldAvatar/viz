@@ -55,7 +55,8 @@ The `config/ui-settings.json` file provides general settings for the platform. T
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario
     - `url`: REQUIRED. url of the resource
-    - `data`: optional dataset indicator that is only used with scenario resources to target required dataset for scenarios
+    - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
+    - `paths`: optional array of strings to denote the names of the registry resources
 
 Note that resources are optional and their configuration options can differ from each other. Please note the list of available resources and their possible options as follows:
 
@@ -63,9 +64,10 @@ Note that resources are optional and their configuration options can differ from
 - Scenario: Enables scenario selection in the `map` page
   - `url`: This is a required field that specifies the URL from which the scenarios and their settings can be retrieved. In this example, the URL points to a stack deployed on theworldavatar.io platform.
   - `data`: This required field indicates the target dataset that should be accessible to the user from the central stack. In the given example, the data field is set to "water", indicating that the scenario contains information only on water assets and not power nor telecoms etc.
-- Registry: Activate the `registry` page based on the backend resource indicated in the `url` parameter. The registry page provides a table for viewing all records within a lifecycle, as well as pages to add, delete, edit, and view these records individually using a form UI.
+- Registry: Activate the `registry` page based on the backend resource indicated in the `url` parameter. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). Note that this will require at least one of the `data` or `paths` property to be valid.
   - `url`: The registry agent endpoint (close it with /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
-  - `data`: The entity of interest that acts as the first landing page for the registry. This should be `contract` at the moment.
+  - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
+  - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Users must only use either white spaces or `_` to separate the words.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
@@ -103,7 +105,8 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     },
     "registry": {
       "url": "http://sample.org/agent/", // Edit registry agent's API here
-      "data": "type" // Specify only the type to reach the registry page of interest
+      "data": "type", // Specify only the type to reach the registry page of interest
+      "paths": ["resource one","resource two"] // Specify the resource names on the backend
     },
     "scenario": {
       "url": "https://theworldavatar.io/demos/credo-ofwat/central/CentralStackAgent", // Edit scenario url here

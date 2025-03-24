@@ -1,6 +1,5 @@
 import styles from './field.module.css';
 
-import React from 'react';
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 
 import FormErrorComponent from 'ui/text/error/form-error';
@@ -26,7 +25,7 @@ export default function FormCheckboxField(props: Readonly<InputFieldProps>) {
   const fieldId: string = props.field.toLowerCase();
 
   return (
-    <div className={styles["form-input-container"]}>
+    <div>
       <Controller
         name={props.field}
         control={props.form.control}

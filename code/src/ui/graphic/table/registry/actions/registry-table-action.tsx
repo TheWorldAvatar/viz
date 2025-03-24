@@ -57,6 +57,7 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
         id: recordId,
         status: status,
         contract: props.row.contract,
+        date: props.row.date,
       });
     } else {
       // Move to the view modal page for the specific record

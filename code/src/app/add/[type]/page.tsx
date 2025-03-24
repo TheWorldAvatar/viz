@@ -1,11 +1,10 @@
-import React from 'react';
 import { Metadata } from 'next';
 
-import { Paths, PageTitles, Modules } from 'io/config/routes';
+import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import FormContainerComponent from 'ui/interaction/form/form-container';
+import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 interface AddFormPageProps {
   params: Promise<{
@@ -33,13 +32,11 @@ export default async function AddFormPage(props: Readonly<AddFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   return (
-    <div className="formContainer">
-      <FormContainerComponent
-        entityType={resolvedParams?.type}
-        formType={Paths.REGISTRY_ADD}
-        agentApi={uiSettings?.resources?.registry?.url}
-        isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
-      />
-    </div>
+    <FormContainerComponent
+      entityType={resolvedParams?.type}
+      formType={Paths.REGISTRY_ADD}
+      agentApi={uiSettings?.resources?.registry?.url}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+    />
   );
 }
