@@ -1,5 +1,5 @@
 import { useFloating, autoUpdate, offset, flip, shift, useHover, useInteractions, FloatingPortal } from "@floating-ui/react";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from './tooltip.module.css';
 
 export interface TooltipProps {
@@ -44,11 +44,14 @@ export function renderTooltip(tooltipProps: ReturnType<typeof useTooltip>) {
         <FloatingPortal>
             <div
                 ref={refs.setFloating}
-                style={floatingStyles}
+                style={{
+                    ...floatingStyles,
+                    zIndex: 999999 // Highest z-index so it is above modal content
+                }}
                 className={styles.tooltip}
             >
                 {text}
             </div>
-        </FloatingPortal>
+        </FloatingPortal >
     );
 }
