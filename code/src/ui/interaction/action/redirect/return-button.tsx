@@ -11,6 +11,9 @@ import ActionButton, { ActionButtonProps } from "../action";
  * An action button that redirects to the target url.
  *
  * @param {string} icon The Material icon name.
+
+ * @param {string} label Optional label that is displayed on the button.
+ * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.active An optional styling object for the active state when active.
@@ -20,6 +23,7 @@ import ActionButton, { ActionButtonProps } from "../action";
 export default function ReturnButton({
   icon,
   label,
+  tooltipText,
   isHoverableDisabled,
   isTransparent,
   styling,
@@ -40,6 +44,7 @@ export default function ReturnButton({
     <ActionButton
       icon={icon}
       label={label}
+      tooltipText={tooltipText}
       className={rest.className}
       title={rest.title}
       onClick={handleReturnClick}

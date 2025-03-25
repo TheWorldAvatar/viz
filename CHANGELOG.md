@@ -8,6 +8,24 @@
 ### Changes
 
 - Allow scenario selector box to render if no scenarios are returned from the API
+
+## 5.18.3
+
+### Improvements
+
+- dependency bumps
+  
+## 5.18.2
+
+### Bug Fixes
+
+- Fix type errors introduced in v5.18.1
+  
+## 5.18.1
+
+### Changes
+
+- Added a tooltip to inform users of an action button's actions
   
 ## 5.18.0
 
