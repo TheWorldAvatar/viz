@@ -1,6 +1,7 @@
-import { useFloating, autoUpdate, offset, flip, shift, useHover, useInteractions, FloatingPortal } from "@floating-ui/react";
-import React, { useState, useRef } from "react";
 import styles from './tooltip.module.css';
+
+import React, { useState } from "react";
+import { autoUpdate, flip, FloatingPortal, offset, shift, useFloating, useHover, useInteractions } from "@floating-ui/react";
 
 export interface TooltipProps {
     text: string;
@@ -9,7 +10,7 @@ export interface TooltipProps {
 }
 
 export function useTooltip(text?: string) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const { refs, floatingStyles, context } = useFloating({
         open: isOpen && !!text,
