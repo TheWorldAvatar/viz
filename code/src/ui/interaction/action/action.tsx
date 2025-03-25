@@ -2,9 +2,9 @@
 
 import styles from "./action.module.css";
 
-import React from "react";
 import { Icon } from "@mui/material";
-import { useTooltip, renderTooltip } from "../tooltip/tooltip";
+import React from "react";
+import { renderTooltip, useTooltip } from "ui/interaction/tooltip/tooltip";
 
 export interface ActionButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
@@ -27,6 +27,7 @@ export interface ActionStyles {
  *
  * @param {string} icon The Material icon name.
  * @param {string} label Optional label that is displayed on the button.
+ * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.active Unused in this button.

@@ -18,6 +18,8 @@ interface RedirectButtonProps extends ActionButtonProps {
  *
  * @param {string} icon The Material icon name.
  * @param {string} url The redirect target url.
+ * @param {string} label Optional label that is displayed on the button.
+ * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {boolean} isActive Indicates if the redirect button is active and should be highlighted.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
@@ -27,10 +29,10 @@ interface RedirectButtonProps extends ActionButtonProps {
  */
 export default function RedirectButton({
   icon,
-  label,
   url,
-  isActive,
+  label,
   tooltipText,
+  isActive,
   isHoverableDisabled,
   isTransparent,
   styling,
