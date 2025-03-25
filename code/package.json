@@ -21,12 +21,12 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
-
         "@mui/icons-material": "^6.4.7",
         "@mui/material": "^6.4.7",
         "@mui/x-data-grid": "^7.27.3",
         "@reduxjs/toolkit": "^2.6.1",
-        "@floating-ui/react": "^0.27.5",        "@types/markdown-it": "^14.1.2",
+        "@floating-ui/react": "^0.27.5",        
+        "@types/markdown-it": "^14.1.2",
         "axios": "^1.8.3",
         "chart.js": "^4.4.8",
         "chartjs-adapter-moment": "^1.0.1",
