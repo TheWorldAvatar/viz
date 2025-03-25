@@ -6,8 +6,7 @@ on:
       - main
     paths:
       - code/**
-      - VERSION
-      - CHANGELOG.md
+      - code/* 
 
 permissions:
   contents: read
