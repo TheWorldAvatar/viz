@@ -46,33 +46,29 @@ export default function ActionButton({
   const tooltipProps = useTooltip(tooltipText);
 
   return (
-    <>
-      <button
-        className={`${rest.className ?? ""} ${isHoverableDisabled ? "" : styles["hover-button-container"]
-          } ${label ? styles["button-container"] : styles["icon-only-button"]
-          } ${isTransparent ? styles["background-transparent"] : label ? styles["background"] : styles["background-secondary"]}`}
-        onClick={rest.onClick}
-        ref={tooltipProps.refs.setReference}
-        {...tooltipProps.getReferenceProps()}
+    <button
+      className={`${rest.className ?? ""} ${isHoverableDisabled ? "" : styles["hover-button-container"]
+        } ${label ? styles["button-container"] : styles["icon-only-button"]
+        } ${isTransparent ? styles["background-transparent"] : label ? styles["background"] : styles["background-secondary"]}`}
+      onClick={rest.onClick}
+      ref={tooltipProps.refs.setReference}
+      {...tooltipProps.getReferenceProps()}
+    >
+      <Icon
+        className={`material-symbols-outlined ${styles["icon"]
+          } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
+          } ${styling?.hover} ${styling?.text}`}
       >
-        <Icon
-          className={`material-symbols-outlined ${styles["icon"]
-            } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
-            } ${styling?.hover} ${styling?.text}`}
-        >
-          {icon}
-        </Icon>
-        {label && (
-          <p className={`${styles["text"]
-            } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
-            } ${styling?.hover} ${styling?.text}`}>
-            {label}
-          </p>
-        )}
-      </button>
-
-      {/* Render the tooltip */}
+        {icon}
+      </Icon>
+      {label && (
+        <p className={`${styles["text"]
+          } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
+          } ${styling?.hover} ${styling?.text}`}>
+          {label}
+        </p>
+      )}
       {renderTooltip(tooltipProps)}
-    </>
+    </button>
   );
 }
