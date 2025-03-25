@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.1
+
+### Changes
+
+- Added a tooltip to inform users of an action button's actions
+
 ## 5.18.0
 
 ### Changes
