@@ -12,6 +12,9 @@ import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import { RegistryTableTheme } from "./registry-table-theme";
 
+import { Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: string;
@@ -32,25 +35,23 @@ interface RegistryTableProps {
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   // Generate a list of column headings
   // const columns: ColumnDef<Record<string, string>>[] = React.useMemo(() => {
-  const columns: GridColDef[] = React.useMemo(() => {
+  const columns: ColumnsType<any> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
     return [
       {
-        field: "actions",
-        headerName: "",
+        key: "actions",
+        title: '',
         width: 25,
-        headerClassName: styles["header"],
+        className: styles["header"],
         cellClassName: styles["header-text"],
-        renderCell: (params) => {
-          return (
-            <RegistryRowActions
-              recordType={props.recordType}
-              lifecycleStage={props.lifecycleStage}
-              row={params.row}
-              setTask={props.setTask}
-            />
-          );
-        },
+        render: (_, record) => (
+          <RegistryRowActions
+            recordType={props.recordType}
+            lifecycleStage={props.lifecycleStage}
+            row={record}
+            setTask={props.setTask}
+          />
+        ),
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -60,18 +61,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           return prevKeys >= currentKeys ? prev : current;
         })
       ).map((field) => ({
-        field,
-        headerName: parseWordsForLabels(field),
-        width: 100, // Adjust the width as needed
-        headerClassName: styles["header"],
-        cellClassName: styles["header-text"],
-        renderCell: (params: GridRenderCellParams) => {
-          // Render status differently
+        key: field,
+        dataIndex: field,
+        title: parseWordsForLabels(field),
+        width: 100,
+        className: styles["header"],
+        render: (value) => {
           if (field.toLowerCase() === "status") {
-            return <StatusComponent status={`${params.value}`} />;
+            return <StatusComponent status={`${value}`} />;
           }
-          if (params.value) {
-            return parseWordsForLabels(`${params.value}`);
+          if (value) {
+            return parseWordsForLabels(`${value}`);
           }
           return "";
         },
@@ -83,8 +83,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const data: FieldValues[] = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
     // Extract only the value into the data to simplify
-    return props.instances.map((instance) => {
-      const flattenInstance: Record<string, string> = {};
+    return props.instances.map((instance, index) => {
+      const flattenInstance: Record<string, string> = { key: `row-${index}` };
       Object.keys(instance).forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
@@ -98,30 +98,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   }, [props.instances]);
 
   return (
-    <RegistryTableTheme>
-      <Box>
-        <DataGrid
-          className={styles["table"]}
-          rows={data}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
-          }}
-          pageSizeOptions={[5, 10, 20]}
-          checkboxSelection={false}
-          disableRowSelectionOnClick={false}
-          autosizeOnMount={true}
-          getRowId={(row) => row.id || row.iri}
-          getRowClassName={(params) =>
-            params.indexRelativeToCurrentPage % 2 === 0 ? styles["even-row"] : styles["odd-row"]
-          }
-          getCellClassName={() => styles["body-cell"]}
-        />
-      </Box>
-    </RegistryTableTheme>
+    <Table
+      className={styles["table"]}
+      dataSource={data}
+      columns={columns}
+      pagination={{
+        defaultPageSize: 10,
+        pageSizeOptions: [5, 10, 20],
+        showSizeChanger: true
+      }}
+      rowKey={(record) => record.id || record.iri}
+      rowClassName={(record, index) =>
+        index % 2 === 0 ? styles["even-row"] : styles["odd-row"]
+      }
+      onRow={(record) => ({
+        className: styles["body-cell"]
+      })}
+    />
   );
-}
+} 
