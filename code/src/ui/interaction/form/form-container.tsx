@@ -224,7 +224,7 @@ export default function FormContainerComponent(
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
-                tooltipText="Rescind Contract"
+                tooltipText={`Rescind ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
@@ -234,7 +234,7 @@ export default function FormContainerComponent(
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Terminate Button
                 icon={"cancel"}
-                tooltipText="Cancel"
+                tooltipText={`Cancel ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
