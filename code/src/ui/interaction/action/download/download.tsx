@@ -54,7 +54,6 @@ export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonPr
       icon="download"
       className={`${rest.className}`}
       label="export data"
-      tooltipText="Export data"
       onClick={exportToCSV}
     />
   );
