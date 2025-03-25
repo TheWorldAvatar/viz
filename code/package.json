@@ -1,6 +1,6 @@
 {
     "name": "viz",
-    "version": "5.18.0",
+    "version": "5.18.1",
     "private": true,
     "type": "module",
     "jest": {
@@ -25,6 +25,7 @@
         "@mui/material": "^6.4.7",
         "@mui/x-data-grid": "^7.27.3",
         "@reduxjs/toolkit": "^2.6.1",
+        "@floating-ui/react": "^0.27.5",        
         "@types/markdown-it": "^14.1.2",
         "axios": "^1.8.3",
         "chart.js": "^4.4.8",

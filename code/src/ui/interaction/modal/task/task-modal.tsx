@@ -239,36 +239,36 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <div className={styles["footer-button-row"]}>
             {props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                // Complete Button
                 icon={"done_outline"}
+                tooltipText="Complete"
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                // Assign Button
                 icon={"assignment"}
+                tooltipText="Assign"
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                // Cancel Button
                 icon={"cancel"}
+                tooltipText="Cancel"
                 onClick={genBooleanClickHandler(setIsCancelAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                // Report Button
                 icon={"report"}
+                tooltipText="Report"
                 onClick={genBooleanClickHandler(setIsReportAction)}
               />}
             {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-              // Submit Button
               icon={"publish"}
+              tooltipText="Submit"
               onClick={onSubmit}
             />}
             <ClickActionButton
-              // Return Button
               icon={"keyboard_return"}
+              tooltipText="Return"
               // Closes the modal if there is a response in any action
               onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
                 onReturnInAction : onClose}
