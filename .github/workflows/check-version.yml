@@ -21,6 +21,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.CI_TRIGGER_PAT_USHCODE }}
+          ## By default, actions/checkout uses the GITHUB_TOKEN secret, but this does not trigger CI which is required after this action, otherwise if the final commit is the twa-bot one, it will not check linting etc before a merge. This PAT ensures that CI is run
 
       - name: Set up Git
         run: |
@@ -51,3 +52,4 @@ jobs:
           git push origin ${{ github.head_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.CI_TRIGGER_PAT_USHCODE }}
+          ## Again, use the PAT to trigger CI
