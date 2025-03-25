@@ -29,7 +29,7 @@ export function scenarioTypeIcon(scenarioType: string) {
  */
 export default function ScenarioModal(props: Readonly<ScenarioModalProperties>) {
   const scenarioDefinitions = useSelector(getScenarioDefinitions);
-  const scenarioUrl = JSON.parse(props.scenarioURL).resources.scenario.url;
+  const scenarioUrl = props.scenarioURL;
   const dispatch = useDispatch();
 
   const handleChange = (event: React.MouseEvent<HTMLButtonElement>) => {
