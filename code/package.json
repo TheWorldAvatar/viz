@@ -19,14 +19,16 @@
         "test": "jest"
     },
     "dependencies": {
+        "@ant-design/icons": "^5.2.6",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
+        "@floating-ui/react": "^0.27.5",
         "@mui/icons-material": "^6.4.7",
         "@mui/material": "^6.4.7",
         "@mui/x-data-grid": "^7.27.3",
         "@reduxjs/toolkit": "^2.6.1",
-        "@floating-ui/react": "^0.27.5",        
         "@types/markdown-it": "^14.1.2",
+        "antd": "^5.9.0",
         "axios": "^1.8.3",
         "chart.js": "^4.4.8",
         "chartjs-adapter-moment": "^1.0.1",
@@ -58,7 +60,8 @@
         "redux": "^5.0.1",
         "redux-persist": "^6.0.0",
         "typescript": "^5.8.2",
-        "uuid": "^11.1.0"
+        "uuid": "^11.1.0",
+        "viz": "file:"
     },
     "devDependencies": {
         "@eslint/js": "^9.22.0",
