@@ -121,6 +121,16 @@ The [`keycloak.json` file](./code/keycloak.json) must also be correctly configur
 
 ## 5. Release
 
-Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged. However, before merging the pull request, update the `resources/CHANGELOG.md` and `resources/VERSION` accordingly. Look at the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format.
+Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged.
 
-Once merged, a release email will be sent to the mailing list based on the `resources/CHANGELOG.md`.
+### Your Responsibilities Before Merging a Pull Request
+
+Users **MUST** perform the following actions **BEFORE** merging your approved pull request:
+
+- Update the `CHANGELOG.md` file
+  - Follow the existing format to maintain consistency
+- Update the `VERSION` file
+  - Refer to the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format
+
+> [!IMPORTANT]  
+> Please ensure your pull request has received the required approvals before merging. Once a pull request is merged, the release process is fully automated. No further manual intervention is required. A release email will also be sent based on the `CHANGELOG.md` file.

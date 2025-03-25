@@ -3,6 +3,26 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.0
+
+### Changes
+
+- Added a simple registry pages to view records of entities specified in the configuration
+
+## 5.17.3
+
+- Dependabot version updates
+
+## 5.17.2
+
+- Update node version
+
+## 5.17.1
+
+### Security Update
+
+- Bump version of `axios` to address server side forgery vulnerability
+
 ## 5.17.0
 
 ### Changes
