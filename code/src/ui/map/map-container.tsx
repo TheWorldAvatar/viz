@@ -78,7 +78,8 @@ export default function MapContainer(props: MapContainerProps) {
         // Await the new definitions from the server
         const reqScenario: ScenarioDefinition = props.scenarios.find((scenario) => scenario.id === selectedScenario);
         setCurrentScenario(reqScenario);
-        fetch(`${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`, { credentials: 'include'})
+        const scenarioDatasetURL = `${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`;
+        fetch(scenarioDatasetURL)
           .then((res) => res.json())
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
@@ -89,6 +90,9 @@ export default function MapContainer(props: MapContainerProps) {
             const dataString: string = JSON.stringify(data).replace(/{dim_time_index}/g, dimensionValue);
             mapDataStore = parseMapDataSettings(JSON.parse(dataString), mapSettings?.type);
             setDataStore(mapDataStore);
+          })
+          .catch((error) => {
+            console.error("Error fetching scenario map data:", error);
           });
       } else {
         // By default, the data settings are retrieved locally
@@ -181,7 +185,7 @@ export default function MapContainer(props: MapContainerProps) {
           />
         }
       </MapSettingsProvider>
-      
+
       {/* Cesium map */}
       {mapSettings?.["type"] === "cesium" &&
         <div></div>
