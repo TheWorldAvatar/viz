@@ -44,20 +44,43 @@
   border-collapse: separate;
 }
 
+/* Table header styling */
 .table :global(.ant-table-thead > tr > th) {
-  background-color: var(--text-color-links);
-  color: var(--background-primary);
-  font-weight: bold;
+  background-color: var(--text-color-links) !important;
+  color: var(--background-primary) !important;
+  font-weight: bold !important;
   padding: 0.5rem;
+  border-bottom: none !important;
 }
 
+/* Table cell styling */
 .table :global(.ant-table-tbody > tr > td) {
   padding: 0.5rem;
+  border-bottom: none !important;
+}
+
+/* Even row styling */
+.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(even)) {
+  background-color: rgba(131, 195, 141, 0.8);
+}
+
+/* Odd row styling */
+.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(odd)) {
+  background-color: rgba(124, 203, 219, 0.8);
+}
+
+/* Row hover styles for even row */
+.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(even):hover > td) {
+  background-color: var(--button-color-primary) !important;
+}
+
+/* Row hover styles for odd row */
+.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(odd):hover > td) {
+  background-color: #7ccbdb80 !important;
 }
 
 .header {
   padding: 0.5rem 0;
-  background-color: var(--text-color-links);
   color: var(--background-primary);
 }
 
@@ -70,26 +93,6 @@
   font-size: var(--font-size-secondary-text);
 }
 
-.even-row {
-  background-color: rgba(131, 195, 141, 0.3);
-}
-
-.even-row:hover {
-  background-color: var(--button-color-primary) !important;
-}
-
-.odd-row {
-  background-color: rgba(124, 203, 219, 0.3);
-}
-
-.odd-row:hover {
-  background-color: #7ccbdb80 !important;
-}
-
-/* Handle row selection and hover effects */
-.table :global(.ant-table-tbody > tr.ant-table-row:hover > td) {
-  background: transparent; /* Let our custom hover styles take precedence */
-}
 /* Fix header border and padding */
 .table :global(.ant-table-container table > thead > tr:first-child th:first-child) {
   border-top-left-radius: 5px;
@@ -103,6 +106,7 @@
 .table :global(.ant-pagination) {
   margin-top: 1rem;
 }
+
 .table-icon-cell {
   display: inline-flex;
   flex-direction: row;

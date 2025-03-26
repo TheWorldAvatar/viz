@@ -107,9 +107,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         position: ['bottomCenter']
       }}
       rowKey={(record) => record.id || record.iri || record.key}
-      rowClassName={(record, index) =>
-        `${styles["body-cell"]} ${index % 2 === 0 ? styles["even-row"] : styles["odd-row"]}`
-      }
       scroll={{ x: 'max-content' }}
       size="middle"
       sticky={{ offsetHeader: 0 }}
