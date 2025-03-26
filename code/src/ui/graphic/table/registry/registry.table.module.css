@@ -107,6 +107,12 @@
   margin-top: 1rem;
 }
 
+/* Style for sorted columns */
+.table :global(.ant-table-column-sort) {
+  background-color: var(--border-secondary) !important;
+  color: var(--background-primary) !important;
+}
+
 .table-icon-cell {
   display: inline-flex;
   flex-direction: row;
