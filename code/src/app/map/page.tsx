@@ -1,4 +1,3 @@
-
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -30,17 +29,18 @@ export async function generateMetadata(): Promise<Metadata> {
  * A server component that handles the explore  route (i.e. images/defaultsexplore") to display the map container and its components.
  * 
  */
-export default async function VisualisationPage() {
+export default async function MapPage() {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   if (uiSettings.modules.map) {
-    let scenarios: ScenarioDefinition[];
+    let scenarios: ScenarioDefinition[] = [];
     // When scenarios are available, retrieve their definitions on the server side
     if (uiSettings.resources?.scenario) {
+      const scenarioUrl = uiSettings.resources?.scenario?.url;
       try {
-        scenarios = await getScenarios(uiSettings.resources?.scenario?.url);
-        scenarios = scenarios.map((scenario) => ({
+        const response = await getScenarios(scenarioUrl);
+        scenarios = response.map((scenario) => ({
           ...scenario,
-          url: uiSettings.resources.scenario.url,
+          url: scenarioUrl,
           dataset: uiSettings.resources.scenario.data,
         }))
       } catch (error) {

@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.19.0
+
+### Changes
+
+- Allow scenario selector box to render if no scenarios are returned from the API
+
 ## 5.18.3
 
 ### Improvements
@@ -20,7 +26,7 @@
 ### Changes
 
 - Added a tooltip to inform users of an action button's actions
-
+  
 ## 5.18.0
 
 ### Changes
@@ -250,7 +256,7 @@
 
 ## 5.11.0
 
-### Improvements
+## Improvements
 
 - Simplify, secure and optimise MapBox credential management by loading in as environment variables instead of exposing via public API and using HTTP to read them
 - Add a "layerTreeIconOverride" option to mapbox layers for cases where automatic icon is not wanted
