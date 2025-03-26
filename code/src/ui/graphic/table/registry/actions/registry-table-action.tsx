@@ -14,7 +14,7 @@ import { Status } from 'ui/text/status/status';
 interface RegistryRowActionsProps {
   recordType: string;
   lifecycleStage: string;
-  row: GridRowModel;
+  row: any;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
 
@@ -67,7 +67,6 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
 
   return (
     <div className={styles["table-icon-cell"]}>
-      {/* Action buttons or icons */}
       <MaterialIconButton
         iconName="expand_circle_right"
         iconStyles={[iconStyles["small-icon"], styles["expand-icon"]]}

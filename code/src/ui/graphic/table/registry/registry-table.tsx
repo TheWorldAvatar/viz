@@ -102,15 +102,31 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       pagination={{
         defaultPageSize: 10,
         pageSizeOptions: [5, 10, 20],
-        showSizeChanger: true
+        showSizeChanger: true,
+        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+        position: ['bottomCenter']
       }}
-      rowKey={(record) => record.id || record.iri}
+      rowKey={(record) => record.id || record.iri || record.key}
       rowClassName={(record, index) =>
-        index % 2 === 0 ? styles["even-row"] : styles["odd-row"]
+        `${styles["body-cell"]} ${index % 2 === 0 ? styles["even-row"] : styles["odd-row"]}`
       }
-      onRow={(record) => ({
-        className: styles["body-cell"]
-      })}
+      scroll={{ x: 'max-content' }}
+      size="middle"
+      sticky={{ offsetHeader: 0 }}
+      bordered={false}
+      responsive={true}
+      showSorterTooltip={true}
+      locale={{
+        triggerDesc: 'Sort descending',
+        triggerAsc: 'Sort ascending',
+        cancelSort: 'Cancel sort',
+        emptyText: (
+          <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
+            <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
+            <span>No data available</span>
+          </div>
+        )
+      }}
     />
   );
-} 
+}
