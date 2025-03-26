@@ -44,6 +44,40 @@
   border-collapse: separate;
 }
 
+.table :global(.ant-table-body) {
+  overflow-x: auto !important;
+  scrollbar-width: thin;
+  margin-bottom: 16px; /* Space for the scrollbar */
+}
+
+/* A fixed position wrapper for the horizontal scrollbar */
+.scrollbar-container {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 10;
+  background-color: var(--background-primary);
+  border-top: 1px solid var(--border-primary);
+  padding-bottom: 2px;
+}
+
+/* Enable a pagination appears below the fixed scrollbar */
+.table :global(.ant-pagination) {
+  margin-top: 20px;
+  position: relative;
+  z-index: 5;
+}
+
+.table-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Table header styling */
 .table :global(.ant-table-thead > tr > th) {
   background-color: var(--text-color-links) !important;
