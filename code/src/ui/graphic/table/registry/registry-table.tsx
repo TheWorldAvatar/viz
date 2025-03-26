@@ -1,13 +1,10 @@
 import styles from "./registry.table.module.css";
-
 import React from "react";
 import { FieldValues } from "react-hook-form";
-
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
 import StatusComponent from "ui/text/status/status";
-
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -48,6 +45,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             setTask={props.setTask}
           />
         ),
+        fixed: 'left'
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -62,14 +60,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         title: parseWordsForLabels(field),
         width: 100,
         className: styles["header"],
+        ellipsis: true,
         render: (value) => {
+          if (!value) return "";
           if (field.toLowerCase() === "status") {
             return <StatusComponent status={`${value}`} />;
           }
-          if (value) {
-            return parseWordsForLabels(`${value}`);
-          }
-          return "";
+          return parseWordsForLabels(`${value}`);
+        },
+        sorter: (a, b) => {
+          if (!a[field] || !b[field]) return 0;
+          return `${a[field]}`.localeCompare(`${b[field]}`);
         },
       })),
     ];

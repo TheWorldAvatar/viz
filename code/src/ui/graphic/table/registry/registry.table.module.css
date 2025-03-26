@@ -38,10 +38,21 @@
 
 .table {
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
 
   border-spacing: 0;
   border-collapse: separate;
+}
+
+.table :global(.ant-table-thead > tr > th) {
+  background-color: var(--text-color-links);
+  color: var(--background-primary);
+  font-weight: bold;
+  padding: 0.5rem;
+}
+
+.table :global(.ant-table-tbody > tr > td) {
+  padding: 0.5rem;
 }
 
 .header {
@@ -61,20 +72,37 @@
 
 .even-row {
   background-color: rgba(131, 195, 141, 0.3);
+}
 
-  &:hover {
-    background-color: var(--button-color-primary) !important;
-  }
+.even-row:hover {
+  background-color: var(--button-color-primary) !important;
 }
 
 .odd-row {
   background-color: rgba(124, 203, 219, 0.3);
-
-  &:hover {
-    background-color: #7ccbdb80 !important;
-  }
 }
 
+.odd-row:hover {
+  background-color: #7ccbdb80 !important;
+}
+
+/* Handle row selection and hover effects */
+.table :global(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: transparent; /* Let our custom hover styles take precedence */
+}
+/* Fix header border and padding */
+.table :global(.ant-table-container table > thead > tr:first-child th:first-child) {
+  border-top-left-radius: 5px;
+}
+
+.table :global(.ant-table-container table > thead > tr:first-child th:last-child) {
+  border-top-right-radius: 5px;
+}
+
+/* Handle pagination styles */
+.table :global(.ant-pagination) {
+  margin-top: 1rem;
+}
 .table-icon-cell {
   display: inline-flex;
   flex-direction: row;
