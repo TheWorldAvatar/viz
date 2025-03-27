@@ -2,7 +2,7 @@ import styles from "./registry.table.module.css";
 
 import React, { useEffect, useRef, useState } from 'react';
 import { FieldValues } from "react-hook-form";
-import { Table, TableColumnsType } from 'antd';
+import { Table, TableColumnsType, Typography } from 'antd';
 
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
@@ -84,9 +84,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       {
         key: "actions",
         title: '',
-        width: 25,
         className: styles["header"],
-        cellClassName: styles["header-text"],
         render: (_, record) => (
           <RegistryRowActions
             recordType={props.recordType}
@@ -107,16 +105,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       ).map((field) => ({
         key: field,
         dataIndex: field,
-        title: parseWordsForLabels(field),
-        width: 100,
         className: styles["header"],
+        title: parseWordsForLabels(field),
         ellipsis: true,
         render: (value: FieldValues) => {
           if (!value) return "";
           if (field.toLowerCase() === "status") {
             return <StatusComponent status={`${value}`} />;
           }
-          return parseWordsForLabels(`${value}`);
+          return <Typography.Text className={styles["row-cell"]}>
+            {parseWordsForLabels(`${value}`)}
+          </Typography.Text>
         },
         sorter: (a: FieldValues, b: FieldValues) => {
           if (!a[field] || !b[field]) return 0;
@@ -149,6 +148,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       <div ref={tableRef} className={styles["table-wrapper"]}>
         <Table
           className={styles["table"]}
+          rowClassName={(_record, index) => `${styles["row"]} ${index % 2 === 0 ? styles["even-row"] : styles["odd-row"]}`}
           dataSource={data}
           columns={columns}
           pagination={{

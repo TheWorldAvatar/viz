@@ -39,15 +39,6 @@
 .table {
   width: 100%;
   overflow-x: auto;
-
-  border-spacing: 0;
-  border-collapse: separate;
-}
-
-.table :global(.ant-table-body) {
-  overflow-x: auto !important;
-  scrollbar-width: thin;
-  margin-bottom: 16px; /* Space for the scrollbar */
 }
 
 /* A fixed position wrapper for the horizontal scrollbar */
@@ -63,13 +54,6 @@
   padding-bottom: 2px;
 }
 
-/* Enable a pagination appears below the fixed scrollbar */
-.table :global(.ant-pagination) {
-  margin-top: 20px;
-  position: relative;
-  z-index: 5;
-}
-
 .table-wrapper {
   position: relative;
   width: 100%;
@@ -78,73 +62,20 @@
   flex-direction: column;
 }
 
-/* Table header styling */
-.table :global(.ant-table-thead > tr > th) {
-  background-color: var(--text-color-links) !important;
-  color: var(--background-primary) !important;
-  font-weight: bold !important;
-  padding: 0.5rem;
-  border-bottom: none !important;
-}
-
-/* Table cell styling */
-.table :global(.ant-table-tbody > tr > td) {
-  padding: 0.5rem;
-  border-bottom: none !important;
-}
-
-/* Even row styling */
-.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(even)) {
-  background-color: rgba(131, 195, 141, 0.8);
-}
-
-/* Odd row styling */
-.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(odd)) {
-  background-color: rgba(124, 203, 219, 0.8);
-}
-
-/* Row hover styles for even row */
-.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(even):hover > td) {
-  background-color: var(--button-color-primary) !important;
-}
-
-/* Row hover styles for odd row */
-.table :global(.ant-table-tbody > tr.ant-table-row:nth-child(odd):hover > td) {
-  background-color: #7ccbdb80 !important;
-}
-
 .header {
-  padding: 0.5rem 0;
-  color: var(--background-primary);
+  border-bottom: none !important;
 }
 
-.header-text {
-  font-size: var(--font-size-primary-text);
+.row-cell {
+  font-size: var(--font-size-secondary-text) !important;
 }
 
-.body-cell {
-  border: none;
-  font-size: var(--font-size-secondary-text);
+.even-row {
+  background: rgba(131, 195, 141, 0.8);
 }
 
-/* Fix header border and padding */
-.table :global(.ant-table-container table > thead > tr:first-child th:first-child) {
-  border-top-left-radius: 5px;
-}
-
-.table :global(.ant-table-container table > thead > tr:first-child th:last-child) {
-  border-top-right-radius: 5px;
-}
-
-/* Handle pagination styles */
-.table :global(.ant-pagination) {
-  margin-top: 1rem;
-}
-
-/* Style for sorted columns */
-.table :global(.ant-table-column-sort) {
-  background-color: var(--border-secondary) !important;
-  color: var(--background-primary) !important;
+.odd-row {
+  background: rgba(124, 203, 219, 0.8);
 }
 
 .table-icon-cell {
