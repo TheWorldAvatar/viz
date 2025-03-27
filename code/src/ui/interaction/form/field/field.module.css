@@ -1,14 +1,16 @@
 .form-field-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin: 0 0.25rem 1vh;
-  flex: 45%;
+  flex: 100%;
+  width: calc(100% - 1rem);
 }
 
 .form-input-container {
   display: flex;
   flex-direction: column;
-  margin: 0 0.5rem;
+  margin: 0;
+  width: 100%;
 }
 
 .form-input-label {
@@ -16,11 +18,19 @@
   margin-bottom: 0.2rem;
   font-size: var(--font-size-tertiary-text);
   white-space: nowrap;
+  text-align: left;
+}
+
+.form-input-label-add {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .form-input-value {
-  width: fit-content;
-  max-width: 40vw;
+  width: 100%;
+  height: 1.8rem;
+  max-width: none;
   padding: 0.2rem;
 
   background-color: var(--background-primary);
@@ -43,9 +53,9 @@
 }
 
 .dtpicker {
-  height: 1.5rem;
-  width: 7.5rem;
-  max-width: 7.5rem;
+  height: 1.8rem;
+  width: 100%;
+  max-width: 100%;
   padding-left: 0.25rem;
 
   background-color: var(--background-primary);
@@ -66,6 +76,7 @@
   background-color: var(--background-tertiary);
   font-size: var(--font-size-tertiary-text);
   color: var(--text-color-secondary);
+  width: 10vw;
 }
 
 .form-checkbox-hover:hover {
@@ -89,15 +100,21 @@
   color: var(--text-color-links-hover);
 }
 
+.info-text-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .info-text {
   position: relative;
-  padding: 0.25rem 0.5rem;
-  margin: 0.75rem 0 0.5rem;
-  font-size: var(--font-size-tertiary-text);
-  background-color: var(--background-tertiary);
-  transition: all 0.2s ease-in;
-  transition-property: max-height padding margin;
+  padding: 0.5rem 0.5rem;
+  margin: 1rem 0 0.5rem;
+  width: 100%;
+
+  background-color: var(--description-box);
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  font-size: var(--font-size-tertiary-text);
+  line-height: 1.25rem;
 }
 
 .info-text:before {
@@ -107,23 +124,14 @@
   top: -1rem;
 
   border: solid transparent;
-  border-bottom-color: var(--background-tertiary);
+  border-bottom-color: var(--description-box);
   border-width: 0.5rem;
 }
 
-.info-text-hidden {
-  display: none;
-  max-height: 0;
-  padding: 0;
-  margin: 0;
-  opacity: 0;
-  display: none;
-}
-
-.info-text-show {
-  display: block;
-  max-height: fit-content;
-  opacity: 1;
+.info-text-redirect-button {
+  margin: 1rem 0 0.5rem !important;
+  width: 5vw;
+  border-radius: 0 !important;
 }
 
 .field-text {
@@ -139,6 +147,6 @@
 
 @media only screen and (max-width: 480px) {
   .form-checkbox {
-    width: 25vw;
+    width: 100%;
   }
 }

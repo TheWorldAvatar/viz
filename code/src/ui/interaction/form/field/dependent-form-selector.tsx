@@ -12,6 +12,10 @@ interface FormSelectorProps {
   options?: {
     disabled?: boolean;
   };
+  redirectOptions?: {
+    addUrl?: string;
+    view?: React.MouseEventHandler<HTMLButtonElement>;
+  };
   styles?: {
     label?: string[],
   };
@@ -25,6 +29,7 @@ interface FormSelectorProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
  * @param {string[]} styles.label Optional styles for the label element.
+ * @param redirectOptions Optional redirect options for adding a new entity or viewing an existing entity.
  */
 export default function DependentFormSelector(props: Readonly<FormSelectorProps>) {
   return (
@@ -32,6 +37,7 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.styles?.label}
+      redirectOptions={props.redirectOptions}
     >
       <Controller
         name={props.field.fieldId}
@@ -48,9 +54,10 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
             isMulti={false}
             isSearchable={true}
             isDisabled={props.options.disabled}
+            noOptionsMessage={() => "No instances available. Please create a new instance."}
           />
         )}
       />
-    </FormInputContainer>
+    </FormInputContainer >
   );
 }

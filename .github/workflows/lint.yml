@@ -1,4 +1,4 @@
-name: Lint TypeScript code
+name: Lint and check types of TypeScript code
 
 on:
   pull_request:
@@ -6,12 +6,17 @@ on:
       - main
     paths:
       - code/**
+      - code/* 
+  workflow_run:
+    workflows: ["Check Version"]
+    types:
+      - completed
 
 permissions:
   contents: read
 
 jobs:
-  cache-install-lint:
+  cache-install-lint-tsc:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,4 +43,8 @@ jobs:
 
       - name: Lint TypeScript code
         run: pnpm lint
+        working-directory: code
+
+      - name: Check Types
+        run: pnpm tsc
         working-directory: code

@@ -105,13 +105,13 @@ export async function getServiceTasks(agentApi: string, id?: string, time?: numb
 }
 
 /**
- * Retrieves all available ontology types for the associated entity type.
+ * Retrieves all available ontology types for the specified class.
  * 
  * @param {string} agentApi API endpoint.
- * @param {string} entityType Type of the entity.
+ * @param {string} uri Target ontology class.
  */
-export async function getAvailableTypes(agentApi: string, entityType: string): Promise<OntologyConcept[]> {
-  const res = await sendRequest(`${agentApi}/type/${entityType}`, "GET");
+export async function getAvailableTypes(agentApi: string, uri: string): Promise<OntologyConcept[]> {
+  const res = await sendRequest(`${agentApi}/type?uri=${uri}`, "GET");
   return await res.json();
 }
 

@@ -11,7 +11,7 @@ import { Paths } from 'io/config/routes';
 import { getIsOpenState } from 'state/modal-slice';
 import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getLifecycleData, getServiceTasks } from 'utils/server-actions';
+import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
 import { Status } from 'ui/text/status/status';
 import useRefresh from 'hooks/useRefresh';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
@@ -77,6 +77,8 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
           instances = await getServiceTasks(props.registryAgentApi, null, unixTimestamp);
+        } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
+          instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
         } else {
           instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
         }
@@ -87,7 +89,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       }
     };
 
-    if (!isModalOpen) {
+    if (!isModalOpen || refreshFlag) {
       fetchData();
     }
   }, [isModalOpen, selectedDate, refreshFlag]);
@@ -138,7 +140,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       </div>
       {task && <TaskModal
         entityType={props.entityType}
-        date={selectedDate}
         registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
         task={task}

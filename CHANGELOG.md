@@ -3,11 +3,71 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.3
+
+### Improvements
+
+- dependency bumps
+  
+## 5.18.2
+
+### Bug Fixes
+
+- Fix type errors introduced in v5.18.1
+  
+## 5.18.1
+
+### Changes
+
+- Added a tooltip to inform users of an action button's actions
+
+## 5.18.0
+
+### Changes
+
+- Added a simple registry pages to view records of entities specified in the configuration
+
+## 5.17.3
+
+- Dependabot version updates
+
+## 5.17.2
+
+- Update node version
+
+## 5.17.1
+
+### Security Update
+
+- Bump version of `axios` to address server side forgery vulnerability
+
+## 5.17.0
+
+### Changes
+
+- Added form branches and arrays
+- Added option to generate report
+- Updated form extraction workflow following changes in the backend
+- Consolidation of form parsing methods
+- Improve dark mode design for the registry
+- Abstracted background image into a hook
+- Updated `VisBackend Agent` from `v1.2.2` to `v1.3.0`
+
+### Bug Fixes
+
+- Fix missing functions for action buttons
+
+## 5.16.15
+
+### Bug Fixes
+
+- Fix missing dependent form field if no instances are found
+
 ## 5.16.14
 
 ### Improvements
 
-- filterTimes are recorded and used in requests to the feature info agent
+- Updated design for the registry table and forms
 
 ## 5.16.13
 
@@ -190,7 +250,7 @@
 
 ## 5.11.0
 
-## Improvements
+### Improvements
 
 - Simplify, secure and optimise MapBox credential management by loading in as environment variables instead of exposing via public API and using HTTP to read them
 - Add a "layerTreeIconOverride" option to mapbox layers for cases where automatic icon is not wanted
