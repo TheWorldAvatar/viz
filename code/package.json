@@ -19,12 +19,11 @@
         "test": "jest"
     },
     "dependencies": {
-        "@ant-design/icons": "^5.2.6",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
+        "@floating-ui/react": "^0.27.5",
         "@mui/icons-material": "^6.4.8",
         "@mui/material": "^6.4.8",
-        "@mui/x-data-grid": "^7.28.1",
         "@reduxjs/toolkit": "^2.6.1",
         "@types/markdown-it": "^14.1.2",
         "antd": "^5.9.0",
@@ -59,8 +58,7 @@
         "redux": "^5.0.1",
         "redux-persist": "^6.0.0",
         "typescript": "^5.8.2",
-        "uuid": "^11.1.0",
-        "viz": "file:"
+        "uuid": "^11.1.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.23.0",
