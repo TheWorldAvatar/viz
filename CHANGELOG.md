@@ -3,6 +3,18 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.3
+
+### Improvements
+
+- dependency bumps
+  
+## 5.18.2
+
+### Bug Fixes
+
+- Fix type errors introduced in v5.18.1
+  
 ## 5.18.1
 
 ### Changes
@@ -238,7 +250,7 @@
 
 ## 5.11.0
 
-## Improvements
+### Improvements
 
 - Simplify, secure and optimise MapBox credential management by loading in as environment variables instead of exposing via public API and using HTTP to read them
 - Add a "layerTreeIconOverride" option to mapbox layers for cases where automatic icon is not wanted
