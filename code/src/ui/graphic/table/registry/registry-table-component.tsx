@@ -19,7 +19,6 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import RegistryTable from './registry-table';
 import TableRibbon from './ribbon/table-ribbon';
 import SummarySection from './ribbon/summary';
-import AntDesignConfig from '../../../css/ant-design-style';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -131,15 +130,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          currentInstances.length > 0 ? <AntDesignConfig>
+          currentInstances.length > 0 ?
             <RegistryTable
               recordType={props.entityType}
               lifecycleStage={props.lifecycleStage}
               setTask={setTask}
               instances={currentInstances}
               limit={3}
-            />
-          </AntDesignConfig> : <div className={styles["instructions"]}>No results found</div>}
+            /> : <div className={styles["instructions"]}>No results found</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}

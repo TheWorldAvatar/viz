@@ -1,12 +1,14 @@
 import styles from "./registry.table.module.css";
-import React, { useRef, useEffect, useState } from 'react';
+
+import React, { useEffect, useRef, useState } from 'react';
 import { FieldValues } from "react-hook-form";
+import { Table, TableColumnsType } from 'antd';
+
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
+import AntDesignConfig from "ui/css/ant-design-style";
+import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
-import StatusComponent from "ui/text/status/status";
-import { Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 
 interface RegistryTableProps {
   recordType: string;
@@ -76,8 +78,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   }, [props.instances]);
 
   // Generate a list of column headings
-  // const columns: ColumnDef<Record<string, string>>[] = React.useMemo(() => {
-  const columns: ColumnsType<any> = React.useMemo(() => {
+  const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
     return [
       {
@@ -110,14 +111,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         width: 100,
         className: styles["header"],
         ellipsis: true,
-        render: (value) => {
+        render: (value: FieldValues) => {
           if (!value) return "";
           if (field.toLowerCase() === "status") {
             return <StatusComponent status={`${value}`} />;
           }
           return parseWordsForLabels(`${value}`);
         },
-        sorter: (a, b) => {
+        sorter: (a: FieldValues, b: FieldValues) => {
           if (!a[field] || !b[field]) return 0;
           return `${a[field]}`.localeCompare(`${b[field]}`);
         },
@@ -144,52 +145,53 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   }, [props.instances]);
 
   return (
-    <div ref={tableRef} className={styles["table-wrapper"]}>
-      <Table
-        className={styles["table"]}
-        dataSource={data}
-        columns={columns}
-        pagination={{
-          defaultPageSize: 10,
-          pageSizeOptions: [5, 10, 20],
-          showSizeChanger: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-          position: ['bottomCenter']
-        }}
-        rowKey={(record) => record.id || record.iri || record.key}
-        scroll={{ x: 'max-content' }}
-        size="middle"
-        sticky={{ offsetHeader: 0 }}
-        bordered={false}
-        responsive={true}
-        showSorterTooltip={true}
-        locale={{
-          triggerDesc: 'Sort descending',
-          triggerAsc: 'Sort ascending',
-          cancelSort: 'Cancel sort',
-          emptyText: (
-            <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
-              <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
-              <span>No data available</span>
-            </div>
-          )
-        }}
-      />
-
-      {/* Simple scrollbar element */}
-      <div className={styles["scrollbar-container"]}>
-        <div
-          ref={scrollbarRef}
-          style={{
-            overflowX: 'auto',
-            overflowY: 'hidden',
-            height: '8px',
-            width: '100%'
+    <AntDesignConfig>
+      <div ref={tableRef} className={styles["table-wrapper"]}>
+        <Table
+          className={styles["table"]}
+          dataSource={data}
+          columns={columns}
+          pagination={{
+            defaultPageSize: 10,
+            pageSizeOptions: [5, 10, 20],
+            showSizeChanger: true,
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            position: ['bottomCenter']
           }}
-        >
-          <div style={{ width: tableWidth + 'px', height: '1px' }}></div>
+          rowKey={(record) => record.id || record.iri || record.key}
+          scroll={{ x: 'max-content' }}
+          size="middle"
+          sticky={{ offsetHeader: 0 }}
+          bordered={false}
+          showSorterTooltip={true}
+          locale={{
+            triggerDesc: 'Sort descending',
+            triggerAsc: 'Sort ascending',
+            cancelSort: 'Cancel sort',
+            emptyText: (
+              <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
+                <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
+                <span>No data available</span>
+              </div>
+            )
+          }}
+        />
+
+        {/* Simple scrollbar element */}
+        <div className={styles["scrollbar-container"]}>
+          <div
+            ref={scrollbarRef}
+            style={{
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              height: '8px',
+              width: '100%'
+            }}
+          >
+            <div style={{ width: tableWidth + 'px', height: '1px' }}></div>
+          </div>
         </div>
       </div>
-    </div>
+    </AntDesignConfig>
   );
 }
