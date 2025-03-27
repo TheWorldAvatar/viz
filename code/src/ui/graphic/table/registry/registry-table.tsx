@@ -1,8 +1,8 @@
 import styles from "./registry.table.module.css";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { FieldValues } from "react-hook-form";
 import { Table, TableColumnsType, Typography } from 'antd';
+import React from 'react';
+import { FieldValues } from "react-hook-form";
 
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
@@ -28,55 +28,6 @@ interface RegistryTableProps {
  * @param {number} limit Optional limit to the number of columns shown.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
-  const tableRef = useRef<HTMLDivElement>(null);
-  const scrollbarRef = useRef<HTMLDivElement>(null);
-  const [tableWidth, setTableWidth] = useState<number>(0);
-  const [clientWidth, setClientWidth] = useState<number>(0);
-
-  // Synchronize scrolling between the table and the scrollbar
-  useEffect(() => {
-    const tableElement = tableRef.current?.querySelector('.ant-table-body');
-    const scrollbarElement = scrollbarRef.current;
-
-    if (!tableElement || !scrollbarElement) return;
-
-    // Set initial dimensions
-    setTableWidth(tableElement.scrollWidth);
-    setClientWidth(tableElement.clientWidth);
-
-    // When the table scrolls, update the scrollbar position
-    const handleTableScroll = () => {
-      // Temporarily remove the scrollbar's scroll event listener to prevent loops
-      scrollbarElement.removeEventListener('scroll', handleScrollbarScroll);
-      scrollbarElement.scrollLeft = tableElement.scrollLeft;
-      // Re-add the event listener after a small delay
-      setTimeout(() => {
-        scrollbarElement.addEventListener('scroll', handleScrollbarScroll);
-      }, 10);
-    };
-
-    // When the scrollbar scrolls, update the table position
-    const handleScrollbarScroll = () => {
-      // Temporarily remove the table's scroll event listener to prevent loops
-      tableElement.removeEventListener('scroll', handleTableScroll);
-      tableElement.scrollLeft = scrollbarElement.scrollLeft;
-      // Re-add the event listener after a small delay
-      setTimeout(() => {
-        tableElement.addEventListener('scroll', handleTableScroll);
-      }, 10);
-    };
-
-    // Add event listeners
-    tableElement.addEventListener('scroll', handleTableScroll);
-    scrollbarElement.addEventListener('scroll', handleScrollbarScroll);
-
-    // Clean up
-    return () => {
-      tableElement.removeEventListener('scroll', handleTableScroll);
-      scrollbarElement.removeEventListener('scroll', handleScrollbarScroll);
-    };
-  }, [props.instances]);
-
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -145,53 +96,36 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <AntDesignConfig>
-      <div ref={tableRef} className={styles["table-wrapper"]}>
-        <Table
-          className={styles["table"]}
-          rowClassName={(_record, index) => `${styles["row"]} ${index % 2 === 0 ? styles["even-row"] : styles["odd-row"]}`}
-          dataSource={data}
-          columns={columns}
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [5, 10, 20],
-            showSizeChanger: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-            position: ['bottomCenter']
-          }}
-          rowKey={(record) => record.id || record.iri || record.key}
-          scroll={{ x: 'max-content' }}
-          size="middle"
-          sticky={{ offsetHeader: 0 }}
-          bordered={false}
-          showSorterTooltip={true}
-          locale={{
-            triggerDesc: 'Sort descending',
-            triggerAsc: 'Sort ascending',
-            cancelSort: 'Cancel sort',
-            emptyText: (
-              <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
-                <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
-                <span>No data available</span>
-              </div>
-            )
-          }}
-        />
-
-        {/* Simple scrollbar element */}
-        <div className={styles["scrollbar-container"]}>
-          <div
-            ref={scrollbarRef}
-            style={{
-              overflowX: 'auto',
-              overflowY: 'hidden',
-              height: '8px',
-              width: '100%'
-            }}
-          >
-            <div style={{ width: tableWidth + 'px', height: '1px' }}></div>
-          </div>
-        </div>
-      </div>
+      <Table
+        className={styles["table"]}
+        rowClassName={(_record, index) => `${styles["row"]} ${index % 2 === 0 ? styles["even-row"] : styles["odd-row"]}`}
+        dataSource={data}
+        columns={columns}
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [5, 10, 20],
+          showSizeChanger: true,
+          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          position: ['bottomCenter']
+        }}
+        rowKey={(record) => record.id || record.iri || record.key}
+        scroll={{ x: 'max-content' }}
+        size="middle"
+        sticky={{ offsetHeader: 0 }}
+        bordered={false}
+        showSorterTooltip={true}
+        locale={{
+          triggerDesc: 'Sort descending',
+          triggerAsc: 'Sort ascending',
+          cancelSort: 'Cancel sort',
+          emptyText: (
+            <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
+              <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
+              <span>No data available</span>
+            </div>
+          )
+        }}
+      />
     </AntDesignConfig>
   );
 }
