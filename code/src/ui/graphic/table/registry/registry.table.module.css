@@ -18,7 +18,7 @@
 }
 
 .title h1 {
-  color: var(text-color-title-primary);
+  color: var(--text-color-primary);
   font-size: var(--font-size-h1);
   text-align: center;
 }

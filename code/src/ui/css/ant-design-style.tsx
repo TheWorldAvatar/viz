@@ -25,8 +25,8 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
                         borderColor: 'var(--border-primary)',
                         colorBgContainer: 'var(--background-primary)',
                         headerBg: 'var(--text-color-links)',
-                        headerColor: 'var(--background-primary)',
-                        rowHoverBg: 'var(--background-primary)',
+                        headerColor: '#dde9ff',
+                        rowHoverBg: '#f9f9f9',
                         bodySortBg: "transparent",
                         headerSortActiveBg: "#105564",
                         headerSortHoverBg: "#105564",
@@ -36,6 +36,12 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
                         colorPrimary: 'var(--text-color-links)',
                         colorBgContainer: 'var(--background-primary)',
                         itemInputBg: 'var(--background-secondary)',
+                    },
+                    Select: {
+                        colorText: 'var(--text-color-primary)',
+                        optionSelectedBg: 'var(--button-color-primary-active)',
+                        selectorBg: 'var(--background-tertiary)',
+                        colorBgElevated: 'var(--background-tertiary)',
                     },
                 },
             }}
