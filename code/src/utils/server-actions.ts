@@ -94,11 +94,12 @@ export async function getLifecycleData(agentApi: string, currentStage: string, e
  * Note that if time and id is provided, time will take precedence over id.
  * 
  * @param {string} agentApi API endpoint.
+ * @param {string} contractType The contract's resource identifier as a type.
  * @param {string} id Optional contract ID associated with the tasks.
  * @param {number} time Optional target day in UNIX timestamp format.
  */
-export async function getServiceTasks(agentApi: string, id?: string, time?: number): Promise<RegistryFieldValues[]> {
-  const url: string = time ? `${agentApi}/contracts/service/${time}` : `${agentApi}/contracts/service/${id}`;
+export async function getServiceTasks(agentApi: string, contractType: string, id?: string, time?: number): Promise<RegistryFieldValues[]> {
+  const url: string = `${agentApi}/contracts/service/${time ?? id}?type=${contractType}`;
   const res = await sendRequest(url, "GET");
   const responseData = await res.json();
   return responseData;
