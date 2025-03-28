@@ -98,7 +98,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     <AntDesignConfig>
       <Table
         className={styles["table"]}
-        rowClassName={(_record, index) => `${styles["row"]} ${index % 2 === 0 ? styles["even-row"] : styles["odd-row"]}`}
+        rowClassName={styles["row"]}
         dataSource={data}
         columns={columns}
         pagination={{

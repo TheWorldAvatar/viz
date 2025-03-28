@@ -45,16 +45,16 @@
   border-bottom: none !important;
 }
 
-.row-cell {
-  font-size: var(--font-size-secondary-text) !important;
-}
-
-.even-row {
+.row:nth-child(even) {
   background: rgba(131, 195, 141, 0.8);
 }
 
-.odd-row {
+.row:nth-child(odd) {
   background: rgba(124, 203, 219, 0.8);
+}
+
+.row-cell {
+  font-size: var(--font-size-secondary-text) !important;
 }
 
 .table-icon-cell {
