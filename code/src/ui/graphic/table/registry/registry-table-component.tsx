@@ -69,14 +69,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             instances = instances.concat(archivedContracts);
           } else {
             // If this is the report page for specific contracts, retrieve tasks associated with the id 
-            instances = await getServiceTasks(props.registryAgentApi, pathNameEnd);
+            instances = await getServiceTasks(props.registryAgentApi, props.entityType, pathNameEnd);
           }
         } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
           // Create a Date object from the YYYY-MM-DD string
           const date = new Date(selectedDate);
           // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          instances = await getServiceTasks(props.registryAgentApi, null, unixTimestamp);
+          instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
         } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
           instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
         } else {
