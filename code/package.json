@@ -1,6 +1,6 @@
 {
     "name": "viz",
-    "version": "5.18.3",
+    "version": "5.18.4",
     "private": true,
     "type": "module",
     "jest": {
@@ -21,12 +21,12 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
+        "@floating-ui/react": "^0.27.5",
         "@mui/icons-material": "^6.4.8",
         "@mui/material": "^6.4.8",
-        "@mui/x-data-grid": "^7.28.1",
         "@reduxjs/toolkit": "^2.6.1",
-        "@floating-ui/react": "^0.27.5",        
         "@types/markdown-it": "^14.1.2",
+        "antd": "^5.9.0",
         "axios": "^1.8.4",
         "chart.js": "^4.4.8",
         "chartjs-adapter-moment": "^1.0.1",

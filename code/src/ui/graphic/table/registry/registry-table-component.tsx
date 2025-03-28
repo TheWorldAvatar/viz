@@ -130,13 +130,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          currentInstances.length > 0 ? <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
-            instances={currentInstances}
-            limit={3}
-          /> : <div className={styles["instructions"]}>No results found</div>}
+          currentInstances.length > 0 ?
+            <RegistryTable
+              recordType={props.entityType}
+              lifecycleStage={props.lifecycleStage}
+              setTask={setTask}
+              instances={currentInstances}
+              limit={3}
+            /> : <div className={styles["instructions"]}>No results found</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}
