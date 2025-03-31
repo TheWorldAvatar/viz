@@ -29,8 +29,7 @@ interface RegistryRowActionsProps {
 export default function RegistryRowActions(props: Readonly<RegistryRowActionsProps>) {
   const router = useRouter();
   const recordId: string = props.row.event_id ?
-    getId(props.row.event_id) :
-    props.row.id ? getId(props.row.id) : props.row.iri;
+    props.row.event_id : props.row.id ? getId(props.row.id) : props.row.iri;
 
   const handleClickView = (): void => {
     if (props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_ARCHIVE) {
