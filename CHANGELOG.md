@@ -3,11 +3,25 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+<<<<<<< HEAD
 ## 5.19.0
 
 ### Changes
 
 - Allow scenario selector box to render if no scenarios are returned from the API
+=======
+## 5.18.5
+
+- dependabot version bump #136
+- add an `.nvmrc` for local node management
+- update `pnpm`
+  
+## 5.18.4
+
+### Changes
+
+- Replaced MUI registry table to Antd
+>>>>>>> origin/main
 
 ## 5.18.3
 
