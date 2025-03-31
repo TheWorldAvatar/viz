@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.5
+
+- dependabot version bump #136
+- add an `.nvmrc` for local node management
+- update `pnpm`
+  
 ## 5.18.4
 
 ### Changes
