@@ -12,8 +12,8 @@
 }
 
 .active {
-  border: 1px solid var(--background-inverse-primary);
-  background-color: var(--button-color-primary-active);
+  background: var(--button-color-primary-active) !important;
+  transform: translateY(-1px);
 }
 
 .background {
