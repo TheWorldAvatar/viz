@@ -2,8 +2,8 @@ import styles from '../registry.table.module.css';
 import iconStyles from 'ui/graphic/icon/icon-button.module.css';
 
 import React from 'react';
+import { FieldValues } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { GridRowModel } from '@mui/x-data-grid';
 
 import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import { Routes } from 'io/config/routes';
@@ -14,7 +14,7 @@ import { Status } from 'ui/text/status/status';
 interface RegistryRowActionsProps {
   recordType: string;
   lifecycleStage: string;
-  row: GridRowModel;
+  row: FieldValues;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
 
@@ -67,7 +67,6 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
 
   return (
     <div className={styles["table-icon-cell"]}>
-      {/* Action buttons or icons */}
       <MaterialIconButton
         iconName="expand_circle_right"
         iconStyles={[iconStyles["small-icon"], styles["expand-icon"]]}

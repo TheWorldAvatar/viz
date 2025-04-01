@@ -13,7 +13,7 @@ import {
 } from "types/form";
 import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { extractResponseField, parseWordsForLabels } from "utils/client-utils";
+import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
@@ -93,11 +93,11 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
       props.form.setValue(
         FORM_STATES.START_DATE,
-        getDefaultVal(FORM_STATES.START_DATE, extractResponseField(jsonResponse, FORM_STATES.START_DATE.replace(/\s+/g, "_"), true).value, formType)
+        getDefaultVal(FORM_STATES.START_DATE, extractResponseField(jsonResponse, parseStringsForUrls(FORM_STATES.START_DATE), true).value, formType)
       );
       props.form.setValue(
         FORM_STATES.END_DATE,
-        getDefaultVal(FORM_STATES.END_DATE, extractResponseField(jsonResponse, FORM_STATES.END_DATE.replace(/\s+/g, "_"), true).value, formType)
+        getDefaultVal(FORM_STATES.END_DATE, extractResponseField(jsonResponse, parseStringsForUrls(FORM_STATES.END_DATE), true).value, formType)
       );
       props.form.setValue(
         FORM_STATES.TIME_SLOT_START,
