@@ -1,0 +1,126 @@
+{
+  "navigation": {
+    "home": "Home",
+    "map": "Map",
+    "dashboard": "Dashboard",
+    "help": "Help Centre",
+    "registry": "Registry",
+    "return": "Return"
+  },
+  "common": {
+    "loading": "Loading, please wait...",
+    "noData": "No data available",
+    "refresh": "Refresh",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "export": "Export data",
+    "add": "Add"
+  },
+  "map": {
+    "location": "Move the map to your location",
+    "mapStyle": "Change base map style",
+    "resetCamera": "Reset camera to default position",
+    "placenames": "Show / hide place names",
+    "terrain": "Toggle 3D terrain",
+    "fullscreen": "Toggle fullscreen mode",
+    "selectScenario": "Select another scenario"
+  },
+  "layers": {
+    "layerSelection": "Layer Selection",
+    "legend": "Key/Legend",
+    "information": "Information"
+  },
+  "registry": {
+    "pending": "Pending",
+    "active": "Active",
+    "archive": "Archive",
+    "overview": "Overview",
+    "viewTasks": "View tasks",
+    "backTo": "Back to",
+    "generateReport": "Generate report",
+    "noResults": "No results found",
+    "serviceDetails": "Service Details",
+    "scheduleDetails": "Schedule Details",
+    "addressDetails": "Address Details",
+    "contractDetails": "Contract Details",
+    "serviceType": "Service Type",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "timeSlot": "Time Slot",
+    "from": "From",
+    "to": "To",
+    "status": {
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "incomplete": "Incomplete",
+      "rescinded": "Rescinded",
+      "terminated": "Terminated",
+      "pendingDispatch": "Pending dispatch",
+      "pendingExecution": "Pending execution"
+    }
+  },
+  "modal": {
+    "actions": "ACTIONS",
+    "searchCriteria": "SEARCH CRITERIA",
+    "completedService": "To complete the service, please input the following details:",
+    "dispatchResources": "Dispatch the resources for the scheduled service on {date}:",
+    "cancelService": "Cancel the scheduled service on {date}. Please provide a reason for the cancellation:",
+    "reportIssue": "Report an issue with the service on {date}. Please include the reason in your report:"
+  },
+  "form": {
+    "addNew": "Add new",
+    "findAddress": "Find address",
+    "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually.",
+    "selectLocation": "Select location",
+    "serviceType": {
+      "singleService": "Single Service",
+      "regularService": "Regular Service",
+      "alternateService": "Alternate Day Service"
+    },
+    "serviceTypeDesc": {
+      "singleService": "A one-off service that will occur once on the specified date.",
+      "regularService": "A service that will occur regularly based on the schedule within the specified period.",
+      "alternateService": "A service that will occur on every alternate day within the specified period."
+    },
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "repeatEvery": "Repeat once every",
+    "week": "week"
+  },
+  "buttons": {
+    "dispatch": "Assign",
+    "complete": "Complete",
+    "cancel": "Cancel",
+    "report": "Report",
+    "publish": "Publish",
+    "approve": "Approve",
+    "rescind": "Rescind",
+    "terminate": "Terminate",
+    "showAll": "Show all"
+  },
+  "messages": {
+    "noMatchingFeature": "No matching feature found! Please refine your search parameters.",
+    "matchingFeatures": "Found matching features! Updating the visualisation...",
+    "timeSearchMessage": "No matching feature found! Attempting to display all features within the selected time period...",
+    "contractApproved": "Contract has been approved successfully!",
+    "selectFeatureFromMap": "Select a feature on the map to explore its information in detail.",
+    "multipleFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information."
+  },
+  "search": {
+    "searchPeriod": "Search Period"
+  }
+}

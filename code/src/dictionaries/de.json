@@ -1,0 +1,126 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "map": "Karte",
+    "dashboard": "Armaturenbrett",
+    "help": "Hilfe-Center",
+    "registry": "Registry",
+    "return": "Rückkehr"
+  },
+  "common": {
+    "loading": "Laden, bitte warten...",
+    "noData": "Keine Daten verfügbar",
+    "refresh": "Aktualisieren",
+    "submit": "Einreichen",
+    "cancel": "Abbrechen",
+    "delete": "löschen",
+    "edit": "bearbeiten",
+    "view": "Ansicht",
+    "search": "Suche",
+    "export": "Daten exportieren",
+    "add": "hinzufügen"
+  },
+  "map": {
+    "location": "Verschieben Sie die Karte an Ihren Standort",
+    "mapStyle": "Stil der Basiskarte ändern",
+    "resetCamera": "Kamera auf Standardposition zurücksetzen",
+    "placenames": "Ortsnamen ein-/ausblenden",
+    "terrain": "3D-Gelände umschalten",
+    "fullscreen": "Vollbildmodus umschalten",
+    "selectScenario": "Anderes Szenario auswählen"
+  },
+  "layers": {
+    "layerSelection": "Ebenenauswahl",
+    "legend": "Schlüssel/Legende",
+    "information": "Information"
+  },
+  "registry": {
+    "pending": "Schwebend",
+    "active": "Aktiv",
+    "archive": "Archiv",
+    "overview": "Übersicht",
+    "viewTasks": "Aufgaben anzeigen",
+    "backTo": "Zurück zu",
+    "generateReport": "Bericht generieren",
+    "noResults": "Keine Ergebnisse gefunden",
+    "serviceDetails": "Dienstdetails",
+    "scheduleDetails": "Zeitplan Details",
+    "addressDetails": "Adressdetails",
+    "contractDetails": "Vertragsdetails",
+    "serviceType": "Dienstleistungsart",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "timeSlot": "Zeitschlitz",
+    "from": "Von",
+    "to": "To",
+    "status": {
+      "available": "Verfügbar",
+      "unavailable": "Nicht verfügbar",
+      "active": "Aktiv",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen",
+      "incomplete": "Unvollständig",
+      "rescinded": "Aufgehoben",
+      "terminated": "Beendet",
+      "pendingDispatch": "Ausstehender Versand",
+      "pendingExecution": "Ausstehende Ausführung"
+    }
+  },
+  "modal": {
+    "actions": "AKTIONEN",
+    "searchCriteria": "SUCHKRITERIEN",
+    "completedService": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
+    "dispatchResources": "Versenden Sie die Ressourcen für den geplanten Dienst am {Datum}:",
+    "cancelService": "Stornieren Sie den geplanten Dienst am {Datum}. Bitte geben Sie einen Grund für die Stornierung an:",
+    "reportIssue": "Melden Sie ein Problem mit dem Dienst am {Datum}. Bitte geben Sie in Ihrem Bericht den Grund an:"
+  },
+  "form": {
+    "addNew": "Neu hinzufügen",
+    "findAddress": "Adresse finden",
+    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein.",
+    "selectLocation": "Ort auswählen",
+    "serviceType": {
+      "singleService": "Einzelner Dienst",
+      "regularService": "Regelmäßiger Dienst",
+      "alternateService": "Alternativer Tagesdienst"
+    },
+    "serviceTypeDesc": {
+      "singleService": "Ein einmaliger Service, der einmalig zum angegebenen Datum stattfindet.",
+      "regularService": "Ein Dienst, der regelmäßig nach dem Zeitplan innerhalb des angegebenen Zeitraums stattfindet.",
+      "alternateService": "Ein Dienst, der an jedem zweiten Tag innerhalb des angegebenen Zeitraums stattfindet."
+    },
+    "weekdays": {
+      "mon": "Montag",
+      "tue": "Dienstag",
+      "wed": "Mittwoch",
+      "thu": "Donnerstag",
+      "fri": "Freitag",
+      "sat": "Samstag",
+      "sun": "Sonntag"
+    },
+    "repeatEvery": "Einmal pro Jahr wiederholen",
+    "week": "week"
+  },
+  "buttons": {
+    "dispatch": "Zuweisen",
+    "complete": "Abschließen",
+    "cancel": "Abbrechen",
+    "report": "Bericht",
+    "publish": "Veröffentlichen",
+    "approve": "Genehmigen",
+    "rescind": "Rückgängig machen",
+    "terminate": "Beenden",
+    "showAll": "Alles anzeigen"
+  },
+  "messages": {
+    "noMatchingFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
+    "matchingFeatures": "Passende Merkmale gefunden! Aktualisieren Sie die Visualisierung...",
+    "timeSearchMessage": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
+    "contractApproved": "Der Vertrag wurde erfolgreich genehmigt!",
+    "selectFeatureFromMap": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
+    "multipleFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten."
+  },
+  "search": {
+    "searchPeriod": "Suchzeitraum"
+  }
+}
