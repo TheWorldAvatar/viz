@@ -6,6 +6,7 @@ import { Paths, PageTitles, Modules } from 'io/config/routes';
 import { UISettings } from 'types/settings';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
+import { useDictionary } from '../../DictionaryContext';
 
 interface ActiveRegistryPageProps {
   params: Promise<{
@@ -13,6 +14,9 @@ interface ActiveRegistryPageProps {
   }>
 }
 
+const dictionary = useDictionary();
+
+///////// DICTIONARY definitions all come from HERE //////////
 /**
  * Set page metadata.
  * 
