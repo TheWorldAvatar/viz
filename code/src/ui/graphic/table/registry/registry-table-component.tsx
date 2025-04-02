@@ -11,7 +11,7 @@ import { Paths } from 'io/config/routes';
 import { getIsOpenState } from 'state/modal-slice';
 import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getLifecycleData, getServiceTasks } from 'utils/server-actions';
+import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
 import { Status } from 'ui/text/status/status';
 import useRefresh from 'hooks/useRefresh';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
@@ -77,6 +77,8 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
           instances = await getServiceTasks(props.registryAgentApi, null, unixTimestamp);
+        } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
+          instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
         } else {
           instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
         }
@@ -128,13 +130,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          currentInstances.length > 0 ? <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
-            instances={currentInstances}
-            limit={3}
-          /> : <div className={styles["instructions"]}>No results found</div>}
+          currentInstances.length > 0 ?
+            <RegistryTable
+              recordType={props.entityType}
+              lifecycleStage={props.lifecycleStage}
+              setTask={setTask}
+              instances={currentInstances}
+              limit={3}
+            /> : <div className={styles["instructions"]}>No results found</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}

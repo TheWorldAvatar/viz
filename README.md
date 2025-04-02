@@ -21,7 +21,7 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
 As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
 
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
-2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.2.3`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.3.0`
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
@@ -121,6 +121,16 @@ The [`keycloak.json` file](./code/keycloak.json) must also be correctly configur
 
 ## 5. Release
 
-Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged. However, before merging the pull request, update the `resources/CHANGELOG.md` and `resources/VERSION` accordingly. Look at the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format.
+Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged.
 
-Once merged, a release email will be sent to the mailing list based on the `resources/CHANGELOG.md`.
+### Your Responsibilities Before Merging a Pull Request
+
+Users **MUST** perform the following actions **BEFORE** merging your approved pull request:
+
+- Update the `CHANGELOG.md` file
+  - Follow the existing format to maintain consistency
+- Update the `VERSION` file
+  - Refer to the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format
+
+> [!IMPORTANT]  
+> Please ensure your pull request has received the required approvals before merging. Once a pull request is merged, the release process is fully automated. No further manual intervention is required. A release email will also be sent based on the `CHANGELOG.md` file.

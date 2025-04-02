@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default function RegistryReportPage() {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  if (uiSettings.modules.registry && uiSettings.resources?.registry) {
+  if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}

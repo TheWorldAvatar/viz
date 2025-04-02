@@ -6,6 +6,11 @@ on:
       - main
     paths:
       - code/**
+      - code/* 
+  workflow_run:
+    workflows: ["Check Version"]
+    types:
+      - completed
 
 permissions:
   contents: read
