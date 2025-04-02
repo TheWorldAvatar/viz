@@ -1,6 +1,6 @@
 import { Dictionary } from 'types/dictionary';
-import { getDictionary } from './dictionaries';
-import { DictionaryProvider } from './DictionaryContext';
+import { getDictionary } from 'utils/dictionary/dictionaries';
+import { DictionaryProvider } from 'utils/dictionary/DictionaryContext';
 
 export async function generateStaticParams() {
     return [
