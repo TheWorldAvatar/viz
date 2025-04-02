@@ -7,10 +7,23 @@
     "viewMore": "mehr sehen",
     "viewTasks": "aufgaben anzeigen",
     "generateReport": "bericht generieren",
-    "date": "Datum"
+    "date": "Datum",
+    "dispatch": "Zuweisen",
+    "complete": "Abschließen",
+    "cancel": "Abbrechen",
+    "report": "Bericht",
+    "submit": "Einreichen",
+    "return": "Rückkehr",
+    "approve": "Genehmigen",
+    "rescind": "Rückgängig machen",
+    "terminate": "Beenden"
   },
   "message": {
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
+    "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
+    "dispatchInstruction": "Versenden Sie die Ressourcen für den geplanten Dienst am",
+    "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes an",
+    "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. Bitte geben Sie in Ihrem Bericht den Grund an:",
     "noResultFound": "Keine Ergebnisse gefunden"
   },
   "nav": {
@@ -39,6 +52,7 @@
     }
   },
   "title": {
+    "actions": "AKTIONEN",
     "description": "Beschreibung",
     "serviceSummary": "Service-Übersicht"
   }

@@ -7,10 +7,23 @@
     "viewMore": "view more",
     "viewTasks": "view tasks",
     "generateReport": "generate report",
-    "date": "Date"
+    "date": "Date",
+    "dispatch": "Assign",
+    "complete": "Complete",
+    "cancel": "Cancel",
+    "report": "Report",
+    "submit": "Submit",
+    "return": "Return",
+    "approve": "Approve",
+    "rescind": "Rescind",
+    "terminate": "Terminate"
   },
   "message": {
     "registryInstruction": "Click on any record in the table to view its summary",
+    "completeInstruction": "To complete the service, please input the following details:",
+    "dispatchInstruction": "Dispatch the resources for the scheduled service on",
+    "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
+    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your report:",
     "noResultFound": "No results found"
   },
   "nav": {
@@ -39,6 +52,7 @@
     }
   },
   "title": {
+    "actions": "ACTIONS",
     "description": "Description",
     "serviceSummary": "Service summary"
   }
