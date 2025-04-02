@@ -1,24 +1,10 @@
 export type Dictionary = {
+    action: Record<string, string>;
+    message: Record<string, string>;
     nav: {
-        caption: {
-            map: string;
-            dashboard: string;
-            registry: string;
-            generalReg: string;
-            help: string;
-        },
-        title: {
-            map: string;
-            dashboard: string;
-            registry: string;
-            help: string;
-        },
-        tooltip: {
-            home: string;
-            map: string;
-            dashboard: string;
-            registry: string;
-            help: string;
-        }
+        caption: Record<string, string>;
+        title: Record<string, string>;
+        tooltip: Record<string, string>;
     };
+    title: Record<string, string>;
 };

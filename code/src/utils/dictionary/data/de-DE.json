@@ -1,4 +1,18 @@
 {
+  "action": {
+    "add": "hinzufügen",
+    "backTo": "zurück zu",
+    "export": "daten exportieren",
+    "overview": "Übersicht",
+    "viewMore": "mehr sehen",
+    "viewTasks": "aufgaben anzeigen",
+    "generateReport": "bericht generieren",
+    "date": "Datum"
+  },
+  "message": {
+    "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
+    "noResultFound": "Keine Ergebnisse gefunden"
+  },
   "nav": {
     "caption": {
       "map": "Visualisierung raumbezogener Daten",
@@ -11,7 +25,10 @@
       "map": "Karte",
       "dashboard": "Armaturenbrett",
       "registry": "Registry",
-      "help": "Hilfe-Center"
+      "help": "Hilfe-Center",
+      "pending": "Schwebend",
+      "active": "Aktiv",
+      "archive": "Archiv"
     },
     "tooltip": {
       "home": "Zurück zur landing page.",
@@ -20,5 +37,9 @@
       "registry": "Öffnen Sie das Register.",
       "help": "Hilfeseite öffnen."
     }
+  },
+  "title": {
+    "description": "Beschreibung",
+    "serviceSummary": "Service-Übersicht"
   }
 }

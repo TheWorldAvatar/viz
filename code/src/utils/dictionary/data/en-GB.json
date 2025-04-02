@@ -1,4 +1,18 @@
 {
+  "action": {
+    "add": "add",
+    "backTo": "back to",
+    "export": "export data",
+    "overview": "overview",
+    "viewMore": "view more",
+    "viewTasks": "view tasks",
+    "generateReport": "generate report",
+    "date": "Date"
+  },
+  "message": {
+    "registryInstruction": "Click on any record in the table to view its summary",
+    "noResultFound": "No results found"
+  },
   "nav": {
     "caption": {
       "map": "Geospatial data visualisation",
@@ -11,7 +25,10 @@
       "map": "Map",
       "dashboard": "Analyse",
       "registry": "Registry",
-      "help": "Help Centre"
+      "help": "Help Centre",
+      "pending": "Pending",
+      "active": "Active",
+      "archive": "Archive"
     },
     "tooltip": {
       "home": "Return to landing page.",
@@ -20,5 +37,9 @@
       "registry": "Open registry.",
       "help": "Open help page."
     }
+  },
+  "title": {
+    "description": "Description",
+    "serviceSummary": "Service summary"
   }
 }
