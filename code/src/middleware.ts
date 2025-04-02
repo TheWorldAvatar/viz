@@ -40,7 +40,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // Skip all internal paths (_next), useful if we want to extend language resolution further later on.
-        '/((?!images/|_next/).*)',
+        '/((?!_next/|images/|api/|favicon.ico).*)',
     ],
 }
