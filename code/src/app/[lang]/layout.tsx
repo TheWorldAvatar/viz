@@ -45,12 +45,17 @@ export async function generateStaticParams() {
  * 
  * @returns generated React nodes.
  */
-export default async function RootLayout({ children, modal, params }: { children: React.ReactNode; modal: React.ReactNode; params: { lang: string }; }) {
+export default async function RootLayout({ children, modal, params }: Readonly<{
+    children: React.ReactNode;
+    modal: React.ReactNode;
+    params: Promise<{ lang: string }>;
+}>) {
     // Initialise static content
     initialise();
     // Get settings to pass to Toolbar
     const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-    const dictionary: Dictionary = await getDictionary(params.lang as 'en-GB' | 'de-DE');
+    const { lang } = await params;
+    const dictionary: Dictionary = await getDictionary(lang);
 
     // Root element containing all children.
     return (
