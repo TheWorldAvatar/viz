@@ -1,7 +1,7 @@
 "use client";
 import styles from './task.modal.module.css';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 import Modal from 'react-modal';
 
@@ -82,17 +82,32 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   };
 
+  // Declare a function to get the previous event occurrence enum based on the current status.
+  const getPrevEventOccurrenceEnum = useCallback((currentStatus: string): number => {
+    // Enum should be 0 for order received at pending dispatch state
+    if (currentStatus === Status.PENDING_DISPATCH) {
+      return 0;
+    } else {
+      // Enum will be 1 as there is already a dispatch event instantiated
+      return 1;
+    }
+  }, []);
+
   const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    formData[FORM_STATES.ORDER] = props.task.id;
     let url = `${props.registryAgentApi}/contracts/service/`;
-    if (isReportAction) {
-      url += "report";
-    } else if (isCancelAction) {
-      url += "cancel";
+    if (isDispatchAction) {
+      url += "dispatch";
+      // Enum should be always be 0 to update dispatch
+      formData[FORM_STATES.ORDER] = 0;
     } else if (isCompleteAction) {
       url += "complete";
-    } else if (isDispatchAction) {
-      url += "dispatch";
+      formData[FORM_STATES.ORDER] = 1;
+    } else if (isCancelAction) {
+      url += "cancel";
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
+    } else if (isReportAction) {
+      url += "report";
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else {
       return;
     }
