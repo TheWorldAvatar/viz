@@ -1,4 +1,13 @@
 {
+  "action": {
+    "add": "hinzufügen",
+    "backTo": "zurück zu",
+    "export": "daten exportieren",
+    "overview": "Übersicht",
+    "viewTasks": "aufgaben anzeigen",
+    "generateReport": "bericht generieren",
+    "date": "Datum"
+  },
   "nav": {
     "caption": {
       "map": "Visualisierung raumbezogener Daten",
@@ -11,7 +20,10 @@
       "map": "Karte",
       "dashboard": "Armaturenbrett",
       "registry": "Registry",
-      "help": "Hilfe-Center"
+      "help": "Hilfe-Center",
+      "pending": "Schwebend",
+      "active": "Aktiv",
+      "archive": "Archiv"
     },
     "tooltip": {
       "home": "Zurück zur landing page.",

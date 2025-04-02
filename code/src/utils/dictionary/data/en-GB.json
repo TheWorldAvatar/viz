@@ -1,4 +1,13 @@
 {
+  "action": {
+    "add": "add",
+    "backTo": "back to",
+    "export": "export data",
+    "overview": "overview",
+    "viewTasks": "view tasks",
+    "generateReport": "generate report",
+    "date": "Date"
+  },
   "nav": {
     "caption": {
       "map": "Geospatial data visualisation",
@@ -11,7 +20,10 @@
       "map": "Map",
       "dashboard": "Analyse",
       "registry": "Registry",
-      "help": "Help Centre"
+      "help": "Help Centre",
+      "pending": "Pending",
+      "active": "Active",
+      "archive": "Archive"
     },
     "tooltip": {
       "home": "Return to landing page.",

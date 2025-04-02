@@ -19,6 +19,8 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import RegistryTable from './registry-table';
 import TableRibbon from './ribbon/table-ribbon';
 import SummarySection from './ribbon/summary';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { Dictionary } from 'types/dictionary';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -34,11 +36,11 @@ interface RegistryTableComponentProps {
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
+  const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
   const isModalOpen: boolean = useSelector(getIsOpenState);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
-
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -105,6 +107,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       <div className={styles["title"]}>
         <h1>{parseWordsForLabels(props.entityType)}</h1>
         <TableRibbon
+          dict={dict}
           path={pathNameEnd}
           entityType={props.entityType}
           registryAgentApi={props.registryAgentApi}
