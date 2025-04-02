@@ -121,16 +121,17 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
-          Click on any {props.entityType} in the table to view its summary
+          {dict.message.registryInstruction}
         </div>}
       {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-        <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
+        <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
         {props.lifecycleStage == Paths.REGISTRY_REPORT &&
           <SummarySection
             id={pathNameEnd}
             entityType={props.entityType}
             registryAgentApi={props.registryAgentApi}
+            dict={dict}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
           currentInstances.length > 0 ?
@@ -140,7 +141,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
               setTask={setTask}
               instances={currentInstances}
               limit={3}
-            /> : <div className={styles["instructions"]}>No results found</div>}
+            /> : <div className={styles["instructions"]}>{dict.message.noResultFound}</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}

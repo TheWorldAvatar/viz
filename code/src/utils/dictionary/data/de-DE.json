@@ -4,9 +4,14 @@
     "backTo": "zurück zu",
     "export": "daten exportieren",
     "overview": "Übersicht",
+    "viewMore": "mehr sehen",
     "viewTasks": "aufgaben anzeigen",
     "generateReport": "bericht generieren",
     "date": "Datum"
+  },
+  "message": {
+    "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
+    "noResultFound": "Keine Ergebnisse gefunden"
   },
   "nav": {
     "caption": {
@@ -32,5 +37,9 @@
       "registry": "Öffnen Sie das Register.",
       "help": "Hilfeseite öffnen."
     }
+  },
+  "title": {
+    "description": "Beschreibung",
+    "serviceSummary": "Service-Übersicht"
   }
 }

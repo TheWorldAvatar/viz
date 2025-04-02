@@ -3,6 +3,7 @@ import styles from './summary.module.css';
 import { useEffect, useState } from 'react';
 
 import { Routes } from 'io/config/routes';
+import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
@@ -13,6 +14,7 @@ interface SummarySectionProps {
   id: string;
   entityType: string;
   registryAgentApi: string;
+  dict: Dictionary;
 }
 
 /**
@@ -44,7 +46,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
   return (
     <div className={styles["container"]}>
       <Accordion
-        title="Description"
+        title={props.dict.title.description}
         isLoading={isLoading}
       >{contract && Object.keys(contract).map((field, index) => {
         if (field != "id" && !Array.isArray(contract[field]) && contract[field].value) {
@@ -60,7 +62,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
           icon="read_more"
           url={`${Routes.REGISTRY}/${props.entityType}/${props.id}`}
           isActive={false}
-          title="view more"
+          tooltipText={props.dict.action.viewMore}
         />
       </div>
     </div>

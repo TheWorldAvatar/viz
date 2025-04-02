@@ -4,9 +4,14 @@
     "backTo": "back to",
     "export": "export data",
     "overview": "overview",
+    "viewMore": "view more",
     "viewTasks": "view tasks",
     "generateReport": "generate report",
     "date": "Date"
+  },
+  "message": {
+    "registryInstruction": "Click on any record in the table to view its summary",
+    "noResultFound": "No results found"
   },
   "nav": {
     "caption": {
@@ -32,5 +37,9 @@
       "registry": "Open registry.",
       "help": "Open help page."
     }
+  },
+  "title": {
+    "description": "Description",
+    "serviceSummary": "Service summary"
   }
 }
