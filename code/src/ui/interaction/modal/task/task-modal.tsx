@@ -15,11 +15,11 @@ import { FormComponent } from 'ui/interaction/form/form';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import ResponseComponent from 'ui/text/response/response';
-import { Status } from 'ui/text/status/status';
+import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 
 interface TaskModalProps {
   entityType: string;
@@ -152,7 +152,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         "@id": "dispatch group",
         "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
         label: {
-          "@value": "dispatch information"
+          "@value": dict.title.dispatchInfo
         },
         comment: {
           "@value": "The dispatch details specified for this service."
@@ -216,7 +216,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       <div className={styles.container}>
         <section className={styles["section-title"]}>
           <h1>{dict.title.actions}</h1>
-          <h2>{props.task.date}: {props.task.status}</h2>
+          <h2>{props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}</h2>
         </section>
         <section className={styles["section-contents"]}>
           {!isFetching && <p className={styles["instructions"]}>

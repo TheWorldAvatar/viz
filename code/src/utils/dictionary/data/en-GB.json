@@ -53,7 +53,18 @@
   },
   "title": {
     "actions": "ACTIONS",
+    "dispatchInfo": "dispatch information",
     "description": "Description",
-    "serviceSummary": "Service summary"
+    "serviceSummary": "Service summary",
+    "available": "available",
+    "unavailable": "unavailable",
+    "active": "active",
+    "completed": "completed",
+    "cancelled": "cancelled",
+    "incomplete": "incomplete",
+    "rescinded": "rescinded",
+    "terminated": "terminated",
+    "pendingDispatch": "pending dispatch",
+    "pendingExecution": "pending execution"
   }
 }
