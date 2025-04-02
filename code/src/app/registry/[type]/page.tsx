@@ -6,17 +6,14 @@ import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { parseStringsForUrls } from 'utils/client-utils';
 
-interface ActiveRegistryPageProps {
+interface GeneralRegistryPageProps {
   params: Promise<{
     type: string
   }>
 }
 
-const dictionary = useDictionary();
-
-///////// DICTIONARY definitions all come from HERE //////////
 /**
  * Set page metadata.
  * 
@@ -29,23 +26,24 @@ export async function generateMetadata(): Promise<Metadata> {
     title: metadata?.title ?? PageTitles.REGISTRY,
   }
 }
+
 /**
- * Displays the registry page for contracts that are currently active.
+ * Displays the registry page for any items based on the dynamic type parameter.
  * 
  * @returns React component for display. 
  */
-export default async function ActiveRegistryPage(props : ActiveRegistryPageProps) {
+export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const resolvedParams = await props.params;
-  if (!uiSettings.modules.registry || !uiSettings.resources?.registry?.data) {
+  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path) == resolvedParams.type)) {
+    return (
+      <RegistryTableComponent
+        entityType={resolvedParams.type}
+        lifecycleStage={Paths.REGISTRY_GENERAL}
+        registryAgentApi={uiSettings.resources?.registry?.url}
+      />
+    );
+  } else {
     redirect(Paths.HOME);
   }
-
-  return (
-    <RegistryTableComponent
-      entityType={resolvedParams.type}
-      lifecycleStage={Paths.REGISTRY_ACTIVE}
-      registryAgentApi={uiSettings.resources?.registry?.url}
-    />
-  );
 }

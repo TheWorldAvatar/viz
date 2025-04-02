@@ -1,16 +1,14 @@
 import styles from "./registry.table.module.css";
 
-import React from "react";
+import { Table, TableColumnsType, Typography } from 'antd';
+import React from 'react';
 import { FieldValues } from "react-hook-form";
 
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
+import AntDesignConfig from "ui/css/ant-design-style";
+import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
-import StatusComponent from "ui/text/status/status";
-
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import Box from "@mui/material/Box";
-import { RegistryTableTheme } from "./registry-table-theme";
 
 interface RegistryTableProps {
   recordType: string;
@@ -31,26 +29,22 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   // Generate a list of column headings
-  // const columns: ColumnDef<Record<string, string>>[] = React.useMemo(() => {
-  const columns: GridColDef[] = React.useMemo(() => {
+  const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
     return [
       {
-        field: "actions",
-        headerName: "",
-        width: 25,
-        headerClassName: styles["header"],
-        cellClassName: styles["header-text"],
-        renderCell: (params) => {
-          return (
-            <RegistryRowActions
-              recordType={props.recordType}
-              lifecycleStage={props.lifecycleStage}
-              row={params.row}
-              setTask={props.setTask}
-            />
-          );
-        },
+        key: "actions",
+        title: '',
+        className: styles["header"],
+        render: (_, record) => (
+          <RegistryRowActions
+            recordType={props.recordType}
+            lifecycleStage={props.lifecycleStage}
+            row={record}
+            setTask={props.setTask}
+          />
+        ),
+        fixed: 'left'
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -60,20 +54,23 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           return prevKeys >= currentKeys ? prev : current;
         })
       ).map((field) => ({
-        field,
-        headerName: parseWordsForLabels(field),
-        width: 100, // Adjust the width as needed
-        headerClassName: styles["header"],
-        cellClassName: styles["header-text"],
-        renderCell: (params: GridRenderCellParams) => {
-          // Render status differently
+        key: field,
+        dataIndex: field,
+        className: styles["header"],
+        title: parseWordsForLabels(field),
+        ellipsis: true,
+        render: (value: FieldValues) => {
+          if (!value) return "";
           if (field.toLowerCase() === "status") {
-            return <StatusComponent status={`${params.value}`} />;
+            return <StatusComponent status={`${value}`} />;
           }
-          if (params.value) {
-            return parseWordsForLabels(`${params.value}`);
-          }
-          return "";
+          return <Typography.Text className={styles["row-cell"]}>
+            {parseWordsForLabels(`${value}`)}
+          </Typography.Text>
+        },
+        sorter: (a: FieldValues, b: FieldValues) => {
+          if (!a[field] || !b[field]) return 0;
+          return `${a[field]}`.localeCompare(`${b[field]}`);
         },
       })),
     ];
@@ -83,8 +80,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const data: FieldValues[] = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
     // Extract only the value into the data to simplify
-    return props.instances.map((instance) => {
-      const flattenInstance: Record<string, string> = {};
+    return props.instances.map((instance, index) => {
+      const flattenInstance: Record<string, string> = { key: `row-${index}` };
       Object.keys(instance).forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
@@ -98,30 +95,37 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   }, [props.instances]);
 
   return (
-    <RegistryTableTheme>
-      <Box>
-        <DataGrid
-          className={styles["table"]}
-          rows={data}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
-          }}
-          pageSizeOptions={[5, 10, 20]}
-          checkboxSelection={false}
-          disableRowSelectionOnClick={false}
-          autosizeOnMount={true}
-          getRowId={(row) => row.id || row.iri}
-          getRowClassName={(params) =>
-            params.indexRelativeToCurrentPage % 2 === 0 ? styles["even-row"] : styles["odd-row"]
-          }
-          getCellClassName={() => styles["body-cell"]}
-        />
-      </Box>
-    </RegistryTableTheme>
+    <AntDesignConfig>
+      <Table
+        className={styles["table"]}
+        rowClassName={styles["row"]}
+        dataSource={data}
+        columns={columns}
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [5, 10, 20],
+          showSizeChanger: true,
+          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          position: ['bottomCenter']
+        }}
+        rowKey={(record) => record.id || record.iri || record.key}
+        scroll={{ x: 'max-content' }}
+        size="middle"
+        sticky={{ offsetHeader: 0 }}
+        bordered={false}
+        showSorterTooltip={true}
+        locale={{
+          triggerDesc: 'Sort descending',
+          triggerAsc: 'Sort ascending',
+          cancelSort: 'Cancel sort',
+          emptyText: (
+            <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
+              <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
+              <span>No data available</span>
+            </div>
+          )
+        }}
+      />
+    </AntDesignConfig>
   );
 }

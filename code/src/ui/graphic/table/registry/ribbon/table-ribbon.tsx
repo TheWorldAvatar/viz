@@ -54,44 +54,46 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className={styles.menu}>
-      <div className={styles["registry-nav-ribbon"]}>
-        <RedirectButton
-          label="Pending"
-          icon="pending"
-          url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-          isHoverableDisabled={true}
-          isTransparent={true}
-          className={styles["registry-nav-button"]}
-          styling={{
-            active: styles["active-state"],
-          }}
-        />
-        <RedirectButton
-          label="Active"
-          icon="schedule"
-          url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-          isHoverableDisabled={true}
-          isTransparent={true}
-          className={styles["registry-nav-button"]}
-          styling={{
-            active: styles["active-state"],
-          }}
-        />
-        <RedirectButton
-          label="Archive"
-          icon="archive"
-          url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-          isHoverableDisabled={true}
-          isTransparent={true}
-          className={styles["registry-nav-button"]}
-          styling={{
-            active: styles["active-state"],
-          }}
-        />
-      </div>
+      {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+        <div className={styles["registry-nav-ribbon"]}>
+          <RedirectButton
+            label="Pending"
+            icon="pending"
+            url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+          <RedirectButton
+            label="Active"
+            icon="schedule"
+            url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+          <RedirectButton
+            label="Archive"
+            icon="archive"
+            url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+        </div>
+      )}
 
       <div className={styles.divider} />
 
@@ -122,11 +124,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </div>
             )}
+
           {(authorised || !isKeycloakEnabled) &&
-            props.lifecycleStage == Routes.REGISTRY_PENDING && (
+            (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
                 icon="add"
-                label={"add " + props.entityType}
+                label={"add " + props.entityType.replace("_", " ")}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
                 isActive={false}
               />
@@ -152,7 +155,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {props.lifecycleStage == Routes.REGISTRY_REPORT && (<>
             <ReturnButton
               icon="first_page"
-              label={`back to ${props.entityType}s`}
+              label={`back to ${props.entityType.replace("_", " ")}s`}
             />
             <RedirectButton
               icon="print"
@@ -161,7 +164,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               isActive={false}
             />
           </>)}
-          <DownloadButton instances={props.instances} />
+          {<DownloadButton instances={props.instances} />}
         </div>
       </div>
     </div>
