@@ -1,15 +1,15 @@
-import styles from '../registry.table.module.css';
 import iconStyles from 'ui/graphic/icon/icon-button.module.css';
+import styles from '../registry.table.module.css';
 
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { FieldValues } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import { Routes } from 'io/config/routes';
-import { getAfterDelimiter, isValidIRI } from 'utils/client-utils';
 import { RegistryTaskOption } from 'types/form';
+import MaterialIconButton from 'ui/graphic/icon/icon-button';
 import { Status } from 'ui/text/status/status';
+import { getId } from 'utils/client-utils';
 
 interface RegistryRowActionsProps {
   recordType: string;
@@ -23,16 +23,13 @@ interface RegistryRowActionsProps {
  * 
  * @param {string} recordType The type of the record.
  * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {GridRowModel} row Row values.
+ * @param {FieldValues} row Row values.
  * @param setTask A dispatch method to set the task option when required.
  */
 export default function RegistryRowActions(props: Readonly<RegistryRowActionsProps>) {
   const router = useRouter();
-
-  const recordId: string = props.row.id ?
-    isValidIRI(props.row.id) ?
-      getAfterDelimiter(props.row.id, "/") : props.row.id
-    : props.row.iri;
+  const recordId: string = props.row.event_id ?
+    props.row.event_id : props.row.id ? getId(props.row.id) : props.row.iri;
 
   const handleClickView = (): void => {
     if (props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_ARCHIVE) {
@@ -56,7 +53,7 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
       props.setTask({
         id: recordId,
         status: status,
-        contract: props.row.contract,
+        contract: props.row.id,
         date: props.row.date,
       });
     } else {

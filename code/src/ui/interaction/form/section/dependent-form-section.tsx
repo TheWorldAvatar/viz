@@ -74,9 +74,12 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         // If there is a default value, search and use the option matching the default instance's local name
         if (field.defaultValue) {
           const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
-          defaultId = extractResponseField(entities.find(entity =>
+          const matchingEntity: RegistryFieldValues = entities.find(entity =>
             getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
-          ), FORM_STATES.IRI)?.value;
+          );
+          if (matchingEntity) {
+            defaultId = extractResponseField(matchingEntity, FORM_STATES.IRI)?.value;
+          }
         }
       }
       // Search form should always target default value

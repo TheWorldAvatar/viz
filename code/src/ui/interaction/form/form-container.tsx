@@ -274,12 +274,7 @@ export default function FormContainerComponent(
             tooltipText="Submit"
             onClick={onSubmit}
           />}
-          {!!response || (!isRescindAction && !isTerminateAction) && <ReturnButton
-            // Closes the modal given a response in the rescind or terminate action states or other states
-            icon="keyboard_return"
-            tooltipText="Return"
-          />}
-          {!response && (isRescindAction || isTerminateAction) &&
+          {!response && (isRescindAction || isTerminateAction) ?
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
               icon={"keyboard_return"}
@@ -288,6 +283,9 @@ export default function FormContainerComponent(
                 setIsRescindAction(false);
                 setIsTerminateAction(false);
               }}
+            /> : <ReturnButton
+              icon="keyboard_return"
+              tooltipText="Return"
             />}
         </div>
       </div>

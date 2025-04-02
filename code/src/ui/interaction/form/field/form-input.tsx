@@ -41,8 +41,8 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
         id={props.field.fieldId}
         type={inputType}
         className={`${inputClassNames} ${props.options?.disabled && (styles["input-disabled"] + " " + styles["field-disabled"])}`}
-        step={props.field.datatype === "decimal" ? "0.00000000000000001" : undefined}
-        placeholder={`Add ${props.field.name[VALUE_KEY]} here`}
+        step={props.field.datatype === "decimal" ? "0.01" : undefined}
+        placeholder={props.options?.disabled ? "" : `Add ${props.field.name[VALUE_KEY]} here`}
         readOnly={props.options?.disabled}
         aria-label={props.field.name[VALUE_KEY]}
         {...props.form.register(props.field.fieldId, getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE)))}
