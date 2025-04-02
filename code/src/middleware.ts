@@ -25,23 +25,22 @@ function getLocale(request: NextRequest): string {
 export function middleware(request: NextRequest) {
     // Check if there is any supported locale in the pathname
     const { pathname } = request.nextUrl
+
     const pathnameHasLocale = supportedLocales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     )
 
-    if (pathnameHasLocale) return
+    if (pathnameHasLocale) return NextResponse.next();
 
     // Redirect if there is no locale
     const locale = getLocale(request)
     request.nextUrl.pathname = `/${locale}${pathname}`
-    return NextResponse.redirect(request.nextUrl)
+    return NextResponse.redirect(request.nextUrl);
 }
 
 export const config = {
     matcher: [
         // Skip all internal paths (_next), useful if we want to extend language resolution further later on.
-        '/((?!_next).*)',
-        // only run the language middleware on registry pages
-        '/registry/*'
+        '/((?!images/|_next/).*)',
     ],
 }
