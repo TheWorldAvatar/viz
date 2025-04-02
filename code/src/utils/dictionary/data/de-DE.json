@@ -1,11 +1,24 @@
 {
   "nav": {
+    "caption": {
+      "map": "Visualisierung raumbezogener Daten",
+      "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
+      "registry": "Verwalten und Anzeigen Ihrer Datensätze",
+      "generalReg": "Verwalten und Anzeigen",
+      "help": "Hilfe für diese Webplattform erhalten"
+    },
+    "title": {
+      "map": "Karte",
+      "dashboard": "Armaturenbrett",
+      "registry": "Registry",
+      "help": "Hilfe-Center"
+    },
     "tooltip": {
       "home": "Zurück zur landing page.",
       "map": "Geografische ansicht.",
       "dashboard": "Analyse-ansicht.",
-      "help": "Hilfeseite öffnen.",
-      "registry": "Öffnen Sie das Register."
+      "registry": "Öffnen Sie das Register.",
+      "help": "Hilfeseite öffnen."
     }
   }
 }

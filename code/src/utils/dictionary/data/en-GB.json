@@ -1,11 +1,24 @@
 {
   "nav": {
+    "caption": {
+      "map": "Geospatial data visualisation",
+      "dashboard": "Discover trends and insights at a glance",
+      "registry": "Manage and view your records",
+      "generalReg": "Manage and view",
+      "help": "Get help for this web platform"
+    },
+    "title": {
+      "map": "Map",
+      "dashboard": "Analyse",
+      "registry": "Registry",
+      "help": "Help Centre"
+    },
     "tooltip": {
       "home": "Return to landing page.",
       "map": "Geospatial view.",
       "dashboard": "Analytics view.",
-      "help": "Open help page.",
-      "registry": "Open registry."
+      "registry": "Open registry.",
+      "help": "Open help page."
     }
   }
 }
