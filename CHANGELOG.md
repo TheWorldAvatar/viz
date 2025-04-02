@@ -10,6 +10,13 @@
 - Refactor to work with new endpoint requirements
 - Updated `VisBackend Agent` from `v1.3.0` to `v1.4.0`
 
+<<<<<<< HEAD
+## 5.19.0
+
+### Changes
+
+- Allow scenario selector box to render if no scenarios are returned from the API
+=======
 ## 5.18.5
 
 - dependabot version bump #136
@@ -21,6 +28,7 @@
 ### Changes
 
 - Replaced MUI registry table to Antd
+>>>>>>> origin/main
 
 ## 5.18.3
 
@@ -39,7 +47,7 @@
 ### Changes
 
 - Added a tooltip to inform users of an action button's actions
-
+  
 ## 5.18.0
 
 ### Changes
@@ -269,7 +277,7 @@
 
 ## 5.11.0
 
-### Improvements
+## Improvements
 
 - Simplify, secure and optimise MapBox credential management by loading in as environment variables instead of exposing via public API and using HTTP to read them
 - Add a "layerTreeIconOverride" option to mapbox layers for cases where automatic icon is not wanted
