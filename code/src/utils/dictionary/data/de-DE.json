@@ -1,6 +1,9 @@
 {
   "action": {
     "add": "hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "refresh": "Aktualisieren",
     "backTo": "zurück zu",
     "export": "daten exportieren",
     "overview": "Übersicht",

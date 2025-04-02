@@ -1,6 +1,9 @@
 {
   "action": {
     "add": "add",
+    "delete": "Delete",
+    "edit": "Edit",
+    "refresh": "Refresh",
     "backTo": "back to",
     "export": "export data",
     "overview": "overview",
