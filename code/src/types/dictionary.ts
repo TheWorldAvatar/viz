@@ -1,5 +1,6 @@
 export type Dictionary = {
     action: Record<string, string>;
+    form: Record<string, string>;
     message: Record<string, string>;
     nav: {
         caption: Record<string, string>;
