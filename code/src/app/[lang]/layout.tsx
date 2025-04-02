@@ -59,7 +59,7 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
 
     // Root element containing all children.
     return (
-        <html lang="en" className={dosis.className}>
+        <html lang={lang} className={dosis.className}>
             <body>
                 <DictionaryProvider dictionary={dictionary}>
                     <GlobalContainer dict={dictionary} settings={uiSettings}>
