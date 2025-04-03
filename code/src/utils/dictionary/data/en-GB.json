@@ -19,7 +19,9 @@
     "return": "Return",
     "approve": "Approve",
     "rescind": "Rescind",
-    "terminate": "Terminate"
+    "terminate": "Terminate",
+    "findAddress": "Find address",
+    "selectLocation": "Select location"
   },
   "form": {
     "singleService": "Single Service",
@@ -43,14 +45,26 @@
     "wed": "Wed",
     "thu": "Thu",
     "fri": "Fri",
-    "sat": "Sat"
+    "sat": "Sat",
+    "latDesc": "The latitude of the",
+    "longDesc": "The longitude of the",
+    "searchStartTimeDesc": "Select the starting date/time for your search.",
+    "searchEndTimeDesc": "Select the ending date/time for your search.",
+    "min": "Min",
+    "max": "Max"
   },
   "message": {
+    "arrayInstruction": "Fill in the details to create a new entry",
+    "branchInstruction": "Select the best category for your request",
     "registryInstruction": "Click on any record in the table to view its summary",
     "completeInstruction": "To complete the service, please input the following details:",
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
     "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your report:",
+    "loading": "Loading, please wait...",
+    "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually.",
+    "noData": "No data available",
+    "noInstances": "No instances available. Please create a new instance.",
     "noResultFound": "No results found"
   },
   "nav": {

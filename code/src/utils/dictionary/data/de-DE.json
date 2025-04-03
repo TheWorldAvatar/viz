@@ -19,7 +19,9 @@
     "return": "Rückkehr",
     "approve": "Genehmigen",
     "rescind": "Rückgängig machen",
-    "terminate": "Beenden"
+    "terminate": "Beenden",
+    "findAddress": "Adresse finden",
+    "selectLocation": "Ort auswählen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -43,14 +45,26 @@
     "wed": "Mittwoch",
     "thu": "Donnerstag",
     "fri": "Freitag",
-    "sat": "Samstag"
+    "sat": "Samstag",
+    "latDesc": "Der Breitengrad des",
+    "longDesc": "Der Längengrad der",
+    "searchStartTimeDesc": "Wählen Sie das Startdatum/die Startzeit für Ihre Suche.",
+    "searchEndTimeDesc": "Wählen Sie das Enddatum/die Endzeit für Ihre Suche.",
+    "min": "Min",
+    "max": "Max"
   },
   "message": {
+    "arrayInstruction": "Füllen Sie die Details aus, um einen neuen Eintrag zu erstellen",
+    "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
     "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
     "dispatchInstruction": "Versenden Sie die Ressourcen für den geplanten Dienst am",
     "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes an",
     "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. Bitte geben Sie in Ihrem Bericht den Grund an:",
+    "loading": "Laden, bitte warten...",
+    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein.",
+    "noData": "Keine Daten verfügbar",
+    "noInstances": "Keine Instanzen verfügbar. Bitte erstellen Sie eine neue Instanz.",
     "noResultFound": "Keine Ergebnisse gefunden"
   },
   "nav": {
