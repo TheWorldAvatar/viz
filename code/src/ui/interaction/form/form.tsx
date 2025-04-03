@@ -196,7 +196,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       {!form.formState.isLoading && formTemplate.property.map((field, index) => {
         return renderFormField(props.entityType, props.agentApi, field, form, index);
       })}
-      {!form.formState.isLoading && formTemplate.node.length > 0 && <BranchFormSection
+      {!form.formState.isLoading && formTemplate.node?.length > 0 && <BranchFormSection
         entityType={props.entityType}
         agentApi={props.agentApi}
         node={formTemplate.node}
