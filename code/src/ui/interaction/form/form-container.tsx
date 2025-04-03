@@ -26,7 +26,7 @@ import {
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
-import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
+import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 import { Dictionary } from "types/dictionary";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
@@ -177,7 +177,7 @@ export default function FormContainerComponent(
         <ReturnButton
           icon="first_page"
         />
-        <span>{`${props.formType.toUpperCase()} ${props.entityType
+        <span>{`${translateFormType(props.formType, dict).toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>

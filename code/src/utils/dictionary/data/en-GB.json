@@ -3,6 +3,7 @@
     "add": "add",
     "delete": "Delete",
     "edit": "Edit",
+    "view": "view",
     "refresh": "Refresh",
     "backTo": "back to",
     "export": "export data",
