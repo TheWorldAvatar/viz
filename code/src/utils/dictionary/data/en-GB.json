@@ -7,6 +7,8 @@
     "backTo": "back to",
     "export": "export data",
     "overview": "overview",
+    "search": "SEARCH",
+    "showAll": "SHOW ALL",
     "viewMore": "view more",
     "viewTasks": "view tasks",
     "generateReport": "generate report",
@@ -61,6 +63,9 @@
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
     "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your report:",
+    "matchedFeatures": "Found matching features! Updating the visualisation...",
+    "noMatchFeature": "No matching feature found! Please refine your search parameters.",
+    "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
     "loading": "Loading, please wait...",
     "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually.",
     "noData": "No data available",
@@ -107,6 +112,8 @@
     "rescinded": "rescinded",
     "terminated": "terminated",
     "pendingDispatch": "pending dispatch",
-    "pendingExecution": "pending execution"
+    "pendingExecution": "pending execution",
+    "searchCriteria": "SEARCH CRITERIA",
+    "searchPeriod": "Search Period"
   }
 }

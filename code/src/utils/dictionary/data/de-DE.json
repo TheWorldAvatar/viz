@@ -7,6 +7,8 @@
     "backTo": "zurück zu",
     "export": "daten exportieren",
     "overview": "Übersicht",
+    "search": "Suche",
+    "showAll": "Alles anzeigen",
     "viewMore": "mehr sehen",
     "viewTasks": "aufgaben anzeigen",
     "generateReport": "bericht generieren",
@@ -61,6 +63,9 @@
     "dispatchInstruction": "Versenden Sie die Ressourcen für den geplanten Dienst am",
     "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes an",
     "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. Bitte geben Sie in Ihrem Bericht den Grund an:",
+    "matchedFeatures": "Passende Merkmale gefunden! Aktualisieren Sie die Visualisierung...",
+    "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
+    "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
     "loading": "Laden, bitte warten...",
     "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein.",
     "noData": "Keine Daten verfügbar",
@@ -106,6 +111,8 @@
     "rescinded": "Aufgehoben",
     "terminated": "Beendet",
     "pendingDispatch": "Ausstehender Versand",
-    "pendingExecution": "Ausstehende Ausführung"
+    "pendingExecution": "Ausstehende Ausführung",
+    "searchPeriod": "Suchzeitraum",
+    "searchCriteria": "SUCHKRITERIEN"
   }
 }

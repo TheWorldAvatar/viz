@@ -25,7 +25,7 @@ export default function FormSearchPeriod(
       className={styles["form-fieldset"]}
       style={{ marginBottom: "1rem" }}
     >
-      <legend className={styles["form-fieldset-label"]}>Search Period</legend>
+      <legend className={styles["form-fieldset-label"]}>{dict.title.searchPeriod}</legend>
       <FormFieldComponent
         field={{
           "@id": "string",
