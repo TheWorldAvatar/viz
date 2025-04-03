@@ -107,7 +107,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       <div className={styles["title"]}>
         <h1>{parseWordsForLabels(props.entityType)}</h1>
         <TableRibbon
-          dict={dict}
           path={pathNameEnd}
           entityType={props.entityType}
           registryAgentApi={props.registryAgentApi}
@@ -131,7 +130,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             id={pathNameEnd}
             entityType={props.entityType}
             registryAgentApi={props.registryAgentApi}
-            dict={dict}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
           currentInstances.length > 0 ?
