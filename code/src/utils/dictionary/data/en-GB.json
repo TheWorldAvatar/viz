@@ -56,6 +56,22 @@
     "min": "Min",
     "max": "Max"
   },
+  "map": {
+    "title": {
+      "layerSelection": "Layer Selection",
+      "legend": "Key/Legend",
+      "information": "Information"
+    },
+    "tooltip": {
+      "location": "Move the map to your location",
+      "mapStyle": "Change base map style",
+      "resetCamera": "Reset camera to default position",
+      "placenames": "Show / hide place names",
+      "terrain": "Toggle 3D terrain",
+      "fullscreen": "Toggle fullscreen mode",
+      "selectScenario": "Select another scenario"
+    }
+  },
   "message": {
     "arrayInstruction": "Fill in the details to create a new entry",
     "branchInstruction": "Select the best category for your request",
@@ -71,7 +87,10 @@
     "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually.",
     "noData": "No data available",
     "noInstances": "No instances available. Please create a new instance.",
-    "noResultFound": "No results found"
+    "noResultFound": "No results found",
+    "mapSelectInstruction": "Select a feature...",
+    "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
+    "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information."
   },
   "nav": {
     "caption": {
