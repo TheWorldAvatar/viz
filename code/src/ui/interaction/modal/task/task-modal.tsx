@@ -7,6 +7,7 @@ import Modal from 'react-modal';
 
 import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
+import { Dictionary } from 'types/dictionary';
 import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
@@ -14,8 +15,9 @@ import { FormComponent } from 'ui/interaction/form/form';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import ResponseComponent from 'ui/text/response/response';
-import { Status } from 'ui/text/status/status';
+import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
 
@@ -40,7 +42,7 @@ interface TaskModalProps {
  */
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
-
+  const dict: Dictionary = useDictionary();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   // Form actions
@@ -150,7 +152,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         "@id": "dispatch group",
         "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
         label: {
-          "@value": "dispatch information"
+          "@value": dict.title.dispatchInfo
         },
         comment: {
           "@value": "The dispatch details specified for this service."
@@ -213,15 +215,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     >
       <div className={styles.container}>
         <section className={styles["section-title"]}>
-          <h1>ACTIONS</h1>
-          <h2>{props.task.date}: {props.task.status}</h2>
+          <h1>{dict.title.actions}</h1>
+          <h2>{props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}</h2>
         </section>
         <section className={styles["section-contents"]}>
           {!isFetching && <p className={styles["instructions"]}>
-            {isCompleteAction && <>To complete the service, please input the following details:</>}
-            {isDispatchAction && <>Dispatch the resources for the scheduled service on {props.task.date}:</>}
-            {isCancelAction && <>Cancel the scheduled service on {props.task.date}. <br /> Please provide a reason for the cancellation:</>}
-            {isReportAction && <>Report an issue with the service on {props.task.date}. <br /> Please include the reason in your report:</>}
+            {isCompleteAction && dict.message.completeInstruction}
+            {isDispatchAction && `${dict.message.dispatchInstruction} ${props.task.date}:`}
+            {isCancelAction && `${dict.message.cancelInstruction} ${props.task.date}:`}
+            {isReportAction && `${dict.message.reportInstruction.replace("{date}", props.task.date)}`}
           </p>}
           {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
           {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
@@ -255,35 +257,35 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             {props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"done_outline"}
-                tooltipText="Complete"
+                tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"assignment"}
-                tooltipText="Assign"
+                tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"cancel"}
-                tooltipText="Cancel"
+                tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
               />}
             {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"report"}
-                tooltipText="Report"
+                tooltipText={dict.action.report}
                 onClick={genBooleanClickHandler(setIsReportAction)}
               />}
             {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
               icon={"publish"}
-              tooltipText="Submit"
+              tooltipText={dict.action.submit}
               onClick={onSubmit}
             />}
             <ClickActionButton
               icon={"keyboard_return"}
-              tooltipText="Return"
+              tooltipText={dict.action.return}
               // Closes the modal if there is a response in any action
               onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
                 onReturnInAction : onClose}

@@ -172,25 +172,6 @@
   margin-right: 0.5rem;
 }
 
-.button {
-  display: flex;
-  margin: 0 0.75rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: .25rem;
-
-  background-color: var(--background-primary);
-  color: var(--text-color-primary);
-}
-
-.button:hover {
-  background-color: var(--background-tertiary);
-}
-
-.button-text {
-  font-size: var(--font-size-tertiary-text);
-  margin-left: 0.25rem;
-}
-
 @media only screen and (max-width: 480px) {
   .form-fieldset-contents {
     flex-direction: column;

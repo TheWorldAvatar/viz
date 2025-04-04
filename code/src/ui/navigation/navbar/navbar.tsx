@@ -2,12 +2,13 @@
 
 import styles from './navbar.module.css';
 
-import { useSelector } from 'react-redux';
-import Link from 'next/link';
 import KeycloakSession from 'authorisation/keycloak-session';
+import Link from 'next/link';
+import { useSelector } from 'react-redux';
 
 import { Routes } from 'io/config/routes';
 import { selectItem } from 'state/context-menu-slice';
+import { Dictionary } from 'types/dictionary';
 import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
 import { navbarItem } from 'ui/interaction/context-menu/context-menu';
@@ -15,6 +16,7 @@ import NavbarComponent from './navbar-component';
 
 // Type definition for navbar properties
 interface NavbarProps {
+  dict: Dictionary;
   settings: UISettings;
 }
 
@@ -71,35 +73,35 @@ export default function Navbar(props: Readonly<NavbarProps>) {
         {props.settings?.modules?.landing &&
           <NavbarComponent
             name="LANDING"
-            tooltip="Return to landing page."
+            tooltip={props.dict.nav.tooltip.home}
             icon="home"
             url={Routes.HOME} />
         }
         {props.settings?.modules?.map &&
           <NavbarComponent
             name="MAP"
-            tooltip="Geospatial view."
+            tooltip={props.dict.nav.tooltip.map}
             icon="public"
             url={Routes.MAP} />
         }
         {props.settings?.modules?.dashboard &&
           <NavbarComponent
             name="DASH"
-            tooltip="Analytics view."
+            tooltip={props.dict.nav.tooltip.dashboard}
             icon="monitoring"
             url={Routes.DASHBOARD} />
         }
         {props.settings?.modules?.help &&
           <NavbarComponent
             name="HELP"
-            tooltip="Open help page."
+            tooltip={props.dict.nav.tooltip.help}
             icon="help"
             url={Routes.HELP} />
         }
         {props.settings?.modules?.registry &&
           <NavbarComponent
             name="REGISTRY"
-            tooltip="Open registry."
+            tooltip={props.dict.nav.tooltip.registry}
             icon="contract"
             url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`} />
         }

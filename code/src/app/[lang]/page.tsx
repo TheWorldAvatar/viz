@@ -5,11 +5,13 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import LandingPage from 'ui/pages/landing';
 import OptionalPages from 'io/config/optional-pages';
 import { Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
+import { Dictionary } from 'types/dictionary';
 import { UISettings } from 'types/settings';
+import LandingPage from 'ui/pages/landing';
+import { getDictionary } from 'utils/dictionary/dictionaries';
 
 /**
  * Set page metadata.
@@ -35,10 +37,16 @@ export async function generateMetadata(): Promise<Metadata> {
  * 
  * @returns JSX for default (home) page.
  */
-export default function App() {
+export default async function App(props: Readonly<{
+  params: Promise<{ lang: string }>;
+}>
+) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const dict: Dictionary = await getDictionary((await props.params).lang);
+
   if (uiSettings.modules.landing) {
     return (<LandingPage
+      dict={dict}
       settings={uiSettings}
     />);
   } else {
