@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server'
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
-const supportedLocales = ['en-GB', 'de-DE', 'en-SG']
+const supportedLocales = ['en-GB', 'de-DE']
 const defaultLocale = 'en-GB'
 
 
