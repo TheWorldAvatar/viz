@@ -134,7 +134,7 @@ export default function FloatingPanelContainer(
           className={styles.expandButton}
           onClick={() => setIsPanelVisible(!isPanelVisible)}>
           <Tooltip
-            title={isPanelVisible ? "Collapse Panel" : "Expand Panel"}
+            title={isPanelVisible ? dict.map.tooltip.collapsePanel : dict.map.tooltip.expandPanel}
             enterDelay={500}
             leaveDelay={200}
           >
