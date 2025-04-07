@@ -31,7 +31,7 @@ const dosis = Dosis({
     display: 'swap',
 })
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
     return [
         { lang: 'en-GB' },
         { lang: 'de-DE' },
