@@ -8,6 +8,7 @@ import Icon from '@mui/material/Icon';
 export interface ContextItemDefinition {
     name: string,
     description?: string,
+    id: string
     toggled?: boolean,
     callback?: (_name: string) => void
 }
