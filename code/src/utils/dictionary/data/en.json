@@ -69,7 +69,19 @@
       "placenames": "Show / hide place names",
       "terrain": "Toggle 3D terrain",
       "fullscreen": "Toggle fullscreen mode",
-      "selectScenario": "Select another scenario"
+      "selectScenario": "Select another scenario",
+      "collapsePanel": "Collapse panel",
+      "expandPanel": "Expand panel"
+    }
+  },
+  "context": {
+    "controlRibbon": {
+      "title": "Show controls ribbon",
+      "tooltip": "Show / hide controls ribbon"
+    },
+    "navBar": {
+      "title": "Show navigation bar",
+      "tooltip": "Show / hide navigation"
     }
   },
   "message": {
@@ -79,7 +91,7 @@
     "completeInstruction": "To complete the service, please input the following details:",
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
-    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your report:",
+    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your replort:",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",

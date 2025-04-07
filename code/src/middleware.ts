@@ -5,12 +5,12 @@ import type { NextRequest } from 'next/server'
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
-const supportedLocales = ['en-GB', 'de-DE']
-const defaultLocale = 'en-GB'
+const supportedLocales = ['en', 'de']
+const defaultLocale = 'en'
 
 
 /**
- * Reads the accept-language header from the request and returns the most preferred locale as a string. Multiple language headers are parsed and ranked in order of preference. Locale is defaulted to 'en-GB' if no match is found.
+ * Reads the accept-language header from the request and returns the most preferred locale as a string. Multiple language headers are parsed and ranked in order of preference. Locale is defaulted to 'en' if no match is found.
  *
  * @param {NextRequest} request 
  * @returns {string} 

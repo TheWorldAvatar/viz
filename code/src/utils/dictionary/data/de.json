@@ -69,7 +69,9 @@
       "placenames": "Ortsnamen ein-/ausblenden",
       "terrain": "3D-Gelände umschalten",
       "fullscreen": "Vollbildmodus umschalten",
-      "selectScenario": "Anderes Szenario auswählen"
+      "selectScenario": "Anderes Szenario auswählen",
+      "collapsePanel": "Panel zusammenklappen",
+      "expandPanel": "Panel erweitern"
     }
   },
   "message": {
