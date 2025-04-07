@@ -74,6 +74,16 @@
       "expandPanel": "Panel erweitern"
     }
   },
+  "context": {
+    "controlRibbon": {
+      "title": "Ribbon für Steuerelemente anzeigen",
+      "tooltip": "Ribbon für Steuerelemente ein-/ausblenden"
+    },
+    "navBar": {
+      "title": "Navigationsleiste anzeigen",
+      "tooltip": "Navigationsleiste ein-/ausblenden"
+    }
+  },
   "message": {
     "arrayInstruction": "Füllen Sie die Details aus, um einen neuen Eintrag zu erstellen",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
