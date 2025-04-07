@@ -62,7 +62,7 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
         <html lang={lang} className={dosis.className}>
             <body>
                 <DictionaryProvider dictionary={dictionary}>
-                    <GlobalContainer dict={dictionary} settings={uiSettings}>
+                    <GlobalContainer settings={uiSettings}>
                         {children}
                         {modal}
                     </GlobalContainer>
