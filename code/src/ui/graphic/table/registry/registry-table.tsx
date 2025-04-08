@@ -107,6 +107,25 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }));
   }
 
+  // Function to calculate the max content length in a column
+  function getMaxContentLength(instances: RegistryFieldValues[], field: string): number {
+    let maxLength = 0;
+    instances.forEach(instance => {
+      const fieldValue = instance[field];
+      let valueStr = '';
+
+      if (Array.isArray(fieldValue)) {
+        valueStr = String(fieldValue[0]?.value || '');
+      } else {
+        valueStr = String(fieldValue?.value || '');
+      }
+
+      maxLength = Math.max(maxLength, valueStr.length);
+    });
+
+    return maxLength;
+  }
+
   // Parse row values
   const data: FieldValues[] = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
