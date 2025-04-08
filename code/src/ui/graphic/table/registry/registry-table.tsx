@@ -88,9 +88,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           filters: getColumnFilters(props.instances, field),
           onFilter: (value, record) =>
             record[field] ? record[field].toString() === value.toString() : false,
-          filters: getColumnFilters(props.instances, field),
-          onFilter: (value, record) =>
-            record[field] ? record[field].toString() === value.toString() : false,
           filterSearch: true,
         };
       }),
