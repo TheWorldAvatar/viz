@@ -44,7 +44,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             setTask={props.setTask}
           />
         ),
-        fixed: 'left'
+        fixed: 'left',
+        width: 60
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -53,34 +54,46 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           const currentKeys = Object.keys(current).length;
           return prevKeys >= currentKeys ? prev : current;
         })
-      ).map((field) => ({
-        key: field,
-        dataIndex: field,
-        className: styles["header"],
-        title: parseWordsForLabels(field),
-        ellipsis: true,
-        render: (value: FieldValues) => {
-          if (!value) return "";
-          if (field.toLowerCase() === "status") {
-            return <StatusComponent status={`${value}`} />;
-          }
-          return <Typography.Text className={styles["row-cell"]}>
-            {parseWordsForLabels(`${value}`)}
-          </Typography.Text>
-        },
-        sorter: (a: FieldValues, b: FieldValues) => {
-          if (!a[field] || !b[field]) return 0;
-          return `${a[field]}`.localeCompare(`${b[field]}`);
-        },
-        // Filtering
-        filters: getColumnFilters(props.instances, field),
-        onFilter: (value, record) =>
-          record[field] ? record[field].toString() === value.toString() : false,
-        filters: getColumnFilters(props.instances, field),
-        onFilter: (value, record) =>
-          record[field] ? record[field].toString() === value.toString() : false,
-        filterSearch: true,
-      })),
+      ).map((field) => {
+        // minimum width based on field name
+        const title = parseWordsForLabels(field);
+        // Set minimum width based on column title length
+        const minWidth = Math.max(
+          title.length * 18, // Title width + space for icons (sort + filter)
+          getMaxContentLength(props.instances, field) * 8, // Based on content
+          80 // Minimum width
+        );
+
+        return {
+          key: field,
+          dataIndex: field,
+          className: styles["header"],
+          title: parseWordsForLabels(field),
+          ellipsis: true,
+          width: minWidth,
+          render: (value: FieldValues) => {
+            if (!value) return "";
+            if (field.toLowerCase() === "status") {
+              return <StatusComponent status={`${value}`} />;
+            }
+            return <Typography.Text className={styles["row-cell"]}>
+              {parseWordsForLabels(`${value}`)}
+            </Typography.Text>
+          },
+          sorter: (a: FieldValues, b: FieldValues) => {
+            if (!a[field] || !b[field]) return 0;
+            return `${a[field]}`.localeCompare(`${b[field]}`);
+          },
+          // Filtering
+          filters: getColumnFilters(props.instances, field),
+          onFilter: (value, record) =>
+            record[field] ? record[field].toString() === value.toString() : false,
+          filters: getColumnFilters(props.instances, field),
+          onFilter: (value, record) =>
+            record[field] ? record[field].toString() === value.toString() : false,
+          filterSearch: true,
+        };
+      }),
     ];
   }, [props.instances]);
 
