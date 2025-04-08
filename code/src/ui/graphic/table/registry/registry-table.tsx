@@ -72,12 +72,39 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           if (!a[field] || !b[field]) return 0;
           return `${a[field]}`.localeCompare(`${b[field]}`);
         },
+        // Filtering
+        filters: getColumnFilters(props.instances, field),
+        onFilter: (value, record) =>
+          record[field] ? record[field].toString() === value.toString() : false,
+        filters: getColumnFilters(props.instances, field),
+        onFilter: (value, record) =>
+          record[field] ? record[field].toString() === value.toString() : false,
+        filterSearch: true,
       })),
     ];
   }, [props.instances]);
 
   // Function to generate filter options for columns
   function getColumnFilters(instances: RegistryFieldValues[], field: string) {
+    if (field === 'id' || field === 'iri' || field === 'key') return undefined;
+    // Get unique values for the field
+    const uniqueValues = [...new Set(
+      instances
+        .map(item => {
+          const fieldValue = item[field];
+          if (Array.isArray(fieldValue)) {
+            return fieldValue[0]?.value;
+          } else {
+            return fieldValue?.value;
+          }
+        })
+        .filter(Boolean)
+    )];
+
+    return uniqueValues.map(value => ({
+      text: parseWordsForLabels(`${value}`),
+      value: value,
+    }));
   }
 
   // Parse row values
