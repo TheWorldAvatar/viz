@@ -19,13 +19,6 @@ interface ContextMenuProps {
   toggleItem?: (_name: string) => void
 }
 
-export const navbarItem: ContextItemDefinition = {
-  name: "Show Navigation Bar",
-  description: "Toggle visibility of global navbar.",
-  id: "navbar",
-  toggled: true
-}
-
 // Time the RMB was pressed down
 let rmbDownTime: number;
 
@@ -60,8 +53,6 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
 
   // Executes the following when the component is first mounted
   useEffect(() => {
-    // Add the defaults at the start
-    props.addItem(navbarItem);
     // Add event listeners and actions
     document.addEventListener("click", handleLeftClick);
 
