@@ -59,8 +59,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         const title = parseWordsForLabels(field);
         // Set minimum width based on column title length
         const minWidth = Math.max(
-          title.length * 18, // Title width + space for icons (sort + filter)
-          getMaxContentLength(props.instances, field) * 8, // Based on content
+          title.length + 200, // Title width + space for icons (sort + filter)
+          getMaxContentLength(props.instances, field), // Based on content
           80 // Minimum width
         );
 
