@@ -4,13 +4,14 @@ import styles from './navbar.module.css';
 
 import KeycloakSession from 'authorisation/keycloak-session';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Routes } from 'io/config/routes';
-import { selectItem } from 'state/context-menu-slice';
+import { useEffect, useMemo } from 'react';
+import { addItem, selectItem } from 'state/context-menu-slice';
 import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
-import { navbarItem } from 'ui/interaction/context-menu/context-menu';
+import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
 import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import NavbarComponent from './navbar-component';
 
@@ -26,6 +27,21 @@ interface NavbarProps {
 export default function Navbar(props: Readonly<NavbarProps>) {
   const dict = useDictionary();
   const navbarDict = dict.nav;
+  const contextDict = dict.context;
+  const navbarItem: ContextItemDefinition = useMemo(() => {
+    return {
+      name: contextDict.navBar.title,
+      description: contextDict.navBar.tooltip,
+      id: "navbar",
+      toggled: true
+    };
+  }, []);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+  dispatch(addItem(navbarItem));
+  }, [])
+
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   // Visibility state of navigation bar

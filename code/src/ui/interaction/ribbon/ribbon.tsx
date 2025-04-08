@@ -51,6 +51,16 @@ const ribbonContextItem: ContextItemDefinition = {
  * Ribbon containing visualisation controls.
  */
 export default function Ribbon(props: Readonly<RibbonProps>) {
+  // Definition of context menu item used to toggle map ribbon.
+  const dict: Dictionary = useDictionary();
+  const ribbonContextItem: ContextItemDefinition = useMemo(() => {
+    return {
+      name: dict.context.controlRibbon.title,
+      description: dict.context.controlRibbon.tooltip,
+      id: "ribbon",
+      toggled: true,
+    };
+  }, []);
   const cameraDefault: string = props.mapSettings.camera.default;
   const dict: Dictionary = useDictionary();
   const ribbonState: ContextItemDefinition = useSelector(selectItem("Show Controls Ribbon"));
