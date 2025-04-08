@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.18.8
+
+### Improvements
+
+- Added filtering function in registry table
+
 ## 5.18.7
 
 ### Bug Fixes
