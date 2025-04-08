@@ -43,6 +43,7 @@ export interface RibbonProps {
 const ribbonContextItem: ContextItemDefinition = {
   name: "Show Controls Ribbon",
   description: "Toggle map controls ribbon.",
+  id: "ribbon",
   toggled: true,
 };
 

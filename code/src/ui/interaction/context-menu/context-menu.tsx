@@ -22,6 +22,7 @@ interface ContextMenuProps {
 export const navbarItem: ContextItemDefinition = {
   name: "Show Navigation Bar",
   description: "Toggle visibility of global navbar.",
+  id: "navbar",
   toggled: true
 }
 
@@ -99,6 +100,7 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
         <ContextItem
           key={item.name}
           name={item.name}
+          id={item.id}
           description={item.description ?? ""}
           toggled={item.toggled}
           callback={(name: string) => {
