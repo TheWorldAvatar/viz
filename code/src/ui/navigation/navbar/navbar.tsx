@@ -45,7 +45,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   // Visibility state of navigation bar
-  const navbarState = useSelector(selectItem(navbarItem.name));
+  const navbarState = useSelector(selectItem(navbarItem.id));
 
   // Do not show if state exists and is disabled
   if (navbarState?.toggled != null && !navbarState.toggled) {

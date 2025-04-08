@@ -55,7 +55,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
     };
   }, []);
   const cameraDefault: string = props.mapSettings.camera.default;
-  const ribbonState: ContextItemDefinition = useSelector(selectItem("ribbon"));
+  const ribbonState: ContextItemDefinition = useSelector(selectItem(ribbonContextItem.id));
   const [isRibbonToggled, setIsRibbonToggled] = useState<boolean>(ribbonState?.toggled);
   const cameraNames: string[] = getCameraPositions(props.mapSettings.camera);
   const imageryNames: string[] = getImageryOptions(props.mapSettings.imagery);
@@ -63,7 +63,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
 
   useEffect(() => {
     setIsRibbonToggled(ribbonState?.toggled);
-  }, [isRibbonToggled, ribbonState?.toggled])
+  }, [ribbonState?.toggled])
 
 
   const currentScenarioName = useSelector(getScenarioName);
@@ -72,6 +72,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
   // State for map configuration settings
   const dispatch = useDispatch();
   useEffect(() => {
+    console.log("Adding ribbon context item:", ribbonContextItem); // Debug log
     dispatch(addItem(ribbonContextItem));   // Add context menu item
   }, [])
 
