@@ -56,7 +56,9 @@ export abstract class DataLayer {
     */
     public isGroupExpanded: boolean;
 
-    // Indicates if live updates are required for this layer
+    /** 
+     * Indicates if live updates are required for this layer
+     */
     public isLive?: boolean = false;
 
     /**
