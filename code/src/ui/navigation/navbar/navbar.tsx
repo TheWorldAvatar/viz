@@ -8,10 +8,10 @@ import { useSelector } from 'react-redux';
 
 import { Routes } from 'io/config/routes';
 import { selectItem } from 'state/context-menu-slice';
-import { Dictionary } from 'types/dictionary';
 import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
 import { navbarItem } from 'ui/interaction/context-menu/context-menu';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import NavbarComponent from './navbar-component';
 
 // Type definition for navbar properties
@@ -26,7 +26,6 @@ interface NavbarProps {
 export default function Navbar(props: Readonly<NavbarProps>) {
   const dict = useDictionary();
   const navbarDict = dict.nav;
-  const contextDict = dict.context;
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   // Visibility state of navigation bar
