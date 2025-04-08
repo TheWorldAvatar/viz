@@ -4,18 +4,18 @@ import React, { useState } from 'react';
 import Konami from 'react-konami-code';
 import { Provider } from 'react-redux';
 
-import Trex from 'utils/trex';
-import ContextMenu from './interaction/context-menu/context-menu';
-import Navbar from './navigation/navbar/navbar';
 import { reduxStore } from 'app/store';
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { UISettings } from 'types/settings';
+import Trex from 'utils/trex';
+import ContextMenu from './interaction/context-menu/context-menu';
+import Navbar from './navigation/navbar/navbar';
 import Footer from './text/footer';
 
 // Incoming properties for global container
 interface GlobalContainerProps {
-  children?: React.ReactNode;
   settings: UISettings;
+  children?: React.ReactNode;
 }
 
 /**

@@ -3,6 +3,13 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.19.0
+
+### Changes
+
+- Added internationalisation framework
+- Support German and English translations
+
 ## 5.18.7
 
 ### Bug Fixes
