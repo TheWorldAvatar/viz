@@ -40,20 +40,24 @@ export function ScenarioDimensionsEndpoint(stack: string, scenario: string): str
 }
 
 export const useScenarioDimensionsService = (stack: string, scenario: string): { scenarioDimensions: ScenarioDimensionsData; isDimensionsFetching: boolean } => {
-  const { data, isFetching } = useFetchDimensionsQuery(ScenarioDimensionsEndpoint(stack, scenario));
+  if (scenario) {
 
-  const [scenarioDimensions, setScenarioDimensions] = useState<ScenarioDimensionsData>({});
-  const isDimensionsFetching = isFetching;
-  useEffect(() => {
-    if (!isFetching) {
-      // If there is any data retrieved, set that first
-      if (data) {
-        setScenarioDimensions(data);
+    const { data, isFetching } = useFetchDimensionsQuery(ScenarioDimensionsEndpoint(stack, scenario));
+
+    const [scenarioDimensions, setScenarioDimensions] = useState<ScenarioDimensionsData>({});
+    const isDimensionsFetching = isFetching;
+    useEffect(() => {
+      if (!isFetching) {
+        // If there is any data retrieved, set that first
+        if (data) {
+          setScenarioDimensions(data);
+        }
       }
-    }
-  }, [data, isFetching]);
+    }, [data, isFetching]);
 
-  return { scenarioDimensions, isDimensionsFetching };
+    return { scenarioDimensions, isDimensionsFetching };
+  }
+  else return  { scenarioDimensions: {}, isDimensionsFetching: false };
 }
 
 /**
