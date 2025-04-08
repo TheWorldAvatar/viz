@@ -16,7 +16,6 @@ import NavbarComponent from './navbar-component';
 
 // Type definition for navbar properties
 interface NavbarProps {
-  dict: Dictionary;
   settings: UISettings;
 }
 
@@ -25,6 +24,9 @@ interface NavbarProps {
  * custom navbar components.
  */
 export default function Navbar(props: Readonly<NavbarProps>) {
+  const dict = useDictionary();
+  const navbarDict = dict.nav;
+  const contextDict = dict.context;
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   // Visibility state of navigation bar
@@ -73,35 +75,35 @@ export default function Navbar(props: Readonly<NavbarProps>) {
         {props.settings?.modules?.landing &&
           <NavbarComponent
             name="LANDING"
-            tooltip={props.dict.nav.tooltip.home}
+            tooltip={navbarDict.tooltip.home}
             icon="home"
             url={Routes.HOME} />
         }
         {props.settings?.modules?.map &&
           <NavbarComponent
             name="MAP"
-            tooltip={props.dict.nav.tooltip.map}
+            tooltip={navbarDict.tooltip.map}
             icon="public"
             url={Routes.MAP} />
         }
         {props.settings?.modules?.dashboard &&
           <NavbarComponent
             name="DASH"
-            tooltip={props.dict.nav.tooltip.dashboard}
+            tooltip={navbarDict.tooltip.dashboard}
             icon="monitoring"
             url={Routes.DASHBOARD} />
         }
         {props.settings?.modules?.help &&
           <NavbarComponent
             name="HELP"
-            tooltip={props.dict.nav.tooltip.help}
+            tooltip={navbarDict.tooltip.help}
             icon="help"
             url={Routes.HELP} />
         }
         {props.settings?.modules?.registry &&
           <NavbarComponent
             name="REGISTRY"
-            tooltip={props.dict.nav.tooltip.registry}
+            tooltip={navbarDict.tooltip.registry}
             icon="contract"
             url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`} />
         }
