@@ -76,6 +76,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     ];
   }, [props.instances]);
 
+  // Function to generate filter options for columns
+  function getColumnFilters(instances: RegistryFieldValues[], field: string) {
+  }
+
   // Parse row values
   const data: FieldValues[] = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -118,6 +122,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           triggerDesc: 'Sort descending',
           triggerAsc: 'Sort ascending',
           cancelSort: 'Cancel sort',
+          filterConfirm: 'OK',
+          filterReset: 'Reset',
+          filterEmptyText: 'No filters',
+          filterSearchPlaceholder: 'Search in filters',
           emptyText: (
             <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
               <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
