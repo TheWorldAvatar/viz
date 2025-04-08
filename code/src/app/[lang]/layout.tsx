@@ -33,8 +33,8 @@ const dosis = Dosis({
 
 export function generateStaticParams() {
     return [
-        { lang: 'en-GB' },
-        { lang: 'de-DE' },
+        { lang: 'en' },
+        { lang: 'de' },
     ];
 }
 
