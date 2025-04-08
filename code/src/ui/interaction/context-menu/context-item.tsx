@@ -10,7 +10,7 @@ export interface ContextItemDefinition {
     description?: string,
     id: string
     toggled?: boolean,
-    callback?: (_name: string) => void
+    callback?: (_id: string) => void
 }
 
 /**
@@ -23,7 +23,7 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
 
     // Update state and fire callback
     const handleClick = () => {
-        if(props.callback != null) props.callback(props.name);
+        if(props.callback != null) props.callback(props.id);
     }
 
     // Return item for rendering
