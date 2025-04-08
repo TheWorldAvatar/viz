@@ -2,7 +2,7 @@
 
 import { Divider } from '@mui/material';
 import { Map } from 'mapbox-gl';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './ribbon.module.css';
@@ -39,17 +39,10 @@ export interface RibbonProps {
   toggleScenarioSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// Definition of context menu item used to toggle map ribbon.
-const ribbonContextItem: ContextItemDefinition = {
-  name: "Show Controls Ribbon",
-  description: "Toggle map controls ribbon.",
-  id: "ribbon",
-  toggled: true,
-};
 
 /**
  * Ribbon containing visualisation controls.
- */
+*/
 export default function Ribbon(props: Readonly<RibbonProps>) {
   // Definition of context menu item used to toggle map ribbon.
   const dict: Dictionary = useDictionary();
@@ -62,8 +55,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
     };
   }, []);
   const cameraDefault: string = props.mapSettings.camera.default;
-  const dict: Dictionary = useDictionary();
-  const ribbonState: ContextItemDefinition = useSelector(selectItem("Show Controls Ribbon"));
+  const ribbonState: ContextItemDefinition = useSelector(selectItem("ribbon"));
   const [isRibbonToggled, setIsRibbonToggled] = useState<boolean>(ribbonState?.toggled);
   const cameraNames: string[] = getCameraPositions(props.mapSettings.camera);
   const imageryNames: string[] = getImageryOptions(props.mapSettings.imagery);
