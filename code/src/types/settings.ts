@@ -10,12 +10,16 @@ export type UISettings = {
     'landing': string;
     'landingDark': string;
   },
-  modules: {
-    [key: string]: boolean;
+  modules: {  
+    'landing' : boolean;
+    'map' : boolean;
+    'dashboard' : boolean;  
+    'help' : boolean;
+    'registry' : boolean;
   },
   links?: DefaultPageThumbnailProps[],
   resources?: {
-    [key: string]: {
+    [key: 'scenario' | 'registry' | string]: {
       url: string;
       data?: string;
       paths?: string[];
