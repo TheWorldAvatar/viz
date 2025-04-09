@@ -9,6 +9,8 @@ import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
+import { Dictionary } from "types/dictionary";
+import { useDictionary } from "utils/dictionary/DictionaryContext";
 
 interface RegistryTableProps {
   recordType: string;
@@ -28,6 +30,7 @@ interface RegistryTableProps {
  * @param {number} limit Optional limit to the number of columns shown.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
+  const dict: Dictionary = useDictionary();
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -185,7 +188,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           emptyText: (
             <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
               <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
-              <span>No data available</span>
+              <span>{dict.message.noData}</span>
             </div>
           )
         }}
