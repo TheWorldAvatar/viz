@@ -53,7 +53,7 @@ export default async function MapPage() {
 
     return (
       <MapContainer
-        scenarioURL={SettingsStore.getDefaultSettings()}
+        scenarioURL={scenarioUrl}
         settings={SettingsStore.getMapSettings()}
         data={SettingsStore.getMapDataSettings()}
         scenarios={scenarios}
