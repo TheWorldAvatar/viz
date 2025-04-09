@@ -32,8 +32,7 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
                         headerSortHoverBg: "#105564",
                         // Filter-related customization
                         filterDropdownBg: 'var(--background-primary)',
-                        filterDropdownColor: 'var(--text-color-primary)',
-                        filterDropdownActiveBg: 'var(--background-tertiary)',
+                        filterDropdownMenuBg: "var(--background-primary)",
                         // Icon hover colors
                         headerIconColor: 'rgba(221, 233, 255, 0.85)', // Filter and sort icons default color
                         headerIconHoverColor: '#f9f9f9', // Filter and sort icons hover color
@@ -43,6 +42,11 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
                         colorPrimary: 'var(--text-color-links)',
                         colorBgContainer: 'var(--background-primary)',
                         itemInputBg: 'var(--background-secondary)',
+                    },
+                    Dropdown: {
+                        controlItemBgHover: "var(--background-tertiary)",
+                        controlItemBgActive: "var(--background-tertiary)",
+                        controlItemBgActiveHover: "var(--background-secondary)"
                     },
                     Select: {
                         colorText: 'var(--text-color-primary)',

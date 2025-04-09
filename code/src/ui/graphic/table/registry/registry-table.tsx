@@ -166,10 +166,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           filterEmptyText: dict.message.noData,
           filterSearchPlaceholder: dict.action.search,
           emptyText: (
-            <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
-              <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
               <span>{dict.message.noData}</span>
-            </div>
           )
         }}
       />
