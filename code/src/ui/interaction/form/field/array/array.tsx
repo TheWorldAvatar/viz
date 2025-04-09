@@ -3,9 +3,11 @@ import styles from './array.module.css';
 import React, { useState } from 'react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 
+import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
+import { isValidIRI } from 'utils/client-utils';
 import FormFieldComponent from '../form-field';
 
 export interface FormArrayProps {
@@ -30,6 +32,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const { control } = props.form;
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: props.fieldId,

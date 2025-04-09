@@ -12,6 +12,9 @@ import OptionalPages from 'io/config/optional-pages';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import GlobalContainer from 'ui/global-container';
+import { getDictionary } from 'utils/dictionary/dictionaries';
+import { DictionaryProvider } from 'utils/dictionary/DictionaryContext';
+import { Dictionary } from 'types/dictionary';
 
 /**
  * Performs initialisation when the platform is
@@ -26,7 +29,14 @@ function initialise() {
 const dosis = Dosis({
     subsets: ['latin'],
     display: 'swap',
-  })
+})
+
+export function generateStaticParams() {
+    return [
+        { lang: 'en' },
+        { lang: 'de' },
+    ];
+}
 
 /**
  * Define a root layout template to be used for all generated HTML files.
@@ -35,21 +45,28 @@ const dosis = Dosis({
  * 
  * @returns generated React nodes.
  */
-export default function RootLayout({ children, modal }: { children: React.ReactNode; modal: React.ReactNode; }) {
+export default async function RootLayout({ children, modal, params }: Readonly<{
+    children: React.ReactNode;
+    modal: React.ReactNode;
+    params: Promise<{ lang: string }>;
+}>) {
     // Initialise static content
     initialise();
-
     // Get settings to pass to Toolbar
     const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+    const { lang } = await params;
+    const dictionary: Dictionary = await getDictionary(lang);
 
     // Root element containing all children.
     return (
-        <html lang="en" className={dosis.className}>
+        <html lang={lang} className={dosis.className}>
             <body>
-                <GlobalContainer settings={uiSettings}>
-                    {children}
-                    {modal}
-                </GlobalContainer>
+                <DictionaryProvider dictionary={dictionary}>
+                    <GlobalContainer settings={uiSettings}>
+                        {children}
+                        {modal}
+                    </GlobalContainer>
+                </DictionaryProvider>
                 <ToastContainer />
             </body>
         </html>
