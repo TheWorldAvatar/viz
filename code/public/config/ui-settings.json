@@ -1,24 +1,14 @@
 {
-  "branding": {
-    "navbar": [
-      "/images/defaults/icons/twa.svg",
-      "/images/wsp/cmcl-logo.svg",
-      "/images/wsp/wappen_pirmasens.svg"
-    ],
-    "landing": "/images/defaults/icons/twa.svg",
-    "landingDark": "/images/defaults/icons/twa.svg"
-  },
-  "modules": {
-    "landing": true,
-    "help": true,
-    "map": false,
-    "dashboard": false,
-    "registry": true
-  },
-  "resources": {
-    "registry": {
-      "url": "https://bnl.theworldavatar.io/backend",
-      "data": "agreement"
+    "branding": {
+        "navbar": ["/images/defaults/icons/twa.svg"],
+        "landing": "/images/defaults/icons/cmcl-logo.svg",
+        "landingDark": "/images/defaults/icons/cmcl-logo.svg"
+    },
+    "modules": {
+        "landing": true,
+        "help": true,
+        "map": true,
+        "dashboard": false,
+        "registry": false
     }
-  }
 }
