@@ -19,6 +19,8 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import RegistryTable from './registry-table';
 import TableRibbon from './ribbon/table-ribbon';
 import SummarySection from './ribbon/summary';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { Dictionary } from 'types/dictionary';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -34,11 +36,11 @@ interface RegistryTableComponentProps {
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
+  const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
   const isModalOpen: boolean = useSelector(getIsOpenState);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
-
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -118,10 +120,10 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
-          Click on any {props.entityType} in the table to view its summary
+          {dict.message.registryInstruction}
         </div>}
       {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-        <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
+        <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
         {props.lifecycleStage == Paths.REGISTRY_REPORT &&
           <SummarySection
@@ -137,7 +139,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
               setTask={setTask}
               instances={currentInstances}
               limit={3}
-            /> : <div className={styles["instructions"]}>No results found</div>}
+            /> : <div className={styles["instructions"]}>{dict.message.noResultFound}</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}

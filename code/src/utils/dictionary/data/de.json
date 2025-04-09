@@ -1,0 +1,150 @@
+{
+  "action": {
+    "add": "hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "view": "Ansicht",
+    "refresh": "Aktualisieren",
+    "backTo": "zurück zu",
+    "export": "daten exportieren",
+    "overview": "Übersicht",
+    "search": "Suche",
+    "showAll": "Alles anzeigen",
+    "viewMore": "mehr sehen",
+    "viewTasks": "aufgaben anzeigen",
+    "generateReport": "bericht generieren",
+    "date": "Datum",
+    "dispatch": "Zuweisen",
+    "complete": "Abschließen",
+    "cancel": "Abbrechen",
+    "report": "Bericht",
+    "submit": "Einreichen",
+    "return": "Rückkehr",
+    "approve": "Genehmigen",
+    "rescind": "Rückgängig machen",
+    "terminate": "Beenden",
+    "findAddress": "Adresse finden",
+    "selectLocation": "Ort auswählen"
+  },
+  "form": {
+    "singleService": "Einzelner Dienst",
+    "regularService": "Regelmäßiger Dienst",
+    "alternateService": "Alternativer Tagesdienst",
+    "singleServiceDesc": "Ein einmaliger Service, der einmalig zum angegebenen Datum stattfindet.",
+    "regularServiceDesc": "Ein Dienst, der regelmäßig nach dem Zeitplan innerhalb des angegebenen Zeitraums stattfindet.",
+    "alternateServiceDesc": "Ein Dienst, der an jedem zweiten Tag innerhalb des angegebenen Zeitraums stattfindet.",
+    "repeatEvery": "Einmal pro Jahr wiederholen",
+    "week": "week",
+    "startDate": "Startdatum",
+    "startDateDesc": "Datum des effektiven Beginns der Dienstleistung",
+    "endDate": "Enddatum",
+    "endDateDesc": "Datum des effektiven Endes des Dienstes",
+    "timeSlot": "Zeitschlitz",
+    "from": "Von",
+    "to": "To",
+    "sun": "Sonntag",
+    "mon": "Montag",
+    "tue": "Dienstag",
+    "wed": "Mittwoch",
+    "thu": "Donnerstag",
+    "fri": "Freitag",
+    "sat": "Samstag",
+    "latDesc": "Der Breitengrad des",
+    "longDesc": "Der Längengrad der",
+    "searchStartTimeDesc": "Wählen Sie das Startdatum/die Startzeit für Ihre Suche.",
+    "searchEndTimeDesc": "Wählen Sie das Enddatum/die Endzeit für Ihre Suche.",
+    "min": "Min",
+    "max": "Max"
+  },
+  "map": {
+    "title": {
+      "layerSelection": "Ebenenauswahl",
+      "legend": "Schlüssel/Legende",
+      "information": "Information"
+    },
+    "tooltip": {
+      "location": "Verschieben Sie die Karte an Ihren Standort",
+      "mapStyle": "Stil der Basiskarte ändern",
+      "resetCamera": "Kamera auf Standardposition zurücksetzen",
+      "placenames": "Ortsnamen ein-/ausblenden",
+      "terrain": "3D-Gelände umschalten",
+      "fullscreen": "Vollbildmodus umschalten",
+      "selectScenario": "Anderes Szenario auswählen",
+      "collapsePanel": "Panel zusammenklappen",
+      "expandPanel": "Panel erweitern"
+    }
+  },
+  "context": {
+    "controlRibbon": {
+      "title": "Ribbon für Steuerelemente anzeigen",
+      "tooltip": "Ribbon für Steuerelemente ein-/ausblenden"
+    },
+    "navBar": {
+      "title": "Navigationsleiste anzeigen",
+      "tooltip": "Navigationsleiste ein-/ausblenden"
+    }
+  },
+  "message": {
+    "arrayInstruction": "Füllen Sie die Details aus, um einen neuen Eintrag zu erstellen",
+    "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
+    "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
+    "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
+    "dispatchInstruction": "Versenden Sie die Ressourcen für den geplanten Dienst am",
+    "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes an",
+    "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. Bitte geben Sie in Ihrem Bericht den Grund an:",
+    "matchedFeatures": "Passende Merkmale gefunden! Aktualisieren Sie die Visualisierung...",
+    "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
+    "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
+    "loading": "Laden, bitte warten...",
+    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein.",
+    "noData": "Keine Daten verfügbar",
+    "noInstances": "Keine Instanzen verfügbar. Bitte erstellen Sie eine neue Instanz.",
+    "noResultFound": "Keine Ergebnisse gefunden",
+    "mapSelectInstruction": "eine Funktion auswählen...",
+    "mapSelectFeature": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
+    "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten."
+  },
+  "nav": {
+    "caption": {
+      "map": "Visualisierung raumbezogener Daten",
+      "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
+      "registry": "Verwalten und Anzeigen Ihrer Datensätze",
+      "generalReg": "Verwalten und Anzeigen",
+      "help": "Hilfe für diese Webplattform erhalten"
+    },
+    "title": {
+      "map": "Karte",
+      "dashboard": "Armaturenbrett",
+      "registry": "Registry",
+      "help": "Hilfe-Center",
+      "pending": "Schwebend",
+      "active": "Aktiv",
+      "archive": "Archiv"
+    },
+    "tooltip": {
+      "home": "Zurück zur landing page.",
+      "map": "Geografische ansicht.",
+      "dashboard": "Analyse-ansicht.",
+      "registry": "Öffnen Sie das Register.",
+      "help": "Hilfeseite öffnen."
+    }
+  },
+  "title": {
+    "actions": "AKTIONEN",
+    "dispatchInfo": "versandinformationen",
+    "description": "Beschreibung",
+    "serviceSummary": "Service-Übersicht",
+    "available": "Verfügbar",
+    "unavailable": "Nicht verfügbar",
+    "active": "Aktiv",
+    "completed": "Abgeschlossen",
+    "cancelled": "Abgebrochen",
+    "incomplete": "Unvollständig",
+    "rescinded": "Aufgehoben",
+    "terminated": "Beendet",
+    "pendingDispatch": "Ausstehender Versand",
+    "pendingExecution": "Ausstehende Ausführung",
+    "searchPeriod": "Suchzeitraum",
+    "searchCriteria": "SUCHKRITERIEN"
+  }
+}
