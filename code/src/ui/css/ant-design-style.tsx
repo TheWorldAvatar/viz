@@ -33,9 +33,7 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
                         // Filter-related customization
                         filterDropdownBg: 'var(--background-primary)',
                         filterDropdownMenuBg: "var(--background-primary)",
-                        // Icon hover colors
-                        headerIconColor: 'rgba(221, 233, 255, 0.85)', // Filter and sort icons default color
-                        headerIconHoverColor: '#f9f9f9', // Filter and sort icons hover color
+                        headerFilterHoverBg: 'rgba(221, 233, 255, 0.85)',
                     },
                     Pagination: {
                         colorText: 'var(--text-color-primary)',

@@ -88,7 +88,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           },
           // Filtering
           filters: getColumnFilters(props.instances, field),
-          onFilter: (value, record) =>
+          onFilter: (value: React.Key | boolean, record: FieldValues) =>
             record[field] ? record[field].toString() === value.toString() : false,
           filterSearch: true,
         };
@@ -166,7 +166,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           filterEmptyText: dict.message.noData,
           filterSearchPlaceholder: dict.action.search,
           emptyText: (
-              <span>{dict.message.noData}</span>
+            <span>{dict.message.noData}</span>
           )
         }}
       />
