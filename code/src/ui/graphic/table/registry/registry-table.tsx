@@ -4,13 +4,13 @@ import { Table, TableColumnsType, Typography } from 'antd';
 import React from 'react';
 import { FieldValues } from "react-hook-form";
 
+import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import RegistryRowActions from "./actions/registry-table-action";
-import { Dictionary } from "types/dictionary";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
+import RegistryRowActions from "./actions/registry-table-action";
 
 interface RegistryTableProps {
   recordType: string;
@@ -60,18 +60,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       ).map((field) => {
         // minimum width based on field name
         const title = parseWordsForLabels(field);
-        // Set minimum width based on column title length
+        // Set minimum width to require space for title and icons
         const minWidth = Math.max(
-          title.length + 200, // Title width + space for icons (sort + filter)
-          getMaxContentLength(props.instances, field), // Based on content
-          80 // Minimum width
+          title.length * 15, // Compute based on title length
+          125 // Minimum width
         );
 
         return {
           key: field,
           dataIndex: field,
           className: styles["header"],
-          title: parseWordsForLabels(field),
+          title: title,
           ellipsis: true,
           width: minWidth,
           render: (value: FieldValues) => {
@@ -118,25 +117,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       text: parseWordsForLabels(`${value}`),
       value: value,
     }));
-  }
-
-  // Function to calculate the max content length in a column
-  function getMaxContentLength(instances: RegistryFieldValues[], field: string): number {
-    let maxLength = 0;
-    instances.forEach(instance => {
-      const fieldValue = instance[field];
-      let valueStr = '';
-
-      if (Array.isArray(fieldValue)) {
-        valueStr = String(fieldValue[0]?.value || '');
-      } else {
-        valueStr = String(fieldValue?.value || '');
-      }
-
-      maxLength = Math.max(maxLength, valueStr.length);
-    });
-
-    return maxLength;
   }
 
   // Parse row values
