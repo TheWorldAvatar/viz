@@ -11,7 +11,7 @@
 - Updated `VisBackend Agent` from `v1.3.0` to `v1.4.0`
 
 <<<<<<< HEAD
-## 5.19.0
+## 5.20.0
 
 ### Changes
 
