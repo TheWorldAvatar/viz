@@ -148,7 +148,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           defaultPageSize: 10,
           pageSizeOptions: [5, 10, 20],
           showSizeChanger: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
           position: ['bottomCenter']
         }}
         rowKey={(record) => record.id || record.iri || record.key}
@@ -158,13 +158,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         bordered={false}
         showSorterTooltip={true}
         locale={{
-          triggerDesc: 'Sort descending',
-          triggerAsc: 'Sort ascending',
-          cancelSort: 'Cancel sort',
-          filterConfirm: 'OK',
-          filterReset: 'Reset',
-          filterEmptyText: 'No filters',
-          filterSearchPlaceholder: 'Search in filters',
+          triggerAsc: dict.action.sortasc,
+          triggerDesc: dict.action.sortdesc,
+          cancelSort: dict.action.clearSort,
+          filterConfirm: dict.action.update.toUpperCase(),
+          filterReset: dict.action.clear.toUpperCase(),
+          filterEmptyText: dict.message.noData,
+          filterSearchPlaceholder: dict.action.search,
           emptyText: (
             <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
               <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
