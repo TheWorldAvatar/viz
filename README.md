@@ -15,6 +15,7 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
     - [3.2 Stack Deployment](#32-stack-deployment)
   - [4 Authorisation](#4-authorisation)
   - [5. Release](#5-release)
+    - [Your Responsibilities Before Merging a Pull Request](#your-responsibilities-before-merging-a-pull-request)
 
 ## 1. Precursor
 
