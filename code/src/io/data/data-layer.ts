@@ -56,8 +56,29 @@ export abstract class DataLayer {
     */
     public isGroupExpanded: boolean;
 
-    // Indicates if live updates are required for this layer
+    /** 
+     * Indicates if live updates are required for this layer
+     */
     public isLive?: boolean = false;
+
+    
+    /**
+     * MapBox slot parameter for layer ordering. top, middle or bottom.
+     * 
+     * [see mapbox docs](https://docs.mapbox.com/mapbox-gl-js/example/geojson-layer-in-slot/)
+     *
+     * @public
+     * @type {?string}
+     */
+    public slot?: string;
+
+    /**
+     * The layer ID of the layer that this layer should be added below. Only relevant in mapbox v2 styles
+     * 
+     * @public
+     * @type {?string}
+     */
+    public addBelowLayer?: string;
 
     /**
      * Initialise a new DataLayer instance.

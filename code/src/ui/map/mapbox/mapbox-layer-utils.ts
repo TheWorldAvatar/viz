@@ -18,11 +18,32 @@ export async function addAllLayers(map: Map, dataStore: DataStore, imageryOption
     const currentStyle = getCurrentImageryOption(imageryOptions);
 
     const layerArray: DataLayer[] = dataStore?.getLayerList();
-    layerArray?.forEach((layer) => addLayer(map, layer, currentStyle));
-    console.info(`Added ${layerArray?.length} layers to the map object.`);
+    // sort layerArray by layer.order
+    let sortedlayers: DataLayer[] = layerArray;
+    try {sortedlayers = orderLayers(layerArray)
+        console.log("Ordered layers by layer.order");
+    } catch (error) {
+        console.error("Error ordering layers:", error);
+    }
+    sortedlayers?.forEach((layer) => addLayer(map, layer, currentStyle));
+    console.info(`Added ${sortedlayers?.length} layers to the map object.`);
 }
 
-/**
+function orderLayers(layerArray: DataLayer[]): DataLayer[] {
+    const sortedArray = layerArray?.sort((a, b) => {
+        if (a.order < b.order) {
+            return -1;
+        } else if (a.order > b.order) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+    console.log("Ordered layers by layer.order innnnor");
+    return sortedArray;
+}
+
+/** 
  * Adds the input DataLayer to the Mapbox map instance.
  * 
  * @param {Map} map the Mapbox map instance.
