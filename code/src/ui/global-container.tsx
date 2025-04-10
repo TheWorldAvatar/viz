@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { reduxStore } from 'app/store';
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { UISettings } from 'types/settings';
+import { SessionProvider } from 'utils/auth/SessionContext';
 import Trex from 'utils/trex';
 import ContextMenu from './interaction/context-menu/context-menu';
 import Navbar from './navigation/navbar/navbar';
@@ -47,35 +48,37 @@ export default function GlobalContainer(
 
   return (
     <Provider store={reduxStore}>
-      <div
-        id="globalContainer"
-        onContextMenu={handleContextMenu}
-        onClick={closeContextMenu} // Close context menu when clicking elsewhere
-        style={{
-          backgroundImage: `url(${backgroundImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
-        {contextMenuVisible && (
-          <ContextMenu
-            x={contextMenuPosition.x}
-            y={contextMenuPosition.y}
-            showContextMenu={contextMenuVisible}
+      <SessionProvider>
+        <div
+          id="globalContainer"
+          onContextMenu={handleContextMenu}
+          onClick={closeContextMenu} // Close context menu when clicking elsewhere
+          style={{
+            backgroundImage: `url(${backgroundImageUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
+          {contextMenuVisible && (
+            <ContextMenu
+              x={contextMenuPosition.x}
+              y={contextMenuPosition.y}
+              showContextMenu={contextMenuVisible}
+            />
+          )}
+
+          <Navbar
+            settings={props.settings}
           />
-        )}
 
-        <Navbar
-          settings={props.settings}
-        />
+          <div id="contentContainer">{props.children}</div>
 
-        <div id="contentContainer">{props.children}</div>
-
-        <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
-        {popup && <Trex callback={togglePopup} />}
-        <Footer />
-      </div>
+          <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
+          {popup && <Trex callback={togglePopup} />}
+          <Footer />
+        </div>
+      </SessionProvider>
     </Provider>
   );
 }
