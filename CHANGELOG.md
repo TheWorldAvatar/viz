@@ -3,11 +3,17 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
-## 5.19.2
+## 5.20.1
 
 ### Changes
 
 - Added filtering function in registry table
+## 5.20.0
+
+### Changes
+
+- Patch issue introduced by updating to express 5.x
+- Keycloak now defaults to protecting all pages. NB this is a breaking change if you previously had * as a keycloak protected pages env variable. Remove it for this behaviour
 
 ## 5.19.1
 
