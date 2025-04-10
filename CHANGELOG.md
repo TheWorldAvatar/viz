@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.19.1
+
+### Changes
+
+- Dependency bumps. See #151
+  
 ## 5.19.0
 
 ### Changes
