@@ -52,8 +52,9 @@ app.prepare().then(() => {
     const server = express();
 
     if (keycloakEnabled) { // do keycloak auth stuff if env var is set
-        console.info('the following pages require keycloak authentication', process.env.PROTECTED_PAGES ? colourYellow : colourRed, process.env.PROTECTED_PAGES, colourReset)
-        console.info('the following pages require the', process.env.ROLE ? colourYellow : colourRed, process.env.ROLE, colourReset, 'role: ', process.env.ROLE_PROTECTED_PAGES ? colourYellow : colourRed, process.env.ROLE_PROTECTED_PAGES, colourReset)
+        if (process.env.PROTECTED_PAGES) console.info('the following pages require keycloak authentication', colourYellow, process.env.PROTECTED_PAGES, colourReset);
+        if (process.env.ROLE && process.env.ROLE_PROTECTED_PAGES) console.info('the following pages require the', process.env.ROLE ? colourYellow : colourRed, process.env.ROLE, colourReset, 'role: ', process.env.ROLE_PROTECTED_PAGES ? colourYellow : colourRed, process.env.ROLE_PROTECTED_PAGES, colourReset)
+        else console.info('No pages protected with role');
 
         server.set('trust proxy', true); // the client’s IP address is understood as the left-most entry in the X-Forwarded-For header.
 
@@ -115,7 +116,7 @@ app.prepare().then(() => {
         });
 
         const useGeoServerProxy = process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true';
-        console.info('REACT_APP_USE_GEOSERVER_PROXY is ' + useGeoServerProxy);
+        console.info('Geoserver proxying is', useGeoServerProxy ? colourYellow : colourGreen, useGeoServerProxy, colourReset);
 
         if (useGeoServerProxy) {
             console.info('Server URL REACT_APP_SERVER_URL is ' + process.env.REACT_APP_SERVER_URL);
