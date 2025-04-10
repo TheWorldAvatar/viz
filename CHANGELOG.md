@@ -29,7 +29,6 @@
 - Refactor to work with new endpoint requirements
 - Updated `VisBackend Agent` from `v1.3.0` to `v1.4.0`
 
-<<<<<<< HEAD
 ## 5.20.0
 
 ### Changes
