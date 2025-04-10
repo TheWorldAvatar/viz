@@ -2,7 +2,6 @@
 
 import styles from './navbar.module.css';
 
-import KeycloakSession from 'authorisation/keycloak-session';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,7 +10,9 @@ import { useEffect, useMemo } from 'react';
 import { addItem, selectItem } from 'state/context-menu-slice';
 import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
+import AuthenticationWidget from 'ui/interaction/auth/authentication-widget';
 import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
+import { useCurrentUser } from 'utils/auth/SessionContext';
 import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import NavbarComponent from './navbar-component';
 
@@ -26,6 +27,8 @@ interface NavbarProps {
  */
 export default function Navbar(props: Readonly<NavbarProps>) {
   const dict = useDictionary();
+  const user: string = useCurrentUser();
+
   const navbarDict = dict.nav;
   const contextDict = dict.context;
   const navbarItem: ContextItemDefinition = useMemo(() => {
@@ -39,10 +42,8 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-  dispatch(addItem(navbarItem));
+    dispatch(addItem(navbarItem));
   }, [])
-
-  const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   // Visibility state of navigation bar
   const navbarState = useSelector(selectItem(navbarItem.id));
@@ -86,7 +87,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
 
       {/* Render each component as required */}
       <div className="navbarElements">
-        {keycloakEnabled && <KeycloakSession />}
+        {user && <AuthenticationWidget user={user} />}
         {props.settings?.modules?.landing &&
           <NavbarComponent
             name="LANDING"
