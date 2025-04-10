@@ -1,4 +1,3 @@
-
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -12,6 +11,11 @@ import MapContainer from 'ui/map/map-container';
 
 export const dynamic = 'force-dynamic';
 
+const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+const scenarioUrl = uiSettings.resources?.scenario?.url;
+const scenarioDataset = uiSettings.resources?.scenario?.data;
+const scenarioResource: UISettings['resources']['scenario'] | undefined = uiSettings.resources?.scenario;
+const mapModule : UISettings['modules']['map']= uiSettings.modules.map;
 
 /**
  * Set page metadata.
@@ -19,7 +23,6 @@ export const dynamic = 'force-dynamic';
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.MAP);
   return {
     title: metadata?.title ?? PageTitles.MAP,
@@ -29,31 +32,29 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * A server component that handles the explore  route (i.e. images/defaultsexplore") to display the map container and its components.
  * 
- */
-export default async function VisualisationPage() {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  if (uiSettings.modules.map) {
-    let scenarios: ScenarioDefinition[];
-    // When scenarios are available, retrieve their definitions on the server side
-    if (uiSettings.resources?.scenario) {
+*/
+export default async function MapPage() {
+  if (mapModule) {
+    let scenarios: ScenarioDefinition[] = [];
+    if (scenarioResource) {
       try {
-        scenarios = await getScenarios(uiSettings.resources?.scenario?.url);
-        scenarios = scenarios.map((scenario) => ({
+        const response = await getScenarios(scenarioUrl);
+        scenarios = response.map((scenario) => ({
           ...scenario,
-          url: uiSettings.resources.scenario.url,
-          dataset: uiSettings.resources.scenario.data,
+          url: scenarioUrl,
+          dataset: scenarioDataset,
         }))
       } catch (error) {
         console.error(`Error populating scenarios selector`, error)
       }
     }
-
+    
     SettingsStore.readMapSettings();
     await SettingsStore.readMapDataSettings();
 
     return (
       <MapContainer
-        scenarioURL={SettingsStore.getDefaultSettings()}
+        scenarioURL={scenarioUrl}
         settings={SettingsStore.getMapSettings()}
         data={SettingsStore.getMapDataSettings()}
         scenarios={scenarios}
