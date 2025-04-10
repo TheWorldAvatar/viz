@@ -15,6 +15,7 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
     - [3.2 Stack Deployment](#32-stack-deployment)
   - [4 Authorisation](#4-authorisation)
   - [5. Release](#5-release)
+    - [Your Responsibilities Before Merging a Pull Request](#your-responsibilities-before-merging-a-pull-request)
 
 ## 1. Precursor
 
@@ -97,8 +98,8 @@ To secure your viz app with a Keycloak authentication server, set the relevant e
 
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES=/page,/otherpage ## pages that a user must be logged in to see
-ROLE_PROTECTED_PAGES=/role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
+PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see
+ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
 ```
 
@@ -106,10 +107,11 @@ alternatively, in the docker `docker-compose.yml` or `docker-compose.dev.yml`
 
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES: page,/otherpage ## pages that a user must be logged in to see
-ROLE_PROTECTED_PAGES: /role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
-ROLE: viz:protected ## the role required for the above list
+PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged in to see
+ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
+ROLE: viz:protected ## (optional) the role required for the above list
 ```
+If `PROTECTED_PAGES` is not defined, all pages will be protected.
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.
 
