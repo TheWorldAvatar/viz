@@ -64,7 +64,6 @@
 ### Changes
 
 - Added a tooltip to inform users of an action button's actions
-  
 ## 5.18.0
 
 ### Changes
