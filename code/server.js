@@ -88,6 +88,10 @@ app.prepare().then(() => {
                 resave: false,
                 saveUninitialized: true,
                 store: store,
+                cookie: {
+                    secure: !dev, // Set secure attribute to true in production
+                    httpOnly: true, // Prevent client-side scripts from accessing the cookie
+                },
             })
         );
 
