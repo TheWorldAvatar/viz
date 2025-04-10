@@ -1,7 +1,8 @@
 import styles from "./registry.table.module.css";
 
-import { Table, TableColumnsType, Typography } from 'antd';
-import React from 'react';
+import { Input, Space, Table, TableColumnsType, Typography } from 'antd';
+
+import React, { useState, useMemo } from 'react';
 import { FieldValues } from "react-hook-form";
 
 import { Dictionary } from "types/dictionary";
@@ -31,6 +32,8 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const [searchText, setSearchText] = useState<string>('');
+
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -137,12 +140,43 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     });
   }, [props.instances]);
 
+
+  // Filter data based on search text
+  const filteredData = useMemo(() => {
+    if (!searchText.trim()) return data;
+
+    return data.filter((record) => {
+      // Search through all fields
+      return Object.keys(record).some((key) => {
+        const value = record[key];
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(searchText.toLowerCase());
+        }
+        return false;
+      });
+    });
+  }, [data, searchText]);
+
+  // Search input handler
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
   return (
     <AntDesignConfig>
+      <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+        <Input
+          placeholder={dict.action.search}
+          onChange={handleSearch}
+          prefix={<span className="material-symbols-outlined">search</span>}
+          allowClear
+          style={{ width: 300 }}
+        />
+      </Space>
       <Table
         className={styles["table"]}
         rowClassName={styles["row"]}
-        dataSource={data}
+        dataSource={filteredData}
         columns={columns}
         pagination={{
           defaultPageSize: 10,
