@@ -99,12 +99,17 @@ app.prepare().then(() => {
             res.json({ userName, firstName, lastName, fullName, roles, clientRoles });
         });
 
-        const protectedPages = process.env.PROTECTED_PAGES.split(',');
-        protectedPages.forEach(page => {
-            server.get(page, keycloak.protect());
-        });
-        const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES.split(',');
-        roleProtectedPages.forEach(page => {
+        if (!process.env.PROTECTED_PAGES) {
+            console.info('No protected pages specified. Protecting', colourGreen, 'all', colourReset, 'pages with Keycloak authentication.');
+            server.get("*allpaths", keycloak.protect());
+        } else {
+            const protectedPages = process.env.PROTECTED_PAGES.split(',');
+            protectedPages.forEach(page => {
+                server.get(page, keycloak.protect());
+            });
+        }
+        const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
+        roleProtectedPages?.forEach(page => {
             server.get(page, keycloak.protect(process.env.ROLE));
             console.info('protecting page', page, 'with role', process.env.ROLE);
         });
