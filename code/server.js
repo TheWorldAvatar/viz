@@ -143,7 +143,7 @@ app.prepare().then(() => {
     }
 
     // Handle all other requests using Next.js
-    server.all("*", (req, res) => {
+    server.all("*allpaths", (req, res) => {
         return handle(req, res);
     });
 
