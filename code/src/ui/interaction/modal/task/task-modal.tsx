@@ -7,6 +7,7 @@ import Modal from 'react-modal';
 
 import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
+import { PermissionScheme } from 'types/auth';
 import { Dictionary } from 'types/dictionary';
 import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
@@ -16,6 +17,7 @@ import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
+import { usePermissionScheme } from 'utils/auth/SessionContext';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { genBooleanClickHandler } from 'utils/event-handler';
@@ -43,6 +45,8 @@ interface TaskModalProps {
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
   const dict: Dictionary = useDictionary();
+  const permissionScheme: PermissionScheme = usePermissionScheme();
+
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   // Form actions
@@ -254,25 +258,29 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
-            {props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
+            {(permissionScheme?.disabled || permissionScheme?.completeTask) &&
+              props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"done_outline"}
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
-            {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            {(permissionScheme?.disabled || permissionScheme?.operation) &&
+              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"assignment"}
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />}
-            {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            {(permissionScheme?.disabled || permissionScheme?.operation) &&
+              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"cancel"}
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
               />}
-            {props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            {(permissionScheme?.disabled || permissionScheme?.reportTask) &&
+              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"report"}
                 tooltipText={dict.action.report}

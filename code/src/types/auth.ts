@@ -1,1 +1,3 @@
-export type Roles = string[]
+export type PermissionScheme = {
+    route: string;
+} & Record<string, boolean>;
