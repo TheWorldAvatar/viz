@@ -145,9 +145,12 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
  * @returns Introduction HTML content.
  */
 function getIntroductionContent(pages: OptionalPage[]): string {
-  const page: OptionalPage[] = pages.filter(page => page.slug === "landing");
+  const filteredPages: OptionalPage[] = pages.filter(page => page.slug === "landing");
+  if (filteredPages.length === 0) {
+    return "";
+  }
   // Only one page should be returned
-  return markdowner.render(page[0].content);
+  return markdowner.render(filteredPages[0]?.content);
 }
 
 /**
@@ -157,7 +160,6 @@ function getIntroductionContent(pages: OptionalPage[]): string {
  * @returns Array of thumbnail components.
  */
 function getThumbnails(pages: OptionalPage[]): React.ReactElement[] {
-
   const components: React.ReactElement[] = [];
   // Filter out the object that defines the landing or help page content
   pages.filter(page => page.slug !== "landing" && page.slug !== "help")
