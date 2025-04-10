@@ -94,9 +94,11 @@ app.prepare().then(() => {
         const keycloak = new Keycloak({ store: store });
         server.use(keycloak.middleware());
 
-        server.get('/api/userinfo', keycloak.protect(), (req, res) => {
-            const { preferred_username: userName, given_name: firstName, family_name: lastName, name: fullName, realm_access: { roles }, resource_access: clientRoles } = req.kauth.grant.access_token.content;
-            res.json({ userName, firstName, lastName, fullName, roles, clientRoles });
+        server.get('/session', keycloak.protect(), (req, res) => {
+            // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles
+            const { name, resource_access } = req.kauth.grant.access_token.content;
+            const roles = resource_access?.viz?.roles || [];
+            res.json({ name, roles });
         });
 
         const protectedPages = process.env.PROTECTED_PAGES.split(',');
