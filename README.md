@@ -119,6 +119,9 @@ The [`keycloak.json` file](./code/keycloak.json) must also be correctly configur
 > [!NOTE]
 > Client roles work better for API-protecting resources than the realm roles. As in the example above, use a role like `<client>:<role>`. See the [documentation in the auth folder](./auth/README.md) to spin up a dev Keycloak server for testing.
 
+> [!IMPORTANT]
+> Access to certain platform features is controlled by predefined client roles set in the sample server configuration at `./auth/realm/realm.json`. While users can create a customised Keycloak server, please ensure that these roles are also included and assigned to users in order for the platform to perform as expected.
+
 ## 5. Release
 
 Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged.
