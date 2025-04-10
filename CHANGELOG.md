@@ -46,7 +46,6 @@
 ### Changes
 
 - Replaced MUI registry table to Antd
->>>>>>> origin/main
 
 ## 5.18.3
 
