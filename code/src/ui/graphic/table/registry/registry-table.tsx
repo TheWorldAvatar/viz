@@ -1,6 +1,6 @@
 import styles from "./registry.table.module.css";
 
-import { Input, Space, Table, TableColumnsType, Typography } from 'antd';
+import { Input, Space, Table, TableColumnsType, Typography, Select } from 'antd';
 
 import React, { useState, useMemo } from 'react';
 import { FieldValues } from "react-hook-form";
@@ -33,6 +33,7 @@ interface RegistryTableProps {
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const [searchText, setSearchText] = useState<string>('');
+  const [searchColumn, setSearchColumn] = useState<string>('all');
 
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
@@ -141,23 +142,52 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   }, [props.instances]);
 
 
-  // Filter data based on search text
+  // Generate search options based on columns
+  const searchOptions = useMemo(() => {
+    if (columns.length === 0) return [{ value: 'all', label: dict.action.searchAll || 'All Columns' }];
+
+    return [
+      { value: 'all', label: dict.action.searchAll || 'All Columns' },
+      ...columns
+        .filter(col => col.key !== 'actions' && typeof col.dataIndex === 'string') // Exclude action column
+        .map(col => ({
+          value: col.dataIndex as string,
+          label: col.title as string
+        }))
+    ];
+  }, [columns]);
+
+  // Filter function that respects column selection
   const filteredData = useMemo(() => {
     if (!searchText.trim()) return data;
 
     return data.filter((record) => {
-      // Search through all fields
-      return Object.keys(record).some((key) => {
-        const value = record[key];
+      if (searchColumn === 'all') {
+        // Search all fields
+        return Object.keys(record).some((key) => {
+          if (key === 'key') return false; // Skip key field
+          const value = record[key];
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(searchText.toLowerCase());
+          }
+          return false;
+        });
+      } else {
+        // Search only the selected column
+        const value = record[searchColumn];
         if (typeof value === 'string') {
           return value.toLowerCase().includes(searchText.toLowerCase());
         }
         return false;
-      });
+      }
     });
-  }, [data, searchText]);
+  }, [data, searchText, searchColumn]);
 
   // Search input handler
+  const handleColumnChange = (value: string) => {
+    setSearchColumn(value);
+  };
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
@@ -165,6 +195,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <AntDesignConfig>
       <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+        <Select
+          defaultValue="all"
+          style={{ width: 160 }}
+          onChange={handleColumnChange}
+          options={searchOptions}
+          placeholder={dict.action.selectColumn || 'Select column'}
+        />
         <Input
           placeholder={dict.action.search}
           onChange={handleSearch}
