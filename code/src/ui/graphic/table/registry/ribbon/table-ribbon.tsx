@@ -41,6 +41,7 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const taskId: string = "task date";
 
@@ -57,7 +58,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     <div className={styles.menu}>
       {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
         <div className={styles["registry-nav-ribbon"]}>
-          {(permissionScheme?.disabled || permissionScheme?.pendingRegistry) && <RedirectButton
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.pendingRegistry) && <RedirectButton
             label={dict.nav.title.pending}
             icon="pending"
             url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
@@ -69,7 +70,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               active: styles["active-state"],
             }}
           />}
-          {(permissionScheme?.disabled || permissionScheme?.activeArchiveRegistry) && <RedirectButton
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.activeArchiveRegistry) && <RedirectButton
             label={dict.nav.title.active}
             icon="schedule"
             url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
@@ -81,7 +82,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               active: styles["active-state"],
             }}
           />}
-          {(permissionScheme?.disabled || permissionScheme?.activeArchiveRegistry) && <RedirectButton
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.activeArchiveRegistry) && <RedirectButton
             label={dict.nav.title.archive}
             icon="archive"
             url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
@@ -125,7 +126,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           )}
 
-          {(permissionScheme?.disabled || permissionScheme?.sales) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
             (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
                 icon="add"
@@ -134,7 +135,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 isActive={false}
               />
             )}
-          {(permissionScheme?.disabled || permissionScheme?.viewTask) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) &&
             (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
               props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
@@ -144,7 +145,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
               />
             )}
-          {(permissionScheme?.disabled || permissionScheme?.viewTask) && (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) && (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
             props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
                 icon="event"
@@ -158,14 +159,14 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               icon="first_page"
               label={`${dict.action.backTo} ${props.entityType.replace("_", " ")}s`}
             />}
-          {(permissionScheme?.disabled || permissionScheme?.invoice) && props.lifecycleStage == Routes.REGISTRY_REPORT &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.invoice) && props.lifecycleStage == Routes.REGISTRY_REPORT &&
             <RedirectButton
               icon="print"
               label={dict.action.generateReport}
               url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
               isActive={false}
             />}
-          {(permissionScheme?.disabled || permissionScheme?.export) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.export) &&
             <DownloadButton instances={props.instances} />}
         </div>
       </div>

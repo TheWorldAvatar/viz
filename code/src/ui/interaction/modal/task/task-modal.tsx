@@ -21,8 +21,8 @@ import { getAfterDelimiter } from 'utils/client-utils';
 import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
-
 import { usePermissionScheme } from 'utils/auth/SessionInfo';
+
 interface TaskModalProps {
   entityType: string;
   registryAgentApi: string;

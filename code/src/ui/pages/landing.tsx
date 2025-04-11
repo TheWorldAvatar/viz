@@ -53,8 +53,8 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const registryUrl: string = useMemo(() => {
     // Defaults to pending registry with no route or scheme is disabled
     let url: string = `${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`;
-    if (!permissionScheme?.disabled && (permissionScheme?.route)) {
-      url = permissionScheme?.route;
+    if ((permissionScheme?.registryPageLink)) {
+      url = permissionScheme?.registryPageLink;
       // Only update the permission route if they are pending or active
       if (url === Routes.REGISTRY_PENDING || url === Routes.REGISTRY_ACTIVE) {
         url = `${url}/${props.settings.resources?.registry?.data}`;
