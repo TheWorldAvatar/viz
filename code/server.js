@@ -111,11 +111,17 @@ app.prepare().then(() => {
                 server.get(page, keycloak.protect());
             });
         }
-        const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
-        roleProtectedPages?.forEach(page => {
-            server.get(page, keycloak.protect(process.env.ROLE));
-            console.info('protecting page', page, 'with role', process.env.ROLE);
-        });
+        if (process.env.ROLE_PROTECTED_PAGES) {
+            if (process.env.ROLE) {
+                const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
+                roleProtectedPages?.forEach(page => {
+                    server.get(page, keycloak.protect(process.env.ROLE));
+                    console.info('protecting page', page, 'with role', process.env.ROLE);
+                });
+            } else {
+                console.info(colourRed, 'ROLE_PROTECTED_PAGES specified but no ROLE specified. No pages will be protected with role', colourReset);
+            }
+        }
 
         const useGeoServerProxy = process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true';
         console.info('Geoserver proxying is', useGeoServerProxy ? colourYellow : colourGreen, useGeoServerProxy, colourReset);
