@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import styles from './authentication-widget.module.css';
+import styles from './keycloak-user-button.module.css';
 import { useUserDisplayName } from 'utils/auth/SessionContext';
 
 
