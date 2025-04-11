@@ -1,16 +1,17 @@
 import styles from "./registry.table.module.css";
 
-import { Table, TableColumnsType, Typography } from 'antd';
-import React from 'react';
+import { Input, Space, Table, TableColumnsType, Typography, Select } from 'antd';
+
+import React, { useState, useMemo } from 'react';
 import { FieldValues } from "react-hook-form";
 
+import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import RegistryRowActions from "./actions/registry-table-action";
-import { Dictionary } from "types/dictionary";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
+import RegistryRowActions from "./actions/registry-table-action";
 
 interface RegistryTableProps {
   recordType: string;
@@ -31,6 +32,9 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchColumn, setSearchColumn] = useState<string>('all');
+
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -47,7 +51,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             setTask={props.setTask}
           />
         ),
-        fixed: 'left'
+        fixed: 'left',
+        width: 60
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -56,28 +61,67 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           const currentKeys = Object.keys(current).length;
           return prevKeys >= currentKeys ? prev : current;
         })
-      ).map((field) => ({
-        key: field,
-        dataIndex: field,
-        className: styles["header"],
-        title: parseWordsForLabels(field),
-        ellipsis: true,
-        render: (value: FieldValues) => {
-          if (!value) return "";
-          if (field.toLowerCase() === "status") {
-            return <StatusComponent status={`${value}`} />;
-          }
-          return <Typography.Text className={styles["row-cell"]}>
-            {parseWordsForLabels(`${value}`)}
-          </Typography.Text>
-        },
-        sorter: (a: FieldValues, b: FieldValues) => {
-          if (!a[field] || !b[field]) return 0;
-          return `${a[field]}`.localeCompare(`${b[field]}`);
-        },
-      })),
+      ).map((field) => {
+        // minimum width based on field name
+        const title = parseWordsForLabels(field);
+        // Set minimum width to require space for title and icons
+        const minWidth = Math.max(
+          title.length * 15, // Compute based on title length
+          125 // Minimum width
+        );
+
+        return {
+          key: field,
+          dataIndex: field,
+          className: styles["header"],
+          title: title,
+          ellipsis: true,
+          width: minWidth,
+          render: (value: FieldValues) => {
+            if (!value) return "";
+            if (field.toLowerCase() === "status") {
+              return <StatusComponent status={`${value}`} />;
+            }
+            return <Typography.Text className={styles["row-cell"]}>
+              {parseWordsForLabels(`${value}`)}
+            </Typography.Text>
+          },
+          sorter: (a: FieldValues, b: FieldValues) => {
+            if (!a[field] || !b[field]) return 0;
+            return `${a[field]}`.localeCompare(`${b[field]}`);
+          },
+          // Filtering
+          filters: getColumnFilters(props.instances, field),
+          onFilter: (value: React.Key | boolean, record: FieldValues) =>
+            record[field] ? record[field].toString() === value.toString() : false,
+          filterSearch: true,
+        };
+      }),
     ];
   }, [props.instances]);
+
+  // Function to generate filter options for columns
+  function getColumnFilters(instances: RegistryFieldValues[], field: string) {
+    if (field === 'id' || field === 'iri' || field === 'key') return undefined;
+    // Get unique values for the field
+    const uniqueValues = [...new Set(
+      instances
+        .map(item => {
+          const fieldValue = item[field];
+          if (Array.isArray(fieldValue)) {
+            return fieldValue[0]?.value;
+          } else {
+            return fieldValue?.value;
+          }
+        })
+        .filter(Boolean)
+    )];
+
+    return uniqueValues.map(value => ({
+      text: parseWordsForLabels(`${value}`),
+      value: value,
+    }));
+  }
 
   // Parse row values
   const data: FieldValues[] = React.useMemo(() => {
@@ -97,18 +141,85 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     });
   }, [props.instances]);
 
+
+  // Generate search options based on columns
+  const searchOptions = useMemo(() => {
+    if (columns.length === 0) return [{ value: 'all', label: dict.action.searchAll || 'All Columns' }];
+
+    return [
+      { value: 'all', label: dict.action.searchAll || 'All Columns' },
+      ...columns
+        .filter(col => col.key !== 'actions' && typeof col.dataIndex === 'string') // Exclude action column
+        .map(col => ({
+          value: col.dataIndex as string,
+          label: col.title as string
+        }))
+    ];
+  }, [columns]);
+
+  // Filter function that respects column selection
+  const filteredData = useMemo(() => {
+    if (!searchText.trim()) return data;
+
+    return data.filter((record) => {
+      if (searchColumn === 'all') {
+        // Search all fields
+        return Object.keys(record).some((key) => {
+          if (key === 'key') return false; // Skip key field
+          const value = record[key];
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(searchText.toLowerCase());
+          }
+          return false;
+        });
+      } else {
+        // Search only the selected column
+        const value = record[searchColumn];
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(searchText.toLowerCase());
+        }
+        return false;
+      }
+    });
+  }, [data, searchText, searchColumn]);
+
+  // Search input handler
+  const handleColumnChange = (value: string) => {
+    setSearchColumn(value);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
   return (
     <AntDesignConfig>
+      <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+        <Select
+          defaultValue="all"
+          style={{ width: 160 }}
+          onChange={handleColumnChange}
+          options={searchOptions}
+          placeholder={dict.action.selectColumn || 'Select column'}
+        />
+        <Input
+          placeholder={dict.action.search}
+          onChange={handleSearch}
+          prefix={<span className="material-symbols-outlined">search</span>}
+          allowClear
+          style={{ width: 300 }}
+        />
+      </Space>
       <Table
         className={styles["table"]}
         rowClassName={styles["row"]}
-        dataSource={data}
+        dataSource={filteredData}
         columns={columns}
         pagination={{
           defaultPageSize: 10,
           pageSizeOptions: [5, 10, 20],
           showSizeChanger: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
           position: ['bottomCenter']
         }}
         rowKey={(record) => record.id || record.iri || record.key}
@@ -118,14 +229,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         bordered={false}
         showSorterTooltip={true}
         locale={{
-          triggerDesc: 'Sort descending',
-          triggerAsc: 'Sort ascending',
-          cancelSort: 'Cancel sort',
+          triggerAsc: dict.action.sortasc,
+          triggerDesc: dict.action.sortdesc,
+          cancelSort: dict.action.clearSort,
+          filterConfirm: dict.action.update.toUpperCase(),
+          filterReset: dict.action.clear.toUpperCase(),
+          filterEmptyText: dict.message.noData,
+          filterSearchPlaceholder: dict.action.search,
           emptyText: (
-            <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
-              <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
-              <span>{dict.message.noData}</span>
-            </div>
+            <span>{dict.message.noData}</span>
           )
         }}
       />

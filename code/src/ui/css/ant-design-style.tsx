@@ -30,12 +30,21 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
                         bodySortBg: "transparent",
                         headerSortActiveBg: "#105564",
                         headerSortHoverBg: "#105564",
+                        // Filter-related customization
+                        filterDropdownBg: 'var(--background-primary)',
+                        filterDropdownMenuBg: "var(--background-primary)",
+                        headerFilterHoverBg: 'rgba(221, 233, 255, 0.85)',
                     },
                     Pagination: {
                         colorText: 'var(--text-color-primary)',
                         colorPrimary: 'var(--text-color-links)',
                         colorBgContainer: 'var(--background-primary)',
                         itemInputBg: 'var(--background-secondary)',
+                    },
+                    Dropdown: {
+                        controlItemBgHover: "var(--background-tertiary)",
+                        controlItemBgActive: "var(--background-tertiary)",
+                        controlItemBgActiveHover: "var(--background-secondary)"
                     },
                     Select: {
                         colorText: 'var(--text-color-primary)',
