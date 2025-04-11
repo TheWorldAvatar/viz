@@ -95,7 +95,7 @@ app.prepare().then(() => {
         const keycloak = new Keycloak({ store: store });
         server.use(keycloak.middleware());
 
-        server.get('/session', keycloak.protect(), (req, res) => {
+        server.get('/api/userinfo', keycloak.protect(), (req, res) => {
             // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles
             const { name, resource_access } = req.kauth.grant.access_token.content;
             const roles = resource_access?.viz?.roles || [];
