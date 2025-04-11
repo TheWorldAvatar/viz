@@ -1,37 +1,29 @@
 "use client"
 
 import React, { cache, createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { PermissionScheme } from 'types/auth';
+import { PermissionScheme, SessionInfo } from 'types/auth';
 import { parsePermissions } from './session-utils';
 
-type SessionToken = {
-    name: string,
-    hasSession: boolean,
-    permissions?: PermissionScheme,
-};
-
-const SessionContext = createContext<SessionToken | null>(null);
+const SessionContext = createContext<SessionInfo>(null);
 
 export const SessionProvider = ({
     children,
 }: {
     children: React.ReactNode;
 }) => {
-    const [session, setSession] = useState<SessionToken>({
-        name: "",
-        hasSession: process.env.KEYCLOAK === "true",
-        permissions: null,
+    const [session, setSession] = useState<SessionInfo>({
+        userDisplayName: "",
+        permissionScheme: null,
     });
     useEffect(() => {
         const fetchSession = cache(async () => {
             try {
-                const response: Response = await fetch('/session');
+                const response: Response = await fetch('/api/userinfo');
                 if (response.ok) {
                     const session = await response.json();
                     setSession({
-                        name: session.name,
-                        hasSession: true,
-                        permissions: parsePermissions(session.roles),
+                        userDisplayName: session.name,
+                        permissionScheme: parsePermissions(session.roles),
                     });
                 }
             } catch (error) {
@@ -50,15 +42,12 @@ export const SessionProvider = ({
     );
 };
 
-export const useCurrentUser = (): string => {
+export const useUserDisplayName = (): string => {
     const context = useContext(SessionContext);
     if (!context) {
-        throw new Error("useCurrentUser must be used within a SessionProvider");
+        throw new Error("useUserDisplayName must be used within a SessionProvider");
     }
-    if (!context.hasSession) {
-        return null;
-    }
-    return context.name;
+    return context.userDisplayName;
 };
 
 export const usePermissionScheme = (): PermissionScheme => {
@@ -66,12 +55,6 @@ export const usePermissionScheme = (): PermissionScheme => {
     if (!context) {
         throw new Error("usePermissionScheme must be used within a SessionProvider");
     }
-    if (!context.hasSession) {
-        return {
-            route: null,
-            disabled: true, // No login session is present
-        };
-    }
-    return context.permissions;
+    return context.permissionScheme as PermissionScheme;
 };
 
