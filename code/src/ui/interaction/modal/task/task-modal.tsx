@@ -46,6 +46,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   Modal.setAppElement("#globalContainer");
   const dict: Dictionary = useDictionary();
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -258,28 +259,28 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
-            {(permissionScheme?.disabled || permissionScheme?.completeTask) &&
+            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask) &&
               props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"done_outline"}
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
-            {(permissionScheme?.disabled || permissionScheme?.operation) &&
+            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
               props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"assignment"}
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />}
-            {(permissionScheme?.disabled || permissionScheme?.operation) &&
+            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
               props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"cancel"}
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
               />}
-            {(permissionScheme?.disabled || permissionScheme?.reportTask) &&
+            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.reportTask) &&
               props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"report"}

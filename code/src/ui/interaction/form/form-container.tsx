@@ -54,6 +54,7 @@ export default function FormContainerComponent(
   const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -224,7 +225,7 @@ export default function FormContainerComponent(
           <ResponseComponent response={response} />
         )}
         <div className={styles["form-row"]}>
-          {(permissionScheme?.disabled || permissionScheme?.operation) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
             props.formType === Paths.REGISTRY &&
             !response && status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -234,7 +235,7 @@ export default function FormContainerComponent(
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {(permissionScheme?.disabled || permissionScheme?.operation) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
@@ -245,7 +246,7 @@ export default function FormContainerComponent(
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
-          {(permissionScheme?.disabled || permissionScheme?.sales) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
@@ -255,7 +256,7 @@ export default function FormContainerComponent(
                 onClick={onApproval}
               />
             )}
-          {(permissionScheme?.disabled || permissionScheme?.sales) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
@@ -267,7 +268,7 @@ export default function FormContainerComponent(
                 isActive={false}
               />
             )}
-          {(permissionScheme?.disabled || permissionScheme?.sales) &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
