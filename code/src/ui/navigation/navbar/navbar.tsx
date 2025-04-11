@@ -12,7 +12,6 @@ import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
 import AuthenticationWidget from 'ui/interaction/auth/authentication-widget';
 import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
-import { useCurrentUser } from 'utils/auth/SessionContext';
 import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import NavbarComponent from './navbar-component';
 
@@ -27,8 +26,6 @@ interface NavbarProps {
  */
 export default function Navbar(props: Readonly<NavbarProps>) {
   const dict = useDictionary();
-  const user: string = useCurrentUser();
-
   const navbarDict = dict.nav;
   const contextDict = dict.context;
   const navbarItem: ContextItemDefinition = useMemo(() => {
@@ -39,7 +36,9 @@ export default function Navbar(props: Readonly<NavbarProps>) {
       toggled: true
     };
   }, []);
+
   const dispatch = useDispatch();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   useEffect(() => {
     dispatch(addItem(navbarItem));
@@ -87,7 +86,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
 
       {/* Render each component as required */}
       <div className="navbarElements">
-        {user && <AuthenticationWidget user={user} />}
+        {keycloakEnabled && <AuthenticationWidget />}
         {props.settings?.modules?.landing &&
           <NavbarComponent
             name="LANDING"
