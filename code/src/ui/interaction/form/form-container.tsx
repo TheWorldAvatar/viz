@@ -31,7 +31,7 @@ import { FormTemplate } from "./template/form-template";
 import { Dictionary } from "types/dictionary";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
 import { PermissionScheme } from "types/auth";
-import { usePermissionScheme } from "utils/auth/SessionContext";
+import { usePermissionScheme } from "utils/auth/SessionInfo";
 
 interface FormContainerComponentProps {
   entityType: string;

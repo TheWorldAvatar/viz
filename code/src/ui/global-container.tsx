@@ -7,11 +7,11 @@ import { Provider } from 'react-redux';
 import { reduxStore } from 'app/store';
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { UISettings } from 'types/settings';
-import { SessionProvider } from 'utils/auth/SessionContext';
 import Trex from 'utils/trex';
 import ContextMenu from './interaction/context-menu/context-menu';
 import Navbar from './navigation/navbar/navbar';
 import Footer from './text/footer';
+import { SessionInfoProvider } from 'utils/auth/SessionInfo';
 
 // Incoming properties for global container
 interface GlobalContainerProps {

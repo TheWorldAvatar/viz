@@ -6,7 +6,7 @@ import { parsePermissions } from './session-utils';
 
 const SessionContext = createContext<SessionInfo>(null);
 
-export const SessionProvider = ({
+export const SessionInfoProvider = ({
     children,
 }: {
     children: React.ReactNode;

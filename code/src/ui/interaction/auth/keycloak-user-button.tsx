@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import styles from './keycloak-user-button.module.css';
-import { useUserDisplayName } from 'utils/auth/SessionContext';
+import { useUserDisplayName } from 'utils/auth/SessionInfo';
 
 
 const userDisplayName = useUserDisplayName();
