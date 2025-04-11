@@ -38,7 +38,9 @@ export default function Navbar(props: Readonly<NavbarProps>) {
       toggled: true
     };
   }, []);
+
   const dispatch = useDispatch();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   useEffect(() => {
     dispatch(addItem(navbarItem));
