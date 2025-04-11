@@ -10,7 +10,7 @@ import { useEffect, useMemo } from 'react';
 import { addItem, selectItem } from 'state/context-menu-slice';
 import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
-import KeycloakUserButton from 'ui/interaction/auth/authentication-widget';
+import KeycloakUserButton from 'ui/interaction/auth/keycloak-user-button';
 import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
 import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import NavbarComponent from './navbar-component';
