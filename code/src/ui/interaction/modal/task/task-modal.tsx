@@ -18,10 +18,10 @@ import { FormTemplate } from 'ui/interaction/form/template/form-template';
 import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
-import { usePermissionScheme } from 'utils/auth/SessionInfo';
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface TaskModalProps {
   entityType: string;

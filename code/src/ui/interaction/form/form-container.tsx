@@ -29,9 +29,9 @@ import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 import { Dictionary } from "types/dictionary";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
 import { PermissionScheme } from "types/auth";
-import { usePermissionScheme } from "utils/auth/SessionInfo";
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface FormContainerComponentProps {
   entityType: string;

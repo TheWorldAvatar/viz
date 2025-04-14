@@ -13,8 +13,8 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
-import { usePermissionScheme } from "utils/auth/SessionInfo";
+import { useDictionary } from 'hooks/useDictionary';
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface TableRibbonProps {
   path: string;

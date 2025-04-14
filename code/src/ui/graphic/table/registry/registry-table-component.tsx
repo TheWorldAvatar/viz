@@ -19,7 +19,7 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import RegistryTable from './registry-table';
 import TableRibbon from './ribbon/table-ribbon';
 import SummarySection from './ribbon/summary';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
 
 interface RegistryTableComponentProps {

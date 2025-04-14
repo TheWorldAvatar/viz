@@ -12,7 +12,7 @@ import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
 import KeycloakUserButton from 'ui/interaction/auth/keycloak-user-button';
 import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import NavbarComponent from './navbar-component';
 
 // Type definition for navbar properties

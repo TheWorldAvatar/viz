@@ -10,7 +10,7 @@ import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
 import { Dictionary } from "types/dictionary";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
 
 interface RegistryTableProps {
   recordType: string;

@@ -16,7 +16,7 @@ import { PermissionScheme } from 'types/auth';
 import { Dictionary } from 'types/dictionary';
 import { UISettings } from 'types/settings';
 import LandingImage from 'ui/graphic/image/landing';
-import { usePermissionScheme } from 'utils/auth/SessionInfo';
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { parseStringsForUrls, parseWordsForLabels } from 'utils/client-utils';
 import { DefaultPageThumbnail, DefaultPageThumbnailProps, MarkdownPageThumbnail } from './page-thumbnail';
 
