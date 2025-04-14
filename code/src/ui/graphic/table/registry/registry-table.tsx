@@ -199,7 +199,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     <AntDesignConfig>
       <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
         <Select
-          defaultValue={searchOptions.length > 0 ? searchOptions[0].value : undefined}
+          value={searchColumn}
           style={{ width: 180 }}
           onChange={handleColumnChange}
           options={searchOptions}
