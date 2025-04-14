@@ -11,7 +11,6 @@ import Trex from 'utils/trex';
 import ContextMenu from './interaction/context-menu/context-menu';
 import Navbar from './navigation/navbar/navbar';
 import Footer from './text/footer';
-import { SessionInfoProvider } from 'utils/auth/SessionInfo';
 
 // Incoming properties for global container
 interface GlobalContainerProps {
@@ -29,7 +28,6 @@ export default function GlobalContainer(
   const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const backgroundImageUrl: string = useBackgroundImageUrl();
-  const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -75,16 +73,9 @@ export default function GlobalContainer(
     <Footer />
   </div>;
 
-  return keycloakEnabled ? (
+  return (
     <Provider store={reduxStore}>
-      <SessionInfoProvider>
         {GlobalContainer}
-      </SessionInfoProvider>
     </Provider>
   )
-    : (
-      <Provider store={reduxStore}>
-        {GlobalContainer}
-      </Provider>
-    );
 }
