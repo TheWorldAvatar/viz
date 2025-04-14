@@ -5,12 +5,12 @@ import styles from './keycloak-user-button.module.css';
 import { useUserDisplayName } from 'hooks/auth/useUserDisplayName';
 
 
-const userDisplayName = useUserDisplayName();
 /**
  * This component renders a widget that displays the user and a log out button.
- *
- */
+*
+*/
 export default function KeycloakUserButton() {
+    const userDisplayName = useUserDisplayName();
     return (
         <div id="keycloakSession" className={styles.keycloakSession}>
             <span id="userName" className={styles.dropbtn}>{userDisplayName}</span>
