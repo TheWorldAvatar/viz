@@ -1,10 +1,13 @@
 "use client"
 
-import React, { cache, createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { PermissionScheme, SessionInfo } from 'types/auth';
+import React, { cache, createContext, useEffect, useMemo, useState } from 'react';
+import { SessionInfo } from 'types/auth';
 import { parsePermissions } from './session-utils';
 
-const SessionContext = createContext<SessionInfo>(null);
+export const SessionContext = createContext<SessionInfo>(null);
+
+
+
 
 export const SessionInfoProvider = ({
     children,
@@ -40,21 +43,4 @@ export const SessionInfoProvider = ({
             {children}
         </SessionContext.Provider>
     );
-};
-
-export const useUserDisplayName = (): string => {
-    const context = useContext(SessionContext);
-    if (!context) {
-        throw new Error("useUserDisplayName must be used within a SessionProvider");
-    }
-    return context.userDisplayName;
-};
-
-export const usePermissionScheme = (): PermissionScheme => {
-    const context = useContext(SessionContext);
-    if (!context) {
-        throw new Error("usePermissionScheme must be used within a SessionProvider");
-    }
-    return context.permissionScheme as PermissionScheme;
-};
-
+}
