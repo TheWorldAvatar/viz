@@ -196,13 +196,19 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <AntDesignConfig>
-      <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+      <div style={{
+        marginBottom: 16,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
         <Select
           value={searchColumn}
           style={{ width: 180 }}
           onChange={handleColumnChange}
           options={searchOptions}
-          placeholder={dict.action.selectColumn || 'Select column'}
+          placeholder={dict.action.selectColumn}
         />
         <Input
           placeholder={dict.action.search}
@@ -213,17 +219,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         />
         <ClickActionButton
           icon="update"
-          tooltipText={dict.action.update || 'Update'}
+          tooltipText={dict.action.update}
           onClick={handleUpdate}
           isHoverableDisabled={!searchText || !searchColumn}
         />
         <ClickActionButton
           icon="close"
-          tooltipText={dict.action.clear || 'Clear'}
+          tooltipText={dict.action.clear}
           onClick={handleClear}
           isHoverableDisabled={!appliedSearchText && !appliedSearchColumn}
         />
-      </Space>
+      </div>
       <Table
         className={styles["table"]}
         rowClassName={styles["row"]}
