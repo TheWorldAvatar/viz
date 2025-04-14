@@ -1,6 +1,6 @@
 import styles from "./registry.table.module.css";
 
-import { Input, Space, Table, TableColumnsType, Typography, Select } from 'antd';
+import { Input, Space, Table, TableColumnsType, Typography, Select, Button } from 'antd';
 
 import React, { useState, useMemo } from 'react';
 import { FieldValues } from "react-hook-form";
@@ -34,6 +34,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const [searchText, setSearchText] = useState<string>('');
   const [searchColumn, setSearchColumn] = useState<string>('');
+
+  // Add states for the applied filters
+  const [appliedSearchText, setAppliedSearchText] = useState<string>('');
+  const [appliedSearchColumn, setAppliedSearchColumn] = useState<string>('');
 
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
@@ -156,17 +160,31 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   // Filter function that respects column selection
   const filteredData = useMemo(() => {
-    if (!searchText.trim() || !searchColumn) return data;
+    if (!appliedSearchText.trim() || !appliedSearchColumn) return data;
 
     return data.filter((record) => {
       // Search only the selected column
-      const value = record[searchColumn];
+      const value = record[appliedSearchColumn];
       if (typeof value === 'string') {
-        return value.toLowerCase().includes(searchText.toLowerCase());
+        return value.toLowerCase().includes(appliedSearchText.toLowerCase());
       }
       return false;
     });
-  }, [data, searchText, searchColumn]);
+  }, [data, appliedSearchText, appliedSearchColumn]);
+
+  // Handler for the Update button
+  const handleUpdate = () => {
+    setAppliedSearchText(searchText);
+    setAppliedSearchColumn(searchColumn);
+  };
+
+  // Handler for the Clear button
+  const handleClear = () => {
+    setSearchText('');
+    setSearchColumn('');
+    setAppliedSearchText('');
+    setAppliedSearchColumn('');
+  };
 
   // Search input handler
   const handleColumnChange = (value: string) => {
@@ -189,11 +207,24 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         />
         <Input
           placeholder={dict.action.search}
+          value={searchText}
           onChange={handleSearch}
           prefix={<span className="material-symbols-outlined">search</span>}
-          allowClear
           style={{ width: 300 }}
         />
+        <Button
+          type="primary"
+          onClick={handleUpdate}
+          disabled={!searchText || !searchColumn}
+        >
+          {dict.action.update || 'Update'}
+        </Button>
+        <Button
+          onClick={handleClear}
+          disabled={!appliedSearchText && !appliedSearchColumn}
+        >
+          {dict.action.clear || 'Clear'}
+        </Button>
       </Space>
       <Table
         className={styles["table"]}
