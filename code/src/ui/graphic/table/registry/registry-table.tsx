@@ -181,9 +181,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   // Handler for the Clear button
   const handleClear = () => {
     setSearchText('');
-    setSearchColumn('');
     setAppliedSearchText('');
-    setAppliedSearchColumn('');
   };
 
   // Search input handler
@@ -213,6 +211,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           style={{ width: 300 }}
         />
         <Button
+          style={{
+            backgroundColor: 'var(--button-color-primary)',
+            borderColor: 'var(--button-color-primary)',
+            color: 'var(--background-primary)'
+          }}
           type="primary"
           onClick={handleUpdate}
           disabled={!searchText || !searchColumn}
@@ -220,6 +223,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           {dict.action.update || 'Update'}
         </Button>
         <Button
+          style={{
+            backgroundColor: 'rgb(var(--alert-color))',
+            borderColor: 'rgb(var(--alert-color))',
+            color: 'var(--background-primary)'
+          }}
           onClick={handleClear}
           disabled={!appliedSearchText && !appliedSearchColumn}
         >
