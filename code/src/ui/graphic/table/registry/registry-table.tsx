@@ -1,6 +1,6 @@
 import styles from "./registry.table.module.css";
 
-import { Input, Space, Table, TableColumnsType, Typography, Select, Button } from 'antd';
+import { Input, Space, Table, TableColumnsType, Typography, Select } from 'antd';
 
 import React, { useState, useMemo } from 'react';
 import { FieldValues } from "react-hook-form";
@@ -12,6 +12,7 @@ import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
 import RegistryRowActions from "./actions/registry-table-action";
+import ClickActionButton from "ui/interaction/action/click/click-button";
 
 interface RegistryTableProps {
   recordType: string;
@@ -208,31 +209,20 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           value={searchText}
           onChange={handleSearch}
           prefix={<span className="material-symbols-outlined">search</span>}
-          style={{ width: 300 }}
+          style={{ width: 200 }}
         />
-        <Button
-          style={{
-            backgroundColor: 'var(--button-color-primary)',
-            borderColor: 'var(--button-color-primary)',
-            color: 'var(--background-primary)'
-          }}
-          type="primary"
+        <ClickActionButton
+          icon="update"
+          tooltipText={dict.action.update || 'Update'}
           onClick={handleUpdate}
-          disabled={!searchText || !searchColumn}
-        >
-          {dict.action.update || 'Update'}
-        </Button>
-        <Button
-          style={{
-            backgroundColor: 'rgb(var(--alert-color))',
-            borderColor: 'rgb(var(--alert-color))',
-            color: 'var(--background-primary)'
-          }}
+          isHoverableDisabled={!searchText || !searchColumn}
+        />
+        <ClickActionButton
+          icon="close"
+          tooltipText={dict.action.clear || 'Clear'}
           onClick={handleClear}
-          disabled={!appliedSearchText && !appliedSearchColumn}
-        >
-          {dict.action.clear || 'Clear'}
-        </Button>
+          isHoverableDisabled={!appliedSearchText && !appliedSearchColumn}
+        />
       </Space>
       <Table
         className={styles["table"]}
