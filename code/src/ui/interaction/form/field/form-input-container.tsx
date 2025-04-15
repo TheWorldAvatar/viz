@@ -2,14 +2,12 @@ import styles from "./field.module.css";
 
 import React from "react";
 import { FieldError } from "react-hook-form";
-import { Dictionary } from "types/dictionary";
 
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
 import ClickActionButton from "ui/interaction/action/click/click-button";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -39,7 +37,7 @@ export default function FormInputContainer(
 ) {
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
-  const dict: Dictionary = useDictionary();
+
   return (
     <>
       <label className={labelClassNames} htmlFor={props.field.fieldId}>
@@ -55,7 +53,7 @@ export default function FormInputContainer(
             icon="add"
             url={props.redirectOptions.addUrl}
             isActive={false}
-            isTransparent={true}
+            isTransparent= {true}
           />
         )}
       </label>
@@ -63,7 +61,7 @@ export default function FormInputContainer(
       {props.field.description[VALUE_KEY] != "" && (
         <div className={styles["info-text-container"]}>
           <p className={styles["info-text"]}>
-            <b className={styles["field-text"]}>{dict.title.description}:&nbsp;</b>{" "}
+            <b className={styles["field-text"]}>Description:&nbsp;</b>{" "}
             {props.field.description[VALUE_KEY]}
             {props.selectedOption && (
               <>

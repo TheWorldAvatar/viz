@@ -4,12 +4,10 @@ import React, { useEffect } from 'react';
 import { useFieldArray, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
-import { Dictionary } from 'types/dictionary';
 import { PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
 import { isValidIRI } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import FormFieldComponent from '../form-field';
 
 export interface FormArrayProps {
@@ -33,7 +31,6 @@ export interface FormArrayProps {
 export default function FormArray(props: Readonly<FormArrayProps>) {
   const { control } = props.form;
   const backgroundImageUrl: string = useBackgroundImageUrl();
-  const dict: Dictionary = useDictionary();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -76,7 +73,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             <span className={styles["row-header"]}>
               <p className={styles["row-text"]}>
                 <span className={styles["row-marker"]}>{index + 1}</span>
-                {index == fieldSize && dict.message.arrayInstruction}
+                {index == fieldSize && "Fill in the details to create a new entry"}
               </p>
               {index < fieldSize && <ClickActionButton
                 icon={"remove"}

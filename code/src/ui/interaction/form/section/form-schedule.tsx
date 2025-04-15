@@ -6,7 +6,6 @@ import { UseFormReturn } from "react-hook-form";
 import Select from "react-select";
 
 import { Paths } from "io/config/routes";
-import { Dictionary } from "types/dictionary";
 import {
   FormOptionType,
   RegistryFieldValues,
@@ -15,7 +14,6 @@ import {
 import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
@@ -50,19 +48,18 @@ export const daysOfWeek: string[] = [
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
-  const dict: Dictionary = useDictionary();
   const daysOfWeekLabel: string[] = [
-    dict.form.sun,
-    dict.form.mon,
-    dict.form.tue,
-    dict.form.wed,
-    dict.form.thu,
-    dict.form.fri,
-    dict.form.sat,
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
   ];
-  const singleService: string = dict.form.singleService;
-  const regularService: string = dict.form.regularService;
-  const alternateService: string = dict.form.alternateService;
+  const singleService: string = "Single Service";
+  const regularService: string = "Regular Service";
+  const alternateService: string = "Alternate Day Service";
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
   };
@@ -129,11 +126,11 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   // Updates the service description whenever the service option changes
   const serviceDescription = useMemo((): string => {
     if (selectedServiceOption === singleService) {
-      return dict.form.singleServiceDesc;
+      return "A one-off service that will occur once on the specified date.";
     } else if (selectedServiceOption === alternateService) {
-      return dict.form.alternateServiceDesc;
+      return "A service that will occur on every alternate day within the specified period.";
     } else {
-      return dict.form.regularServiceDesc;
+      return "A service that will occur regularly based on the schedule within the specified period.";
     }
   }, [selectedServiceOption]);
 
@@ -162,7 +159,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         <>
           <div className={fieldStyles["form-field-container"]}>
             <label className={fieldStyles["field-text"]} htmlFor="select-input">
-              {dict.title.serviceType}
+              Service Type
             </label>
             <Select
               styles={selectorStyles}
@@ -187,7 +184,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               }
             />
             <p className={fieldStyles["info-text"]}>
-              <b className={fieldStyles["field-text"]}>{dict.title.description}: </b>
+              <b className={fieldStyles["field-text"]}>Description: </b>
               {serviceDescription}
             </p>
           </div>
@@ -198,7 +195,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               name: { "@value": FORM_STATES.START_DATE },
               fieldId: FORM_STATES.START_DATE,
               datatype: "date",
-              description: { "@value": dict.form.startDateDesc },
+              description: { "@value": "Effective start date of service" },
               order: 0,
             }}
             form={props.form}
@@ -212,7 +209,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 name: { "@value": FORM_STATES.END_DATE },
                 fieldId: FORM_STATES.END_DATE,
                 datatype: "date",
-                description: { "@value": dict.form.endDateDesc },
+                description: { "@value": "Effective end date of service" },
                 order: 0,
               }}
               form={props.form}
@@ -223,7 +220,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             <div className={styles["schedule-occurrence-container"]}>
               <div style={{ margin: "0 0 0.75rem" }}>
                 <span className={fieldStyles["field-text"]}>
-                  {dict.form.repeatEvery}
+                  Repeat once every
                 </span>
                 <input
                   id={FORM_STATES.RECURRENCE}
@@ -237,9 +234,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   aria-label={FORM_STATES.RECURRENCE}
                   {...props.form.register(FORM_STATES.RECURRENCE)}
                 />
-                <span className={fieldStyles["field-text"]}>
-                  {dict.form.week}
-                </span>
+                <span className={fieldStyles["field-text"]}>week</span>
               </div>
               <div className={styles["schedule-day-container"]}>
                 {daysOfWeek.map((dayOfWeek, index) => {
@@ -261,7 +256,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               className={fieldStyles["field-text"]}
               style={{ margin: "0 0.25rem" }}
             >
-              {dict.form.timeSlot}
+              Time Slot
             </h1>
             <FormFieldComponent
               field={{

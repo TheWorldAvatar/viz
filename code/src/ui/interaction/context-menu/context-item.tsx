@@ -8,9 +8,8 @@ import Icon from '@mui/material/Icon';
 export interface ContextItemDefinition {
     name: string,
     description?: string,
-    id: string
     toggled?: boolean,
-    callback?: (_id: string) => void
+    callback?: (_name: string) => void
 }
 
 /**
@@ -23,7 +22,7 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
 
     // Update state and fire callback
     const handleClick = () => {
-        if(props.callback != null) props.callback(props.id);
+        if(props.callback != null) props.callback(props.name);
     }
 
     // Return item for rendering

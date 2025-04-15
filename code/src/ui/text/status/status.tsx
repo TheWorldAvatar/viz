@@ -1,4 +1,3 @@
-import { Dictionary } from 'types/dictionary';
 import styles from './status.module.css';
 
 export const Status: {
@@ -18,33 +17,6 @@ export const Status: {
 
 interface StatusComponentProps<> {
   status: string;
-}
-
-export function getTranslatedStatusLabel(status: string, dict: Dictionary): string {
-  switch (status.toLowerCase()) {
-    case Status.AVAILABLE:
-      return dict.title.available;
-    case Status.UNAVAILABLE:
-      return dict.title.unavailable;
-    case Status.ACTIVE:
-      return dict.title.active;
-    case Status.COMPLETED:
-      return dict.title.completed;
-    case Status.CANCELLED:
-      return dict.title.cancelled;
-    case Status.INCOMPLETE:
-      return dict.title.incomplete;
-    case Status.RESCINDED:
-      return dict.title.rescinded;
-    case Status.TERMINATED:
-      return dict.title.terminated;
-    case Status.PENDING_DISPATCH:
-      return dict.title.pendingDispatch;
-    case Status.PENDING_EXECUTION:
-      return dict.title.pendingExecution;
-    default:
-      return null;
-  }
 }
 
 /**

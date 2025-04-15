@@ -12,9 +12,6 @@ import OptionalPages from 'io/config/optional-pages';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import GlobalContainer from 'ui/global-container';
-import { getDictionary } from 'utils/dictionary/dictionaries';
-import { DictionaryProvider } from 'utils/dictionary/DictionaryContext';
-import { Dictionary } from 'types/dictionary';
 
 /**
  * Performs initialisation when the platform is
@@ -29,14 +26,7 @@ function initialise() {
 const dosis = Dosis({
     subsets: ['latin'],
     display: 'swap',
-})
-
-export function generateStaticParams() {
-    return [
-        { lang: 'en' },
-        { lang: 'de' },
-    ];
-}
+  })
 
 /**
  * Define a root layout template to be used for all generated HTML files.
@@ -45,28 +35,21 @@ export function generateStaticParams() {
  * 
  * @returns generated React nodes.
  */
-export default async function RootLayout({ children, modal, params }: Readonly<{
-    children: React.ReactNode;
-    modal: React.ReactNode;
-    params: Promise<{ lang: string }>;
-}>) {
+export default function RootLayout({ children, modal }: { children: React.ReactNode; modal: React.ReactNode; }) {
     // Initialise static content
     initialise();
+
     // Get settings to pass to Toolbar
     const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-    const { lang } = await params;
-    const dictionary: Dictionary = await getDictionary(lang);
 
     // Root element containing all children.
     return (
-        <html lang={lang} className={dosis.className}>
+        <html lang="en" className={dosis.className}>
             <body>
-                <DictionaryProvider dictionary={dictionary}>
-                    <GlobalContainer settings={uiSettings}>
-                        {children}
-                        {modal}
-                    </GlobalContainer>
-                </DictionaryProvider>
+                <GlobalContainer settings={uiSettings}>
+                    {children}
+                    {modal}
+                </GlobalContainer>
                 <ToastContainer />
             </body>
         </html>

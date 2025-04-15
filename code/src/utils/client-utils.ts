@@ -89,15 +89,6 @@ export function parseStringsForUrls(str: string): string {
 }
 
 /**
- * Retrieves the ID from input.
- * 
- * @param {string} input input string.
- */
-export function getId(input: string): string {
-    return isValidIRI(input) ? getAfterDelimiter(input, "/") : input;
-}
-
-/**
  * Checks that the input iri is valid.
  * 
  * @param {string} iri input iri.

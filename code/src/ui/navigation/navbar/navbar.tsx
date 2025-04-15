@@ -2,17 +2,15 @@
 
 import styles from './navbar.module.css';
 
-import KeycloakSession from 'authorisation/keycloak-session';
+import { useSelector } from 'react-redux';
 import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
+import KeycloakSession from 'authorisation/keycloak-session';
 
 import { Routes } from 'io/config/routes';
-import { useEffect, useMemo } from 'react';
-import { addItem, selectItem } from 'state/context-menu-slice';
+import { selectItem } from 'state/context-menu-slice';
 import { UISettings } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
-import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { navbarItem } from 'ui/interaction/context-menu/context-menu';
 import NavbarComponent from './navbar-component';
 
 // Type definition for navbar properties
@@ -25,27 +23,10 @@ interface NavbarProps {
  * custom navbar components.
  */
 export default function Navbar(props: Readonly<NavbarProps>) {
-  const dict = useDictionary();
-  const navbarDict = dict.nav;
-  const contextDict = dict.context;
-  const navbarItem: ContextItemDefinition = useMemo(() => {
-    return {
-      name: contextDict.navBar.title,
-      description: contextDict.navBar.tooltip,
-      id: "navbar",
-      toggled: true
-    };
-  }, []);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-  dispatch(addItem(navbarItem));
-  }, [])
-
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
 
   // Visibility state of navigation bar
-  const navbarState = useSelector(selectItem(navbarItem.id));
+  const navbarState = useSelector(selectItem(navbarItem.name));
 
   // Do not show if state exists and is disabled
   if (navbarState?.toggled != null && !navbarState.toggled) {
@@ -90,35 +71,35 @@ export default function Navbar(props: Readonly<NavbarProps>) {
         {props.settings?.modules?.landing &&
           <NavbarComponent
             name="LANDING"
-            tooltip={navbarDict.tooltip.home}
+            tooltip="Return to landing page."
             icon="home"
             url={Routes.HOME} />
         }
         {props.settings?.modules?.map &&
           <NavbarComponent
             name="MAP"
-            tooltip={navbarDict.tooltip.map}
+            tooltip="Geospatial view."
             icon="public"
             url={Routes.MAP} />
         }
         {props.settings?.modules?.dashboard &&
           <NavbarComponent
             name="DASH"
-            tooltip={navbarDict.tooltip.dashboard}
+            tooltip="Analytics view."
             icon="monitoring"
             url={Routes.DASHBOARD} />
         }
         {props.settings?.modules?.help &&
           <NavbarComponent
             name="HELP"
-            tooltip={navbarDict.tooltip.help}
+            tooltip="Open help page."
             icon="help"
             url={Routes.HELP} />
         }
         {props.settings?.modules?.registry &&
           <NavbarComponent
             name="REGISTRY"
-            tooltip={navbarDict.tooltip.registry}
+            tooltip="Open registry."
             icon="contract"
             url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`} />
         }

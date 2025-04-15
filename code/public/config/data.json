@@ -1,72 +1,86 @@
 {
-  "name": "All Data",
+  "name": "Cambridge",
+  "tree-icon": "/images/duck.svg",
   "groups": [
     {
-      "name": "Trajectory lines",
-      "expanded": true,
-      "stack": "http://10.25.188.143:3838",
-      "search": "trajectory",
+      "name": "Colleges",
+      "tree-icon": "/images/tub.svg",
+      "expanded": false,
       "sources": [
         {
-          "type": "vector",
-          "tiles": [
-            "http://localhost:3838/geoserver/twa/wms?service=WMS&version=1.1.0&request=GetMap&layers=twa:trucks&bbox={bbox-epsg-3857}&width=256&height=256&srs=EPSG:3857&format=application/vnd.mapbox-vector-tile"
-          ],
-          "id": "trajectory_lines"
+          "id": "college-source",
+          "type": "geojson",
+          "data": "/data/cambridge-colleges.geojson"
         }
       ],
       "layers": [
         {
-          "id": "trajectory_lines",
-          "name": "Trucks",
-          "source": "trajectory_lines",
-          "source-layer": "trucks",
-          "type": "line",
-          "order": 2,
+          "id": "colleges-layer-before",
+          "grouping": "Founding Year",
+          "name": "Before 1600",
+          "source": "college-source",
+          "type": "symbol",
+          "filter": ["<=", ["get", "founded"], 1600],
           "layout": {
-            "visibility": "none"
-          },
-          "paint": {
-            "line-color": [
-              "get",
-              "truck_colour"
-            ],
-            "line-width": 3
+            "icon-image": "christs",
+            "icon-size": ["interpolate", ["linear"], ["zoom"], 12, 0.25, 20, 0.5],
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        {
+          "id": "colleges-layer-after",
+          "grouping": "Founding Year",
+          "name": "After 1600",
+          "source": "college-source",
+          "type": "symbol",
+          "filter": [">", ["get", "founded"], 1600],
+          "layout": {
+            "icon-image": "christs",
+            "icon-size": ["interpolate", ["linear"], ["zoom"], 12, 0.25, 20, 0.5],
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
+          }
+        },
+        {
+          "id": "colleges-layer",
+          "grouping": "Default",
+          "name": "All Groupings",
+          "source": "college-source",
+          "type": "symbol",
+          "layout": {
+            "icon-image": ["get", "icon-image"],
+            "icon-size": ["interpolate", ["linear"], ["zoom"], 12, 0.25, 20, 0.5],
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true
           }
         }
       ]
     },
     {
-      "name": "Latest locations",
+      "name": "Travelling paths",
       "expanded": true,
-      "stack": "http://localhost:3838",
       "sources": [
         {
-          "type": "vector",
-          "tiles": [
-            "http://localhost:3838/geoserver/twa/wms?service=WMS&version=1.1.0&request=GetMap&layers=twa:trucks_latest&bbox={bbox-epsg-3857}&width=256&height=256&srs=EPSG:3857&format=application/vnd.mapbox-vector-tile"
-          ],
-          "id": "trucks_latest"
+          "id": "lines-source",
+          "type": "geojson",
+          "data": "/data/lines.geojson"
         }
       ],
       "layers": [
         {
-          "id": "trucks_latest",
-          "name": "Latest",
-          "source": "trucks_latest",
-          "source-layer": "trucks_latest",
-          "type": "circle",
-          "order": 1,
+          "id": "lines-layer",
+          "name": "Sample vector paths",
+          "source": "lines-source",
+          "type": "line",
           "layout": {
-            "visibility": "none"
+              "visibility": "visible"
           },
           "paint": {
-            "circle-color": [
-              "get",
-              "truck_colour"
-            ]
+              "line-color": "#d35230",
+              "line-width": 3
           }
-        }
+      }
       ]
     }
   ]

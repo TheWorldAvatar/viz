@@ -4,10 +4,8 @@ import styles from './feature-selector.module.css';
 import React from 'react';
 
 import { MapFeaturePayload } from 'state/map-feature-slice';
-import { Dictionary } from 'types/dictionary';
 import GroupDropdownField from 'ui/interaction/dropdown/group-dropdown';
 import { setSelectedFeature } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 
 interface FeatureSelectorProps {
   features: MapFeaturePayload[];
@@ -20,7 +18,6 @@ interface FeatureSelectorProps {
  */
 export default function FeatureSelector(props: Readonly<FeatureSelectorProps>) {
   const dispatch = useDispatch();
-  const dict: Dictionary = useDictionary();
 
   const handleSelectorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedFeature: MapFeaturePayload = props.features.find((feature) => feature.name === event.target.value);
@@ -29,10 +26,10 @@ export default function FeatureSelector(props: Readonly<FeatureSelectorProps>) {
 
   return (
     <div className={styles["container"]}>
-      <p>{dict.message.mapOverlapFeatures}</p>
+      <p>Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information.</p>
       <div className={styles["select-container"]}>
         <GroupDropdownField
-          placeholderText={dict.message.mapSelectInstruction}
+          placeholderText="Select a feature..."
           options={extractNames(props.features)}
           groups={extractGroups(props.features)}
           handleChange={handleSelectorChange}

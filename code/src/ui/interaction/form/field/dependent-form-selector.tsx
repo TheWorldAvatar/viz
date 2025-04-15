@@ -1,10 +1,8 @@
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
-import { Dictionary } from 'types/dictionary';
 import { FormOptionType, PropertyShape } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import FormInputContainer from './form-input-container';
 
 interface FormSelectorProps {
@@ -34,7 +32,6 @@ interface FormSelectorProps {
  * @param redirectOptions Optional redirect options for adding a new entity or viewing an existing entity.
  */
 export default function DependentFormSelector(props: Readonly<FormSelectorProps>) {
-  const dict: Dictionary = useDictionary();
   return (
     <FormInputContainer
       field={props.field}
@@ -57,7 +54,7 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
             isMulti={false}
             isSearchable={true}
             isDisabled={props.options.disabled}
-            noOptionsMessage={() => dict.message.noInstances}
+            noOptionsMessage={() => "No instances available. Please create a new instance."}
           />
         )}
       />

@@ -2,8 +2,6 @@ import styles from "../form.module.css";
 
 import { UseFormReturn } from "react-hook-form";
 
-import { Dictionary } from "types/dictionary";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 
@@ -19,13 +17,12 @@ interface FormSearchPeriodProps {
 export default function FormSearchPeriod(
   props: Readonly<FormSearchPeriodProps>
 ) {
-  const dict: Dictionary = useDictionary();
   return (
     <fieldset
       className={styles["form-fieldset"]}
       style={{ marginBottom: "1rem" }}
     >
-      <legend className={styles["form-fieldset-label"]}>{dict.title.searchPeriod}</legend>
+      <legend className={styles["form-fieldset-label"]}>Search Period</legend>
       <FormFieldComponent
         field={{
           "@id": "string",
@@ -34,7 +31,7 @@ export default function FormSearchPeriod(
           fieldId: FORM_STATES.START_TIME_PERIOD,
           datatype: "dateTime",
           description: {
-            "@value": dict.form.searchStartTimeDesc,
+            "@value": "Select the starting date/time for your search.",
           },
           order: 0,
         }}
@@ -48,7 +45,7 @@ export default function FormSearchPeriod(
           fieldId: FORM_STATES.END_TIME_PERIOD,
           datatype: "dateTime",
           description: {
-            "@value": dict.form.searchEndTimeDesc,
+            "@value": "Select the ending date/time for your search.",
           },
           order: 0,
         }}

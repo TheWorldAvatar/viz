@@ -6,11 +6,9 @@ import { FieldValues, UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
 import { Routes } from 'io/config/routes';
-import { Dictionary } from 'types/dictionary';
 import { FormOptionType, NodeShape, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
 import { parseWordsForLabels } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
 
@@ -69,7 +67,6 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
     return nodeWithMostNonEmpty;
   }, []);
 
-  const dict: Dictionary = useDictionary();
   // Extract the initial node shape
   const initialNodeShape: NodeShape = useMemo(() => {
     return getBranchNode(props.node);
@@ -118,7 +115,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
   return (
     <>
       <div className={styles["section-selector-container"]}>
-        <label className={fieldStyles["field-text"]} htmlFor="select-input">{dict.message.branchInstruction}:</label>
+        <label className={fieldStyles["field-text"]} htmlFor="select-input">Select the best category for your request:</label>
         <Select
           styles={selectorStyles}
           unstyled
@@ -131,7 +128,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
           isDisabled={props.form.getValues(FORM_STATES.FORM_TYPE) == Routes.REGISTRY_DELETE || props.form.getValues(FORM_STATES.FORM_TYPE) == Routes.REGISTRY}
         />
         <p className={fieldStyles["info-text"]}>
-          <b className={fieldStyles["field-text"]}>{dict.title.description}: </b>
+          <b className={fieldStyles["field-text"]}>Description: </b>
           {selectedModel?.comment[VALUE_KEY]}
         </p>
       </div>

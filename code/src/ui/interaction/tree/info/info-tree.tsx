@@ -4,14 +4,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getHasExistingData } from 'state/floating-panel-slice';
-import { MapFeaturePayload } from 'state/map-feature-slice';
-import { AttributeGroup } from 'types/attribute';
-import { Dictionary } from 'types/dictionary';
 import { TimeSeries } from 'types/timeseries';
+import { AttributeGroup } from 'types/attribute';
+import { MapFeaturePayload } from 'state/map-feature-slice';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import FeatureSelector from 'ui/interaction/dropdown/feature-selector';
 import { setSelectedFeature } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import AttributeRoot from './attribute-root';
 import InfoTabs from './info-tabs';
 import TimeSeriesPanel from './time-series-panel';
@@ -46,7 +44,6 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
-  const dict: Dictionary = useDictionary();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -92,7 +89,7 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
       );
     }
     // Placeholder text when there are no initial data or selected feature
-    return <div className={styles.initialContent}>{dict.message.mapSelectFeature}</div>;
+    return <div className={styles.initialContent}>Select a feature on the map to explore its information in detail.</div>;
   }
 
 

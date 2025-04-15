@@ -9,13 +9,11 @@ import { DataStore } from 'io/data/data-store';
 import { selectDimensionSliderValue } from 'state/dimension-slider-slice';
 import { getIndex, setIndex } from 'state/floating-panel-slice';
 import { getFeatures, getFilterTimes, getIri, getProperties, getScenarioID, getStack, MapFeaturePayload } from 'state/map-feature-slice';
-import { Dictionary } from 'types/dictionary';
 import { MapLayerGroup } from 'types/map-layer';
 import { IconSettings, LegendSettings } from 'types/settings';
 import { ScenarioDimensionsData } from 'types/timeseries';
 import DimensionSlider from 'ui/interaction/controls/slider';
 import { generateFIAEndpoint, useFeatureInfoAgentService } from 'utils/data-services';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import InfoTree from './info/info-tree';
 import LayerTree, { parseIntoTreeStucture } from './layer/layer-tree';
 import LegendTree from './legend/legend-tree';
@@ -45,7 +43,6 @@ export default function FloatingPanelContainer(
   const showInfo = props.hideInfo == null || !props.hideInfo;
 
   const dispatch = useDispatch();
-  const dict: Dictionary = useDictionary();
   const activeIndex = useSelector(getIndex);
   const selectedIri = useSelector(getIri);
   const selectedProperties = useSelector(getProperties);
@@ -87,7 +84,7 @@ export default function FloatingPanelContainer(
           onClick={() => clickAction(0)}
         >
           <Tooltip
-            title={dict.map.title.layerSelection}
+            title="Layer Selection"
             enterDelay={1000}
             leaveDelay={100}
             placement="bottom-start"
@@ -103,7 +100,7 @@ export default function FloatingPanelContainer(
             onClick={() => clickAction(1)}
           >
             <Tooltip
-              title={dict.map.title.legend}
+              title="Key/Legend"
               enterDelay={1000}
               leaveDelay={100}
               placement="bottom-start"
@@ -120,7 +117,7 @@ export default function FloatingPanelContainer(
             onClick={() => clickAction(2)}
           >
             <Tooltip
-              title={dict.map.title.information}
+              title="Information"
               enterDelay={1000}
               leaveDelay={100}
               placement="bottom-start"
@@ -135,7 +132,7 @@ export default function FloatingPanelContainer(
           className={styles.expandButton}
           onClick={() => setIsPanelVisible(!isPanelVisible)}>
           <Tooltip
-            title={isPanelVisible ? dict.map.tooltip.collapsePanel : dict.map.tooltip.expandPanel}
+            title={isPanelVisible ? "Collapse Panel" : "Expand Panel"}
             enterDelay={500}
             leaveDelay={200}
           >

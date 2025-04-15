@@ -18,7 +18,7 @@
 }
 
 .title h1 {
-  color: var(--text-color-primary);
+  color: var(text-color-title-primary);
   font-size: var(--font-size-h1);
   text-align: center;
 }
@@ -38,23 +38,41 @@
 
 .table {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
+
+  border-spacing: 0;
+  border-collapse: separate;
 }
 
 .header {
-  border-bottom: none !important;
+  padding: 0.5rem 0;
+  background-color: var(--text-color-links);
+  color: var(--background-primary);
 }
 
-.row:nth-child(even) {
-  background: rgba(131, 195, 141, 0.8);
+.header-text {
+  font-size: var(--font-size-primary-text);
 }
 
-.row:nth-child(odd) {
-  background: rgba(124, 203, 219, 0.8);
+.body-cell {
+  border: none;
+  font-size: var(--font-size-secondary-text);
 }
 
-.row-cell {
-  font-size: var(--font-size-secondary-text) !important;
+.even-row {
+  background-color: rgba(131, 195, 141, 0.3);
+
+  &:hover {
+    background-color: var(--button-color-primary) !important;
+  }
+}
+
+.odd-row {
+  background-color: rgba(124, 203, 219, 0.3);
+
+  &:hover {
+    background-color: #7ccbdb80 !important;
+  }
 }
 
 .table-icon-cell {

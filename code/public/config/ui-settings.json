@@ -1,25 +1,14 @@
 {
-  "branding": {
-    "navbar": [
-      "/images/defaults/icons/twa.svg",
-      "/images/dewaste/cmcl-logo.svg",
-      "/images/dewaste/bnl.svg"
-    ],
-    "landing": "/images/defaults/icons/twa.svg",
-    "landingDark": "/images/defaults/icons/twa.svg"
-  },
-  "modules": {
-    "landing": true,
-    "help": true,
-    "map": true,
-    "dashboard": false,
-    "registry": true
-  },
-  "resources": {
-    "registry": {
-      "url": "http://localhost:3838/vis-backend-agent",
-      "data": "agreement"
+    "branding": {
+        "navbar": ["/images/defaults/icons/twa.svg"],
+        "landing": "/images/defaults/icons/cmcl-logo.svg",
+        "landingDark": "/images/defaults/icons/cmcl-logo.svg"
     },
-    "scenario": {}
-  }
+    "modules": {
+        "landing": true,
+        "help": true,
+        "map": true,
+        "dashboard": false,
+        "registry": false
+    }
 }

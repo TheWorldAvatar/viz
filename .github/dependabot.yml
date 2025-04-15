@@ -8,21 +8,11 @@ updates:
     directory: "/code"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "Ushcode"
-
-
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "Ushcode"
-
-      
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "Ushcode"

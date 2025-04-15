@@ -7,13 +7,11 @@ import { useProtectedRole } from "hooks/useProtectedRole";
 import React from "react";
 
 import { Routes } from "io/config/routes";
-import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import ClickActionButton from "ui/interaction/action/click/click-button";
 
 interface TableRibbonProps {
   path: string;
@@ -41,8 +39,8 @@ interface TableRibbonProps {
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isKeycloakEnabled = process.env.KEYCLOAK === "true";
 
-  const dict: Dictionary = useDictionary();
   const authorised = useProtectedRole().authorised;
+
   const taskId: string = "task date";
 
   // Handle change event for the date input
@@ -59,7 +57,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
         <div className={styles["registry-nav-ribbon"]}>
           <RedirectButton
-            label={dict.nav.title.pending}
+            label="Pending"
             icon="pending"
             url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
             isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
@@ -71,7 +69,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             }}
           />
           <RedirectButton
-            label={dict.nav.title.active}
+            label="Active"
             icon="schedule"
             url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
             isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
@@ -83,7 +81,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             }}
           />
           <RedirectButton
-            label={dict.nav.title.archive}
+            label="Archive"
             icon="archive"
             url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
             isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
@@ -113,7 +111,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className={fieldStyles["form-input-label"]}
                   htmlFor={taskId}
                 >
-                  {dict.action.date}:
+                  Date:
                 </label>
                 <input
                   id={taskId}
@@ -131,7 +129,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
                 icon="add"
-                label={`${dict.action.add} ${props.entityType.replace("_", " ")}`}
+                label={"add " + props.entityType.replace("_", " ")}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
                 isActive={false}
               />
@@ -140,7 +138,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
                 icon="task"
-                label={dict.action.overview}
+                label={"overview"}
                 url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
                 isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
               />
@@ -149,7 +147,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
                 icon="event"
-                label={dict.action.viewTasks}
+                label={"view tasks"}
                 url={Routes.REGISTRY_TASK_DATE}
                 isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
               />
@@ -157,11 +155,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {props.lifecycleStage == Routes.REGISTRY_REPORT && (<>
             <ReturnButton
               icon="first_page"
-              label={`${dict.action.backTo} ${props.entityType.replace("_", " ")}s`}
+              label={`back to ${props.entityType.replace("_", " ")}s`}
             />
             <RedirectButton
               icon="print"
-              label={dict.action.generateReport}
+              label="generate report"
               url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
               isActive={false}
             />

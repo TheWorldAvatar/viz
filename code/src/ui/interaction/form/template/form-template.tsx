@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
 import { Paths } from 'io/config/routes';
-import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
+import { PropertyShapeOrGroup } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
@@ -10,7 +10,7 @@ import { parsePropertyShapeOrGroupList } from '../form-utils';
 interface FormComponentProps {
   agentApi: string;
   entityType: string;
-  formRef: React.RefObject<HTMLFormElement>;
+  formRef: React.MutableRefObject<HTMLFormElement>;
   fields: PropertyShapeOrGroup[];
   submitAction: SubmitHandler<FieldValues>;
 }
@@ -20,7 +20,7 @@ interface FormComponentProps {
  * 
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {string} entityType The type of entity.
- * @param {React.RefObject<HTMLFormElement>} formRef Reference to the form element.
+ * @param {React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {PropertyShapeOrGroup[]} fields The fields to render.
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
@@ -44,10 +44,9 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
     <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
       {form.formState.isLoading ?
         <LoadingSpinner isSmall={false} /> :
-        formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
-          .map((formField, index) => {
-            return renderFormField(props.entityType, props.agentApi, formField, form, index)
-          })}
+        formFields.map((formField, index) => {
+          return renderFormField(props.entityType, props.agentApi, formField, form, index)
+        })}
     </form>
   );
 }

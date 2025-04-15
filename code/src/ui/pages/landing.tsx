@@ -11,11 +11,10 @@ import React from 'react';
 import { Assets } from 'io/config/assets';
 import OptionalPages, { OptionalPage } from 'io/config/optional-pages';
 import { Modules, Routes } from 'io/config/routes';
-import { Dictionary } from 'types/dictionary';
-import { UISettings } from 'types/settings';
 import LandingImage from 'ui/graphic/image/landing';
-import { parseStringsForUrls, parseWordsForLabels } from 'utils/client-utils';
 import { DefaultPageThumbnail, DefaultPageThumbnailProps, MarkdownPageThumbnail } from './page-thumbnail';
+import { UISettings } from 'types/settings';
+import { parseStringsForUrls, parseWordsForLabels } from 'utils/client-utils';
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -26,7 +25,6 @@ const markdowner = markdownit({
 });
 
 interface LandingPageProps {
-  dict: Dictionary,
   settings: UISettings,
 }
 
@@ -66,24 +64,24 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
 
         {props.settings.modules.map && (
           <DefaultPageThumbnail
-            title={mapLinkProps?.title ?? props.dict.nav.title.map}
-            caption={mapLinkProps?.caption ?? props.dict.nav.caption.map}
+            title={mapLinkProps?.title ?? "Map"}
+            caption={mapLinkProps?.caption ?? "Geospatial data visualisation"}
             icon={mapLinkProps?.icon ?? Assets.MAP}
             url={Routes.MAP}
           />
         )}
         {props.settings.modules.dashboard && (
           <DefaultPageThumbnail
-            title={dashboardLinkProps?.title ?? props.dict.nav.title.dashboard}
-            caption={dashboardLinkProps?.caption ?? props.dict.nav.caption.dashboard}
+            title={dashboardLinkProps?.title ?? "Analyse"}
+            caption={dashboardLinkProps?.caption ?? "Discover trends and insights at a glance"}
             icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
             url={Routes.DASHBOARD}
           />
         )}
         {props.settings.modules.registry && props.settings.resources?.registry?.data && (
           <DefaultPageThumbnail
-            title={registryLinkProps?.title ?? props.dict.nav.title.registry}
-            caption={registryLinkProps?.caption ?? props.dict.nav.caption.registry}
+            title={registryLinkProps?.title ?? "Registry"}
+            caption={registryLinkProps?.caption ?? "Manage and view your records"}
             icon={registryLinkProps?.icon ?? Assets.REGISTRY}
             url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
           />
@@ -92,15 +90,15 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           <DefaultPageThumbnail
             key={path + index}
             title={parseWordsForLabels(path)}
-            caption={`${props.dict.nav.caption.generalReg} ${path}`}
+            caption={`Manage and view your ${path}s`}
             icon={Assets.REGISTRY}
             url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
           />
         ))}
 
         <DefaultPageThumbnail
-          title={helpLinkProps?.title ?? props.dict.nav.title.help}
-          caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
+          title={helpLinkProps?.title ?? "Help Centre"}
+          caption={helpLinkProps?.caption ?? "Get help for this web platform"}
           icon={helpLinkProps?.icon ?? Assets.HELP}
           url={Routes.HELP}
         />
