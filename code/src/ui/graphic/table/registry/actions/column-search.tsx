@@ -112,6 +112,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
               className={styles["search-input"]}
               placeholder={dict.action.search}
               onChange={handleSearch}
+              value={searchText}
               readOnly={false}
               aria-label={"Filter Search"}
             />
