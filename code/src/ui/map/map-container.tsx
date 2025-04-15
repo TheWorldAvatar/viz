@@ -157,7 +157,6 @@ export default function MapContainer(props: MapContainerProps) {
       // Reset the filter features after usage
       dispatch(setFilterFeatureIris([]));
       dispatch(setFilterLayerIds([]));
-      dispatch(setFilterTimes([]));
     }
   }, [map, dataStore, filterLayerIds, filterFeatureIris, filterTimes]);
 
