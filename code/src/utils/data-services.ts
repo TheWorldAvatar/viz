@@ -24,8 +24,15 @@ const stackKey: string = "stack";
  * @param {string} stack The stack endpoint associated with the target feature.
  * @param {string} scenario The current scenario ID (if any).
 */
-export function generateFIAEndpoint(iri: string, stack: string, scenario: string, dimensionSliderValue?: number[] | number): string {
+export function generateFIAEndpoint(iri: string, stack: string, scenario: string, filterTimes: number[], dimensionSliderValue?: number[] | number): string {
   let url = `${stack}/feature-info-agent/get?iri=${encodeURIComponent(iri)}`;
+
+  // this is only used for trajectory queries, not the actual time series data
+  if (filterTimes && filterTimes.length === 2) {
+    url += `&lowerbound=${filterTimes[0]}`;
+    url += `&upperbound=${filterTimes[1]}`;
+  }
+
   if (scenario && stack && iri) {
     url = `${stack}/CReDoAccessAgent/getMetadataPrivate/${scenario}?iri=${encodeURIComponent(iri)}`;
     if (dimensionSliderValue) {
@@ -93,7 +100,7 @@ export const useFeatureInfoAgentService = (endpoint: string, selectedIri: string
         setQueriedData(builtInData);
       }
     }
-  }, [data, featureProperties, isFetching]);
+  }, [data, featureProperties, isFetching, endpoint]);
 
   useEffect(() => {
     setIsUpdating(true);
