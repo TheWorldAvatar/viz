@@ -5,21 +5,23 @@ import { useDispatch } from 'react-redux';
 
 import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
+import { Dictionary } from 'types/dictionary';
 import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, HttpResponse, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
+import BranchFormSection from './section/branch-form-section';
 import { DependentFormSection } from './section/dependent-form-section';
 import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
 import FormSection from './section/form-section';
-import BranchFormSection from './section/branch-form-section';
 
 interface FormComponentProps {
-  formRef: React.MutableRefObject<HTMLFormElement>;
+  formRef: React.RefObject<HTMLFormElement>;
   entityType: string;
   formType: string;
   agentApi: string;
@@ -46,6 +48,7 @@ interface FormComponentProps {
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
+  const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplate>(null);
 
   // Sets the default value with the requested function call
@@ -165,16 +168,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         if (pendingResponse.success) {
           if (pendingResponse.message === "[]") {
             pendingResponse.success = false;
-            pendingResponse.message = "No matching feature found! Please refine your search parameters.";
+            pendingResponse.message = dict.message.noMatchFeature;
           } else {
             dispatch(setFilterFeatureIris(JSON.parse(pendingResponse.message)));
-            pendingResponse.message = "Found matching features! Updating the visualisation...";
+            pendingResponse.message = dict.message.matchedFeatures;
           }
           if (formData[FORM_STATES.START_TIME_PERIOD] && formData[FORM_STATES.END_TIME_PERIOD]) {
             // Only display this message if there is no features based on static meta data but the search period is required
             if (!pendingResponse.success) {
               pendingResponse.success = true;
-              pendingResponse.message = "No matching feature found! Attempting to display all features within the selected time period...";
+              pendingResponse.message = dict.message.noMatchMetaWithTime;
             }
             // Convert date to UNIX Epoch Timestamp
             const startTime: number = Math.floor(new Date(formData[FORM_STATES.START_TIME_PERIOD]).getTime() / 1000);
@@ -196,7 +199,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       {!form.formState.isLoading && formTemplate.property.map((field, index) => {
         return renderFormField(props.entityType, props.agentApi, field, form, index);
       })}
-      {!form.formState.isLoading && formTemplate.node.length > 0 && <BranchFormSection
+      {!form.formState.isLoading && formTemplate.node?.length > 0 && <BranchFormSection
         entityType={props.entityType}
         agentApi={props.agentApi}
         node={formTemplate.node}

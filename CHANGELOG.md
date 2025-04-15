@@ -3,6 +3,57 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.20.1
+
+### Changes
+
+- Dependency bumps outlined in #157
+
+## 5.20.0
+
+### Changes
+
+- Patch issue introduced by updating to express 5.x
+- Keycloak now defaults to protecting all pages. NB this is a breaking change if you previously had * as a keycloak protected pages env variable. Remove it for this behaviour
+
+## 5.19.1
+
+### Changes
+
+- Dependency bumps. See #151
+  
+## 5.19.0
+
+### Changes
+
+- Added internationalisation framework
+- Support German and English translations
+
+## 5.18.7
+
+### Bug Fixes
+
+- Fixed the form error when no node property is found in the form template
+
+## 5.18.6
+
+### Changes
+
+- Refactor to work with new endpoint requirements
+- Updated `VisBackend Agent` from `v1.3.0` to `v1.4.0`
+
+## 5.18.5
+
+- dependabot version bump #136
+- add an `.nvmrc` for local node management
+- update `pnpm`
+  
+## 5.18.4
+
+### Changes
+
+- Replaced MUI registry table to Antd
+
 ## 5.18.3
 
 ### Improvements

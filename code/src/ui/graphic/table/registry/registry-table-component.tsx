@@ -19,6 +19,8 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import RegistryTable from './registry-table';
 import TableRibbon from './ribbon/table-ribbon';
 import SummarySection from './ribbon/summary';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { Dictionary } from 'types/dictionary';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -34,11 +36,11 @@ interface RegistryTableComponentProps {
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
+  const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
   const isModalOpen: boolean = useSelector(getIsOpenState);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
-
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -69,14 +71,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             instances = instances.concat(archivedContracts);
           } else {
             // If this is the report page for specific contracts, retrieve tasks associated with the id 
-            instances = await getServiceTasks(props.registryAgentApi, pathNameEnd);
+            instances = await getServiceTasks(props.registryAgentApi, props.entityType, pathNameEnd);
           }
         } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
           // Create a Date object from the YYYY-MM-DD string
           const date = new Date(selectedDate);
           // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          instances = await getServiceTasks(props.registryAgentApi, null, unixTimestamp);
+          instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
         } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
           instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
         } else {
@@ -118,10 +120,10 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
-          Click on any {props.entityType} in the table to view its summary
+          {dict.message.registryInstruction}
         </div>}
       {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-        <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
+        <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
         {props.lifecycleStage == Paths.REGISTRY_REPORT &&
           <SummarySection
@@ -130,13 +132,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          currentInstances.length > 0 ? <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
-            instances={currentInstances}
-            limit={3}
-          /> : <div className={styles["instructions"]}>No results found</div>}
+          currentInstances.length > 0 ?
+            <RegistryTable
+              recordType={props.entityType}
+              lifecycleStage={props.lifecycleStage}
+              setTask={setTask}
+              instances={currentInstances}
+              limit={3}
+            /> : <div className={styles["instructions"]}>{dict.message.noResultFound}</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}
