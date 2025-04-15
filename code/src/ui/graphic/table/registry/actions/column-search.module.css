@@ -23,7 +23,7 @@
   max-width: none;
   padding: 0.2rem;
 
-  background-color: var(--background-primary);
+  background-color: var(--background-secondary);
   font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
+  color: var(--text-color-primary);
 }

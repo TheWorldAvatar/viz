@@ -118,14 +118,14 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
             />
             <div className={styles["button-container"]} >
               <ClickActionButton
-                icon="replay"
-                tooltipText={dict.action.clear}
-                onClick={handleClear}
-              />
-              <ClickActionButton
                 icon="search"
                 tooltipText={dict.action.update}
                 onClick={handleUpdate}
+              />
+              <ClickActionButton
+                icon="replay"
+                tooltipText={dict.action.clear}
+                onClick={handleClear}
               />
             </div>
           </div>
