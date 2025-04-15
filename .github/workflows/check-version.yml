@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - code/**
 
 jobs:
   check-version:
@@ -24,19 +22,23 @@ jobs:
           ## By default, actions/checkout uses the GITHUB_TOKEN secret, but this does not trigger CI which is required after this action, otherwise if the final commit is the twa-bot one, it will not check linting etc before a merge. This PAT ensures that CI is run
 
       - name: Set up Git
+        if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.changed_files, 'code/') }}  
         run: |
           git config --global user.email "viz-bot@noreply.theworldavatar.io"
           git config --global user.name "twa-viz-bot"
 
       - name: Check version incrementation
+        if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.changed_files, 'code/') }}
         run: |
           chmod +x .github/scripts/check-version.sh
           .github/scripts/check-version.sh
 
       - name: Save version to environment
+        if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.changed_files, 'code/') }}
         run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
       - name: Check for changes
+        if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.changed_files, 'code/') }}
         id: changes
         run: |
           git checkout ${{ github.head_ref }}
