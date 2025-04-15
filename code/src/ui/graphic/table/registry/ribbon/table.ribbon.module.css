@@ -54,9 +54,14 @@
     justify-content: flex-start;
   }
 
-  .action-buttons {
-    margin-left: 0;
-    width: 100%;
+  .action-ribbon-container {
     justify-content: flex-start;
+    flex-direction: column;
+  }
+
+  .action-ribbon {
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
   }
 }
