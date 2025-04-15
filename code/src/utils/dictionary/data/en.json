@@ -1,0 +1,151 @@
+{
+  "action": {
+    "add": "add",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "view",
+    "refresh": "Refresh",
+    "backTo": "back to",
+    "export": "export data",
+    "overview": "overview",
+    "search": "SEARCH",
+    "showAll": "SHOW ALL",
+    "viewMore": "view more",
+    "viewTasks": "view tasks",
+    "generateReport": "generate report",
+    "date": "Date",
+    "dispatch": "Assign",
+    "complete": "Complete",
+    "cancel": "Cancel",
+    "report": "Report",
+    "submit": "Submit",
+    "return": "Return",
+    "approve": "Approve",
+    "rescind": "Rescind",
+    "terminate": "Terminate",
+    "findAddress": "Find address",
+    "selectLocation": "Select location"
+  },
+  "form": {
+    "singleService": "Single Service",
+    "regularService": "Regular Service",
+    "alternateService": "Alternate Day Service",
+    "singleServiceDesc": "A one-off service that will occur once on the specified date.",
+    "regularServiceDesc": "A service that will occur regularly based on the schedule within the specified period.",
+    "alternateServiceDesc": "A service that will occur on every alternate day within the specified period.",
+    "repeatEvery": "Repeat once every",
+    "week": "week",
+    "startDate": "Start date",
+    "startDateDesc": "Effective start date of service",
+    "endDate": "End date",
+    "endDateDesc": "Effective end date of service",
+    "timeSlot": "Time Slot",
+    "from": "From",
+    "to": "To",
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "latDesc": "The latitude of the",
+    "longDesc": "The longitude of the",
+    "searchStartTimeDesc": "Select the starting date/time for your search.",
+    "searchEndTimeDesc": "Select the ending date/time for your search.",
+    "min": "Min",
+    "max": "Max"
+  },
+  "map": {
+    "title": {
+      "layerSelection": "Layer Selection",
+      "legend": "Key/Legend",
+      "information": "Information"
+    },
+    "tooltip": {
+      "location": "Move the map to your location",
+      "mapStyle": "Change base map style",
+      "resetCamera": "Reset camera to default position",
+      "placenames": "Show / hide place names",
+      "terrain": "Toggle 3D terrain",
+      "fullscreen": "Toggle fullscreen mode",
+      "selectScenario": "Select another scenario",
+      "collapsePanel": "Collapse panel",
+      "expandPanel": "Expand panel"
+    }
+  },
+  "context": {
+    "controlRibbon": {
+      "title": "Show controls ribbon",
+      "tooltip": "Show / hide controls ribbon"
+    },
+    "navBar": {
+      "title": "Show navigation bar",
+      "tooltip": "Show / hide navigation"
+    }
+  },
+  "message": {
+    "arrayInstruction": "Fill in the details to create a new entry",
+    "branchInstruction": "Select the best category for your request",
+    "registryInstruction": "Click on any record in the table to view its summary",
+    "completeInstruction": "To complete the service, please input the following details:",
+    "dispatchInstruction": "Dispatch the resources for the scheduled service on",
+    "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
+    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your replort:",
+    "matchedFeatures": "Found matching features! Updating the visualisation...",
+    "noMatchFeature": "No matching feature found! Please refine your search parameters.",
+    "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
+    "loading": "Loading, please wait...",
+    "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually.",
+    "noData": "No data available",
+    "noInstances": "No instances available. Please create a new instance.",
+    "noResultFound": "No results found",
+    "mapSelectInstruction": "Select a feature...",
+    "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
+    "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information."
+  },
+  "nav": {
+    "caption": {
+      "map": "Geospatial data visualisation",
+      "dashboard": "Discover trends and insights at a glance",
+      "registry": "Manage and view your records",
+      "generalReg": "Manage and view",
+      "help": "Get help for this web platform"
+    },
+    "title": {
+      "map": "Map",
+      "dashboard": "Analyse",
+      "registry": "Registry",
+      "help": "Help Centre",
+      "pending": "Pending",
+      "active": "Active",
+      "archive": "Archive"
+    },
+    "tooltip": {
+      "home": "Return to landing page.",
+      "map": "Geospatial view.",
+      "dashboard": "Analytics view.",
+      "registry": "Open registry.",
+      "help": "Open help page."
+    }
+  },
+  "title": {
+    "actions": "ACTIONS",
+    "dispatchInfo": "dispatch information",
+    "description": "Description",
+    "serviceSummary": "Service summary",
+    "serviceType": "Service Type",
+    "available": "available",
+    "unavailable": "unavailable",
+    "active": "active",
+    "completed": "completed",
+    "cancelled": "cancelled",
+    "incomplete": "incomplete",
+    "rescinded": "rescinded",
+    "terminated": "terminated",
+    "pendingDispatch": "pending dispatch",
+    "pendingExecution": "pending execution",
+    "searchCriteria": "SEARCH CRITERIA",
+    "searchPeriod": "Search Period"
+  }
+}

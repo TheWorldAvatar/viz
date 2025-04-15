@@ -3,6 +3,38 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.20.2
+
+### Changes
+
+- Store selected filterTimes in search form, only applicable for trajectory FIA queries
+
+## 5.20.1
+
+### Changes
+
+- Dependency bumps outlined in #157
+
+## 5.20.0
+
+### Changes
+
+- Patch issue introduced by updating to express 5.x
+- Keycloak now defaults to protecting all pages. NB this is a breaking change if you previously had * as a keycloak protected pages env variable. Remove it for this behaviour
+
+## 5.19.1
+
+### Changes
+
+- Dependency bumps. See #151
+  
+## 5.19.0
+
+### Changes
+
+- Added internationalisation framework
+- Support German and English translations
+
 ## 5.18.7
 
 ### Bug Fixes

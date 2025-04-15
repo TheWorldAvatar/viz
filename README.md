@@ -15,13 +15,14 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
     - [3.2 Stack Deployment](#32-stack-deployment)
   - [4 Authorisation](#4-authorisation)
   - [5. Release](#5-release)
+    - [Your Responsibilities Before Merging a Pull Request](#your-responsibilities-before-merging-a-pull-request)
 
 ## 1. Precursor
 
 As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
 
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
-2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.4.0`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.4.2`
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
@@ -97,8 +98,8 @@ To secure your viz app with a Keycloak authentication server, set the relevant e
 
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES=/page,/otherpage ## pages that a user must be logged in to see
-ROLE_PROTECTED_PAGES=/role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
+PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see
+ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
 ```
 
@@ -106,10 +107,11 @@ alternatively, in the docker `docker-compose.yml` or `docker-compose.dev.yml`
 
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES: page,/otherpage ## pages that a user must be logged in to see
-ROLE_PROTECTED_PAGES: /role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
-ROLE: viz:protected ## the role required for the above list
+PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged in to see
+ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
+ROLE: viz:protected ## (optional) the role required for the above list
 ```
+If `PROTECTED_PAGES` is not defined, all pages will be protected.
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.
 
