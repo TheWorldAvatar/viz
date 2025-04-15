@@ -33,7 +33,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
     placement: 'bottom-start',
     open: isOpen,
     onOpenChange: setIsOpen,
-    middleware: [offset(5), flip(), shift()],
+    middleware: [offset(-5), flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
 
@@ -114,7 +114,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
               onChange={handleSearch}
               readOnly={false}
               aria-label={"Filter Search"}
-            />            
+            />
             <div className={styles["button-container"]} >
               <ClickActionButton
                 icon="replay"
