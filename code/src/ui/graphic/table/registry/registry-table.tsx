@@ -1,16 +1,17 @@
 import styles from "./registry.table.module.css";
 
 import { Table, TableColumnsType, Typography } from 'antd';
+
 import React from 'react';
 import { FieldValues } from "react-hook-form";
 
+import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import RegistryRowActions from "./actions/registry-table-action";
-import { Dictionary } from "types/dictionary";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
+import RegistryRowActions from "./actions/registry-table-action";
 
 interface RegistryTableProps {
   recordType: string;
@@ -31,6 +32,7 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -47,7 +49,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             setTask={props.setTask}
           />
         ),
-        fixed: 'left'
+        fixed: 'left',
+        width: 60
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -56,26 +59,37 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           const currentKeys = Object.keys(current).length;
           return prevKeys >= currentKeys ? prev : current;
         })
-      ).map((field) => ({
-        key: field,
-        dataIndex: field,
-        className: styles["header"],
-        title: parseWordsForLabels(field),
-        ellipsis: true,
-        render: (value: FieldValues) => {
-          if (!value) return "";
-          if (field.toLowerCase() === "status") {
-            return <StatusComponent status={`${value}`} />;
-          }
-          return <Typography.Text className={styles["row-cell"]}>
-            {parseWordsForLabels(`${value}`)}
-          </Typography.Text>
-        },
-        sorter: (a: FieldValues, b: FieldValues) => {
-          if (!a[field] || !b[field]) return 0;
-          return `${a[field]}`.localeCompare(`${b[field]}`);
-        },
-      })),
+      ).map((field) => {
+        // minimum width based on field name
+        const title = parseWordsForLabels(field);
+        // Set minimum width to require space for title and icons
+        const minWidth = Math.max(
+          title.length * 15, // Compute based on title length
+          125 // Minimum width
+        );
+
+        return {
+          key: field,
+          dataIndex: field,
+          className: styles["header"],
+          title: title,
+          ellipsis: true,
+          width: minWidth,
+          render: (value: FieldValues) => {
+            if (!value) return "";
+            if (field.toLowerCase() === "status") {
+              return <StatusComponent status={`${value}`} />;
+            }
+            return <Typography.Text className={styles["row-cell"]}>
+              {parseWordsForLabels(`${value}`)}
+            </Typography.Text>
+          },
+          sorter: (a: FieldValues, b: FieldValues) => {
+            if (!a[field] || !b[field]) return 0;
+            return `${a[field]}`.localeCompare(`${b[field]}`);
+          },
+        };
+      }),
     ];
   }, [props.instances]);
 
@@ -108,7 +122,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           defaultPageSize: 10,
           pageSizeOptions: [5, 10, 20],
           showSizeChanger: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
           position: ['bottomCenter']
         }}
         rowKey={(record) => record.id || record.iri || record.key}
@@ -118,14 +132,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         bordered={false}
         showSorterTooltip={true}
         locale={{
-          triggerDesc: 'Sort descending',
-          triggerAsc: 'Sort ascending',
-          cancelSort: 'Cancel sort',
+          triggerAsc: dict.action.sortasc,
+          triggerDesc: dict.action.sortdesc,
+          cancelSort: dict.action.clearSort,
+          filterConfirm: dict.action.update.toUpperCase(),
+          filterReset: dict.action.clear.toUpperCase(),
+          filterEmptyText: dict.message.noData,
+          filterSearchPlaceholder: dict.action.search,
           emptyText: (
-            <div style={{ padding: '20px', color: 'var(--text-color-secondary)' }}>
-              <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>info</span>
-              <span>{dict.message.noData}</span>
-            </div>
+            <span>{dict.message.noData}</span>
           )
         }}
       />
