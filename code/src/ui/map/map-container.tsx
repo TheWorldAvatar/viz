@@ -79,7 +79,7 @@ export default function MapContainer(props: MapContainerProps) {
         const reqScenario: ScenarioDefinition = props.scenarios.find((scenario) => scenario.id === selectedScenario);
         setCurrentScenario(reqScenario);
         const scenarioDatasetURL = `${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`;
-        fetch(scenarioDatasetURL)
+        fetch(scenarioDatasetURL, { credentials: 'include' })
           .then((res) => res.json())
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
@@ -157,6 +157,7 @@ export default function MapContainer(props: MapContainerProps) {
       // Reset the filter features after usage
       dispatch(setFilterFeatureIris([]));
       dispatch(setFilterLayerIds([]));
+      dispatch(setFilterTimes([]));
     }
   }, [map, dataStore, filterLayerIds, filterFeatureIris, filterTimes]);
 
