@@ -103,11 +103,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       <div className={styles.divider} />
 
       <div className={styles["action-ribbon-container"]}>
-        <ClickActionButton
-          icon={"cached"}
-          onClick={triggerRefresh}
-          isTransparent={true}
-        />
+        <div className={styles["action-ribbon"]}>
+          <ClickActionButton
+            icon={"cached"}
+            onClick={triggerRefresh}
+            isTransparent={true}
+          />
+          {props.instances.length > 0 && <ColumnSearchComponent
+            instances={props.instances}
+            setCurrentInstances={props.setCurrentInstances}
+          />}
+        </div>
         <div className={styles["action-ribbon"]}>
           {(authorised || !isKeycloakEnabled) &&
             props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
@@ -172,10 +178,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {<DownloadButton instances={props.instances} />}
         </div>
       </div>
-      {props.instances.length > 0 && <ColumnSearchComponent
-        instances={props.instances}
-        setCurrentInstances={props.setCurrentInstances}
-      />}
     </div>
   );
 }
