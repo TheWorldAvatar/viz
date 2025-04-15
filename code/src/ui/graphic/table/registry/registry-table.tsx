@@ -1,8 +1,8 @@
 import styles from "./registry.table.module.css";
 
-import { Input, Space, Table, TableColumnsType, Typography, Select } from 'antd';
+import { Table, TableColumnsType, Typography } from 'antd';
 
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { FieldValues } from "react-hook-form";
 
 import { Dictionary } from "types/dictionary";
@@ -12,7 +12,6 @@ import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
 import RegistryRowActions from "./actions/registry-table-action";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 
 interface RegistryTableProps {
   recordType: string;
@@ -33,12 +32,6 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
-  const [searchText, setSearchText] = useState<string>('');
-  const [searchColumn, setSearchColumn] = useState<string>('');
-
-  // Add states for the applied filters
-  const [appliedSearchText, setAppliedSearchText] = useState<string>('');
-  const [appliedSearchColumn, setAppliedSearchColumn] = useState<string>('');
 
   // Generate a list of column headings
   const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
@@ -95,38 +88,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             if (!a[field] || !b[field]) return 0;
             return `${a[field]}`.localeCompare(`${b[field]}`);
           },
-          // Filtering
-          filters: getColumnFilters(props.instances, field),
-          onFilter: (value: React.Key | boolean, record: FieldValues) =>
-            record[field] ? record[field].toString() === value.toString() : false,
-          filterSearch: true,
         };
       }),
     ];
   }, [props.instances]);
-
-  // Function to generate filter options for columns
-  function getColumnFilters(instances: RegistryFieldValues[], field: string) {
-    if (field === 'id' || field === 'iri' || field === 'key') return undefined;
-    // Get unique values for the field
-    const uniqueValues = [...new Set(
-      instances
-        .map(item => {
-          const fieldValue = item[field];
-          if (Array.isArray(fieldValue)) {
-            return fieldValue[0]?.value;
-          } else {
-            return fieldValue?.value;
-          }
-        })
-        .filter(Boolean)
-    )];
-
-    return uniqueValues.map(value => ({
-      text: parseWordsForLabels(`${value}`),
-      value: value,
-    }));
-  }
 
   // Parse row values
   const data: FieldValues[] = React.useMemo(() => {
@@ -146,94 +111,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     });
   }, [props.instances]);
 
-
-  // Generate search options based on columns
-  const searchOptions = useMemo(() => {
-    if (columns.length === 0) return [];
-
-    return columns
-      .filter(col => col.key !== 'actions' && typeof col.dataIndex === 'string') // Exclude action column
-      .map(col => ({
-        value: col.dataIndex as string,
-        label: col.title as string
-      }));
-  }, [columns]);
-
-  // Filter function that respects column selection
-  const filteredData = useMemo(() => {
-    if (!appliedSearchText.trim() || !appliedSearchColumn) return data;
-
-    return data.filter((record) => {
-      // Search only the selected column
-      const value = record[appliedSearchColumn];
-      if (typeof value === 'string') {
-        return value.toLowerCase().includes(appliedSearchText.toLowerCase());
-      }
-      return false;
-    });
-  }, [data, appliedSearchText, appliedSearchColumn]);
-
-  // Handler for the Update button
-  const handleUpdate = () => {
-    setAppliedSearchText(searchText);
-    setAppliedSearchColumn(searchColumn);
-  };
-
-  // Handler for the Clear button
-  const handleClear = () => {
-    setSearchText('');
-    setAppliedSearchText('');
-  };
-
-  // Search input handler
-  const handleColumnChange = (value: string) => {
-    setSearchColumn(value);
-  };
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
   return (
     <AntDesignConfig>
-      <div style={{
-        marginBottom: 16,
-        display: 'flex',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        gap: '8px'
-      }}>
-        <Select
-          value={searchColumn}
-          style={{ width: 180 }}
-          onChange={handleColumnChange}
-          options={searchOptions}
-          placeholder={dict.action.selectColumn}
-        />
-        <Input
-          placeholder={dict.action.search}
-          value={searchText}
-          onChange={handleSearch}
-          prefix={<span className="material-symbols-outlined">search</span>}
-          style={{ width: 200 }}
-        />
-        <ClickActionButton
-          icon="update"
-          tooltipText={dict.action.update}
-          onClick={handleUpdate}
-          isHoverableDisabled={!searchText || !searchColumn}
-        />
-        <ClickActionButton
-          icon="close"
-          tooltipText={dict.action.clear}
-          onClick={handleClear}
-          isHoverableDisabled={!appliedSearchText && !appliedSearchColumn}
-        />
-      </div>
       <Table
         className={styles["table"]}
         rowClassName={styles["row"]}
-        dataSource={filteredData}
+        dataSource={data}
         columns={columns}
         pagination={{
           defaultPageSize: 10,

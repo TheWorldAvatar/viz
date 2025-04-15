@@ -29,6 +29,7 @@ export const selectorStyles: StylesConfig<FormOptionType | GroupBase<FormOptionT
     margin: "0.25rem 0",
     minWidth: "100%",
     width: "fit-content",
+    zIndex: 99999,
   }),
   noOptionsMessage: (provided) => ({
     ...provided,

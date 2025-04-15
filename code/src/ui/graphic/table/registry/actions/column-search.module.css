@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width:20vw;
+  row-gap: .25rem;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+}

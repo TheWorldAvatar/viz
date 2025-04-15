@@ -14,6 +14,7 @@ import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import { useDictionary } from "utils/dictionary/DictionaryContext";
+import ColumnSearchComponent from "../actions/column-search";
 
 interface TableRibbonProps {
   path: string;
@@ -23,6 +24,7 @@ interface TableRibbonProps {
   selectedDate: string;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentInstances: React.Dispatch<React.SetStateAction<RegistryFieldValues[]>>;
   triggerRefresh: () => void;
 }
 
@@ -36,6 +38,7 @@ interface TableRibbonProps {
  * @param {string} selectedDate The selected date in the date field input.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate Method to update selected date.
+ * @param setCurrentInstances A dispatch method to set the current instances after parsing the initial instances.
  * @param triggerRefresh Method to trigger refresh.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
@@ -169,6 +172,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {<DownloadButton instances={props.instances} />}
         </div>
       </div>
+      {props.instances.length > 0 && <ColumnSearchComponent
+        instances={props.instances}
+        setCurrentInstances={props.setCurrentInstances}
+      />}
     </div>
   );
 }
