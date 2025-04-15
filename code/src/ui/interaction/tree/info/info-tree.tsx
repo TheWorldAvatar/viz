@@ -4,19 +4,21 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getHasExistingData } from 'state/floating-panel-slice';
-import { TimeSeriesGroup } from 'types/timeseries';
-import { AttributeGroup } from 'types/attribute';
 import { MapFeaturePayload } from 'state/map-feature-slice';
+import { AttributeGroup } from 'types/attribute';
+import { Dictionary } from 'types/dictionary';
+import { TimeSeries } from 'types/timeseries';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import FeatureSelector from 'ui/interaction/dropdown/feature-selector';
 import { setSelectedFeature } from 'utils/client-utils';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import AttributeRoot from './attribute-root';
 import InfoTabs from './info-tabs';
 import TimeSeriesPanel from './time-series-panel';
 
 interface InfoTreeProps {
   attributes: AttributeGroup;
-  timeSeries: TimeSeriesGroup;
+  timeSeries: TimeSeries[];
   featureName: string;
   isFetching: boolean;
   isUpdating: boolean;
@@ -33,7 +35,7 @@ interface InfoTreeProps {
  * the existing state is persisted even if this component is removed.
  * 
  * @param {AttributeGroup} attributes The processed attributes for user interaction.
- * @param {TimeSeriesGroup} timeSeries The processed time series for user interaction.
+ * @param {TimeSeries[]} timeSeries The processed time series for user interaction.
  * @param {string} featureName The name of the currently selected feature.
  * @param {boolean} isFetching An indicator if the query is still running.
  * @param {MapFeaturePayload[]} features A list of selected features.
@@ -44,12 +46,20 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
+  const dict: Dictionary = useDictionary();
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo(scrollPosition, 0);
     }
   }, [scrollPosition]);
+
+  useEffect(() => {
+    // Update the active tab only if the time series is present but attributes are missing
+    if (!props.attributes && props.timeSeries) {
+      props.activeTab.setActiveTab(1);
+    }
+  }, [props.attributes, props.timeSeries]);
 
   // A function that renders the required contents for this panel
   const renderPanelContents: () => React.ReactElement = () => {
@@ -82,7 +92,7 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
       );
     }
     // Placeholder text when there are no initial data or selected feature
-    return <div className={styles.initialContent}>Select a feature on the map to explore its information in detail.</div>;
+    return <div className={styles.initialContent}>{dict.message.mapSelectFeature}</div>;
   }
 
 

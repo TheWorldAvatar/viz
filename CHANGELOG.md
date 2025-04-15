@@ -3,6 +3,217 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.20.3
+
+### Changes
+
+- Added filtering function in registry table
+
+## 5.20.2
+
+### Changes
+
+- Store selected filterTimes in search form, only applicable for trajectory FIA queries
+
+## 5.20.1
+
+### Changes
+
+- Dependency bumps outlined in #157
+
+## 5.20.0
+
+### Changes
+
+- Patch issue introduced by updating to express 5.x
+- Keycloak now defaults to protecting all pages. NB this is a breaking change if you previously had * as a keycloak protected pages env variable. Remove it for this behaviour
+
+## 5.19.1
+
+### Changes
+
+- Dependency bumps. See #151
+  
+## 5.19.0
+
+### Changes
+
+- Added internationalisation framework
+- Support German and English translations
+
+## 5.18.7
+
+### Bug Fixes
+
+- Fixed the form error when no node property is found in the form template
+
+## 5.18.6
+
+### Changes
+
+- Refactor to work with new endpoint requirements
+- Updated `VisBackend Agent` from `v1.3.0` to `v1.4.0`
+
+## 5.18.5
+
+- dependabot version bump #136
+- add an `.nvmrc` for local node management
+- update `pnpm`
+  
+## 5.18.4
+
+### Changes
+
+- Replaced MUI registry table to Antd
+
+## 5.18.3
+
+### Improvements
+
+- dependency bumps
+  
+## 5.18.2
+
+### Bug Fixes
+
+- Fix type errors introduced in v5.18.1
+  
+## 5.18.1
+
+### Changes
+
+- Added a tooltip to inform users of an action button's actions
+
+## 5.18.0
+
+### Changes
+
+- Added a simple registry pages to view records of entities specified in the configuration
+
+## 5.17.3
+
+- Dependabot version updates
+
+## 5.17.2
+
+- Update node version
+
+## 5.17.1
+
+### Security Update
+
+- Bump version of `axios` to address server side forgery vulnerability
+
+## 5.17.0
+
+### Changes
+
+- Added form branches and arrays
+- Added option to generate report
+- Updated form extraction workflow following changes in the backend
+- Consolidation of form parsing methods
+- Improve dark mode design for the registry
+- Abstracted background image into a hook
+- Updated `VisBackend Agent` from `v1.2.2` to `v1.3.0`
+
+### Bug Fixes
+
+- Fix missing functions for action buttons
+
+## 5.16.15
+
+### Bug Fixes
+
+- Fix missing dependent form field if no instances are found
+
+## 5.16.14
+
+### Improvements
+
+- Updated design for the registry table and forms
+
+## 5.16.13
+
+### Changes
+
+ This PR was created by the Combine PRs action by combining the following PRs:
+
+- #106 build(deps-dev): bump eslint from 9.20.0 to 9.21.0 in /code
+- #105 build(deps): bump @mui/material from 6.4.3 to 6.4.5 in /code
+- #104 build(deps-dev): bump globals from 15.14.0 to 16.0.0 in /code
+- #102 build(deps): bump actions/github-script from 6 to 7
+- #101 build(deps): bump node from 23.7-slim to 23.8-slim
+
+## 5.16.12
+
+### Bug Fixes
+
+- Account for multiple time series returned by the feature info agent
+
+## 5.16.11
+
+### Improvements
+
+- Updated design of registry table
+- Change the default row size for registry
+- Added a simple no results found overlay
+
+## 5.16.10
+
+### Bug Fixes
+
+- Fix missing time series panel when only time series data is returned with no attributes
+
+## 5.16.9
+
+### Bug Fixes
+
+- Fix the bug that prevents the display of dependent form fields with conflicting similar names
+
+## 5.16.8
+
+### Improvements
+
+- Address unused imports warned by ESLint
+
+## 5.16.7
+
+### Changes
+
+- Bump next.js, mapbox and several other dependencies
+
+### Bug Fixes
+
+- Fixed issue with metadata display for number values
+
+## 5.16.6
+
+### Changes
+
+- Bump dependencies:
+  - `material-symbols`
+  - `react-select`
+  - `@next/eslint-plugin-next`
+- Remove redundant `react-map-gl` dependency
+
+## 5.16.5
+
+### Changes
+
+- Update pnpm and node versions in package.json
+
+## 5.16.4
+
+### Changes
+
+- Update node base image from 22.11 to 23.7
+
+## 5.16.3
+
+## Bug fixes
+
+- Fixes issue where FIA responses were not decoded if not in 'utf-8'
+
 ## 5.16.2
 
 ### Changes
@@ -102,7 +313,7 @@
 
 ## 5.11.0
 
-## Improvements
+### Improvements
 
 - Simplify, secure and optimise MapBox credential management by loading in as environment variables instead of exposing via public API and using HTTP to read them
 - Add a "layerTreeIconOverride" option to mapbox layers for cases where automatic icon is not wanted

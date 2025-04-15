@@ -9,28 +9,28 @@ export const contextMenuSlice = createSlice({
     reducers: {
         addItem: (state, action) => {
             // Check for collision
-            const match = state.items.find((item) => 
-                item.name === action.payload.name
+            const match = state.items.find((item) =>
+                item.id === action.payload.id
             );
 
-            if(match == null) {
+            if (!match) {
                 // Update state with new item
                 state.items = state.items.concat(action.payload);
             }
         },
         removeItem: (state, action) => {
-            state.items = state.items.filter(function(item){
-                return item.name !== action.payload
+            state.items = state.items.filter(function (item) {
+                return item.id !== action.payload.id
             })
         },
         toggleItem: (state, action) => {
-            // Find entry by name
-            const match = state.items.find((item) => 
-                item.name === action.payload
+            // Find entry by id
+            const match = state.items.find((item) =>
+                item.id === action.payload
             );
 
             // Set toggled state
-            if(match?.toggled != null) {
+            if(match) {
                 match.toggled = !match.toggled;
             }
         }
@@ -39,13 +39,13 @@ export const contextMenuSlice = createSlice({
 
 // Export selectors 
 export const selectItems = (state: ReduxState) => state.contextMenu.items;
-export const selectItem = (name: string) => (state: ReduxState) => {
-    if(state?.contextMenu?.items == null) return null;
-    return state.contextMenu.items.find((item) => item.name === name)
+export const selectItem = (id: string) => (state: ReduxState) => {
+    if (state?.contextMenu?.items == null) return null;
+    return state.contextMenu.items.find((item) => item.id === id)
 };
 
 // Export the actions
-export const { addItem, removeItem, toggleItem} = contextMenuSlice.actions;
+export const { addItem, removeItem, toggleItem } = contextMenuSlice.actions;
 
 // Export the reducer
 export default contextMenuSlice.reducer;

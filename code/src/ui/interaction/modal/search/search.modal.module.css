@@ -36,11 +36,6 @@
   text-wrap: nowrap;
 }
 
-.close-button {
-  background-color: transparent;
-  border: none;
-}
-
 .section-contents {
   padding: 0.5rem;
   margin: 0.5rem 0 0;
@@ -64,28 +59,7 @@
 .footer-button-row {
   display: flex;
   flex-direction: row;
-}
-
-.section-footer-button {
-  flex-direction: row-reverse;
-  padding-left: 1rem;
-}
-
-.button-text {
-  font-size: var(--font-size-primary-text);
-  color: var(--text-color-links);
-}
-
-.button-text:hover {
-  color: var(--text-color-links-hover);
-}
-
-.icon {
-  color: var(--text-color-links);
-}
-
-.icon:hover {
-  color: var(--text-color-links-hover);
+  gap: 1rem;
 }
 
 @media only screen and (max-width: 480px) {

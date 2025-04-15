@@ -2,15 +2,15 @@
 
 import styles from './context-item.module.css';
 
-import React from 'react';
-import Icon from '@mui/material/Icon';
 import { Tooltip } from '@mui/material';
+import Icon from '@mui/material/Icon';
 
 export interface ContextItemDefinition {
     name: string,
     description?: string,
+    id: string
     toggled?: boolean,
-    callback?: (_name: string) => void
+    callback?: (_id: string) => void
 }
 
 /**
@@ -23,7 +23,7 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
 
     // Update state and fire callback
     const handleClick = () => {
-        if(props.callback != null) props.callback(props.name);
+        if(props.callback != null) props.callback(props.id);
     }
 
     // Return item for rendering

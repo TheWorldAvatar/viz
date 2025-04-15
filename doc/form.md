@@ -2,7 +2,7 @@
 
 In meeting the demand for a generalisable Knowledge Graph approach to form UI generation, The World Avatar (TWA) Visualisation Platform have implemented such an approach based on [SHACL](https://www.w3.org/TR/shacl/). [SHACL](https://www.w3.org/TR/shacl/) is generally a language for validating RDF graphs against a set of conditions. As a description of a valid data graph, they can also be implemented to generate forms in a generalisable knowledge graph enabled approach. This section will describe the form template required from the backend so that The World Avatar (TWA) Visualisation Platform can parse it into the corresponding form UI.
 
-The form template must be in the `JSON-LD` format, with a sample format as follows. Do note that the overall form template structure does not necessarily follow a real ontology, but is intended to structure the template. The template must contain a list of either a property group or property themselves. Properties in a property group are grouped together as fieldsets in the form, whereas property are listed separately.
+The form template must be in the `JSON-LD` format, with a sample format as follows. Do note that the overall form template structure does not necessarily follow a real ontology, but is intended to structure the template. The template must contain a list of either a property group or property themselves. Properties in a property group are grouped together as fieldsets in the form, whereas property are listed separately. It is recommended to employ the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent) as the backend service to do this transformation accordingly.
 
 ```json
 {
@@ -84,6 +84,9 @@ In general, property groups are intended to group related fields into a fieldset
  }
 ```
 
+> [!IMPORTANT]
+> When using the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent), please read [the documentation](https://github.com/TheWorldAvatar/Viz-Backend-Agent#312-property-groups) for the required group representation format.
+
 ## 2. Property Shapes
 
 With that said, the properties `PropertyShape` themselves must comply with [SHACL](https://www.w3.org/TR/shacl/) restrictions. All fields/shapes must contain a `@type`, `name`, and `description` at the minimum. The following sections highlights how the associated `SHACL` property is used in generating the form.
@@ -98,11 +101,10 @@ The following are applicable for all form types:
 - **Number**: `decimal`, `integer`
 - **Date**: `date`, `time`, `dateTime`
 
-2. `in`: Generates a select input field with options containing the **subclasses** on the associated class `{"@id": "class"}`
+2. `in`: Generates a select input field with options containing the **subclasses** on the associated list of class(es) `{"@id": "class"}`
 3. `class`: Generates a form section based on a select input field, containing the **instances** of the associated class `{"@id": "class"}`. Additional buttons are available to either add a new instance or view more details about the selected instance. This property can be used as a standalone without any dependency capabilities enabled. In enabling dependencies, please also include the following properties:
 
-- `qualifiedValueShape`: An optional property that must be included with `class` to enable dependencies between two fields. For instance, an employee must always be linked to a specific employer. This property must contain an array of the associated node shape instances in the format `{"@id": "node shape"}`. Note that one property may have as many node shapes as possible using the `sh:and` property in the original `SHACL` format.
-- `nodeKind`: An optional property that must be included with `class` and `qualifiedValueShape` to denote if the property is a dependent property, that is dependent on a separate (independent) field with the same node shape. If `nodeKind` is not added, we assume that the property is an independent field that other dependent fields will require.
+- `https://theworldavatar.io/kg/form/dependentOn`: An optional property that must be included with `class` to enable dependencies between two fields. For instance, an employee must always be linked to a specific employer. This property must target the associated independent property shape in the format `{"@id": "IRI of the independent property shape ie employer"}`.
 - `https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule`: Targeting this value in class will invoke a special Schedule UI section, providing users the ability to choose a schedule (day of week, interval). Note that any other shapes/fields/keys associated with this schedule class and property are ignored in this case.
 
 In the search form, users can also search within a selected time period using the following `Time Series` property to invoke a special form section UI. However, the corresponding `GeoServer` layer must contain a `time` column using the UNIX Epoch timestamp format in its SQL view.

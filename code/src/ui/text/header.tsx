@@ -1,5 +1,3 @@
-import React from 'react';
-
 import IconComponent from 'ui/graphic/icon/icon';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import styles from './header.module.css';

@@ -1,19 +1,18 @@
-import styles from './field.module.css';
 import generalStyles from '../form.module.css';
+import styles from './field.module.css';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
-import FormInputField from './form-input';
+import { FORM_STATES } from '../form-utils';
 import FormDateTimePicker from './form-date-time-picker';
+import FormInputField from './form-input';
 import FormInputMinMaxField from './input/form-min-max-input';
 import FormSelector from './input/form-selector';
-import { FORM_STATES } from '../form-utils';
 
 interface FormFieldProps {
-  entityType: string;
   agentApi?: string;
   field: PropertyShape;
   form: UseFormReturn;
@@ -25,7 +24,6 @@ interface FormFieldProps {
 /**
  * Renders a form field as part of the form component.
  * 
- * @param {string} entityType The type of entity.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities. Optional for dropdown
  * @param {PropertyShape} field The form field data model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
@@ -52,7 +50,6 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
               /> :
               <FormInputField
                 field={props.field}
-                instanceType={props.entityType}
                 form={props.form}
                 options={{
                   disabled: props.options?.disabled,
@@ -91,7 +88,6 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
           }
           <div className={styles["form-input-container"]}>
             <FormSelector
-              instanceType={props.entityType}
               agentApi={props.agentApi}
               field={props.field}
               form={props.form}

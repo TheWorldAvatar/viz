@@ -20,11 +20,17 @@
         --text-color-secondary: #7f7f80;
         --text-color-links: #146a7d;
         --text-color-links-hover: #20aac9;
+        --text-color-title-primary: #0B4452;
 
         /* Border colors */
         --border-primary: #b6b6bf;
         --border-secondary: #a5a5b3;
         --border-tertiary: #9898af;
+
+        /* Button */
+        --description-box: #a9d9d1;
+        --button-color-secondary: #18677a;
+        --button-color-secondary-hover: #0B4452;
     }
 }
 
@@ -48,11 +54,17 @@
         --text-color-secondary: deepskyblue;
         --text-color-links: #146a7d;
         --text-color-links-hover: #20aac9;
+        --text-color-title-primary: #0B4452;
 
         /* Border colors */
         --border-primary: #434b55;
         --border-secondary: #6c7989;
         --border-tertiary: #7f8ea1;
+
+        /* Button */
+        --description-box: #2B816F;
+        --button-color-secondary: #7ACADB;
+        --button-color-secondary-hover: #35A7C0;
     }
 }
 
@@ -72,6 +84,11 @@
     --icon-size: 1.5rem;
     --small-icon-size: 1rem;
     --smallest-icon-size: 0.6rem;
+
+    /* Button colors */
+    --button-color-primary: #83C38D;
+    --button-color-primary-active: #65A671;
+    --alert-color: 191, 74, 42;
 }
 
 * {
@@ -92,9 +109,6 @@ body {
 body {
     background-color: var(--background-primary);
     color: var(--text-color-primary);
-
-    background-position: center;
-    background-size: cover;
     overflow: hidden;
 }
 
@@ -112,6 +126,9 @@ img {
     background-color: transparent !important;
 }
 
+ul {
+    list-style-type: none;
+}
 
 /**
     Constants for our own CSS classes (across all themes).
@@ -127,15 +144,6 @@ img {
     flex-grow: 0;
     pointer-events: all;
     background-color: white;
-}
-
-.formContainer {
-    display: flex;
-    align-self: center;
-    flex-direction: column;
-
-    width: 90%;
-    height: 75vh;
 }
 
 .partner-button {

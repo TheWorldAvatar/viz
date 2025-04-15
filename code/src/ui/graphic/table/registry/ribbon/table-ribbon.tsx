@@ -1,18 +1,20 @@
 "use client";
 
-import styles from './table.ribbon.module.css';
-import fieldStyles from 'ui/interaction/form/field/field.module.css';
+import fieldStyles from "ui/interaction/form/field/field.module.css";
+import styles from "./table.ribbon.module.css";
 
-import React from 'react';
-import { useProtectedRole } from 'hooks/useProtectedRole';
-import { useRouter } from 'next/navigation';
+import { useProtectedRole } from "hooks/useProtectedRole";
+import React from "react";
 
-import { Routes } from 'io/config/routes';
-import { RegistryFieldValues } from 'types/form';
-import { DownloadButton } from 'ui/interaction/action/download/download';
-import ClickActionButton from 'ui/interaction/action/click/click-button';
-import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
+import { Routes } from "io/config/routes";
+import { Dictionary } from "types/dictionary";
+import { RegistryFieldValues } from "types/form";
+import ClickActionButton from "ui/interaction/action/click/click-button";
+import { DownloadButton } from "ui/interaction/action/download/download";
+import RedirectButton from "ui/interaction/action/redirect/redirect-button";
+import ReturnButton from "ui/interaction/action/redirect/return-button";
+import { useDictionary } from "utils/dictionary/DictionaryContext";
+import ColumnSearchComponent from "../actions/column-search";
 
 interface TableRibbonProps {
   path: string;
@@ -22,12 +24,13 @@ interface TableRibbonProps {
   selectedDate: string;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentInstances: React.Dispatch<React.SetStateAction<RegistryFieldValues[]>>;
   triggerRefresh: () => void;
 }
 
 /**
  * Renders a ribbon for the view page
- * 
+ *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
  * @param {string} registryAgentApi The target endpoint for default registry agents.
@@ -35,15 +38,14 @@ interface TableRibbonProps {
  * @param {string} selectedDate The selected date in the date field input.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate Method to update selected date.
+ * @param setCurrentInstances A dispatch method to set the current instances after parsing the initial instances.
  * @param triggerRefresh Method to trigger refresh.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
-  const router = useRouter();
+  const isKeycloakEnabled = process.env.KEYCLOAK === "true";
 
-  const isKeycloakEnabled = process.env.KEYCLOAK === 'true';
-
+  const dict: Dictionary = useDictionary();
   const authorised = useProtectedRole().authorised;
-
   const taskId: string = "task date";
 
   // Handle change event for the date input
@@ -51,87 +53,130 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.setSelectedDate(event.target.value);
   };
 
-  const triggerRefresh: React.MouseEventHandler<HTMLDivElement> = () => {
+  const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
 
   return (
     <div className={styles.menu}>
-      <div className={styles["ribbon-button-container"]}>
-        <RedirectButton
-          icon="pending"
-          url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-          title="Pending"
-        />
-        <RedirectButton
-          icon="schedule"
-          url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-          title="Active"
-        />
-        <RedirectButton
-          icon="archive"
-          url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-          isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-          title="Archive"
-        />
-      </div>
-      <div className={styles["ribbon-button-container"]}>
-        {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_PENDING &&
-          <ClickActionButton
-            icon={"add"}
-            title={"add " + props.entityType}
-            onClick={() => {
-              router.push(`${Routes.REGISTRY_ADD}/${props.entityType}`);
+      {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+        <div className={styles["registry-nav-ribbon"]}>
+          <RedirectButton
+            label={dict.nav.title.pending}
+            icon="pending"
+            url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
             }}
           />
-        }
-        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
           <RedirectButton
-            icon={"task"}
+            label={dict.nav.title.active}
+            icon="schedule"
             url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
-            title={"overview"}
-          />}
-        {(props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE) &&
-          <RedirectButton
-            icon={"event"}
-            url={`${Routes.REGISTRY_TASK_DATE}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
-            title={"view tasks"}
-          />}
-        {props.lifecycleStage == Routes.REGISTRY_REPORT &&
-          <ClickActionButton
-            icon={"first_page"}
-            title={`back to ${props.entityType}s`}
-            onClick={() => { router.back(); }}
-          />}
-        <DownloadButton
-          instances={props.instances}
-        />
-        {(authorised || !isKeycloakEnabled) && props.lifecycleStage == Routes.REGISTRY_TASK_DATE && <>
-          <div style={{ margin: "auto 0" }}>
-            <label className={fieldStyles["form-input-label"]} htmlFor={taskId}>
-              Date:
-            </label>
-            <input
-              id={taskId}
-              className={fieldStyles["dtpicker"]}
-              style={{ width: "5.5rem" }}
-              type={"date"}
-              defaultValue={props.selectedDate}
-              aria-label={taskId}
-              onChange={handleDateChange}
-            />
-          </div>
-          <MaterialIconButton
-            iconName={"cached"}
-            iconStyles={[styles["icon"]]}
-            onClick={triggerRefresh}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
           />
-        </>
-        }
+          <RedirectButton
+            label={dict.nav.title.archive}
+            icon="archive"
+            url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
+            isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            className={styles["registry-nav-button"]}
+            styling={{
+              active: styles["active-state"],
+            }}
+          />
+        </div>
+      )}
+
+      <div className={styles.divider} />
+
+      <div className={styles["action-ribbon-container"]}>
+        <div className={styles["action-ribbon"]}>
+          <ClickActionButton
+            icon={"cached"}
+            onClick={triggerRefresh}
+            isTransparent={true}
+          />
+          {props.instances.length > 0 && <ColumnSearchComponent
+            instances={props.instances}
+            setCurrentInstances={props.setCurrentInstances}
+          />}
+        </div>
+        <div className={styles["action-ribbon"]}>
+          {(authorised || !isKeycloakEnabled) &&
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
+              <div style={{ margin: "auto 0" }}>
+                <label
+                  className={fieldStyles["form-input-label"]}
+                  htmlFor={taskId}
+                >
+                  {dict.action.date}:
+                </label>
+                <input
+                  id={taskId}
+                  className={fieldStyles["dtpicker"]}
+                  style={{ width: "5.5rem" }}
+                  type={"date"}
+                  defaultValue={props.selectedDate}
+                  aria-label={taskId}
+                  onChange={handleDateChange}
+                />
+              </div>
+            )}
+
+          {(authorised || !isKeycloakEnabled) &&
+            (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
+              <RedirectButton
+                icon="add"
+                label={`${dict.action.add} ${props.entityType.replace("_", " ")}`}
+                url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
+                isActive={false}
+              />
+            )}
+          {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+              <RedirectButton
+                icon="task"
+                label={dict.action.overview}
+                url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+                isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+              />
+            )}
+          {(props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
+            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+              <RedirectButton
+                icon="event"
+                label={dict.action.viewTasks}
+                url={Routes.REGISTRY_TASK_DATE}
+                isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+              />
+            )}
+          {props.lifecycleStage == Routes.REGISTRY_REPORT && (<>
+            <ReturnButton
+              icon="first_page"
+              label={`${dict.action.backTo} ${props.entityType.replace("_", " ")}s`}
+            />
+            <RedirectButton
+              icon="print"
+              label={dict.action.generateReport}
+              url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
+              isActive={false}
+            />
+          </>)}
+          {<DownloadButton instances={props.instances} />}
+        </div>
       </div>
     </div>
   );

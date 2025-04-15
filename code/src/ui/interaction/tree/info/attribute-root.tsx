@@ -13,14 +13,14 @@ import { setIri, setStack } from 'state/map-feature-slice';
 // type definition for incoming properties
 interface AttributeRootProps {
   attribute: AttributeGroup;
-  scrollRef: React.MutableRefObject<HTMLDivElement>;
+  scrollRef: React.RefObject<HTMLDivElement>;
   setScrollPosition: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface AttributeNodeProps {
   group: AttributeGroup;
   depth: number;
-  scrollRef: React.MutableRefObject<HTMLDivElement>;
+  scrollRef: React.RefObject<HTMLDivElement>;
   setScrollPosition: React.Dispatch<React.SetStateAction<number>>;
 }
 

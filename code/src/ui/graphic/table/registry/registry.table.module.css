@@ -19,12 +19,12 @@
 
 .title h1 {
   color: var(--text-color-primary);
-  font-size: var(--font-size-h2);
+  font-size: var(--font-size-h1);
+  text-align: center;
 }
 
 .instructions {
   font-size: var(--font-size-secondary-text);
-  padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
 
@@ -38,33 +38,23 @@
 
 .table {
   width: 100%;
-  overflow-x: hidden;
-
-  border-spacing: 0;
-  border-collapse: separate;
+  overflow-x: auto;
 }
 
 .header {
-  position: sticky;
-  top: 0;
-
-  background-color: var(--background-primary);
-  text-align: left;
-  text-wrap: nowrap;
+  border-bottom: none !important;
 }
 
-.table th {
-  padding: 0.5rem 1rem 0.5rem 0.4rem;
-  font-size: var(--font-size-secondary-text);
-  color: var(--text-color-primary);
-
-  border-style: solid;
-  border-color: var(--border-primary);
-  border-width: 0.1rem 0;
+.row:nth-child(even) {
+  background: rgba(131, 195, 141, 0.8);
 }
 
-.table thead th:nth-last-child(1) {
-  width: 100%;
+.row:nth-child(odd) {
+  background: rgba(124, 203, 219, 0.8);
+}
+
+.row-cell {
+  font-size: var(--font-size-secondary-text) !important;
 }
 
 .table-icon-cell {
@@ -78,21 +68,4 @@
 
 .expand-icon:hover {
   color: var(--text-color-links-hover) !important;
-}
-
-.table td {
-  white-space: nowrap;
-  padding: 0.5rem 0.4rem;
-  font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
-
-  border-style: solid;
-  border-color: var(--border-secondary);
-  border-width: 0 0 0.025rem;
-}
-
-@media only screen and (max-width: 480px) {
-  .table td {
-    white-space: normal;
-  }
 }
