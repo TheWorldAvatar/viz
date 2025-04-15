@@ -63,6 +63,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
 
   const handleClear = () => {
     setSearchText("");
+    props.setCurrentInstances(props.instances)
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
