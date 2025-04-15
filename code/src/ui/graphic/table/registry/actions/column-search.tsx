@@ -1,7 +1,6 @@
 import { selectorStyles } from 'ui/css/selector-style';
 import styles from './column-search.module.css';
 
-import { Input } from 'antd';
 import React, { useMemo, useState } from 'react';
 import Select from 'react-select';
 
@@ -108,13 +107,14 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
               isMulti={false}
               isSearchable={true}
             />
-            <Input
+            <input
+              type="text"
+              className={styles["search-input"]}
               placeholder={dict.action.search}
-              value={searchText}
               onChange={handleSearch}
-              prefix={<span className="material-symbols-outlined">search</span>}
-              style={{ width: 200 }}
-            />
+              readOnly={false}
+              aria-label={"Filter Search"}
+            />            
             <div className={styles["button-container"]} >
               <ClickActionButton
                 icon="replay"
