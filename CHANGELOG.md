@@ -11,6 +11,24 @@
 - Added a global login session using context
 - Updated the existing UI display of Keycloak session to the new global session
 
+## 5.20.3
+
+### Changes
+
+- Added filtering function in registry table
+
+## 5.20.2
+
+### Changes
+
+- Store selected filterTimes in search form, only applicable for trajectory FIA queries
+
+## 5.20.1
+
+### Changes
+
+- Dependency bumps outlined in #157
+
 ## 5.20.0
 
 ### Changes

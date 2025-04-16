@@ -2,25 +2,25 @@
 
 import styles from './registry.table.module.css';
 
+import { Icon } from '@mui/material';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { usePathname } from 'next/navigation';
-import { Icon } from '@mui/material';
 
+import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
 import { getIsOpenState } from 'state/modal-slice';
-import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
-import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
-import { Status } from 'ui/text/status/status';
-import useRefresh from 'hooks/useRefresh';
-import TaskModal from 'ui/interaction/modal/task/task-modal';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
-import RegistryTable from './registry-table';
-import TableRibbon from './ribbon/table-ribbon';
-import SummarySection from './ribbon/summary';
-import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
+import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
+import LoadingSpinner from 'ui/graphic/loader/spinner';
+import TaskModal from 'ui/interaction/modal/task/task-modal';
+import { Status } from 'ui/text/status/status';
+import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
+import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
+import RegistryTable from './registry-table';
+import SummarySection from './ribbon/summary';
+import TableRibbon from './ribbon/table-ribbon';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -40,6 +40,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
   const isModalOpen: boolean = useSelector(getIsOpenState);
+  const [initialInstances, setInitialInstances] = useState<RegistryFieldValues[]>([]);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
@@ -84,6 +85,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
         } else {
           instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
         }
+        setInitialInstances(instances);
         setCurrentInstances(instances);
         setIsLoading(false);
       } catch (error) {
@@ -112,7 +114,8 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           registryAgentApi={props.registryAgentApi}
           lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
-          instances={currentInstances}
+          instances={initialInstances}
+          setCurrentInstances={setCurrentInstances}
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
