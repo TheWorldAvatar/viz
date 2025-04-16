@@ -8,6 +8,7 @@ import { PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
 import { isValidIRI } from 'utils/client-utils';
+import { useDictionary } from 'hooks/useDictionary';
 import FormFieldComponent from '../form-field';
 
 export interface FormArrayProps {
