@@ -24,7 +24,7 @@ import {
   togglePlacenames
 } from 'ui/map/map-helper';
 import { closeFullscreen, openFullscreen } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { scenarioTypeIcon } from '../modal/scenario';
 import RibbonComponentClick from './components/ribbon-component-click';
 import RibbonComponentOptions from './components/ribbon-component-options';

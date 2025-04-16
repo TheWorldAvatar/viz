@@ -7,7 +7,7 @@ import { MapFeaturePayload } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
 import GroupDropdownField from 'ui/interaction/dropdown/group-dropdown';
 import { setSelectedFeature } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 
 interface FeatureSelectorProps {
   features: MapFeaturePayload[];

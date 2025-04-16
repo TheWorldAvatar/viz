@@ -9,7 +9,7 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
 
 export interface FormInputContainerProps {
   field: PropertyShape;
