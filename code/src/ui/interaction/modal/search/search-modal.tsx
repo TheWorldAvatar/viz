@@ -12,7 +12,7 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
 import ResponseComponent from 'ui/text/response/response';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { HttpResponse } from 'utils/server-actions';
 
 interface SearchModalProps {

@@ -11,7 +11,7 @@ import { TimeSeries } from 'types/timeseries';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import FeatureSelector from 'ui/interaction/dropdown/feature-selector';
 import { setSelectedFeature } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import AttributeRoot from './attribute-root';
 import InfoTabs from './info-tabs';
 import TimeSeriesPanel from './time-series-panel';
