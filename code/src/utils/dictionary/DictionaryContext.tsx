@@ -1,8 +1,8 @@
 "use client"
-import React, { createContext, useContext } from 'react';
+import React, { createContext } from 'react';
 import { Dictionary } from 'types/dictionary';
 
-const DictionaryContext = createContext<Dictionary | null>(null);
+export const DictionaryContext = createContext<Dictionary | null>(null);
 
 export const DictionaryProvider = ({
     children,
@@ -16,12 +16,4 @@ export const DictionaryProvider = ({
             {children}
         </DictionaryContext.Provider>
     );
-};
-
-export const useDictionary = () => {
-    const context = useContext(DictionaryContext);
-    if (!context) {
-        throw new Error('useDictionary must be used within a DictionaryProvider');
-    }
-    return context;
 };
