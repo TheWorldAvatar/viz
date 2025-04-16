@@ -38,14 +38,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
-  height: 1rem !important;
-  width: 1rem !important;
-  margin: 0 !important;
-
-  color: var(--border-tertiary) !important;
+  font-size: 0.8rem;
+  font-weight: normal;
+  height: 1rem;
+  width: 1rem;
+  margin: 0;
+  color: var(--border-tertiary);
   border-radius: 2px;
   border: 1px solid var(--border-tertiary);
+  cursor: pointer;
+}
+
+.row-marker.active {
+  background-color: var(--border-tertiary);
+  color: var(--background-primary);
+  font-weight: bold;
 }
 
 .cell {

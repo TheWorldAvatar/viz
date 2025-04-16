@@ -63,17 +63,16 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           }}
         />}
         {Array.from({ length: fields.length }, (_, index) => (
-          <ClickActionButton
+          <button
             key={index}
-            icon={index === currentIndex ? "expand_more" : "chevron_right"}
-            className={styles["row-marker"]}
-            isActive={index === currentIndex}
-            isTransparent={true}
+            className={`${styles["row-marker"]} ${index === currentIndex ? styles["active"] : ""}`}
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               event.preventDefault();
               setCurrentIndex(index);
             }}
-          />
+          >
+            {index + 1}
+          </button>
         ))}
       </div>
       <div className={styles["row"]}>
