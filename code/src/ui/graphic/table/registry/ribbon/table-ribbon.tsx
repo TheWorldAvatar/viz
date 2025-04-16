@@ -115,27 +115,25 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />}
         </div>
         <div className={styles["action-ribbon"]}>
-          {(authorised || !isKeycloakEnabled) &&
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
-              <div style={{ margin: "auto 0" }}>
-                <label
-                  className={fieldStyles["form-input-label"]}
-                  htmlFor={taskId}
-                >
-                  {dict.action.date}:
-                </label>
-                <input
-                  id={taskId}
-                  className={fieldStyles["dtpicker"]}
-                  style={{ width: "5.5rem" }}
-                  type={"date"}
-                  defaultValue={props.selectedDate}
-                  aria-label={taskId}
-                  onChange={handleDateChange}
-                />
-              </div>
-            )}
-
+          {props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
+            <div style={{ margin: "auto 0" }}>
+              <label
+                className={fieldStyles["form-input-label"]}
+                htmlFor={taskId}
+              >
+                {dict.action.date}:
+              </label>
+              <input
+                id={taskId}
+                className={fieldStyles["dtpicker"]}
+                style={{ width: "5.5rem" }}
+                type={"date"}
+                defaultValue={props.selectedDate}
+                aria-label={taskId}
+                onChange={handleDateChange}
+              />
+            </div>
+          )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
             (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
