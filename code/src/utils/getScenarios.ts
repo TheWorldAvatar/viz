@@ -1,6 +1,6 @@
-import { ScenarioDefinition } from "types/scenario";
+import { ScenarioDefinition, ScenarioDescription } from "types/scenario";
 
-export async function getScenarios(scenarioUrl: string): Promise<ScenarioDefinition[]> {
+export async function getScenarios(scenarioUrl: string): Promise<ScenarioDescription[]> {
   const url: string = scenarioUrl + "/getScenarios";
   let response;
   let data: ScenarioDefinition[];
