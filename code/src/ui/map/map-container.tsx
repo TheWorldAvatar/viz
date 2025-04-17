@@ -26,6 +26,7 @@ import { MapSettingsProvider } from './mapbox/map-settings-context';
 // Type definition of incoming properties
 interface MapContainerProps {
   scenarioURL: string;
+  scenarioDataset: string;
   settings: string;
   data: string;
   scenarios: ScenarioDefinition[]
