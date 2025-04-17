@@ -81,6 +81,7 @@ export default function MapContainer(props: MapContainerProps) {
         } catch (error) {
           console.error("Error setting scenario dataset URL, check the resource.scenario.url and dataset values in ui-settings.json", error);
         }
+        fetch(scenarioDatasetURL, { credentials: 'same-origin' })
           .then((res) => res.json())
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
