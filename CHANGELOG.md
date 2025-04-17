@@ -3,6 +3,16 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.22.0
+
+### Changes
+
+- Allow scenario modal to render on the client if server side scenario fetch fails
+- Allow better closing behaviour of scenario modal
+- Pass credentials where relevant
+- Simplify some data fetching
+- Simplify some scenario state management
+  
 ## 5.21.0
 
 ### Changes
