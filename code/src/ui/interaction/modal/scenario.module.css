@@ -84,10 +84,10 @@
 
 .refreshButton {
   margin-left: 'auto';
-  color: var(--text-color-links)
+  color: var(--text-color-links) !important;
 }
 
 .closeButton {
   margin-left: 'auto';
-  color: rgba(255, 60, 0, 0.6)
+  color: rgba(255, 60, 0, 0.6) !important
 }
