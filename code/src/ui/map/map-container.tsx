@@ -39,12 +39,11 @@ export default function MapContainer(props: MapContainerProps) {
   const dispatch = useDispatch();
   const [map, setMap] = useState<Map>(null);
   const [mapEventManager, setMapEventManager] = useState<MapEventManager>(null);
-  const [currentScenario, setCurrentScenario] = useState<ScenarioDefinition>(null);
   const [showDialog, setShowDialog] = useState<boolean>(!!props.scenarios);
   const [dataStore, setDataStore] = useState<DataStore>(null);
 
-  const selectedScenario = useSelector(getScenarioID);
-  const { scenarioDimensions, isDimensionsFetching } = useScenarioDimensionsService(currentScenario?.url, selectedScenario);
+  const selectedScenarioID = useSelector(getScenarioID);
+  const { scenarioDimensions, isDimensionsFetching } = useScenarioDimensionsService(props.scenarioURL);
   const dimensionSliderValue = useSelector(selectDimensionSliderValue);
   const filterLayerIds: string[] = useSelector(getFilterLayerIds);
   const filterFeatureIris: string[] = useSelector(getFilterFeatureIris);
@@ -75,12 +74,13 @@ export default function MapContainer(props: MapContainerProps) {
       setDataStore(null); // Always reset data when traversing states
       let mapDataStore: DataStore;
       // If there are any scenarios, the corresponding data settings should be fetched from the server
-      if (selectedScenario) {
-        // Await the new definitions from the server
-        const reqScenario: ScenarioDefinition = props.scenarios.find((scenario) => scenario.id === selectedScenario);
-        setCurrentScenario(reqScenario);
-        const scenarioDatasetURL = `${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`;
-        fetch(scenarioDatasetURL, { credentials: 'include' })
+      if (selectedScenarioID) {
+        let scenarioDatasetURL
+        try {
+          scenarioDatasetURL = `${props.scenarioURL}/getDataJson/${selectedScenarioID}?dataset=${props.scenarioDataset}`;
+        } catch (error) {
+          console.error("Error setting scenario dataset URL, check the resource.scenario.url and dataset values in ui-settings.json", error);
+        }
           .then((res) => res.json())
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
@@ -101,7 +101,7 @@ export default function MapContainer(props: MapContainerProps) {
         setDataStore(mapDataStore);
       }
     }
-  }, [mapSettings?.type, props.data, props.scenarios, selectedScenario, showDialog, dimensionSliderValue]);
+  }, [mapSettings?.type, props.data, props.scenarios, selectedScenarioID, showDialog, dimensionSliderValue]);
 
   // Populates the map after it has loaded and scenario selection is not required
   useEffect(() => {
@@ -200,7 +200,7 @@ export default function MapContainer(props: MapContainerProps) {
           startingIndex={0}
           mapSettings={mapSettings}
           toggleScenarioSelection={setShowDialog}
-          hasScenario={!!selectedScenario}
+          hasScenario={!!selectedScenarioID}
         />
 
         {/* Map information panel */}
