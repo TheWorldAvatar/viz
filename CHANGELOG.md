@@ -72,8 +72,6 @@
 - Refactor to work with new endpoint requirements
 - Updated `VisBackend Agent` from `v1.3.0` to `v1.4.0`
 
-=======
-
 ## 5.18.5
 
 - dependabot version bump #136
