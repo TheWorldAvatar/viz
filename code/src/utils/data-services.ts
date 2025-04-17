@@ -43,14 +43,11 @@ export function generateFIAEndpoint(iri: string, stack: string, scenario: string
   return url;
 }
 
-function ScenarioDimensionsEndpoint(stack: string): string {
+
+export const useScenarioDimensionsService = (scenarioURL: string): { scenarioDimensions: ScenarioDimensionsData; isDimensionsFetching: boolean } => {
   const selectedScenario = useSelector(getScenarioID);
-  return `${stack}/getScenarioTimes/${selectedScenario}`;
-}
-
-export const useScenarioDimensionsService = (stack: string, scenario: string): { scenarioDimensions: ScenarioDimensionsData; isDimensionsFetching: boolean } => {
-  const { data, isFetching } = useFetchDimensionsQuery(ScenarioDimensionsEndpoint(stack));
-
+  const scenarioDimensionsEndpoint = `${scenarioURL}/getScenarioTimes/${selectedScenario}`
+  const { data, isFetching } = useFetchDimensionsQuery(scenarioDimensionsEndpoint);
   const [scenarioDimensions, setScenarioDimensions] = useState<ScenarioDimensionsData>({});
   const isDimensionsFetching = isFetching;
   useEffect(() => {
