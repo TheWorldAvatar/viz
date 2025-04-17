@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import SettingsStore from 'io/config/settings';
 import { Paths, PageTitles, Modules } from 'io/config/routes';
-import { ScenarioDefinition } from 'types/scenario';
+import { ScenarioDefinition, ScenarioDescription } from 'types/scenario';
 import { UISettings } from 'types/settings';
 import { getScenarios } from 'utils/getScenarios';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
@@ -38,14 +38,14 @@ export default async function MapPage() {
     let scenarios: ScenarioDefinition[] = [];
     if (scenarioResource) {
       try {
-        const response = await getScenarios(scenarioUrl);
-        scenarios = response.map((scenario) => ({
+        const response: ScenarioDescription[] = await getScenarios(scenarioUrl); // Ensure response is typed as ScenarioDescription[]
+        scenarios = response.map((scenario): ScenarioDefinition => ({
           ...scenario,
           url: scenarioUrl,
           dataset: scenarioDataset,
-        }))
+        }));
       } catch (error) {
-        console.error(`Error populating scenarios selector`, error)
+        console.error(`Error populating scenarios selector`, error);
       }
     }
     
