@@ -3,6 +3,13 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.22.1
+
+### Changes
+
+- Dependabot bump #163
+- Update package manager version
+  
 ## 5.22.0
 
 ### Changes
