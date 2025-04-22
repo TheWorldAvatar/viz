@@ -16,7 +16,8 @@
         "start": "NODE_ENV=production node --env-file='.env.local' server.js",
         "start-docker": "NODE_ENV=production node server.js",
         "lint": "next lint",
-        "test": "jest"
+        "test": "jest",
+        "test:ci": "jest --ci --reporters=default --reporters=jest-junit"
     },
     "dependencies": {
         "@emotion/react": "^11.14.0",
