@@ -1,4 +1,4 @@
-name: Lint and check types of TypeScript code
+name: Check types of TypeScript code
 
 on:
   pull_request:
@@ -40,10 +40,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
         working-directory: code 
-
-      - name: Lint TypeScript code
-        run: pnpm lint
-        working-directory: code
 
       - name: Check Types
         run: pnpm tsc

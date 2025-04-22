@@ -1,0 +1,46 @@
+name: Lint TypeScript and JavaScript code
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - code/**
+      - code/* 
+  workflow_run:
+    workflows: ["Check Version"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  cache-install-lint-tsc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda #v4 <- pinned commit for safety
+        with:
+          version: 10.2.1
+
+      - name: Setup Node.js and cache dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: code/package.json
+          cache-dependency-path: code/pnpm-lock.yaml
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: code 
+
+      - name: Lint TypeScript code
+        run: pnpm lint
+        working-directory: code
