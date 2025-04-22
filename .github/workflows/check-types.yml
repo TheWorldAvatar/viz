@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  cache-install-lint-tsc:
+  check-types:
     runs-on: ubuntu-latest
 
     steps:
