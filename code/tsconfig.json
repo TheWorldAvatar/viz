@@ -15,7 +15,8 @@
         "jsx": "preserve",
         "incremental": true,
         "strictNullChecks": false,
-        "typeRoots": ["../node_modules/@types"],
+        "typeRoots": ["node_modules/@types"],
+        "types": ["node", "jest"],
         "lib": [
             "dom",
             "dom.iterable",
