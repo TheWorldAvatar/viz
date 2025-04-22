@@ -7,7 +7,7 @@ import nextJest from 'next/jest.js'
 import type { Config } from 'jest';
 
 const createJestConfig = nextJest({
-  dir: 'src',
+  dir: '.',
 });
 
 
@@ -144,6 +144,7 @@ const config: Config = {
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
