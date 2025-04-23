@@ -6,9 +6,6 @@ import { parsePermissions } from './session-utils';
 
 export const SessionContext = createContext<SessionInfo>(null);
 
-
-
-
 export const SessionInfoProvider = ({
     children,
 }: {

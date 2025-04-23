@@ -70,7 +70,7 @@ export default class SettingsStore {
   }
 
   /**
-   * Reads the map settings.
+   * Reads the map settings file and sets the string version to SettingsStore private field.
    */
   public static readMapSettings(): void {
     const settings: string = this.readFile(this.MAP_SETTINGS_FILE);

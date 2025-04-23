@@ -7,6 +7,7 @@ import Negotiator from 'negotiator'
 
 const supportedLocales = ['en', 'de']
 const defaultLocale = 'en'
+const prefix = process.env.ASSET_PREFIX || ''
 
 
 /**
@@ -34,7 +35,7 @@ export function middleware(request: NextRequest) {
 
     // Redirect if there is no locale
     const locale = getLocale(request)
-    request.nextUrl.pathname = `/${locale}${pathname}`
+    request.nextUrl.pathname = `${prefix}/${locale}${pathname}`
     return NextResponse.redirect(request.nextUrl);
 }
 

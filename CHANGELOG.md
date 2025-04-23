@@ -3,6 +3,23 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.22.1
+
+### Changes
+
+- Dependabot bump #163
+- Update package manager version
+  
+## 5.22.0
+
+### Changes
+
+- Allow scenario modal to render on the client if server side scenario fetch fails
+- Allow better closing behaviour of scenario modal
+- Pass credentials where relevant
+- Simplify some data fetching
+- Simplify some scenario state management
+  
 ## 5.21.0
 
 ### Changes
@@ -10,6 +27,24 @@
 - Added role-based features using Keycloak
 - Added a global login session using context
 - Updated the existing UI display of Keycloak session to the new global session
+
+## 5.20.3
+
+### Changes
+
+- Added filtering function in registry table
+
+## 5.20.2
+
+### Changes
+
+- Store selected filterTimes in search form, only applicable for trajectory FIA queries
+
+## 5.20.1
+
+### Changes
+
+- Dependency bumps outlined in #157
 
 ## 5.20.0
 
