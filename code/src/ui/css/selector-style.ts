@@ -7,12 +7,10 @@ export const selectorStyles: StylesConfig<FormOptionType | GroupBase<FormOptionT
   control: (provided, { isDisabled }) => ({
     ...provided,
     outline: "1px solid var(--border-primary)",
-    borderRadius: "5px",
-    minHeight: "3vh",
-    maxHeight: "3vh",
+    height: "1.8rem",
     width: "100%",
-    maxWidth: "6rem",
-    padding: "0 0.5rem",
+    maxWidth: "100%",
+    padding: "0.2rem",
     margin: "0",
 
     cursor: isDisabled ? "not-allowed !important" : "default",
@@ -31,6 +29,7 @@ export const selectorStyles: StylesConfig<FormOptionType | GroupBase<FormOptionT
     margin: "0.25rem 0",
     minWidth: "100%",
     width: "fit-content",
+    zIndex: 99999,
   }),
   noOptionsMessage: (provided) => ({
     ...provided,

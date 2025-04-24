@@ -1,11 +1,19 @@
 import { ScenarioDimensionsData } from "./timeseries";
 
-export type ScenarioDefinition = {
-  name: string;
+export interface ScenarioDescription {
   description: string;
   id: string;
+  name: string;
+  type: 'Heat Event' | 'Flood Event' | 'Probabilistic Heat Event';
+}
+
+/**
+ *   url?: string;
+ *   dataset?: string;
+ *   dimensions?: ScenarioDimensionsData;
+ */
+export interface ScenarioDefinition extends ScenarioDescription {
   url?: string;
   dataset?: string;
-  type: 'Heat Event' | 'Flood Event' | 'Probabilistic Heat Event';
-  dimensions: ScenarioDimensionsData
-};
+  dimensions?: ScenarioDimensionsData;
+}

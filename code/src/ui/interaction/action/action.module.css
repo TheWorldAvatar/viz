@@ -7,34 +7,68 @@
   margin: 0.5rem 0 0.25rem 0;
   padding: 0.5rem 1rem;
   border-radius: 0.1rem;
-  border: 1px solid transparent;
-  background-color: var(--button-color-primary);
   color: var(--text-color-primary);
   transition: all 0.2s ease-in-out;
 }
 
-.hover-button-container:hover {
+.active {
+  background: var(--button-color-primary-active) !important;
+  transform: translateY(-1px);
+}
+
+.background {
+  background: var(--button-color-primary);
+  border: 1px solid transparent;
+}
+
+.background-secondary {
+  background: var(--button-color-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+.background:hover {
   background-color: var(--button-color-primary-active);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.active {
-  border: 1px solid var(--background-inverse-primary);
-  background-color: var(--button-color-primary-active);
+.background-transparent {
+  background: none;
+  border: none;
 }
 
 .icon {
-  color: var(--background-primary);
   font-size: var(--small-icon-size) !important;
   transition: color 0.2s ease;
 }
 
 .text {
-  color: var(--background-primary);
   font-size: var(--font-size-tertiary-text);
   margin-left: 0.5rem;
   font-weight: 500;
+}
+
+.background-text-color {
+  color: var(--background-primary);
+}
+
+.transparent-text-color {
+  font-size: var(--font-size-secondary-text);
+  color: var(--text-color-primary);
+}
+
+.transparent-text-color:hover {
+  color: var(--text-color-links-hover);
+}
+
+.icon-only-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+  margin: 0 0.5rem;
+  transition: all 0.2s ease-in-out;
 }
 
 @media only screen and (max-width: 480px) {

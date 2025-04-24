@@ -25,7 +25,7 @@ export default function FormCheckboxField(props: Readonly<InputFieldProps>) {
   const fieldId: string = props.field.toLowerCase();
 
   return (
-    <div className={styles["form-input-container"]}>
+    <div>
       <Controller
         name={props.field}
         control={props.form.control}

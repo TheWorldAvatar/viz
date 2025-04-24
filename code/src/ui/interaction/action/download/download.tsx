@@ -2,8 +2,11 @@
 
 import React from 'react';
 
-import ActionButton from '../action';
+import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
+import { extractResponseField } from 'utils/client-utils';
+import { useDictionary } from 'hooks/useDictionary';
+import ActionButton from '../action';
 
 interface DownloadButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   instances: RegistryFieldValues[];
@@ -15,6 +18,7 @@ interface DownloadButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  */
 export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonProps>) {
+  const dict: Dictionary = useDictionary();
   const exportToCSV = () => {
     if (instances.length === 0) {
       console.error("No data to export.");
@@ -27,7 +31,7 @@ export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonPr
     csvRows.push(headers.join(",")); // Add headers
 
     for (const row of instances) {
-      const values = headers.map(header => row[header]?.value ?? "");
+      const values = headers.map(header => extractResponseField(row, header)?.value ?? "");
       csvRows.push(values.join(","));
     }
     // Transform contents into a url for download
@@ -50,7 +54,7 @@ export function DownloadButton({ instances, ...rest }: Readonly<DownloadButtonPr
     <ActionButton
       icon="download"
       className={`${rest.className}`}
-      title="export data"
+      label={dict.action.export}
       onClick={exportToCSV}
     />
   );

@@ -15,10 +15,14 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
     - [3.2 Stack Deployment](#32-stack-deployment)
   - [4 Authorisation](#4-authorisation)
   - [5. Release](#5-release)
+    - [Your Responsibilities Before Merging a Pull Request](#your-responsibilities-before-merging-a-pull-request)
 
 ## 1. Precursor
 
-As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections.
+As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
+
+1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.4.2`
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
@@ -57,7 +61,7 @@ To view the example configuration, simply run `docker compose up` in this direct
 
 2. (optional) Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly. Skip this step to use the default example config.
 3. (optional) Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
-4. (optional) If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment  variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
+4. (optional) If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above
@@ -71,12 +75,12 @@ For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAva
 1. The `mapbox_username` and `mapbox_api_key` are available as Docker secrets
 2. Copy the [custom visualisation service config](./example/vip.json) to the `stack-manager/inputs/config/services` directory
 3. In the stack config file, `visualisation` is included as part of the `services` `includes` list
-4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment  variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
+4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above.
 
->[!NOTE]
+> [!NOTE]
 > For typical self-hosted TWA deployment, `ASSET_PREFIX` must contain both the top level nginx path, and the stack level nginx path. e.g. if the app is deployed in a stack at `theworldavatar.io/demos/app`, then `ASSET_PREFIX` should be set to `demos/app/visualisation` to account for the `visualisation` path added by the stack level nginx.
 
 5. Specify the directory holding the configuration files that should be mapped to a volume called `webspace` or your preference
@@ -94,8 +98,8 @@ To secure your viz app with a Keycloak authentication server, set the relevant e
 
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES=/page,/otherpage ## pages that a user must be logged in to see
-ROLE_PROTECTED_PAGES=/role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
+PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see
+ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
 ```
 
@@ -103,10 +107,11 @@ alternatively, in the docker `docker-compose.yml` or `docker-compose.dev.yml`
 
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES: page,/otherpage ## pages that a user must be logged in to see
-ROLE_PROTECTED_PAGES: /role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
-ROLE: viz:protected ## the role required for the above list
+PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged in to see
+ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
+ROLE: viz:protected ## (optional) the role required for the above list
 ```
+If `PROTECTED_PAGES` is not defined, all pages will be protected.
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.
 
@@ -116,8 +121,21 @@ The [`keycloak.json` file](./code/keycloak.json) must also be correctly configur
 > [!NOTE]
 > Client roles work better for API-protecting resources than the realm roles. As in the example above, use a role like `<client>:<role>`. See the [documentation in the auth folder](./auth/README.md) to spin up a dev Keycloak server for testing.
 
+> [!IMPORTANT]
+> Access to certain platform features is controlled by predefined client roles set in the sample server configuration at `./auth/realm/realm.json`. While users can create a customised Keycloak server, please ensure that these roles are also included and assigned to users in order for the platform to perform as expected.
+
 ## 5. Release
 
-Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged. However, before merging the pull request, update the `resources/CHANGELOG.md` and `resources/VERSION` accordingly. Look at the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format.
+Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged.
 
-Once merged, a release email will be sent to the mailing list based on the `resources/CHANGELOG.md`.
+### Your Responsibilities Before Merging a Pull Request
+
+Users **MUST** perform the following actions **BEFORE** merging your approved pull request:
+
+- Update the `CHANGELOG.md` file
+  - Follow the existing format to maintain consistency
+- Update the `VERSION` file
+  - Refer to the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format
+
+> [!IMPORTANT]  
+> Please ensure your pull request has received the required approvals before merging. Once a pull request is merged, the release process is fully automated. No further manual intervention is required. A release email will also be sent based on the `CHANGELOG.md` file.

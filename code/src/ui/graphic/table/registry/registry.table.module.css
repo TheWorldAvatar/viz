@@ -18,14 +18,13 @@
 }
 
 .title h1 {
-  color: var(text-color-title-primary);
+  color: var(--text-color-primary);
   font-size: var(--font-size-h1);
   text-align: center;
 }
 
 .instructions {
   font-size: var(--font-size-secondary-text);
-  padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
 
@@ -39,41 +38,23 @@
 
 .table {
   width: 100%;
-  overflow-x: hidden;
-
-  border-spacing: 0;
-  border-collapse: separate;
+  overflow-x: auto;
 }
 
 .header {
-  padding: 0.5rem 0;
-  background-color: var(--text-color-links);
-  color: var(--background-primary);
+  border-bottom: none !important;
 }
 
-.header-text {
-  font-size: var(--font-size-primary-text);
+.row:nth-child(even) {
+  background: rgba(131, 195, 141, 0.8);
 }
 
-.body-cell {
-  border: none;
-  font-size: var(--font-size-secondary-text);
+.row:nth-child(odd) {
+  background: rgba(124, 203, 219, 0.8);
 }
 
-.even-row {
-  background-color: rgba(131, 195, 141, 0.3);
-
-  &:hover {
-    background-color: var(--button-color-primary) !important;
-  }
-}
-
-.odd-row {
-  background-color: rgba(124, 203, 219, 0.3);
-
-  &:hover {
-    background-color: #7ccbdb80 !important;
-  }
+.row-cell {
+  font-size: var(--font-size-secondary-text) !important;
 }
 
 .table-icon-cell {

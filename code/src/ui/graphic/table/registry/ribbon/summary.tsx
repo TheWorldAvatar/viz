@@ -3,11 +3,13 @@ import styles from './summary.module.css';
 import { useEffect, useState } from 'react';
 
 import { Routes } from 'io/config/routes';
+import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
-import { getData } from 'utils/server-actions';
+import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
-import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
+import { useDictionary } from 'hooks/useDictionary';
+import { getData } from 'utils/server-actions';
 
 interface SummarySectionProps {
   id: string;
@@ -23,6 +25,7 @@ interface SummarySectionProps {
  * @param {string} registryAgentApi The target endpoint for the registry agent.
  */
 export default function SummarySection(props: Readonly<SummarySectionProps>) {
+  const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [contract, setContract] = useState<RegistryFieldValues>(null);
 
@@ -31,8 +34,8 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const contract: RegistryFieldValues[] = await getData(props.registryAgentApi, props.entityType, props.id, null, true);
-        setContract(contract[0]);
+        const contractRes: RegistryFieldValues[] = await getData(props.registryAgentApi, props.entityType, props.id, null, true);
+        setContract(contractRes[0]);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching instances", error);
@@ -44,10 +47,10 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
   return (
     <div className={styles["container"]}>
       <Accordion
-        title="Description"
+        title={dict.title.description}
         isLoading={isLoading}
       >{contract && Object.keys(contract).map((field, index) => {
-        if (field != "id" && contract[field].value) {
+        if (field != "id" && !Array.isArray(contract[field]) && contract[field].value) {
           return <AccordionField
             key={field + index}
             name={field}
@@ -60,7 +63,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
           icon="read_more"
           url={`${Routes.REGISTRY}/${props.entityType}/${props.id}`}
           isActive={false}
-          title="view more"
+          tooltipText={dict.action.viewMore}
         />
       </div>
     </div>

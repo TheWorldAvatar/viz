@@ -13,18 +13,18 @@ services:
       KC_LOG_LEVEL: info
       KC_LOG_CONSOLE_COLOR: true
       KC_LOG_FILE_DIR: /log/keycloak.log
-      KC_DB: postgres
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-theworldavatar}
-      KC_DB_POOL_MAX_SIZE: 50
-      KC_DB_URL_HOST: postgres
     command: start-dev --import-realm
     volumes:
       - ./realm:/opt/keycloak/data/import:ro # the realm to import
-    depends_on:
-      - postgres
     networks:
       - auth-network
+
+  # keycloak-dev:
+ ##############################################################################
+ #####                                                                   ######     
+ #####      Uncomment everything below for a production auth server      ######
+ #####                                                                   ######
+ ##############################################################################
 
   # keycloak-server:
   #   container_name: "keycloak-server"
@@ -61,73 +61,73 @@ services:
   #   networks:
   #     - auth-network
 
-  dragonfly:
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
-    container_name: "session-store"
-    restart: always
-    ulimits:
-      memlock: -1
-    ports:
-      - "6379:6379"
-    networks:
-      - auth-network
-    healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "healthcheck" ]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    volumes:
-      - dragonfly-data:/data
+#   dragonfly:
+#     image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+#     container_name: "session-store"
+#     restart: always
+#     ulimits:
+#       memlock: -1
+#     ports:
+#       - "6379:6379"
+#     networks:
+#       - auth-network
+#     healthcheck:
+#       test: [ "CMD", "redis-cli", "--raw", "incr", "healthcheck" ]
+#       interval: 1s
+#       timeout: 5s
+#       retries: 10
+#     volumes:
+#       - dragonfly-data:/data
 
-  postgres:
-    restart: always
-    container_name: "postgres"
-    image: postgres:17
-    environment:
-      POSTGRES_USER: postgres # default user for the container os
-      PGUSER: postgres # default user for psql
-      POSTGRES_DB: keycloak
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-theworldavatar}
-      # POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
-      GID: 1001
-    secrets:
-      - postgres-password
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d keycloak -U postgres" ]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - auth-network
+#   postgres:
+#     restart: always
+#     container_name: "postgres"
+#     image: postgres:17
+#     environment:
+#       POSTGRES_USER: postgres # default user for the container os
+#       PGUSER: postgres # default user for psql
+#       POSTGRES_DB: keycloak
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-theworldavatar}
+#       # POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
+#       GID: 1001
+#     secrets:
+#       - postgres-password
+#     healthcheck:
+#       test: [ "CMD-SHELL", "pg_isready -d keycloak -U postgres" ]
+#       interval: 1s
+#       timeout: 5s
+#       retries: 10
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres-data:/var/lib/postgresql/data
+#     networks:
+#       - auth-network
 
-  pgadmin:
-    restart: always
-    container_name: "pgadmin"
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_LOGIN_EMAIL:-user@example.com}
-      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD:-theworldavatar}
-      HOSTNAME: postgres
-      DATABASE: keycloak
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-    networks:
-      - auth-network
+#   pgadmin:
+#     restart: always
+#     container_name: "pgadmin"
+#     image: dpage/pgadmin4:latest
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_LOGIN_EMAIL:-user@example.com}
+#       PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD:-theworldavatar}
+#       HOSTNAME: postgres
+#       DATABASE: keycloak
+#     ports:
+#       - "5050:80"
+#     depends_on:
+#       - postgres
+#     networks:
+#       - auth-network
 
 networks:
   auth-network:
     driver: bridge
 
-secrets:
-  postgres-password:
-    file: ./postgres-password
+# secrets:
+#   postgres-password:
+#     file: ./postgres-password
 
-volumes:
-  dragonfly-data:
-  postgres-data:
+# volumes:
+#   dragonfly-data:
+#   postgres-data:

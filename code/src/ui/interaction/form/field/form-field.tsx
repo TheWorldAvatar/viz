@@ -13,7 +13,6 @@ import FormInputMinMaxField from './input/form-min-max-input';
 import FormSelector from './input/form-selector';
 
 interface FormFieldProps {
-  entityType: string;
   agentApi?: string;
   field: PropertyShape;
   form: UseFormReturn;
@@ -25,7 +24,6 @@ interface FormFieldProps {
 /**
  * Renders a form field as part of the form component.
  * 
- * @param {string} entityType The type of entity.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities. Optional for dropdown
  * @param {PropertyShape} field The form field data model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
@@ -52,7 +50,6 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
               /> :
               <FormInputField
                 field={props.field}
-                instanceType={props.entityType}
                 form={props.form}
                 options={{
                   disabled: props.options?.disabled,
@@ -91,7 +88,6 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
           }
           <div className={styles["form-input-container"]}>
             <FormSelector
-              instanceType={props.entityType}
               agentApi={props.agentApi}
               field={props.field}
               form={props.form}

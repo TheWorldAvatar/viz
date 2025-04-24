@@ -26,6 +26,7 @@ import { MapSettingsProvider } from './mapbox/map-settings-context';
 // Type definition of incoming properties
 interface MapContainerProps {
   scenarioURL: string;
+  scenarioDataset: string;
   settings: string;
   data: string;
   scenarios: ScenarioDefinition[]
@@ -38,12 +39,11 @@ export default function MapContainer(props: MapContainerProps) {
   const dispatch = useDispatch();
   const [map, setMap] = useState<Map>(null);
   const [mapEventManager, setMapEventManager] = useState<MapEventManager>(null);
-  const [currentScenario, setCurrentScenario] = useState<ScenarioDefinition>(null);
   const [showDialog, setShowDialog] = useState<boolean>(!!props.scenarios);
   const [dataStore, setDataStore] = useState<DataStore>(null);
 
-  const selectedScenario = useSelector(getScenarioID);
-  const { scenarioDimensions, isDimensionsFetching } = useScenarioDimensionsService(currentScenario?.url, selectedScenario);
+  const selectedScenarioID = useSelector(getScenarioID);
+  const { scenarioDimensions, isDimensionsFetching } = useScenarioDimensionsService(props.scenarioURL);
   const dimensionSliderValue = useSelector(selectDimensionSliderValue);
   const filterLayerIds: string[] = useSelector(getFilterLayerIds);
   const filterFeatureIris: string[] = useSelector(getFilterFeatureIris);
@@ -74,11 +74,14 @@ export default function MapContainer(props: MapContainerProps) {
       setDataStore(null); // Always reset data when traversing states
       let mapDataStore: DataStore;
       // If there are any scenarios, the corresponding data settings should be fetched from the server
-      if (selectedScenario) {
-        // Await the new definitions from the server
-        const reqScenario: ScenarioDefinition = props.scenarios.find((scenario) => scenario.id === selectedScenario);
-        setCurrentScenario(reqScenario);
-        fetch(`${reqScenario.url}/getDataJson/${selectedScenario}?dataset=${reqScenario.dataset}`)
+      if (selectedScenarioID) {
+        let scenarioDatasetURL
+        try {
+          scenarioDatasetURL = `${props.scenarioURL}/getDataJson/${selectedScenarioID}?dataset=${props.scenarioDataset}`;
+        } catch (error) {
+          console.error("Error setting scenario dataset URL, check the resource.scenario.url and dataset values in ui-settings.json", error);
+        }
+        fetch(scenarioDatasetURL, { credentials: 'same-origin' })
           .then((res) => res.json())
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
@@ -89,6 +92,9 @@ export default function MapContainer(props: MapContainerProps) {
             const dataString: string = JSON.stringify(data).replace(/{dim_time_index}/g, dimensionValue);
             mapDataStore = parseMapDataSettings(JSON.parse(dataString), mapSettings?.type);
             setDataStore(mapDataStore);
+          })
+          .catch((error) => {
+            console.error("Error fetching scenario map data:", error);
           });
       } else {
         // By default, the data settings are retrieved locally
@@ -96,7 +102,7 @@ export default function MapContainer(props: MapContainerProps) {
         setDataStore(mapDataStore);
       }
     }
-  }, [mapSettings?.type, props.data, props.scenarios, selectedScenario, showDialog, dimensionSliderValue]);
+  }, [mapSettings?.type, props.data, props.scenarios, selectedScenarioID, showDialog, dimensionSliderValue]);
 
   // Populates the map after it has loaded and scenario selection is not required
   useEffect(() => {
@@ -181,7 +187,7 @@ export default function MapContainer(props: MapContainerProps) {
           />
         }
       </MapSettingsProvider>
-      
+
       {/* Cesium map */}
       {mapSettings?.["type"] === "cesium" &&
         <div></div>
@@ -195,7 +201,7 @@ export default function MapContainer(props: MapContainerProps) {
           startingIndex={0}
           mapSettings={mapSettings}
           toggleScenarioSelection={setShowDialog}
-          hasScenario={!!selectedScenario}
+          hasScenario={!!selectedScenarioID}
         />
 
         {/* Map information panel */}

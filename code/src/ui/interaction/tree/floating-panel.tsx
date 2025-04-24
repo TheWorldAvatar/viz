@@ -8,12 +8,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DataStore } from 'io/data/data-store';
 import { selectDimensionSliderValue } from 'state/dimension-slider-slice';
 import { getIndex, setIndex } from 'state/floating-panel-slice';
-import { getFeatures, getIri, getProperties, getScenarioID, getStack, MapFeaturePayload } from 'state/map-feature-slice';
+import { getFeatures, getFilterTimes, getIri, getProperties, getScenarioID, getStack, MapFeaturePayload } from 'state/map-feature-slice';
+import { Dictionary } from 'types/dictionary';
 import { MapLayerGroup } from 'types/map-layer';
 import { IconSettings, LegendSettings } from 'types/settings';
 import { ScenarioDimensionsData } from 'types/timeseries';
 import DimensionSlider from 'ui/interaction/controls/slider';
 import { generateFIAEndpoint, useFeatureInfoAgentService } from 'utils/data-services';
+import { useDictionary } from 'hooks/useDictionary';
 import InfoTree from './info/info-tree';
 import LayerTree, { parseIntoTreeStucture } from './layer/layer-tree';
 import LegendTree from './legend/legend-tree';
@@ -43,12 +45,14 @@ export default function FloatingPanelContainer(
   const showInfo = props.hideInfo == null || !props.hideInfo;
 
   const dispatch = useDispatch();
+  const dict: Dictionary = useDictionary();
   const activeIndex = useSelector(getIndex);
   const selectedIri = useSelector(getIri);
   const selectedProperties = useSelector(getProperties);
   const selectedStack = useSelector(getStack);
   const selectedScenario = useSelector(getScenarioID);
   const availableFeatures: MapFeaturePayload[] = useSelector(getFeatures);
+  const filterTimes: number[] = useSelector(getFilterTimes);
   //TODO fetch from api
   const buttonClass = styles.headButton;
   const buttonClassActive = [styles.headButton, styles.active].join(" ");
@@ -56,7 +60,7 @@ export default function FloatingPanelContainer(
   const hasMultipleDimensions = Object.values(props.scenarioDimensions).some(array => array.length > 1);
   // Execute API call
   const { attributes, timeSeries, isFetching, isUpdating } = useFeatureInfoAgentService(
-    generateFIAEndpoint(selectedIri, selectedStack, selectedScenario, ...(hasMultipleDimensions ? [dimensionSliderValue] : [])),
+    generateFIAEndpoint(selectedIri, selectedStack, selectedScenario, filterTimes, ...(hasMultipleDimensions ? [dimensionSliderValue] : [])),
     selectedIri,
     selectedProperties
   );
@@ -83,7 +87,7 @@ export default function FloatingPanelContainer(
           onClick={() => clickAction(0)}
         >
           <Tooltip
-            title="Layer Selection"
+            title={dict.map.title.layerSelection}
             enterDelay={1000}
             leaveDelay={100}
             placement="bottom-start"
@@ -99,7 +103,7 @@ export default function FloatingPanelContainer(
             onClick={() => clickAction(1)}
           >
             <Tooltip
-              title="Key/Legend"
+              title={dict.map.title.legend}
               enterDelay={1000}
               leaveDelay={100}
               placement="bottom-start"
@@ -116,7 +120,7 @@ export default function FloatingPanelContainer(
             onClick={() => clickAction(2)}
           >
             <Tooltip
-              title="Information"
+              title={dict.map.title.information}
               enterDelay={1000}
               leaveDelay={100}
               placement="bottom-start"
@@ -131,7 +135,7 @@ export default function FloatingPanelContainer(
           className={styles.expandButton}
           onClick={() => setIsPanelVisible(!isPanelVisible)}>
           <Tooltip
-            title={isPanelVisible ? "Collapse Panel" : "Expand Panel"}
+            title={isPanelVisible ? dict.map.tooltip.collapsePanel : dict.map.tooltip.expandPanel}
             enterDelay={500}
             leaveDelay={200}
           >
