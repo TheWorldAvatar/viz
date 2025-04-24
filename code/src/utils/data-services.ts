@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchDataQuery, useFetchDimensionsQuery } from 'state/api/fia-api';
 import { getHasExistingData, setHasExistingData } from 'state/floating-panel-slice';
+import { getScenarioID } from 'state/map-feature-slice';
 import { Attribute, AttributeGroup } from 'types/attribute';
 import { JsonArray, JsonObject } from 'types/json';
 import { ScenarioDimensionsData, TIME_CLASSES, TimeSeries } from 'types/timeseries';
@@ -42,13 +43,11 @@ export function generateFIAEndpoint(iri: string, stack: string, scenario: string
   return url;
 }
 
-export function ScenarioDimensionsEndpoint(stack: string, scenario: string): string {
-  return `${stack}/getScenarioTimes/${scenario}`;
-}
 
-export const useScenarioDimensionsService = (stack: string, scenario: string): { scenarioDimensions: ScenarioDimensionsData; isDimensionsFetching: boolean } => {
-  const { data, isFetching } = useFetchDimensionsQuery(ScenarioDimensionsEndpoint(stack, scenario));
-
+export const useScenarioDimensionsService = (scenarioURL: string): { scenarioDimensions: ScenarioDimensionsData; isDimensionsFetching: boolean } => {
+  const selectedScenario = useSelector(getScenarioID);
+  const scenarioDimensionsEndpoint = `${scenarioURL}/getScenarioTimes/${selectedScenario}`
+  const { data, isFetching } = useFetchDimensionsQuery(scenarioDimensionsEndpoint);
   const [scenarioDimensions, setScenarioDimensions] = useState<ScenarioDimensionsData>({});
   const isDimensionsFetching = isFetching;
   useEffect(() => {

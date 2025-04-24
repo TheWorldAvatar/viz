@@ -15,6 +15,8 @@ import GlobalContainer from 'ui/global-container';
 import { getDictionary } from 'utils/dictionary/dictionaries';
 import { DictionaryProvider } from 'utils/dictionary/DictionaryContext';
 import { Dictionary } from 'types/dictionary';
+import { SessionInfoProvider } from 'utils/auth/SessionInfo';
+
 
 /**
  * Performs initialisation when the platform is
@@ -62,10 +64,12 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
         <html lang={lang} className={dosis.className}>
             <body>
                 <DictionaryProvider dictionary={dictionary}>
-                    <GlobalContainer settings={uiSettings}>
-                        {children}
-                        {modal}
-                    </GlobalContainer>
+                    <SessionInfoProvider>
+                        <GlobalContainer settings={uiSettings}>
+                            {children}
+                            {modal}
+                        </GlobalContainer>
+                    </SessionInfoProvider>
                 </DictionaryProvider>
                 <ToastContainer />
             </body>

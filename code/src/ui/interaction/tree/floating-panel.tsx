@@ -15,7 +15,7 @@ import { IconSettings, LegendSettings } from 'types/settings';
 import { ScenarioDimensionsData } from 'types/timeseries';
 import DimensionSlider from 'ui/interaction/controls/slider';
 import { generateFIAEndpoint, useFeatureInfoAgentService } from 'utils/data-services';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import InfoTree from './info/info-tree';
 import LayerTree, { parseIntoTreeStucture } from './layer/layer-tree';
 import LegendTree from './legend/legend-tree';

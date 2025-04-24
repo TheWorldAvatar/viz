@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
 import { getIsOpenState } from 'state/modal-slice';
@@ -16,7 +17,6 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
 import { Status } from 'ui/text/status/status';
 import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
 import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
 import RegistryTable from './registry-table';
 import SummarySection from './ribbon/summary';

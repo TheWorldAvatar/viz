@@ -5,12 +5,12 @@ import { Table, TableColumnsType, Typography } from 'antd';
 import React from 'react';
 import { FieldValues } from "react-hook-form";
 
+import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
 import RegistryRowActions from "./actions/registry-table-action";
 
 interface RegistryTableProps {

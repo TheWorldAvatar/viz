@@ -15,7 +15,7 @@ import {
 import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";

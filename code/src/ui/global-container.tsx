@@ -45,37 +45,37 @@ export default function GlobalContainer(
     setContextMenuVisible(false);
   };
 
+  const GlobalContainer = <div
+    id="globalContainer"
+    onContextMenu={handleContextMenu}
+    onClick={closeContextMenu} // Close context menu when clicking elsewhere
+    style={{
+      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+  >
+    {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
+    {contextMenuVisible && (
+      <ContextMenu
+        x={contextMenuPosition.x}
+        y={contextMenuPosition.y}
+        showContextMenu={contextMenuVisible} />
+    )}
+
+    <Navbar
+      settings={props.settings} />
+
+    <div id="contentContainer">{props.children}</div>
+
+    <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
+    {popup && <Trex callback={togglePopup} />}
+    <Footer />
+  </div>;
+
   return (
     <Provider store={reduxStore}>
-      <div
-        id="globalContainer"
-        onContextMenu={handleContextMenu}
-        onClick={closeContextMenu} // Close context menu when clicking elsewhere
-        style={{
-          backgroundImage: `url(${backgroundImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
-        {contextMenuVisible && (
-          <ContextMenu
-            x={contextMenuPosition.x}
-            y={contextMenuPosition.y}
-            showContextMenu={contextMenuVisible}
-          />
-        )}
-
-        <Navbar
-          settings={props.settings}
-        />
-
-        <div id="contentContainer">{props.children}</div>
-
-        <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
-        {popup && <Trex callback={togglePopup} />}
-        <Footer />
-      </div>
+        {GlobalContainer}
     </Provider>
-  );
+  )
 }

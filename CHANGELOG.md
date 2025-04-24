@@ -3,6 +3,37 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.22.2
+
+### Changes
+
+- Ignore authorisation in language middleware to prevent incorrect redirection when keycloak is deployed on the same host but different path to the main viz
+  
+## 5.22.1
+
+### Changes
+
+- Dependabot bump #163
+- Update package manager version
+  
+## 5.22.0
+
+### Changes
+
+- Allow scenario modal to render on the client if server side scenario fetch fails
+- Allow better closing behaviour of scenario modal
+- Pass credentials where relevant
+- Simplify some data fetching
+- Simplify some scenario state management
+  
+## 5.21.0
+
+### Changes
+
+- Added role-based features using Keycloak
+- Added a global login session using context
+- Updated the existing UI display of Keycloak session to the new global session
+
 ## 5.20.3
 
 ### Changes

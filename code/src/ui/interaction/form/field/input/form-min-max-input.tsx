@@ -6,7 +6,7 @@ import { FieldError, UseFormReturn } from 'react-hook-form';
 import { Dictionary } from 'types/dictionary';
 import { PropertyShape, VALUE_KEY } from 'types/form';
 import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import FormInputContainer from '../form-input-container';
 
 export interface FormInputMinMaxFieldProps {

@@ -311,9 +311,99 @@
       "security-admin-console": [],
       "viz": [
         {
-          "id": "f958f403-3938-4270-84a5-5e155a6014dc",
-          "name": "protected",
-          "description": "",
+          "id": "f25fc06b-80a2-4aca-adb5-a339683df0a9",
+          "name": "registry-navigation",
+          "description": "Permission for viewing the full navigation ribbon in the registry",
+          "composite": true,
+          "composites": {
+            "client": {
+              "viz": [
+                "registry-navigation-pending",
+                "registry-navigation-active-archive"
+              ]
+            }
+          },
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "f5c36eb1-878f-4f70-82a2-ea8f1e56b4f5",
+          "name": "export",
+          "description": "Permission to export data",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "1eef16f8-4776-4d68-a477-3b8df223726d",
+          "name": "admin",
+          "description": "Given full permissions",
+          "composite": true,
+          "composites": {
+            "client": {
+              "viz": [
+                "export",
+                "finance",
+                "sales",
+                "operations"
+              ]
+            }
+          },
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "a8db3bf7-aa93-48fa-8e76-0633d716ef99",
+          "name": "finance",
+          "description": "Permission to handle invoicing related matters",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "da9ae31a-f884-4fe0-97f5-f47e2fd7f2eb",
+          "name": "registry-navigation-pending",
+          "description": "Permission to view the pending registry",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "de3f82b6-fb03-4439-a74d-c9e0c87e8305",
+          "name": "operations",
+          "description": "Permissions to view contracts and tasks, as well as dispatch, cancel, report, and complete tasks.",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "acdbdfe1-ca27-4376-8b77-1fd159b6cc0d",
+          "name": "registry-navigation-active-archive",
+          "description": "Permission to view both the active and archive registry",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "a1f071e6-ace3-4070-9b90-8af147367fdb",
+          "name": "sales",
+          "description": "Given permissions to add, update, or delete new requests",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "870659a5-91f9-434c-9998-d3278f2995c7",
+          "name": "task-viewer",
+          "description": "Access given to view, complete, or report tasks",
           "composite": false,
           "clientRole": true,
           "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",

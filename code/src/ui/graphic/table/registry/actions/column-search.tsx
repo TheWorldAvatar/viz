@@ -9,7 +9,7 @@ import { Dictionary } from 'types/dictionary';
 import { FormOptionType, RegistryFieldValues } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { extractResponseField, parseWordsForLabels } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 
 interface ColumnSearchComponentProps {
   instances: RegistryFieldValues[];

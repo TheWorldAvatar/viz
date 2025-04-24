@@ -5,7 +5,7 @@ import React from 'react';
 import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import { extractResponseField } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import ActionButton from '../action';
 
 interface DownloadButtonProps extends React.HTMLAttributes<HTMLButtonElement> {

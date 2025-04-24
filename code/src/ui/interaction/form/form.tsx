@@ -9,7 +9,7 @@ import { Dictionary } from 'types/dictionary';
 import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, HttpResponse, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';

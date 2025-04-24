@@ -96,8 +96,10 @@ app.prepare().then(() => {
         server.use(keycloak.middleware());
 
         server.get('/api/userinfo', keycloak.protect(), (req, res) => {
-            const { preferred_username: userName, given_name: firstName, family_name: lastName, name: fullName, realm_access: { roles }, resource_access: clientRoles } = req.kauth.grant.access_token.content;
-            res.json({ userName, firstName, lastName, fullName, roles, clientRoles });
+            // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles
+            const { name, resource_access } = req.kauth.grant.access_token.content;
+            const roles = resource_access?.viz?.roles || [];
+            res.json({ name, roles });
         });
 
         if (!process.env.PROTECTED_PAGES) {
@@ -109,11 +111,17 @@ app.prepare().then(() => {
                 server.get(page, keycloak.protect());
             });
         }
-        const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
-        roleProtectedPages?.forEach(page => {
-            server.get(page, keycloak.protect(process.env.ROLE));
-            console.info('protecting page', page, 'with role', process.env.ROLE);
-        });
+        if (process.env.ROLE_PROTECTED_PAGES) {
+            if (process.env.ROLE) {
+                const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
+                roleProtectedPages?.forEach(page => {
+                    server.get(page, keycloak.protect(process.env.ROLE));
+                    console.info('protecting page', page, 'with role', process.env.ROLE);
+                });
+            } else {
+                console.info(colourRed, 'ROLE_PROTECTED_PAGES specified but no ROLE specified. No pages will be protected with role', colourReset);
+            }
+        }
 
         const useGeoServerProxy = process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true';
         console.info('Geoserver proxying is', useGeoServerProxy ? colourYellow : colourGreen, useGeoServerProxy, colourReset);

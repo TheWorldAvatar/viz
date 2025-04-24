@@ -29,7 +29,9 @@ import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 import { Dictionary } from "types/dictionary";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -52,6 +54,8 @@ export default function FormContainerComponent(
   const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
+  const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -221,9 +225,9 @@ export default function FormContainerComponent(
           <ResponseComponent response={response} />
         )}
         <div className={styles["form-row"]}>
-          {props.formType === Paths.REGISTRY &&
-            !response &&
-            status?.message === ENTITY_STATUS.ACTIVE &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+            props.formType === Paths.REGISTRY &&
+            !response && status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
@@ -231,7 +235,8 @@ export default function FormContainerComponent(
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -241,7 +246,8 @@ export default function FormContainerComponent(
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
@@ -250,7 +256,8 @@ export default function FormContainerComponent(
                 onClick={onApproval}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -261,7 +268,8 @@ export default function FormContainerComponent(
                 isActive={false}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (

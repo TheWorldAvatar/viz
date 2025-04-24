@@ -2,7 +2,7 @@
 import { Assets } from 'io/config/assets';
 import Image from 'next/image';
 import { Dictionary } from 'types/dictionary';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import styles from './loader.module.css';
 
 export default function Loader() {

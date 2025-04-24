@@ -19,7 +19,7 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
 import {
   getFormTemplate,
   getGeolocation,

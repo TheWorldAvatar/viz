@@ -8,7 +8,7 @@ import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { getData } from 'utils/server-actions';
 
 interface SummarySectionProps {

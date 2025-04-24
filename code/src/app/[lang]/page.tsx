@@ -5,7 +5,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import OptionalPages from 'io/config/optional-pages';
+import OptionalPages, { OptionalPage } from 'io/config/optional-pages';
 import { Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { Dictionary } from 'types/dictionary';
@@ -43,11 +43,13 @@ export default async function App(props: Readonly<{
 ) {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   const dict: Dictionary = await getDictionary((await props.params).lang);
+  const pages: OptionalPage[] = OptionalPages.getAllPages();
 
   if (uiSettings.modules.landing) {
     return (<LandingPage
       dict={dict}
       settings={uiSettings}
+      pages={pages}
     />);
   } else {
     redirect(Paths.MAP);

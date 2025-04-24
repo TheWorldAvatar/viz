@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { Dictionary } from 'types/dictionary';
 import { FormOptionType, PropertyShape } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import FormInputContainer from './form-input-container';
 
 interface FormSelectorProps {

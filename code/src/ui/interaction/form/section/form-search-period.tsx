@@ -3,7 +3,7 @@ import styles from "../form.module.css";
 import { UseFormReturn } from "react-hook-form";
 
 import { Dictionary } from "types/dictionary";
-import { useDictionary } from "utils/dictionary/DictionaryContext";
+import { useDictionary } from 'hooks/useDictionary';
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 

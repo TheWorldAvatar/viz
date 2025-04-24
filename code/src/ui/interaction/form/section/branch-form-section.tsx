@@ -10,7 +10,7 @@ import { Dictionary } from 'types/dictionary';
 import { FormOptionType, NodeShape, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
 import { parseWordsForLabels } from 'utils/client-utils';
-import { useDictionary } from 'utils/dictionary/DictionaryContext';
+import { useDictionary } from 'hooks/useDictionary';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
 
