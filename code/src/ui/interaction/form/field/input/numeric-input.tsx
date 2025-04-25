@@ -53,14 +53,14 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
       <div className={styles["numeric-input-scroller-container"]}>
         <ClickActionButton
           icon="add"
-          tooltipText={dict.action.filter}
+          tooltipText={dict.action.clickIncrease}
           isTransparent={true}
           className={styles["numeric-input-scroller"]}
           onClick={handleIncrement}
         />
         <ClickActionButton
           icon="remove"
-          tooltipText={dict.action.filter}
+          tooltipText={dict.action.clickDecrease}
           isTransparent={true}
           className={styles["numeric-input-scroller"]}
           onClick={handleDecrement}
