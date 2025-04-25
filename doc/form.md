@@ -133,6 +133,8 @@ The following fields are optional utility fields that does not affect the catego
 1. `order`: A `number` that can be set at either the group and property level to arrange the form accordingly
 2. `defaultValue`: An optional `string` at each `property` that contains the corresponding value of the specific entity instance
 3. `maxCount = 0`: Indicates that the field is a hidden property that should be hidden on the form
+4. `step`: Defines the increment between valid numbers for a numeric input field.
+   - When combined with the `pattern` attribute, it enforces specific format requirements. For example, with the pattern `\.(00|15|30|45|60)$` and a `0.05` step, the field will increment to the nearest value matching the pattern within that step. Ensure the `step` value does not exceed the pattern's granularity; `0.15` steps would fail to meet the `\.(00|15|30|45|60)$` pattern, while `0.01` steps are inefficient.
 
 ### 2.3. Form validation
 
