@@ -89,7 +89,7 @@ app.prepare().then(() => {
                 saveUninitialized: true,
                 store: store,
                 cookie: {
-                    secure: !dev, // Set secure attribute to true in production
+                    secure: !dev, // Set secure attribute to true in production, this means cookie is only sent over HTTPS
                     httpOnly: true, // Prevent client-side scripts from accessing the cookie
                 },
             })
