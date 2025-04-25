@@ -43,7 +43,7 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
   const handleIncrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const currentValue: number = Number(props.form.getValues(props.field.fieldId));
-    let result: number = computeIncrementDecrement(currentValue, steps, scaleFactor, true);
+    let result: number = computeIncrementDecrement(Math.round(currentValue / steps) * steps, steps, scaleFactor, true);
     // The result must match the pattern and values will continue to be incremented until they are
     if (props.field.pattern) {
       const pattern: RegExp = new RegExp(props.field.pattern[VALUE_KEY]);
@@ -58,7 +58,7 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
   const handleDecrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const currentValue: number = Number(props.form.getValues(props.field.fieldId));
-    let result: number = computeIncrementDecrement(currentValue, steps, scaleFactor, false);
+    let result: number = computeIncrementDecrement(Math.round(currentValue / steps) * steps, steps, scaleFactor, false);
     // The result must match the pattern and values will continue to be decremented until they are
     if (props.field.pattern) {
       const pattern: RegExp = new RegExp(props.field.pattern[VALUE_KEY]);
