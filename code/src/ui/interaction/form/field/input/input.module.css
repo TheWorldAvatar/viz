@@ -1,3 +1,19 @@
+.numeric-input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.numeric-input-scroller-container {
+  position: absolute;
+  right: 0.25rem;
+  top: 0;
+}
+
+.numeric-input-scroller {
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
 .min-max-container {
   display: flex;
   flex-direction: row;
