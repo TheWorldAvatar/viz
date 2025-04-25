@@ -34,7 +34,16 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
     return props.field.step ? Number(props.field.step[VALUE_KEY]) : props.field.datatype === "integer" ? 1 : 0.01;
   }, [props.field]);
   const scaleFactor: number = useMemo(() => {
-    return props.field.datatype === "integer" ? 1 : Math.pow(10, (steps.toString().split('.')[1] || '').length);
+    if (props.field.datatype === "integer") {
+      return 1;
+    }
+    const stepStr: string = steps.toString();
+    if (stepStr.includes("e-")) {
+      const exponentPart = stepStr.split("e-")[1];
+      return Math.pow(10, (parseInt(exponentPart, 10)));
+    } else if (stepStr.includes(".")) {
+      return Math.pow(10, (stepStr.split(".")[1].length));
+    }
   }, [steps]);
 
   const handleIncrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -112,10 +121,10 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
  */
 function performIncrementDecrement(value: number, steps: number, scaleFactor: number, regexEx: string, isAddition: boolean): number {
   let result: number = computeIncrementDecrement(Math.round(value / steps) * steps, steps, scaleFactor, isAddition);
-  const stepString: string = String(steps);
-  const decimalPlaces: number = stepString.includes('.') ? stepString.split('.')[1].length : 0;
   // The result must match the pattern and values will continue to be decremented until they are
   if (regexEx) {
+    const stepString: string = String(steps);
+    const decimalPlaces: number = stepString.includes('.') ? stepString.split('.')[1].length : 0;
     const pattern: RegExp = new RegExp(regexEx);
     while (!pattern.test(result.toFixed(decimalPlaces))) {
       result = computeIncrementDecrement(result, steps, scaleFactor, isAddition);
