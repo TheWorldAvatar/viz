@@ -3,11 +3,11 @@ import styles from './input.module.css';
 
 import { FieldError, UseFormReturn } from 'react-hook-form';
 
-import { Dictionary } from 'types/dictionary';
-import { PropertyShape, VALUE_KEY } from 'types/form';
-import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
 import { useDictionary } from 'hooks/useDictionary';
+import { Dictionary } from 'types/dictionary';
+import { PropertyShape } from 'types/form';
 import FormInputContainer from '../form-input-container';
+import NumericInputField from './numeric-input';
 
 export interface FormInputMinMaxFieldProps {
   field: PropertyShape;
@@ -26,7 +26,6 @@ export interface FormInputMinMaxFieldProps {
  */
 export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFieldProps>) {
   const dict: Dictionary = useDictionary();
-  const label: string = props.field.name[VALUE_KEY];
   const originalField: string = props.field.fieldId;
   const minFieldId: string = "min " + originalField;
   const maxFieldId: string = "max " + originalField;
@@ -41,14 +40,13 @@ export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFiel
           <label className={props.styles?.label.join(" ")} htmlFor={minFieldId}>
             <span className={fieldStyles["field-text"]}>{dict.form.min}:</span>
           </label>
-          <input
-            id={minFieldId}
-            type={"number"}
-            className={styles["min-max-input-value"]}
-            step={props.field.datatype === "decimal" ? "0.01" : "1"}
-            placeholder={"Enter"}
-            aria-label={label}
-            {...props.form.register(minFieldId, getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE)))}
+          <NumericInputField
+            field={{
+              ...props.field,
+              fieldId: minFieldId,
+            }}
+            form={props.form}
+            styles={{ input: [styles["min-max-input-value"]] }}
           />
         </div>
         <div className={styles["min-max-divider"]}></div>
@@ -56,14 +54,13 @@ export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFiel
           <label className={props.styles?.label.join(" ")} htmlFor={maxFieldId}>
             <span className={fieldStyles["field-text"]}>{dict.form.max}:</span>
           </label>
-          <input
-            id={maxFieldId}
-            type={"number"}
-            className={styles["min-max-input-value"]}
-            step={props.field.datatype === "decimal" ? "0.01" : "1"}
-            placeholder={"Enter"}
-            aria-label={label}
-            {...props.form.register(maxFieldId, getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE)))}
+          <NumericInputField
+            field={{
+              ...props.field,
+              fieldId: maxFieldId,
+            }}
+            form={props.form}
+            styles={{ input: [styles["min-max-input-value"]] }}
           />
         </div>
       </div>
