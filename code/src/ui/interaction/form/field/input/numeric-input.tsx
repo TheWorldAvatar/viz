@@ -29,19 +29,28 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
   const inputClassNames: string = props.styles?.input?.join(" ");
   const inputMode: "numeric" | "decimal" = props.field.datatype === "integer" ? "numeric" : "decimal";
   const steps: number = useMemo(() => {
-    return props.field.step ? Number(props.field.step[VALUE_KEY]) : props.field.datatype === "integer" ? 1 : 0.01
+    return props.field.step ? Number(props.field.step[VALUE_KEY]) : props.field.datatype === "integer" ? 1 : 0.01;
   }, [props.field]);
   const scaleFactor: number = useMemo(() => {
     return props.field.datatype === "integer" ? 1 : Math.pow(10, (steps.toString().split('.')[1] || '').length);
   }, [steps]);
 
+  const decimalPlaces: number = useMemo(() => {
+    const stepString: string = String(steps);
+    return stepString.includes('.') ? stepString.split('.')[1].length : 0;
+  }, [steps]);
+
   const handleIncrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const currentValue: number = Number(props.form.getValues(props.field.fieldId));
-    // Scale up for decimals, but integers will always be 1
-    const scaledCurrentValue: number = Math.round(currentValue * scaleFactor);
-    const scaledStep: number = Math.round(steps * scaleFactor);
-    const result: number = (scaledCurrentValue + scaledStep) / scaleFactor;
+    let result: number = computeIncrementDecrement(currentValue, steps, scaleFactor, true);
+    // The result must match the pattern and values will continue to be incremented until they are
+    if (props.field.pattern) {
+      const pattern: RegExp = new RegExp(props.field.pattern[VALUE_KEY]);
+      while (!pattern.test(result.toFixed(decimalPlaces))) {
+        result = computeIncrementDecrement(result, steps, scaleFactor, true);
+      }
+    }
     // Set value
     props.form.setValue(props.field.fieldId, result);
   };
@@ -49,10 +58,14 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
   const handleDecrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const currentValue: number = Number(props.form.getValues(props.field.fieldId));
-    // Scale up for decimals, but integers will always be 1
-    const scaledCurrentValue: number = Math.round(currentValue * scaleFactor);
-    const scaledStep: number = Math.round(steps * scaleFactor);
-    const result: number = (scaledCurrentValue - scaledStep) / scaleFactor;
+    let result: number = computeIncrementDecrement(currentValue, steps, scaleFactor, false);
+    // The result must match the pattern and values will continue to be decremented until they are
+    if (props.field.pattern) {
+      const pattern: RegExp = new RegExp(props.field.pattern[VALUE_KEY]);
+      while (!pattern.test(result.toFixed(decimalPlaces))) {
+        result = computeIncrementDecrement(result, steps, scaleFactor, false);
+      }
+    }
     // Set value
     props.form.setValue(props.field.fieldId, result);
   };
@@ -86,4 +99,24 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
       </div>
     </div>
   );
+}
+
+/**
+ * Computes the increment or decrement of a value based on the given steps and scale factor.
+ * 
+ * @param value the current value to be incremented or decremented.
+ * @param steps the number of steps to increment or decrement the value by.
+ * @param scaleFactor the scale factor to use for the operation.
+ * @param isAddition indicates if the operation is addition (true) or subtraction (false).
+ * @returns 
+ */
+function computeIncrementDecrement(value: number, steps: number, scaleFactor: number, isAddition: boolean): number {
+  // Scale up for decimals, but integers will always have 1 as a scale factor
+  const scaledCurrentValue: number = Math.round(value * scaleFactor);
+  const scaledStep: number = Math.round(steps * scaleFactor);
+  if (isAddition) {
+    return (scaledCurrentValue + scaledStep) / scaleFactor;
+  }
+
+  return (scaledCurrentValue - scaledStep) / scaleFactor;
 }
