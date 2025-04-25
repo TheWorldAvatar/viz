@@ -1,6 +1,6 @@
 import styles from './input.module.css';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { useDictionary } from 'hooks/useDictionary';
@@ -26,6 +26,8 @@ export interface NumericInputFieldProps {
  */
 export default function NumericInputField(props: Readonly<NumericInputFieldProps>) {
   const dict: Dictionary = useDictionary();
+  const lastKeyPressTime: React.RefObject<number> = useRef<number>(0);
+
   const inputClassNames: string = props.styles?.input?.join(" ");
   const inputMode: "numeric" | "decimal" = props.field.datatype === "integer" ? "numeric" : "decimal";
   const steps: number = useMemo(() => {
@@ -35,22 +37,10 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
     return props.field.datatype === "integer" ? 1 : Math.pow(10, (steps.toString().split('.')[1] || '').length);
   }, [steps]);
 
-  const decimalPlaces: number = useMemo(() => {
-    const stepString: string = String(steps);
-    return stepString.includes('.') ? stepString.split('.')[1].length : 0;
-  }, [steps]);
-
   const handleIncrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const currentValue: number = Number(props.form.getValues(props.field.fieldId));
-    let result: number = computeIncrementDecrement(Math.round(currentValue / steps) * steps, steps, scaleFactor, true);
-    // The result must match the pattern and values will continue to be incremented until they are
-    if (props.field.pattern) {
-      const pattern: RegExp = new RegExp(props.field.pattern[VALUE_KEY]);
-      while (!pattern.test(result.toFixed(decimalPlaces))) {
-        result = computeIncrementDecrement(result, steps, scaleFactor, true);
-      }
-    }
+    const result: number = performIncrementDecrement(currentValue, steps, scaleFactor, props.field.pattern?.[VALUE_KEY], true);
     // Set value
     props.form.setValue(props.field.fieldId, result);
   };
@@ -58,16 +48,25 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
   const handleDecrement: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const currentValue: number = Number(props.form.getValues(props.field.fieldId));
-    let result: number = computeIncrementDecrement(Math.round(currentValue / steps) * steps, steps, scaleFactor, false);
-    // The result must match the pattern and values will continue to be decremented until they are
-    if (props.field.pattern) {
-      const pattern: RegExp = new RegExp(props.field.pattern[VALUE_KEY]);
-      while (!pattern.test(result.toFixed(decimalPlaces))) {
-        result = computeIncrementDecrement(result, steps, scaleFactor, false);
-      }
-    }
+    const result: number = performIncrementDecrement(currentValue, steps, scaleFactor, props.field.pattern?.[VALUE_KEY], false);
     // Set value
     props.form.setValue(props.field.fieldId, result);
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const now = Date.now();
+    if (now - lastKeyPressTime.current >= 200) {
+      const currentValue: number = Number(props.form.getValues(props.field.fieldId));
+      if (event.key === "ArrowUp") {
+        const result: number = performIncrementDecrement(currentValue, steps, scaleFactor, props.field.pattern?.[VALUE_KEY], true);
+        props.form.setValue(props.field.fieldId, result);
+        lastKeyPressTime.current = now;
+      } else if (event.key === "ArrowDown") {
+        const result: number = performIncrementDecrement(currentValue, steps, scaleFactor, props.field.pattern?.[VALUE_KEY], false);
+        props.form.setValue(props.field.fieldId, result);
+        lastKeyPressTime.current = now;
+      }
+    }
   };
 
   return (
@@ -78,6 +77,7 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
         inputMode={inputMode}
         className={inputClassNames}
         placeholder={`${dict.action.edit} ${props.field.name[VALUE_KEY]}`}
+        onKeyDown={handleKeyDown}
         aria-label={props.field.name[VALUE_KEY]}
         {...props.form.register(props.field.fieldId, getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE)))}
       />
@@ -102,13 +102,35 @@ export default function NumericInputField(props: Readonly<NumericInputFieldProps
 }
 
 /**
+ * Perform the increment or decrement of a value.
+ * 
+ * @param value the current value to be incremented or decremented.
+ * @param steps the number of steps to increment or decrement the value by.
+ * @param scaleFactor the scale factor to use for the operation.
+ * @param regexEx the regex expression.
+ * @param isAddition indicates if the operation is addition (true) or subtraction (false).
+ */
+function performIncrementDecrement(value: number, steps: number, scaleFactor: number, regexEx: string, isAddition: boolean): number {
+  let result: number = computeIncrementDecrement(Math.round(value / steps) * steps, steps, scaleFactor, isAddition);
+  const stepString: string = String(steps);
+  const decimalPlaces: number = stepString.includes('.') ? stepString.split('.')[1].length : 0;
+  // The result must match the pattern and values will continue to be decremented until they are
+  if (regexEx) {
+    const pattern: RegExp = new RegExp(regexEx);
+    while (!pattern.test(result.toFixed(decimalPlaces))) {
+      result = computeIncrementDecrement(result, steps, scaleFactor, isAddition);
+    }
+  }
+  return result;
+}
+
+/**
  * Computes the increment or decrement of a value based on the given steps and scale factor.
  * 
  * @param value the current value to be incremented or decremented.
  * @param steps the number of steps to increment or decrement the value by.
  * @param scaleFactor the scale factor to use for the operation.
  * @param isAddition indicates if the operation is addition (true) or subtraction (false).
- * @returns 
  */
 function computeIncrementDecrement(value: number, steps: number, scaleFactor: number, isAddition: boolean): number {
   // Scale up for decimals, but integers will always have 1 as a scale factor
