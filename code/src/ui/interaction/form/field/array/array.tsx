@@ -28,6 +28,7 @@ export interface FormArrayProps {
  * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
+  // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const { control, setValue } = props.form;
 
@@ -39,12 +40,15 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     name: props.fieldId,
   });
 
-  // Force re-render when the current index changes
+  // Force re-render when the current index changes to ensure correct field values are displayed
   useEffect(() => {
     setRenderKey(prev => prev + 1);
   }, [currentIndex]);
 
-  // Create a new empty row
+  /**
+   * Creates a new empty row with default values for each field in the configuration
+   * @returns {Object} An object with empty values for each field
+   */
   const createEmptyRow = () => {
     const emptyField = {};
     props.fieldConfigs.forEach(config => {
