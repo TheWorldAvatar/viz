@@ -22,7 +22,17 @@ Refer to the [keycloak guides](https://www.keycloak.org/guides) for detailed gui
   - **N.B** you can also create a `postgres-password` file in this directory, uncomment the POSTGRES_PASSWORD_FILE line in the `compose` file and set the postgres password via a docker secret, but this is probably pointless since Keycloak does not support docker secrets so must be passed in as an environment variable anyway. This will be updated if keycloak adds secret support.
   - Run `docker compose up` in this directory.
 
-## Keycloak container
+## Table of Contents
+
+- [Authorisation Server Config](#authorisation-server-config)
+  - [Table of Contents](#table-of-contents)
+  - [1. Keycloak container](#1-keycloak-container)
+  - [2. Database](#2-database)
+  - [3. PGAdmin](#3-pgadmin)
+  - [4. Dragonfly](#4-dragonfly)
+  - [5. Roles](#5-roles)
+ 
+## 1. Keycloak container
 
 This directory contains the needed info to spin up a *dev config* and a sample *prod config* for Keycloak authorisation of a viz app. This is not suitable for production deployment, instead a production Keycloak server should be used.
 There is a sample realm imported by this project called 'twa-test'.
@@ -38,13 +48,13 @@ Do not commit exported realms anywhere.
   - **NB** `hosts.docker.internal` only exists in your machine's `hosts` file if docker is installed. If this name does not resolve, you probably need to specify `localhost` or another IP
 - The Keycloak UI also needs to know where the web app is running. This is specified in the UI of the Keycloak admin console when you click on clients > job-portal. This is set to `http://localhost:3000` by default but should be changed if your app is running somewhere else.
 
-## Database
+## 2. Database
 
 The compose file is correctly configured to spin up a postgres database inside the docker network. Keycloak will access it via its url at `jdbc:postgresql://postgres/keycloak`.
 
 This should not require any further configuration.
 
-## PGAdmin
+## 3. PGAdmin
 
 A PGAdmin container is included as a part of this stack, mainly for debug purposes.
 You can use it to check if realms and users are being correctly stored in postgres.
@@ -53,7 +63,7 @@ You will need to add your postgres server using the host `postgres` (visible ins
 You can also connect to this via adminer if you prefer, by starting an adminer container and connecting to the database on port `5432` which is forwarded to the server host by default (`localhost:5432`).
 This assumes you do not have another database forwarding to localhost.
 
-## Dragonfly
+## 4. Dragonfly
 
 Dragonfly is a fork of redis.
 The store is in place to store and cache sessions.
@@ -61,3 +71,13 @@ The store is in place to store and cache sessions.
  This, like the keycloak server url in your `keycloak.json` will likely need to be the local IP (191.xx.xxx.xxx) or host.docker.internal sometimes works.
 
 This will default to localhost if the node server is running on the bare metal.
+
+## 5. Roles
+
+The sample `realm.json` includes predefined client roles (in the `viz` client), which are mandatory for the `viz` platform to function correctly. These core roles must be present in any custom configuration. To support other backend services, it is recommended to leverage the predefined core roles. But if they are unsuitable for your application, users can define and incorporate additional custom roles. Below is a list of these core roles:
+
+1) admin: Grants unrestricted access to all features and functionalities.
+2) sales: Provides access to sales-related functionalities.
+3) finance: Provides access to finance-related functionalities.
+4) operations: Provides access to operation-related functionalities.
+5) task-viewer: Permits users to view, report on, and complete tasks only.

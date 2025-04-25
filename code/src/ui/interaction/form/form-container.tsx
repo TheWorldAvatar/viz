@@ -26,8 +26,12 @@ import {
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
-import { ENTITY_STATUS, FORM_STATES } from "./form-utils";
+import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+import { Dictionary } from "types/dictionary";
+import { useDictionary } from 'hooks/useDictionary';
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -49,6 +53,9 @@ export default function FormContainerComponent(
 ) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const dict: Dictionary = useDictionary();
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
+  const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,7 +64,7 @@ export default function FormContainerComponent(
   const [status, setStatus] = useState<ApiResponse>(null);
   const [response, setResponse] = useState<HttpResponse>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
-  const formRef: React.MutableRefObject<HTMLFormElement> =
+  const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
@@ -174,7 +181,7 @@ export default function FormContainerComponent(
         <ReturnButton
           icon="first_page"
         />
-        <span>{`${props.formType.toUpperCase()} ${props.entityType
+        <span>{`${translateFormType(props.formType, dict).toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
@@ -207,6 +214,7 @@ export default function FormContainerComponent(
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}
+            tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             isTransparent={true}
           />
@@ -217,68 +225,78 @@ export default function FormContainerComponent(
           <ResponseComponent response={response} />
         )}
         <div className={styles["form-row"]}>
-          {props.formType === Paths.REGISTRY &&
-            !response &&
-            status?.message === ENTITY_STATUS.ACTIVE &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+            props.formType === Paths.REGISTRY &&
+            !response && status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
+                tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Terminate Button
                 icon={"cancel"}
+                tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
                 icon={"done_outline"}
+                tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 icon="edit"
+                tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 isActive={false}
               />
             )}
-          {props.formType === Paths.REGISTRY &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+            props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 icon="delete"
+                tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 isActive={false}
               />
             )}
           {props.formType != Paths.REGISTRY && !response && <ClickActionButton
             icon="publish"
+            tooltipText={dict.action.submit}
             onClick={onSubmit}
           />}
-          {!!response || (!isRescindAction && !isTerminateAction) && <ReturnButton
-            // Closes the modal given a response in the rescind or terminate action states or other states
-            icon="keyboard_return"
-          />}
-          {!response && (isRescindAction || isTerminateAction) &&
+          {!response && (isRescindAction || isTerminateAction) ?
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
               icon={"keyboard_return"}
+              tooltipText={dict.action.cancel}
               onClick={() => {
                 setIsRescindAction(false);
                 setIsTerminateAction(false);
               }}
+            /> : <ReturnButton
+              icon="keyboard_return"
+              tooltipText={dict.action.return}
             />}
         </div>
       </div>

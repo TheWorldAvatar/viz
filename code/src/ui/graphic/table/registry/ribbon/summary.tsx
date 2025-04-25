@@ -3,10 +3,12 @@ import styles from './summary.module.css';
 import { useEffect, useState } from 'react';
 
 import { Routes } from 'io/config/routes';
+import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
+import { useDictionary } from 'hooks/useDictionary';
 import { getData } from 'utils/server-actions';
 
 interface SummarySectionProps {
@@ -23,6 +25,7 @@ interface SummarySectionProps {
  * @param {string} registryAgentApi The target endpoint for the registry agent.
  */
 export default function SummarySection(props: Readonly<SummarySectionProps>) {
+  const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [contract, setContract] = useState<RegistryFieldValues>(null);
 
@@ -44,7 +47,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
   return (
     <div className={styles["container"]}>
       <Accordion
-        title="Description"
+        title={dict.title.description}
         isLoading={isLoading}
       >{contract && Object.keys(contract).map((field, index) => {
         if (field != "id" && !Array.isArray(contract[field]) && contract[field].value) {
@@ -60,7 +63,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
           icon="read_more"
           url={`${Routes.REGISTRY}/${props.entityType}/${props.id}`}
           isActive={false}
-          title="view more"
+          tooltipText={dict.action.viewMore}
         />
       </div>
     </div>

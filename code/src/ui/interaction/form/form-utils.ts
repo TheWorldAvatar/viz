@@ -2,7 +2,8 @@ import { FieldValues, RegisterOptions } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 
 import { Paths } from "io/config/routes";
-import { PropertyShape, VALUE_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, SEARCH_FORM_TYPE, PropertyShapeOrGroup, ID_KEY, TYPE_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, SparqlResponseField } from "types/form";
+import { Dictionary } from "types/dictionary";
+import { ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, SparqlResponseField, TYPE_KEY, VALUE_KEY } from "types/form";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -422,4 +423,27 @@ export function getMatchingConcept(mappings: OntologyConceptMappings, targetValu
     }
   });
   return match;
+}
+
+/**
+ * Translates the form type from the input and dictionary.
+ * 
+ * @param {string} input The target input.
+ * @param {Dictionary} dict The dictionary mappings.
+ */
+export function translateFormType(input: string, dict: Dictionary): string {
+  switch (input) {
+    case Paths.REGISTRY:
+      return dict.action.view;
+    case Paths.REGISTRY_ADD:
+      return dict.action.add;
+    case Paths.REGISTRY_EDIT:
+      return dict.action.edit;
+    case Paths.REGISTRY_DELETE:
+      return dict.action.delete;
+    case SEARCH_FORM_TYPE:
+      return dict.action.search;
+    default:
+      break;
+  }
 }

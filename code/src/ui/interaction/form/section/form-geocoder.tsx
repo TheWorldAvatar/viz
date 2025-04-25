@@ -3,7 +3,9 @@ import styles from "../form.module.css";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
+import { Paths } from "io/config/routes";
 import { Address } from "types/address";
+import { Dictionary } from "types/dictionary";
 import {
   FormTemplate,
   PROPERTY_GROUP_TYPE,
@@ -12,19 +14,19 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { parseWordsForLabels } from "utils/client-utils";
+import LoadingSpinner from "ui/graphic/loader/spinner";
+import ClickActionButton from "ui/interaction/action/click/click-button";
+import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
+import ErrorComponent from "ui/text/error/error";
+import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
+import { useDictionary } from 'hooks/useDictionary';
 import {
   getFormTemplate,
   getGeolocation,
   sendGetRequest,
 } from "utils/server-actions";
-import MaterialIconButton from "ui/graphic/icon/icon-button";
-import LoadingSpinner from "ui/graphic/loader/spinner";
-import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
-import ErrorComponent from "ui/text/error/error";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
-import { Paths } from "io/config/routes";
 
 interface FormGeocoderProps {
   agentApi: string;
@@ -41,6 +43,7 @@ interface FormGeocoderProps {
  */
 export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const dict: Dictionary = useDictionary();
 
   const postalCode: string = "postal code";
   const postalCodeUnderscored: string = "postal_code";
@@ -51,7 +54,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       "@value": FORM_STATES.LATITUDE,
     },
     description: {
-      "@value": `The latitude of the ${props.field.name[VALUE_KEY]}`,
+      "@value": `${dict.form.latDesc} ${props.field.name[VALUE_KEY]}`,
     },
     datatype: "decimal",
     fieldId: FORM_STATES.LATITUDE,
@@ -73,7 +76,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       "@value": FORM_STATES.LONGITUDE,
     },
     description: {
-      "@value": `The longitude of the ${props.field.name[VALUE_KEY]}`,
+      "@value": `${dict.form.longDesc} ${props.field.name[VALUE_KEY]}`,
     },
     order: 11,
     fieldId: FORM_STATES.LONGITUDE,
@@ -88,7 +91,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     },
   };
 
-  const isInitialFetching: React.MutableRefObject<boolean> =
+  const isInitialFetching: React.RefObject<boolean> =
     useRef<boolean>(true);
   const [isEmptyAddress, setIsEmptyAddress] = useState<boolean>(false);
   const [hasGeolocation, setHasGeolocation] = useState<boolean>(false);
@@ -107,7 +110,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       // The location resource must mapped to the field name on the backend
       const template: FormTemplate = await getFormTemplate(
         agentApi,
-        locationIdentifier.replace(/\s+/g, "_")
+        parseStringsForUrls(locationIdentifier)
       );
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
@@ -277,21 +280,21 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       {!isInitialFetching.current &&
         (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) && (
           <div className={styles["form-dependent-button-layout"]}>
-            <MaterialIconButton
-              iconName={"search"}
-              className={styles["button"] + " " + styles["button-layout"]}
-              iconStyles={[styles["icon"]]}
-              text={{
-                styles: [styles["button-text"]],
-                content: "Find address",
-              }}
+            <ClickActionButton
+              icon={"search"}
+              tooltipText={dict.action.findAddress}
               onClick={props.form.handleSubmit(onSearchForAddress)}
             />
+            {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && <ClickActionButton
+              icon={"edit_location"}
+              tooltipText={dict.action.selectLocation}
+              onClick={props.form.handleSubmit(onGeocoding)}
+            />}
           </div>
         )}
       {isEmptyAddress && (
         <div style={{ margin: "0.5rem 0.75rem" }}>
-          <ErrorComponent message="No address found! The postal code may be incorrect. Please enter the address manually." />
+          <ErrorComponent message={dict.message.noAddressFound} />
         </div>
       )}
       {addresses.length > 0 && !selectedAddress && (
@@ -318,18 +321,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               form={props.form}
             />
           ))}
-          <div className={styles["form-dependent-button-layout"]}>
-            <MaterialIconButton
-              iconName={"edit_location"}
-              className={styles["button"] + " " + styles["button-layout"]}
-              iconStyles={[styles["icon"]]}
-              text={{
-                styles: [styles["button-text"]],
-                content: "Select location",
-              }}
-              onClick={props.form.handleSubmit(onGeocoding)}
-            />
-          </div>
         </div>
       )}
       {hasGeolocation && (

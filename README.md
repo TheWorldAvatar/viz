@@ -15,13 +15,14 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
     - [3.2 Stack Deployment](#32-stack-deployment)
   - [4 Authorisation](#4-authorisation)
   - [5. Release](#5-release)
+    - [Your Responsibilities Before Merging a Pull Request](#your-responsibilities-before-merging-a-pull-request)
 
 ## 1. Precursor
 
 As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
 
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
-2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.2.3`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.4.2`
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
@@ -98,7 +99,7 @@ To secure your viz app with a Keycloak authentication server, set the relevant e
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
 PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see, if not set all pages will be protected 
-ROLE_PROTECTED_PAGES=/role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
+ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
 SESSION_SECRET=${SESSION_SECRET} ## Needed in production, generate on the production deployment environment, see note below
 ```
@@ -108,23 +109,41 @@ alternatively, in the docker `docker-compose.yml` or `docker-compose.dev.yml`
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
 PROTECTED_PAGES: page,/otherpage ## (optional) pages that a user must be logged in to see, if not set all pages will be protected
-ROLE_PROTECTED_PAGES: /role,/protected,/pages ## pages that require a user to have a given REALM or CLIENT role
-ROLE: viz:protected ## the role required for the above list
+ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
+ROLE: viz:protected ## (optional) the role required for the above list
 SESSION_SECRET: ${SESSION_SECRET} ## Needed in production, generate on the production deployment environment, see note below
 
 ```
+
+If `PROTECTED_PAGES` is not defined, all pages will be protected.
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.
 
 > [!NOTE]  
 > The Keycloak server IP address must be routable from inside the viz docker container, and outside. The safest way to do this is to specify the IP directly. Sometimes `host.docker.internal` works, but it is often not set in the DNS hosts file of the host machine. This should be the hostname of the deployed keycloak auth server in production.
+<!--  -->
 > [!NOTE]
 > Client roles work better for API-protecting resources than the realm roles. As in the example above, use a role like `<client>:<role>`. See the [documentation in the auth folder](./auth/README.md) to spin up a dev Keycloak server for testing.
+<!--  -->
+
+> [!NOTE]
+> Access to certain platform features is controlled by predefined client roles set in the sample server configuration at `./auth/realm/realm.json`. While users can create a customised Keycloak server, please ensure that these roles are also included and assigned to users in order for the platform to perform as expected.
+<!--  -->
 > [!NOTE]
 > In production, there must be a SESSION_SECRET environment variable passed in to the viz instance. This is a long unguessable string used to verify session cookies and is an important security aspect. Before running a production server, run `export SESSION_SECRET=$(openssl rand -hex 32)` or something similar to generate a secure session secret for the server that will persist logins over server restarts.
 
 ## 5. Release
 
-Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged. However, before merging the pull request, update the `resources/CHANGELOG.md` and `resources/VERSION` accordingly. Look at the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format.
+Github Actions has been configured to automatically compile, build, and release the platform when the pull request has been merged.
 
-Once merged, a release email will be sent to the mailing list based on the `resources/CHANGELOG.md`.
+### Your Responsibilities Before Merging a Pull Request
+
+Users **MUST** perform the following actions **BEFORE** merging your approved pull request:
+
+- Update the `CHANGELOG.md` file
+  - Follow the existing format to maintain consistency
+- Update the `VERSION` file
+  - Refer to the [Wiki](https://github.com/cambridge-cares/TheWorldAvatar/wiki/Versioning) for the versioning format
+
+> [!IMPORTANT]  
+> Please ensure your pull request has received the required approvals before merging. Once a pull request is merged, the release process is fully automated. No further manual intervention is required. A release email will also be sent based on the `CHANGELOG.md` file.

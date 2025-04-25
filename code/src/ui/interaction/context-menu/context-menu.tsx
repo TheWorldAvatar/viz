@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxState } from 'app/store';
-import { addItem, toggleItem } from 'state/context-menu-slice';
+import { addItem, removeItem, toggleItem } from 'state/context-menu-slice';
 import ContextItem, { ContextItemDefinition } from './context-item';
 
 // Incoming properties type
@@ -17,12 +17,6 @@ interface ContextMenuProps {
   items?: ContextItemDefinition[],
   addItem?: (_item: ContextItemDefinition) => void,
   toggleItem?: (_name: string) => void
-}
-
-export const navbarItem: ContextItemDefinition = {
-  name: "Show Navigation Bar",
-  description: "Toggle visibility of global navbar.",
-  toggled: true
 }
 
 // Time the RMB was pressed down
@@ -53,14 +47,9 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
     setShowMenu(true);
   }
 
-  const handleItemClick = (name: string) => {
-    props.toggleItem(name);
-  }
 
   // Executes the following when the component is first mounted
   useEffect(() => {
-    // Add the defaults at the start
-    props.addItem(navbarItem);
     // Add event listeners and actions
     document.addEventListener("click", handleLeftClick);
 
@@ -97,12 +86,13 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
 
       {props.items.map((item) => (
         <ContextItem
-          key={item.name}
+          key={item.id}
           name={item.name}
+          id={item.id}
           description={item.description ?? ""}
           toggled={item.toggled}
-          callback={(name: string) => {
-            handleItemClick(name);
+          callback={(id: string) => {
+            props.toggleItem(id);;
           }}
         />
       ))}
@@ -117,6 +107,7 @@ const mapStateToProps = (state: ReduxState) => ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapDispatchToProps = (dispatch: any) => ({
   addItem: (item: ContextItemDefinition) => dispatch(addItem(item)),
-  toggleItem: (name: string) => dispatch(toggleItem(name))
+  toggleItem: (id: string) => dispatch(toggleItem(id)),
+  removeItem: (id: string) => dispatch(removeItem(id))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(ContextMenu);

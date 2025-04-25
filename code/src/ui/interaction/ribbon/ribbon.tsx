@@ -2,11 +2,17 @@
 
 import { Divider } from '@mui/material';
 import { Map } from 'mapbox-gl';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './ribbon.module.css';
 
+import { addItem, selectItem } from 'state/context-menu-slice';
+import { getScenarioName, getScenarioType } from 'state/map-feature-slice';
+import { Dictionary } from 'types/dictionary';
+import { ImageryOption, MapSettings } from 'types/settings';
+import IconComponent from 'ui/graphic/icon/icon';
+import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
 import {
   getCameraPositions,
   getDefaultImageryOption,
@@ -17,16 +23,12 @@ import {
   setImagery,
   togglePlacenames
 } from 'ui/map/map-helper';
-import { addItem, selectItem } from 'state/context-menu-slice';
-import { getScenarioName, getScenarioType } from 'state/map-feature-slice';
-import { ImageryOption, MapSettings } from 'types/settings';
-import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
-import IconComponent from 'ui/graphic/icon/icon';
 import { closeFullscreen, openFullscreen } from 'utils/client-utils';
+import { useDictionary } from 'hooks/useDictionary';
+import { scenarioTypeIcon } from '../modal/scenario';
 import RibbonComponentClick from './components/ribbon-component-click';
 import RibbonComponentOptions from './components/ribbon-component-options';
 import RibbonComponentToggle from './components/ribbon-component-toggle';
-import { scenarioTypeIcon } from '../modal/scenario';
 
 // Type definition for Ribbon parameters
 export interface RibbonProps {
@@ -37,19 +39,23 @@ export interface RibbonProps {
   toggleScenarioSelection: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// Definition of context menu item used to toggle map ribbon.
-const ribbonContextItem: ContextItemDefinition = {
-  name: "Show Controls Ribbon",
-  description: "Toggle map controls ribbon.",
-  toggled: true,
-};
 
 /**
  * Ribbon containing visualisation controls.
- */
+*/
 export default function Ribbon(props: Readonly<RibbonProps>) {
+  // Definition of context menu item used to toggle map ribbon.
+  const dict: Dictionary = useDictionary();
+  const ribbonContextItem: ContextItemDefinition = useMemo(() => {
+    return {
+      name: dict.context.controlRibbon.title,
+      description: dict.context.controlRibbon.tooltip,
+      id: "ribbon",
+      toggled: true,
+    };
+  }, []);
   const cameraDefault: string = props.mapSettings.camera.default;
-  const ribbonState: ContextItemDefinition = useSelector(selectItem("Show Controls Ribbon"));
+  const ribbonState: ContextItemDefinition = useSelector(selectItem(ribbonContextItem.id));
   const [isRibbonToggled, setIsRibbonToggled] = useState<boolean>(ribbonState?.toggled);
   const cameraNames: string[] = getCameraPositions(props.mapSettings.camera);
   const imageryNames: string[] = getImageryOptions(props.mapSettings.imagery);
@@ -57,7 +63,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
 
   useEffect(() => {
     setIsRibbonToggled(ribbonState?.toggled);
-  }, [isRibbonToggled, ribbonState?.toggled])
+  }, [ribbonState?.toggled])
 
 
   const currentScenarioName = useSelector(getScenarioName);
@@ -75,7 +81,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         <RibbonComponentClick
           key="location" id="location"
           icon="my_location"
-          tooltip="Move the map to your location."
+          tooltip={dict.map.tooltip.location}
           action={() => {
             locateUser(props.map);
           }}
@@ -83,7 +89,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         <RibbonComponentOptions
           key="map-style" id="map-style"
           icon="palette"
-          tooltip="Change base map style"
+          tooltip={dict.map.tooltip.mapStyle}
           options={imageryNames}
           initialOption={currentImagery?.name}
           iconClickable={false}
@@ -94,7 +100,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         <RibbonComponentOptions
           key="reset" id="reset"
           icon="reset_focus"
-          tooltip="Reset camera to default position."
+          tooltip={dict.map.tooltip.resetCamera}
           options={cameraNames}
           initialOption={cameraDefault}
           action={() => {
@@ -104,7 +110,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         <RibbonComponentToggle
           key="placenames" id="placenames"
           icon="glyphs"
-          tooltip="Show / hide place names."
+          tooltip={dict.map.tooltip.placenames}
           initialState={props.mapSettings.hideLabels}
           action={() => {
             togglePlacenames(props.mapSettings.imagery, props.map);
@@ -113,7 +119,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         <RibbonComponentToggle
           key="terrain" id="terrain"
           icon="landscape_2"
-          tooltip="Toggle 3D terrain."
+          tooltip={dict.map.tooltip.terrain}
           initialState={false}
           action={state => {
             set3DTerrain(state, props.map);
@@ -122,7 +128,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         <RibbonComponentToggle
           key="fullscreen" id="fullscreen"
           icon="open_in_full"
-          tooltip="Toggle fullscreen mode."
+          tooltip={dict.map.tooltip.fullscreen}
           initialState={false}
           action={state => {
             if (state) {
@@ -136,7 +142,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
         {currentScenarioName &&
           <RibbonComponentToggle
             key="scenario" id="scenario"
-            tooltip="Select another scenario."
+            tooltip={dict.map.tooltip.selectScenario}
             initialState={false}
             action={props.toggleScenarioSelection}
           >

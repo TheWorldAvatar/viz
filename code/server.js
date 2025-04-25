@@ -52,8 +52,9 @@ app.prepare().then(() => {
     const server = express();
 
     if (keycloakEnabled) { // do keycloak auth stuff if env var is set
-        console.info('the following pages require keycloak authentication', process.env.PROTECTED_PAGES ? colourYellow : colourRed, process.env.PROTECTED_PAGES, colourReset)
-        console.info('the following pages require the', process.env.ROLE ? colourYellow : colourRed, process.env.ROLE, colourReset, 'role: ', process.env.ROLE_PROTECTED_PAGES ? colourYellow : colourRed, process.env.ROLE_PROTECTED_PAGES, colourReset)
+        if (process.env.PROTECTED_PAGES) console.info('the following pages require keycloak authentication', colourYellow, process.env.PROTECTED_PAGES, colourReset);
+        if (process.env.ROLE && process.env.ROLE_PROTECTED_PAGES) console.info('the following pages require the', process.env.ROLE ? colourYellow : colourRed, process.env.ROLE, colourReset, 'role: ', process.env.ROLE_PROTECTED_PAGES ? colourYellow : colourRed, process.env.ROLE_PROTECTED_PAGES, colourReset)
+        else console.info('No pages protected with role');
 
         server.set('trust proxy', true); // the client’s IP address is understood as the left-most entry in the X-Forwarded-For header.
 
@@ -103,22 +104,35 @@ app.prepare().then(() => {
         server.use(keycloak.middleware());
 
         server.get('/api/userinfo', keycloak.protect(), (req, res) => {
-            const { preferred_username: userName, given_name: firstName, family_name: lastName, name: fullName, realm_access: { roles }, resource_access: clientRoles } = req.kauth.grant.access_token.content;
-            res.json({ userName, firstName, lastName, fullName, roles, clientRoles });
+            // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles
+            const { name, resource_access } = req.kauth.grant.access_token.content;
+            const roles = resource_access?.viz?.roles || [];
+            res.json({ name, roles });
         });
 
-        const protectedPages = process.env.PROTECTED_PAGES.split(',');
-        protectedPages.forEach(page => {
-            server.get(page, keycloak.protect());
-        });
-        const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES.split(',');
-        roleProtectedPages.forEach(page => {
-            server.get(page, keycloak.protect(process.env.ROLE));
-            console.info('protecting page', page, 'with role', process.env.ROLE);
-        });
+        if (!process.env.PROTECTED_PAGES) {
+            console.info('No protected pages specified. Protecting', colourGreen, 'all', colourReset, 'pages with Keycloak authentication.');
+            server.get("*allpaths", keycloak.protect());
+        } else {
+            const protectedPages = process.env.PROTECTED_PAGES.split(',');
+            protectedPages.forEach(page => {
+                server.get(page, keycloak.protect());
+            });
+        }
+        if (process.env.ROLE_PROTECTED_PAGES) {
+            if (process.env.ROLE) {
+                const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
+                roleProtectedPages?.forEach(page => {
+                    server.get(page, keycloak.protect(process.env.ROLE));
+                    console.info('protecting page', page, 'with role', process.env.ROLE);
+                });
+            } else {
+                console.info(colourRed, 'ROLE_PROTECTED_PAGES specified but no ROLE specified. No pages will be protected with role', colourReset);
+            }
+        }
 
         const useGeoServerProxy = process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true';
-        console.info('REACT_APP_USE_GEOSERVER_PROXY is ' + useGeoServerProxy);
+        console.info('Geoserver proxying is', useGeoServerProxy ? colourYellow : colourGreen, useGeoServerProxy, colourReset);
 
         if (useGeoServerProxy) {
             console.info('Server URL REACT_APP_SERVER_URL is ' + process.env.REACT_APP_SERVER_URL);
@@ -151,7 +165,7 @@ app.prepare().then(() => {
     }
 
     // Handle all other requests using Next.js
-    server.all("*", (req, res) => {
+    server.all("*allpaths", (req, res) => {
         return handle(req, res);
     });
 

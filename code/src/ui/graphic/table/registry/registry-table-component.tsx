@@ -2,23 +2,25 @@
 
 import styles from './registry.table.module.css';
 
+import { Icon } from '@mui/material';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { usePathname } from 'next/navigation';
-import { Icon } from '@mui/material';
 
+import { useDictionary } from 'hooks/useDictionary';
+import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
 import { getIsOpenState } from 'state/modal-slice';
+import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
-import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getLifecycleData, getServiceTasks } from 'utils/server-actions';
-import { Status } from 'ui/text/status/status';
-import useRefresh from 'hooks/useRefresh';
-import TaskModal from 'ui/interaction/modal/task/task-modal';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
+import TaskModal from 'ui/interaction/modal/task/task-modal';
+import { Status } from 'ui/text/status/status';
+import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
+import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
 import RegistryTable from './registry-table';
-import TableRibbon from './ribbon/table-ribbon';
 import SummarySection from './ribbon/summary';
+import TableRibbon from './ribbon/table-ribbon';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -34,11 +36,12 @@ interface RegistryTableComponentProps {
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
+  const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
   const isModalOpen: boolean = useSelector(getIsOpenState);
+  const [initialInstances, setInitialInstances] = useState<RegistryFieldValues[]>([]);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
-
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -69,17 +72,20 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             instances = instances.concat(archivedContracts);
           } else {
             // If this is the report page for specific contracts, retrieve tasks associated with the id 
-            instances = await getServiceTasks(props.registryAgentApi, pathNameEnd);
+            instances = await getServiceTasks(props.registryAgentApi, props.entityType, pathNameEnd);
           }
         } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
           // Create a Date object from the YYYY-MM-DD string
           const date = new Date(selectedDate);
           // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          instances = await getServiceTasks(props.registryAgentApi, null, unixTimestamp);
+          instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
+        } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
+          instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
         } else {
           instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
         }
+        setInitialInstances(instances);
         setCurrentInstances(instances);
         setIsLoading(false);
       } catch (error) {
@@ -108,7 +114,8 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           registryAgentApi={props.registryAgentApi}
           lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
-          instances={currentInstances}
+          instances={initialInstances}
+          setCurrentInstances={setCurrentInstances}
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
@@ -116,10 +123,10 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
-          Click on any {props.entityType} in the table to view its summary
+          {dict.message.registryInstruction}
         </div>}
       {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-        <h2 className={styles["instructions"]}>Service summary<hr /></h2>}
+        <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
         {props.lifecycleStage == Paths.REGISTRY_REPORT &&
           <SummarySection
@@ -128,13 +135,14 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          currentInstances.length > 0 ? <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
-            instances={currentInstances}
-            limit={3}
-          /> : <div className={styles["instructions"]}>No results found</div>}
+          currentInstances.length > 0 ?
+            <RegistryTable
+              recordType={props.entityType}
+              lifecycleStage={props.lifecycleStage}
+              setTask={setTask}
+              instances={currentInstances}
+              limit={3}
+            /> : <div className={styles["instructions"]}>{dict.message.noResultFound}</div>}
       </div>
       {task && <TaskModal
         entityType={props.entityType}

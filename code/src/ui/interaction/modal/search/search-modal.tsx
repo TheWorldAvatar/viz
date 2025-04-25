@@ -6,11 +6,13 @@ import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 
 import { setFilterFeatureIris } from 'state/map-feature-slice';
+import { Dictionary } from 'types/dictionary';
 import { SEARCH_FORM_TYPE } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
 import ResponseComponent from 'ui/text/response/response';
+import { useDictionary } from 'hooks/useDictionary';
 import { HttpResponse } from 'utils/server-actions';
 
 interface SearchModalProps {
@@ -30,7 +32,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
   const dispatch = useDispatch();
   const [response, setResponse] = useState<HttpResponse>(null);
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
-
+  const dict: Dictionary = useDictionary();
   // Show all features upon click
   const showAllFeatures: React.MouseEventHandler<HTMLButtonElement> = () => {
     dispatch(setFilterFeatureIris([SHOW_ALL_FEATURE_INDICATOR]));
@@ -58,7 +60,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
     >
       <div className={styles.container}>
         <section className={styles["section-title"]}>
-          <h1>SEARCH CRITERIA</h1>
+          <h1>{dict.title.searchCriteria}</h1>
           <ClickActionButton
             icon={"cancel"}
             onClick={() => props.setShowState(false)}
@@ -79,12 +81,12 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
           <div className={styles["footer-button-row"]}>
             <ClickActionButton
               icon={"search"}
-              label={"SEARCH"}
+              label={dict.action.search}
               onClick={onSubmit}
             />
             <ClickActionButton
               icon={"select_all"}
-              label={"SHOW ALL"}
+              label={dict.action.showAll}
               onClick={showAllFeatures}
             />
           </div>
