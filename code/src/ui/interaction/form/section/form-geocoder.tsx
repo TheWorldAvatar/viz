@@ -59,6 +59,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     datatype: "decimal",
     fieldId: FORM_STATES.LATITUDE,
     order: 10,
+    step: {
+      "@value": "0.00000001",
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+    },
     minCount: {
       "@value": "1",
       "@type": "http://www.w3.org/2001/XMLSchema#integer",
@@ -78,8 +82,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     description: {
       "@value": `${dict.form.longDesc} ${props.field.name[VALUE_KEY]}`,
     },
-    order: 11,
     fieldId: FORM_STATES.LONGITUDE,
+    order: 11,
+    step: {
+      "@value": "0.00000001",
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+    },
     datatype: "decimal",
     minCount: {
       "@value": "1",
