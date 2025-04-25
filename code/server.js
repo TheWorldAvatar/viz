@@ -82,9 +82,13 @@ app.prepare().then(() => {
             console.info(`development mode is:`, dev ? colourYellow : colourRed, dev, colourReset, `-> using in-memory session store (express-session MemoryStore())`);
         }
 
+        if (!dev && !process.env.SESSION_SECRET) {
+            console.error('environment variable: SESSION_SECRET is not set. Please set it to a long, unguessable random string. Run `export SESSION_SECRET=$(openssl rand -hex 32)` before production spinup');
+            process.exit(1);
+        }
         server.use(
             session({
-                secret: 'login',
+                secret: dev ? 'sampleSecret' : process.env.SESSION_SECRET, // This should be a long, unguessable random string, run `export SESSION_SECRET=$(openssl rand -hex 32)` before production spinup. 'samplesecret' is fine for dev mode
                 resave: false,
                 saveUninitialized: true,
                 store: store,
