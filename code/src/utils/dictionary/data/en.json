@@ -30,7 +30,9 @@
     "rescind": "Rescind",
     "terminate": "Terminate",
     "findAddress": "Find address",
-    "selectLocation": "Select location"
+    "selectLocation": "Select location",
+    "clickIncrease": "Click to increase",
+    "clickDecrease": "Click to decrease"
   },
   "form": {
     "singleService": "Single Service",

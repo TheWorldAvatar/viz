@@ -30,7 +30,9 @@
     "rescind": "Rückgängig machen",
     "terminate": "Beenden",
     "findAddress": "Adresse finden",
-    "selectLocation": "Ort auswählen"
+    "selectLocation": "Ort auswählen",
+    "clickIncrease": "Zum Erhöhen anklicken",
+    "clickDecrease": "Zum Verringern anklicken"
   },
   "form": {
     "singleService": "Einzelner Dienst",
