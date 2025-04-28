@@ -3,6 +3,18 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.23.0
+
+### Changes
+
+- Added a new numeric input component to facilitate granular steps and fixed values
+- Updated the min max input field to the new component
+- Updated min version of `VisBackend Agent` from `v1.4.0` to `v1.5.1`
+
+### Bug Fixes
+
+- Fixed the longitude and latitude fields in the form geocoder
+
 ## 5.22.4
 
 - Dependabot update #173
