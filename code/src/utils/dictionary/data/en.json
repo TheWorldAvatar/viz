@@ -116,8 +116,8 @@
     "caption": {
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
-      "registry": "Manage and view your records",
-      "generalReg": "Manage and view",
+      "registry": "Manage your records",
+      "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
     },
     "title": {

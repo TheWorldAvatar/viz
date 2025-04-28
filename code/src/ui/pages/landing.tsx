@@ -109,7 +109,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           <DefaultPageThumbnail
             key={path + index}
             title={parseWordsForLabels(path)}
-            caption={`${props.dict.nav.caption.generalReg} ${parseWordsForLabels(path).toLowerCase()}`}
+            caption={props.dict.nav.caption.generalReg.replace("{replace}", parseWordsForLabels(path).toLowerCase())}
             icon={Assets.REGISTRY}
             url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
           />
