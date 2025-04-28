@@ -3,6 +3,10 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.22.4
+
+- Dependabot update #173
+
 ## 5.22.3
 
 - Security update of `react-router-dom`, see #171
