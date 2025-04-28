@@ -3,6 +3,49 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.23.0
+
+### Changes
+
+- Added a new numeric input component to facilitate granular steps and fixed values
+- Updated the min max input field to the new component
+- Updated min version of `VisBackend Agent` from `v1.4.0` to `v1.5.1`
+
+### Bug Fixes
+
+- Fixed the longitude and latitude fields in the form geocoder
+
+## 5.22.4
+
+- Dependabot update #173
+
+## 5.22.3
+
+- Security update of `react-router-dom`, see #171
+
+## 5.22.2
+
+### Changes
+
+- Ignore authorisation in language middleware to prevent incorrect redirection when keycloak is deployed on the same host but different path to the main viz
+  
+## 5.22.1
+
+### Changes
+
+- Dependabot bump #163
+- Update package manager version
+  
+## 5.22.0
+
+### Changes
+
+- Allow scenario modal to render on the client if server side scenario fetch fails
+- Allow better closing behaviour of scenario modal
+- Pass credentials where relevant
+- Simplify some data fetching
+- Simplify some scenario state management
+  
 ## 5.21.0
 
 ### Changes

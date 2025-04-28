@@ -72,7 +72,6 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
   // State for map configuration settings
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("Adding ribbon context item:", ribbonContextItem); // Debug log
     dispatch(addItem(ribbonContextItem));   // Add context menu item
   }, [])
 

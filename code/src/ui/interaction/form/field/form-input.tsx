@@ -5,6 +5,7 @@ import { FieldError, UseFormReturn } from 'react-hook-form';
 import { PropertyShape, VALUE_KEY } from 'types/form';
 import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
 import FormInputContainer from './form-input-container';
+import NumericInputField from './input/numeric-input';
 
 export interface InputFieldProps {
   field: PropertyShape;
@@ -30,23 +31,30 @@ export interface InputFieldProps {
 export default function FormInputField(props: Readonly<InputFieldProps>) {
   const inputClassNames: string = props.styles?.input?.join(" ");
   // Disabled inputs should provide only text input
-  const inputType: string = props.options?.disabled || props.field.datatype === "string" ? "text" : "number";
+  const inputMode: "none" | "text" | "numeric" | "decimal" = props.options?.disabled ? "none" :
+    props.field.datatype === "string" ? "text" :
+      props.field.datatype === "integer" ? "numeric" : "decimal";
+
   return (
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.styles?.label}
     >
-      <input
+      {(props.options?.disabled || props.field?.datatype === "string") ? <input
         id={props.field.fieldId}
-        type={inputType}
+        type="text"
+        inputMode={inputMode}
         className={`${inputClassNames} ${props.options?.disabled && (styles["input-disabled"] + " " + styles["field-disabled"])}`}
-        step={props.field.datatype === "decimal" ? "0.01" : undefined}
         placeholder={props.options?.disabled ? "" : `Add ${props.field.name[VALUE_KEY]} here`}
         readOnly={props.options?.disabled}
         aria-label={props.field.name[VALUE_KEY]}
         {...props.form.register(props.field.fieldId, getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE)))}
-      />
+      /> : <NumericInputField
+        field={props.field}
+        form={props.form}
+        styles={props.styles}
+      />}
     </FormInputContainer>
   );
 }

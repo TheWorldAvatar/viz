@@ -1,12 +1,28 @@
+.numeric-input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.numeric-input-scroller-container {
+  position: absolute;
+  right: 0.25rem;
+  top: 0;
+}
+
+.numeric-input-scroller {
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
 .min-max-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  width: 25vw;
+  justify-content: space-between;
 }
 
 .min-max-input-value {
-  width: 3rem;
+  height: 1.8rem;
+  width: 25vw;
   padding: 0.2rem;
 
   background-color: var(--background-primary);
