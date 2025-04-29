@@ -234,11 +234,18 @@ export async function deleteEntity(agentApi: string, id: string, entityType: str
  * @param {string} contentType Type of request content - application/json - Optional for GET request
  * @param {string} jsonBody Optional body parameter to be passed in request
  */
-async function sendRequest(endpoint: string, methodType: string, contentType?: string, jsonBody?: string): Promise<Response> {
+async function sendRequest(
+  endpoint: string,
+  methodType: string,
+  contentType?: string,
+  jsonBody?: string,
+  bearerToken?: string // Add optional bearer token
+): Promise<Response> {
   const options: RequestInit = {
     method: methodType,
     headers: {
       "Content-Type": contentType,
+      ...(bearerToken && { Authorization: `Bearer ${bearerToken}` }), // Add Authorization header if token is provided
     },
   };
 
