@@ -115,8 +115,8 @@
     "caption": {
       "map": "Visualisierung raumbezogener Daten",
       "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
-      "registry": "Verwalten und Anzeigen Ihrer Datensätze",
-      "generalReg": "Verwalten und Anzeigen",
+      "registry": "Verwalten Sie Ihrer Datensätze",
+      "generalReg": "{replace} verwalten",
       "help": "Hilfe für diese Webplattform erhalten"
     },
     "title": {

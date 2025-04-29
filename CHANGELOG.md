@@ -3,6 +3,14 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.24.1
+
+### Bug Fixes
+
+- Fixed the non-human-readable attributes in the general registry table
+- Ensure proper parsing of caption labels for general registry landing page redirect
+- Updated captions for general registry in dictionary
+
 ## 5.24.0
 
 ### Changes

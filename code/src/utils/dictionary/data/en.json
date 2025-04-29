@@ -98,7 +98,7 @@
     "completeInstruction": "To complete the service, please input the following details:",
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
-    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your replort:",
+    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your report:",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
@@ -115,8 +115,8 @@
     "caption": {
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
-      "registry": "Manage and view your records",
-      "generalReg": "Manage and view",
+      "registry": "Manage your records",
+      "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
     },
     "title": {
