@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.24.0
+
+### Changes
+
+- Updated the form array design
+
 ## 5.23.0
 
 ### Changes

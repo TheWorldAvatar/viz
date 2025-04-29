@@ -447,3 +447,16 @@ export function translateFormType(input: string, dict: Dictionary): string {
       break;
   }
 }
+
+/**
+  * Creates a new empty array row with default values for each field in the configuration
+  * 
+  * @param {PropertyShape[]} fieldConfigs A list of property shapes for the form array field
+  */
+export function genEmptyArrayRow(fieldConfigs: PropertyShape[]): FieldValues {
+  const emptyField: FieldValues = {};
+  fieldConfigs.forEach(config => {
+    emptyField[config.fieldId] = "";
+  });
+  return emptyField;
+}

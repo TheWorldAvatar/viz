@@ -93,7 +93,6 @@
     }
   },
   "message": {
-    "arrayInstruction": "Füllen Sie die Details aus, um einen neuen Eintrag zu erstellen",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
     "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
