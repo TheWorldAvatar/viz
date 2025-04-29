@@ -93,7 +93,6 @@
     }
   },
   "message": {
-    "arrayInstruction": "Fill in the details to create a new entry",
     "branchInstruction": "Select the best category for your request",
     "registryInstruction": "Click on any record in the table to view its summary",
     "completeInstruction": "To complete the service, please input the following details:",
