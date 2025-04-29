@@ -1,11 +1,12 @@
 import styles from './array.module.css';
 
-import React, { useState, useEffect } from 'react';
-import { useFieldArray, UseFormReturn } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FieldValues, useFieldArray, UseFormReturn } from 'react-hook-form';
 
 import { PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
+import { genEmptyArrayRow } from '../../form-utils';
 import FormFieldComponent from '../form-field';
 
 export interface FormArrayProps {
@@ -30,10 +31,10 @@ export interface FormArrayProps {
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const { control, setValue } = props.form;
+  const { control } = props.form;
 
   // This key forces re-render of the form fields when currentIndex changes
-  const [renderKey, setRenderKey] = useState(0);
+  const [renderKey, setRenderKey] = useState<number>(0);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -45,17 +46,9 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     setRenderKey(prev => prev + 1);
   }, [currentIndex]);
 
-  /**
-   * Creates a new empty row with default values for each field in the configuration
-   * @returns {Object} An object with empty values for each field
-   */
-  const createEmptyRow = () => {
-    const emptyField = {};
-    props.fieldConfigs.forEach(config => {
-      emptyField[config.fieldId] = '';
-    });
-    return emptyField;
-  };
+  const emptyRow: FieldValues = useMemo(() => {
+    return genEmptyArrayRow(props.fieldConfigs);
+  }, [props.fieldConfigs]);
 
   return (
     <div className={styles["container"]}>
@@ -66,7 +59,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           isTransparent={true}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             event.preventDefault();
-            append(createEmptyRow());
+            append(emptyRow);
           }}
         />
         {fields.length > 1 && <ClickActionButton
