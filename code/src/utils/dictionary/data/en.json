@@ -138,6 +138,7 @@
   },
   "title": {
     "actions": "ACTIONS",
+    "completionDetails": "completion details",
     "dispatchInfo": "dispatch information",
     "description": "Description",
     "serviceSummary": "Service summary",
