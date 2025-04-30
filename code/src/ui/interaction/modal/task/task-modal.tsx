@@ -264,15 +264,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
           {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
           <div className={styles["footer-button-row"]}>
-            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask) &&
-              props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+            {/**
+             * Completion details can only be updated by users with:
+             * CompleteTask permission in the dispatch stage, OR
+             * Operation permission in the completed stage.
+             * Complete task is typically given to simple users who are only allowed to view tasks.
+             * */}
+            {(props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
+              (!(keycloakEnabled && permissionScheme) || permissionScheme?.hasPermissions?.completeTask)
+            ) || (props.task.status.toLowerCase().trim() == Status.COMPLETED &&
+              (!(keycloakEnabled && permissionScheme) || permissionScheme?.hasPermissions?.operation)
+            ) && !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"done_outline"}
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />}
             {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
               !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"assignment"}
                 tooltipText={dict.action.dispatch}
