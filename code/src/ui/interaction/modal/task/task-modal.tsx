@@ -195,7 +195,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     if (isDispatchAction) {
       getFormTemplate(props.registryAgentApi, "service", "dispatch", props.task.id);
     } else if (isCompleteAction) {
-      getFormTemplate(props.registryAgentApi, "service", "complete");
+      getFormTemplate(props.registryAgentApi, "service", "complete", props.task.id);
     } else if (isReportAction) {
       getFormTemplate(props.registryAgentApi, "service", "report");
     } else if (isCancelAction) {
