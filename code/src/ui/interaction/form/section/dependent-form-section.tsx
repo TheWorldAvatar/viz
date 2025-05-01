@@ -76,8 +76,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       if (entities.length > 0) {
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
         // If there is a default value, search and use the option matching the default instance's local name
-        if (field.defaultValue) {
-          const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
+        if (props.form.getValues(field.fieldId)) {
+          const defaultValueId: string = getAfterDelimiter(props.form.getValues(field.fieldId), "/");
           const matchingEntity: RegistryFieldValues = entities.find(entity =>
             getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
           );
