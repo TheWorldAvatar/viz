@@ -1,6 +1,6 @@
 import styles from './array.module.css';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FieldValues, useFieldArray, UseFormReturn } from 'react-hook-form';
 
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
@@ -33,18 +33,10 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   const { control } = props.form;
   const backgroundImageUrl: string = useBackgroundImageUrl();
 
-  // This key forces re-render of the form fields when currentIndex changes
-  const [renderKey, setRenderKey] = useState<number>(0);
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: props.fieldId,
   });
-
-  // Force re-render when the current index changes to ensure correct field values are displayed
-  useEffect(() => {
-    setRenderKey(prev => prev + 1);
-  }, [currentIndex]);
 
   const emptyRow: FieldValues = useMemo(() => {
     return genEmptyArrayRow(props.fieldConfigs);
@@ -87,17 +79,16 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           </button>
         ))}
       </div>
-      <div className={styles["row"]} key={`form-fields-${renderKey}`}
+      <div className={styles["row"]}
         style={{
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
-        {props.fieldConfigs.map((config, secondaryIndex) => {
+        {props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
-
           return (
-            <div key={`field-${secondaryIndex}`} className={styles["cell"]}>
+            <div key={`field-${currentIndex}-${index}`} className={styles["cell"]}>
               {config.class && <DependentFormSection
                 agentApi={props.agentApi}
                 dependentProp={{
