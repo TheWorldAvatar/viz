@@ -7,8 +7,9 @@ import 'github-markdown-css/github-markdown.css';
 import styles from './landing.module.css';
 
 import markdownit from 'markdown-it';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { Assets } from 'io/config/assets';
 import { OptionalPage } from 'io/config/optional-pages';
 import { Modules, Routes } from 'io/config/routes';
@@ -16,9 +17,8 @@ import { PermissionScheme } from 'types/auth';
 import { Dictionary } from 'types/dictionary';
 import { UISettings } from 'types/settings';
 import LandingImage from 'ui/graphic/image/landing';
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { parseStringsForUrls, parseWordsForLabels } from 'utils/client-utils';
-import { DefaultPageThumbnail, DefaultPageThumbnailProps, MarkdownPageThumbnail } from './page-thumbnail';
+import { DefaultPageThumbnail, DefaultPageThumbnailProps } from './page-thumbnail';
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -42,6 +42,8 @@ interface LandingPageProps {
  * @returns JSX for landing page.
  */
 export default function LandingPage(props: Readonly<LandingPageProps>) {
+  const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
+
   // CSS class names
   const introClasses = ["markdown-body", styles.introInner].join(" ");
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -79,7 +81,17 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           lightUrl={props.settings.branding?.landing}
           darkUrl={props.settings.branding?.landingDark}
         />)}
-        {getThumbnails(props.pages)}
+
+        {props.pages.filter(page => page.slug !== "landing" && page.slug !== "help")
+          .map(page => (
+            <DefaultPageThumbnail
+              key={page.title}
+              title={page.title}
+              caption={page.description}
+              icon={page.thumbnail ?? Assets.INFO}
+              url={`${ASSET_PREFIX}/${page.slug}`}
+            />))
+        }
 
         {props.settings.modules.map && (
           <DefaultPageThumbnail
@@ -151,28 +163,4 @@ function getIntroductionContent(pages: OptionalPage[]): string {
   }
   // Only one page should be returned
   return markdowner.render(filteredPages[0]?.content);
-}
-
-/**
- * Loads linkable thumbnail components for registered
- * optional static content pages.
- * 
- * @returns Array of thumbnail components.
- */
-function getThumbnails(pages: OptionalPage[]): React.ReactElement[] {
-  const components: React.ReactElement[] = [];
-  // Filter out the object that defines the landing or help page content
-  pages.filter(page => page.slug !== "landing" && page.slug !== "help")
-    // Create thumbnail components for each page
-    .forEach(page => {
-      const thumbnail = (
-        <MarkdownPageThumbnail
-          key={page.slug}
-          page={page}
-        />
-      );
-      components.push(thumbnail);
-    });
-
-  return components;
 }
