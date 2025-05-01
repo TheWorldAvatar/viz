@@ -1,9 +1,9 @@
 import { GroupBase, StylesConfig } from 'react-select';
 
-import { FormOptionType } from 'types/form';
+import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 
 // Selector styles for react select
-export const selectorStyles: StylesConfig<FormOptionType | GroupBase<FormOptionType>, false, GroupBase<FormOptionType>> = {
+export const selectorStyles: StylesConfig<SelectOption, false, GroupBase<SelectOption>> = {
   control: (provided, { isDisabled }) => ({
     ...provided,
     outline: "1px solid var(--border-primary)",
