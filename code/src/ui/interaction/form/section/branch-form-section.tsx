@@ -3,14 +3,12 @@ import styles from '../form.module.css';
 
 import { useCallback, useMemo, useState } from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
-import Select from 'react-select';
 
 import { useDictionary } from 'hooks/useDictionary';
 import { Routes } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
 import { NodeShape, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
-import { selectorStyles } from 'ui/css/selector-style';
-import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
+import SimpleSelector, { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { parseWordsForLabels } from 'utils/client-utils';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
@@ -120,15 +118,14 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
     <>
       <div className={styles["section-selector-container"]}>
         <label className={fieldStyles["field-text"]} htmlFor="select-input">{dict.message.branchInstruction}:</label>
-        <Select
-          styles={selectorStyles}
-          unstyled
+        <SimpleSelector
           options={formOptions}
-          value={convertNodeShapeToFormOption(selectedModel)}
-          onChange={(selectedOption) => handleModelChange(selectedOption)}
-          isLoading={false}
-          isMulti={false}
-          isSearchable={true}
+          defaultVal={convertNodeShapeToFormOption(selectedModel).value}
+          onChange={(selectedOption) => {
+            if (selectedOption && "value" in selectedOption) {
+              handleModelChange(selectedOption)
+            }
+          }}
           isDisabled={props.form.getValues(FORM_STATES.FORM_TYPE) == Routes.REGISTRY_DELETE || props.form.getValues(FORM_STATES.FORM_TYPE) == Routes.REGISTRY}
         />
         <p className={fieldStyles["info-text"]}>

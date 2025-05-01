@@ -1,15 +1,13 @@
-import { selectorStyles } from 'ui/css/selector-style';
 import styles from './column-search.module.css';
 
 import React, { useMemo, useState } from 'react';
-import Select from 'react-select';
 
 import { autoUpdate, flip, FloatingFocusManager, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole, } from '@floating-ui/react';
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
-import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
+import SimpleSelector, { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, parseWordsForLabels } from 'utils/client-utils';
 
 interface ColumnSearchComponentProps {
@@ -26,7 +24,7 @@ interface ColumnSearchComponentProps {
 export default function ColumnSearchComponent(props: Readonly<ColumnSearchComponentProps>) {
   const dict: Dictionary = useDictionary();
   const [searchText, setSearchText] = useState<string>("");
-  const [searchColumn, setSearchColumn] = useState<SelectOption>(null);
+  const [searchColumn, setSearchColumn] = useState<string>(null);
   // WIP: Separate the Floating UI code and trigger
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -57,7 +55,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
         label: parseWordsForLabels(field),
       }
     });
-    setSearchColumn(options[0]);
+    setSearchColumn(options[0]?.value);
     return options;
   }, [props.instances]);
 
@@ -74,7 +72,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
     const searchableInput: string = searchText.trim().toLowerCase();
     if (searchableInput) {
       props.setCurrentInstances(props.instances.filter(instance => {
-        return extractResponseField(instance, searchColumn.value, true).value
+        return extractResponseField(instance, searchColumn, true).value
           .toLowerCase().includes(searchableInput);
       }));
     } else {
@@ -98,15 +96,14 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
             style={floatingStyles}
             {...getFloatingProps()}
           >
-            <Select
-              styles={selectorStyles}
-              unstyled
+            <SimpleSelector
               options={columnSearchOptions}
-              value={searchColumn}
-              onChange={(selectedOption) => setSearchColumn(selectedOption)}
-              isLoading={false}
-              isMulti={false}
-              isSearchable={true}
+              defaultVal={searchColumn}
+              onChange={(selectedOption) => {
+                if (selectedOption && "value" in selectedOption) {
+                  setSearchColumn(selectedOption?.value)
+                }
+              }}
             />
             <input
               type="text"

@@ -3,7 +3,6 @@ import styles from "../form.module.css";
 
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import Select from "react-select";
 
 import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from "io/config/routes";
@@ -13,9 +12,8 @@ import {
   RegistryFieldValues,
   SEARCH_FORM_TYPE,
 } from "types/form";
-import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
@@ -163,24 +161,18 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             <label className={fieldStyles["field-text"]} htmlFor="select-input">
               {dict.title.serviceType}
             </label>
-            <Select
-              styles={selectorStyles}
-              unstyled
+            <SimpleSelector
               options={[
                 { label: singleService, value: singleService },
                 { label: regularService, value: regularService },
                 { label: alternateService, value: alternateService },
               ]}
-              value={{
-                label: selectedServiceOption,
-                value: selectedServiceOption,
+              defaultVal={selectedServiceOption}
+              onChange={(selectedOption) => {
+                if (selectedOption && "value" in selectedOption) {
+                  handleServiceChange(selectedOption?.value)
+                }
               }}
-              onChange={(selectedOption) =>
-                handleServiceChange((selectedOption as SelectOption).value)
-              }
-              isLoading={false}
-              isMulti={false}
-              isSearchable={true}
               isDisabled={
                 formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
               }
