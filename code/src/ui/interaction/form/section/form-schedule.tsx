@@ -5,18 +5,18 @@ import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import Select from "react-select";
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
   FormFieldOptions,
-  FormOptionType,
   RegistryFieldValues,
   SEARCH_FORM_TYPE,
 } from "types/form";
 import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import { SelectOption } from "ui/interaction/dropdown/simple-selector";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from 'hooks/useDictionary';
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
@@ -176,7 +176,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 value: selectedServiceOption,
               }}
               onChange={(selectedOption) =>
-                handleServiceChange((selectedOption as FormOptionType).value)
+                handleServiceChange((selectedOption as SelectOption).value)
               }
               isLoading={false}
               isMulti={false}

@@ -31,11 +31,6 @@ export type OntologyConcept = {
   parent?: SparqlResponseField;
 };
 
-export interface FormOptionType {
-  label: string;
-  value: string;
-}
-
 export interface FormArrayItemOption {
   fieldId: string;
   label: string;

@@ -5,12 +5,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 import Select from 'react-select';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Routes } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
-import { FormOptionType, NodeShape, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { NodeShape, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import { selectorStyles } from 'ui/css/selector-style';
+import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { parseWordsForLabels } from 'utils/client-utils';
-import { useDictionary } from 'hooks/useDictionary';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
 
@@ -80,7 +81,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
   const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(parsePropertyShapeOrGroupList({}, initialNodeShape.property));
 
   // Declare a function to transform node shape to a form option
-  const convertNodeShapeToFormOption = useCallback((nodeShape: NodeShape): FormOptionType => {
+  const convertNodeShapeToFormOption = useCallback((nodeShape: NodeShape): SelectOption => {
     return {
       label: parseWordsForLabels(nodeShape.label[VALUE_KEY]),
       value: nodeShape.label[VALUE_KEY],
@@ -91,7 +92,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
   ), []);
 
   // Handle change event for the branch selection
-  const handleModelChange = (formOption: FormOptionType) => {
+  const handleModelChange = (formOption: SelectOption) => {
     const matchingNode: NodeShape = props.node.find(nodeShape => nodeShape.label[VALUE_KEY] === formOption.value);
     // Before updating the current form branch, unregister all current fields
     selectedModel.property.forEach(field => {
@@ -124,7 +125,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
           unstyled
           options={formOptions}
           value={convertNodeShapeToFormOption(selectedModel)}
-          onChange={(selectedOption) => handleModelChange(selectedOption as FormOptionType)}
+          onChange={(selectedOption) => handleModelChange(selectedOption)}
           isLoading={false}
           isMulti={false}
           isSearchable={true}
