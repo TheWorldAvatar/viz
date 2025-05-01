@@ -1,7 +1,7 @@
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { OntologyConcept, PropertyShape } from 'types/form';
+import { FormFieldOptions, OntologyConcept, PropertyShape } from 'types/form';
 import SimpleSelector, { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import FormInputContainer, { FormInputContainerRedirectOptions } from '../form-input-container';
 
@@ -12,12 +12,7 @@ interface FormSelectorProps {
   selectedOption?: OntologyConcept;
   redirectOptions?: FormInputContainerRedirectOptions;
   noOptionMessage?: string;
-  options?: {
-    disabled?: boolean;
-  };
-  styles?: {
-    label?: string[],
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -29,15 +24,14 @@ interface FormSelectorProps {
  * @param {OntologyConcept} selectedOption Optional selected option description.
  * @param redirectOptions Optional redirect options for adding a new entity or viewing an existing entity.
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
- * @param {boolean} options.disabled Optional parameter to disable the selector. Defaults to false.
- * @param {string[]} styles.label Optional styles for the label element.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSelector(props: Readonly<FormSelectorProps>) {
   return (
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
-      labelStyles={props.styles?.label}
+      labelStyles={props.options?.labelStyle}
       selectedOption={props.selectedOption}
       redirectOptions={props.redirectOptions}
     >

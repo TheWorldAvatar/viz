@@ -180,10 +180,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
               }}
               noOptionMessage={dict.message.noInstances}
               options={{
-                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
-              }}
-              styles={{
-                label: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
+                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+                labelStyle: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
               }}
             />
           </div>

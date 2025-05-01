@@ -8,6 +8,7 @@ import Select from "react-select";
 import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
+  FormFieldOptions,
   FormOptionType,
   RegistryFieldValues,
   SEARCH_FORM_TYPE,
@@ -25,9 +26,7 @@ interface FormScheduleProps {
   fieldId: string;
   agentApi: string;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 export const daysOfWeek: string[] = [
@@ -46,7 +45,7 @@ export const daysOfWeek: string[] = [
  * @param {string} fieldId Field name.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the fields should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);

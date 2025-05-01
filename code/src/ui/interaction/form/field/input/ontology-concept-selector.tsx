@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { defaultSearchOption, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
@@ -13,12 +13,7 @@ interface OntologyConceptSelectorProps {
   agentApi: string;
   field: PropertyShape;
   form: UseFormReturn;
-  styles?: {
-    label?: string[],
-  };
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -27,7 +22,7 @@ interface OntologyConceptSelectorProps {
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {string[]} styles.label Optional styles for the label element.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function OntologyConceptSelector(props: Readonly<OntologyConceptSelectorProps>) {
   const control: Control = props.form.control;
@@ -138,7 +133,6 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
         form={props.form}
         selectedOption={selectedOption}
         options={props.options}
-        styles={props.styles}
       />
     );
   }

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FieldValues, useFieldArray, UseFormReturn } from 'react-hook-form';
 
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
-import { PropertyShape } from 'types/form';
+import { FormFieldOptions, PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
 import { genEmptyArrayRow } from '../../form-utils';
@@ -15,9 +15,7 @@ export interface FormArrayProps {
   fieldId: string;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -27,7 +25,7 @@ export interface FormArrayProps {
  * @param {string} fieldId The field ID for the array. 
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed

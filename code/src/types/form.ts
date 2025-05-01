@@ -14,6 +14,11 @@ export interface SparqlResponseField {
   dataType: string;
   lang: string;
 }
+export interface FormFieldOptions {
+  disabled?: boolean;
+  labelStyle?: string[],
+  inputStyle?: string[],
+}
 
 export type RegistryFieldValues = Record<string, SparqlResponseField | SparqlResponseField[]>;
 
