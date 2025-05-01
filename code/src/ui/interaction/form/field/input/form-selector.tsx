@@ -1,7 +1,7 @@
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { FormFieldOptions, OntologyConcept, PropertyShape } from 'types/form';
+import { FormFieldOptions, OntologyConcept, PropertyShape, VALUE_KEY } from 'types/form';
 import SimpleSelector, { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import FormInputContainer, { FormInputContainerRedirectOptions } from '../form-input-container';
 
@@ -46,6 +46,7 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
             onChange={(selectedOption) => onChange((selectedOption as SelectOption).value)}
             isDisabled={props.options?.disabled}
             noOptionMessage={props.noOptionMessage}
+            reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
           />
         )}
       />
