@@ -1,10 +1,10 @@
 import styles from './array.module.css';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FieldValues, useFieldArray, UseFormReturn } from 'react-hook-form';
 
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
-import { PropertyShape } from 'types/form';
+import { FormFieldOptions, PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
 import { genEmptyArrayRow } from '../../form-utils';
@@ -15,9 +15,7 @@ export interface FormArrayProps {
   fieldId: string;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -27,7 +25,7 @@ export interface FormArrayProps {
  * @param {string} fieldId The field ID for the array. 
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
@@ -35,18 +33,10 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   const { control } = props.form;
   const backgroundImageUrl: string = useBackgroundImageUrl();
 
-  // This key forces re-render of the form fields when currentIndex changes
-  const [renderKey, setRenderKey] = useState<number>(0);
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: props.fieldId,
   });
-
-  // Force re-render when the current index changes to ensure correct field values are displayed
-  useEffect(() => {
-    setRenderKey(prev => prev + 1);
-  }, [currentIndex]);
 
   const emptyRow: FieldValues = useMemo(() => {
     return genEmptyArrayRow(props.fieldConfigs);
@@ -89,17 +79,16 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           </button>
         ))}
       </div>
-      <div className={styles["row"]} key={`form-fields-${renderKey}`}
+      <div className={styles["row"]}
         style={{
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
-        {props.fieldConfigs.map((config, secondaryIndex) => {
+        {props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
-
           return (
-            <div key={`field-${secondaryIndex}`} className={styles["cell"]}>
+            <div key={`field-${currentIndex}-${index}`} className={styles["cell"]}>
               {config.class && <DependentFormSection
                 agentApi={props.agentApi}
                 dependentProp={{

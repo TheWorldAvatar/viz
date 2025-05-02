@@ -112,7 +112,8 @@
     "noResultFound": "No results found",
     "mapSelectInstruction": "Select a feature...",
     "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
-    "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information."
+    "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information.",
+    "na": "Not applicable"
   },
   "nav": {
     "caption": {
