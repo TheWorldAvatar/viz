@@ -1,4 +1,7 @@
 {
+  "accessibility": {
+    "thumbnailImage": "Thumbnail icon for the '{replace}' page"
+  },
   "action": {
     "add": "add",
     "delete": "Delete",
@@ -129,11 +132,12 @@
       "archive": "Archive"
     },
     "tooltip": {
-      "home": "Return to landing page.",
-      "map": "Geospatial view.",
-      "dashboard": "Analytics view.",
-      "registry": "Open registry.",
-      "help": "Open help page."
+      "home": "Return to landing page",
+      "map": "Geospatial view",
+      "dashboard": "Analytics view",
+      "registry": "Open registry",
+      "help": "Open help page",
+      "landingRedirect": "Click to open the '{replace}' page"
     }
   },
   "title": {

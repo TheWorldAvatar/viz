@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import Tooltip from 'ui/interaction/tooltip/tooltip';
+import { Dictionary } from 'types/dictionary';
+import { useDictionary } from 'hooks/useDictionary';
 
 // Interface for incoming parameters
 export interface DefaultPageThumbnailProps {
@@ -25,9 +27,10 @@ export interface DefaultPageThumbnailProps {
  * @param {string} redirectUrl Redirects to this url when clicked.
  */
 export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>): React.ReactElement {
-  const imageDescription = "Thumbnail icon for the '" + props.title + "' page.";
+  const dict: Dictionary = useDictionary();
+  const imageDescription = dict.accessibility.thumbnailImage.replace("{replace}", props.title);
   return (
-    <Tooltip text={`Click to open the '${props.title}' page.`} placement={"left"}>
+    <Tooltip text={dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)} placement={"left"}>
       <Link href={props.url} className={styles.container}>
         <div className={styles.thumbnail}>
           <Image src={props.icon} height={50} width={50} alt={imageDescription} />

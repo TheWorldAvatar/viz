@@ -1,4 +1,7 @@
 {
+  "accessibility": {
+    "thumbnailImage": "Thumbnail-Symbol für die Seite'{replace}'"
+  },
   "action": {
     "add": "hinzufügen",
     "edit": "Bearbeiten",
@@ -129,11 +132,12 @@
       "archive": "Archiv"
     },
     "tooltip": {
-      "home": "Zurück zur landing page.",
-      "map": "Geografische ansicht.",
-      "dashboard": "Analyse-ansicht.",
-      "registry": "Öffnen Sie das Register.",
-      "help": "Hilfeseite öffnen."
+      "home": "Zurück zur landing page",
+      "map": "Geografische ansicht",
+      "dashboard": "Analyse-ansicht",
+      "registry": "Öffnen Sie das Register",
+      "help": "Hilfeseite öffnen",
+      "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen"
     }
   },
   "title": {
