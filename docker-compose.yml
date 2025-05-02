@@ -11,6 +11,8 @@ services:
       ROLE: twa-test:protected ## the role required for the above list
       REACT_APP_USE_GEOSERVER_PROXY: false
       REACT_APP_SERVER_URL: http://localhost:3000 # only applicable for REACT_APP_USE_GEOSERVER_PROXY = true
+      REACT_APP_GEOSERVER_PROXY_URL: http://host.docker.internal:3838/geoserver-jwt-proxy/ 
+      # REACT_APP_GEOSERVER_PROXY_URL is used as a security measure to prevent users from injecting an unexpected URL at the client
 
       REDIS_HOST: host.docker.internal
 
