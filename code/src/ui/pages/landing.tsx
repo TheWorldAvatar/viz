@@ -142,6 +142,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               caption={externalLink.caption}
               icon={externalLink.icon}
               url={externalLink.url}
+              type={externalLink.type}
             />
           }
         })
