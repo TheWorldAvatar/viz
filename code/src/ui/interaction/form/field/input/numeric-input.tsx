@@ -5,16 +5,14 @@ import { UseFormReturn } from 'react-hook-form';
 
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
-import { PropertyShape, VALUE_KEY } from 'types/form';
+import { FormFieldOptions, PropertyShape, VALUE_KEY } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
 
 export interface NumericInputFieldProps {
   field: PropertyShape;
   form: UseFormReturn;
-  styles?: {
-    input?: string[],
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -22,13 +20,13 @@ export interface NumericInputFieldProps {
  * 
  * @param {PropertyShape} field The SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {string[]} styles.input Optional styles for the input element.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function NumericInputField(props: Readonly<NumericInputFieldProps>) {
   const dict: Dictionary = useDictionary();
   const lastKeyPressTime: React.RefObject<number> = useRef<number>(0);
 
-  const inputClassNames: string = props.styles?.input?.join(" ");
+  const inputClassNames: string = props.options?.inputStyle?.join(" ");
   const inputMode: "numeric" | "decimal" = props.field.datatype === "integer" ? "numeric" : "decimal";
   const steps: number = useMemo(() => {
     return props.field.step ? Number(props.field.step[VALUE_KEY]) : props.field.datatype === "integer" ? 1 : 0.01;

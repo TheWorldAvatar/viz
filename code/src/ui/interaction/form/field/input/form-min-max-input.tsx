@@ -5,16 +5,14 @@ import { FieldError, UseFormReturn } from 'react-hook-form';
 
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
-import { PropertyShape } from 'types/form';
+import { FormFieldOptions, PropertyShape } from 'types/form';
 import FormInputContainer from '../form-input-container';
 import NumericInputField from './numeric-input';
 
 export interface FormInputMinMaxFieldProps {
   field: PropertyShape;
   form: UseFormReturn;
-  styles?: {
-    label?: string[],
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -22,7 +20,7 @@ export interface FormInputMinMaxFieldProps {
  * 
  * @param {PropertyShape} field The SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {string[]} styles.label Optional styles for the label element.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFieldProps>) {
   const dict: Dictionary = useDictionary();
@@ -33,11 +31,11 @@ export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFiel
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[originalField] as FieldError}
-      labelStyles={props.styles?.label}
+      labelStyles={props.options?.labelStyle}
     >
       <div className={styles["min-max-container"]}>
         <div>
-          <label className={props.styles?.label.join(" ")} htmlFor={minFieldId}>
+          <label className={props.options?.labelStyle.join(" ")} htmlFor={minFieldId}>
             <span className={fieldStyles["field-text"]}>{dict.form.min}:</span>
           </label>
           <NumericInputField
@@ -46,12 +44,12 @@ export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFiel
               fieldId: minFieldId,
             }}
             form={props.form}
-            styles={{ input: [styles["min-max-input-value"]] }}
+            options={{ inputStyle: [styles["min-max-input-value"]] }}
           />
         </div>
         <div className={styles["min-max-divider"]}></div>
         <div>
-          <label className={props.styles?.label.join(" ")} htmlFor={maxFieldId}>
+          <label className={props.options?.labelStyle.join(" ")} htmlFor={maxFieldId}>
             <span className={fieldStyles["field-text"]}>{dict.form.max}:</span>
           </label>
           <NumericInputField
@@ -60,7 +58,7 @@ export default function FormInputMinMaxField(props: Readonly<FormInputMinMaxFiel
               fieldId: maxFieldId,
             }}
             form={props.form}
-            styles={{ input: [styles["min-max-input-value"]] }}
+            options={{ inputStyle: [styles["min-max-input-value"]] }}
           />
         </div>
       </div>
