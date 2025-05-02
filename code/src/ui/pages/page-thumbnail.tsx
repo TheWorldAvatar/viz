@@ -2,14 +2,13 @@
 
 import styles from './page-thumbnail.module.css';
 
-import { Tooltip } from '@mui/material';
 import React from 'react';
-
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Interface for incoming parameters
+import Tooltip from 'ui/interaction/tooltip/tooltip';
 
+// Interface for incoming parameters
 export interface DefaultPageThumbnailProps {
   title?: string;
   caption?: string;
@@ -17,15 +16,8 @@ export interface DefaultPageThumbnailProps {
   url: string;
 }
 
-interface PageThumbnailTemplateProps {
-  header: string;
-  description: string;
-  icon: string;
-  redirectUrl: string;
-}
-
 /**
- * A default page thumbnail that is always available and can redirect to the specified url when clicked.
+ * A default page thumbnail on the landing page that can redirect to the specified url on click.
  * 
  * @param {string} title Thumbnail title.
  * @param {string} description Description.
@@ -33,54 +25,22 @@ interface PageThumbnailTemplateProps {
  * @param {string} redirectUrl Redirects to this url when clicked.
  */
 export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>): React.ReactElement {
+  const imageDescription = "Thumbnail icon for the '" + props.title + "' page.";
   return (
-    <PageThumbnailTemplate
-      key={props.title}
-      header={props.title}
-      description={props.caption}
-      icon={props.icon}
-      redirectUrl={props.url}
-    />
-  );
-}
-
-/**
- * A component template that can be reused for page thumbnail components.
- * 
- * @param {string} header Title for thumbnail.
- * @param {string} description Description.
- * @param {string} icon Icon to display.
- * @param {string} redirectUrl Redirects to this url when clicked.
- */
-function PageThumbnailTemplate(props: Readonly<PageThumbnailTemplateProps>): React.ReactElement {
-  const tooltipText = "Click to open the '" + props.header + "' page.";
-  // In order to add custom child components to MUI's tooltip component, we need to forward the Ref to prevent errors
-  return (
-    <Tooltip title={tooltipText} enterDelay={1000} leaveDelay={100}>
-      <ForwardedPageThumbnailTemplate header={props.header}
-        description={props.description}
-        icon={props.icon}
-        redirectUrl={props.redirectUrl} />
-    </Tooltip>
-  );
-}
-
-const ForwardedPageThumbnailTemplate = React.forwardRef<HTMLDivElement, Readonly<PageThumbnailTemplateProps>>(
-  function ForwardedPageThumbnailTemplate({ header, description, icon, redirectUrl, ...rest }, ref): React.ReactElement {
-    const imageDescription = "Thumbnail icon for the '" + header + "' page.";
-    return (
-      <Link href={redirectUrl} className={styles.container}>
+    <Tooltip text={`Click to open the '${props.title}' page.`} placement={"left"}>
+      <Link href={props.url} className={styles.container}>
         <div className={styles.thumbnail}>
-          <Image src={icon} height={50} width={50} alt={imageDescription} />
+          <Image src={props.icon} height={50} width={50} alt={imageDescription} />
         </div>
-        <div ref={ref} {...rest} className={styles.content}>
+        <div className={styles.content}>
           <h3 className={styles.title}>
-            {header}
+            {props.title}
           </h3>
           <div className={styles.description} >
-            {description}
+            {props.caption}
           </div>
         </div>
       </Link >
-    );
-  });
+    </Tooltip>
+  );
+}
