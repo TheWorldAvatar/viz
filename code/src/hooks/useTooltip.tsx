@@ -1,11 +1,12 @@
-import { autoUpdate, ElementProps, flip, offset, shift, useDismiss, useFloating, useFocus, useHover, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
+import { autoUpdate, ElementProps, flip, offset, Placement, shift, useDismiss, useFloating, useFocus, useHover, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
 import React, { useState } from "react";
 
-export function useTooltip() {
+
+export function useTooltip(placement: Placement = "top") {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const floatingProps = useFloating({
-        placement: "top",
+        placement: placement,
         open: isOpen,
         onOpenChange: setIsOpen,
         whileElementsMounted: autoUpdate,

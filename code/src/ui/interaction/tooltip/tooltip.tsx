@@ -1,21 +1,22 @@
 import styles from './tooltip.module.css';
 
-import { FloatingPortal } from "@floating-ui/react";
+import { FloatingPortal, Placement } from "@floating-ui/react";
 import { useTooltip } from 'hooks/useTooltip';
 
 export interface TooltipProps {
     text: string;
     children: React.ReactNode;
+    placement?: Placement;
 }
 
 /**
  * A floating component to render labels upon hovering or focus.
  * 
  * @param {string} text Tooltip text content.
+ * @param {Placement} placement Position of tooltip.
  */
-
 export default function Tooltip(props: Readonly<TooltipProps>) {
-    const tooltip = useTooltip();
+    const tooltip = useTooltip(props.placement);
 
     return (
         <>
