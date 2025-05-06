@@ -1,7 +1,7 @@
 import styles from './tooltip.module.css';
 
 import { FloatingPortal, Placement } from "@floating-ui/react";
-import { useTooltip } from 'hooks/useTooltip';
+import { useTooltip } from 'hooks/float/useTooltip';
 
 export interface TooltipProps {
     text: string;

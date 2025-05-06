@@ -3,7 +3,7 @@
 import styles from "../action.module.css";
 
 import ActionButton, { ActionButtonProps } from "../action";
-import { usePopover } from "hooks/usePopover";
+import { usePopover } from "hooks/float/usePopover";
 import { FloatingPortal, Placement } from "@floating-ui/react";
 
 interface PopoverActionButtonProps extends ActionButtonProps {

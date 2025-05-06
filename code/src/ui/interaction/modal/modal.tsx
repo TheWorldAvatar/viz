@@ -3,7 +3,7 @@ import styles from './modal.module.css';
 import { FloatingFocusManager, FloatingOverlay, FloatingPortal } from '@floating-ui/react';
 import React from 'react';
 
-import { useDialog } from 'hooks/useDialog';
+import { useDialog } from 'hooks/float/useDialog';
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
