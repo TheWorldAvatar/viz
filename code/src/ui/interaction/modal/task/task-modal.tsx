@@ -3,8 +3,9 @@ import styles from './task.modal.module.css';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
-import Modal from 'react-modal';
 
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
+import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
 import { PermissionScheme } from 'types/auth';
@@ -15,13 +16,12 @@ import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { FormTemplate } from 'ui/interaction/form/template/form-template';
+import Modal from 'ui/interaction/modal/modal';
 import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
-import { useDictionary } from 'hooks/useDictionary';
 import { genBooleanClickHandler } from 'utils/event-handler';
 import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface TaskModalProps {
   entityType: string;
@@ -43,7 +43,6 @@ interface TaskModalProps {
  * @param setTask A dispatch method to set the task option when required.
  */
 export default function TaskModal(props: Readonly<TaskModalProps>) {
-  Modal.setAppElement("#globalContainer");
   const dict: Dictionary = useDictionary();
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
@@ -207,93 +206,91 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   return (
     <Modal
       isOpen={props.isOpen}
-      overlayClassName={styles.overlay}
-      className={styles.modal}
+      setIsOpen={props.setIsOpen}
     >
-      <div className={styles.container}>
-        <section className={styles["section-title"]}>
-          <h1>{dict.title.actions}</h1>
-          <h2>{props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}</h2>
-        </section>
-        <section className={styles["section-contents"]}>
-          {!isFetching && <p className={styles["instructions"]}>
+      <section className={styles["section-title"]}>
+        <h1>{dict.title.actions}</h1>
+        <h2>{props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}</h2>
+      </section>
+      <section className={styles["section-contents"]}>
+        {!isFetching && (isReportAction || isCancelAction || isCompleteAction || isDispatchAction) &&
+          <p className={styles["instructions"]}>
             {isCompleteAction && dict.message.completeInstruction}
             {isDispatchAction && `${dict.message.dispatchInstruction} ${props.task.date}:`}
             {isCancelAction && `${dict.message.cancelInstruction} ${props.task.date}:`}
             {isReportAction && `${dict.message.reportInstruction.replace("{date}", props.task.date)}`}
           </p>}
-          {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
-          {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
-            formRef={formRef}
-            entityType={props.entityType}
-            formType={Paths.REGISTRY}
-            agentApi={props.registryAgentApi}
-            setResponse={setResponse}
-            id={getAfterDelimiter(props.task.contract, "/")}
-            additionalFields={dispatchFields}
-          />}
-          {formFields.length > 0 && !refreshFlag && <FormTemplate
-            agentApi={props.registryAgentApi}
-            entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
-            formRef={formRef}
-            fields={formFields}
-            submitAction={taskSubmitAction}
-          />}
-        </section>
-        <section className={styles["section-footer"]}>
-          {!formRef.current?.formState?.isSubmitting && !response && (
-            <ClickActionButton
-              icon={"cached"}
-              onClick={triggerRefresh}
-              isTransparent={true}
-            />
-          )}
-          {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
-          {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
-          <div className={styles["footer-button-row"]}>
-            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask) &&
-              props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                icon={"done_outline"}
-                tooltipText={dict.action.complete}
-                onClick={genBooleanClickHandler(setIsCompleteAction)}
-              />}
-            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                icon={"assignment"}
-                tooltipText={dict.action.dispatch}
-                onClick={genBooleanClickHandler(setIsDispatchAction)}
-              />}
-            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                icon={"cancel"}
-                tooltipText={dict.action.cancel}
-                onClick={genBooleanClickHandler(setIsCancelAction)}
-              />}
-            {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.reportTask) &&
-              props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-              !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-                icon={"report"}
-                tooltipText={dict.action.report}
-                onClick={genBooleanClickHandler(setIsReportAction)}
-              />}
-            {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
-              icon={"publish"}
-              tooltipText={dict.action.submit}
-              onClick={onSubmit}
+        {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
+        {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
+          formRef={formRef}
+          entityType={props.entityType}
+          formType={Paths.REGISTRY}
+          agentApi={props.registryAgentApi}
+          setResponse={setResponse}
+          id={getAfterDelimiter(props.task.contract, "/")}
+          additionalFields={dispatchFields}
+        />}
+        {formFields.length > 0 && !refreshFlag && <FormTemplate
+          agentApi={props.registryAgentApi}
+          entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
+          formRef={formRef}
+          fields={formFields}
+          submitAction={taskSubmitAction}
+        />}
+      </section>
+      <section className={styles["section-footer"]}>
+        {!formRef.current?.formState?.isSubmitting && !response && (
+          <ClickActionButton
+            icon={"cached"}
+            onClick={triggerRefresh}
+            isTransparent={true}
+          />
+        )}
+        {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
+        {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
+        <div className={styles["footer-button-row"]}>
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask) &&
+            props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
+            !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+              icon={"done_outline"}
+              tooltipText={dict.action.complete}
+              onClick={genBooleanClickHandler(setIsCompleteAction)}
             />}
-            <ClickActionButton
-              icon={"keyboard_return"}
-              tooltipText={dict.action.return}
-              // Closes the modal if there is a response in any action
-              onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
-                onReturnInAction : onClose}
-            />
-          </div>
-        </section>
-      </div>
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+              icon={"assignment"}
+              tooltipText={dict.action.dispatch}
+              onClick={genBooleanClickHandler(setIsDispatchAction)}
+            />}
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+              icon={"cancel"}
+              tooltipText={dict.action.cancel}
+              onClick={genBooleanClickHandler(setIsCancelAction)}
+            />}
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.reportTask) &&
+            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+              icon={"report"}
+              tooltipText={dict.action.report}
+              onClick={genBooleanClickHandler(setIsReportAction)}
+            />}
+          {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+            icon={"publish"}
+            tooltipText={dict.action.submit}
+            onClick={onSubmit}
+          />}
+          <ClickActionButton
+            icon={"keyboard_return"}
+            tooltipText={dict.action.return}
+            // Closes the modal if there is a response in any action
+            onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
+              onReturnInAction : onClose}
+          />
+        </div>
+      </section>
     </Modal>
   );
 }
