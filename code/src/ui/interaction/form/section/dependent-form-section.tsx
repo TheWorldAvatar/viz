@@ -5,12 +5,15 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from 'io/config/routes';
-import { defaultSearchOption, FormOptionType, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
+import { Dictionary } from 'types/dictionary';
+import { defaultSearchOption, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
+import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
 import { getData } from 'utils/server-actions';
-import DependentFormSelector from '../field/dependent-form-selector';
+import FormSelector from '../field/input/form-selector';
 import { FORM_STATES } from '../form-utils';
 
 interface DependentFormSectionProps {
@@ -28,13 +31,14 @@ interface DependentFormSectionProps {
  */
 export function DependentFormSection(props: Readonly<DependentFormSectionProps>) {
   const pathName: string = usePathname();
+  const dict: Dictionary = useDictionary();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<FormOptionType[]>([]);
+  const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -72,8 +76,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       if (entities.length > 0) {
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
         // If there is a default value, search and use the option matching the default instance's local name
-        if (field.defaultValue) {
-          const defaultValueId: string = getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/");
+        if (props.form.getValues(field.fieldId)) {
+          const defaultValueId: string = getAfterDelimiter(props.form.getValues(field.fieldId), "/");
           const matchingEntity: RegistryFieldValues = entities.find(entity =>
             getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
           );
@@ -89,7 +93,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
 
-      const formFields: FormOptionType[] = [];
+      const formFields: SelectOption[] = [];
 
       // Retrieve and set the display field accordingly
       if (entities.length > 0) {
@@ -103,7 +107,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
           displayField = Object.keys(fields).find((key => key != "id" && key != "iri"));
         }
         entities.forEach(entity => {
-          const formOption: FormOptionType = {
+          const formOption: SelectOption = {
             value: extractResponseField(entity, FORM_STATES.IRI)?.value,
             label: extractResponseField(entity, displayField)?.value,
           };
@@ -164,22 +168,22 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         }
         {!isFetching && (
           <div className={fieldStyles["form-input-container"]}>
-            <DependentFormSelector
+            <FormSelector
+              selectOptions={selectElements}
               field={props.dependentProp}
               form={props.form}
-              fieldOptions={selectElements}
-              options={{
-                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
-              }}
               redirectOptions={{
                 addUrl: formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE ?
                   genAddSubEntityUrl(queryEntityType) : undefined,
                 view: !isFetching && formType != SEARCH_FORM_TYPE && selectElements.length > 0 ?
                   openViewSubEntityModal : undefined,
               }}
-              styles={{
-                label: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
-              }} />
+              noOptionMessage={dict.message.noInstances}
+              options={{
+                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+                labelStyle: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
+              }}
+            />
           </div>
         )}
       </fieldset>);

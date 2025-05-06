@@ -3,11 +3,59 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
-## 5.23.0
+## 5.25.0
 
 - NB this is a breaking change for deployments. It is now necessary to generate a unique SESSION_SECRET variable on the server before a production deployment with keycloak. See auth section of the main docs for guidance.
 - Address [security vulnerability 3](https://github.com/TheWorldAvatar/viz/security/code-scanning/3)
 - Address [security vulnerability 5](https://github.com/TheWorldAvatar/viz/security/code-scanning/5)
+
+## 5.24.3
+
+### Changes
+
+- Depenabot bump #183
+
+## 5.24.2
+
+### Changes
+
+- Simplify the form array code
+- Refactor react-select into a reusable component
+
+### Bug Fixes
+
+- Ensure that the last row of a field array is now sent upon form submission
+- Storage of dropdown state for instance selector when navigating between different items in the array
+
+## 5.24.1
+
+### Bug Fixes
+
+- Fixed the non-human-readable attributes in the general registry table
+- Ensure proper parsing of caption labels for general registry landing page redirect
+- Updated captions for general registry in dictionary
+
+## 5.24.0
+
+### Changes
+
+- Updated the form array design
+
+## 5.23.0
+
+### Changes
+
+- Added a new numeric input component to facilitate granular steps and fixed values
+- Updated the min max input field to the new component
+- Updated min version of `VisBackend Agent` from `v1.4.0` to `v1.5.1`
+
+### Bug Fixes
+
+- Fixed the longitude and latitude fields in the form geocoder
+
+## 5.22.4
+
+- Dependabot update #173
 
 ## 5.22.3
 

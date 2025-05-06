@@ -2,15 +2,14 @@ import styles from './field.module.css';
 
 import { Controller, FieldError, UseFormReturn } from 'react-hook-form';
 
+import { FormFieldOptions } from 'types/form';
 import FormErrorComponent from 'ui/text/error/form-error';
 
 export interface InputFieldProps {
   field: string;
   label: string;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -19,7 +18,7 @@ export interface InputFieldProps {
  * @param {string} field The name of the field. 
  * @param {string} label The label of the field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormCheckboxField(props: Readonly<InputFieldProps>) {
   const fieldId: string = props.field.toLowerCase();

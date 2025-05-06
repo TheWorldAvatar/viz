@@ -3,7 +3,7 @@ import styles from "../form.module.css";
 
 import { UseFormReturn } from "react-hook-form";
 
-import { PropertyGroup, VALUE_KEY } from "types/form";
+import { FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
 import FormArray from '../field/array/array';
 import { renderFormField } from '../form';
@@ -13,9 +13,7 @@ interface FormSectionProps {
   agentApi: string;
   group: PropertyGroup;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 /**
  * This component renders a form section.
@@ -24,7 +22,7 @@ interface FormSectionProps {
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyGroup} group Fieldset group model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
