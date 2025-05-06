@@ -14,6 +14,11 @@ export interface SparqlResponseField {
   dataType: string;
   lang: string;
 }
+export interface FormFieldOptions {
+  disabled?: boolean;
+  labelStyle?: string[],
+  inputStyle?: string[],
+}
 
 export type RegistryFieldValues = Record<string, SparqlResponseField | SparqlResponseField[]>;
 
@@ -25,11 +30,6 @@ export type OntologyConcept = {
   description: SparqlResponseField;
   parent?: SparqlResponseField;
 };
-
-export interface FormOptionType {
-  label: string;
-  value: string;
-}
 
 export interface FormArrayItemOption {
   fieldId: string;
@@ -72,7 +72,8 @@ export interface PropertyShape {
   maxExclusive?: JsonLdLiteral;
   minLength?: JsonLdLiteral;
   maxLength?: JsonLdLiteral;
-  pattern?: JsonLdLiteral
+  pattern?: JsonLdLiteral;
+  step?: JsonLdLiteral;
 }
 
 export interface PropertyGroup {

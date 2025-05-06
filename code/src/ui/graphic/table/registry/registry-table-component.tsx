@@ -81,7 +81,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
           instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
         } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
-          instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
+          instances = await getData(props.registryAgentApi, props.entityType, null, null, true);
         } else {
           instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
         }

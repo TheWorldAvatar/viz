@@ -3,12 +3,70 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
-## 5.23.0
+## 5.25.1
 
 ###
 
 - Initial test configuration using jest. Coverage to be extended
 
+## 5.24.3
+
+### Changes
+
+- Depenabot bump #183
+
+## 5.24.2
+
+### Changes
+
+- Simplify the form array code
+- Refactor react-select into a reusable component
+
+### Bug Fixes
+
+- Ensure that the last row of a field array is now sent upon form submission
+- Storage of dropdown state for instance selector when navigating between different items in the array
+
+## 5.24.1
+
+### Bug Fixes
+
+- Fixed the non-human-readable attributes in the general registry table
+- Ensure proper parsing of caption labels for general registry landing page redirect
+- Updated captions for general registry in dictionary
+
+## 5.24.0
+
+### Changes
+
+- Updated the form array design
+
+## 5.23.0
+
+### Changes
+
+- Added a new numeric input component to facilitate granular steps and fixed values
+- Updated the min max input field to the new component
+- Updated min version of `VisBackend Agent` from `v1.4.0` to `v1.5.1`
+
+### Bug Fixes
+
+- Fixed the longitude and latitude fields in the form geocoder
+
+## 5.22.4
+
+- Dependabot update #173
+
+## 5.22.3
+
+- Security update of `react-router-dom`, see #171
+
+## 5.22.2
+
+### Changes
+
+- Ignore authorisation in language middleware to prevent incorrect redirection when keycloak is deployed on the same host but different path to the main viz
+  
 ## 5.22.1
 
 ### Changes

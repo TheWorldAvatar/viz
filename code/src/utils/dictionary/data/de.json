@@ -30,7 +30,9 @@
     "rescind": "Rückgängig machen",
     "terminate": "Beenden",
     "findAddress": "Adresse finden",
-    "selectLocation": "Ort auswählen"
+    "selectLocation": "Ort auswählen",
+    "clickIncrease": "Zum Erhöhen anklicken",
+    "clickDecrease": "Zum Verringern anklicken"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -91,7 +93,6 @@
     }
   },
   "message": {
-    "arrayInstruction": "Füllen Sie die Details aus, um einen neuen Eintrag zu erstellen",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
     "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
@@ -108,14 +109,15 @@
     "noResultFound": "Keine Ergebnisse gefunden",
     "mapSelectInstruction": "eine Funktion auswählen...",
     "mapSelectFeature": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
-    "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten."
+    "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten.",
+    "na": "Nicht anwendbar"
   },
   "nav": {
     "caption": {
       "map": "Visualisierung raumbezogener Daten",
       "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
-      "registry": "Verwalten und Anzeigen Ihrer Datensätze",
-      "generalReg": "Verwalten und Anzeigen",
+      "registry": "Verwalten Sie Ihrer Datensätze",
+      "generalReg": "{replace} verwalten",
       "help": "Hilfe für diese Webplattform erhalten"
     },
     "title": {

@@ -125,7 +125,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
           position: ['bottomCenter']
         }}
-        rowKey={(record) => record.id || record.iri || record.key}
+        rowKey={(record) => record.event_id ?? record.id ?? record.iri ?? record.key}
         scroll={{ x: 'max-content' }}
         size="middle"
         sticky={{ offsetHeader: 0 }}

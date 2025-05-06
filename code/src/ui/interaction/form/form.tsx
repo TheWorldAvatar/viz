@@ -108,13 +108,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         recurrence: `P${formData[FORM_STATES.RECURRENCE] * 7}D`,
       }
     }
-    // Removes the last row in the form array
-    for (const key in formData) {
-      const field = formData[key];
-      if (Array.isArray(field)) {
-        field.pop();
-      }
-    }
 
     // Remove form type state before sending to backend
     delete formData[FORM_STATES.FORM_TYPE];
