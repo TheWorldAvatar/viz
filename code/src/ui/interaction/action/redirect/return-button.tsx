@@ -14,6 +14,7 @@ import ActionButton, { ActionButtonProps } from "../action";
 
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
+ * @param {Placement} tooltipPosition Optional tooltip positioning.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.active An optional styling object for the active state when active.
@@ -24,6 +25,7 @@ export default function ReturnButton({
   icon,
   label,
   tooltipText,
+  tooltipPosition,
   isHoverableDisabled,
   isTransparent,
   styling,
@@ -45,6 +47,7 @@ export default function ReturnButton({
       icon={icon}
       label={label}
       tooltipText={tooltipText}
+      tooltipPosition={tooltipPosition}
       className={rest.className}
       title={rest.title}
       onClick={handleReturnClick}
