@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.25.1
+
+###
+
+- Initial test configuration using jest. Coverage to be extended
+
 ## 5.24.3
 
 ### Changes
