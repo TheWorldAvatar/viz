@@ -5,15 +5,18 @@ import styles from "./form.module.css";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { useDispatch } from "react-redux";
 
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
+import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from "hooks/useRefresh";
 import { Paths } from "io/config/routes";
-import { setIsOpen } from "state/modal-slice";
+import { PermissionScheme } from "types/auth";
+import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, PropertyShape } from "types/form";
 import { ApiResponse, JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
+import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
@@ -28,31 +31,55 @@ import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-import { Dictionary } from "types/dictionary";
-import { useDictionary } from 'hooks/useDictionary';
-import { PermissionScheme } from "types/auth";
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 
 interface FormContainerComponentProps {
   entityType: string;
   formType: string;
   agentApi: string;
   isPrimaryEntity?: boolean;
+  isModal?: boolean;
 }
 
 /**
- * Renders a form container page for entities.
+ * Renders a form container.
  *
  * @param {string} entityType The type of entity.
  * @param {string} formType The type of form such as add, update, delete, and view.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
+ * @param {boolean} isModal An optional indicator to render the form as a modal.
  */
 export default function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
+  const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
+
+  if (props.isModal) {
+    return (<Modal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      returnPrevPage={true}
+    >
+      <FormContents {...props} />
+    </Modal>
+    );
+  }
+
+  return (<div className={styles["container"]}>
+    <ReturnButton
+      icon={"close"}
+      className={styles.close}
+      styling={{ text: styles["close-text"] }}
+    />
+    <FormContents {...props} />
+  </div>
+  );
+}
+
+function FormContents(
+  props: Readonly<FormContainerComponentProps>
+) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === 'true';
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -144,7 +171,6 @@ export default function FormContainerComponent(
     setResponse(response);
     setIsLoading(false);
     setTimeout(() => {
-      dispatch(setIsOpen(false));
       router.back();
     }, 2000);
   };
@@ -176,11 +202,8 @@ export default function FormContainerComponent(
   }, []);
 
   return (
-    <div className={styles["container"]}>
+    <>
       <div className={`${styles["form-title"]} ${styles["form-row"]}`}>
-        <ReturnButton
-          icon="first_page"
-        />
         <span>{`${translateFormType(props.formType, dict).toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>
@@ -285,21 +308,23 @@ export default function FormContainerComponent(
             tooltipText={dict.action.submit}
             onClick={onSubmit}
           />}
-          {!response && (isRescindAction || isTerminateAction) ?
+          {!response && (isRescindAction || isTerminateAction) &&
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
-              icon={"keyboard_return"}
+              icon={"first_page"}
               tooltipText={dict.action.cancel}
               onClick={() => {
                 setIsRescindAction(false);
                 setIsTerminateAction(false);
               }}
-            /> : <ReturnButton
-              icon="keyboard_return"
+            />}
+          {!response && !(isRescindAction || isTerminateAction) &&
+            <ReturnButton
+              icon="first_page"
               tooltipText={dict.action.return}
             />}
         </div>
       </div>
-    </div>
+    </>
   );
 }

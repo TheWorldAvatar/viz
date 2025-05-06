@@ -7,10 +7,12 @@ import { useDialog } from 'hooks/useDialog';
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
+import { useRouter } from 'next/navigation';
 
 interface ModalProps {
   isOpen: boolean,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  returnPrevPage?: boolean,
   styles?: string[],
   children: React.ReactNode;
 }
@@ -20,10 +22,13 @@ interface ModalProps {
  * 
  * @param {boolean} isOpen Indicates if modal should be initially open.
  * @param  setIsOpen Sets the isOpen parameter.
+ * @param {boolean} returnPrevPage Indicates if the modal should return to the previous page upon closing.
+ * @param {string[]} styles Optional styling for the modal.
  */
 export default function Modal(props: Readonly<ModalProps>) {
-  const dialog = useDialog(props.isOpen, props.setIsOpen);
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
+  const dialog = useDialog(props.isOpen, props.setIsOpen);
 
   return (
     <>
@@ -48,6 +53,9 @@ export default function Modal(props: Readonly<ModalProps>) {
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   props.setIsOpen(false);
+                  if (props.returnPrevPage) {
+                    router.back();
+                  }
                 }}
               />
               {props.children}

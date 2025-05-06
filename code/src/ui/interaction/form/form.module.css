@@ -1,14 +1,30 @@
 .container {
   display: flex;
-  align-self: center;
-  width: 90vw;
+  flex-direction: column;
+  height: 80vh;
   padding: 1rem 2rem 0.5rem;
-  margin: 0.75rem 1rem 1rem;
+  margin: 0.75rem 2rem 1rem;
 
   background-color: var(--background-primary);
   border: 1px solid var(--border-primary) !important;
-  border-radius: 20px;
-  flex-direction: column;
+  border-radius: 4px;
+}
+
+.close {
+  margin: -0.5rem 0 -1.5rem auto !important;
+  padding: 0 !important;
+
+  border-color: transparent !important;
+  background: none !important;
+}
+
+.close-text {
+  color: var(--text-color-primary) !important;
+  font-size: var(--font-size-h2) !important;
+}
+
+.close-text:hover {
+  color: rgb(var(--alert-color)) !important;
 }
 
 .form-row {
@@ -25,7 +41,7 @@
 .form-contents {
   padding: 0.5rem;
   margin: 0.5rem 0 0;
-  height: 65vh;
+  height: 75vh;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--background-secondary);
@@ -173,6 +189,10 @@
 }
 
 @media only screen and (max-width: 480px) {
+  .container {
+    margin: 0.75rem 1rem 1rem;
+  }
+  
   .form-fieldset-contents {
     flex-direction: column;
   }

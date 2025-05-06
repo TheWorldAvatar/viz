@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { useDispatch, useSelector } from "react-redux";
-import { getIsOpenState, setIsOpen } from "state/modal-slice";
 import ActionButton, { ActionButtonProps } from "../action";
 
 /**
@@ -32,14 +30,9 @@ export default function ReturnButton({
   ...rest
 }: Readonly<ActionButtonProps>) {
   const router = useRouter();
-  const isOpen: boolean = useSelector(getIsOpenState);
-  const dispatch = useDispatch();
 
   const handleReturnClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
-    if (isOpen) {
-      dispatch(setIsOpen(false));
-    }
     router.back();
   };
   return (
