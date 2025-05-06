@@ -60,19 +60,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   const [refreshFlag, triggerRefresh] = useRefresh();
 
-  // Closes the modal on click
-  const onClose: React.MouseEventHandler<HTMLButtonElement> = () => {
-    props.setIsOpen(false);
-    props.setTask(null);
-    setIsDispatchAction(false);
-    setIsCompleteAction(false);
-    setIsCancelAction(false);
-    setIsReportAction(false);
-    setFormFields([]);
-    setDispatchFields([]);
-    setResponse(null);
-  };
-
   // Return back to the non-action page
   const onReturnInAction: React.MouseEventHandler<HTMLButtonElement> = () => {
     setIsDispatchAction(false);
@@ -282,13 +269,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             tooltipText={dict.action.submit}
             onClick={onSubmit}
           />}
-          <ClickActionButton
-            icon={"keyboard_return"}
+          {!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+            icon={"first_page"}
             tooltipText={dict.action.return}
-            // Closes the modal if there is a response in any action
-            onClick={!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) ?
-              onReturnInAction : onClose}
-          />
+            onClick={onReturnInAction}
+          />}
         </div>
       </section>
     </Modal>
