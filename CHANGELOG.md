@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.25.0
+
+- NB this is a breaking change for deployments. It is now necessary to generate a unique SESSION_SECRET variable on the server before a production deployment with keycloak. See auth section of the main docs for guidance.
+- Address [security vulnerability 3](https://github.com/TheWorldAvatar/viz/security/code-scanning/3)
+- Address [security vulnerability 5](https://github.com/TheWorldAvatar/viz/security/code-scanning/5)
+
 ## 5.24.3
 
 ### Changes

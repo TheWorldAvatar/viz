@@ -1,7 +1,7 @@
 services:
   # Empty visualisation image for deployment.
   base:
-    image: ghcr.io/theworldavatar/viz:5.24.3
+    image: ghcr.io/theworldavatar/viz:5.25.0
     container_name: "viz"
     restart: "no"
     environment:
@@ -11,7 +11,9 @@ services:
       ROLE: twa-test:protected ## the role required for the above list
       REACT_APP_USE_GEOSERVER_PROXY: false
       REACT_APP_SERVER_URL: http://localhost:3000 # only applicable for REACT_APP_USE_GEOSERVER_PROXY = true
-
+      
+      SESSION_SECRET: ${SESSION_SECRET} # Pass the session secret as an environment variable, generate by running `export SESSION_SECRET=$(openssl rand -hex 32)` in the linux production environment before spinning up this stack
+      
       REDIS_HOST: host.docker.internal
 
       ASSET_PREFIX: # Fill this in if app is to be deployed at a reverse proxy path other than root  

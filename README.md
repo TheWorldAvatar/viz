@@ -94,35 +94,43 @@ At the moment, the `visualisation` service defaults to the [Visualisation Framew
 
 ## 4 Authorisation
 
-To secure your viz app with a Keycloak authentication server, set the relevant environment variables in the [local node environment file](.code/.env.local) or the relevant compose file in this directory. If running in a stack, the variables will be set in the service spec file. The relevant variables are:
+To secure your viz app with a Keycloak authentication server, set the relevant environment variables in the [local node environment file](.code/.env.local) or the relevant compose file in this directory. If running in a TWA stack, the variables will be set in the service spec file. The relevant variables are:
 
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see
+PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see, if not set all pages will be protected 
 ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
+SESSION_SECRET=${SESSION_SECRET} ## Needed in production, generate on the production deployment environment, see note below
 ```
 
 alternatively, in the docker `docker-compose.yml` or `docker-compose.dev.yml`
 
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
-PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged in to see
+PROTECTED_PAGES: page,/otherpage ## (optional) pages that a user must be logged in to see, if not set all pages will be protected
 ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE: viz:protected ## (optional) the role required for the above list
+SESSION_SECRET: ${SESSION_SECRET} ## Needed in production, generate on the production deployment environment, see note below
+
 ```
+
 If `PROTECTED_PAGES` is not defined, all pages will be protected.
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.
 
 > [!NOTE]  
-> Crucial information necessary for users to succeed. The most important thing is that the Keycloak server IP address is routable from inside the viz docker container, and outside. The safest way to do this is to specify the IP directly. Sometimes `host.docker.internal` works, but it is often not set in the DNS hosts file of the host machine.
-
+> The Keycloak server IP address must be routable from inside the viz docker container, and outside. The safest way to do this is to specify the IP directly. Sometimes `host.docker.internal` works, but it is often not set in the DNS hosts file of the host machine. This should be the hostname of the deployed keycloak auth server in production.
+<!--  -->
 > [!NOTE]
 > Client roles work better for API-protecting resources than the realm roles. As in the example above, use a role like `<client>:<role>`. See the [documentation in the auth folder](./auth/README.md) to spin up a dev Keycloak server for testing.
+<!--  -->
 
-> [!IMPORTANT]
+> [!NOTE]
 > Access to certain platform features is controlled by predefined client roles set in the sample server configuration at `./auth/realm/realm.json`. While users can create a customised Keycloak server, please ensure that these roles are also included and assigned to users in order for the platform to perform as expected.
+<!--  -->
+> [!NOTE]
+> In production, there must be a SESSION_SECRET environment variable passed in to the viz instance. This is a long unguessable string used to verify session cookies and is an important security aspect. Before running a production server, run `export SESSION_SECRET=$(openssl rand -hex 32)` or something similar to generate a secure session secret for the server that will persist logins over server restarts.
 
 ## 5. Release
 
