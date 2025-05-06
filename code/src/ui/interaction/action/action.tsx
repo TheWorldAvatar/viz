@@ -56,16 +56,15 @@ export default function ActionButton({
         onClick={rest.onClick}
       >
         <Icon
-          className={`material-symbols-outlined ${styles["icon"]
+          className={`material-symbols-outlined ${styling?.text} ${styles["icon"]
             } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
-            } ${styling?.hover} ${styling?.text}`}
+            } ${styling?.hover}`}
         >
           {icon}
         </Icon>
         {label && (
-          <p className={`${styles["text"]
-            } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
-            } ${styling?.hover} ${styling?.text}`}>
+          <p className={`${styling?.text} ${styles["text"]} 
+            ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]} ${styling?.hover}`}>
             {label}
           </p>
         )}
