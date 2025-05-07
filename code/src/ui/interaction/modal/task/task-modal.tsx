@@ -124,14 +124,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
   const submitLifecycleAction = async (formData: FieldValues, endpoint: string, isPost: boolean) => {
-    // Remove last item in any field array before submission
-    for (const key in formData) {
-      const field = formData[key];
-      if (Array.isArray(field)) {
-        field.pop();
-      }
-    }
-
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;

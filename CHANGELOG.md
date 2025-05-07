@@ -3,6 +3,24 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.24.3
+
+### Changes
+
+- Depenabot bump #183
+
+## 5.24.2
+
+### Changes
+
+- Simplify the form array code
+- Refactor react-select into a reusable component
+
+### Bug Fixes
+
+- Ensure that the last row of a field array is now sent upon form submission
+- Storage of dropdown state for instance selector when navigating between different items in the array
+
 ## 5.24.1
 
 ### Bug Fixes

@@ -2,19 +2,14 @@ import styles from './field.module.css';
 
 import { FieldError, UseFormReturn } from 'react-hook-form';
 
-import { PropertyShape, VALUE_KEY } from 'types/form';
+import { FormFieldOptions, PropertyShape, VALUE_KEY } from 'types/form';
 import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
 import FormInputContainer from './form-input-container';
 
 interface FormDateTimePickerProps {
   field: PropertyShape;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
-  styles?: {
-    label?: string[],
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -22,8 +17,7 @@ interface FormDateTimePickerProps {
  * 
  * @param {PropertyShape} field The form field data model. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
- * @param {string[]} styles.label Optional styles for the label element.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormDateTimePicker(props: Readonly<FormDateTimePickerProps>) {
   const dateType: string = "date";
@@ -62,7 +56,7 @@ export default function FormDateTimePicker(props: Readonly<FormDateTimePickerPro
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
-      labelStyles={props.styles?.label}
+      labelStyles={props.options?.labelStyle}
       formatLabel={formatLabel}
     >
       <input

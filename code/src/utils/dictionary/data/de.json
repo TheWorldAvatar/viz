@@ -109,7 +109,8 @@
     "noResultFound": "Keine Ergebnisse gefunden",
     "mapSelectInstruction": "eine Funktion auswählen...",
     "mapSelectFeature": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
-    "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten."
+    "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten.",
+    "na": "Nicht anwendbar"
   },
   "nav": {
     "caption": {
