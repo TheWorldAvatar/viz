@@ -30,9 +30,10 @@ export function useTooltip(placement: Placement = "top") {
     return React.useMemo(
         () => ({
             isOpen,
+            context,
             ...interactions,
             ...floatingProps
         }),
-        [isOpen, interactions, floatingProps]
+        [isOpen, context, interactions, floatingProps]
     );
 }

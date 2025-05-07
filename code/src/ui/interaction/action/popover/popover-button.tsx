@@ -4,7 +4,7 @@ import styles from "../action.module.css";
 
 import ActionButton, { ActionButtonProps } from "../action";
 import { usePopover } from "hooks/float/usePopover";
-import { FloatingPortal, Placement } from "@floating-ui/react";
+import { FloatingPortal, Placement, useTransitionStyles } from "@floating-ui/react";
 
 interface PopoverActionButtonProps extends ActionButtonProps {
   children: React.ReactNode;
@@ -38,6 +38,13 @@ export default function PopoverActionButton({
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const popover = usePopover(placement);
+  const transition = useTransitionStyles(popover.context, {
+    duration: 200,
+    initial: {
+      opacity: 0,
+      transform: "scale(0.9)",
+    },
+  });
 
   return (
     <>
@@ -64,10 +71,16 @@ export default function PopoverActionButton({
             ...popover.floatingStyles,
             zIndex: 999998 // Second highest z-index so it is below the tooltips
           }}
-          className={styles.popover}
           {...popover.getFloatingProps()}
         >
-          {children}
+          <div
+            style={{
+              ...transition.styles,
+            }}
+            className={styles.popover}
+          >
+            {children}
+          </div>
         </div>
       </FloatingPortal >}
     </>

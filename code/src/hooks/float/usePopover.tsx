@@ -28,9 +28,10 @@ export function usePopover(placement: Placement = "top") {
         () => ({
             isOpen,
             setIsOpen,
+            context,
             ...interactions,
             ...floatingProps
         }),
-        [isOpen, setIsOpen, interactions, floatingProps]
+        [isOpen, setIsOpen, context, interactions, floatingProps]
     );
 }

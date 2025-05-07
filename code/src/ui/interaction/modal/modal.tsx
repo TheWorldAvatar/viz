@@ -1,6 +1,6 @@
 import styles from './modal.module.css';
 
-import { FloatingFocusManager, FloatingOverlay, FloatingPortal } from '@floating-ui/react';
+import { FloatingFocusManager, FloatingOverlay, FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import React from 'react';
 
 import { useDialog } from 'hooks/float/useDialog';
@@ -29,7 +29,13 @@ export default function Modal(props: Readonly<ModalProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const dialog = useDialog(props.isOpen, props.setIsOpen);
-
+  const transition = useTransitionStyles(dialog.context, {
+    duration: 400,
+    initial: {
+      opacity: 0,
+      transform: "translateY(10vh)",
+    },
+  });
   return (
     <>
       {dialog.open && <FloatingPortal>
@@ -41,24 +47,31 @@ export default function Modal(props: Readonly<ModalProps>) {
                 ...dialog.floatingStyles,
                 zIndex: 999998 // Second highest z-index so it hides other content but is hidden before tooltips
               }}
-              className={`${styles.modal} ${props.styles?.join(" ")}`}
+              className={styles["content-container"]}
               {...dialog.getFloatingProps()}
             >
-              <ClickActionButton
-                icon={"close"}
-                className={styles.close}
-                tooltipText={dict.action.close}
-                tooltipPosition="top-end"
-                styling={{ text: styles["close-text"] }}
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  props.setIsOpen(false);
-                  if (props.returnPrevPage) {
-                    router.back();
-                  }
+              <div
+                style={{
+                  ...transition.styles,
                 }}
-              />
-              {props.children}
+                className={`${styles.modal} ${props.styles?.join(" ")}`}
+              >
+                <ClickActionButton
+                  icon={"close"}
+                  className={styles.close}
+                  tooltipText={dict.action.close}
+                  tooltipPosition="top-end"
+                  styling={{ text: styles["close-text"] }}
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    props.setIsOpen(false);
+                    if (props.returnPrevPage) {
+                      router.back();
+                    }
+                  }}
+                />
+                {props.children}
+              </div>
             </div>
           </FloatingFocusManager>
         </FloatingOverlay>

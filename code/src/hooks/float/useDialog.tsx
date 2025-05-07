@@ -19,9 +19,10 @@ export function useDialog(isOpen: boolean, setIsOpen: React.Dispatch<React.SetSt
         () => ({
             open: isOpen,
             setIsOpen,
+            context,
             ...interactions,
             ...floatingProps
         }),
-        [isOpen, setIsOpen, interactions, floatingProps]
+        [isOpen, setIsOpen, context, interactions, floatingProps]
     );
 }
