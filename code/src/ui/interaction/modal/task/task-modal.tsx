@@ -66,6 +66,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setIsCompleteAction(false);
     setIsCancelAction(false);
     setIsReportAction(false);
+    setResponse(null);
     setFormFields([]);
   };
 
@@ -190,6 +191,19 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   }, [response]);
 
+  // Reset the states when the modal is closed
+  useEffect(() => {
+    if (!props.isOpen) {
+      setIsDispatchAction(false);
+      setIsCompleteAction(false);
+      setIsCancelAction(false);
+      setIsReportAction(false);
+      setResponse(null);
+      setFormFields([]);
+      setDispatchFields([]);
+    }
+  }, [props.isOpen]);
+
   return (
     <Modal
       isOpen={props.isOpen}
@@ -264,12 +278,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               tooltipText={dict.action.report}
               onClick={genBooleanClickHandler(setIsReportAction)}
             />}
-          {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+          {!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
             icon={"publish"}
             tooltipText={dict.action.submit}
             onClick={onSubmit}
           />}
-          {!response && (isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+          {(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
             icon={"first_page"}
             tooltipText={dict.action.return}
             onClick={onReturnInAction}
