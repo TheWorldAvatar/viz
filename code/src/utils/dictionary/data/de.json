@@ -139,7 +139,8 @@
       "dashboard": "Analyse-ansicht",
       "registry": "Öffnen Sie das Register",
       "help": "Hilfeseite öffnen",
-      "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen"
+      "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
+      "fileUpload": "Klicken Sie zum Hochladen einer Datei"
     }
   },
   "title": {

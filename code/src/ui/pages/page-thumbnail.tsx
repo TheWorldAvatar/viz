@@ -69,7 +69,10 @@ export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>)
   };
 
   return (
-    <Tooltip text={dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)} placement={"left"}>
+    <Tooltip
+      text={props.type === "file" ? dict.nav.tooltip.fileUpload : dict.nav.tooltip.landingRedirect.replace("{replace}",
+        props.title)} placement={"left"}
+    >
       <div className={styles.container} onClick={handleClick}>
         <div className={styles.thumbnail}>
           <Image src={props.icon} height={50} width={50} alt={imageDescription} />
