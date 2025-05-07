@@ -166,7 +166,7 @@ export default function MapContainer(props: MapContainerProps) {
   return (
     <>
       {/* On initial start up or user request, scenario dialog will be shown if scenarios are required */}
-      {showDialog &&
+      {showDialog && props.scenarioURL &&
         <ScenarioModal
           scenarioURL={props.scenarioURL}
           scenarios={props.scenarios}
