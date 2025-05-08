@@ -56,7 +56,6 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
     initialise();
     // Get settings to pass to Toolbar
     const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
-    console.log("UI Settings to pass to toolbar", uiSettings);
     const { lang } = await params;
     const dictionary: Dictionary = await getDictionary(lang);
 
