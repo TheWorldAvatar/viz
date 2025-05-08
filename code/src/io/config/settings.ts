@@ -16,23 +16,23 @@ import { UISettings } from 'types/settings';
 export default class SettingsStore {
 
   // Location of all configuration files
-  private static readonly DEFAULT_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
+  private static readonly UI_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
   private static readonly DATA_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/data-settings.json");
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
 
   // Cached settings
-  private static DEFAULT_SETTINGS: string | null = null;
+  private static UI_SETTINGS: string | null = null;
   private static MAP_SETTINGS: string | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
 
   /**
    * Retrieves default settings
    */
-  public static getDefaultSettings(): string {
-    if (!this.DEFAULT_SETTINGS) {
-      this.readInitialisationSettings();
+  public static getUISettings(): string {
+    if (!this.UI_SETTINGS) {
+      this.readUISettings();
     }
-    return this.DEFAULT_SETTINGS;
+    return this.UI_SETTINGS;
   }
 
   /**
@@ -58,15 +58,12 @@ export default class SettingsStore {
   /**
    * Reads the initialisation settings.
    */
-  public static readInitialisationSettings(): void {
-    const settings: string = this.readFile(this.DEFAULT_SETTINGS_FILE);
+  public static readUISettings(): void {
+    const settings: string = this.readFile(this.UI_SETTINGS_FILE);
     const jsonifiedSettings: UISettings = JSON.parse(settings);
-    if (jsonifiedSettings.resources?.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== ""){
-      jsonifiedSettings.modules.dashboard = true;
-    } else {
-      jsonifiedSettings.modules.dashboard = false;
-    }
-    this.DEFAULT_SETTINGS = JSON.stringify(jsonifiedSettings);
+    if (jsonifiedSettings.modules.dashboard && (!jsonifiedSettings.resources?.dashboard?.url || jsonifiedSettings.resources.dashboard.url.trim() === "")) {
+      console.error('\x1b[31m%s\x1b[0m', 'ERROR: modules.dashboard module set to true but resources.dashboard.url is empty');    }
+    this.UI_SETTINGS = JSON.stringify(jsonifiedSettings);
   }
 
   /**
