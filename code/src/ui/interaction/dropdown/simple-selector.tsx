@@ -39,7 +39,7 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     if (!reqNotApplicableOption) {
       return options;
     }
-    const naOption: SelectOption = { value: null, label: dict.message.na };
+    const naOption: SelectOption = { value: "", label: dict.message.na };
     // Add na option at the beginning for visibility 
     return [naOption, ...options];
   }
