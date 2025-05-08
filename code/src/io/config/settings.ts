@@ -30,7 +30,7 @@ export default class SettingsStore {
    */
   public static getUISettings(): string {
     if (!this.UI_SETTINGS) {
-      this.readInitialisationSettings();
+      this.readUISettings();
     }
     return this.UI_SETTINGS;
   }
@@ -58,7 +58,7 @@ export default class SettingsStore {
   /**
    * Reads the initialisation settings.
    */
-  public static readInitialisationSettings(): void {
+  public static readUISettings(): void {
     const settings: string = this.readFile(this.UI_SETTINGS_FILE);
     const jsonifiedSettings: UISettings = JSON.parse(settings);
     if (jsonifiedSettings.resources?.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== ""){
