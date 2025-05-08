@@ -61,10 +61,8 @@ export default class SettingsStore {
   public static readUISettings(): void {
     const settings: string = this.readFile(this.UI_SETTINGS_FILE);
     const jsonifiedSettings: UISettings = JSON.parse(settings);
-    if (jsonifiedSettings.resources?.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== ""){
-      jsonifiedSettings.modules.dashboard = true;
-    } else {
-      jsonifiedSettings.modules.dashboard = false;
+    if (jsonifiedSettings.modules.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== "") {
+      console.error('modules.dashboard module set to true but resources.dashboard.url is empty');
     }
     this.UI_SETTINGS = JSON.stringify(jsonifiedSettings);
   }
