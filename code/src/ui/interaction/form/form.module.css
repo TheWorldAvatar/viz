@@ -1,3 +1,8 @@
+.modal {
+  height: 90vh;
+  width: 90vw;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -192,7 +197,7 @@
   .container {
     margin: 0.75rem 1rem 1rem;
   }
-  
+
   .form-fieldset-contents {
     flex-direction: column;
   }

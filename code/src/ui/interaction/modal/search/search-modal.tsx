@@ -55,6 +55,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
     <Modal
       isOpen={props.show}
       setIsOpen={props.setShowState}
+      styles={[styles["modal"]]}
     >
       <h1>{dict.title.searchCriteria}</h1>
       <section className={styles["section-contents"]}>

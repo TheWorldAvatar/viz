@@ -59,6 +59,7 @@ export default function FormContainerComponent(
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       returnPrevPage={true}
+      styles={[styles["modal"]]}
     >
       <FormContents {...props} />
     </Modal>

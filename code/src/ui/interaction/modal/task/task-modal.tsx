@@ -208,6 +208,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     <Modal
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
+      styles={[styles["modal"]]}
     >
       <section className={styles["section-title"]}>
         <h1>{dict.title.actions}</h1>
