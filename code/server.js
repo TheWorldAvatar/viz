@@ -29,6 +29,7 @@ const colourGreen = "\x1b[32m";
 const colourYellow = "\x1b[33m";
 
 // Utility function to validate target URLs against an allowlist
+// Only used when REACT_APP_USE_GEOSERVER_PROXY is true
 function isValidTargetUrl(url) {
     try {
         const parsedUrl = new URL(url);
@@ -147,8 +148,7 @@ app.prepare().then(() => {
                 if (!isValidTargetUrl(targetUrl)) {
                     let errmsg = "Invalid or unexpected URL for GeoServer proxy: " + targetUrl;
                     console.error(errmsg);
-                    res.status(400).send("Invalid URL for GeoServer layer");
-                    return;
+                    res.status(400).send(errmsg);
                 } else {
                     let headers = { ...req.headers };
 
