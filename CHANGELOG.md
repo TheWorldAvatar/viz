@@ -7,6 +7,12 @@
 
 ### Changes
 
+- Address server side request forgery risk
+
+## 5.24.4
+
+### Changes
+
 - Fix behaviour of scenario modal render
 
 ## 5.24.3
