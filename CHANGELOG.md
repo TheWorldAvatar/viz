@@ -3,7 +3,7 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
-## 5.24.4
+## 5.24.5
 
 ### Changes
 
