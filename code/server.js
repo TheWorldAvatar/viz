@@ -148,7 +148,7 @@ app.prepare().then(() => {
                 if (!isValidTargetUrl(targetUrl)) {
                     let errmsg = "Invalid or unexpected URL for GeoServer proxy: " + targetUrl;
                     console.error(errmsg);
-                    res.status(400).send(errmsg);
+                    res.status(400).send("Invalid or unexpected URL for GeoServer proxy");
                 } else {
                     let headers = { ...req.headers };
 
