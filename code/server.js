@@ -8,6 +8,7 @@
  *
  * server side session storage (cookies) for keycloak authentication are configured here
  * 
+ * Utility function `isValidTargetUrl` added to validate GeoServer proxy URLs.
  * Note:
  * Next.js, by default, serves static files from the 'public' directory, which requires contents to be present at build time.
  * This script extends that capability to allow serving files from a different directory after the build process.
@@ -27,6 +28,17 @@ const colourRed = "\x1b[31m";
 const colourGreen = "\x1b[32m";
 const colourYellow = "\x1b[33m";
 
+// Utility function to validate target URLs against an allowlist
+function isValidTargetUrl(url) {
+    try {
+        const parsedUrl = new URL(url);
+        const allowedBaseUrls = [process.env.REACT_APP_GEOSERVER_PROXY_URL];
+        return allowedBaseUrls.some(base => parsedUrl.href.startsWith(base));
+    } catch (err) {
+        console.error("Error parsing URL:", err);
+        return false;
+    }
+}
 
 // Configure the server port; default to 3000 if not specified in environment variables
 if (process.env.PORT) { console.info('port specified in environment variable: ', colourGreen, process.env.PORT, colourReset); }
@@ -132,9 +144,11 @@ app.prepare().then(() => {
             server.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
                 const targetUrl = req.query.url;
 
-                if (!targetUrl.startsWith(process.env.REACT_APP_GEOSERVER_PROXY_URL)) {
-                    let errmsg = "Unexpected URL for GeoServer proxy: " + targetUrl;
+                if (!isValidTargetUrl(targetUrl)) {
+                    let errmsg = "Invalid or unexpected URL for GeoServer proxy: " + targetUrl;
                     console.error(errmsg);
+                    res.status(400).send("Invalid URL for GeoServer layer");
+                    return;
                 } else {
                     let headers = { ...req.headers };
 
