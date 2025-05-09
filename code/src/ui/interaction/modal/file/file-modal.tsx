@@ -6,6 +6,7 @@ import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
+import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import FileInputButton from 'ui/interaction/action/file/file-input';
 import Modal from 'ui/interaction/modal/modal';
@@ -29,6 +30,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const form: UseFormReturn = useForm();
   const dict: Dictionary = useDictionary();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [response, setResponse] = useState<HttpResponse>(null);
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
@@ -37,11 +39,13 @@ export default function FileModal(props: Readonly<FileModalProps>) {
       const fileData: FormData = new FormData();
       fileData.append("file", formData.files[0]);
       try {
+        setIsUploading(true);
         response = await fetch(props.url, {
           method: "POST",
           body: fileData,
         });
         const jsonResp: HttpResponse = await response.json();
+        setIsUploading(false);
         setResponse(jsonResp);
       } catch (error) {
         console.error("There was an error uploading the file:", error);
@@ -80,9 +84,10 @@ export default function FileModal(props: Readonly<FileModalProps>) {
         </section>
 
         <section className={styles["section-footer"]}>
-          {!formRef.current?.formState?.isSubmitting && response && (
+          {!formRef.current?.formState?.isSubmitting && !isUploading && response && (
             <ResponseComponent response={response} />
           )}
+          {isUploading && <LoadingSpinner isSmall={false} />}
           {!response?.success && (
             <ClickActionButton
               icon={"keyboard_tab"}
