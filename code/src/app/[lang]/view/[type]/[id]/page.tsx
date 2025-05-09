@@ -42,6 +42,7 @@ export default async function ViewFormPage(props: Readonly<ViewFormPageProps>) {
       formType={Paths.REGISTRY}
       agentApi={uiSettings?.resources?.registry?.url}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isModal={false}
     />
   );
 }

@@ -2,10 +2,9 @@
 
 import styles from './navbar-component.module.css';
 
-import { Tooltip } from '@mui/material';
 import Icon from '@mui/material/Icon';
 import Link from 'next/link';
-
+import Tooltip from 'ui/interaction/tooltip/tooltip';
 
 // Type definition for incoming parameters
 export interface NavbarComponentProps {
@@ -28,16 +27,13 @@ export default function NavbarComponent(props: Readonly<NavbarComponentProps>) {
     }
   }
   return (
-    <Link
-      className={styles.navbarButton}
-      onClick={bubbleUp}
-      href={props.url}>
-
-      <Tooltip
-        title={props.tooltip}
-        enterDelay={1000}
-        leaveDelay={100}
-        placement="bottom-start">
+    <Tooltip
+      text={props.tooltip}
+      placement="bottom-start">
+      <Link
+        className={styles.navbarButton}
+        onClick={bubbleUp}
+        href={props.url}>
         <Icon
           className={`
             material-symbols-outlined
@@ -46,7 +42,7 @@ export default function NavbarComponent(props: Readonly<NavbarComponentProps>) {
           }>
           {props.icon}
         </Icon>
-      </Tooltip>
-    </Link>
+      </Link>
+    </Tooltip>
   );
 }

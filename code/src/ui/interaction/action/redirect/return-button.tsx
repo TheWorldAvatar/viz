@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { useDispatch, useSelector } from "react-redux";
-import { getIsOpenState, setIsOpen } from "state/modal-slice";
 import ActionButton, { ActionButtonProps } from "../action";
 
 /**
@@ -14,6 +12,7 @@ import ActionButton, { ActionButtonProps } from "../action";
 
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
+ * @param {Placement} tooltipPosition Optional tooltip positioning.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.active An optional styling object for the active state when active.
@@ -24,20 +23,16 @@ export default function ReturnButton({
   icon,
   label,
   tooltipText,
+  tooltipPosition,
   isHoverableDisabled,
   isTransparent,
   styling,
   ...rest
 }: Readonly<ActionButtonProps>) {
   const router = useRouter();
-  const isOpen: boolean = useSelector(getIsOpenState);
-  const dispatch = useDispatch();
 
   const handleReturnClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
-    if (isOpen) {
-      dispatch(setIsOpen(false));
-    }
     router.back();
   };
   return (
@@ -45,6 +40,7 @@ export default function ReturnButton({
       icon={icon}
       label={label}
       tooltipText={tooltipText}
+      tooltipPosition={tooltipPosition}
       className={rest.className}
       title={rest.title}
       onClick={handleReturnClick}

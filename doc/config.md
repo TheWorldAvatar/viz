@@ -52,6 +52,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `title`: REQUIRED. Thumbnail title on landing page. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on landing page. Optional for only internal links, which defaults to the default if not set.
   - `icon`: REQUIRED. Thumbnail icon on landing page. Optional for only internal links, which defaults to the default if not set.
+  - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL.
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario
     - `url`: REQUIRED. url of the resource
@@ -73,7 +74,9 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
 
 > [!NOTE]
 > When specifying image paths, be sure to use absolute paths beggining with a `/`
+
 <!--  -->
+
 > [!NOTE]  
 > The comments seen below are for explanation purposes only, they are not valid JSON. If wishing to use this content in production, remove the comments first.
 
@@ -89,7 +92,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     "help": true, // Should the help page be enabled
     "dashboard": false, // Should the analytics page be enabled
     "map": true, // Should the map page be enabled
-    "registry": false, // Should the registry page be enabled
+    "registry": false // Should the registry page be enabled
   },
   "links": [
     {
@@ -106,7 +109,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     "registry": {
       "url": "http://sample.org/agent/", // Edit registry agent's API here
       "data": "type", // Specify only the type to reach the registry page of interest
-      "paths": ["resource one","resource two"] // Specify the resource names on the backend
+      "paths": ["resource one", "resource two"] // Specify the resource names on the backend
     },
     "scenario": {
       "url": "https://theworldavatar.io/demos/credo-ofwat/central/CentralStackAgent", // Edit scenario url here

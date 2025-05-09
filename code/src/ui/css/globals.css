@@ -130,6 +130,11 @@ ul {
     list-style-type: none;
 }
 
+/* Hide the default file input */
+input[type="file"] {
+    display: none;
+}
+
 /**
     Constants for our own CSS classes (across all themes).
 **/

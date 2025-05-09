@@ -2,7 +2,7 @@
 
 import styles from './ribbon-component.module.css';
 
-import { Tooltip } from '@mui/material';
+import Tooltip from 'ui/interaction/tooltip/tooltip';
 
 import IconComponent from 'ui/graphic/icon/icon';
 
@@ -16,12 +16,8 @@ interface RibbonComponentClickProps {
 
 export default function RibbonComponentClick(props: Readonly<RibbonComponentClickProps>) {
   return (
-    <div className={styles.ribbonComponent} onClick={props.action}>
-      <Tooltip
-        title={props.tooltip}
-        enterDelay={1000}
-        leaveDelay={100}
-        placement="bottom-start">
+    <Tooltip text={props.tooltip} placement="bottom-start">
+      <div className={styles.ribbonComponent} onClick={props.action}>
         <div>
           <div className={styles.ribbonComponentInner}>
             <div className={styles.ribbonComponentIcon}>
@@ -35,7 +31,7 @@ export default function RibbonComponentClick(props: Readonly<RibbonComponentClic
             }
           </div>
         </div>
-      </Tooltip>
-    </div>
+      </div>
+    </Tooltip>
   );
 }

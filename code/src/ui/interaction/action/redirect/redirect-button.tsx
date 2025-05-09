@@ -20,6 +20,7 @@ interface RedirectButtonProps extends ActionButtonProps {
  * @param {string} url The redirect target url.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
+ * @param {Placement} tooltipPosition Optional tooltip positioning.
  * @param {boolean} isActive Indicates if the redirect button is active and should be highlighted.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
@@ -32,6 +33,7 @@ export default function RedirectButton({
   url,
   label,
   tooltipText,
+  tooltipPosition,
   isActive,
   isHoverableDisabled,
   isTransparent,
@@ -48,6 +50,7 @@ export default function RedirectButton({
       icon={icon}
       label={label}
       tooltipText={tooltipText}
+      tooltipPosition={tooltipPosition}
       className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className
         }`}
       title={rest.title}

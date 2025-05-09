@@ -2,11 +2,11 @@ import styles from './column-search.module.css';
 
 import React, { useMemo, useState } from 'react';
 
-import { autoUpdate, flip, FloatingFocusManager, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole, } from '@floating-ui/react';
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
+import PopoverActionButton from 'ui/interaction/action/popover/popover-button';
 import SimpleSelector, { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, parseWordsForLabels } from 'utils/client-utils';
 
@@ -25,26 +25,6 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
   const dict: Dictionary = useDictionary();
   const [searchText, setSearchText] = useState<string>("");
   const [searchColumn, setSearchColumn] = useState<string>(null);
-  // WIP: Separate the Floating UI code and trigger
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const { refs, floatingStyles, context } = useFloating({
-    placement: 'bottom-start',
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [offset(-5), flip(), shift()],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const click = useClick(context);
-  const dismiss = useDismiss(context);
-  const role = useRole(context);
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    click,
-    dismiss,
-    role,
-  ]);
 
   // Generate search option from instances
   const columnSearchOptions: SelectOption[] = useMemo(() => {
@@ -81,54 +61,41 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
   };
 
   return (
-    <>
-      <div ref={refs.setReference} {...getReferenceProps()}>
+    <PopoverActionButton
+      placement="bottom-start"
+      icon="filter_alt"
+      tooltipText={dict.action.filter}
+      isTransparent={true}>
+      <SimpleSelector
+        options={columnSearchOptions}
+        defaultVal={searchColumn}
+        onChange={(selectedOption) => {
+          if (selectedOption && "value" in selectedOption) {
+            setSearchColumn(selectedOption?.value)
+          }
+        }}
+      />
+      <input
+        type="text"
+        className={styles["search-input"]}
+        placeholder={dict.action.search}
+        onChange={handleSearch}
+        value={searchText}
+        readOnly={false}
+        aria-label={"Filter Search"}
+      />
+      <div className={styles["button-container"]} >
         <ClickActionButton
-          icon="filter_alt"
-          tooltipText={dict.action.filter}
-          isTransparent={true}
+          icon="search"
+          tooltipText={dict.action.update}
+          onClick={handleUpdate}
+        />
+        <ClickActionButton
+          icon="replay"
+          tooltipText={dict.action.clear}
+          onClick={handleClear}
         />
       </div>
-      {isOpen && (
-        <FloatingFocusManager context={context} modal={false}>
-          <div className={styles["container"]}
-            ref={refs.setFloating}
-            style={floatingStyles}
-            {...getFloatingProps()}
-          >
-            <SimpleSelector
-              options={columnSearchOptions}
-              defaultVal={searchColumn}
-              onChange={(selectedOption) => {
-                if (selectedOption && "value" in selectedOption) {
-                  setSearchColumn(selectedOption?.value)
-                }
-              }}
-            />
-            <input
-              type="text"
-              className={styles["search-input"]}
-              placeholder={dict.action.search}
-              onChange={handleSearch}
-              value={searchText}
-              readOnly={false}
-              aria-label={"Filter Search"}
-            />
-            <div className={styles["button-container"]} >
-              <ClickActionButton
-                icon="search"
-                tooltipText={dict.action.update}
-                onClick={handleUpdate}
-              />
-              <ClickActionButton
-                icon="replay"
-                tooltipText={dict.action.clear}
-                onClick={handleClear}
-              />
-            </div>
-          </div>
-        </FloatingFocusManager>
-      )}
-    </>
+    </PopoverActionButton>
   );
 }

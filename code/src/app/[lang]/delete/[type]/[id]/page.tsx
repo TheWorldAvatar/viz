@@ -40,6 +40,7 @@ export default async function DeleteFormPage(props: Readonly<DeleteFormPageProps
       formType={Paths.REGISTRY_DELETE}
       agentApi={uiSettings?.resources?.registry?.url}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isModal={false}
     />
   );
 }
