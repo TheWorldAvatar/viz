@@ -37,7 +37,7 @@ jobs:
       - name: Save version to environment
         run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
-      - name: Check for changes
+      - name: Check if package files have been changed by action
         id: changes
         run: |
           git checkout ${{ github.head_ref }}
