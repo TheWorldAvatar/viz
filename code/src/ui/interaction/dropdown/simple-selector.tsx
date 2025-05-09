@@ -39,10 +39,12 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     if (!reqNotApplicableOption) {
       return options;
     }
-    const naOption: SelectOption = { value: null, label: dict.message.na };
+    const naOption: SelectOption = { value: "", label: dict.message.na };
     // Add na option at the beginning for visibility 
     return [naOption, ...options];
   }
+
+  const parsedOptions: OptionsOrGroups<SelectOption, GroupBase<SelectOption>> = addNAOption(props.reqNotApplicableOption, props.options);
 
   // A function that flattens the list of options and groups into a single list of options
   const flattenOptions = (optionsOrGroups: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>): SelectOption[] => {
@@ -58,14 +60,14 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     return flattened;
   }
 
-  const flattenedOptions: SelectOption[] = useMemo(() => flattenOptions(props.options),
-    [props.options]);
+  const flattenedOptions: SelectOption[] = useMemo(() => flattenOptions(parsedOptions),
+    [parsedOptions]);
 
   return (
     <Select
       styles={selectorStyles}
       unstyled
-      options={addNAOption(props.reqNotApplicableOption, props.options)}
+      options={parsedOptions}
       value={flattenedOptions.find(option => option.value === props.defaultVal)}
       onChange={props.onChange}
       isLoading={false}
