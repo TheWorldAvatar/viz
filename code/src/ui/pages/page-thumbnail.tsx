@@ -3,11 +3,12 @@
 import styles from './page-thumbnail.module.css';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 import { useDictionary } from 'hooks/useDictionary';
-import { useRouter } from 'next/navigation';
 import { Dictionary } from 'types/dictionary';
+import FileModal from 'ui/interaction/modal/file/file-modal';
 import Tooltip from 'ui/interaction/tooltip/tooltip';
 
 type PageThumbnailType = "default" | "file";
@@ -32,37 +33,15 @@ export interface DefaultPageThumbnailProps {
  *                                  When set to "file", the thumbnail allows users to send a local file to the target url.
  */
 export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>): React.ReactElement {
-  const dict: Dictionary = useDictionary();
-  const fileInputRef = React.useRef(null);
-  const imageDescription = dict.accessibility.thumbnailImage.replace("{replace}", props.title);
   const router = useRouter();
-
-  const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        const response = await fetch(props.url, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (response.ok) {
-          console.info("File uploaded successfully!");
-        } else {
-          console.error("File upload failed:", response.status);
-        }
-      } catch (error) {
-        console.error("There was an error uploading the file:", error);
-      }
-    }
-  };
+  const dict: Dictionary = useDictionary();
+  const [isFileModalOpen, setIsFileModalOpen] = React.useState<boolean>(false);
+  const imageDescription = dict.accessibility.thumbnailImage.replace("{replace}", props.title);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (event: React.MouseEvent<HTMLDivElement>): void => {
     event.preventDefault();
     if (props.type === "file") {
-      fileInputRef.current.click();
+      setIsFileModalOpen(true);
     } else {
       router.push(props.url);
     }
@@ -86,13 +65,12 @@ export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>)
           </div>
         </div>
       </div>
-      {// File input is hidden and can only be triggered by via the ref
-        props.type === "file" && <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />}
+      {props.type === "file" &&
+        <FileModal
+          url={props.url}
+          isOpen={isFileModalOpen}
+          setIsOpen={setIsFileModalOpen} />
+      }
     </Tooltip>
   );
 }

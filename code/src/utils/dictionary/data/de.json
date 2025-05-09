@@ -12,6 +12,7 @@
     "backTo": "zurück zu",
     "export": "daten exportieren",
     "overview": "Übersicht",
+    "file": "Datei auswählen",
     "filter": "Filter",
     "search": "Suche",
     "showAll": "Alles anzeigen",
@@ -114,6 +115,9 @@
     "mapSelectInstruction": "eine Funktion auswählen...",
     "mapSelectFeature": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
     "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten.",
+    "noFileChosen": "Keine Datei ausgewählt",
+    "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
+    "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "na": "Nicht anwendbar"
   },
   "nav": {

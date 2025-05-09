@@ -12,6 +12,7 @@
     "backTo": "back to",
     "export": "export data",
     "overview": "overview",
+    "file": "Choose file",
     "filter": "Filter",
     "search": "SEARCH",
     "showAll": "SHOW ALL",
@@ -114,6 +115,9 @@
     "mapSelectInstruction": "Select a feature...",
     "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
     "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information.",
+    "noFileChosen": "No file chosen",
+    "noFileChosenError": "No file is chosen. Please choose a file.",
+    "contactTechTeam": "Contact your technical team if assistance is required.",
     "na": "Not applicable"
   },
   "nav": {

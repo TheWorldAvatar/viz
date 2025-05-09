@@ -1,3 +1,5 @@
+import { useDictionary } from 'hooks/useDictionary';
+import { Dictionary } from 'types/dictionary';
 import { HttpResponse } from 'utils/server-actions';
 
 interface ResponseComponentProps<> {
@@ -10,13 +12,14 @@ interface ResponseComponentProps<> {
  * @param {HttpResponse} response Response to display.
  */
 export default function ResponseComponent(props: Readonly<ResponseComponentProps>) {
+  const dict: Dictionary = useDictionary();
   if (props.response) {
     const textColor: string = props.response?.success ? "#52B7A5" : "#D7653D";
     return (
       <div style={{ color: textColor, overflowY: "auto", height: "5vh", width: "100%" }}>
         {props.response.message}
         <br />
-        {!props.response.success ? "Contact your technical team if assistance is required." : ""}
+        {props.response.success ? "" : dict.message.contactTechTeam}
       </div>
     );
   } else {
