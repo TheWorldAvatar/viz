@@ -1,15 +1,15 @@
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
-import { HttpResponse } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'utils/server-actions';
 
 interface ResponseComponentProps<> {
-  response: HttpResponse;
+  response: CustomAgentResponseBody;
 }
 
 /**
  * Renders the response message for dialogs after submission.
  * 
- * @param {HttpResponse} response Response to display.
+ * @param {CustomAgentResponseBody} response Response to display.
  */
 export default function ResponseComponent(props: Readonly<ResponseComponentProps>) {
   const dict: Dictionary = useDictionary();

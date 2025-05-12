@@ -8,7 +8,7 @@ import { FieldValues } from 'react-hook-form';
 
 import { RegistryFieldValues, FormTemplate, OntologyConcept, PropertyShape } from 'types/form';
 
-export interface HttpResponse {
+export interface CustomAgentResponseBody {
   message: string;
   success?: boolean;
   iri?: string;
@@ -162,7 +162,7 @@ export async function sendGetRequest(agentApi: string): Promise<string> {
  * @param {string} agentApi API endpoint.
  * @param {string} jsonBody Parameters in JSONIFIED string.
  */
-export async function sendPostRequest(agentApi: string, jsonBody: string): Promise<HttpResponse> {
+export async function sendPostRequest(agentApi: string, jsonBody: string): Promise<CustomAgentResponseBody> {
   const response = await sendRequest(agentApi, "POST", "application/json", jsonBody);
   const responseBody: string = await response.text();
   return { success: response.ok, message: responseBody };
@@ -175,7 +175,7 @@ export async function sendPostRequest(agentApi: string, jsonBody: string): Promi
  * @param {string} entityType Type of the entity.
  * @param {FieldValues} form Form storing the input data.
  */
-export async function getMatchingInstances(agentApi: string, entityType: string, form: FieldValues): Promise<HttpResponse> {
+export async function getMatchingInstances(agentApi: string, entityType: string, form: FieldValues): Promise<CustomAgentResponseBody> {
   const url: string = `${agentApi}/${entityType}/search`;
   const reqBody: string = JSON.stringify(form);
   const response = await sendRequest(url, "POST", "application/json", reqBody);
@@ -190,13 +190,13 @@ export async function getMatchingInstances(agentApi: string, entityType: string,
  * @param {FieldValues} form Form storing the input data.
  * @param {string} entityType Target entity type.
  */
-export async function addEntity(agentApi: string, form: FieldValues, entityType: string): Promise<HttpResponse> {
+export async function addEntity(agentApi: string, form: FieldValues, entityType: string): Promise<CustomAgentResponseBody> {
   const reqBody: string = JSON.stringify({
     ...form,
     entity: entityType,
   });
   const response = await sendRequest(`${agentApi}/${entityType}`, "POST", "application/json", reqBody);
-  const responseBody: HttpResponse = await response.json();
+  const responseBody: CustomAgentResponseBody = await response.json();
   return { success: response.ok, ...responseBody };
 }
 
@@ -206,9 +206,9 @@ export async function addEntity(agentApi: string, form: FieldValues, entityType:
  * @param {string} agentApi API endpoint.
  * @param {string} jsonBody JSON body for updating.
  */
-export async function updateEntity(agentApi: string, jsonBody: string): Promise<HttpResponse> {
+export async function updateEntity(agentApi: string, jsonBody: string): Promise<CustomAgentResponseBody> {
   const response = await sendRequest(agentApi, "PUT", "application/json", jsonBody);
-  const responseBody: HttpResponse = await response.json();
+  const responseBody: CustomAgentResponseBody = await response.json();
   return { success: response.ok, ...responseBody };
 }
 
@@ -220,9 +220,9 @@ export async function updateEntity(agentApi: string, jsonBody: string): Promise<
  * @param {string} id Target entity id.
  * @param {string} entityType Target entity type.
  */
-export async function deleteEntity(agentApi: string, id: string, entityType: string): Promise<HttpResponse> {
+export async function deleteEntity(agentApi: string, id: string, entityType: string): Promise<CustomAgentResponseBody> {
   const response = await sendRequest(`${agentApi}/${entityType}/${id}`, "DELETE", "application/json");
-  const responseBody: HttpResponse = await response.json();
+  const responseBody: CustomAgentResponseBody = await response.json();
   return { success: response.ok, ...responseBody };
 }
 

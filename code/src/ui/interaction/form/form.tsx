@@ -10,7 +10,7 @@ import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { useDictionary } from 'hooks/useDictionary';
-import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, HttpResponse, updateEntity } from 'utils/server-actions';
+import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, CustomAgentResponseBody, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -25,7 +25,7 @@ interface FormComponentProps {
   entityType: string;
   formType: string;
   agentApi: string;
-  setResponse: React.Dispatch<React.SetStateAction<HttpResponse>>;
+  setResponse: React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>;
   id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
@@ -39,7 +39,7 @@ interface FormComponentProps {
  * @param {string} entityType The type of entity.
  * @param {string} formType The type of submission. Valid inputs include add and update.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
- * @param {React.Dispatch<React.SetStateAction<HttpResponse>>} setResponse A dispatch function for setting the response after submission.
+ * @param {React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
@@ -82,7 +82,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
-    let pendingResponse: HttpResponse;
+    let pendingResponse: CustomAgentResponseBody;
     // For single service
     if (formData[FORM_STATES.RECURRENCE] == 0) {
       const startDate: string = formData[FORM_STATES.START_DATE];

@@ -21,7 +21,7 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { getLifecycleFormTemplate, HttpResponse, sendPostRequest, updateEntity } from 'utils/server-actions';
+import { getLifecycleFormTemplate, CustomAgentResponseBody, sendPostRequest, updateEntity } from 'utils/server-actions';
 
 interface TaskModalProps {
   entityType: string;
@@ -56,7 +56,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [dispatchFields, setDispatchFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [response, setResponse] = useState<HttpResponse>(null);
+  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
 
@@ -114,7 +114,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
-    let response: HttpResponse;
+    let response: CustomAgentResponseBody;
     if (isPost) {
       response = await sendPostRequest(endpoint, JSON.stringify(formData));
     } else {

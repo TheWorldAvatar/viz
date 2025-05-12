@@ -22,7 +22,7 @@ import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import {
   getLifecycleFormTemplate,
-  HttpResponse,
+  CustomAgentResponseBody,
   sendGetRequest,
   sendPostRequest,
 } from "utils/server-actions";
@@ -90,7 +90,7 @@ function FormContents(
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<ApiResponse>(null);
-  const [response, setResponse] = useState<HttpResponse>(null);
+  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -125,7 +125,7 @@ function FormContents(
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = status.iri;
     formData[FORM_STATES.DATE] = new Date().toISOString().split("T")[0];
-    const response: HttpResponse = await sendPostRequest(
+    const response: CustomAgentResponseBody = await sendPostRequest(
       endpoint,
       JSON.stringify(formData)
     );
@@ -165,7 +165,7 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const response: HttpResponse = await sendPostRequest(
+    const response: CustomAgentResponseBody = await sendPostRequest(
       `${props.agentApi}/contracts/service/commence`,
       JSON.stringify(reqBody)
     );

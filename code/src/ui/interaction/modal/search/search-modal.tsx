@@ -13,7 +13,7 @@ import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
 import Modal from 'ui/interaction/modal/modal';
 import ResponseComponent from 'ui/text/response/response';
-import { HttpResponse } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'utils/server-actions';
 
 interface SearchModalProps {
   id: string;
@@ -29,7 +29,7 @@ export const SHOW_ALL_FEATURE_INDICATOR: string = "all";
  */
 export default function SearchModal(props: Readonly<SearchModalProps>) {
   const dispatch = useDispatch();
-  const [response, setResponse] = useState<HttpResponse>(null);
+  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const dict: Dictionary = useDictionary();
   // Show all features upon click

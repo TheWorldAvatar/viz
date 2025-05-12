@@ -11,7 +11,7 @@ import ClickActionButton from 'ui/interaction/action/click/click-button';
 import FileInputButton from 'ui/interaction/action/file/file-input';
 import Modal from 'ui/interaction/modal/modal';
 import ResponseComponent from 'ui/text/response/response';
-import { HttpResponse } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'utils/server-actions';
 
 interface FileModalProps {
   url: string;
@@ -31,7 +31,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const dict: Dictionary = useDictionary();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [response, setResponse] = useState<HttpResponse>(null);
+  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let response;
@@ -44,7 +44,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           method: "POST",
           body: fileData,
         });
-        const jsonResp: HttpResponse = await response.json();
+        const jsonResp: CustomAgentResponseBody = await response.json();
         setIsUploading(false);
         setResponse(jsonResp);
       } catch (error) {
