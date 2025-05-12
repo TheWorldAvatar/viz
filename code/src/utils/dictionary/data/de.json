@@ -117,6 +117,7 @@
     "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten.",
     "noFileChosen": "Keine Datei ausgewählt",
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
+    "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "na": "Nicht anwendbar"
   },

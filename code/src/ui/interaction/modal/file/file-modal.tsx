@@ -45,10 +45,12 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           body: fileData,
         });
         const jsonResp: CustomAgentResponseBody = await response.json();
-        setIsUploading(false);
         setResponse(jsonResp);
       } catch (error) {
         console.error("There was an error uploading the file:", error);
+        setResponse({ success: false, message: dict.message.fileUploadError })
+      } finally {
+        setIsUploading(false);
       }
     } else {
       setResponse({ success: false, message: dict.message.noFileChosenError })
