@@ -65,7 +65,7 @@ export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>)
           </div>
         </div>
       </div>
-      {props.type === "file" &&
+      {props.type === "file" && isFileModalOpen &&
         <FileModal
           url={props.url}
           isOpen={isFileModalOpen}
