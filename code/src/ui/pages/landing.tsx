@@ -43,7 +43,7 @@ interface LandingPageProps {
  */
 export default function LandingPage(props: Readonly<LandingPageProps>) {
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
-
+  const keycloakEnabled = process.env.KEYCLOAK === 'true';
   // CSS class names
   const introClasses = ["markdown-body", styles.introInner].join(" ");
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -135,7 +135,10 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
         />
 
         {props.settings.links?.map((externalLink, index) => {
-          if (![Modules.MAP, Modules.DASHBOARD, Modules.HELP, Modules.REGISTRY].includes(externalLink.url)) {
+          if ((![Modules.MAP, Modules.DASHBOARD, Modules.HELP, Modules.REGISTRY].includes(externalLink.url)) &&
+            // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
+            // IF there is a permission set with authentication enabled, check if the user has the specified permission
+            (!keycloakEnabled || !externalLink?.permission || permissionScheme?.hasPermissions[externalLink.permission])) {
             return <DefaultPageThumbnail
               key={externalLink.title + index}
               title={externalLink.title}

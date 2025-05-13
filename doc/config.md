@@ -52,6 +52,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `title`: REQUIRED. Thumbnail title on landing page. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on landing page. Optional for only internal links, which defaults to the default if not set.
   - `icon`: REQUIRED. Thumbnail icon on landing page. Optional for only internal links, which defaults to the default if not set.
+  - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL.
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario
