@@ -270,11 +270,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
              * Operation permission in the completed stage.
              * Complete task is typically given to simple users who are only allowed to view tasks.
              * */}
-            {(props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
+            {((props.task.status.toLowerCase().trim() == Status.PENDING_EXECUTION &&
               (!(keycloakEnabled && permissionScheme) || permissionScheme?.hasPermissions?.completeTask)
             ) || (props.task.status.toLowerCase().trim() == Status.COMPLETED &&
               (!(keycloakEnabled && permissionScheme) || permissionScheme?.hasPermissions?.operation)
-            ) && !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
+            )) && !(isCancelAction || isCompleteAction || isDispatchAction || isReportAction) && <ClickActionButton
                 icon={"done_outline"}
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
