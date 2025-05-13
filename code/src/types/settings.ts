@@ -1,4 +1,9 @@
 import { DefaultPageThumbnailProps } from "ui/pages/page-thumbnail";
+import { HasPermissions } from "./auth";
+
+interface PageThumbnailPropsWithPermissions extends DefaultPageThumbnailProps {
+  permission?: keyof HasPermissions;
+}
 
 /**
  * Interface of default settings for landing page.
@@ -10,14 +15,14 @@ export type UISettings = {
     'landing': string;
     'landingDark': string;
   },
-  modules: {  
-    'landing' : boolean;
-    'map' : boolean;
-    'dashboard' : boolean;  
-    'help' : boolean;
-    'registry' : boolean;
+  modules: {
+    'landing': boolean;
+    'map': boolean;
+    'dashboard': boolean;
+    'help': boolean;
+    'registry': boolean;
   },
-  links?: DefaultPageThumbnailProps[],
+  links?: PageThumbnailPropsWithPermissions[],
   resources?: {
     [key: 'scenario' | 'registry' | string]: {
       url: string;

@@ -4,6 +4,7 @@ type contextMenuDictItem = {
 };
 
 export type Dictionary = {
+    accessibility: Record<string, string>;
     action: Record<string, string>;
     form: Record<string, string>;
     map: {
