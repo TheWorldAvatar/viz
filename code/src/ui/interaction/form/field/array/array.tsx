@@ -13,6 +13,7 @@ import FormFieldComponent from '../form-field';
 export interface FormArrayProps {
   agentApi: string;
   fieldId: string;
+  maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
   options?: FormFieldOptions;
@@ -22,7 +23,9 @@ export interface FormArrayProps {
  * This component renders an array of inputs for a form.
  * It allows users to add, remove, and navigate between multiple entries of the same form fields.
  * 
+ * @param {string} agentApi The API endpoint of the agent. 
  * @param {string} fieldId The field ID for the array. 
+ * @param {number} maxSize The maximum size of the array. 
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
@@ -45,7 +48,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   return (
     <div className={styles["container"]}>
       <div className={styles["tab-container"]}>
-        <ClickActionButton
+        {(Number.isNaN(props.maxSize) || fields.length < props.maxSize) && <ClickActionButton
           icon={"add"}
           className={`${styles["row-marker"]} ${styles["add-button-background"]}`}
           isTransparent={true}
@@ -53,7 +56,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             event.preventDefault();
             append(emptyRow);
           }}
-        />
+        />}
         {fields.length > 1 && <ClickActionButton
           icon={"remove"}
           className={`${styles["delete-button"]} ${styles["delete-button-background"]}`}

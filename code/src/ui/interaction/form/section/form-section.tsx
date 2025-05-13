@@ -33,6 +33,7 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
           <FormArray
             agentApi={props.agentApi}
             fieldId={props.group.label[VALUE_KEY]}
+            maxSize={parseInt(props.group.maxCount?.[VALUE_KEY])}
             fieldConfigs={props.group.property}
             form={props.form}
             options={props.options}

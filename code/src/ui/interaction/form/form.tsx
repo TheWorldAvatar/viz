@@ -248,6 +248,7 @@ export function renderFormField(
         key={fieldProp.name[VALUE_KEY] + currentIndex}
         agentApi={agentApi}
         fieldId={fieldProp.name[VALUE_KEY]}
+        maxSize = {parseInt(fieldProp.maxCount?.[VALUE_KEY])}
         fieldConfigs={[fieldProp]}
         form={form}
         options={{
