@@ -31,15 +31,16 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
     <fieldset className={styles["form-fieldset"]}>
       <legend className={styles["form-fieldset-label"]}>{parseWordsForLabels(props.group.label[VALUE_KEY])}</legend>
       <div className={styles["form-fieldset-contents"]}>
-        {props.group.property.map((field, index) =>
-          renderFormField(props.entityType, props.agentApi, field, props.form, index))}
-        {props.group.multipleProperty.length > 0 && <FormArray
-          agentApi={props.agentApi}
-          fieldId={props.group.label[VALUE_KEY]}
-          fieldConfigs={props.group.multipleProperty}
-          form={props.form}
-          options={props.options}
-        />}
+        {!props.group.maxCount || (props.group.maxCount && parseInt(props.group.maxCount?.[VALUE_KEY]) > 1) ?
+          <FormArray
+            agentApi={props.agentApi}
+            fieldId={props.group.label[VALUE_KEY]}
+            fieldConfigs={props.group.property}
+            form={props.form}
+            options={props.options}
+          /> : props.group.property.map((field, index) =>
+            renderFormField(props.entityType, props.agentApi, field, props.form, index))
+        }
       </div>
     </fieldset>);
 }
