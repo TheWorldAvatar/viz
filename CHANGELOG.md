@@ -3,6 +3,18 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.24.5
+
+### Bug fix
+
+- Fix Not Applicable option behaviour in the registry's dropdown selector
+
+## 5.24.4
+
+### Changes
+
+- Fix behaviour of scenario modal render
+
 ## 5.24.3
 
 ### Changes
