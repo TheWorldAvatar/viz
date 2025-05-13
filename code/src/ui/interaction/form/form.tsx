@@ -3,14 +3,15 @@ import React, { ReactNode, useState } from 'react';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
 import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
-import { useDictionary } from 'hooks/useDictionary';
-import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, CustomAgentResponseBody, updateEntity } from 'utils/server-actions';
+import { addEntity, CustomAgentResponseBody, deleteEntity, getFormTemplate, getMatchingInstances, updateEntity } from 'utils/server-actions';
+import FormArray from './field/array/array';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -241,6 +242,19 @@ export function renderFormField(
       return;
     }
     const disableId: boolean = formType === Paths.REGISTRY_EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
+    // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
+    if (!fieldProp.maxCount || (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)) {
+      return <FormArray
+        key={fieldProp.name[VALUE_KEY] + currentIndex}
+        agentApi={agentApi}
+        fieldId={fieldProp.name[VALUE_KEY]}
+        fieldConfigs={[fieldProp]}
+        form={form}
+        options={{
+          disabled: disableAllInputs,
+        }}
+      />
+    }
     if (fieldProp.class) {
       if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule") {
         return <FormSchedule

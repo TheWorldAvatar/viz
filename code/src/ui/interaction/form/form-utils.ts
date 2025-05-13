@@ -72,6 +72,10 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
       }
     } else {
       const fieldShape: PropertyShape = updateDependentProperty(field as PropertyShape, fields);
+      // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
+      if (!fieldShape.maxCount || (fieldShape.maxCount && parseInt(fieldShape.maxCount?.[VALUE_KEY]) > 1)) {
+        return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY], true);
+      }
       // For groupless properties, their field ID will be directly set without further parsing
       return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);
     }
