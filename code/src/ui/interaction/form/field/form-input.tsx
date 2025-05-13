@@ -2,7 +2,7 @@ import styles from './field.module.css';
 
 import { FieldError, UseFormReturn } from 'react-hook-form';
 
-import { PropertyShape, VALUE_KEY } from 'types/form';
+import { FormFieldOptions, PropertyShape, VALUE_KEY } from 'types/form';
 import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
 import FormInputContainer from './form-input-container';
 import NumericInputField from './input/numeric-input';
@@ -10,13 +10,7 @@ import NumericInputField from './input/numeric-input';
 export interface InputFieldProps {
   field: PropertyShape;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
-  styles?: {
-    label?: string[],
-    input?: string[],
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -24,12 +18,10 @@ export interface InputFieldProps {
  * 
  * @param {PropertyShape} field The SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
- * @param {string[]} styles.label Optional styles for the label element.
- * @param {string[]} styles.input Optional styles for the input element.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormInputField(props: Readonly<InputFieldProps>) {
-  const inputClassNames: string = props.styles?.input?.join(" ");
+  const inputClassNames: string = props.options?.inputStyle?.join(" ");
   // Disabled inputs should provide only text input
   const inputMode: "none" | "text" | "numeric" | "decimal" = props.options?.disabled ? "none" :
     props.field.datatype === "string" ? "text" :
@@ -39,7 +31,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
-      labelStyles={props.styles?.label}
+      labelStyles={props.options?.labelStyle}
     >
       {(props.options?.disabled || props.field?.datatype === "string") ? <input
         id={props.field.fieldId}
@@ -53,7 +45,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
       /> : <NumericInputField
         field={props.field}
         form={props.form}
-        styles={props.styles}
+        options={props.options}
       />}
     </FormInputContainer>
   );

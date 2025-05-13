@@ -1,24 +1,19 @@
-import generalStyles from '../form.module.css';
 import styles from './field.module.css';
 
-import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
+import { FormFieldOptions, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
 import { FORM_STATES } from '../form-utils';
 import FormDateTimePicker from './form-date-time-picker';
 import FormInputField from './form-input';
 import FormInputMinMaxField from './input/form-min-max-input';
-import FormSelector from './input/form-selector';
+import OntologyConceptSelector from './input/ontology-concept-selector';
 
 interface FormFieldProps {
   agentApi?: string;
   field: PropertyShape;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 /**
@@ -27,12 +22,10 @@ interface FormFieldProps {
  * @param {string} agentApi The target agent endpoint for any registry related functionalities. Optional for dropdown
  * @param {PropertyShape} field The form field data model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the field should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
-  // For dropdown fetching
-  const [isFetching, setIsFetching] = useState<boolean>(true);
   // Any id field in the search form should be ignored
   if (!(formType == SEARCH_FORM_TYPE && props.field.name[VALUE_KEY] == "id")) {
     if (props.field.datatype && ["string", "integer", "decimal"].includes(props.field.datatype)) {
@@ -44,19 +37,15 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
               ? <FormInputMinMaxField
                 field={props.field}
                 form={props.form}
-                styles={{
-                  label: [styles["form-input-label"]],
-                }}
+                options={{ labelStyle: [styles["form-input-label"]] }}
               /> :
               <FormInputField
                 field={props.field}
                 form={props.form}
                 options={{
                   disabled: props.options?.disabled,
-                }}
-                styles={{
-                  label: [styles["form-input-label"]],
-                  input: [styles["form-input-value"]],
+                  inputStyle: [styles["form-input-value"]],
+                  labelStyle: [styles["form-input-label"]],
                 }}
               />
             }
@@ -70,10 +59,10 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
             <FormDateTimePicker
               field={props.field}
               form={props.form}
-              styles={{
-                label: [styles["form-input-label"]],
+              options={{
+                ...props.options,
+                labelStyle: [styles["form-input-label"]]
               }}
-              options={props.options}
             />
           </div>
         </div>
@@ -81,21 +70,15 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
     } else if (props.field.in) {
       return (
         <div className={styles["form-field-container"]}>
-          {isFetching && (
-            <div className={generalStyles["loader-container"]}>
-              <LoadingSpinner isSmall={true} />
-            </div>)
-          }
           <div className={styles["form-input-container"]}>
-            <FormSelector
+            <OntologyConceptSelector
               agentApi={props.agentApi}
               field={props.field}
               form={props.form}
-              setIsFetching={setIsFetching}
-              styles={{
-                label: [styles["form-input-label"]],
+              options={{
+                ...props.options,
+                labelStyle: [styles["form-input-label"]],
               }}
-              options={props.options}
             />
           </div>
         </div>

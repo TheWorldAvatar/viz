@@ -3,6 +3,51 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.25.0
+
+### Changes
+
+- Addition of a file upload functionality with permissions to a target endpoint on the landing page
+- Simplify page thumbnail code
+- Created reusable tooltips, popovers, and modals using Floating UI
+- Replaced all MUI tooltips and react-modal modals with the new floating elements
+- Updated tooltip messages
+- Removed react-modal library
+
+### Bug fix
+
+- Fix the console error when keycloak is disabled but user credentials are being fetched
+
+## 5.24.5
+
+### Bug fix
+
+- Fix Not Applicable option behaviour in the registry's dropdown selector
+
+## 5.24.4
+
+### Changes
+
+- Fix behaviour of scenario modal render
+
+## 5.24.3
+
+### Changes
+
+- Depenabot bump #183
+
+## 5.24.2
+
+### Changes
+
+- Simplify the form array code
+- Refactor react-select into a reusable component
+
+### Bug Fixes
+
+- Ensure that the last row of a field array is now sent upon form submission
+- Storage of dropdown state for instance selector when navigating between different items in the array
+
 ## 5.24.1
 
 ### Bug Fixes

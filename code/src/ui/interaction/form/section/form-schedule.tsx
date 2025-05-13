@@ -3,19 +3,18 @@ import styles from "../form.module.css";
 
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import Select from "react-select";
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
-  FormOptionType,
+  FormFieldOptions,
   RegistryFieldValues,
   SEARCH_FORM_TYPE,
 } from "types/form";
-import { selectorStyles } from "ui/css/selector-style";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from 'hooks/useDictionary';
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
@@ -25,9 +24,7 @@ interface FormScheduleProps {
   fieldId: string;
   agentApi: string;
   form: UseFormReturn;
-  options?: {
-    disabled?: boolean;
-  };
+  options?: FormFieldOptions;
 }
 
 export const daysOfWeek: string[] = [
@@ -46,7 +43,7 @@ export const daysOfWeek: string[] = [
  * @param {string} fieldId Field name.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {boolean} options.disabled Optional indicator if the fields should be disabled. Defaults to false.
+ * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -164,24 +161,18 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             <label className={fieldStyles["field-text"]} htmlFor="select-input">
               {dict.title.serviceType}
             </label>
-            <Select
-              styles={selectorStyles}
-              unstyled
+            <SimpleSelector
               options={[
                 { label: singleService, value: singleService },
                 { label: regularService, value: regularService },
                 { label: alternateService, value: alternateService },
               ]}
-              value={{
-                label: selectedServiceOption,
-                value: selectedServiceOption,
+              defaultVal={selectedServiceOption}
+              onChange={(selectedOption) => {
+                if (selectedOption && "value" in selectedOption) {
+                  handleServiceChange(selectedOption?.value)
+                }
               }}
-              onChange={(selectedOption) =>
-                handleServiceChange((selectedOption as FormOptionType).value)
-              }
-              isLoading={false}
-              isMulti={false}
-              isSearchable={true}
               isDisabled={
                 formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
               }

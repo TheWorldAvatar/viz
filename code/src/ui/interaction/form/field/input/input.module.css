@@ -4,6 +4,8 @@
 }
 
 .numeric-input-scroller-container {
+  display: flex;
+  flex-direction: row;
   position: absolute;
   right: 0.25rem;
   top: 0;
