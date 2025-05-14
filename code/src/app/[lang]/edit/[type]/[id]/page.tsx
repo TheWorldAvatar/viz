@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
-import { Paths, PageTitles, Modules } from 'io/config/routes';
+import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import FormContainerComponent from 'ui/interaction/form/form-container';
+import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 interface EditFormPageProps {
   params: Promise<{
@@ -40,6 +40,7 @@ export default async function EditFormPage(props: Readonly<EditFormPageProps>) {
       formType={Paths.REGISTRY_EDIT}
       agentApi={uiSettings?.resources?.registry?.url}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isModal={false}
     />
   );
 }

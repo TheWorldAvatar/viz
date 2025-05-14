@@ -1,13 +1,18 @@
 {
+  "accessibility": {
+    "thumbnailImage": "Thumbnail icon for the '{replace}' page"
+  },
   "action": {
     "add": "add",
     "delete": "Delete",
     "edit": "Edit",
     "view": "view",
+    "close": "Close",
     "refresh": "Refresh",
     "backTo": "back to",
     "export": "export data",
     "overview": "overview",
+    "file": "Choose file",
     "filter": "Filter",
     "search": "SEARCH",
     "showAll": "SHOW ALL",
@@ -30,7 +35,9 @@
     "rescind": "Rescind",
     "terminate": "Terminate",
     "findAddress": "Find address",
-    "selectLocation": "Select location"
+    "selectLocation": "Select location",
+    "clickIncrease": "Click to increase",
+    "clickDecrease": "Click to decrease"
   },
   "form": {
     "singleService": "Single Service",
@@ -91,13 +98,12 @@
     }
   },
   "message": {
-    "arrayInstruction": "Fill in the details to create a new entry",
     "branchInstruction": "Select the best category for your request",
     "registryInstruction": "Click on any record in the table to view its summary",
     "completeInstruction": "To complete the service, please input the following details:",
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
-    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your replort:",
+    "reportInstruction": "Report an issue with the service on {date}. Please include the reason in your report:",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
@@ -108,14 +114,19 @@
     "noResultFound": "No results found",
     "mapSelectInstruction": "Select a feature...",
     "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
-    "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information."
+    "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information.",
+    "noFileChosen": "No file chosen",
+    "noFileChosenError": "No file is chosen. Please choose a file.",
+    "fileUploadError": "File upload failed! Please try again.",
+    "contactTechTeam": "Contact your technical team if assistance is required.",
+    "na": "Not applicable"
   },
   "nav": {
     "caption": {
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
-      "registry": "Manage and view your records",
-      "generalReg": "Manage and view",
+      "registry": "Manage your records",
+      "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
     },
     "title": {
@@ -128,11 +139,13 @@
       "archive": "Archive"
     },
     "tooltip": {
-      "home": "Return to landing page.",
-      "map": "Geospatial view.",
-      "dashboard": "Analytics view.",
-      "registry": "Open registry.",
-      "help": "Open help page."
+      "home": "Return to landing page",
+      "map": "Geospatial view",
+      "dashboard": "Analytics view",
+      "registry": "Open registry",
+      "help": "Open help page",
+      "landingRedirect": "Click to open the '{replace}' page",
+      "fileUpload": "Click to upload a file"
     }
   },
   "title": {

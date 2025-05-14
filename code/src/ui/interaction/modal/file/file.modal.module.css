@@ -1,0 +1,16 @@
+.section-contents {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.section-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0;
+
+  border-style: solid;
+  border-color: var(--border-primary);
+  border-width: 1px 0 0 0;
+}

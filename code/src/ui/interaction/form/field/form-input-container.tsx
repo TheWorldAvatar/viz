@@ -18,10 +18,12 @@ export interface FormInputContainerProps {
   formatLabel?: string;
   labelStyles?: string[];
   selectedOption?: OntologyConcept;
-  redirectOptions?: {
-    addUrl?: string;
-    view?: React.MouseEventHandler<HTMLButtonElement>;
-  };
+  redirectOptions?: FormInputContainerRedirectOptions;
+}
+
+export interface FormInputContainerRedirectOptions {
+  addUrl?: string;
+  view?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 /**

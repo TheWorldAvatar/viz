@@ -2,18 +2,18 @@
 import styles from './search.modal.module.css';
 
 import React, { useEffect, useRef, useState } from 'react';
-import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { setFilterFeatureIris } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
 import { SEARCH_FORM_TYPE } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
+import Modal from 'ui/interaction/modal/modal';
 import ResponseComponent from 'ui/text/response/response';
-import { useDictionary } from 'hooks/useDictionary';
-import { HttpResponse } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'utils/server-actions';
 
 interface SearchModalProps {
   id: string;
@@ -28,9 +28,8 @@ export const SHOW_ALL_FEATURE_INDICATOR: string = "all";
  * A modal component for users to interact with a form for search criterias while on the registry.
  */
 export default function SearchModal(props: Readonly<SearchModalProps>) {
-  Modal.setAppElement("#globalContainer");
   const dispatch = useDispatch();
-  const [response, setResponse] = useState<HttpResponse>(null);
+  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const dict: Dictionary = useDictionary();
   // Show all features upon click
@@ -55,43 +54,35 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
   return (
     <Modal
       isOpen={props.show}
-      overlayClassName={styles.overlay}
-      className={styles.modal}
+      setIsOpen={props.setShowState}
+      styles={[styles["modal"]]}
     >
-      <div className={styles.container}>
-        <section className={styles["section-title"]}>
-          <h1>{dict.title.searchCriteria}</h1>
+      <h1>{dict.title.searchCriteria}</h1>
+      <section className={styles["section-contents"]}>
+        <FormComponent
+          formRef={formRef}
+          entityType={props.id}
+          formType={SEARCH_FORM_TYPE}
+          agentApi={`${props.stack}/vis-backend-agent`}
+          setResponse={setResponse}
+        />
+      </section>
+      <section className={styles["section-footer"]}>
+        {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
+        {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
+        <div className={styles["footer-button-row"]}>
           <ClickActionButton
-            icon={"cancel"}
-            onClick={() => props.setShowState(false)}
+            icon={"search"}
+            label={dict.action.search}
+            onClick={onSubmit}
           />
-        </section>
-        <section className={styles["section-contents"]}>
-          <FormComponent
-            formRef={formRef}
-            entityType={props.id}
-            formType={SEARCH_FORM_TYPE}
-            agentApi={`${props.stack}/vis-backend-agent`}
-            setResponse={setResponse}
+          <ClickActionButton
+            icon={"select_all"}
+            label={dict.action.showAll}
+            onClick={showAllFeatures}
           />
-        </section>
-        <section className={styles["section-footer"]}>
-          {formRef.current?.formState?.isSubmitting && <LoadingSpinner isSmall={false} />}
-          {!formRef.current?.formState?.isSubmitting && (<ResponseComponent response={response} />)}
-          <div className={styles["footer-button-row"]}>
-            <ClickActionButton
-              icon={"search"}
-              label={dict.action.search}
-              onClick={onSubmit}
-            />
-            <ClickActionButton
-              icon={"select_all"}
-              label={dict.action.showAll}
-              onClick={showAllFeatures}
-            />
-          </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </Modal>
   );
 }

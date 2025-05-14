@@ -27,7 +27,7 @@ import { MapSettingsProvider } from './mapbox/map-settings-context';
 interface MapContainerProps {
   scenarioURL: string;
   scenarioDataset: string;
-  settings: string;
+  mapSettings: string;
   data: string;
   scenarios: ScenarioDefinition[]
 }
@@ -39,7 +39,7 @@ export default function MapContainer(props: MapContainerProps) {
   const dispatch = useDispatch();
   const [map, setMap] = useState<Map>(null);
   const [mapEventManager, setMapEventManager] = useState<MapEventManager>(null);
-  const [showDialog, setShowDialog] = useState<boolean>(!!props.scenarios);
+  const [showScenarioSelector, setShowScenarioSelector] = useState<boolean>(!!props.scenarioURL);
   const [dataStore, setDataStore] = useState<DataStore>(null);
 
   const selectedScenarioID = useSelector(getScenarioID);
@@ -51,7 +51,7 @@ export default function MapContainer(props: MapContainerProps) {
 
   // Memoizes parsing of settings only once initially to prevent any unintended calls
   const mapSettings: MapSettings = useMemo(() => {
-    return JSON.parse(props.settings);
+    return JSON.parse(props.mapSettings);
   }, []);
 
   const defaultPosition: CameraPosition = useMemo(() => {
@@ -70,7 +70,7 @@ export default function MapContainer(props: MapContainerProps) {
 
   // Retrieves data settings for specified scenario from the server, else, defaults to the local file
   useEffect(() => {
-    if (!showDialog) {
+    if (!showScenarioSelector) {
       setDataStore(null); // Always reset data when traversing states
       let mapDataStore: DataStore;
       // If there are any scenarios, the corresponding data settings should be fetched from the server
@@ -102,7 +102,7 @@ export default function MapContainer(props: MapContainerProps) {
         setDataStore(mapDataStore);
       }
     }
-  }, [mapSettings?.type, props.data, props.scenarios, selectedScenarioID, showDialog, dimensionSliderValue]);
+  }, [mapSettings?.type, props.data, props.scenarios, selectedScenarioID, showScenarioSelector, dimensionSliderValue]);
 
   // Populates the map after it has loaded and scenario selection is not required
   useEffect(() => {
@@ -166,12 +166,12 @@ export default function MapContainer(props: MapContainerProps) {
   return (
     <>
       {/* On initial start up or user request, scenario dialog will be shown if scenarios are required */}
-      {showDialog &&
+      {showScenarioSelector &&
         <ScenarioModal
           scenarioURL={props.scenarioURL}
           scenarios={props.scenarios}
-          show={showDialog}
-          setShowState={setShowDialog}
+          show={showScenarioSelector}
+          setShowState={setShowScenarioSelector}
         />}
 
       {/* Mapbox map */}
@@ -200,12 +200,12 @@ export default function MapContainer(props: MapContainerProps) {
           map={map}
           startingIndex={0}
           mapSettings={mapSettings}
-          toggleScenarioSelection={setShowDialog}
+          toggleScenarioSelection={setShowScenarioSelector}
           hasScenario={!!selectedScenarioID}
         />
 
         {/* Map information panel */}
-        {!showDialog && dataStore && <div className={styles.upperContainer}>
+        {!showScenarioSelector && dataStore && <div className={styles.upperContainer}>
           <FloatingPanelContainer map={map} dataStore={dataStore} icons={mapSettings.icons} legend={mapSettings.legend} scenarioDimensions={scenarioDimensions} isDimensionsFetching={isDimensionsFetching} />
         </div>
         }

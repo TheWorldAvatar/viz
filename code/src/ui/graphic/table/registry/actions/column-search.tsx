@@ -1,15 +1,14 @@
-import { selectorStyles } from 'ui/css/selector-style';
 import styles from './column-search.module.css';
 
 import React, { useMemo, useState } from 'react';
-import Select from 'react-select';
 
-import { autoUpdate, flip, FloatingFocusManager, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole, } from '@floating-ui/react';
-import { Dictionary } from 'types/dictionary';
-import { FormOptionType, RegistryFieldValues } from 'types/form';
-import ClickActionButton from 'ui/interaction/action/click/click-button';
-import { extractResponseField, parseWordsForLabels } from 'utils/client-utils';
 import { useDictionary } from 'hooks/useDictionary';
+import { Dictionary } from 'types/dictionary';
+import { RegistryFieldValues } from 'types/form';
+import ClickActionButton from 'ui/interaction/action/click/click-button';
+import PopoverActionButton from 'ui/interaction/action/popover/popover-button';
+import SimpleSelector, { SelectOption } from 'ui/interaction/dropdown/simple-selector';
+import { extractResponseField, parseWordsForLabels } from 'utils/client-utils';
 
 interface ColumnSearchComponentProps {
   instances: RegistryFieldValues[];
@@ -25,38 +24,18 @@ interface ColumnSearchComponentProps {
 export default function ColumnSearchComponent(props: Readonly<ColumnSearchComponentProps>) {
   const dict: Dictionary = useDictionary();
   const [searchText, setSearchText] = useState<string>("");
-  const [searchColumn, setSearchColumn] = useState<FormOptionType>(null);
-  // WIP: Separate the Floating UI code and trigger
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const { refs, floatingStyles, context } = useFloating({
-    placement: 'bottom-start',
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [offset(-5), flip(), shift()],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const click = useClick(context);
-  const dismiss = useDismiss(context);
-  const role = useRole(context);
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    click,
-    dismiss,
-    role,
-  ]);
+  const [searchColumn, setSearchColumn] = useState<string>(null);
 
   // Generate search option from instances
-  const columnSearchOptions: FormOptionType[] = useMemo(() => {
+  const columnSearchOptions: SelectOption[] = useMemo(() => {
     if (props.instances.length === 0) return [];
-    const options: FormOptionType[] = Object.keys(props.instances[0]).map(field => {
+    const options: SelectOption[] = Object.keys(props.instances[0]).map(field => {
       return {
         value: field,
         label: parseWordsForLabels(field),
       }
     });
-    setSearchColumn(options[0]);
+    setSearchColumn(options[0]?.value);
     return options;
   }, [props.instances]);
 
@@ -73,7 +52,7 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
     const searchableInput: string = searchText.trim().toLowerCase();
     if (searchableInput) {
       props.setCurrentInstances(props.instances.filter(instance => {
-        return extractResponseField(instance, searchColumn.value, true).value
+        return extractResponseField(instance, searchColumn, true).value
           .toLowerCase().includes(searchableInput);
       }));
     } else {
@@ -82,55 +61,41 @@ export default function ColumnSearchComponent(props: Readonly<ColumnSearchCompon
   };
 
   return (
-    <>
-      <div ref={refs.setReference} {...getReferenceProps()}>
+    <PopoverActionButton
+      placement="bottom-start"
+      icon="filter_alt"
+      tooltipText={dict.action.filter}
+      isTransparent={true}>
+      <SimpleSelector
+        options={columnSearchOptions}
+        defaultVal={searchColumn}
+        onChange={(selectedOption) => {
+          if (selectedOption && "value" in selectedOption) {
+            setSearchColumn(selectedOption?.value)
+          }
+        }}
+      />
+      <input
+        type="text"
+        className={styles["search-input"]}
+        placeholder={dict.action.search}
+        onChange={handleSearch}
+        value={searchText}
+        readOnly={false}
+        aria-label={"Filter Search"}
+      />
+      <div className={styles["button-container"]} >
         <ClickActionButton
-          icon="filter_alt"
-          tooltipText={dict.action.filter}
-          isTransparent={true}
+          icon="search"
+          tooltipText={dict.action.update}
+          onClick={handleUpdate}
+        />
+        <ClickActionButton
+          icon="replay"
+          tooltipText={dict.action.clear}
+          onClick={handleClear}
         />
       </div>
-      {isOpen && (
-        <FloatingFocusManager context={context} modal={false}>
-          <div className={styles["container"]}
-            ref={refs.setFloating}
-            style={floatingStyles}
-            {...getFloatingProps()}
-          >
-            <Select
-              styles={selectorStyles}
-              unstyled
-              options={columnSearchOptions}
-              value={searchColumn}
-              onChange={(selectedOption) => setSearchColumn(selectedOption as FormOptionType)}
-              isLoading={false}
-              isMulti={false}
-              isSearchable={true}
-            />
-            <input
-              type="text"
-              className={styles["search-input"]}
-              placeholder={dict.action.search}
-              onChange={handleSearch}
-              value={searchText}
-              readOnly={false}
-              aria-label={"Filter Search"}
-            />
-            <div className={styles["button-container"]} >
-              <ClickActionButton
-                icon="search"
-                tooltipText={dict.action.update}
-                onClick={handleUpdate}
-              />
-              <ClickActionButton
-                icon="replay"
-                tooltipText={dict.action.clear}
-                onClick={handleClear}
-              />
-            </div>
-          </div>
-        </FloatingFocusManager>
-      )}
-    </>
+    </PopoverActionButton>
   );
 }

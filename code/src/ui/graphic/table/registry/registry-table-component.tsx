@@ -5,12 +5,10 @@ import styles from './registry.table.module.css';
 import { Icon } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
-import { getIsOpenState } from 'state/modal-slice';
 import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
@@ -39,7 +37,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
-  const isModalOpen: boolean = useSelector(getIsOpenState);
   const [initialInstances, setInitialInstances] = useState<RegistryFieldValues[]>([]);
   const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
   const [task, setTask] = useState<RegistryTaskOption>(null);
@@ -81,7 +78,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
           instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
         } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
-          instances = await getData(props.registryAgentApi, props.entityType, null, null, false);
+          instances = await getData(props.registryAgentApi, props.entityType, null, null, true);
         } else {
           instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
         }
@@ -93,10 +90,10 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       }
     };
 
-    if (!isModalOpen || refreshFlag) {
+    if (!isTaskModalOpen || refreshFlag) {
       fetchData();
     }
-  }, [isModalOpen, selectedDate, refreshFlag]);
+  }, [isTaskModalOpen, selectedDate, refreshFlag]);
 
   useEffect(() => {
     if (task) {

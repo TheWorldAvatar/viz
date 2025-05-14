@@ -3,6 +3,87 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.26.0
+
+### Updates
+
+- Update node to v24
+
+## 5.25.0
+
+### Changes
+
+- Addition of a file upload functionality with permissions to a target endpoint on the landing page
+- Simplify page thumbnail code
+- Created reusable tooltips, popovers, and modals using Floating UI
+- Replaced all MUI tooltips and react-modal modals with the new floating elements
+- Updated tooltip messages
+- Removed react-modal library
+
+### Bug fix
+
+- Fix the console error when keycloak is disabled but user credentials are being fetched
+
+## 5.24.5
+
+### Bug fix
+
+- Fix Not Applicable option behaviour in the registry's dropdown selector
+
+## 5.24.4
+
+### Changes
+
+- Fix behaviour of scenario modal render
+
+## 5.24.3
+
+### Changes
+
+- Depenabot bump #183
+
+## 5.24.2
+
+### Changes
+
+- Simplify the form array code
+- Refactor react-select into a reusable component
+
+### Bug Fixes
+
+- Ensure that the last row of a field array is now sent upon form submission
+- Storage of dropdown state for instance selector when navigating between different items in the array
+
+## 5.24.1
+
+### Bug Fixes
+
+- Fixed the non-human-readable attributes in the general registry table
+- Ensure proper parsing of caption labels for general registry landing page redirect
+- Updated captions for general registry in dictionary
+
+## 5.24.0
+
+### Changes
+
+- Updated the form array design
+
+## 5.23.0
+
+### Changes
+
+- Added a new numeric input component to facilitate granular steps and fixed values
+- Updated the min max input field to the new component
+- Updated min version of `VisBackend Agent` from `v1.4.0` to `v1.5.1`
+
+### Bug Fixes
+
+- Fixed the longitude and latitude fields in the form geocoder
+
+## 5.22.4
+
+- Dependabot update #173
+
 ## 5.22.3
 
 - Security update of `react-router-dom`, see #171

@@ -1,13 +1,13 @@
 {
     "name": "viz",
-    "version": "5.22.3",
+    "version": "5.26.0",
     "private": true,
     "type": "module",
     "jest": {
         "verbose": true
     },
     "engines": {
-        "node": ">=23.10.0"
+        "node": ">=24.0.0"
     },
     "scripts": {
         "dev": "NODE_ENV=development node --env-file='.env.local' server.js",
@@ -23,22 +23,22 @@
         "@emotion/styled": "^11.14.0",
         "@formatjs/intl-localematcher": "^0.6.1",
         "@floating-ui/react": "^0.27.7",
-        "@mui/icons-material": "^7.0.2",
+        "@mui/icons-material": "^7.1.0",
         "@mui/material": "^7.0.2",
         "@reduxjs/toolkit": "^2.7.0",
         "@types/markdown-it": "^14.1.2",
-        "antd": "^5.24.7",
+        "antd": "^5.24.9",
         "axios": "^1.8.4",
         "chart.js": "^4.4.9",
         "chartjs-adapter-moment": "^1.0.1",
         "connect-redis": "^8.0.2",
         "express": "^5.1.0",
         "express-session": "^1.18.1",
-        "framer-motion": "^12.7.4",
+        "framer-motion": "^12.9.2",
         "github-markdown-css": "^5.8.1",
         "gray-matter": "^4.0.3",
         "keycloak-connect": "^26.1.1",
-        "mapbox-gl": "3.11.0",
+        "mapbox-gl": "3.12.0",
         "markdown-it": "^14.1.0",
         "material-symbols": "^0.31.2",
         "moment": "^2.30.1",
@@ -51,12 +51,11 @@
         "react-inlinesvg": "^4.2.0",
         "react-konami-code": "^2.3.0",
         "react-markdown": "^10.1.0",
-        "react-modal": "^3.16.3",
         "react-redux": "^9.2.0",
         "react-router-dom": "^7.5.1",
         "react-select": "^5.10.1",
         "react-toastify": "^11.0.5",
-        "redis": "^4.7.0",
+        "redis": "^5.0.0",
         "redux": "^5.0.1",
         "redux-persist": "^6.0.0",
         "typescript": "^5.8.3",
@@ -73,7 +72,6 @@
         "@types/node": "^22.14.1",
         "@types/react": "^19.1.2",
         "@types/react-dom": "^19.1.2",
-        "@types/react-modal": "^3.16.3",
         "eslint": "^9.25.0",
         "eslint-config-next": "^15.3.1",
         "eslint-plugin-react": "^7.37.5",
@@ -82,5 +80,10 @@
         "ts-typed-json": "^0.3.2",
         "typescript-eslint": "^8.30.1"
     },
-    "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f"
+    "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977",
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "chromedriver"
+        ]
+    }
 }

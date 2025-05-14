@@ -30,7 +30,7 @@ export const SessionInfoProvider = ({
                 console.warn('Error fetching session details:', error);
             }
         });
-        if (process.env.KEYCLOAK) {
+        if (process.env.KEYCLOAK.toLowerCase() == "true") {
             fetchSession();
         }
     }, []);
