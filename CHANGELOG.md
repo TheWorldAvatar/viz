@@ -3,6 +3,21 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.25.0
+
+### Changes
+
+- Addition of a file upload functionality with permissions to a target endpoint on the landing page
+- Simplify page thumbnail code
+- Created reusable tooltips, popovers, and modals using Floating UI
+- Replaced all MUI tooltips and react-modal modals with the new floating elements
+- Updated tooltip messages
+- Removed react-modal library
+
+### Bug fix
+
+- Fix the console error when keycloak is disabled but user credentials are being fetched
+
 ## 5.24.5
 
 ### Bug fix
