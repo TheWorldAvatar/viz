@@ -30,7 +30,7 @@ export async function getData(
   identifier?: string, // append to the URL if provided
   subEntityType?: string,
   requireLabel?: boolean,
-  bearerToken?: string // Bearer token from the next context passed down by express
+  bearerToken?: string | string[] // Bearer token from the next context passed down by express
 ): Promise<RegistryFieldValues[]> {
   let url: string = `${agentApi}/${entityType}`;
   if (requireLabel) {
@@ -239,7 +239,7 @@ async function sendRequest(
   methodType: string,
   contentType?: string,
   jsonBody?: string,
-  bearerToken?: string // Add optional bearer token
+  bearerToken?: string | string[] // Add optional bearer token
 ): Promise<Response> {
   const options: RequestInit = {
     method: methodType,
