@@ -158,6 +158,9 @@ app.prepare().then(() => {
 
     // Handle all other requests using Next.js
     server.all("*allpaths", (req, res) => {
+        if (req.kauth?.grant) {
+            req.headers['x-bearer-token'] = req.kauth.grant.access_token.token; // Pass the token from express server to next.js, to be available in getServerSideProps calls
+        }
         return handle(req, res);
     });
 
