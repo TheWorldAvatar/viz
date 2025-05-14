@@ -131,11 +131,6 @@ app.prepare().then(() => {
             console.info('GeoServer requests from MapBox will be sent to ' + process.env.REACT_APP_SERVER_URL + '/geoserver-proxy')
             server.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
                 const targetUrl = req.query.url;
-                const allowedUrls = [
-                    'https://example.com/geoserver',
-                    'https://another-allowed-url.com/geoserver'
-                ];
-
                 let headers = { ...req.headers };
 
                 if (req.kauth?.grant) {
@@ -143,11 +138,6 @@ app.prepare().then(() => {
                 }
 
                 try {
-                    // Validate the target URL against the allowed list
-                    if (!allowedUrls.includes(targetUrl)) {
-                        return res.status(400).send('Invalid URL');
-                    }
-
                     // Forward the request to the target URL with the modified headers
                     const response = await axios({
                         url: targetUrl,
