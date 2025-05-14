@@ -22,9 +22,16 @@ export interface CustomAgentResponseBody {
  * @param {string} identifier Optional identifier of the parent entity.
  * @param {string} subEntityType Optional type of sub entity to retrieve entities associated with the specific parent entity.
  * @param {boolean} requireLabel Optional indicator to retrieve labelled data if requested.
+ * @param {string} bearerToken Optional bearer token for authorization.
  */
-export async function getData(agentApi: string, entityType: string, identifier?: string, subEntityType?: string, requireLabel?: boolean): Promise<RegistryFieldValues[]> {
-  // Append identifier to the url if it exist
+export async function getData(
+  agentApi: string,
+  entityType: string,
+  identifier?: string, // append to the URL if provided
+  subEntityType?: string,
+  requireLabel?: boolean,
+  bearerToken?: string // Bearer token from the next context passed down by express
+): Promise<RegistryFieldValues[]> {
   let url: string = `${agentApi}/${entityType}`;
   if (requireLabel) {
     url += `/label`;
