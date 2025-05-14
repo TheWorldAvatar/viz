@@ -42,7 +42,7 @@ export async function getData(
       url += `/${subEntityType}`;
     }
   }
-  const res = await sendRequest(url, "GET");
+  const res = await sendRequest(url, "GET", undefined, undefined, bearerToken);
   const responseData = await res.json();
   let parsedResponse: RegistryFieldValues[];
   // If response is a single object, store it as an array
