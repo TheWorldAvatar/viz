@@ -4,6 +4,8 @@ import React, { useMemo, useState } from 'react';
 import { FieldValues, useFieldArray, UseFormReturn } from 'react-hook-form';
 
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
+import { useDictionary } from 'hooks/useDictionary';
+import { Dictionary } from 'types/dictionary';
 import { FormFieldOptions, PropertyShape } from 'types/form';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
@@ -35,6 +37,7 @@ export interface FormArrayProps {
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const dict: Dictionary = useDictionary();
   // Min size defaults to 1. Users can only set it as 0 or 1
   const minArraySize: number = Number.isNaN(props.minSize) || props.minSize != 0 ? 1 : props.minSize;
   const backgroundImageUrl: string = useBackgroundImageUrl();
@@ -91,6 +94,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
+        {fields.length == 0 && <p className={styles["row-text"]}>{dict.message.arrayInstruction}</p>}
         {fields.length > 0 && props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
           return (
