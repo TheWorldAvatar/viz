@@ -3,6 +3,12 @@
 
 [//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
 
+## 5.26.0
+
+### Updates
+
+- Update node to v24
+
 ## 5.25.0
 
 ### Changes
