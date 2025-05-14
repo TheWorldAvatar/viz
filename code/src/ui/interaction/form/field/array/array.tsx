@@ -54,7 +54,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   return (
     <div className={styles["container"]}>
       <div className={styles["tab-container"]}>
-        {(Number.isNaN(props.maxSize) || fields.length < props.maxSize) && <ClickActionButton
+        {!props.options?.disabled && (Number.isNaN(props.maxSize) || fields.length < props.maxSize) && <ClickActionButton
           icon={"add"}
           className={`${styles["row-marker"]} ${styles["add-button-background"]}`}
           isTransparent={true}
@@ -63,7 +63,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             append(emptyRow);
           }}
         />}
-        {fields.length > minArraySize && <ClickActionButton
+        {!props.options?.disabled && fields.length > minArraySize && <ClickActionButton
           icon={"remove"}
           className={`${styles["delete-button"]} ${styles["delete-button-background"]}`}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
