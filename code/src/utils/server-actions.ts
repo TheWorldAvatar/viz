@@ -44,14 +44,7 @@ export async function getData(
   }
   const res = await sendRequest(url, "GET", undefined, undefined, bearerToken);
   const responseData = await res.json();
-  let parsedResponse: RegistryFieldValues[];
-  // If response is a single object, store it as an array
-  if (!Array.isArray(responseData)) {
-    parsedResponse = [responseData];
-  } else {
-    parsedResponse = responseData;
-  }
-  return parsedResponse;
+  return Array.isArray(responseData) ? responseData : [responseData];
 }
 
 /**
