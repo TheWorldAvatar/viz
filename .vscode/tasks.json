@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "code",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build - code",
+			"detail": "build viz locally with `next build` (requires node)"
+		}
+	]
+}

@@ -19,6 +19,7 @@ import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
 import FormSection from './section/form-section';
+import { GetServerSidePropsContext } from 'next';
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -45,6 +46,35 @@ interface FormComponentProps {
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const bearerToken = context.req.headers['x-bearer-token']; // Access the token
+
+  if (!bearerToken) {
+    return {
+      redirect: {
+        destination: '/login', // Redirect if no token is available
+        permanent: false,
+      },
+    };
+  }
+
+  // Use the token to fetch data from the backend
+  const response = await fetch(`${process.env.VIS_BACKEND_AGENT_URL}/some-endpoint`, {
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+
+  const data = await response.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();

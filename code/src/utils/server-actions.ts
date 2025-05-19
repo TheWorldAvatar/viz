@@ -22,9 +22,16 @@ export interface CustomAgentResponseBody {
  * @param {string} identifier Optional identifier of the parent entity.
  * @param {string} subEntityType Optional type of sub entity to retrieve entities associated with the specific parent entity.
  * @param {boolean} requireLabel Optional indicator to retrieve labelled data if requested.
+ * @param {string} bearerToken Optional bearer token for authorization.
  */
-export async function getData(agentApi: string, entityType: string, identifier?: string, subEntityType?: string, requireLabel?: boolean): Promise<RegistryFieldValues[]> {
-  // Append identifier to the url if it exist
+export async function getData(
+  agentApi: string,
+  entityType: string,
+  identifier?: string, // append to the URL if provided
+  subEntityType?: string,
+  requireLabel?: boolean,
+  bearerToken?: string | string[] // Bearer token from the next context passed down by express
+): Promise<RegistryFieldValues[]> {
   let url: string = `${agentApi}/${entityType}`;
   if (requireLabel) {
     url += `/label`;
@@ -35,16 +42,9 @@ export async function getData(agentApi: string, entityType: string, identifier?:
       url += `/${subEntityType}`;
     }
   }
-  const res = await sendRequest(url, "GET");
+  const res = await sendRequest(url, "GET", undefined, undefined, bearerToken);
   const responseData = await res.json();
-  let parsedResponse: RegistryFieldValues[];
-  // If response is a single object, store it as an array
-  if (!Array.isArray(responseData)) {
-    parsedResponse = [responseData];
-  } else {
-    parsedResponse = responseData;
-  }
-  return parsedResponse;
+  return Array.isArray(responseData) ? responseData : [responseData];
 }
 
 /**
@@ -234,11 +234,18 @@ export async function deleteEntity(agentApi: string, id: string, entityType: str
  * @param {string} contentType Type of request content - application/json - Optional for GET request
  * @param {string} jsonBody Optional body parameter to be passed in request
  */
-async function sendRequest(endpoint: string, methodType: string, contentType?: string, jsonBody?: string): Promise<Response> {
+async function sendRequest(
+  endpoint: string,
+  methodType: string,
+  contentType?: string,
+  jsonBody?: string,
+  bearerToken?: string | string[] // Add optional bearer token
+): Promise<Response> {
   const options: RequestInit = {
     method: methodType,
     headers: {
       "Content-Type": contentType,
+      ...(bearerToken && { Authorization: `Bearer ${bearerToken}` }), // Add Authorization header if token is provided
     },
   };
 
