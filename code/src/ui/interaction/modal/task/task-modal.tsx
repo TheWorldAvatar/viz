@@ -104,8 +104,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    // Submit post requests if they are not dispatch action
-    submitLifecycleAction(formData, url, !isDispatchAction);
+    // Submit post requests if they are not dispatch or complete actions
+    submitLifecycleAction(formData, url, !(isDispatchAction || isCompleteAction));
   }
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
