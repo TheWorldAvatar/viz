@@ -125,39 +125,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setDispatchCompletedFields([]);
   }
 
-  // A hook that fetches the form template with dispatch details included
-  useEffect(() => {
-    // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplateWithDispatchOrCompletedDetails = async (endpoint: string, targetId: string, isDispatch: boolean): Promise<void> => {
-      const id: string = getAfterDelimiter(targetId, "/");
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, "service", isDispatch ? "dispatch" : "complete", id);
-      const group: PropertyGroup = {
-        "@id": `${isDispatch ? "dispatch" : "completed"} group`,
-        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
-        label: {
-          "@value": isDispatch ? dict.title.dispatchInfo : dict.title.completionDetails
-        },
-        comment: {
-          "@value": `The ${isDispatch ? "dispatch" : "completed"} details specified for this service.`
-        },
-        order: 1000,
-        property: template.filter(shape => shape.name[VALUE_KEY] != "id"), // Filter out id field
-      };
-      dispatchCompletedFields.push(group);
-    }
-
-    setIsFetching(true);
-    // Only execute dispatch query for orders that are pending execution
-    if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
-      getFormTemplateWithDispatchOrCompletedDetails(props.registryAgentApi, props.task.id, true);
-    }
-    // Only execute completed query for completed orders
-    if (props.task.status === Status.COMPLETED) {
-      getFormTemplateWithDispatchOrCompletedDetails(props.registryAgentApi, props.task.id, false);
-    }
-    setIsFetching(false);
-  }, []);
-
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
@@ -198,6 +165,28 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   // Reset the states when the modal is closed
   useEffect(() => {
+    // Declare an async function to retrieve the form template with dispatch details
+    const getFormTemplateWithDispatchOrCompletedDetails = async (endpoint: string, targetId: string, isDispatch: boolean): Promise<void> => {
+      const id: string = getAfterDelimiter(targetId, "/");
+      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, "service", isDispatch ? "dispatch" : "complete", id);
+      const group: PropertyGroup = {
+        "@id": `${isDispatch ? "dispatch" : "completed"} group`,
+        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
+        label: {
+          "@value": isDispatch ? dict.title.dispatchInfo : dict.title.completionDetails
+        },
+        comment: {
+          "@value": `The ${isDispatch ? "dispatch" : "completed"} details specified for this service.`
+        },
+        order: 1000,
+        property: template.filter(shape => shape.name[VALUE_KEY] != "id"), // Filter out id field
+        maxCount: {
+          "@value": "1",
+          "@type": "http://www.w3.org/2001/XMLSchema#integer"
+        },
+      };
+      dispatchCompletedFields.push(group);
+    }
     if (!props.isOpen) {
       setIsDispatchAction(false);
       setIsCompleteAction(false);
@@ -206,6 +195,17 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setResponse(null);
       setFormFields([]);
       setDispatchCompletedFields([]);
+    } else {
+      setIsFetching(true);
+      // Only execute dispatch query for orders that are pending execution
+      if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
+        getFormTemplateWithDispatchOrCompletedDetails(props.registryAgentApi, props.task.id, true);
+      }
+      // Only execute completed query for completed orders
+      if (props.task.status === Status.COMPLETED) {
+        getFormTemplateWithDispatchOrCompletedDetails(props.registryAgentApi, props.task.id, false);
+      }
+      setIsFetching(false);
     }
   }, [props.isOpen]);
 
