@@ -10,7 +10,7 @@ import useRefresh from 'hooks/useRefresh';
 import { Paths } from 'io/config/routes';
 import { PermissionScheme } from 'types/auth';
 import { Dictionary } from 'types/dictionary';
-import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
+import { FORM_IDENTIFIER, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -55,7 +55,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [dispatchCompletedFields, setDispatchCompletedFields] = useState<PropertyShapeOrGroup[]>([]);
   const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -122,7 +121,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
     setResponse(response);
     setFormFields([]);
-    setDispatchCompletedFields([]);
   }
 
   // A hook that fetches the form template for executing an action
@@ -165,28 +163,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   // Reset the states when the modal is closed
   useEffect(() => {
-    // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplateWithDispatchOrCompletedDetails = async (endpoint: string, targetId: string, isDispatch: boolean): Promise<void> => {
-      const id: string = getAfterDelimiter(targetId, "/");
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, "service", isDispatch ? "dispatch" : "complete", id);
-      const group: PropertyGroup = {
-        "@id": `${isDispatch ? "dispatch" : "completed"} group`,
-        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
-        label: {
-          "@value": isDispatch ? dict.title.dispatchInfo : dict.title.completionDetails
-        },
-        comment: {
-          "@value": `The ${isDispatch ? "dispatch" : "completed"} details specified for this service.`
-        },
-        order: 1000,
-        property: template.filter(shape => shape.name[VALUE_KEY] != "id"), // Filter out id field
-        maxCount: {
-          "@value": "1",
-          "@type": "http://www.w3.org/2001/XMLSchema#integer"
-        },
-      };
-      dispatchCompletedFields.push(group);
-    }
     if (!props.isOpen) {
       setIsDispatchAction(false);
       setIsCompleteAction(false);
@@ -194,18 +170,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setIsReportAction(false);
       setResponse(null);
       setFormFields([]);
-      setDispatchCompletedFields([]);
-    } else {
-      setIsFetching(true);
-      // Only execute dispatch query for orders that are pending execution
-      if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
-        getFormTemplateWithDispatchOrCompletedDetails(props.registryAgentApi, props.task.id, true);
-      }
-      // Only execute completed query for completed orders
-      if (props.task.status === Status.COMPLETED) {
-        getFormTemplateWithDispatchOrCompletedDetails(props.registryAgentApi, props.task.id, false);
-      }
-      setIsFetching(false);
     }
   }, [props.isOpen]);
 
@@ -235,7 +199,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           agentApi={props.registryAgentApi}
           setResponse={setResponse}
           id={getAfterDelimiter(props.task.contract, "/")}
-          additionalFields={dispatchCompletedFields}
         />}
         {formFields.length > 0 && !refreshFlag && <FormTemplate
           agentApi={props.registryAgentApi}

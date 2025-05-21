@@ -151,8 +151,6 @@
   },
   "title": {
     "actions": "AKTIONEN",
-    "completionDetails": "angaben zur fertigstellung",
-    "dispatchInfo": "versandinformationen",
     "description": "Beschreibung",
     "serviceSummary": "Service-Übersicht",
     "available": "Verfügbar",
