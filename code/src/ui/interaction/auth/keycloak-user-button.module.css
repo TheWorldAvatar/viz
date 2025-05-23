@@ -8,6 +8,9 @@
 .text{
     margin-left: 0 !important;
 }
+.text:hover{
+   color: inherit !important;
+}
 
 
 .userMenuContainer {
