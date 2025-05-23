@@ -6,7 +6,7 @@ The `src` directory contains the core source code of the application, structured
 
 ## Directory Structure
 
-* `/_tests`: Contains the unit and integration tests for the application aims to cover critical functionalities of the application.
+* `/__tests__`: Contains the unit and integration tests for the application.
 
 * `/app`: This is the heart of the application, containing the main application logic, routing, and the entry point of the application. It includes the setup for the application's pages and API routes.
 
