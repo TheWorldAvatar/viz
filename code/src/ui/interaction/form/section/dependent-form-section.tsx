@@ -63,8 +63,9 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
           entities = await getData(props.agentApi, field.dependentOn.label, getAfterDelimiter(currentParentOption, "/"), entityType);
         }
         // If there is no valid parent option, there should be no entity
-      } else if (formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) {
+      } else if ((formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) && field.defaultValue) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
+        // Note that the default value can be a null if the field is optional
         entities = await getData(props.agentApi, entityType, getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/"));
       } else {
         entities = await getData(props.agentApi, entityType);
@@ -72,8 +73,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
 
       // By default, id is empty
       let defaultId: string = "";
-      // Only update the id if there are any entities
-      if (entities.length > 0) {
+      // Only update the id if there are any entities and default value is not NA (ie null)
+      if (entities.length > 0 && field.defaultValue) {
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
         // If there is a default value, search and use the option matching the default instance's local name
         if (props.form.getValues(field.fieldId)) {
