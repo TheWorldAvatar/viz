@@ -11,11 +11,8 @@ import PopoverActionButton from '../action/popover/popover-button';
 *
 */
 export default function KeycloakUserButton() {
-    // const userDisplayName = useUserDisplayName();
-        const userDisplayName: string = "Plamen Dochev";
+        const userDisplayName = useUserDisplayName();
         const userInitial: string = userDisplayName.charAt(0).toUpperCase();
-
- 
 
     return (
 
