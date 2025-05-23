@@ -9,7 +9,7 @@ import Tooltip from "ui/interaction/tooltip/tooltip";
 
 export interface ActionButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
-  icon: string;
+  icon?: string;
   label?: string;
   tooltipText?: string;
   tooltipPosition?: Placement;
@@ -55,13 +55,13 @@ export default function ActionButton({
           } ${isTransparent ? styles["background-transparent"] : label ? styles["background"] : styles["background-secondary"]}`}
         onClick={rest.onClick}
       >
-        <Icon
+        {icon && <Icon
           className={`material-symbols-outlined ${styling?.text} ${styles["icon"]
             } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
             } ${styling?.hover}`}
         >
           {icon}
-        </Icon>
+        </Icon>}
         {label && (
           <p className={`${styling?.text} ${styles["text"]} 
             ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]} ${styling?.hover}`}>
