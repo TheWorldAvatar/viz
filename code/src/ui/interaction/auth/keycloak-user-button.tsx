@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import styles from './keycloak-user-button.module.css';
 import { useUserDisplayName } from 'hooks/auth/useUserDisplayName';
+import PopoverActionButton from '../action/popover/popover-button';
 
 
 /**
@@ -10,13 +11,29 @@ import { useUserDisplayName } from 'hooks/auth/useUserDisplayName';
 *
 */
 export default function KeycloakUserButton() {
-    const userDisplayName = useUserDisplayName();
+    // const userDisplayName = useUserDisplayName();
+        const userDisplayName: string = "Plamen Dochev";
+        const userInitial: string = userDisplayName.charAt(0).toUpperCase();
+
+ 
+
     return (
-        <div id="keycloakSession" className={styles.keycloakSession}>
-            <span id="userName" className={styles.dropbtn}>{userDisplayName}</span>
-            <div className={styles.dropdownContent}>
-                <Link prefetch={false} href="/logout">Log Out</Link>
-            </div>
-        </div>
+
+        <PopoverActionButton
+            label={userInitial}
+            tooltipText="User"
+            tooltipPosition="bottom"
+            isHoverableDisabled={true}
+            isTransparent={true}
+            styling={{ text: styles.text}}
+            placement="bottom-end"
+            className={styles.userMenuButton}
+            >
+                <div className={styles.userMenuContainer}>
+                            <span>{userDisplayName}</span>
+                   <div className={styles.seperationLine}></div>
+                      <Link prefetch={false} href="/logout">Log Out</Link>
+                </div>
+             </PopoverActionButton>
     );
 };

@@ -9,7 +9,7 @@ import Tooltip from "ui/interaction/tooltip/tooltip";
 
 export interface ActionButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
-  icon: string;
+  icon?: string;
   label?: string;
   tooltipText?: string;
   tooltipPosition?: Placement;
