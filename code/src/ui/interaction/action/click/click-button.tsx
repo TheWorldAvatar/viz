@@ -16,6 +16,7 @@ interface ClickActionButtonProps extends ActionButtonProps {
  * @param {string} icon The Material icon name.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
+ * @param {Placement} tooltipPosition Optional tooltip positioning.
  * @param {boolean} isActive Optional indicator to put the button in an active state if true.
  * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
@@ -27,6 +28,7 @@ export default function ClickActionButton({
   icon,
   label,
   tooltipText,
+  tooltipPosition,
   isActive,
   isHoverableDisabled,
   isTransparent,
@@ -39,6 +41,7 @@ export default function ClickActionButton({
       className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className}`}
       label={label}
       tooltipText={tooltipText}
+      tooltipPosition={tooltipPosition}
       onClick={rest.onClick}
       isHoverableDisabled={isHoverableDisabled}
       isTransparent={isTransparent}

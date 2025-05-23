@@ -4,7 +4,6 @@ import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import FormContainerComponent from 'ui/interaction/form/form-container';
-import FormModal from 'ui/interaction/modal/form/form-modal';
 import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 
 interface InterceptViewFormPageProps {
@@ -34,13 +33,12 @@ export default async function InterceptViewFormPage(props: Readonly<InterceptVie
   const resolvedParams = await props.params;
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
   return (
-    <FormModal>
-      <FormContainerComponent
-        entityType={resolvedParams?.type}
-        formType={Paths.REGISTRY}
-        agentApi={uiSettings?.resources?.registry?.url}
-        isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
-      />
-    </FormModal>
+    <FormContainerComponent
+      entityType={resolvedParams?.type}
+      formType={Paths.REGISTRY}
+      agentApi={uiSettings?.resources?.registry?.url}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isModal={true}
+    />
   );
 }

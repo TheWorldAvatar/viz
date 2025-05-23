@@ -37,6 +37,7 @@ export default async function AddFormPage(props: Readonly<AddFormPageProps>) {
       formType={Paths.REGISTRY_ADD}
       agentApi={uiSettings?.resources?.registry?.url}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isModal={false}
     />
   );
 }
