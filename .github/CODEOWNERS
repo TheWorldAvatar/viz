@@ -1,0 +1,8 @@
+# Main owners of viz code, used for triggering pull requests
+
+@Ushcode
+
+# Owners of registry pages
+
+/code/src/[lang]/registry @qhouyee
+/code/src/ui/interaction/modal @qhouyee
