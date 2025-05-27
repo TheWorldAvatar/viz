@@ -19,7 +19,7 @@ COPY ./code/package.json  ./
 
 # ---- Development Image ----
 FROM base AS develop
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --lockfile-only
 COPY ./code ./
 # Script should not be at twa directory as volume mount will override any copied contents
 COPY ./dev-start.sh /dev-start.sh
