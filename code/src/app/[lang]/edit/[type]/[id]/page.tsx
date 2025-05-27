@@ -19,7 +19,7 @@ interface EditFormPageProps {
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
   const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
   return {
     title: metadata?.title ?? PageTitles.REGISTRY,
@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function EditFormPage(props: Readonly<EditFormPageProps>) {
   const resolvedParams = await props.params;
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
   return (
     <FormContainerComponent
       entityType={resolvedParams?.type}
