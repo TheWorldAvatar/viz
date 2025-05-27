@@ -75,19 +75,8 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   }, [permissionScheme]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.introOuter}>
-        <div className={styles.introMiddle}>
-          <div
-            className={introClasses}
-            dangerouslySetInnerHTML={{
-              __html: getIntroductionContent(props.pages),
-            }}
-          />
-        </div>
-      </div>
-
-      <div className={`${styles.thumbnailContainer} hidden-scrollbar`}>
+    <div className="w-full  h-full  py-[5vh] px-0 flex justify-center ">
+      {/* <div className={`${styles.thumbnailContainer} hidden-scrollbar`}>
         {props.settings.branding.landing && (
           <LandingImage
             lightUrl={props.settings.branding?.landing}
@@ -183,6 +172,16 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             );
           }
         })}
+      </div> */}
+      <div className="h-full w-xs sm:w-sm md:w-11/12 lg:w-1/2 ">
+        <div className="flex flex-col h-full bg-gray-200 p-5 border border-gray-400 rounded-xl shadow-2xl">
+          <div
+            className={introClasses}
+            dangerouslySetInnerHTML={{
+              __html: getIntroductionContent(props.pages),
+            }}
+          />
+        </div>
       </div>
     </div>
   );

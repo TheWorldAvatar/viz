@@ -59,24 +59,27 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   return (
     <div
       id="navbar"
-      className="flex justify-between items-center  overflow-hidden min-h-16 h-16 bg-white shadow-md border-b border-b-gray-400"
+      className="flex justify-between items-center  overflow-hidden min-h-16 h-16  bg-gray-200 shadow-md border-b border-b-gray-400 z-[999]"
     >
       {/* Render navbar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
         // Handle the case where navbar is a list
-        <div className="flex justify-center items-center h-14">
+        <div className="flex justify-center items-center h-14 gap-2">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
               <Link key={logo} href={Routes.HOME}>
-                <IconComponent icon={logo} classes={styles["logo"]} />
-              </Link>
+                <IconComponent
+                  icon={logo}
+                  classes="h-8 md:h-8 2xl:h-12 w-auto"
+                />
+              </Link> 
             ))
           ) : (
             // Handle the case where navbar is a string
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
-                classes={styles["logo"]}
+                classes="h-8 md:h-8 2xl:h-12 ml-4 w-auto"
               />
             </Link>
           )}
@@ -84,9 +87,9 @@ export default function Navbar(props: Readonly<NavbarProps>) {
       )}
 
       {/* Render each component as required */}
-      <div className="navbarElements">
-        {keycloakEnabled && <KeycloakUserButton />}
-        {props.settings?.modules?.landing && (
+      <div className="flex justify-center items-center">
+        {true && <KeycloakUserButton />}
+        {/* {props.settings?.modules?.landing && (
           <NavbarComponent
             name="LANDING"
             tooltip={navbarDict.tooltip.home}
@@ -125,7 +128,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
             icon="contract"
             url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`}
           />
-        )}
+        )} */}
       </div>
     </div>
   );
