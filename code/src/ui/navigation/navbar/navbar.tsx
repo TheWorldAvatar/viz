@@ -59,7 +59,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   return (
     <div
       id="navbar"
-      className="flex justify-between items-center overflow-hidden min-h-16 h-16 bg-white shadow-md border-b border-b-gray-400"
+      className="flex justify-between items-center  overflow-hidden min-h-16 h-16 bg-white shadow-md border-b border-b-gray-400"
     >
       {/* Render navbar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (

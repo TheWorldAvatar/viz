@@ -74,8 +74,6 @@
 **/
 :root {
   /** Fonts **/
-  --background: #ffffff;
-  --foreground: #000000;
   --font-family-primary: "Helvetica Now", sans-serif;
   --font-size-root: 14pt;
   --font-size-h1: 1.8rem;
@@ -95,8 +93,6 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
 }
 
 * {
