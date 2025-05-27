@@ -6,6 +6,11 @@
   background-color: #82b29a !important;
 }
 
+.userMenuButton span {
+    font-size: 1.5rem !important;
+}
+
+
 .text {
   margin-left: 0 !important;
 }

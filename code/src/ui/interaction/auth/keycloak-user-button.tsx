@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./keycloak-user-button.module.css";
 import { useUserDisplayName } from "hooks/auth/useUserDisplayName";
 import PopoverActionButton from "../action/popover/popover-button";
+import PersonIcon from "@mui/icons-material/Person";
 
 /**
  * This component renders a widget that displays the user and a log out button.
@@ -11,11 +12,10 @@ import PopoverActionButton from "../action/popover/popover-button";
  */
 export default function KeycloakUserButton() {
   const userDisplayName = useUserDisplayName();
-  const userInitial: string = userDisplayName.charAt(0).toUpperCase();
 
   return (
     <PopoverActionButton
-      label={userInitial}
+      icon={"person"}
       isHoverableDisabled={true}
       isTransparent={true}
       styling={{ text: styles.text }}
