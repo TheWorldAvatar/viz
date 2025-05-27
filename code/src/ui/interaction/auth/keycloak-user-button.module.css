@@ -1,53 +1,49 @@
-.keycloakSession {
-    height: 50px;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-    float: right;
-    overflow: hidden;
+.userMenuButton {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 50% !important;
+  margin-right: 0.5rem !important;
+  background-color: #82b29a !important;
 }
 
-.keycloakSession span {
-    font-size: 1.5em;
-    color: var(--logo-colour);
-    margin-right: 20px;
+.userMenuButton span {
+  font-size: 1.5rem !important;
 }
 
- .dropbtn {
-    transition: background-color 0.5s ease, border-radius 0.5s ease, margin-right 2s ease;
+.text {
+  margin-left: 0 !important;
 }
 
-.keycloakSession:hover .dropbtn {
-    background-color: var(--background-secondary);
-    border-radius: 10px 30px;
-    padding: 6.5px 20px;
-    margin-right: 1px
+.text:hover {
+  color: inherit !important;
 }
 
-/* Dropdown Content (Hidden by Default) */
-.dropdownContent {
-    display: none;
-    position: relative;
-    left: 0;
-    z-index: 1;
-    margin-right: 5px;
-    margin: 1px;
+.userButtons {
+  padding: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-secondary);
 }
 
-/* Show the dropdown menu on hover */
-.keycloakSession:hover .dropdownContent {
-    display: block;
+.userButtons:last-child {
+  border-bottom: none;
 }
 
-.dropdownContent a {
-    padding: 10px;
-    transition: color 0.5s ease, background-color 0.5s ease, border-radius 1s ease, transform 0.5s ease;
+.userMenuContainer {
+  padding: 0 !important;
 }
 
-.dropdownContent a:hover {
-    background-color: var(--background-secondary);
-    border-radius: 40px;
+.userMenuContainer a {
+  color: var(--text-color-primary) !important;
+}
+
+.userMenuContainer a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+  transition: none;
+}
+
+.userMenuText {
+  font-size: var(--font-size-tertiary-text);
+  color: var(--text-color-primary);
 }
