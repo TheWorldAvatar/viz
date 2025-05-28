@@ -52,15 +52,15 @@ export function DefaultPageThumbnail(props: Readonly<DefaultPageThumbnailProps>)
       text={props.type === "file" ? dict.nav.tooltip.fileUpload : dict.nav.tooltip.landingRedirect.replace("{replace}",
         props.title)} placement={"left"}
     >
-      <div className={styles.container} onClick={handleClick}>
-        <div className={styles.thumbnail}>
-          <Image src={props.icon} height={50} width={50} alt={imageDescription} />
+      <div className="w-42 2xl:w-72 gap-2 h-fit rounded-md flex cursor-pointer hover:bg-gray-300 mt-4 2xl:p-1" onClick={handleClick}>
+        <div className="w-12 2xl:w-18 flex justify-center items-center">
+          <Image  src={props.icon} height={48} width={48} alt={imageDescription} />
         </div>
-        <div className={styles.content}>
-          <h3 className={styles.title}>
+        <div className="mx-2 w-full flex grow flex-col">
+          <h3 className="mb-1 text-foreground font-medium">
             {props.title}
           </h3>
-          <div className={styles.description} >
+          <div className="text-gray-500" >
             {props.caption}
           </div>
         </div>

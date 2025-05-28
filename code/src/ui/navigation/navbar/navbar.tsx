@@ -59,7 +59,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   return (
     <div
       id="navbar"
-      className="flex justify-between items-center  overflow-hidden min-h-16 h-16  bg-gray-200 shadow-md border-b border-b-gray-400 z-[999]"
+      className="flex justify-between items-center  overflow-hidden min-h-16 h-16 bg-muted border-b border-b-border z-[999] "
     >
       {/* Render navbar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
@@ -70,7 +70,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
               <Link key={logo} href={Routes.HOME}>
                 <IconComponent
                   icon={logo}
-                  classes="h-8 md:h-8 2xl:h-12 w-auto"
+                  classes="h-8 md:h-10 lg:h-12 2xl:h-12 w-auto ml-2 md:ml-8"
                 />
               </Link> 
             ))
@@ -79,7 +79,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
-                classes="h-8 md:h-8 2xl:h-12 ml-4 w-auto"
+                classes="h-8 md:h-10 lg:h-12 2xl:h-12 ml-4 w-auto"
               />
             </Link>
           )}
@@ -114,7 +114,9 @@ export default function Navbar(props: Readonly<NavbarProps>) {
           />
         )}
         {props.settings?.modules?.help && (
-          <NavbarComponent
+          <NavbarComponent  
+
+
             name="HELP"
             tooltip={navbarDict.tooltip.help}
             icon="help"

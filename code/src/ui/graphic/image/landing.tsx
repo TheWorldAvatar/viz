@@ -28,6 +28,6 @@ export default function LandingImage(props: Readonly<LandingImageProps>) {
   }, []);
 
   return (
-    <Image alt="Brand Logo with Text" src={imageUrl} width={200} height={200} />
+    <Image className='w-24 h-24 2xl:w-48 2xl:h-48'  alt="Brand Logo with Text" src={imageUrl} width={200} height={200} />
   );
 }

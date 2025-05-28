@@ -35,6 +35,8 @@
   }
 }
 
+
+
 /**
     Dark theme detected.
 **/
@@ -92,13 +94,20 @@
   --alert-color: 191, 74, 42;
 }
 
-@theme inline {
+@theme  {
+  --color-background: var(--background-primary);
+  --color-foreground: var(--text-color-primary);
+  --color-muted: #FAFAFA;
+  --color-border: #DBDBDB;
+  --color-primary: #82B29A;
+  --color-secondary: #236776;
+  --color-accent: rgba(35,103,118,25%);
 }
 
 * {
-  box-sizing: border-box;
+  /* box-sizing: border-box;
   padding: 0;
-  margin: 0;
+  margin: 0; */
 
   font-family: var(--font-family-primary);
   font-size: var(--font-size-root);
