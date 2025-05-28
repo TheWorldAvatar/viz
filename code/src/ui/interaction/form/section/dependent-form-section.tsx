@@ -15,29 +15,6 @@ import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'ut
 import { getData } from 'utils/server-actions';
 import FormSelector from '../field/input/form-selector';
 import { FORM_STATES } from '../form-utils';
-import { GetServerSidePropsContext } from 'next';
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const bearerToken = context.req.headers['x-bearer-token']; // Access the token from custom header
-
-  if (!bearerToken) {
-    return {
-      redirect: {
-        destination: '/login', // Redirect if no token is available
-        permanent: false,
-      },
-    };
-  }
-
-  // Use the token to fetch data
-  const data = await getData(process.env.VIS_BACKEND_AGENT_URL, "some-entity", undefined, undefined, undefined, bearerToken);
-
-  return {
-    props: {
-      data,
-    },
-  };
-}
 
 interface DependentFormSectionProps {
   agentApi: string;
