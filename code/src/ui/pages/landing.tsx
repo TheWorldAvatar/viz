@@ -132,12 +132,12 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             />
           ))}
 
-        <DefaultPageThumbnail
+        {props.settings.modules.help && <DefaultPageThumbnail
           title={helpLinkProps?.title ?? props.dict.nav.title.help}
           caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
           icon={helpLinkProps?.icon ?? Assets.HELP}
           url={Routes.HELP}
-        />
+        />}
 
         {props.settings.links?.map((externalLink, index) => {
           if (
