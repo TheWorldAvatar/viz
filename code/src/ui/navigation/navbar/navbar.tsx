@@ -1,10 +1,10 @@
 "use client";
 
-import styles from "./navbar.module.css";
 
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 
+import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import { useEffect, useMemo } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
@@ -12,8 +12,6 @@ import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
-import { useDictionary } from "hooks/useDictionary";
-import NavbarComponent from "./navbar-component";
 
 // Type definition for navbar properties
 interface NavbarProps {
@@ -28,7 +26,6 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   const dict = useDictionary();
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const navbarDict = dict.nav;
   const contextDict = dict.context;
   const navbarItem: ContextItemDefinition = useMemo(() => {
     return {
