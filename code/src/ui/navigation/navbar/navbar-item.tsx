@@ -9,29 +9,29 @@ import { Dictionary } from "types/dictionary";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 
-type PageThumbnailType = "default" | "file";
+type NavBarItemType = "default" | "file";
 
-export interface DefaultPageThumbnailProps {
+export interface NavBarItemProps {
   title: string;
   caption: string;
   icon: string;
   url: string;
-  type?: PageThumbnailType;
+  type?: NavBarItemType;
 }
 
 /**
- * A default page thumbnail on the landing page that can redirect to the specified url on click.
+ * A nav bar item with an icon, title, and caption that may either redirect to a URL or upload a file.
  *
- * @param {string} title Thumbnail title.
+ * @param {string} title Title.
  * @param {string} caption Description.
  * @param {string} icon Icon to display.
  * @param {string} url Redirects to this url when clicked.
- * @param {PageThumbnailType} type  Optional parameter that changes the thumbnail's functionality.
+ * @param {NavBarItemType} type  Optional parameter that changes the thumbnail's functionality.
  *                                  Defaults to "default" for redirect functionality.
  *                                  When set to "file", the thumbnail allows users to send a local file to the target url.
  */
-export function DefaultPageThumbnail(
-  props: Readonly<DefaultPageThumbnailProps>,
+export function NavBarItem(
+  props: Readonly<NavBarItemProps>,
 ): React.ReactElement {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
