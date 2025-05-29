@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import markdownIt from "markdown-it";
 
 import StaticContentPage from 'ui/pages/static-content-page';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { NavBarItemProps } from 'ui/navigation/navbar/navbar-item';
 import OptionalPages, { OptionalPage } from 'io/config/optional-pages';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
@@ -23,7 +23,7 @@ const markdowner = markdownIt({
  */
 export async function generateMetadata(): Promise<Metadata> {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.HELP);
+  const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.HELP);
   return {
     title: metadata?.title ?? PageTitles.HELP,
   }

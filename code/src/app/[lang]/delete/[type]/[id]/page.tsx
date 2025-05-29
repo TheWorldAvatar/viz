@@ -4,7 +4,7 @@ import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { UISettings } from 'types/settings';
 import FormContainerComponent from 'ui/interaction/form/form-container';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { NavBarItemProps } from 'ui/navigation/navbar/navbar-item';
 
 interface DeleteFormPageProps {
   params: Promise<{
@@ -20,7 +20,7 @@ interface DeleteFormPageProps {
  */
 export async function generateMetadata(): Promise<Metadata> {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
+  const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
   return {
     title: metadata?.title ?? PageTitles.REGISTRY,
   }
