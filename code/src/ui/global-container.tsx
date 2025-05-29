@@ -9,7 +9,7 @@ import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
 import { UISettings } from 'types/settings';
 import Trex from 'utils/trex';
 import ContextMenu from './interaction/context-menu/context-menu';
-import Navbar from './navigation/navbar/navbar';
+import HeaderBar from './interaction/header/headerbar';
 import Footer from './text/footer';
 
 // Incoming properties for global container
@@ -63,7 +63,7 @@ export default function GlobalContainer(
         showContextMenu={contextMenuVisible} />
     )}
 
-    <Navbar
+    <HeaderBar
       settings={props.settings} />
 
     <div id="contentContainer">{props.children}</div>
@@ -75,7 +75,7 @@ export default function GlobalContainer(
 
   return (
     <Provider store={reduxStore}>
-        {GlobalContainer}
+      {GlobalContainer}
     </Provider>
   )
 }
