@@ -31,18 +31,18 @@ export interface DefaultPageThumbnailProps {
  *                                  When set to "file", the thumbnail allows users to send a local file to the target url.
  */
 export function DefaultPageThumbnail(
-  props: Readonly<DefaultPageThumbnailProps>
+  props: Readonly<DefaultPageThumbnailProps>,
 ): React.ReactElement {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
   const [isFileModalOpen, setIsFileModalOpen] = React.useState<boolean>(false);
   const imageDescription = dict.accessibility.thumbnailImage.replace(
     "{replace}",
-    props.title
+    props.title,
   );
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (
-    event: React.MouseEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement>,
   ): void => {
     event.preventDefault();
     if (props.type === "file") {
@@ -62,10 +62,10 @@ export function DefaultPageThumbnail(
       placement={"left"}
     >
       <div
-        className="w-72  gap-2 h-fit rounded-md flex items-center cursor-pointer hover:bg-gray-300 transition-colors duration-200 mt-4 p-1.5"
+        className="mt-4 flex h-fit w-72 cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300"
         onClick={handleClick}
       >
-        <div className="w-18 flex justify-center items-center">
+        <div className="flex w-18 items-center justify-center">
           <Image
             src={props.icon}
             height={48}
@@ -73,9 +73,9 @@ export function DefaultPageThumbnail(
             alt={imageDescription}
           />
         </div>
-        <div className="flex flex-col flex-1">
-          <h3 className="text-foreground font-bold text-lg">{props.title}</h3>
-          <div className="text-gray-500 text-sm">{props.caption}</div>
+        <div className="flex flex-1 flex-col">
+          <h3 className="text-foreground text-lg font-bold">{props.title}</h3>
+          <div className="text-sm text-gray-500">{props.caption}</div>
         </div>
       </div>
       {props.type === "file" && isFileModalOpen && (

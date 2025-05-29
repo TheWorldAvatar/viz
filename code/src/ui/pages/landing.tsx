@@ -54,10 +54,10 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const dashboardLinkProps: DefaultPageThumbnailProps =
     props.settings.links?.find((link) => link.url === Modules.DASHBOARD);
   const helpLinkProps: DefaultPageThumbnailProps = props.settings.links?.find(
-    (link) => link.url === Modules.HELP
+    (link) => link.url === Modules.HELP,
   );
   const mapLinkProps: DefaultPageThumbnailProps = props.settings.links?.find(
-    (link) => link.url === Modules.MAP
+    (link) => link.url === Modules.MAP,
   );
   const registryLinkProps: DefaultPageThumbnailProps =
     props.settings.links?.find((link) => link.url === Modules.REGISTRY);
@@ -75,9 +75,9 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   }, [permissionScheme]);
 
   return (
-    <div className="w-full h-screen flex pb-2  ">
+    <div className="flex h-screen w-full pb-2">
       {/* This is the navigation on the left */}
-      <div className="hidden w-3xs lg:w-xs 2xl:w-xs  bg-muted border-r xl:flex border-r-border flex-col justify-start items-center gap-6 overflow-x-scroll overflow-y-auto pb-20">
+      <div className="bg-muted border-r-border hidden w-3xs flex-col items-center justify-start gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs">
         {props.pages
           .filter((page) => page.slug !== "landing" && page.slug !== "help")
           .map((page) => (
@@ -126,7 +126,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               title={parseWordsForLabels(path)}
               caption={props.dict.nav.caption.generalReg.replace(
                 "{replace}",
-                parseWordsForLabels(path).toLowerCase()
+                parseWordsForLabels(path).toLowerCase(),
               )}
               icon={Assets.REGISTRY}
               url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
@@ -168,8 +168,8 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
         })}
       </div>
       {/* This is the where the tumnnail and Project outline is */}
-      <div className="h-4/5 mt-4 xl:mt-0 flex justify-center items-center lg:h-10/12 xl:h-10/12 2xl:h-11/12 mx-auto  sm:w-sm md:w-11/12 lg:w-11/12 xl:w-9/12 p-2 lg:p-4">
-        <div className="flex flex-col h-full bg-muted p-5 border-1 border-border rounded-xl shadow-2xl">
+      <div className="mx-auto mt-4 flex h-4/5 items-center justify-center p-2 sm:w-sm md:w-11/12 lg:h-10/12 lg:w-11/12 lg:p-4 xl:mt-0 xl:h-10/12 xl:w-9/12 2xl:h-11/12">
+        <div className="bg-muted border-border flex h-full flex-col rounded-xl border-1 p-5 shadow-2xl">
           <div
             className={introClasses}
             dangerouslySetInnerHTML={{
@@ -188,7 +188,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
  */
 function getIntroductionContent(pages: OptionalPage[]): string {
   const filteredPages: OptionalPage[] = pages.filter(
-    (page) => page.slug === "landing"
+    (page) => page.slug === "landing",
   );
   if (filteredPages.length === 0) {
     return "";

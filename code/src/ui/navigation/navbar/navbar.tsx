@@ -59,12 +59,12 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   return (
     <div
       id="navbar"
-      className="flex justify-between items-center  overflow-hidden min-h-16 h-16 bg-muted border-b border-b-border z-[999] "
+      className="bg-muted border-b-border z-[999] flex h-16 min-h-16 items-center justify-between overflow-hidden border-b"
     >
       {/* Render navbar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
         // Handle the case where navbar is a list
-        <div className="flex justify-center items-center h-14 gap-2">
+        <div className="flex h-14 items-center justify-center gap-2">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
               <Link key={logo} href={Routes.HOME}>
@@ -87,7 +87,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
       )}
 
       {/* Render each component as required */}
-      <div className="flex justify-center items-center">
+      <div className="flex items-center justify-center">
         {keycloakEnabled && <KeycloakUserButton />}
       </div>
     </div>
