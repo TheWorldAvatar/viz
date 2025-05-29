@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface LandingImageProps {
   lightUrl: string;
@@ -10,15 +10,17 @@ interface LandingImageProps {
 
 /**
  * An image component that sets the landing page logo based on the current theme.
- * 
+ *
  * @prop {string} lightUrl The url for the light mode image.
  * @prop {string} darkUrl An optional url for the dark mode image. Defaults to light url if undefined
-*/
+ */
 export default function LandingImage(props: Readonly<LandingImageProps>) {
   const [imageUrl, setImageUrl] = useState<string>(props.lightUrl);
 
   useEffect(() => {
-    const prefersDarkMode: boolean = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDarkMode: boolean =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     // Only set dark mode image if the user has configured this
     if (typeof window !== "undefined" && prefersDarkMode && props.darkUrl) {
       setImageUrl(props.darkUrl);
@@ -28,6 +30,12 @@ export default function LandingImage(props: Readonly<LandingImageProps>) {
   }, []);
 
   return (
-    <Image className='w-24 h-24 2xl:w-48 2xl:h-48'  alt="Brand Logo with Text" src={imageUrl} width={200} height={200} />
+    <Image
+      className="mt-8"
+      alt="Brand Logo with Text"
+      src={imageUrl}
+      width={150}
+      height={150}
+    />
   );
 }

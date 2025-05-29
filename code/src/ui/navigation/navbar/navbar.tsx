@@ -70,16 +70,16 @@ export default function Navbar(props: Readonly<NavbarProps>) {
               <Link key={logo} href={Routes.HOME}>
                 <IconComponent
                   icon={logo}
-                  classes="h-8 md:h-10 lg:h-12 2xl:h-12 w-auto ml-2 md:ml-8"
+                  classes="h-8 md:h-10 lg:h-10 2xl:h-12 w-auto ml-2 md:ml-8"
                 />
-              </Link> 
+              </Link>
             ))
           ) : (
             // Handle the case where navbar is a string
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
-                classes="h-8 md:h-10 lg:h-12 2xl:h-12 ml-4 w-auto"
+                classes="h-8 md:h-10 lg:h-10 2xl:h-12 ml-4 w-auto"
               />
             </Link>
           )}

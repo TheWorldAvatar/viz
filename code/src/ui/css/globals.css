@@ -35,8 +35,6 @@
   }
 }
 
-
-
 /**
     Dark theme detected.
 **/
@@ -94,14 +92,14 @@
   --alert-color: 191, 74, 42;
 }
 
-@theme  {
+@theme {
   --color-background: var(--background-primary);
   --color-foreground: var(--text-color-primary);
-  --color-muted: #FAFAFA;
-  --color-border: #DBDBDB;
-  --color-primary: #82B29A;
+  --color-muted: #fafafa;
+  --color-border: #dbdbdb;
+  --color-primary: #82b29a;
   --color-secondary: #236776;
-  --color-accent: rgba(35,103,118,25%);
+  --color-accent: rgba(35, 103, 118, 25%);
 }
 
 * {
@@ -110,7 +108,7 @@
   margin: 0; */
 
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-root);
+  /* font-size: var(--font-size-root); */
 }
 
 html,

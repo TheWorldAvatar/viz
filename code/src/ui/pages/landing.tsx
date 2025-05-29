@@ -75,9 +75,9 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   }, [permissionScheme]);
 
   return (
-    <div className="w-full h-screen flex">
+    <div className="w-full h-screen flex pb-2  ">
       {/* This is the navigation on the left */}
-      <div className="hidden w-[12rem] 2xl:w-xs bg-muted border-r xl:flex border-r-border flex-col justify-start items-center gap-6 overflow-x-x scroll overflow-y-auto shadow-lg">
+      <div className="hidden w-3xs lg:w-xs 2xl:w-xs  bg-muted border-r xl:flex border-r-border flex-col justify-start items-center gap-6 overflow-x-scroll overflow-y-auto pb-20">
         {props.pages
           .filter((page) => page.slug !== "landing" && page.slug !== "help")
           .map((page) => (
@@ -140,7 +140,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           url={Routes.HELP}
         />
 
-        {/* {props.settings.links?.map((externalLink, index) => {
+        {props.settings.links?.map((externalLink, index) => {
           if (
             ![
               Modules.MAP,
@@ -165,16 +165,17 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               />
             );
           }
-        })} */}
-           {props.settings.branding.landing && (
+        })}
+
+        {/* {props.settings.branding.landing && (
           <LandingImage
             lightUrl={props.settings.branding?.landing}
             darkUrl={props.settings.branding?.landingDark}
           />
-        )}
+        )} */}
       </div>
       {/* This is the where the tumnnail and Project outline is */}
-      <div  className="h-4/5 mb-20 2xl:mb-0 lg:h-10/12 2xl:h-11/12 mx-auto self-center w-xs sm:w-sm md:w-11/12 lg:w-11/12 xl:w-9/12">
+      <div className="h-4/5 mt-4 xl:mt-0 flex justify-center items-center lg:h-10/12 xl:h-10/12 2xl:h-11/12 mx-auto  sm:w-sm md:w-11/12 lg:w-11/12 xl:w-9/12 p-2 lg:p-4">
         <div className="flex flex-col h-full bg-muted p-5 border-1 border-border rounded-xl shadow-2xl">
           <div
             className={introClasses}

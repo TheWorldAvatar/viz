@@ -1,4 +1,3 @@
-import styles from "./footer.module.css";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -17,7 +16,7 @@ export default function Footer() {
         src={Assets.TWA}
         width={30}
         height={30}
-        style={{ paddingRight: 5 }}
+        className="pr-1"
       />
       <span>
         Powered by&nbsp;
