@@ -16,7 +16,6 @@ import { Modules, Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { UISettings } from "types/settings";
-import LandingImage from "ui/graphic/image/landing";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import {
   DefaultPageThumbnail,
