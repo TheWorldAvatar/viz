@@ -88,49 +88,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
 
       {/* Render each component as required */}
       <div className="flex justify-center items-center">
-        {true && <KeycloakUserButton />}
-        {/* {props.settings?.modules?.landing && (
-          <NavbarComponent
-            name="LANDING"
-            tooltip={navbarDict.tooltip.home}
-            icon="home"
-            url={Routes.HOME}
-          />
-        )}
-        {props.settings?.modules?.map && (
-          <NavbarComponent
-            name="MAP"
-            tooltip={navbarDict.tooltip.map}
-            icon="public"
-            url={Routes.MAP}
-          />
-        )}
-        {props.settings?.modules?.dashboard && (
-          <NavbarComponent
-            name="DASH"
-            tooltip={navbarDict.tooltip.dashboard}
-            icon="monitoring"
-            url={Routes.DASHBOARD}
-          />
-        )}
-        {props.settings?.modules?.help && (
-          <NavbarComponent  
-
-
-            name="HELP"
-            tooltip={navbarDict.tooltip.help}
-            icon="help"
-            url={Routes.HELP}
-          />
-        )}
-        {props.settings?.modules?.registry && (
-          <NavbarComponent
-            name="REGISTRY"
-            tooltip={navbarDict.tooltip.registry}
-            icon="contract"
-            url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`}
-          />
-        )} */}
+        {keycloakEnabled && <KeycloakUserButton />}
       </div>
     </div>
   );

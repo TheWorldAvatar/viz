@@ -166,13 +166,6 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             );
           }
         })}
-
-        {/* {props.settings.branding.landing && (
-          <LandingImage
-            lightUrl={props.settings.branding?.landing}
-            darkUrl={props.settings.branding?.landingDark}
-          />
-        )} */}
       </div>
       {/* This is the where the tumnnail and Project outline is */}
       <div className="h-4/5 mt-4 xl:mt-0 flex justify-center items-center lg:h-10/12 xl:h-10/12 2xl:h-11/12 mx-auto  sm:w-sm md:w-11/12 lg:w-11/12 xl:w-9/12 p-2 lg:p-4">
