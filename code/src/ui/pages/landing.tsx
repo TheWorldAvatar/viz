@@ -18,9 +18,9 @@ import { Dictionary } from "types/dictionary";
 import { UISettings } from "types/settings";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import {
-  DefaultPageThumbnail,
-  DefaultPageThumbnailProps,
-} from "./page-thumbnail";
+  NavBarItem,
+  NavBarItemProps
+} from "../navigation/navbar/navbar-item";
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -50,15 +50,15 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const introClasses = ["markdown-body", styles.introInner].join(" ");
   const permissionScheme: PermissionScheme = usePermissionScheme();
   // Retrieve links
-  const dashboardLinkProps: DefaultPageThumbnailProps =
+  const dashboardLinkProps: NavBarItemProps =
     props.settings.links?.find((link) => link.url === Modules.DASHBOARD);
-  const helpLinkProps: DefaultPageThumbnailProps = props.settings.links?.find(
+  const helpLinkProps: NavBarItemProps = props.settings.links?.find(
     (link) => link.url === Modules.HELP,
   );
-  const mapLinkProps: DefaultPageThumbnailProps = props.settings.links?.find(
+  const mapLinkProps: NavBarItemProps = props.settings.links?.find(
     (link) => link.url === Modules.MAP,
   );
-  const registryLinkProps: DefaultPageThumbnailProps =
+  const registryLinkProps: NavBarItemProps =
     props.settings.links?.find((link) => link.url === Modules.REGISTRY);
   const registryUrl: string = useMemo(() => {
     // Defaults to pending registry with no route or scheme is disabled
@@ -74,13 +74,13 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   }, [permissionScheme]);
 
   return (
-    <div className="flex h-screen w-full pb-2">
+    <div className="flex h-screen w-full pb-10">
       {/* This is the navigation on the left */}
       <div className="bg-muted border-r-border hidden w-3xs flex-col items-center justify-start gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs">
         {props.pages
           .filter((page) => page.slug !== "landing" && page.slug !== "help")
           .map((page) => (
-            <DefaultPageThumbnail
+            <NavBarItem
               key={page.title}
               title={page.title}
               caption={page.description}
@@ -90,7 +90,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           ))}
 
         {props.settings.modules.map && (
-          <DefaultPageThumbnail
+          <NavBarItem
             title={mapLinkProps?.title ?? props.dict.nav.title.map}
             caption={mapLinkProps?.caption ?? props.dict.nav.caption.map}
             icon={mapLinkProps?.icon ?? Assets.MAP}
@@ -98,7 +98,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           />
         )}
         {props.settings.modules.dashboard && (
-          <DefaultPageThumbnail
+          <NavBarItem
             title={dashboardLinkProps?.title ?? props.dict.nav.title.dashboard}
             caption={
               dashboardLinkProps?.caption ?? props.dict.nav.caption.dashboard
@@ -109,7 +109,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
         )}
         {props.settings.modules.registry &&
           props.settings.resources?.registry?.data && (
-            <DefaultPageThumbnail
+            <NavBarItem
               title={registryLinkProps?.title ?? props.dict.nav.title.registry}
               caption={
                 registryLinkProps?.caption ?? props.dict.nav.caption.registry
@@ -120,7 +120,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
           )}
         {props.settings.modules.registry &&
           props.settings.resources?.registry?.paths?.map((path, index) => (
-            <DefaultPageThumbnail
+            <NavBarItem
               key={path + index}
               title={parseWordsForLabels(path)}
               caption={props.dict.nav.caption.generalReg.replace(
@@ -132,14 +132,12 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             />
           ))}
 
-        {props.settings.modules.help && (
-          <DefaultPageThumbnail
-            title={helpLinkProps?.title ?? props.dict.nav.title.help}
-            caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
-            icon={helpLinkProps?.icon ?? Assets.HELP}
-            url={Routes.HELP}
-          />
-        )}
+        {props.settings.modules.help && <NavBarItem
+          title={helpLinkProps?.title ?? props.dict.nav.title.help}
+          caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
+          icon={helpLinkProps?.icon ?? Assets.HELP}
+          url={Routes.HELP}
+        />}
 
         {props.settings.links?.map((externalLink, index) => {
           if (
@@ -156,7 +154,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               permissionScheme?.hasPermissions[externalLink.permission])
           ) {
             return (
-              <DefaultPageThumbnail
+              <NavBarItem
                 key={externalLink.title + index}
                 title={externalLink.title}
                 caption={externalLink.caption}

@@ -17,16 +17,19 @@ export default function KeycloakUserButton() {
       icon={"person"}
       isHoverableDisabled={true}
       isTransparent={true}
-      styling={{ text: styles.text }}
+      styling={{
+        text: styles.text,
+        container: styles.userMenuContainer,
+      }}
       placement="bottom-end"
       className={styles.userMenuButton}
     >
       <div className={styles.userMenuContainer}>
         <div className={styles.userButtons}>
-          <span>{userDisplayName}</span>
+          <span className={styles.userMenuText}>{userDisplayName}</span>
         </div>
         <div className={styles.userButtons}>
-          <Link prefetch={false} href="/logout">
+          <Link className={styles.userMenuText} prefetch={false} href="/logout">
             Log Out
           </Link>
         </div>

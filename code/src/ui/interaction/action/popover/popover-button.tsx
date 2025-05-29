@@ -24,6 +24,7 @@ interface PopoverActionButtonProps extends ActionButtonProps {
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.hover An optional styling object for hover effects on text and icon.
  * @param {string} styling.text An optional styling object for text and icon.
+ * @param {string} styling.container An optional styling object for the pop up container.
  */
 export default function PopoverActionButton({
   children,
@@ -77,7 +78,7 @@ export default function PopoverActionButton({
             style={{
               ...transition.styles,
             }}
-            className={styles.popover}
+            className={`${styles.popover} ${styling?.container}`}
           >
             {children}
           </div>

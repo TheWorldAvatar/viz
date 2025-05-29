@@ -22,6 +22,7 @@ export interface ActionStyles {
   active?: string;
   hover?: string;
   text?: string;
+  container?: string;
 }
 
 /**

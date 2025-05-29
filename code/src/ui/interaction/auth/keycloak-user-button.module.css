@@ -13,6 +13,7 @@
 .text {
   margin-left: 0 !important;
 }
+
 .text:hover {
   color: inherit !important;
 }
@@ -21,22 +22,18 @@
   padding: 0.5rem;
   text-align: center;
   border-bottom: 1px solid var(--border-secondary);
-  margin-left: -0.5rem;
-  margin-right: -0.5rem;
-  font-size: 4px !important;
 }
 
 .userButtons:last-child {
   border-bottom: none;
 }
 
-.userMenuContainer a {
-  color: var(--text-color-primary) !important;
-  font-size: 3.5em !important;
+.userMenuContainer {
+  padding: 0 !important;
 }
 
-.userMenuContainer span {
-  font-size: 3.5em !important;
+.userMenuContainer a {
+  color: var(--text-color-primary) !important;
 }
 
 .userMenuContainer a:hover {
@@ -44,4 +41,9 @@
   text-decoration-thickness: 1.5px;
   text-underline-offset: 5px;
   transition: none;
+}
+
+.userMenuText {
+  font-size: var(--font-size-tertiary-text);
+  color: var(--text-color-primary);
 }

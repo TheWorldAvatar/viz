@@ -1,7 +1,7 @@
-import { DefaultPageThumbnailProps } from "ui/pages/page-thumbnail";
+import { NavBarItemProps } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 
-interface PageThumbnailPropsWithPermissions extends DefaultPageThumbnailProps {
+interface PageThumbnailPropsWithPermissions extends NavBarItemProps {
   permission?: keyof HasPermissions;
 }
 

@@ -13,21 +13,19 @@ import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 
-// Type definition for navbar properties
-interface NavbarProps {
+interface HeaderBarProps {
   settings: UISettings;
 }
 
 /**
- * Represents the top level navigation bar, that loads a number of
- * custom navbar components.
+ * Represents the top level header bar displaying the various logos and account icon.
  */
-export default function Navbar(props: Readonly<NavbarProps>) {
+export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const contextDict = dict.context;
-  const navbarItem: ContextItemDefinition = useMemo(() => {
+  const headerItem: ContextItemDefinition = useMemo(() => {
     return {
       name: contextDict.navBar.title,
       description: contextDict.navBar.tooltip,
@@ -39,28 +37,28 @@ export default function Navbar(props: Readonly<NavbarProps>) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(addItem(navbarItem));
+    dispatch(addItem(headerItem));
   }, []);
 
-  // Visibility state of navigation bar
-  const navbarState = useSelector(selectItem(navbarItem.id));
+  // Visibility state of header bar
+  const headerBarState = useSelector(selectItem(headerItem.id));
 
   // Do not show if state exists and is disabled
-  if (navbarState?.toggled != null && !navbarState.toggled) {
+  if (headerBarState?.toggled != null && !headerBarState.toggled) {
     return null;
   }
-  // Backwards compatibility for navbar logo
+  // Backwards compatibility for header bar logo
   if (props.settings.branding.navbarLogo) {
     props.settings.branding.navbar = props.settings?.branding?.navbarLogo;
   }
   return (
     <div
-      id="navbar"
+      id="headerbar"
       className="bg-muted border-b-border z-[999] flex h-16 min-h-16 items-center justify-between overflow-hidden border-b"
     >
-      {/* Render navbar logo if set */}
+      {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
-        // Handle the case where navbar is a list
+        // Handle the case where header bar is a list
         <div className="flex h-14 items-center justify-center gap-2">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
@@ -72,7 +70,7 @@ export default function Navbar(props: Readonly<NavbarProps>) {
               </Link>
             ))
           ) : (
-            // Handle the case where navbar is a string
+            // Handle the case where header bar is a string
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
