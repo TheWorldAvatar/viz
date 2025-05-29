@@ -1,7 +1,7 @@
 services:
   # Empty visualisation image for deployment.
   base:
-    image: ghcr.io/theworldavatar/viz:5.27.2
+    image: ghcr.io/theworldavatar/viz:5.27.3
     container_name: "viz"
     restart: "no"
     environment:
