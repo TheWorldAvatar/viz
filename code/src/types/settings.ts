@@ -1,7 +1,7 @@
-import { DefaultPageThumbnailProps } from "ui/pages/page-thumbnail";
+import { NavBarItemProps } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 
-interface PageThumbnailPropsWithPermissions extends DefaultPageThumbnailProps {
+interface PageThumbnailPropsWithPermissions extends NavBarItemProps {
   permission?: keyof HasPermissions;
 }
 
@@ -12,8 +12,6 @@ export type UISettings = {
   branding: {
     'navbarLogo': string | string[]; // Backwards compatibility but do not use this going forward
     'navbar': string | string[];
-    'landing': string;
-    'landingDark': string;
   },
   modules: {
     'landing': boolean;

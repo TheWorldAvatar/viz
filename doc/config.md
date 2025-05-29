@@ -39,8 +39,6 @@ The `config/ui-settings.json` file provides general settings for the platform. T
 
 - `branding`: key value pairs for various branding icons such as navigation bar and logo. It requires a string `ARRAY`.
   - `navbar`: An array of logos to be placed on the left side of the navbar
-  - `landing`: One logo element (within an array) for the landing page on light mode
-  - `landingDark`: One logo element (within an array) for the landing page on dark mode
 - `modules`: key value pairs indicating if certain modules should be available
   - `landing`: REQUIRED. Displays landing page if enabled
   - `map`: REQUIRED. Displays map visualisation if enabled

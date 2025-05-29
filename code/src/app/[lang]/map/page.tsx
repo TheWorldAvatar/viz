@@ -6,7 +6,7 @@ import { Paths, PageTitles, Modules } from 'io/config/routes';
 import { ScenarioDefinition, ScenarioDescription } from 'types/scenario';
 import { UISettings } from 'types/settings';
 import { getScenarios } from 'utils/getScenarios';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { NavBarItemProps } from 'ui/navigation/navbar/navbar-item';
 import MapContainer from 'ui/map/map-container';
 
 export const dynamic = 'force-dynamic';
@@ -23,7 +23,7 @@ const mapModule : UISettings['modules']['map']= uiSettings.modules.map;
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.MAP);
+  const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.MAP);
   return {
     title: metadata?.title ?? PageTitles.MAP,
   }
