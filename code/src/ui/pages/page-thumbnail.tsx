@@ -75,7 +75,7 @@ export function DefaultPageThumbnail(
         </div>
         <div className="flex flex-1 flex-col">
           <h3 className="text-foreground text-lg font-bold">{props.title}</h3>
-          <div className="text-sm text-gray-500">{props.caption}</div>
+          <p className="text-sm text-gray-500">{props.caption}</p>
         </div>
       </div>
       {props.type === "file" && isFileModalOpen && (
