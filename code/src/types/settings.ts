@@ -12,8 +12,6 @@ export type UISettings = {
   branding: {
     'navbarLogo': string | string[]; // Backwards compatibility but do not use this going forward
     'navbar': string | string[];
-    'landing': string;
-    'landingDark': string;
   },
   modules: {
     'landing': boolean;

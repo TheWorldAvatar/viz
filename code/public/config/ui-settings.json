@@ -1,8 +1,6 @@
 {
     "branding": {
-        "navbar": ["/images/defaults/icons/twa.svg"],
-        "landing": "/images/defaults/icons/cmcl-logo.svg",
-        "landingDark": "/images/defaults/icons/cmcl-logo.svg"
+        "navbar": ["/images/defaults/icons/twa.svg"]
     },
     "modules": {
         "landing": true,
