@@ -60,15 +60,21 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await getData(props.agentApi, field.dependentOn.label, getAfterDelimiter(currentParentOption, "/"), entityType);
+          entities = await fetch(`/api/registry/data?AgentApi=${encodeURIComponent(props.agentApi)}&entityType=${field.dependentOn.label}&identifier=${getAfterDelimiter(currentParentOption, "/")}&subEntityType=${entityType}`)
+            .then(res => res.json());
         }
         // If there is no valid parent option, there should be no entity
       } else if ((formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) && field.defaultValue) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
-        entities = await getData(props.agentApi, entityType, getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/"));
+        const url = new URL('/api/registry/data', window.location.origin)
+        url.searchParams.set('agentApi', props.agentApi)
+        url.searchParams.set('entityType', entityType)
+        url.searchParams.set('identifier', getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/"))
+        entities = await fetch(url).then((response) => response.json())
+
       } else {
-        entities = await getData(props.agentApi, entityType);
+        entities = await fetch(`/api/registry/data?AgentApi=${props.agentApi}&entityType=&{entityType}`).then((res) => res.json())
       }
 
       // By default, id is empty

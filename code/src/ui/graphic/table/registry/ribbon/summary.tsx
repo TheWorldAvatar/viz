@@ -34,7 +34,14 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const contractRes: RegistryFieldValues[] = await getData(props.registryAgentApi, props.entityType, props.id, null, true);
+        const url = new URL('/api/registry/data', window.location.origin)
+        url.searchParams.set('agentApi', props.registryAgentApi);
+        url.searchParams.set('entityType', props.entityType);
+        url.searchParams.set('identifier', props.id);
+        url.searchParams.set('requireLabel', 'true');
+
+        const contractRes: RegistryFieldValues[] = await fetch(url).then((response) => response.json())
+
         setContract(contractRes[0]);
         setIsLoading(false);
       } catch (error) {
