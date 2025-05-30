@@ -50,7 +50,14 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
         // Extract all the concept types and extract all the types from the endpoint
         const conceptTypes: string[] = props.field.in.map(subClass => subClass[ID_KEY])
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
-          conceptTypes.map(conceptType => getAvailableTypes(props.agentApi, encodeURIComponent(conceptType)))
+          conceptTypes.map(conceptType => fetch(`/api/registry/available-types?agentApi=${props.agentApi}&uri=${encodeURIComponent(conceptType)}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`Failed to fetch available types for ${conceptType}`);
+              }
+              return response.json();
+            })
+          )
         );
         const concepts: OntologyConcept[] = conceptsArrays.flat();
         if (concepts && concepts.length > 0) {
