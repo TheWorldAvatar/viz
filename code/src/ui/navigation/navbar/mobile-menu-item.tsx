@@ -9,14 +9,13 @@ import { Dictionary } from "types/dictionary";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 
-type NavBarItemType = "default" | "file";
+type MobileMenuItemType = "default" | "file";
 
-export interface NavBarItemProps {
+export interface MobileMenuItemProps {
   title: string;
-  caption: string;
   icon: string;
   url: string;
-  type?: NavBarItemType;
+  type?: MobileMenuItemType;
 }
 
 /**
@@ -26,12 +25,12 @@ export interface NavBarItemProps {
  * @param {string} caption Description.
  * @param {string} icon Icon to display.
  * @param {string} url Redirects to this url when clicked.
- * @param {NavBarItemType} type  Optional parameter that changes the thumbnail's functionality.
+ * @param {MobileMenuItemType} type  Optional parameter that changes the thumbnail's functionality.
  *                                  Defaults to "default" for redirect functionality.
  *                                  When set to "file", the thumbnail allows users to send a local file to the target url.
  */
-export function NavBarItem(
-  props: Readonly<NavBarItemProps>
+export function MobileMenuItem(
+  props: Readonly<MobileMenuItemProps>
 ): React.ReactElement {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
@@ -59,23 +58,22 @@ export function NavBarItem(
           ? dict.nav.tooltip.fileUpload
           : dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)
       }
-      placement={"left"}
+      placement={"bottom"}
     >
       <div
-        className="mt-4 flex h-fit w-72 cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300"
+        className="flex h-fit cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300"
         onClick={handleClick}
       >
-        <div className="flex w-18 items-center justify-center">
+        <div className="flex items-center justify-center">
           <Image
             src={props.icon}
-            height={48}
-            width={48}
+            height={32}
+            width={32}
             alt={imageDescription}
           />
         </div>
         <div className="flex flex-1 flex-col">
-          <h3 className="text-foreground text-lg font-bold">{props.title}</h3>
-          <p className="text-sm text-gray-500">{props.caption}</p>
+          <h3 className="text-foreground text-md font-bold">{props.title}</h3>
         </div>
       </div>
       {props.type === "file" && isFileModalOpen && (

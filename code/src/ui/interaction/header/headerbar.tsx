@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "./navbar.module.css";
 
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +12,12 @@ import { addItem, selectItem } from "state/context-menu-slice";
 import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
+import PopoverActionButton from "../action/popover/popover-button";
+import { MobileMenuItem } from "ui/navigation/navbar/mobile-menu-item";
+import { Assets } from "io/config/assets";
 
 interface HeaderBarProps {
   settings: UISettings;
@@ -22,6 +28,9 @@ interface HeaderBarProps {
  */
 export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
+  const navbarDict = dict.nav;
+
+  const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const contextDict = dict.context;
@@ -83,7 +92,80 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
-        {keycloakEnabled && <KeycloakUserButton />}
+        <div className="flex ">
+          <PopoverActionButton
+            icon={"menu"}
+            styling={{ text: styles.text }}
+            isHoverableDisabled={true}
+            isTransparent={true}
+            placement="bottom-end"
+            className={styles.hamburgerMenuButton}
+          >
+            <div className="flex flex-col justify-start gap-4 p-2">
+              {props.settings?.modules?.landing && (
+                <MobileMenuItem
+                  title="Home"
+                  icon={Assets.INFO}
+                  url={Routes.HOME}
+                />
+              )}
+              {props.settings?.modules?.map && (
+                <MobileMenuItem
+                  title="Map"
+                  icon={Assets.MAP}
+                  url={Routes.MAP}
+                />
+              )}
+              {props.settings?.modules?.dashboard && (
+                <MobileMenuItem
+                  title="Dashboard"
+                  icon={Assets.DASHBOARD}
+                  url={Routes.DASHBOARD}
+                />
+              )}
+              {props.settings?.modules?.help && (
+                <MobileMenuItem
+                  title="Help Centre"
+                  icon={Assets.HELP}
+                  url={Routes.HELP}
+                />
+              )}
+              {props.settings?.modules?.registry && (
+                <MobileMenuItem
+                  title="Registry"
+                  icon={Assets.REGISTRY}
+                  url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`}
+                />
+              )}
+              {props.settings.links?.map((externalLink, index) => {
+                if (
+                  ![
+                    Routes.MAP,
+                    Routes.DASHBOARD,
+                    Routes.HELP,
+                    Routes.REGISTRY,
+                  ].includes(externalLink.url) &&
+                  // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
+                  // IF there is a permission set with authentication enabled, check if the user has the specified permission
+                  (!keycloakEnabled ||
+                    !externalLink?.permission ||
+                    permissionScheme?.hasPermissions[externalLink.permission])
+                ) {
+                  return (
+                    <MobileMenuItem
+                      key={externalLink.title + index}
+                      title={externalLink.title}
+                      icon={externalLink.icon}
+                      url={externalLink.url}
+                    />
+                  );
+                }
+              })}
+            </div>
+          </PopoverActionButton>
+        </div>
+
+        {true && <KeycloakUserButton />}
       </div>
     </div>
   );
