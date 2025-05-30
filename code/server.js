@@ -43,20 +43,20 @@ console.info('keycloak authorisation required: ', keycloakEnabled ? colourYellow
 const dev = process.env.NODE_ENV !== "production";
 
 // Initialise the Next.js application
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
 let store;
 
 // Prepare the Next.js application and then start the Express server
-app.prepare().then(() => {
-    const server = express();
+nextApp.prepare().then(() => {
+    const expressServer = express();
 
     if (keycloakEnabled) { // do keycloak auth stuff if env var is set
         if (process.env.PROTECTED_PAGES) console.info('the following pages require keycloak authentication', colourYellow, process.env.PROTECTED_PAGES, colourReset);
         if (process.env.ROLE && process.env.ROLE_PROTECTED_PAGES) console.info('the following pages require the', process.env.ROLE ? colourYellow : colourRed, process.env.ROLE, colourReset, 'role: ', process.env.ROLE_PROTECTED_PAGES ? colourYellow : colourRed, process.env.ROLE_PROTECTED_PAGES, colourReset)
         else console.info('No pages protected with role');
 
-        server.set('trust proxy', true); // the client’s IP address is understood as the left-most entry in the X-Forwarded-For header.
+        expressServer.set('trust proxy', true); // the client’s IP address is understood as the left-most entry in the X-Forwarded-For header.
 
         if (!dev) {
             let redisClient;
@@ -83,7 +83,7 @@ app.prepare().then(() => {
             console.info(`development mode is:`, dev ? colourYellow : colourRed, dev, colourReset, `-> using in-memory session store (express-session MemoryStore())`);
         }
 
-        server.use(
+        expressServer.use(
             session({
                 secret: 'login',
                 resave: false,
@@ -93,9 +93,9 @@ app.prepare().then(() => {
         );
 
         const keycloak = new Keycloak({ store: store });
-        server.use(keycloak.middleware());
+        expressServer.use(keycloak.middleware());
 
-        server.get('/api/userinfo', keycloak.protect(), (req, res) => {
+        expressServer.get('/api/userinfo', keycloak.protect(), (req, res) => {
             // preferred_username; given_name; family_name; name; realm_access: { roles }; resource_access: clientRoles
             const { name, resource_access } = req.kauth.grant.access_token.content;
             const roles = resource_access?.viz?.roles || [];
@@ -104,18 +104,18 @@ app.prepare().then(() => {
 
         if (!process.env.PROTECTED_PAGES) {
             console.info('No protected pages specified. Protecting', colourGreen, 'all', colourReset, 'pages with Keycloak authentication.');
-            server.get("*allpaths", keycloak.protect());
+            expressServer.get("*allpaths", keycloak.protect());
         } else {
             const protectedPages = process.env.PROTECTED_PAGES.split(',');
             protectedPages.forEach(page => {
-                server.get(page, keycloak.protect());
+                expressServer.get(page, keycloak.protect());
             });
         }
         if (process.env.ROLE_PROTECTED_PAGES) {
             if (process.env.ROLE) {
                 const roleProtectedPages = process.env.ROLE_PROTECTED_PAGES?.split(',');
                 roleProtectedPages?.forEach(page => {
-                    server.get(page, keycloak.protect(process.env.ROLE));
+                    expressServer.get(page, keycloak.protect(process.env.ROLE));
                     console.info('protecting page', page, 'with role', process.env.ROLE);
                 });
             } else {
@@ -129,7 +129,7 @@ app.prepare().then(() => {
         if (useGeoServerProxy) {
             console.info('Server URL REACT_APP_SERVER_URL is ' + process.env.REACT_APP_SERVER_URL);
             console.info('GeoServer requests from MapBox will be sent to ' + process.env.REACT_APP_SERVER_URL + '/geoserver-proxy')
-            server.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
+            expressServer.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
                 const targetUrl = req.query.url;
                 let headers = { ...req.headers };
 
@@ -157,7 +157,7 @@ app.prepare().then(() => {
     }
 
     // Handle all other requests using Next.js
-    server.all("*allpaths", (req, res) => {
+    expressServer.all("*allpaths", (req, res) => {
         if (req.kauth?.grant) {
             req.headers['x-bearer-token'] = req.kauth.grant.access_token.token; // Pass the token from express server to next.js, to be available in getServerSideProps calls
         }
@@ -165,7 +165,7 @@ app.prepare().then(() => {
     });
 
     // Start listening on the specified port and log server status
-    server.listen(port, (err) => {
+    expressServer.listen(port, (err) => {
         if (err) throw err;
         console.info('Running at', colourGreen, `http://localhost:${port}${colourReset}`, `(on host / inside container). Development mode :${dev ? colourYellow : colourGreen}`, dev, colourReset);
     });
