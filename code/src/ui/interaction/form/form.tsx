@@ -10,7 +10,7 @@ import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { useDictionary } from 'hooks/useDictionary';
-import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, CustomAgentResponseBody, updateEntity } from 'utils/server-actions';
+import { addEntity, deleteEntity, getMatchingInstances, CustomAgentResponseBody, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -19,6 +19,7 @@ import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
 import FormSection from './section/form-section';
+import { GetServerSidePropsContext } from 'next';
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -45,6 +46,35 @@ interface FormComponentProps {
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const bearerToken = context.req.headers['x-bearer-token']; // Access the token
+
+  if (!bearerToken) {
+    return {
+      redirect: {
+        destination: '/login', // Redirect if no token is available
+        permanent: false,
+      },
+    };
+  }
+
+  // Use the token to fetch data from the backend
+  const response = await fetch(`${process.env.VIS_BACKEND_AGENT_URL}/some-endpoint`, {
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+
+  const data = await response.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
@@ -63,10 +93,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       let template: FormTemplate;
       // For add form, get a blank template
       if (props.formType == Paths.REGISTRY_ADD || props.formType == SEARCH_FORM_TYPE) {
-        template = await getFormTemplate(props.agentApi, props.entityType);
+        template = await fetch(`/api/registry/form-template?agentApi=${props.agentApi}&entityType=${props.entityType}`).then((res) => res.json())
+
       } else {
         // For edit and view, get template with values
-        template = await getFormTemplate(props.agentApi, props.entityType, id);
+        template = await fetch(`/api/registry/form-template?agentApi=${props.agentApi}&entityType=${props.entityType}&identifier=${id}`).then((res) => res.json());
       }
       if (props.additionalFields) {
         props.additionalFields.forEach(field => template.property.push(field));

@@ -3,6 +3,7 @@ import styles from "../form.module.css";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from "io/config/routes";
 import { Address } from "types/address";
 import { Dictionary } from "types/dictionary";
@@ -19,15 +20,9 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from 'hooks/useDictionary';
-import {
-  getFormTemplate,
-  getGeolocation,
-  sendGetRequest,
-} from "utils/server-actions";
+import { sendGetRequest } from "utils/server-actions";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
-
 interface FormGeocoderProps {
   agentApi: string;
   field: PropertyShape;
@@ -115,11 +110,16 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       locationIdentifier: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      // The location resource must mapped to the field name on the backend
-      const template: FormTemplate = await getFormTemplate(
+      // Use the API route for form template
+      const params = new URLSearchParams({
         agentApi,
-        parseStringsForUrls(locationIdentifier)
-      );
+        entityType: parseStringsForUrls(locationIdentifier)
+      });
+      const res = await fetch(`/api/registry/form-template?${params.toString()}`, {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const template: FormTemplate = await res.json();
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;
@@ -156,11 +156,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       location: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      const coordinates: number[] = await getGeolocation(
-        `${agentApi}/location`,
-        { iri: location }
-      );
-      // Only set coordinates if they are available
+      const searchParams = new URLSearchParams({ agentApi: `${agentApi}/location`, iri: location });
+      const res = await fetch(`/api/registry/geolocation?${searchParams.toString()}`, {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const coordinates: number[] = await res.json();
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
         setHasGeolocation(true);
@@ -230,12 +231,13 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       { city: data.city, country: data.country },
     ];
 
-    for (const params of searchParamsList) {
-      const coordinates: number[] = await getGeolocation(
-        `${props.agentApi}/location/geocode`,
-        params
-      );
-      // Only set coordinates if they are available
+    for (const param of searchParamsList) {
+      const searchParams = new URLSearchParams({ agentApi: `${props.agentApi}/location/geocode`, ...param });
+      const res = await fetch(`/api/registry/geolocation?${searchParams.toString()}`, {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const coordinates: number[] = await res.json();
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
         setHasGeolocation(true);
@@ -245,7 +247,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           props.field.fieldId,
           `POINT(${coordinates[0]}, ${coordinates[1]})`
         );
-        break; // Stop function if found
+        break;
       }
     }
   };

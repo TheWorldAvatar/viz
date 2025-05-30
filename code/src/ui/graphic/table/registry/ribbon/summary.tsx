@@ -2,14 +2,13 @@ import styles from './summary.module.css';
 
 import { useEffect, useState } from 'react';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Routes } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
-import { useDictionary } from 'hooks/useDictionary';
-import { getData } from 'utils/server-actions';
 
 interface SummarySectionProps {
   id: string;
@@ -34,7 +33,14 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const contractRes: RegistryFieldValues[] = await getData(props.registryAgentApi, props.entityType, props.id, null, true);
+        const url = new URL('/api/registry/data', window.location.origin)
+        url.searchParams.set('agentApi', props.registryAgentApi);
+        url.searchParams.set('entityType', props.entityType);
+        url.searchParams.set('identifier', props.id);
+        url.searchParams.set('requireLabel', 'true');
+
+        const contractRes: RegistryFieldValues[] = await fetch(url).then((response) => response.json())
+
         setContract(contractRes[0]);
         setIsLoading(false);
       } catch (error) {
