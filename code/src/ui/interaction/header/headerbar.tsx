@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
 import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
@@ -28,6 +28,7 @@ interface HeaderBarProps {
  */
 export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
@@ -94,6 +95,8 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
         <div className="flex xl:hidden">
           <PopoverActionButton
             icon={"menu"}
+            isOpen={isMenuOpen}
+            setIsOpen={setIsMenuOpen}
             styling={{ text: styles.text }}
             isHoverableDisabled={true}
             isTransparent={true}
@@ -106,6 +109,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                   title="Home"
                   icon={Assets.INFO}
                   url={Routes.HOME}
+                  setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.map && (
@@ -113,6 +117,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                   title="Map"
                   icon={Assets.MAP}
                   url={Routes.MAP}
+                  setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.dashboard && (
@@ -120,6 +125,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                   title="Dashboard"
                   icon={Assets.DASHBOARD}
                   url={Routes.DASHBOARD}
+                  setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.help && (
@@ -127,6 +133,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                   title="Help Centre"
                   icon={Assets.HELP}
                   url={Routes.HELP}
+                  setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.registry && (
@@ -134,6 +141,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                   title="Registry"
                   icon={Assets.REGISTRY}
                   url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`}
+                  setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings.links?.map((externalLink, index) => {
@@ -157,6 +165,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                       icon={externalLink.icon}
                       url={externalLink.url}
                       type={externalLink.type}
+                      setIsOpen={setIsMenuOpen}
                     />
                   );
                 }

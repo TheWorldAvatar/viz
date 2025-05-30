@@ -16,6 +16,7 @@ export interface MobileMenuItemProps {
   icon: string;
   url: string;
   type?: MobileMenuItemType;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -44,6 +45,7 @@ export function MobileMenuItem(
     event: React.MouseEvent<HTMLDivElement>
   ): void => {
     event.preventDefault();
+    props.setIsOpen?.(false);
     if (props.type === "file") {
       setIsFileModalOpen(true);
     } else {
