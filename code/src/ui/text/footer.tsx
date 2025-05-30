@@ -20,7 +20,12 @@ export default function Footer() {
       />
       <span>
         Powered by&nbsp;
-        <Link href="https://theworldavatar.io">The World Avatar&#8482;</Link>
+        <Link
+          className="text-links hover:text-links-hover"
+          href="https://theworldavatar.io"
+        >
+          The World Avatar&#8482;
+        </Link>
         &nbsp;{currentYear}
       </span>
     </footer>

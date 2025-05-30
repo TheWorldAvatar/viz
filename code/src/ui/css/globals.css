@@ -100,6 +100,8 @@
   --color-primary: #82b29a;
   --color-secondary: #236776;
   --color-accent: rgba(35, 103, 118, 25%);
+  --color-links: var(--text-color-links);
+  --color-links-hover: var(--text-color-links-hover);
 }
 
 * {
@@ -118,7 +120,7 @@ body {
   overflow: hidden;
 }
 
-a {
+/* a {
   color: var(--text-color-links);
   text-decoration: none;
   transition: color 0.5s ease;
@@ -126,7 +128,7 @@ a {
 
 a:hover {
   color: var(--text-color-links-hover) !important;
-}
+} */
 
 img {
   background-color: transparent !important;
