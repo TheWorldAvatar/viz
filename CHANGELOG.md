@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.27.3
+
+### Changes
+
+- Updated the landing page design
+
+### Bug Fixes
+
+- Fix the enable and disable of the help page in ui-settings
+
 ## 5.27.2
 
 ### Changes
