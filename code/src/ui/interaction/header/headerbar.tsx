@@ -28,7 +28,6 @@ interface HeaderBarProps {
  */
 export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
-  const navbarDict = dict.nav;
 
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
@@ -157,6 +156,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                       title={externalLink.title}
                       icon={externalLink.icon}
                       url={externalLink.url}
+                      type={externalLink.type}
                     />
                   );
                 }

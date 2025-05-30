@@ -17,10 +17,7 @@ import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { UISettings } from "types/settings";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import {
-  NavBarItem,
-  NavBarItemProps
-} from "../navigation/navbar/navbar-item";
+import { NavBarItem, NavBarItemProps } from "../navigation/navbar/navbar-item";
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -50,16 +47,18 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const introClasses = ["markdown-body", styles.introInner].join(" ");
   const permissionScheme: PermissionScheme = usePermissionScheme();
   // Retrieve links
-  const dashboardLinkProps: NavBarItemProps =
-    props.settings.links?.find((link) => link.url === Modules.DASHBOARD);
+  const dashboardLinkProps: NavBarItemProps = props.settings.links?.find(
+    (link) => link.url === Modules.DASHBOARD
+  );
   const helpLinkProps: NavBarItemProps = props.settings.links?.find(
-    (link) => link.url === Modules.HELP,
+    (link) => link.url === Modules.HELP
   );
   const mapLinkProps: NavBarItemProps = props.settings.links?.find(
-    (link) => link.url === Modules.MAP,
+    (link) => link.url === Modules.MAP
   );
-  const registryLinkProps: NavBarItemProps =
-    props.settings.links?.find((link) => link.url === Modules.REGISTRY);
+  const registryLinkProps: NavBarItemProps = props.settings.links?.find(
+    (link) => link.url === Modules.REGISTRY
+  );
   const registryUrl: string = useMemo(() => {
     // Defaults to pending registry with no route or scheme is disabled
     let url: string = `${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`;
@@ -125,19 +124,21 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               title={parseWordsForLabels(path)}
               caption={props.dict.nav.caption.generalReg.replace(
                 "{replace}",
-                parseWordsForLabels(path).toLowerCase(),
+                parseWordsForLabels(path).toLowerCase()
               )}
               icon={Assets.REGISTRY}
               url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
             />
           ))}
 
-        {props.settings.modules.help && <NavBarItem
-          title={helpLinkProps?.title ?? props.dict.nav.title.help}
-          caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
-          icon={helpLinkProps?.icon ?? Assets.HELP}
-          url={Routes.HELP}
-        />}
+        {props.settings.modules.help && (
+          <NavBarItem
+            title={helpLinkProps?.title ?? props.dict.nav.title.help}
+            caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
+            icon={helpLinkProps?.icon ?? Assets.HELP}
+            url={Routes.HELP}
+          />
+        )}
 
         {props.settings.links?.map((externalLink, index) => {
           if (
@@ -187,7 +188,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
  */
 function getIntroductionContent(pages: OptionalPage[]): string {
   const filteredPages: OptionalPage[] = pages.filter(
-    (page) => page.slug === "landing",
+    (page) => page.slug === "landing"
   );
   if (filteredPages.length === 0) {
     return "";
