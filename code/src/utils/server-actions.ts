@@ -3,10 +3,8 @@
  */
 'use server';
 
-import { Paths } from 'io/config/routes';
 import { FieldValues } from 'react-hook-form';
 
-import { RegistryFieldValues, FormTemplate, OntologyConcept, PropertyShape } from 'types/form';
 
 export interface CustomAgentResponseBody {
   message: string;
@@ -14,137 +12,6 @@ export interface CustomAgentResponseBody {
   iri?: string;
 }
 
-/**
- * Retrieves all data of the specified type.
- * 
- * @param {string} agentApi API endpoint.
- * @param {string} entityType Type of entity to retrieve.
- * @param {string} identifier Optional identifier of the parent entity.
- * @param {string} subEntityType Optional type of sub entity to retrieve entities associated with the specific parent entity.
- * @param {boolean} requireLabel Optional indicator to retrieve labelled data if requested.
- * @param {string} bearerToken Optional bearer token for authorization.
- */
-export async function getData(
-  agentApi: string,
-  entityType: string,
-  identifier?: string, // append to the URL if provided
-  subEntityType?: string,
-  requireLabel?: boolean,
-  bearerToken?: string | string[] // Bearer token from the next context passed down by express
-): Promise<RegistryFieldValues[]> {
-  let url: string = `${agentApi}/${entityType}`;
-  if (requireLabel) {
-    url += `/label`;
-  }
-  if (identifier) {
-    url += `/${identifier}`;
-    if (subEntityType) {
-      url += `/${subEntityType}`;
-    }
-  }
-  const res = await sendRequest(url, "GET", undefined, undefined, bearerToken);
-  const responseData = await res.json();
-  return Array.isArray(responseData) ? responseData : [responseData];
-}
-
-/**
- * Retrieves the geolocation from the API endpoint based on the query parameters.
- * 
- * @param {string} agentApi API endpoint.
- * @param {Record<string, string | undefined>} params query parameters.
- */
-export async function getGeolocation(agentApi: string, params: Record<string, string | undefined>): Promise<number[]> {
-  const searchParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    // Only append the search param if there is a value
-    if (value) searchParams.append(key, value);
-  });
-  const url: string = `${agentApi}?${searchParams.toString()}`;
-  const results = await sendGetRequest(url);
-  if (results == "There are no coordinates associated with the parameters in the knowledge graph.") {
-    return [];
-  }
-  return JSON.parse(results);
-}
-
-/**
- * Retrieves all data of the specified type associated with a lifecycle. Fields are returned with human-readable labels.
- * 
- * @param {string} agentApi API endpoint.
- * @param {string} currentStage Current stage of the lifecycle.
- * @param {string} entityType Type of entity to retrieve.
- */
-export async function getLifecycleData(agentApi: string, currentStage: string, entityType: string): Promise<RegistryFieldValues[]> {
-  let stagePath: string;
-  if (currentStage == Paths.REGISTRY_PENDING) {
-    stagePath = "draft";
-  } else if (currentStage == Paths.REGISTRY_ACTIVE) {
-    stagePath = "service";
-  } else if (currentStage == Paths.REGISTRY_ARCHIVE) {
-    stagePath = "archive";
-  }
-  const res = await sendRequest(`${agentApi}/contracts/${stagePath}?type=${entityType}&label=yes`, "GET");
-  const responseData = await res.json();
-  return responseData;
-}
-
-
-/**
- * Retrieves all service tasks in a lifecycle on the specified day or contract. Fields are returned with human-readable labels.
- * Note that if time and id is provided, time will take precedence over id.
- * 
- * @param {string} agentApi API endpoint.
- * @param {string} contractType The contract's resource identifier as a type.
- * @param {string} id Optional contract ID associated with the tasks.
- * @param {number} time Optional target day in UNIX timestamp format.
- */
-export async function getServiceTasks(agentApi: string, contractType: string, id?: string, time?: number): Promise<RegistryFieldValues[]> {
-  const url: string = `${agentApi}/contracts/service/${time ?? id}?type=${contractType}`;
-  const res = await sendRequest(url, "GET");
-  const responseData = await res.json();
-  return responseData;
-}
-
-/**
- * Retrieves all available ontology types for the specified class.
- * 
- * @param {string} agentApi API endpoint.
- * @param {string} uri Target ontology class.
- */
-export async function getAvailableTypes(agentApi: string, uri: string): Promise<OntologyConcept[]> {
-  const res = await sendRequest(`${agentApi}/type?uri=${uri}`, "GET");
-  return await res.json();
-}
-
-/**
-* Retrieves the form template for a specific lifecycle event.
-* 
-* @param {string} agentApi API endpoint.
-* @param {string} lifecycleStage The target lifecycle stage ie service or archive.
-* @param {string} eventType The target event type: dispatch, report, cancel, terminate, rescind.
-* @param {string} identifier The target identifier for a specific order OR use "form" if retrieving only a template.
-*/
-export async function getLifecycleFormTemplate(endpoint: string, lifecycleStage: string, eventType: string, identifier: string): Promise<PropertyShape[]> {
-  const url: string = `${endpoint}/contracts/${lifecycleStage}/${eventType}/${identifier}`;
-  const form: string = await sendGetRequest(url);
-  return JSON.parse(form).property;
-}
-
-/**
- * Retrieves the form template for the associated entity type.
- * 
- * @param {string} agentApi API endpoint.
- * @param {string} entityType Type of the entity.
- * @param {string} identifier Optional identifier of the parent entity.
- */
-export async function getFormTemplate(agentApi: string, entityType: string, identifier?: string): Promise<FormTemplate> {
-  let url: string = `${agentApi}/form/${entityType}`;
-  if (identifier) {
-    url += `/${identifier}`;
-  }
-  const res = await sendRequest(url, "GET");
-  return await res.json();
-}
 
 /**
  * Sends a GET request to the specified agent to execute its task, and return its text if required.
