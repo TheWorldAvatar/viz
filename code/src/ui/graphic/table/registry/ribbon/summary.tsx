@@ -2,14 +2,13 @@ import styles from './summary.module.css';
 
 import { useEffect, useState } from 'react';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Routes } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
 import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
-import { useDictionary } from 'hooks/useDictionary';
-import { getData } from 'utils/server-actions';
 
 interface SummarySectionProps {
   id: string;
