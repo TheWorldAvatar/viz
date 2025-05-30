@@ -10,9 +10,8 @@ import PopoverActionButton from "../action/popover/popover-button";
  *
  */
 export default function KeycloakUserButton() {
-  // const userDisplayName = useUserDisplayName();
+  const userDisplayName = useUserDisplayName();
 
-  const userDisplayName = "Plamen Dochev";
   return (
     <PopoverActionButton
       icon={"person"}
