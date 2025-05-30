@@ -91,7 +91,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
-        <div className="flex ">
+        <div className="flex xl:hidden">
           <PopoverActionButton
             icon={"menu"}
             styling={{ text: styles.text }}
@@ -100,7 +100,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             placement="bottom-end"
             className={styles.hamburgerMenuButton}
           >
-            <div className="flex flex-col justify-start gap-4 p-2">
+            <div className="flex flex-col justify-start gap-4 p-2 ">
               {props.settings?.modules?.landing && (
                 <MobileMenuItem
                   title="Home"
