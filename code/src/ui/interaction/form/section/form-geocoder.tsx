@@ -115,11 +115,16 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       locationIdentifier: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      // The location resource must mapped to the field name on the backend
-      const template: FormTemplate = await getFormTemplate(
+      // Use the API route for form template
+      const params = new URLSearchParams({
         agentApi,
-        parseStringsForUrls(locationIdentifier)
-      );
+        entityType: parseStringsForUrls(locationIdentifier)
+      });
+      const res = await fetch(`/api/registry/form-template?${params.toString()}`, {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const template: FormTemplate = await res.json();
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;

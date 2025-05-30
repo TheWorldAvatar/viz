@@ -93,10 +93,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       let template: FormTemplate;
       // For add form, get a blank template
       if (props.formType == Paths.REGISTRY_ADD || props.formType == SEARCH_FORM_TYPE) {
-        template = await getFormTemplate(props.agentApi, props.entityType);
+        template = await fetch(`/api/registry/form-template?agentApi=${props.agentApi}&entityType=${props.entityType}`).then((res) => res.json())
+
       } else {
         // For edit and view, get template with values
-        template = await getFormTemplate(props.agentApi, props.entityType, id);
+        template = await fetch(`/api/registry/form-template?agentApi=${props.agentApi}&entityType=${props.entityType}&identifier=${id}`).then((res) => res.json());
       }
       if (props.additionalFields) {
         props.additionalFields.forEach(field => template.property.push(field));
