@@ -10,26 +10,29 @@ import PopoverActionButton from "../action/popover/popover-button";
  *
  */
 export default function KeycloakUserButton() {
-  const userDisplayName = useUserDisplayName();
+  // const userDisplayName = useUserDisplayName();
 
+  const userDisplayName = "Plamen Dochev";
   return (
     <PopoverActionButton
       icon={"person"}
+      styling={{ text: styles.text }}
       isHoverableDisabled={true}
       isTransparent={true}
-      styling={{
-        text: styles.text,
-        container: styles.userMenuContainer,
-      }}
-      placement="bottom-end"
+      placement="bottom"
       className={styles.userMenuButton}
     >
-      <div className={styles.userMenuContainer}>
-        <div className={styles.userButtons}>
-          <span className={styles.userMenuText}>{userDisplayName}</span>
+      <div className="flex flex-col justify-center items-center p-1">
+        <div className="p-2">
+          <span className="text-md font-bold">{userDisplayName}</span>
         </div>
-        <div className={styles.userButtons}>
-          <Link className={styles.userMenuText} prefetch={false} href="/logout">
+        <hr className="w-full border-t border-border my-1" />
+        <div className="p-2">
+          <Link
+            className="py-2 px-8 rounded-md transition-colors duration-200 hover:bg-gray-300"
+            prefetch={false}
+            href="/logout"
+          >
             Log Out
           </Link>
         </div>
