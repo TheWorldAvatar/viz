@@ -165,7 +165,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
           </PopoverActionButton>
         </div>
 
-        {true && <KeycloakUserButton />}
+        {keycloakEnabled && <KeycloakUserButton />}
       </div>
     </div>
   );
