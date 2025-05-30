@@ -15,7 +15,6 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
 import { Status } from 'ui/text/status/status';
 import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
 import RegistryTable from './registry-table';
 import SummarySection from './ribbon/summary';
 import TableRibbon from './ribbon/table-ribbon';
@@ -51,32 +50,58 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       try {
         let instances: RegistryFieldValues[] = [];
         if (props.lifecycleStage === Paths.REGISTRY_REPORT) {
-          // If this is the base report page, users should retrieve all contracts
           if (pathNameEnd === props.entityType) {
-            instances = await getLifecycleData(props.registryAgentApi, Paths.REGISTRY_ACTIVE, props.entityType);
-            instances = instances.map(contract => {
-              return {
-                status: {
-                  value: parseWordsForLabels(Status.ACTIVE),
-                  type: "literal",
-                  dataType: "http://www.w3.org/2001/XMLSchema#string",
-                  lang: "",
-                },
-                ...contract
-              }
-            });
-            const archivedContracts: RegistryFieldValues[] = await getLifecycleData(props.registryAgentApi, Paths.REGISTRY_ARCHIVE, props.entityType);
-            instances = instances.concat(archivedContracts);
+            // Fetch active contracts
+            const activeRes = await fetch(
+              `/api/registry/lifecycle-data?agentApi=${encodeURIComponent(props.registryAgentApi)}&currentStage=active&entityType=${props.entityType}`,
+              { cache: 'no-store', credentials: 'same-origin' }
+            );
+            let activeInstances = await activeRes.json();
+            activeInstances = activeInstances.map((contract: RegistryFieldValues) => ({
+              status: {
+                value: parseWordsForLabels(Status.ACTIVE),
+                type: "literal",
+                dataType: "http://www.w3.org/2001/XMLSchema#string",
+                lang: "",
+              },
+              ...contract
+            }));
+
+            // Fetch archived contracts
+            const archivedRes = await fetch(
+              `/api/registry/lifecycle-data?agentApi=${encodeURIComponent(props.registryAgentApi)}&currentStage=archive&entityType=${props.entityType}`,
+              { cache: 'no-store', credentials: 'same-origin' }
+            );
+            const archivedInstances = await archivedRes.json();
+
+            instances = activeInstances.concat(archivedInstances);
           } else {
-            // If this is the report page for specific contracts, retrieve tasks associated with the id 
-            instances = await getServiceTasks(props.registryAgentApi, props.entityType, pathNameEnd);
+            // Fetch service tasks for a specific contract
+            const params = new URLSearchParams({
+              agentApi: props.registryAgentApi,
+              contractType: props.entityType,
+              id: pathNameEnd,
+            });
+            const res = await fetch(`/api/registry/service-tasks?${params.toString()}`, {
+              cache: 'no-store',
+              credentials: 'same-origin'
+            });
+            instances = await res.json();
           }
         } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
-          // Create a Date object from the YYYY-MM-DD string
+          // Fetch service tasks for a specific date
           const date = new Date(selectedDate);
-          // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
+          const params = new URLSearchParams({
+            agentApi: props.registryAgentApi,
+            contractType: props.entityType,
+            time: unixTimestamp.toString(),
+          });
+          const res = await fetch(`/api/registry/service-tasks?${params.toString()}`, {
+            cache: 'no-store',
+            credentials: 'same-origin'
+          });
+          instances = await res.json();
         } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
           const res = await fetch(
             `/api/registry/data?agentApi=${encodeURIComponent(props.registryAgentApi)}&entityType=${props.entityType}&requireLabel=true`,
@@ -84,7 +109,11 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           );
           instances = await res.json();
         } else {
-          instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
+          const res = await fetch(
+            `/api/registry/lifecycle-data?agentApi=${encodeURIComponent(props.registryAgentApi)}&currentStage=${props.lifecycleStage}&entityType=${props.entityType}`,
+            { cache: 'no-store', credentials: 'same-origin' }
+          );
+          instances = await res.json();
         }
         setInitialInstances(instances);
         setCurrentInstances(instances);

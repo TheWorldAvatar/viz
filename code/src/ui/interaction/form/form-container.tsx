@@ -21,7 +21,6 @@ import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import {
-  getLifecycleFormTemplate,
   CustomAgentResponseBody,
   sendGetRequest,
   sendPostRequest,
@@ -141,12 +140,17 @@ function FormContents(
       eventType: string
     ): Promise<void> => {
       setIsLoading(true);
-      const template: PropertyShape[] = await getLifecycleFormTemplate(
-        endpoint,
+      const params = new URLSearchParams({
+        agentApi: endpoint,
         lifecycleStage,
         eventType,
-        FORM_IDENTIFIER
-      );
+        identifier: FORM_IDENTIFIER,
+      });
+      const res = await fetch(`/api/registry/geolocation/lifecycle-form-template?${params.toString()}`, {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const template: PropertyShape[] = await res.json();
       setFormFields(template);
       setIsLoading(false);
     };

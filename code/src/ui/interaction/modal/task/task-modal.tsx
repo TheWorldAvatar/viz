@@ -21,7 +21,7 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { getLifecycleFormTemplate, CustomAgentResponseBody, sendPostRequest, updateEntity } from 'utils/server-actions';
+import { CustomAgentResponseBody, sendPostRequest, updateEntity } from 'utils/server-actions';
 
 interface TaskModalProps {
   entityType: string;
@@ -131,7 +131,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     const getFormTemplateWithDispatchDetails = async (endpoint: string, targetId: string): Promise<void> => {
       setIsFetching(true);
       const id: string = getAfterDelimiter(targetId, "/");
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, "service", "dispatch", id);
+      const template: PropertyShape[] = await fetch(`/api/registry/lifecycle-form-template?agentApi=${endpoint}&lifecycleStage=service&eventType=dispatch&identifier=${id}`).then(res => res.json());
       const group: PropertyGroup = {
         "@id": "dispatch group",
         "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
@@ -159,9 +159,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Target id is optional, and will default to form
     const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShapeOrGroup[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType,
-        targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER // use the target id if available, else, default to an empty form
-      );
+      const template: PropertyShapeOrGroup[] = await fetch(`/api/registry/lifecycle-form-template?agentApi=${endpoint}&lifecycleStage=${lifecycleStage}&eventType=${eventType}&identifier=${targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER}`)
+        .then(res => res.json());
       setFormFields(template);
       setIsFetching(false);
     }

@@ -6,7 +6,6 @@ import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, O
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
-import { getAvailableTypes } from 'utils/server-actions';
 import FormSelector from './form-selector';
 
 interface OntologyConceptSelectorProps {

@@ -12,7 +12,6 @@ import { defaultSearchOption, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
-import { getData } from 'utils/server-actions';
 import FormSelector from '../field/input/form-selector';
 import { FORM_STATES } from '../form-utils';
 
