@@ -29,6 +29,7 @@ export interface MobileMenuItemProps {
  * @param {MobileMenuItemType} type  Optional parameter that changes the thumbnail's functionality.
  *                                  Defaults to "default" for redirect functionality.
  *                                  When set to "file", the thumbnail allows users to send a local file to the target url.
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setIsOpen Optional dispatch action to control the open state of the mobile menu.
  */
 export function MobileMenuItem(
   props: Readonly<MobileMenuItemProps>
