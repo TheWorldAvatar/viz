@@ -11,6 +11,8 @@
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
 
+    --background-muted: #fafafa;
+
     --background-inverse-primary: #0d1117;
     --background-inverse-primary-rgb: 13, 17, 23;
     --background-inverse-secondary: #30363d;
@@ -27,6 +29,7 @@
     --border-primary: #b6b6bf;
     --border-secondary: #a5a5b3;
     --border-tertiary: #9898af;
+    --border: #dbdbdb;
 
     /* Button */
     --description-box: #82b29a;
@@ -45,6 +48,8 @@
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
 
+    --background-muted: #0d1117;
+
     --background-inverse-primary: #f9f9f9;
     --background-inverse-primary-rgb: 249, 249, 249;
     --background-inverse-secondary: #efefef;
@@ -61,6 +66,7 @@
     --border-primary: #434b55;
     --border-secondary: #6c7989;
     --border-tertiary: #7f8ea1;
+    --border: #2f2f36;
 
     /* Button */
     --description-box: #2b816f;
@@ -95,8 +101,8 @@
 @theme {
   --color-background: var(--background-primary);
   --color-foreground: var(--text-color-primary);
-  --color-muted: #fafafa;
-  --color-border: #dbdbdb;
+  --color-muted: var(--background-muted);
+  --color-border: var(--border);
   --color-primary: #82b29a;
   --color-secondary: #236776;
   --color-accent: rgba(35, 103, 118, 25%);
