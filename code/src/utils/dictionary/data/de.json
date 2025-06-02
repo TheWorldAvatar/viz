@@ -130,6 +130,7 @@
       "help": "Hilfe für diese Webplattform erhalten"
     },
     "title": {
+      "home": "Startseite",
       "map": "Karte",
       "dashboard": "Armaturenbrett",
       "registry": "Registry",
