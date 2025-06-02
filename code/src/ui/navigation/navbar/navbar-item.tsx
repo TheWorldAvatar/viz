@@ -63,8 +63,8 @@ export function NavBarItem(
         <div className={`${props.isMobile ? "" : "w-18"} flex items-center justify-center`}>
           <Image
             src={props.icon}
-            height={48}
-            width={48}
+            height={props.isMobile ? 32 : 48}
+            width={props.isMobile ? 32 : 48}
             alt={imageDescription}
           />
         </div>
