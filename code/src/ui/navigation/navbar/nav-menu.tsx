@@ -80,7 +80,7 @@ export function NavMenu(
         ))}
       {props.settings?.modules?.landing && (
         <NavBarItem
-          title="Home"
+          title={dict.nav.title.home}
           icon={Assets.INFO}
           url={Routes.HOME}
           isMobile={props.isMobile}
