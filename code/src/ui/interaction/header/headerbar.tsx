@@ -1,21 +1,18 @@
 "use client";
 
-import styles from "./navbar.module.css";
-
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
+import { OptionalPage } from "io/config/optional-pages";
 import { Routes } from "io/config/routes";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
 import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavMenu } from "ui/navigation/navbar/nav-menu";
-import PopoverActionButton from "../action/popover/popover-button";
-import { OptionalPage } from "io/config/optional-pages";
 
 interface HeaderBarProps {
   pages: OptionalPage[];
@@ -27,7 +24,6 @@ interface HeaderBarProps {
  */
 export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const contextDict = dict.context;
@@ -90,23 +86,11 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
         <div className="flex xl:hidden">
-          <PopoverActionButton
-            icon={"menu"}
-            isOpen={isMenuOpen}
-            setIsOpen={setIsMenuOpen}
-            styling={{ text: styles.text }}
-            isHoverableDisabled={true}
-            isTransparent={true}
-            placement="bottom-end"
-            className={styles.hamburgerMenuButton}
-          >
-            <NavMenu
-              pages={props.pages}
-              settings={props.settings}
-              isMobile={true}
-              setIsOpen={setIsMenuOpen}
-            />
-          </PopoverActionButton>
+          <NavMenu
+            pages={props.pages}
+            settings={props.settings}
+            isMobile={true}
+          />
         </div>
 
         {keycloakEnabled && <KeycloakUserButton />}

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useMemo } from "react";
+import styles from "./nav.menu.module.css";
+
+import React, { useMemo, useState } from "react";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
@@ -10,28 +12,95 @@ import { Modules, Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
-import { NavBarUploadItem } from "./navbar-upload-item";
-
 
 export interface NavMenuProps {
   pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface NavMenuContentsProps extends NavMenuProps {
+  setFileUploadEndpoint: React.Dispatch<React.SetStateAction<string>>;
+  setIsFileUploadModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
- * A menu item containing navigation options.
+ * A menu displaying the navigation options.
+ *
+ * @param {OptionalPage[]} pages Additional pages to be redirected.
+ * @param {UISettings} settings Settings declared in the user configuration Title.
+ * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
+ */
+export function NavMenu(
+  props: Readonly<NavMenuProps>
+): React.ReactElement {
+  const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isFileModalOpen, setIsFileModalOpen] = React.useState<boolean>(false);
+
+
+  if (props.isMobile) {
+    return (
+      <div className="flex xl:hidden">
+        <PopoverActionButton
+          icon={"menu"}
+          isOpen={isMenuOpen}
+          setIsOpen={setIsMenuOpen}
+          styling={{ text: styles.text }}
+          isHoverableDisabled={true}
+          isTransparent={true}
+          placement="bottom-end"
+          className={styles.hamburgerMenuButton}
+        >
+          <NavMenuContents
+            {...props}
+            setFileUploadEndpoint={setFileUploadEndpoint}
+            setIsFileUploadModalOpen={setIsFileModalOpen}
+            setIsMenuOpen={setIsMenuOpen}
+          />
+        </PopoverActionButton>
+        {isFileModalOpen && (
+          <FileModal
+            url={fileUploadEndpoint}
+            isOpen={isFileModalOpen}
+            setIsOpen={setIsFileModalOpen}
+          />
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <NavMenuContents
+        {...props}
+        setFileUploadEndpoint={setFileUploadEndpoint}
+        setIsFileUploadModalOpen={setIsFileModalOpen} />
+      {isFileModalOpen && (
+        <FileModal
+          url={fileUploadEndpoint}
+          isOpen={isFileModalOpen}
+          setIsOpen={setIsFileModalOpen}
+        />
+      )}
+    </>
+  );
+}
+/**
+ * The contents for the navigation menu.
  *
  * @param {OptionalPage[]} pages Additional pages to be redirected.
  * @param {UISettings} settings Settings declared in the user configuration Title.
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
  * @param setIsOpen Optional dispatch function to dismiss the menu in mobile mode.
  */
-export function NavMenu(
-  props: Readonly<NavMenuProps>
+function NavMenuContents(
+  props: Readonly<NavMenuContentsProps>
 ): React.ReactElement {
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
   const keycloakEnabled = process.env.KEYCLOAK === "true";
@@ -64,6 +133,17 @@ export function NavMenu(
     return url;
   }, [permissionScheme]);
 
+  function createHandleFileUploadClick(url: string): React.MouseEventHandler<HTMLDivElement> {
+    return (
+      event: React.MouseEvent<HTMLDivElement>
+    ): void => {
+      event.preventDefault();
+      props.setFileUploadEndpoint(url);
+      props.setIsFileUploadModalOpen(true);
+      props.setIsMenuOpen?.(false);
+    };
+  }
+
   return (
     <div className={`${props.isMobile ? "flex gap-4 p-2" : " bg-muted border-r-border hidden w-3xs items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs"}
          flex-col justify-start`}>
@@ -73,7 +153,7 @@ export function NavMenu(
           icon={Assets.INFO}
           url={Routes.HOME}
           isMobile={props.isMobile}
-          setIsOpen={props.setIsOpen}
+          setIsOpen={props.setIsMenuOpen}
         />
       )}
 
@@ -95,7 +175,7 @@ export function NavMenu(
           icon={mapLinkProps?.icon ?? Assets.MAP}
           url={Routes.MAP}
           isMobile={props.isMobile}
-          setIsOpen={props.setIsOpen}
+          setIsOpen={props.setIsMenuOpen}
           caption={mapLinkProps?.caption ?? dict.nav.caption.map}
         />
       )}
@@ -105,7 +185,7 @@ export function NavMenu(
           icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
           url={Routes.DASHBOARD}
           isMobile={false}
-          setIsOpen={props.setIsOpen}
+          setIsOpen={props.setIsMenuOpen}
           caption={
             dashboardLinkProps?.caption ?? dict.nav.caption.dashboard
           }
@@ -117,7 +197,7 @@ export function NavMenu(
           icon={helpLinkProps?.icon ?? Assets.HELP}
           url={Routes.HELP}
           isMobile={props.isMobile}
-          setIsOpen={props.setIsOpen}
+          setIsOpen={props.setIsMenuOpen}
           caption={helpLinkProps?.caption ?? dict.nav.caption.help}
         />
       )}
@@ -132,7 +212,7 @@ export function NavMenu(
             caption={
               registryLinkProps?.caption ?? dict.nav.caption.registry
             }
-            setIsOpen={props.setIsOpen}
+            setIsOpen={props.setIsMenuOpen}
           />
         )}
 
@@ -148,7 +228,7 @@ export function NavMenu(
               "{replace}",
               parseWordsForLabels(path).toLowerCase()
             )}
-            setIsOpen={props.setIsOpen}
+            setIsOpen={props.setIsMenuOpen}
           />
         ))}
 
@@ -167,21 +247,16 @@ export function NavMenu(
             permissionScheme?.hasPermissions[externalLink.permission])
         ) {
           return (
-            externalLink.type === "file" ? <NavBarUploadItem
+            <NavBarItem
               key={externalLink.title + index}
               title={externalLink.title}
               icon={externalLink.icon}
               url={externalLink.url}
               isMobile={props.isMobile}
+              tooltip={externalLink.type === "file" ? dict.nav.tooltip.fileUpload : undefined}
               caption={externalLink.caption}
-            /> : <NavBarItem
-              key={externalLink.title + index}
-              title={externalLink.title}
-              icon={externalLink.icon}
-              url={externalLink.url}
-              isMobile={props.isMobile}
-              setIsOpen={props.setIsOpen}
-              caption={externalLink.caption}
+              setIsOpen={props.setIsMenuOpen}
+              handleClick={externalLink.type === "file" ? createHandleFileUploadClick(externalLink.url) : undefined}
             />
           );
         }
