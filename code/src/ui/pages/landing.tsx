@@ -15,9 +15,10 @@ import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
-import { UISettings } from "types/settings";
+import { NavBarItemSettings, UISettings } from "types/settings";
+import { NavBarUploadItem } from "ui/navigation/navbar/navbar-upload-item";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { NavBarItem, NavBarItemProps } from "../navigation/navbar/navbar-item";
+import { NavBarItem } from "../navigation/navbar/navbar-item";
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -47,16 +48,16 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const introClasses = ["markdown-body", styles.introInner].join(" ");
   const permissionScheme: PermissionScheme = usePermissionScheme();
   // Retrieve links
-  const dashboardLinkProps: NavBarItemProps = props.settings.links?.find(
+  const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.DASHBOARD
   );
-  const helpLinkProps: NavBarItemProps = props.settings.links?.find(
+  const helpLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.HELP
   );
-  const mapLinkProps: NavBarItemProps = props.settings.links?.find(
+  const mapLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.MAP
   );
-  const registryLinkProps: NavBarItemProps = props.settings.links?.find(
+  const registryLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.REGISTRY
   );
   const registryUrl: string = useMemo(() => {
@@ -161,14 +162,20 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               permissionScheme?.hasPermissions[externalLink.permission])
           ) {
             return (
-              <NavBarItem
+              externalLink.type === "file" ? <NavBarUploadItem
                 key={externalLink.title + index}
                 title={externalLink.title}
                 icon={externalLink.icon}
                 url={externalLink.url}
                 isMobile={false}
                 caption={externalLink.caption}
-                type={externalLink.type}
+              /> : <NavBarItem
+                key={externalLink.title + index}
+                title={externalLink.title}
+                icon={externalLink.icon}
+                url={externalLink.url}
+                isMobile={false}
+                caption={externalLink.caption}
               />
             );
           }

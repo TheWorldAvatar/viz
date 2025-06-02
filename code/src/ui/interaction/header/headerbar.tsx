@@ -18,6 +18,7 @@ import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavBarItem } from "ui/navigation/navbar/navbar-item";
 import PopoverActionButton from "../action/popover/popover-button";
+import { NavBarUploadItem } from "ui/navigation/navbar/navbar-upload-item";
 
 interface HeaderBarProps {
   settings: UISettings;
@@ -164,13 +165,18 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                     permissionScheme?.hasPermissions[externalLink.permission])
                 ) {
                   return (
-                    <NavBarItem
+                    externalLink.type === "file" ? <NavBarUploadItem
                       key={externalLink.title + index}
                       title={externalLink.title}
                       icon={externalLink.icon}
                       url={externalLink.url}
                       isMobile={true}
-                      type={externalLink.type}
+                    /> : <NavBarItem
+                      key={externalLink.title + index}
+                      title={externalLink.title}
+                      icon={externalLink.icon}
+                      url={externalLink.url}
+                      isMobile={true}
                       setIsOpen={setIsMenuOpen}
                     />
                   );
