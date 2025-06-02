@@ -82,7 +82,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
-        {true && <KeycloakUserButton />}
+        {keycloakEnabled && <KeycloakUserButton />}
       </div>
     </div>
   );

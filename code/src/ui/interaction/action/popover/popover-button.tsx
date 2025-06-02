@@ -4,7 +4,11 @@ import styles from "../action.module.css";
 
 import ActionButton, { ActionButtonProps } from "../action";
 import { usePopover } from "hooks/float/usePopover";
-import { FloatingPortal, Placement, useTransitionStyles } from "@floating-ui/react";
+import {
+  FloatingPortal,
+  Placement,
+  useTransitionStyles,
+} from "@floating-ui/react";
 
 interface PopoverActionButtonProps extends ActionButtonProps {
   children: React.ReactNode;
@@ -49,10 +53,7 @@ export default function PopoverActionButton({
 
   return (
     <>
-      <div
-        ref={popover.refs.setReference}
-        {...popover.getReferenceProps()}
-      >
+      <div ref={popover.refs.setReference} {...popover.getReferenceProps()}>
         <ActionButton
           icon={icon}
           className={rest.className}
@@ -65,25 +66,27 @@ export default function PopoverActionButton({
           styling={styling}
         />
       </div>
-      {popover.isOpen && <FloatingPortal>
-        <div
-          ref={popover.refs.setFloating}
-          style={{
-            ...popover.floatingStyles,
-            zIndex: 999998 // Second highest z-index so it is below the tooltips
-          }}
-          {...popover.getFloatingProps()}
-        >
+      {popover.isOpen && (
+        <FloatingPortal>
           <div
+            ref={popover.refs.setFloating}
             style={{
-              ...transition.styles,
+              ...popover.floatingStyles,
+              zIndex: 999998, // Second highest z-index so it is below the tooltips
             }}
-            className={`${styles.popover} ${styling?.container}`}
+            {...popover.getFloatingProps()}
           >
-            {children}
+            <div
+              style={{
+                ...transition.styles,
+              }}
+              className={`${styles.popover} ${styling?.container}`}
+            >
+              {children}
+            </div>
           </div>
-        </div>
-      </FloatingPortal >}
+        </FloatingPortal>
+      )}
     </>
   );
 }

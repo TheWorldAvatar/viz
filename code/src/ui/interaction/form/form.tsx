@@ -1,24 +1,41 @@
-import { usePathname } from 'next/navigation';
-import React, { ReactNode, useState } from 'react';
-import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { usePathname } from "next/navigation";
+import React, { ReactNode, useState } from "react";
+import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
-import { Paths } from 'io/config/routes';
-import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
-import { Dictionary } from 'types/dictionary';
-import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { getAfterDelimiter } from 'utils/client-utils';
-import { useDictionary } from 'hooks/useDictionary';
-import { addEntity, deleteEntity, getFormTemplate, getMatchingInstances, CustomAgentResponseBody, updateEntity } from 'utils/server-actions';
-import FormFieldComponent from './field/form-field';
-import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
-import BranchFormSection from './section/branch-form-section';
-import { DependentFormSection } from './section/dependent-form-section';
-import FormGeocoder from './section/form-geocoder';
-import FormSchedule, { daysOfWeek } from './section/form-schedule';
-import FormSearchPeriod from './section/form-search-period';
-import FormSection from './section/form-section';
+import { Paths } from "io/config/routes";
+import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
+import { Dictionary } from "types/dictionary";
+import {
+  FormTemplate,
+  ID_KEY,
+  PROPERTY_GROUP_TYPE,
+  PropertyGroup,
+  PropertyShape,
+  PropertyShapeOrGroup,
+  SEARCH_FORM_TYPE,
+  TYPE_KEY,
+  VALUE_KEY,
+} from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
+import { getAfterDelimiter } from "utils/client-utils";
+import { useDictionary } from "hooks/useDictionary";
+import {
+  addEntity,
+  deleteEntity,
+  getFormTemplate,
+  getMatchingInstances,
+  CustomAgentResponseBody,
+  updateEntity,
+} from "utils/server-actions";
+import FormFieldComponent from "./field/form-field";
+import { FORM_STATES, parsePropertyShapeOrGroupList } from "./form-utils";
+import BranchFormSection from "./section/branch-form-section";
+import { DependentFormSection } from "./section/dependent-form-section";
+import FormGeocoder from "./section/form-geocoder";
+import FormSchedule, { daysOfWeek } from "./section/form-schedule";
+import FormSearchPeriod from "./section/form-search-period";
+import FormSection from "./section/form-section";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -34,7 +51,7 @@ interface FormComponentProps {
 
 /**
  * This component renders a dynamic form component that generates inputs based on its inputs.
- * 
+ *
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {string} entityType The type of entity.
  * @param {string} formType The type of submission. Valid inputs include add and update.
@@ -62,22 +79,34 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // Retrieve template from APIs
       let template: FormTemplate;
       // For add form, get a blank template
-      if (props.formType == Paths.REGISTRY_ADD || props.formType == SEARCH_FORM_TYPE) {
+      if (
+        props.formType == Paths.REGISTRY_ADD ||
+        props.formType == SEARCH_FORM_TYPE
+      ) {
         template = await getFormTemplate(props.agentApi, props.entityType);
       } else {
         // For edit and view, get template with values
         template = await getFormTemplate(props.agentApi, props.entityType, id);
       }
       if (props.additionalFields) {
-        props.additionalFields.forEach(field => template.property.push(field));
+        props.additionalFields.forEach((field) =>
+          template.property.push(field)
+        );
       }
-      const updatedProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, template.property);
+
+      const updatedProperties: PropertyShapeOrGroup[] =
+        parsePropertyShapeOrGroupList(initialState, template.property);
+      console.log({
+        ...template,
+        property: updatedProperties,
+      });
+
       setFormTemplate({
         ...template,
-        property: updatedProperties
+        property: updatedProperties,
       });
       return initialState;
-    }
+    },
   });
 
   // A function to initiate the form submission process
@@ -94,19 +123,19 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         recurrence: "P1D",
         "end date": startDate, // End date must correspond to start date
         [dayOfWeek]: true, // Ensure the corresponding day of week is true
-      }
+      };
       // For alternate day service
     } else if (formData[FORM_STATES.RECURRENCE] == -1) {
       formData = {
         ...formData,
         recurrence: "P2D",
-      }
+      };
       // For regular service
     } else if (formData[FORM_STATES.RECURRENCE]) {
       formData = {
         ...formData,
         recurrence: `P${formData[FORM_STATES.RECURRENCE] * 7}D`,
-      }
+      };
     }
 
     // Remove form type state before sending to backend
@@ -114,50 +143,74 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
     switch (props.formType.toLowerCase()) {
       case Paths.REGISTRY_ADD: {
-        pendingResponse = await addEntity(props.agentApi, formData, props.entityType);
+        pendingResponse = await addEntity(
+          props.agentApi,
+          formData,
+          props.entityType
+        );
         // For registry's primary entity, a draft lifecycle must also be generated
         if (props.isPrimaryEntity && pendingResponse.success) {
-          pendingResponse = await addEntity(props.agentApi, {
-            contract: pendingResponse.iri,
-            ...formData
-          }, "contracts/draft");
+          pendingResponse = await addEntity(
+            props.agentApi,
+            {
+              contract: pendingResponse.iri,
+              ...formData,
+            },
+            "contracts/draft"
+          );
         }
         break;
       }
       case Paths.REGISTRY_DELETE: {
-        pendingResponse = await deleteEntity(props.agentApi, formData[FORM_STATES.ID], props.entityType);
+        pendingResponse = await deleteEntity(
+          props.agentApi,
+          formData[FORM_STATES.ID],
+          props.entityType
+        );
         break;
       }
       case Paths.REGISTRY_EDIT: {
-        pendingResponse = await updateEntity(`${props.agentApi}/${props.entityType}/${formData.id}`,
+        pendingResponse = await updateEntity(
+          `${props.agentApi}/${props.entityType}/${formData.id}`,
           JSON.stringify({
             ...formData,
             entity: props.entityType,
           })
         );
         if (props.isPrimaryEntity && pendingResponse.success) {
-          pendingResponse = await updateEntity(`${props.agentApi}/contracts/draft`, JSON.stringify({
-            ...formData,
-            contract: props.primaryInstance,
-          }));
+          pendingResponse = await updateEntity(
+            `${props.agentApi}/contracts/draft`,
+            JSON.stringify({
+              ...formData,
+              contract: props.primaryInstance,
+            })
+          );
         }
         break;
       }
       case SEARCH_FORM_TYPE: {
         // For interacting with min and max fields in the search form
-        Object.keys(formData).forEach(field => {
+        Object.keys(formData).forEach((field) => {
           // Append range key to field if they have min and max fields and values in either their min or max field
           // eslint-disable-next-line no-prototype-builtins
-          if (formData.hasOwnProperty(`min ${field}`) && formData.hasOwnProperty(`max ${field}`) &&
-            (formData[`min ${field}`] != undefined || formData[`max ${field}`] != undefined)) {
+          if (
+            formData.hasOwnProperty(`min ${field}`) &&
+            formData.hasOwnProperty(`max ${field}`) &&
+            (formData[`min ${field}`] != undefined ||
+              formData[`max ${field}`] != undefined)
+          ) {
             formData = {
               ...formData,
               [field]: "range",
-            }
+            };
           }
         });
 
-        pendingResponse = await getMatchingInstances(props.agentApi, props.entityType, formData);
+        pendingResponse = await getMatchingInstances(
+          props.agentApi,
+          props.entityType,
+          formData
+        );
         if (pendingResponse.success) {
           if (pendingResponse.message === "[]") {
             pendingResponse.success = false;
@@ -166,15 +219,22 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             dispatch(setFilterFeatureIris(JSON.parse(pendingResponse.message)));
             pendingResponse.message = dict.message.matchedFeatures;
           }
-          if (formData[FORM_STATES.START_TIME_PERIOD] && formData[FORM_STATES.END_TIME_PERIOD]) {
+          if (
+            formData[FORM_STATES.START_TIME_PERIOD] &&
+            formData[FORM_STATES.END_TIME_PERIOD]
+          ) {
             // Only display this message if there is no features based on static meta data but the search period is required
             if (!pendingResponse.success) {
               pendingResponse.success = true;
               pendingResponse.message = dict.message.noMatchMetaWithTime;
             }
             // Convert date to UNIX Epoch Timestamp
-            const startTime: number = Math.floor(new Date(formData[FORM_STATES.START_TIME_PERIOD]).getTime() / 1000);
-            const endTime: number = Math.floor(new Date(formData[FORM_STATES.END_TIME_PERIOD]).getTime() / 1000);
+            const startTime: number = Math.floor(
+              new Date(formData[FORM_STATES.START_TIME_PERIOD]).getTime() / 1000
+            );
+            const endTime: number = Math.floor(
+              new Date(formData[FORM_STATES.END_TIME_PERIOD]).getTime() / 1000
+            );
             dispatch(setFilterTimes([startTime, endTime]));
           }
         }
@@ -189,15 +249,24 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   return (
     <form ref={props.formRef} onSubmit={onSubmit}>
       {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
-      {!form.formState.isLoading && formTemplate.property.map((field, index) => {
-        return renderFormField(props.entityType, props.agentApi, field, form, index);
-      })}
-      {!form.formState.isLoading && formTemplate.node?.length > 0 && <BranchFormSection
-        entityType={props.entityType}
-        agentApi={props.agentApi}
-        node={formTemplate.node}
-        form={form}
-      />}
+      {!form.formState.isLoading &&
+        formTemplate.property.map((field, index) => {
+          return renderFormField(
+            props.entityType,
+            props.agentApi,
+            field,
+            form,
+            index
+          );
+        })}
+      {!form.formState.isLoading && formTemplate.node?.length > 0 && (
+        <BranchFormSection
+          entityType={props.entityType}
+          agentApi={props.agentApi}
+          node={formTemplate.node}
+          form={form}
+        />
+      )}
     </form>
   );
 }
@@ -209,7 +278,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * based on the structure of the `field` parameter.
  *
  * @param entityType The type of entity being edited.
- * @param agentApi   The target agent API endpoint. 
+ * @param agentApi   The target agent API endpoint.
  * @param field      The configuration object defining the form field.
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
@@ -219,69 +288,97 @@ export function renderFormField(
   agentApi: string,
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
-  currentIndex: number): ReactNode {
+  currentIndex: number
+): ReactNode {
   const formType: string = form.getValues(FORM_STATES.FORM_TYPE);
-  const disableAllInputs: boolean = formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE;
+  const disableAllInputs: boolean =
+    formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE;
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
-    return <FormSection
-      key={fieldset[ID_KEY] + currentIndex}
-      entityType={entityType}
-      agentApi={agentApi}
-      group={fieldset}
-      form={form}
-      options={{
-        disabled: disableAllInputs,
-      }}
-    />
+    return (
+      <FormSection
+        key={fieldset[ID_KEY] + currentIndex}
+        entityType={entityType}
+        agentApi={agentApi}
+        group={fieldset}
+        form={form}
+        options={{
+          disabled: disableAllInputs,
+        }}
+      />
+    );
   } else {
     const fieldProp: PropertyShape = field as PropertyShape;
     // If this is a hidden field, hide the field
     if (fieldProp.maxCount && parseInt(fieldProp.maxCount[VALUE_KEY]) === 0) {
       return;
     }
-    const disableId: boolean = formType === Paths.REGISTRY_EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
+    const disableId: boolean =
+      formType === Paths.REGISTRY_EDIT &&
+      fieldProp.name[VALUE_KEY] === FORM_STATES.ID
+        ? true
+        : disableAllInputs;
     if (fieldProp.class) {
-      if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule") {
-        return <FormSchedule
+      if (
+        fieldProp.class[ID_KEY] ===
+        "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
+      ) {
+        return (
+          <FormSchedule
+            key={fieldProp.name[VALUE_KEY] + currentIndex}
+            fieldId={fieldProp.name[VALUE_KEY]}
+            agentApi={agentApi}
+            form={form}
+            options={{
+              disabled: disableAllInputs,
+            }}
+          />
+        );
+      }
+      if (
+        fieldProp.class[ID_KEY] ===
+        "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
+      ) {
+        return (
+          <FormGeocoder
+            key={fieldProp.name[VALUE_KEY] + currentIndex}
+            agentApi={agentApi}
+            field={fieldProp}
+            form={form}
+          />
+        );
+      }
+      if (
+        formType === SEARCH_FORM_TYPE &&
+        fieldProp.class[ID_KEY] ===
+          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+      ) {
+        return (
+          <FormSearchPeriod
+            key={fieldProp.name[VALUE_KEY] + currentIndex}
+            form={form}
+          />
+        );
+      }
+      return (
+        <DependentFormSection
           key={fieldProp.name[VALUE_KEY] + currentIndex}
-          fieldId={fieldProp.name[VALUE_KEY]}
           agentApi={agentApi}
+          dependentProp={fieldProp}
           form={form}
-          options={{
-            disabled: disableAllInputs,
-          }}
         />
-      }
-      if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation") {
-        return <FormGeocoder
-          key={fieldProp.name[VALUE_KEY] + currentIndex}
-          agentApi={agentApi}
-          field={fieldProp}
-          form={form}
-        />;
-      }
-      if (formType === SEARCH_FORM_TYPE && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
-        return <FormSearchPeriod
-          key={fieldProp.name[VALUE_KEY] + currentIndex}
-          form={form}
-        />;
-      }
-      return <DependentFormSection
+      );
+    }
+    return (
+      <FormFieldComponent
         key={fieldProp.name[VALUE_KEY] + currentIndex}
         agentApi={agentApi}
-        dependentProp={fieldProp}
+        field={fieldProp}
         form={form}
+        options={{
+          disabled: disableId,
+        }}
       />
-    }
-    return <FormFieldComponent
-      key={fieldProp.name[VALUE_KEY] + currentIndex}
-      agentApi={agentApi}
-      field={fieldProp}
-      form={form}
-      options={{
-        disabled: disableId,
-      }}
-    />
+    );
   }
 }

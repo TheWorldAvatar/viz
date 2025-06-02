@@ -4,7 +4,7 @@ import styles from "../form.module.css";
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { useDictionary } from 'hooks/useDictionary';
+import { useDictionary } from "hooks/useDictionary";
 import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
@@ -14,7 +14,11 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
-import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
+import {
+  extractResponseField,
+  parseStringsForUrls,
+  parseWordsForLabels,
+} from "utils/client-utils";
 import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
@@ -69,8 +73,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     props.form.getValues(FORM_STATES.RECURRENCE) == 0
       ? singleService
       : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-        ? alternateService
-        : regularService
+      ? alternateService
+      : regularService
   );
 
   useEffect(() => {
@@ -81,36 +85,68 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       const jsonResponse: RegistryFieldValues = JSON.parse(response);
 
       // Retrieve recurrence and selected service option
-      const recurrence: number = getDefaultVal(FORM_STATES.RECURRENCE, extractResponseField(jsonResponse, FORM_STATES.RECURRENCE, true).value, formType) as number;
+      const recurrence: number = getDefaultVal(
+        FORM_STATES.RECURRENCE,
+        extractResponseField(jsonResponse, FORM_STATES.RECURRENCE, true).value,
+        formType
+      ) as number;
       setSelectedServiceOption(
         recurrence == 0
           ? singleService
           : recurrence == -1
-            ? alternateService
-            : regularService
+          ? alternateService
+          : regularService
       );
       props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
 
       props.form.setValue(
         FORM_STATES.START_DATE,
-        getDefaultVal(FORM_STATES.START_DATE, extractResponseField(jsonResponse, parseStringsForUrls(FORM_STATES.START_DATE), true).value, formType)
+        getDefaultVal(
+          FORM_STATES.START_DATE,
+          extractResponseField(
+            jsonResponse,
+            parseStringsForUrls(FORM_STATES.START_DATE),
+            true
+          ).value,
+          formType
+        )
       );
       props.form.setValue(
         FORM_STATES.END_DATE,
-        getDefaultVal(FORM_STATES.END_DATE, extractResponseField(jsonResponse, parseStringsForUrls(FORM_STATES.END_DATE), true).value, formType)
+        getDefaultVal(
+          FORM_STATES.END_DATE,
+          extractResponseField(
+            jsonResponse,
+            parseStringsForUrls(FORM_STATES.END_DATE),
+            true
+          ).value,
+          formType
+        )
       );
       props.form.setValue(
         FORM_STATES.TIME_SLOT_START,
-        getDefaultVal(FORM_STATES.TIME_SLOT_START, extractResponseField(jsonResponse, "start_time", true).value, formType)
+        getDefaultVal(
+          FORM_STATES.TIME_SLOT_START,
+          extractResponseField(jsonResponse, "start_time", true).value,
+          formType
+        )
       );
       props.form.setValue(
         FORM_STATES.TIME_SLOT_END,
-        getDefaultVal(FORM_STATES.TIME_SLOT_END, extractResponseField(jsonResponse, "end_time", true).value, formType)
+        getDefaultVal(
+          FORM_STATES.TIME_SLOT_END,
+          extractResponseField(jsonResponse, "end_time", true).value,
+          formType
+        )
       );
       daysOfWeek.forEach((dayOfWeek) => {
         props.form.setValue(
           dayOfWeek,
-          getDefaultVal(dayOfWeek, extractResponseField(jsonResponse, dayOfWeek, true).value, formType)
+          getDefaultVal(
+            dayOfWeek,
+            extractResponseField(jsonResponse, dayOfWeek, true).value,
+            formType
+          )
         );
       });
       setIsLoading(false);
@@ -148,17 +184,17 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   return (
     <fieldset
-      className={styles["form-fieldset"]}
+      className="p-8 bg-muted border-1 border-border rounded-lg m-4 "
       style={{ marginBottom: "1rem" }}
     >
-      <legend className={styles["form-fieldset-label"]}>
+      <legend className="text-md xl:text-lg font-bold">
         {parseWordsForLabels(props.fieldId)}
       </legend>
       {isLoading && <LoadingSpinner isSmall={true} />}
       {!isLoading && (
         <>
-          <div className={fieldStyles["form-field-container"]}>
-            <label className={fieldStyles["field-text"]} htmlFor="select-input">
+          <div className="flex flex-col basis-full mb-4 gap-4">
+            <label className="text-lg font-bold" htmlFor="select-input">
               {dict.title.serviceType}
             </label>
             <SimpleSelector
@@ -170,7 +206,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               defaultVal={selectedServiceOption}
               onChange={(selectedOption) => {
                 if (selectedOption && "value" in selectedOption) {
-                  handleServiceChange(selectedOption?.value)
+                  handleServiceChange(selectedOption?.value);
                 }
               }}
               isDisabled={
@@ -178,7 +214,9 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               }
             />
             <p className={fieldStyles["info-text"]}>
-              <b className={fieldStyles["field-text"]}>{dict.title.description}: </b>
+              <b className={fieldStyles["field-text"]}>
+                {dict.title.description}:{" "}
+              </b>
               {serviceDescription}
             </p>
           </div>
@@ -211,15 +249,16 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             />
           )}
           {selectedServiceOption === regularService && (
-            <div className={styles["schedule-occurrence-container"]}>
+            <div className="w-full m-2">
               <div style={{ margin: "0 0 0.75rem" }}>
-                <span className={fieldStyles["field-text"]}>
-                  {dict.form.repeatEvery}
-                </span>
+                <span className="text-lg">{dict.form.repeatEvery}</span>
                 <input
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
-                  className={`${styles["schedule-occurrence-input"]} ${props.options?.disabled && styles["field-disabled"]}`}
+                  disabled={props.options?.disabled}
+                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
+                    props.options?.disabled && "cursor-not-allowed"
+                  }`}
                   step={"1"}
                   readOnly={
                     formType == Paths.REGISTRY ||
@@ -228,11 +267,9 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   aria-label={FORM_STATES.RECURRENCE}
                   {...props.form.register(FORM_STATES.RECURRENCE)}
                 />
-                <span className={fieldStyles["field-text"]}>
-                  {dict.form.week}
-                </span>
+                <span className="text-lg">{dict.form.week}</span>
               </div>
-              <div className={styles["schedule-day-container"]}>
+              <div className="flex justify-center items-center flex-wrap gap-4 mb-10 mt-10">
                 {daysOfWeek.map((dayOfWeek, index) => {
                   return (
                     <FormCheckboxField
@@ -247,11 +284,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             </div>
           )}
-          <div className={styles["time-slot-container"]}>
-            <h1
-              className={fieldStyles["field-text"]}
-              style={{ margin: "0 0.25rem" }}
-            >
+          <div className="w-full">
+            <h1 className="text-lg" style={{ margin: "0 0.25rem" }}>
               {dict.form.timeSlot}
             </h1>
             <FormFieldComponent

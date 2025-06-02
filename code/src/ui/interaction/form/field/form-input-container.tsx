@@ -1,6 +1,6 @@
 import styles from "./field.module.css";
 
-import React from "react";
+import { useState } from "react";
 import { FieldError } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
@@ -9,7 +9,8 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from 'hooks/useDictionary';
+import { useDictionary } from "hooks/useDictionary";
+import { Icon } from "@mui/material";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -39,18 +40,30 @@ export interface FormInputContainerRedirectOptions {
 export default function FormInputContainer(
   props: Readonly<FormInputContainerProps>
 ) {
+  const [isDescriptionVisible, setIsDescriptionVisible] =
+    useState<boolean>(false);
+
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
   const dict: Dictionary = useDictionary();
   return (
     <>
       <label className={labelClassNames} htmlFor={props.field.fieldId}>
-        <span className={styles["field-text"]}>
+        <span className="text-lg font-semibold flex gap-4">
           {parseWordsForLabels(label)}
           {props.error && "*"}
+          <Icon
+            onMouseEnter={() => setIsDescriptionVisible(true)}
+            onMouseLeave={() => setIsDescriptionVisible(false)}
+            className="material-symbols-outlined"
+          >
+            {"info"}
+          </Icon>
         </span>
         {props.formatLabel && (
-          <span className={styles["format-label"]}>{props.formatLabel}</span>
+          <span className="ml-2 text-gray-600 text-lg">
+            {props.formatLabel}
+          </span>
         )}
         {props.redirectOptions?.addUrl && (
           <RedirectButton
@@ -61,11 +74,22 @@ export default function FormInputContainer(
           />
         )}
       </label>
-      {props.children}
-      {props.field.description[VALUE_KEY] != "" && (
-        <div className={styles["info-text-container"]}>
+      <div>
+        {props.redirectOptions?.view && (
+          <ClickActionButton
+            icon={"arrow_forward"}
+            onClick={props.redirectOptions.view}
+            className={styles["info-text-redirect-button"]}
+          />
+        )}
+        {props.children}
+      </div>
+      {props.field.description[VALUE_KEY] != "" && isDescriptionVisible && (
+        <div className="flex justify-between">
           <p className={styles["info-text"]}>
-            <b className={styles["field-text"]}>{dict.title.description}:&nbsp;</b>{" "}
+            <b className={styles["field-text"]}>
+              {dict.title.description}:&nbsp;
+            </b>{" "}
             {props.field.description[VALUE_KEY]}
             {props.selectedOption && (
               <>
@@ -78,13 +102,6 @@ export default function FormInputContainer(
               </>
             )}
           </p>
-          {props.redirectOptions?.view && (
-            <ClickActionButton
-              icon={"arrow_forward"}
-              onClick={props.redirectOptions.view}
-              className={styles["info-text-redirect-button"]}
-            />
-          )}
         </div>
       )}
       <FormErrorComponent error={props.error} />
