@@ -5,20 +5,16 @@ import styles from "./navbar.module.css";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
-import { Assets } from "io/config/assets";
 import { Routes } from "io/config/routes";
 import { useEffect, useMemo, useState } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
-import { PermissionScheme } from "types/auth";
 import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
-import { NavBarItem } from "ui/navigation/navbar/navbar-item";
+import { NavMenu } from "ui/navigation/navbar/nav-menu";
 import PopoverActionButton from "../action/popover/popover-button";
-import { NavBarUploadItem } from "ui/navigation/navbar/navbar-upload-item";
 
 interface HeaderBarProps {
   settings: UISettings;
@@ -30,8 +26,6 @@ interface HeaderBarProps {
 export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const contextDict = dict.context;
@@ -104,85 +98,11 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             placement="bottom-end"
             className={styles.hamburgerMenuButton}
           >
-            <div className="flex flex-col justify-start gap-4 p-2 ">
-              {props.settings?.modules?.landing && (
-                <NavBarItem
-                  title="Home"
-                  icon={Assets.INFO}
-                  url={Routes.HOME}
-                  isMobile={true}
-                  setIsOpen={setIsMenuOpen}
-                />
-              )}
-              {props.settings?.modules?.map && (
-                <NavBarItem
-                  title="Map"
-                  icon={Assets.MAP}
-                  url={Routes.MAP}
-                  isMobile={true}
-                  setIsOpen={setIsMenuOpen}
-                />
-              )}
-              {props.settings?.modules?.dashboard && (
-                <NavBarItem
-                  title="Dashboard"
-                  icon={Assets.DASHBOARD}
-                  url={Routes.DASHBOARD}
-                  isMobile={true}
-                  setIsOpen={setIsMenuOpen}
-                />
-              )}
-              {props.settings?.modules?.help && (
-                <NavBarItem
-                  title="Help Centre"
-                  icon={Assets.HELP}
-                  url={Routes.HELP}
-                  isMobile={true}
-                  setIsOpen={setIsMenuOpen}
-                />
-              )}
-              {props.settings?.modules?.registry && (
-                <NavBarItem
-                  title="Registry"
-                  icon={Assets.REGISTRY}
-                  url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`}
-                  isMobile={true}
-                  setIsOpen={setIsMenuOpen}
-                />
-              )}
-              {props.settings.links?.map((externalLink, index) => {
-                if (
-                  ![
-                    Routes.MAP,
-                    Routes.DASHBOARD,
-                    Routes.HELP,
-                    Routes.REGISTRY,
-                  ].includes(externalLink.url) &&
-                  // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
-                  // IF there is a permission set with authentication enabled, check if the user has the specified permission
-                  (!keycloakEnabled ||
-                    !externalLink?.permission ||
-                    permissionScheme?.hasPermissions[externalLink.permission])
-                ) {
-                  return (
-                    externalLink.type === "file" ? <NavBarUploadItem
-                      key={externalLink.title + index}
-                      title={externalLink.title}
-                      icon={externalLink.icon}
-                      url={externalLink.url}
-                      isMobile={true}
-                    /> : <NavBarItem
-                      key={externalLink.title + index}
-                      title={externalLink.title}
-                      icon={externalLink.icon}
-                      url={externalLink.url}
-                      isMobile={true}
-                      setIsOpen={setIsMenuOpen}
-                    />
-                  );
-                }
-              })}
-            </div>
+           <NavMenu
+              settings={props.settings}
+              isMobile={true}
+              setIsOpen={setIsMenuOpen}
+            />
           </PopoverActionButton>
         </div>
 
