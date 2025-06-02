@@ -67,6 +67,16 @@ export function NavMenu(
   return (
     <div className={`${props.isMobile ? "flex gap-4 p-2" : " bg-muted border-r-border hidden w-3xs items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs"}
          flex-col justify-start`}>
+      {props.isMobile && props.settings?.modules?.landing && (
+        <NavBarItem
+          title={dict.nav.title.home}
+          icon={Assets.INFO}
+          url={Routes.HOME}
+          isMobile={props.isMobile}
+          setIsOpen={props.setIsOpen}
+        />
+      )}
+
       {props.pages?.filter((page) => page.slug !== "landing" && page.slug !== "help")
         .map((page) => (
           <NavBarItem
@@ -78,15 +88,7 @@ export function NavMenu(
             caption={page.description}
           />
         ))}
-      {props.settings?.modules?.landing && (
-        <NavBarItem
-          title={dict.nav.title.home}
-          icon={Assets.INFO}
-          url={Routes.HOME}
-          isMobile={props.isMobile}
-          setIsOpen={props.setIsOpen}
-        />
-      )}
+
       {props.settings?.modules?.map && (
         <NavBarItem
           title={mapLinkProps?.title ?? dict.nav.title.map}
