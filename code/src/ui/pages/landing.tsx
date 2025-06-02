@@ -42,9 +42,9 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
     <div className="flex h-screen w-full">
       {/* This is the navigation on the left */}
       <NavMenu
+        pages={props.pages}
         settings={props.settings}
         isMobile={false}
-        pages={props.pages}
       />
       {/* This is the where the thumbnail and Project outline is */}
       <div className="mx-auto mt-4 flex h-4/5 items-center justify-center p-2 sm:w-sm md:h-11/12 md:w-11/12 lg:h-11/12 lg:w-11/12 lg:p-4 xl:mt-0 xl:h-10/12 xl:w-9/12 2xl:h-11/12">

@@ -15,8 +15,10 @@ import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavMenu } from "ui/navigation/navbar/nav-menu";
 import PopoverActionButton from "../action/popover/popover-button";
+import { OptionalPage } from "io/config/optional-pages";
 
 interface HeaderBarProps {
+  pages: OptionalPage[];
   settings: UISettings;
 }
 
@@ -98,7 +100,8 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             placement="bottom-end"
             className={styles.hamburgerMenuButton}
           >
-           <NavMenu
+            <NavMenu
+              pages={props.pages}
               settings={props.settings}
               isMobile={true}
               setIsOpen={setIsMenuOpen}

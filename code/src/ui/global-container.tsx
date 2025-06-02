@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 
 import { reduxStore } from 'app/store';
 import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
+import { OptionalPage } from 'io/config/optional-pages';
 import { UISettings } from 'types/settings';
 import Trex from 'utils/trex';
 import ContextMenu from './interaction/context-menu/context-menu';
@@ -14,6 +15,7 @@ import Footer from './text/footer';
 
 // Incoming properties for global container
 interface GlobalContainerProps {
+  pages: OptionalPage[];
   settings: UISettings;
   children?: React.ReactNode;
 }
@@ -64,6 +66,7 @@ export default function GlobalContainer(
     )}
 
     <HeaderBar
+      pages={props.pages}
       settings={props.settings} />
 
     <div id="contentContainer">{props.children}</div>

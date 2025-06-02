@@ -3,31 +3,31 @@
 import React, { useMemo } from "react";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDictionary } from "hooks/useDictionary";
 import { Assets } from "io/config/assets";
+import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
+import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
+import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import { NavBarUploadItem } from "./navbar-upload-item";
-import { OptionalPage } from "io/config/optional-pages";
-import { useDictionary } from "hooks/useDictionary";
-import { Dictionary } from "types/dictionary";
-import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 
 
 export interface NavMenuProps {
+  pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
-  pages?: OptionalPage[];
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
  * A menu item containing navigation options.
  *
+ * @param {OptionalPage[]} pages Additional pages to be redirected.
  * @param {UISettings} settings Settings declared in the user configuration Title.
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
- * @param {OptionalPage[]} pages Additional pages to be redirected.
  * @param setIsOpen Optional dispatch function to dismiss the menu in mobile mode.
  */
 export function NavMenu(
@@ -74,7 +74,7 @@ export function NavMenu(
             title={page.title}
             icon={page.thumbnail ?? Assets.INFO}
             url={`${ASSET_PREFIX}/${page.slug}`}
-            isMobile={false}
+            isMobile={props.isMobile}
             caption={page.description}
           />
         ))}
