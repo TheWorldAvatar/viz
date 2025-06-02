@@ -73,9 +73,9 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   }, [permissionScheme]);
 
   return (
-    <div className="flex h-screen w-full pb-10">
+    <div className="flex h-screen w-full">
       {/* This is the navigation on the left */}
-      <div className="bg-muted border-r-border hidden w-3xs flex-col items-center justify-start gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs">
+      <div className="bg-muted  border-r-border hidden w-3xs flex-col items-center justify-start gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs">
         {props.pages
           .filter((page) => page.slug !== "landing" && page.slug !== "help")
           .map((page) => (
