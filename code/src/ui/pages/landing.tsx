@@ -82,39 +82,43 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             <NavBarItem
               key={page.title}
               title={page.title}
-              caption={page.description}
               icon={page.thumbnail ?? Assets.INFO}
               url={`${ASSET_PREFIX}/${page.slug}`}
+              isMobile={false}
+              caption={page.description}
             />
           ))}
 
         {props.settings.modules.map && (
           <NavBarItem
             title={mapLinkProps?.title ?? props.dict.nav.title.map}
-            caption={mapLinkProps?.caption ?? props.dict.nav.caption.map}
             icon={mapLinkProps?.icon ?? Assets.MAP}
             url={Routes.MAP}
+            isMobile={false}
+            caption={mapLinkProps?.caption ?? props.dict.nav.caption.map}
           />
         )}
         {props.settings.modules.dashboard && (
           <NavBarItem
             title={dashboardLinkProps?.title ?? props.dict.nav.title.dashboard}
+            icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
+            url={Routes.DASHBOARD}
+            isMobile={false}
             caption={
               dashboardLinkProps?.caption ?? props.dict.nav.caption.dashboard
             }
-            icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
-            url={Routes.DASHBOARD}
           />
         )}
         {props.settings.modules.registry &&
           props.settings.resources?.registry?.data && (
             <NavBarItem
               title={registryLinkProps?.title ?? props.dict.nav.title.registry}
+              icon={registryLinkProps?.icon ?? Assets.REGISTRY}
+              url={registryUrl}
+              isMobile={false}
               caption={
                 registryLinkProps?.caption ?? props.dict.nav.caption.registry
               }
-              icon={registryLinkProps?.icon ?? Assets.REGISTRY}
-              url={registryUrl}
             />
           )}
         {props.settings.modules.registry &&
@@ -122,21 +126,23 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
             <NavBarItem
               key={path + index}
               title={parseWordsForLabels(path)}
+              icon={Assets.REGISTRY}
+              url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
+              isMobile={false}
               caption={props.dict.nav.caption.generalReg.replace(
                 "{replace}",
                 parseWordsForLabels(path).toLowerCase()
               )}
-              icon={Assets.REGISTRY}
-              url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
             />
           ))}
 
         {props.settings.modules.help && (
           <NavBarItem
             title={helpLinkProps?.title ?? props.dict.nav.title.help}
-            caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
             icon={helpLinkProps?.icon ?? Assets.HELP}
             url={Routes.HELP}
+            isMobile={false}
+            caption={helpLinkProps?.caption ?? props.dict.nav.caption.help}
           />
         )}
 
@@ -158,9 +164,10 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
               <NavBarItem
                 key={externalLink.title + index}
                 title={externalLink.title}
-                caption={externalLink.caption}
                 icon={externalLink.icon}
                 url={externalLink.url}
+                isMobile={false}
+                caption={externalLink.caption}
                 type={externalLink.type}
               />
             );

@@ -13,22 +13,26 @@ type NavBarItemType = "default" | "file";
 
 export interface NavBarItemProps {
   title: string;
-  caption: string;
   icon: string;
   url: string;
+  isMobile: boolean;
+  caption?: string;
   type?: NavBarItemType;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
  * A nav bar item with an icon, title, and caption that may either redirect to a URL or upload a file.
  *
  * @param {string} title Title.
- * @param {string} caption Description.
  * @param {string} icon Icon to display.
  * @param {string} url Redirects to this url when clicked.
+ * @param {boolean} isMobile Indicates if the design should be in mobile mode.
+ * @param {string} caption Optional description text. Ignored in mobile mode.
  * @param {NavBarItemType} type  Optional parameter that changes the thumbnail's functionality.
  *                                  Defaults to "default" for redirect functionality.
  *                                  When set to "file", the thumbnail allows users to send a local file to the target url.
+ * @param setIsOpen Optional dispatch function for setting the open state.
  */
 export function NavBarItem(
   props: Readonly<NavBarItemProps>
@@ -45,6 +49,7 @@ export function NavBarItem(
     event: React.MouseEvent<HTMLDivElement>
   ): void => {
     event.preventDefault();
+    props.setIsOpen?.(false);
     if (props.type === "file") {
       setIsFileModalOpen(true);
     } else {
@@ -62,10 +67,10 @@ export function NavBarItem(
       placement={"left"}
     >
       <div
-        className="mt-4 flex h-fit w-72 cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300"
+        className={`${props.isMobile ? "" : "mt-4 w-72"} flex h-fit cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300`}
         onClick={handleClick}
       >
-        <div className="flex w-18 items-center justify-center">
+        <div className={`${props.isMobile ? "" : "w-18"} flex items-center justify-center`}>
           <Image
             src={props.icon}
             height={48}
@@ -75,7 +80,9 @@ export function NavBarItem(
         </div>
         <div className="flex flex-1 flex-col">
           <h3 className="text-foreground text-lg font-bold">{props.title}</h3>
-          <p className="text-sm text-gray-500">{props.caption}</p>
+          {!props.isMobile &&
+            <p className="text-sm text-gray-500">{props.caption}</p>
+          }
         </div>
       </div>
       {props.type === "file" && isFileModalOpen && (

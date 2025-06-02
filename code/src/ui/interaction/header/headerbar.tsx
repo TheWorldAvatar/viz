@@ -5,19 +5,19 @@ import styles from "./navbar.module.css";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
+import { Assets } from "io/config/assets";
 import { Routes } from "io/config/routes";
 import { useEffect, useMemo, useState } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
+import { PermissionScheme } from "types/auth";
 import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
-import { PermissionScheme } from "types/auth";
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
+import { NavBarItem } from "ui/navigation/navbar/navbar-item";
 import PopoverActionButton from "../action/popover/popover-button";
-import { MobileMenuItem } from "ui/navigation/navbar/mobile-menu-item";
-import { Assets } from "io/config/assets";
 
 interface HeaderBarProps {
   settings: UISettings;
@@ -105,42 +105,47 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
           >
             <div className="flex flex-col justify-start gap-4 p-2 ">
               {props.settings?.modules?.landing && (
-                <MobileMenuItem
+                <NavBarItem
                   title="Home"
                   icon={Assets.INFO}
                   url={Routes.HOME}
+                  isMobile={true}
                   setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.map && (
-                <MobileMenuItem
+                <NavBarItem
                   title="Map"
                   icon={Assets.MAP}
                   url={Routes.MAP}
+                  isMobile={true}
                   setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.dashboard && (
-                <MobileMenuItem
+                <NavBarItem
                   title="Dashboard"
                   icon={Assets.DASHBOARD}
                   url={Routes.DASHBOARD}
+                  isMobile={true}
                   setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.help && (
-                <MobileMenuItem
+                <NavBarItem
                   title="Help Centre"
                   icon={Assets.HELP}
                   url={Routes.HELP}
+                  isMobile={true}
                   setIsOpen={setIsMenuOpen}
                 />
               )}
               {props.settings?.modules?.registry && (
-                <MobileMenuItem
+                <NavBarItem
                   title="Registry"
                   icon={Assets.REGISTRY}
                   url={`${Routes.REGISTRY_PENDING}/${props.settings?.resources?.registry?.data}`}
+                  isMobile={true}
                   setIsOpen={setIsMenuOpen}
                 />
               )}
@@ -159,11 +164,12 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
                     permissionScheme?.hasPermissions[externalLink.permission])
                 ) {
                   return (
-                    <MobileMenuItem
+                    <NavBarItem
                       key={externalLink.title + index}
                       title={externalLink.title}
                       icon={externalLink.icon}
                       url={externalLink.url}
+                      isMobile={true}
                       type={externalLink.type}
                       setIsOpen={setIsMenuOpen}
                     />
