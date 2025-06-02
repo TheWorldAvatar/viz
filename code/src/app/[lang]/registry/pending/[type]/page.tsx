@@ -38,7 +38,7 @@ export default async function PendingRegistryPage(props: Readonly<PendingRegistr
     return (
       <RegistryTableComponent
         entityType={resolvedParams.type}
-        lifecycleStage={Paths.REGISTRY_PENDING}
+        lifecycleStage={'pending'}
         registryAgentApi={uiSettings.resources?.registry?.url}
       />
     );
