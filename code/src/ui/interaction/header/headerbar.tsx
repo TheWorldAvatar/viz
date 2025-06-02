@@ -1,6 +1,5 @@
 "use client";
 
-
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -83,7 +82,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
-        {keycloakEnabled && <KeycloakUserButton />}
+        {true && <KeycloakUserButton />}
       </div>
     </div>
   );

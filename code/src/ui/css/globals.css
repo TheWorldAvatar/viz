@@ -11,7 +11,7 @@
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
 
-    --background-inverse-primary: #0d1117;
+    --background-inverse-primary: rgba(44, 47, 51, 80%);
     --background-inverse-primary-rgb: 13, 17, 23;
     --background-inverse-secondary: #30363d;
     --background-inverse-tertiary: #434c57;
@@ -45,7 +45,7 @@
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
 
-    --background-inverse-primary: #f9f9f9;
+    --background-inverse-primary: rgba(44, 47, 51, 80%);
     --background-inverse-primary-rgb: 249, 249, 249;
     --background-inverse-secondary: #efefef;
     --background-inverse-tertiary: #e5e5e5;
@@ -100,6 +100,7 @@
   --color-primary: #82b29a;
   --color-secondary: #236776;
   --color-accent: rgba(35, 103, 118, 25%);
+  --color-inverse-primary: var(--background-inverse-primary);
 }
 
 * {

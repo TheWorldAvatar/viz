@@ -6,8 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
-import { useDictionary } from 'hooks/useDictionary';
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { Paths } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
@@ -55,34 +55,34 @@ export default function FormContainerComponent(
   const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
 
   if (props.isModal) {
-    return (<Modal
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      returnPrevPage={true}
-      styles={[styles["modal"]]}
-    >
-      <FormContents {...props} />
-    </Modal>
+    return (
+      <Modal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        returnPrevPage={true}
+        styles={[styles["modal"]]}
+      >
+        <FormContents {...props} />
+      </Modal>
     );
   }
 
-  return (<div className={styles["container"]}>
-    <ReturnButton
-      icon={"close"}
-      className={styles.close}
-      styling={{ text: styles["close-text"] }}
-    />
-    <FormContents {...props} />
-  </div>
+  return (
+    <div className={styles["container"]}>
+      <ReturnButton
+        icon={"close"}
+        className={styles.close}
+        styling={{ text: styles["close-text"] }}
+      />
+      <FormContents {...props} />
+    </div>
   );
 }
 
-function FormContents(
-  props: Readonly<FormContainerComponentProps>
-) {
+function FormContents(props: Readonly<FormContainerComponentProps>) {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
-  const keycloakEnabled = process.env.KEYCLOAK === 'true';
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -204,12 +204,15 @@ function FormContents(
 
   return (
     <>
-      <div className={`${styles["form-title"]} ${styles["form-row"]}`}>
-        <span>{`${translateFormType(props.formType, dict).toUpperCase()} ${props.entityType
+      <div className="flex justify-between items-center mb-4 text-lg font-bold">
+        <span>{`${translateFormType(
+          props.formType,
+          dict
+        ).toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className={styles["form-contents"]}>
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] p- 8">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -234,7 +237,7 @@ function FormContents(
           />
         )}
       </div>
-      <div className={styles["form-footer"]}>
+      <div className="flex justify-between p-2 border-t border-border">
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}
@@ -248,10 +251,13 @@ function FormContents(
         {!formRef.current?.formState?.isSubmitting && response && (
           <ResponseComponent response={response} />
         )}
-        <div className={styles["form-row"]}>
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+        <div className="flex">
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
             props.formType === Paths.REGISTRY &&
-            !response && status?.message === ENTITY_STATUS.ACTIVE &&
+            !response &&
+            status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
@@ -259,7 +265,9 @@ function FormContents(
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
@@ -270,7 +278,9 @@ function FormContents(
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
@@ -280,7 +290,9 @@ function FormContents(
                 onClick={onApproval}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
@@ -292,7 +304,9 @@ function FormContents(
                 isActive={false}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
@@ -304,12 +318,14 @@ function FormContents(
                 isActive={false}
               />
             )}
-          {props.formType != Paths.REGISTRY && !response && <ClickActionButton
-            icon="publish"
-            tooltipText={dict.action.submit}
-            onClick={onSubmit}
-          />}
-          {!response && (isRescindAction || isTerminateAction) &&
+          {props.formType != Paths.REGISTRY && !response && (
+            <ClickActionButton
+              icon="publish"
+              tooltipText={dict.action.submit}
+              onClick={onSubmit}
+            />
+          )}
+          {!response && (isRescindAction || isTerminateAction) && (
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
               icon={"first_page"}
@@ -318,12 +334,11 @@ function FormContents(
                 setIsRescindAction(false);
                 setIsTerminateAction(false);
               }}
-            />}
-          {!response && !(isRescindAction || isTerminateAction) &&
-            <ReturnButton
-              icon="first_page"
-              tooltipText={dict.action.return}
-            />}
+            />
+          )}
+          {!response && !(isRescindAction || isTerminateAction) && (
+            <ReturnButton icon="first_page" tooltipText={dict.action.return} />
+          )}
         </div>
       </div>
     </>

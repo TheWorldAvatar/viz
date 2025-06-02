@@ -1,12 +1,11 @@
-
 import styles from "../form.module.css";
 
 import { UseFormReturn } from "react-hook-form";
 
 import { FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
-import FormArray from '../field/array/array';
-import { renderFormField } from '../form';
+import FormArray from "../field/array/array";
+import { renderFormField } from "../form";
 
 interface FormSectionProps {
   entityType: string;
@@ -26,18 +25,30 @@ interface FormSectionProps {
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
-    <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>{parseWordsForLabels(props.group.label[VALUE_KEY])}</legend>
-      <div className={styles["form-fieldset-contents"]}>
+    <fieldset className="p-8 bg-muted border-1 border-border rounded-lg m-4  ">
+      <legend className="text-md xl:text-lg font-bold ">
+        {parseWordsForLabels(props.group.label[VALUE_KEY])}
+      </legend>
+      <div className="flex flex-wrap w-full">
         {props.group.property.map((field, index) =>
-          renderFormField(props.entityType, props.agentApi, field, props.form, index))}
-        {props.group.multipleProperty.length > 0 && <FormArray
-          agentApi={props.agentApi}
-          fieldId={props.group.label[VALUE_KEY]}
-          fieldConfigs={props.group.multipleProperty}
-          form={props.form}
-          options={props.options}
-        />}
+          renderFormField(
+            props.entityType,
+            props.agentApi,
+            field,
+            props.form,
+            index
+          )
+        )}
+        {props.group.multipleProperty.length > 0 && (
+          <FormArray
+            agentApi={props.agentApi}
+            fieldId={props.group.label[VALUE_KEY]}
+            fieldConfigs={props.group.multipleProperty}
+            form={props.form}
+            options={props.options}
+          />
+        )}
       </div>
-    </fieldset>);
+    </fieldset>
+  );
 }
