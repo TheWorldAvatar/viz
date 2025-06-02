@@ -2,7 +2,11 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
-## 5.27.3
+## 5.27.4
+
+### Changes
+
+- Implemented Mobile Menu Navigation
 
 ### Changes
 
