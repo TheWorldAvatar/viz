@@ -1,6 +1,5 @@
 import styles from "./field.module.css";
 
-import { useState } from "react";
 import { FieldError } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
@@ -11,6 +10,7 @@ import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
 import { useDictionary } from "hooks/useDictionary";
 import { Icon } from "@mui/material";
+import Tooltip from "ui/interaction/tooltip/tooltip";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -40,25 +40,28 @@ export interface FormInputContainerRedirectOptions {
 export default function FormInputContainer(
   props: Readonly<FormInputContainerProps>
 ) {
-  const [isDescriptionVisible, setIsDescriptionVisible] =
-    useState<boolean>(false);
-
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
   const dict: Dictionary = useDictionary();
+
+  const description =
+    props.field.description[VALUE_KEY] != ""
+      ? `${dict.title.description}: ${props.field.description[VALUE_KEY]}${
+          props.selectedOption
+            ? `\n\n${props.selectedOption?.label.value}: ${props.selectedOption?.description.value}`
+            : ""
+        }`
+      : "";
+
   return (
     <>
       <label className={labelClassNames} htmlFor={props.field.fieldId}>
         <span className="text-lg font-semibold flex gap-4">
           {parseWordsForLabels(label)}
           {props.error && "*"}
-          <Icon
-            onMouseEnter={() => setIsDescriptionVisible(true)}
-            onMouseLeave={() => setIsDescriptionVisible(false)}
-            className="material-symbols-outlined"
-          >
-            {"info"}
-          </Icon>
+          <Tooltip text={description} placement="right">
+            <Icon className="material-symbols-outlined">{"info"}</Icon>
+          </Tooltip>
         </span>
         {props.formatLabel && (
           <span className="ml-2 text-gray-600 text-lg">
@@ -84,26 +87,7 @@ export default function FormInputContainer(
         )}
         {props.children}
       </div>
-      {props.field.description[VALUE_KEY] != "" && isDescriptionVisible && (
-        <div className="flex justify-between">
-          <p className={styles["info-text"]}>
-            <b className={styles["field-text"]}>
-              {dict.title.description}:&nbsp;
-            </b>{" "}
-            {props.field.description[VALUE_KEY]}
-            {props.selectedOption && (
-              <>
-                <br />
-                <br />
-                <b className={styles["field-text"]}>
-                  {props.selectedOption?.label.value}:
-                </b>{" "}
-                {props.selectedOption?.description.value}
-              </>
-            )}
-          </p>
-        </div>
-      )}
+
       <FormErrorComponent error={props.error} />
     </>
   );
