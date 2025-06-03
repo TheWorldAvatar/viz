@@ -24,6 +24,16 @@
 
 - Fix the enable and disable of the help page in ui-settings
 
+## 5.27.3
+
+### Changes
+
+- Updated the landing page design
+
+### Bug Fixes
+
+- Fix the enable and disable of the help page in ui-settings
+
 ## 5.27.2
 
 ### Changes
