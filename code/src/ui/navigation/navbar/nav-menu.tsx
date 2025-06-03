@@ -156,7 +156,7 @@ function NavMenuContents(
          flex-col justify-start transition-all duration-200 ease-in-out`}
     >
       <button
-        className="hidden xl:flex cursor-pointer mt-4 w-16 h-16  items-center justify-center rounded-full transition-colors duration-200 hover:bg-gray-300"
+        className="hidden xl:flex cursor-pointer mt-4 w-16 h-16 p-4 items-center justify-center rounded-full transition-colors duration-200 hover:bg-gray-300"
         onClick={() => setIsMenuExpanded(!isMenuExpanded)}
       >
         <Icon className="material-symbols-outlined">
@@ -185,6 +185,7 @@ function NavMenuContents(
             isMobile={props.isMobile}
             caption={isMenuExpanded ? page.description : undefined}
             isMenuExpanded={isMenuExpanded}
+            setIsOpen={props.setIsMenuOpen}
           />
         ))}
 
