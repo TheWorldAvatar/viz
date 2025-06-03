@@ -1,7 +1,4 @@
 {
-  "accessibility": {
-    "thumbnailImage": "Thumbnail-Symbol für die Seite'{replace}'"
-  },
   "action": {
     "add": "hinzufügen",
     "edit": "Bearbeiten",

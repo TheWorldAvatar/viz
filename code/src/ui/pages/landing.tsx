@@ -11,7 +11,6 @@ import markdownit from "markdown-it";
 import { OptionalPage } from "io/config/optional-pages";
 import { Dictionary } from "types/dictionary";
 import { UISettings } from "types/settings";
-import { NavMenu } from "ui/navigation/navbar/nav-menu";
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
@@ -39,24 +38,13 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const introClasses = ["markdown-body", styles.introInner].join(" ");
 
   return (
-    <div className="flex h-screen w-full">
-      {/* This is the navigation on the left */}
-      <NavMenu
-        pages={props.pages}
-        settings={props.settings}
-        isMobile={false}
+    <div className="bg-muted border-border flex h-full flex-col rounded-xl border-1 p-5 shadow-2xl">
+      <div
+        className={introClasses}
+        dangerouslySetInnerHTML={{
+          __html: getIntroductionContent(props.pages),
+        }}
       />
-      {/* This is the where the thumbnail and Project outline is */}
-      <div className="mx-auto mt-4 flex h-4/5 items-center justify-center p-2 sm:w-sm md:h-11/12 md:w-11/12 lg:h-11/12 lg:w-11/12 lg:p-4 xl:mt-0 xl:h-10/12 xl:w-9/12 2xl:h-11/12">
-        <div className="bg-muted border-border flex h-full flex-col rounded-xl border-1 p-5 shadow-2xl">
-          <div
-            className={introClasses}
-            dangerouslySetInnerHTML={{
-              __html: getIntroductionContent(props.pages),
-            }}
-          />
-        </div>
-      </div>
     </div>
   );
 }
