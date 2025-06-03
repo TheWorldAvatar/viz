@@ -1,12 +1,40 @@
 {
-    "branding": {
-        "navbar": ["/images/defaults/icons/twa.svg"]
+  "branding": {
+    "navbar": [
+      "/images/defaults/icons/twa.svg",
+      "/images/wsp/cmcl-logo.svg",
+      "/images/wsp/wappen_pirmasens.svg"
+    ],
+    "landing": "/images/defaults/icons/twa.svg",
+    "landingDark": "/images/defaults/icons/twa.svg"
+  },
+  "modules": {
+    "landing": true,
+    "help": true,
+    "map": false,
+    "dashboard": false,
+    "registry": true
+  },
+  "links": [
+    {
+      "url": "http://192.168.50.42",
+      "title": "Exportieren",
+      "caption": "Export für REGIE68",
+      "icon": "file_download"
     },
-    "modules": {
-        "landing": true,
-        "help": true,
-        "map": true,
-        "dashboard": false,
-        "registry": false
+    {
+      "url": "http://192.168.50.42",
+      "title": "Daten hochladen",
+      "caption": "Importieren Sie Ihre Daten, indem Sie eine CSV-Datei hochladen",
+      "icon": "file_upload",
+      "type": "file",
+      "permission": "operation"
     }
+  ],
+  "resources": {
+    "registry": {
+      "url": "http://192.168.50.42:3838/vis-backend-agent",
+      "data": "auftrags"
+    }
+  }
 }
