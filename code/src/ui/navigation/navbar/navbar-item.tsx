@@ -19,6 +19,7 @@ export interface NavBarItemProps {
   caption?: string;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   handleClick?: React.MouseEventHandler<HTMLDivElement>;
+  isMenuExpanded?: boolean;
 }
 
 /**
@@ -61,8 +62,12 @@ export function NavBarItem(
     >
       <div
         className={`${
-          props.isMobile ? "" : "mt-4 w-72"
-        } flex h-fit cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300`}
+          props.isMobile
+            ? "gap-4"
+            : props.isMenuExpanded
+            ? "mt-4 w-72 gap-2 "
+            : "mt-4 w-16 "
+        } flex h-fit cursor-pointer items-center rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300`}
         onClick={props.handleClick ?? handleClick}
       >
         <div

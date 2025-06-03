@@ -16,6 +16,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
+import { Icon } from "@mui/material";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -104,6 +105,7 @@ function NavMenuContents(
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const dict: Dictionary = useDictionary();
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
 
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -147,10 +149,20 @@ function NavMenuContents(
       className={`${
         props.isMobile
           ? "flex gap-4 p-2"
-          : " bg-muted border-r-border hidden w-3xs items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs"
+          : " bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
       }
-         flex-col justify-start`}
+      ${isMenuExpanded ? "w-3xs lg:w-xs xl:flex 2xl:w-xs" : "w-24  xl:flex"}
+      
+         flex-col justify-start transition-all duration-200 ease-in-out`}
     >
+      <button
+        className="hidden xl:flex cursor-pointer mt-4 w-16 h-16  items-center justify-center rounded-full transition-colors duration-200 hover:bg-gray-300"
+        onClick={() => setIsMenuExpanded(!isMenuExpanded)}
+      >
+        <Icon className="material-symbols-outlined">
+          {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+        </Icon>
+      </button>
       {props.isMobile && props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
@@ -158,6 +170,7 @@ function NavMenuContents(
           url={Routes.HOME}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
+          isMenuExpanded={isMenuExpanded}
         />
       )}
 
@@ -166,54 +179,87 @@ function NavMenuContents(
         .map((page) => (
           <NavBarItem
             key={page.title}
-            title={page.title}
+            title={isMenuExpanded ? page.title : ""}
             icon={page.thumbnail ?? Assets.INFO}
             url={`${ASSET_PREFIX}/${page.slug}`}
             isMobile={props.isMobile}
-            caption={page.description}
+            caption={isMenuExpanded ? page.description : undefined}
+            isMenuExpanded={isMenuExpanded}
           />
         ))}
 
       {props.settings?.modules?.map && (
         <NavBarItem
-          title={mapLinkProps?.title ?? dict.nav.title.map}
+          title={
+            isMenuExpanded ? mapLinkProps?.title ?? dict.nav.title.map : ""
+          }
           icon={mapLinkProps?.icon ?? Assets.MAP}
           url={Routes.MAP}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
-          caption={mapLinkProps?.caption ?? dict.nav.caption.map}
+          caption={
+            isMenuExpanded
+              ? mapLinkProps?.caption ?? dict.nav.caption.map
+              : undefined
+          }
+          isMenuExpanded={isMenuExpanded}
         />
       )}
       {props.settings?.modules?.dashboard && (
         <NavBarItem
-          title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
+          title={
+            isMenuExpanded
+              ? dashboardLinkProps?.title ?? dict.nav.title.dashboard
+              : ""
+          }
           icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
           url={Routes.DASHBOARD}
           isMobile={false}
           setIsOpen={props.setIsMenuOpen}
-          caption={dashboardLinkProps?.caption ?? dict.nav.caption.dashboard}
+          caption={
+            isMenuExpanded
+              ? dashboardLinkProps?.caption ?? dict.nav.caption.dashboard
+              : undefined
+          }
+          isMenuExpanded={isMenuExpanded}
         />
       )}
       {props.settings?.modules?.help && (
         <NavBarItem
-          title={helpLinkProps?.title ?? dict.nav.title.help}
+          title={
+            isMenuExpanded ? helpLinkProps?.title ?? dict.nav.title.help : ""
+          }
           icon={helpLinkProps?.icon ?? Assets.HELP}
           url={Routes.HELP}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
-          caption={helpLinkProps?.caption ?? dict.nav.caption.help}
+          caption={
+            isMenuExpanded
+              ? helpLinkProps?.caption ?? dict.nav.caption.help
+              : undefined
+          }
+          isMenuExpanded={isMenuExpanded}
         />
       )}
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data && (
           <NavBarItem
-            title={registryLinkProps?.title ?? dict.nav.title.registry}
+            title={
+              isMenuExpanded
+                ? registryLinkProps?.title ?? dict.nav.title.registry
+                : ""
+            }
             icon={registryLinkProps?.icon ?? Assets.REGISTRY}
             url={registryUrl}
             isMobile={props.isMobile}
-            caption={registryLinkProps?.caption ?? dict.nav.caption.registry}
+            caption={
+              isMenuExpanded
+                ? registryLinkProps?.caption ?? dict.nav.caption.registry
+                : undefined
+            }
             setIsOpen={props.setIsMenuOpen}
+            isMenuExpanded={isMenuExpanded}
           />
         )}
 
@@ -221,15 +267,20 @@ function NavMenuContents(
         props.settings.resources?.registry?.paths?.map((path, index) => (
           <NavBarItem
             key={path + index}
-            title={parseWordsForLabels(path)}
+            title={isMenuExpanded ? parseWordsForLabels(path) : ""}
             icon={Assets.REGISTRY}
             url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
             isMobile={props.isMobile}
-            caption={dict.nav.caption.generalReg.replace(
-              "{replace}",
-              parseWordsForLabels(path).toLowerCase()
-            )}
+            caption={
+              isMenuExpanded
+                ? dict.nav.caption.generalReg.replace(
+                    "{replace}",
+                    parseWordsForLabels(path).toLowerCase()
+                  )
+                : undefined
+            }
             setIsOpen={props.setIsMenuOpen}
+            isMenuExpanded={isMenuExpanded}
           />
         ))}
 
@@ -250,7 +301,7 @@ function NavMenuContents(
           return (
             <NavBarItem
               key={externalLink.title + index}
-              title={externalLink.title}
+              title={isMenuExpanded ? externalLink.title : ""}
               icon={externalLink.icon}
               url={externalLink.url}
               isMobile={props.isMobile}
@@ -259,13 +310,14 @@ function NavMenuContents(
                   ? dict.nav.tooltip.fileUpload
                   : undefined
               }
-              caption={externalLink.caption}
+              caption={isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
                 externalLink.type === "file"
                   ? createHandleFileUploadClick(externalLink.url)
                   : undefined
               }
+              isMenuExpanded={isMenuExpanded}
             />
           );
         }
