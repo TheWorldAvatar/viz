@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
+import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
@@ -39,10 +39,6 @@ export function NavBarItem(
 ): React.ReactElement {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
-  const imageDescription = dict.accessibility.thumbnailImage.replace(
-    "{replace}",
-    props.title
-  );
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (
     event: React.MouseEvent<HTMLDivElement>
@@ -75,12 +71,15 @@ export function NavBarItem(
             props.isMobile ? "" : "w-18"
           } flex items-center justify-center`}
         >
-          <Image
-            src={props.icon}
-            height={props.isMobile ? 32 : 48}
-            width={props.isMobile ? 32 : 48}
-            alt={imageDescription}
-          />
+          <Icon
+            sx={{
+              color: "#16687B",
+            }}
+            fontSize={props.isMobile ? "medium" : "large"}
+            className="material-symbols-outlined  "
+          >
+            {props.icon}
+          </Icon>
         </div>
         <div className="flex flex-1 flex-col">
           <h3

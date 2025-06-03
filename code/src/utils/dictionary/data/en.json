@@ -1,7 +1,4 @@
 {
-  "accessibility": {
-    "thumbnailImage": "Thumbnail icon for the '{replace}' page"
-  },
   "action": {
     "add": "add",
     "delete": "Delete",

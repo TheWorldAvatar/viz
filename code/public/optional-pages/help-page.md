@@ -1,6 +1,8 @@
 ---
 title: Help Page
 slug: help
+description: This help page provides guidance on using the platform's web map and dashboard tools, including navigation, map exploration, available options, and how to get further assistance.
+thumbnail: help
 ---
 
 <link rel="stylesheet" href="https://fonts.google.com/icons?icon.set=Material+Icons">
@@ -54,7 +56,5 @@ Additionally, an information panel containing the map layers, legend, and featur
 ## Need further assistance?
 
 Contact the <a href="mailto:support@cmclinnovations.com">CMCL technical team</a> today!
-
-
 
 //TODO failure states

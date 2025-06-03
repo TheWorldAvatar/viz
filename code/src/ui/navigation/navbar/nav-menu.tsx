@@ -156,7 +156,11 @@ function NavMenuContents(
          flex-col justify-start transition-all duration-200 ease-in-out`}
     >
       <button
-        className="hidden xl:flex cursor-pointer mt-4 w-16 h-16 p-4 items-center justify-center rounded-full transition-colors duration-200 hover:bg-gray-300"
+        className={`hidden xl:flex cursor-pointer mt-4  p-4   transition-colors duration-200 hover:bg-gray-300 ${
+          isMenuExpanded
+            ? "mr-2 self-end rounded-md"
+            : " justify-center items-center rounded-full"
+        }`}
         onClick={() => setIsMenuExpanded(!isMenuExpanded)}
       >
         <Icon className="material-symbols-outlined">
@@ -166,7 +170,7 @@ function NavMenuContents(
       {props.isMobile && props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
-          icon={Assets.INFO}
+          icon="home"
           url={Routes.HOME}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -177,7 +181,7 @@ function NavMenuContents(
       {!props.isMobile && props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
-          icon={Assets.INFO}
+          icon="home"
           url={Routes.HOME}
           caption={isMenuExpanded ? "Return to Home Screen" : undefined}
           isMobile={props.isMobile}
@@ -192,7 +196,7 @@ function NavMenuContents(
           <NavBarItem
             key={page.title}
             title={page.title}
-            icon={page.thumbnail ?? Assets.INFO}
+            icon={page.thumbnail ?? "info"}
             url={`${ASSET_PREFIX}/${page.slug}`}
             isMobile={props.isMobile}
             caption={isMenuExpanded ? page.description : undefined}
@@ -204,7 +208,7 @@ function NavMenuContents(
       {props.settings?.modules?.map && (
         <NavBarItem
           title={mapLinkProps?.title ?? dict.nav.title.map}
-          icon={mapLinkProps?.icon ?? Assets.MAP}
+          icon={mapLinkProps?.icon ?? "map"}
           url={Routes.MAP}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -219,7 +223,7 @@ function NavMenuContents(
       {props.settings?.modules?.dashboard && (
         <NavBarItem
           title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
-          icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
+          icon={dashboardLinkProps?.icon ?? "dashboard"}
           url={Routes.DASHBOARD}
           isMobile={false}
           setIsOpen={props.setIsMenuOpen}
@@ -234,7 +238,7 @@ function NavMenuContents(
       {props.settings?.modules?.help && (
         <NavBarItem
           title={helpLinkProps?.title ?? dict.nav.title.help}
-          icon={helpLinkProps?.icon ?? Assets.HELP}
+          icon={helpLinkProps?.icon ?? "help"}
           url={Routes.HELP}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
@@ -251,7 +255,7 @@ function NavMenuContents(
         props.settings.resources?.registry?.data && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
-            icon={registryLinkProps?.icon ?? Assets.REGISTRY}
+            icon={registryLinkProps?.icon ?? "table_chart"}
             url={registryUrl}
             isMobile={props.isMobile}
             caption={

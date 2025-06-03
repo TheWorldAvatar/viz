@@ -1,6 +1,8 @@
 ---
 title: Sample Visualisation
 slug: landing
+description: This page provides an overview of the Sample Visualisation for TheWorldAvatar project. It serves as a starting point for developers to explore, understand, and create their own visualisations using the TWA Visualisation Framework, even without prior experience in Typescript or mapping libraries.
+thumbnail: home_app_logo
 ---
 
 <style>
