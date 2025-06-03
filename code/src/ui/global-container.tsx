@@ -49,7 +49,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
     setContextMenuVisible(false);
   };
 
-  const GlobalContainer = (
+  return <Provider store={reduxStore}>
     <div
       id="globalContainer"
       onContextMenu={handleContextMenu}
@@ -87,7 +87,5 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
       {popup && <Trex callback={togglePopup} />}
       <Footer />
     </div>
-  );
-
-  return <Provider store={reduxStore}>{GlobalContainer}</Provider>;
+  </Provider>;
 }

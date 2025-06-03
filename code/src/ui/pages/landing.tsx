@@ -11,7 +11,6 @@ import markdownit from "markdown-it";
 import { OptionalPage } from "io/config/optional-pages";
 import { Dictionary } from "types/dictionary";
 import { UISettings } from "types/settings";
-import { NavMenu } from "ui/navigation/navbar/nav-menu";
 
 // Utilities to render markdown into HTML
 const markdowner = markdownit({
