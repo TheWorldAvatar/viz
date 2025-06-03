@@ -53,14 +53,23 @@ export function NavBarItem(
 
   return (
     <Tooltip
-      text={props.tooltip ?? dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)}
+      text={
+        props.tooltip ??
+        dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)
+      }
       placement={"left"}
     >
       <div
-        className={`${props.isMobile ? "" : "mt-4 w-72"} flex h-fit cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300`}
+        className={`${
+          props.isMobile ? "" : "mt-4 w-72"
+        } flex h-fit cursor-pointer items-center gap-2 rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300`}
         onClick={props.handleClick ?? handleClick}
       >
-        <div className={`${props.isMobile ? "" : "w-18"} flex items-center justify-center`}>
+        <div
+          className={`${
+            props.isMobile ? "" : "w-18"
+          } flex items-center justify-center`}
+        >
           <Image
             src={props.icon}
             height={props.isMobile ? 32 : 48}
@@ -70,9 +79,9 @@ export function NavBarItem(
         </div>
         <div className="flex flex-1 flex-col">
           <h3 className="text-foreground text-lg font-bold">{props.title}</h3>
-          {!props.isMobile &&
+          {!props.isMobile && (
             <p className="text-sm text-gray-500">{props.caption}</p>
-          }
+          )}
         </div>
       </div>
     </Tooltip>

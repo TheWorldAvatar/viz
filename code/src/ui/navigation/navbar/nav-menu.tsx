@@ -36,13 +36,10 @@ interface NavMenuContentsProps extends NavMenuProps {
  * @param {UISettings} settings Settings declared in the user configuration Title.
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
  */
-export function NavMenu(
-  props: Readonly<NavMenuProps>
-): React.ReactElement {
+export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isFileModalOpen, setIsFileModalOpen] = React.useState<boolean>(false);
-
 
   if (props.isMobile) {
     return (
@@ -72,7 +69,7 @@ export function NavMenu(
           />
         )}
       </div>
-    )
+    );
   }
 
   return (
@@ -80,7 +77,8 @@ export function NavMenu(
       <NavMenuContents
         {...props}
         setFileUploadEndpoint={setFileUploadEndpoint}
-        setIsFileUploadModalOpen={setIsFileModalOpen} />
+        setIsFileUploadModalOpen={setIsFileModalOpen}
+      />
       {isFileModalOpen && (
         <FileModal
           url={fileUploadEndpoint}
@@ -133,10 +131,10 @@ function NavMenuContents(
     return url;
   }, [permissionScheme]);
 
-  function createHandleFileUploadClick(url: string): React.MouseEventHandler<HTMLDivElement> {
-    return (
-      event: React.MouseEvent<HTMLDivElement>
-    ): void => {
+  function createHandleFileUploadClick(
+    url: string
+  ): React.MouseEventHandler<HTMLDivElement> {
+    return (event: React.MouseEvent<HTMLDivElement>): void => {
       event.preventDefault();
       props.setFileUploadEndpoint(url);
       props.setIsFileUploadModalOpen(true);
@@ -145,8 +143,14 @@ function NavMenuContents(
   }
 
   return (
-    <div className={`${props.isMobile ? "flex gap-4 p-2" : " bg-muted border-r-border hidden w-3xs items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs"}
-         flex-col justify-start`}>
+    <div
+      className={`${
+        props.isMobile
+          ? "flex gap-4 p-2"
+          : " bg-muted border-r-border hidden w-3xs items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20 lg:w-xs xl:flex 2xl:w-xs"
+      }
+         flex-col justify-start`}
+    >
       {props.isMobile && props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
@@ -157,7 +161,8 @@ function NavMenuContents(
         />
       )}
 
-      {props.pages?.filter((page) => page.slug !== "landing" && page.slug !== "help")
+      {props.pages
+        ?.filter((page) => page.slug !== "landing" && page.slug !== "help")
         .map((page) => (
           <NavBarItem
             key={page.title}
@@ -186,9 +191,7 @@ function NavMenuContents(
           url={Routes.DASHBOARD}
           isMobile={false}
           setIsOpen={props.setIsMenuOpen}
-          caption={
-            dashboardLinkProps?.caption ?? dict.nav.caption.dashboard
-          }
+          caption={dashboardLinkProps?.caption ?? dict.nav.caption.dashboard}
         />
       )}
       {props.settings?.modules?.help && (
@@ -209,9 +212,7 @@ function NavMenuContents(
             icon={registryLinkProps?.icon ?? Assets.REGISTRY}
             url={registryUrl}
             isMobile={props.isMobile}
-            caption={
-              registryLinkProps?.caption ?? dict.nav.caption.registry
-            }
+            caption={registryLinkProps?.caption ?? dict.nav.caption.registry}
             setIsOpen={props.setIsMenuOpen}
           />
         )}
@@ -253,10 +254,18 @@ function NavMenuContents(
               icon={externalLink.icon}
               url={externalLink.url}
               isMobile={props.isMobile}
-              tooltip={externalLink.type === "file" ? dict.nav.tooltip.fileUpload : undefined}
+              tooltip={
+                externalLink.type === "file"
+                  ? dict.nav.tooltip.fileUpload
+                  : undefined
+              }
               caption={externalLink.caption}
               setIsOpen={props.setIsMenuOpen}
-              handleClick={externalLink.type === "file" ? createHandleFileUploadClick(externalLink.url) : undefined}
+              handleClick={
+                externalLink.type === "file"
+                  ? createHandleFileUploadClick(externalLink.url)
+                  : undefined
+              }
             />
           );
         }
