@@ -15,7 +15,6 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
@@ -75,6 +74,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
+      // TODO setup contracts/schedule API route
       const response: string = await sendGetRequest(
         `${props.agentApi}/contracts/schedule/${props.form.getValues("id")}`
       );

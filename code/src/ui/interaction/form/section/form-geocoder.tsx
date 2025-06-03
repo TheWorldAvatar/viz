@@ -20,7 +20,6 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { sendGetRequest } from "utils/server-actions";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 interface FormGeocoderProps {
@@ -202,6 +201,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
 
     const url: string = `${props.agentApi
       }/location/addresses?${searchParams.toString()}`;
+    // TODO setup /registry/location api calls
     const results = await sendGetRequest(url);
     if (
       results ==
