@@ -174,12 +174,24 @@ function NavMenuContents(
         />
       )}
 
+      {!props.isMobile && props.settings?.modules?.landing && (
+        <NavBarItem
+          title={dict.nav.title.home}
+          icon={Assets.INFO}
+          url={Routes.HOME}
+          caption={isMenuExpanded ? "Return to Home Screen" : undefined}
+          isMobile={props.isMobile}
+          setIsOpen={props.setIsMenuOpen}
+          isMenuExpanded={isMenuExpanded}
+        />
+      )}
+
       {props.pages
         ?.filter((page) => page.slug !== "landing" && page.slug !== "help")
         .map((page) => (
           <NavBarItem
             key={page.title}
-            title={isMenuExpanded ? page.title : ""}
+            title={page.title}
             icon={page.thumbnail ?? Assets.INFO}
             url={`${ASSET_PREFIX}/${page.slug}`}
             isMobile={props.isMobile}
@@ -191,9 +203,7 @@ function NavMenuContents(
 
       {props.settings?.modules?.map && (
         <NavBarItem
-          title={
-            isMenuExpanded ? mapLinkProps?.title ?? dict.nav.title.map : ""
-          }
+          title={mapLinkProps?.title ?? dict.nav.title.map}
           icon={mapLinkProps?.icon ?? Assets.MAP}
           url={Routes.MAP}
           isMobile={props.isMobile}
@@ -208,11 +218,7 @@ function NavMenuContents(
       )}
       {props.settings?.modules?.dashboard && (
         <NavBarItem
-          title={
-            isMenuExpanded
-              ? dashboardLinkProps?.title ?? dict.nav.title.dashboard
-              : ""
-          }
+          title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
           icon={dashboardLinkProps?.icon ?? Assets.DASHBOARD}
           url={Routes.DASHBOARD}
           isMobile={false}
@@ -227,9 +233,7 @@ function NavMenuContents(
       )}
       {props.settings?.modules?.help && (
         <NavBarItem
-          title={
-            isMenuExpanded ? helpLinkProps?.title ?? dict.nav.title.help : ""
-          }
+          title={helpLinkProps?.title ?? dict.nav.title.help}
           icon={helpLinkProps?.icon ?? Assets.HELP}
           url={Routes.HELP}
           isMobile={props.isMobile}
@@ -246,11 +250,7 @@ function NavMenuContents(
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data && (
           <NavBarItem
-            title={
-              isMenuExpanded
-                ? registryLinkProps?.title ?? dict.nav.title.registry
-                : ""
-            }
+            title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? Assets.REGISTRY}
             url={registryUrl}
             isMobile={props.isMobile}
@@ -268,7 +268,7 @@ function NavMenuContents(
         props.settings.resources?.registry?.paths?.map((path, index) => (
           <NavBarItem
             key={path + index}
-            title={isMenuExpanded ? parseWordsForLabels(path) : ""}
+            title={parseWordsForLabels(path)}
             icon={Assets.REGISTRY}
             url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path)}`}
             isMobile={props.isMobile}
@@ -302,7 +302,7 @@ function NavMenuContents(
           return (
             <NavBarItem
               key={externalLink.title + index}
-              title={isMenuExpanded ? externalLink.title : ""}
+              title={externalLink.title}
               icon={externalLink.icon}
               url={externalLink.url}
               isMobile={props.isMobile}
