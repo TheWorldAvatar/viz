@@ -156,10 +156,10 @@ function NavMenuContents(
          flex-col justify-start transition-all duration-200 ease-in-out`}
     >
       <button
-        className={`hidden xl:flex cursor-pointer mt-4  p-4   transition-colors duration-200 hover:bg-gray-300 ${
+        className={`hidden xl:flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 ${
           isMenuExpanded
-            ? "mr-2 self-end rounded-md"
-            : " justify-center items-center rounded-full"
+            ? "mr-2 self-end rounded-md -mb-8 "
+            : " justify-center items-center rounded-full -mb-4"
         }`}
         onClick={() => setIsMenuExpanded(!isMenuExpanded)}
       >
@@ -183,7 +183,6 @@ function NavMenuContents(
           title={dict.nav.title.home}
           icon="home"
           url={Routes.HOME}
-          caption={isMenuExpanded ? "Return to Home Screen" : undefined}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           isMenuExpanded={isMenuExpanded}
