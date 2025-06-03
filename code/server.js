@@ -8,6 +8,7 @@
  *
  * server side session storage (cookies) for keycloak authentication are configured here
  * 
+ * Utility function `isValidTargetUrl` added to validate GeoServer proxy URLs.
  * Note:
  * Next.js, by default, serves static files from the 'public' directory, which requires contents to be present at build time.
  * This script extends that capability to allow serving files from a different directory after the build process.
@@ -27,6 +28,18 @@ const colourRed = "\x1b[31m";
 const colourGreen = "\x1b[32m";
 const colourYellow = "\x1b[33m";
 
+// Utility function to validate target URLs against an allowlist
+// Only used when REACT_APP_USE_GEOSERVER_PROXY is true
+function isValidTargetUrl(url) {
+    try {
+        const parsedUrl = new URL(url);
+        const allowedBaseUrls = [process.env.REACT_APP_GEOSERVER_PROXY_URL];
+        return allowedBaseUrls.some(base => parsedUrl.href.startsWith(base));
+    } catch (err) {
+        console.error("Error parsing URL:", err);
+        return false;
+    }
+}
 
 // Configure the server port; default to 3000 if not specified in environment variables
 if (process.env.PORT) { console.info('port specified in environment variable: ', colourGreen, process.env.PORT, colourReset); }
@@ -131,26 +144,33 @@ app.prepare().then(() => {
             console.info('GeoServer requests from MapBox will be sent to ' + process.env.REACT_APP_SERVER_URL + '/geoserver-proxy')
             server.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
                 const targetUrl = req.query.url;
-                let headers = { ...req.headers };
 
-                if (req.kauth?.grant) {
-                    headers['Authorization'] = 'Bearer ' + req.kauth.grant.access_token.token;
-                }
+                if (!isValidTargetUrl(targetUrl)) {
+                    let errmsg = "Invalid or unexpected URL for GeoServer proxy: " + targetUrl;
+                    console.error(errmsg);
+                    res.status(400).send("Invalid or unexpected URL for GeoServer proxy");
+                } else {
+                    let headers = { ...req.headers };
 
-                try {
-                    // Forward the request to the target URL with the modified headers
-                    const response = await axios({
-                        url: targetUrl,
-                        method: req.method,
-                        headers: headers,
-                        responseType: 'stream', // To stream the response back
-                    });
+                    if (req.kauth?.grant) {
+                        headers['Authorization'] = 'Bearer ' + req.kauth.grant.access_token.token;
+                    }
 
-                    // Pipe the response back to the client
-                    response.data.pipe(res);
-                } catch (err) {
-                    // most of these errors can probably be ignored
-                    console.error(err);
+                    try {
+                        // Forward the request to the target URL with the modified headers
+                        const response = await axios({
+                            url: targetUrl,
+                            method: req.method,
+                            headers: headers,
+                            responseType: 'stream', // To stream the response back
+                        });
+
+                        // Pipe the response back to the client
+                        response.data.pipe(res);
+                    } catch (err) {
+                        // most of these errors can probably be ignored
+                        console.error(err);
+                    }
                 }
             });
         }
