@@ -21,7 +21,7 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { CustomAgentResponseBody, sendPostRequest, updateEntity } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 
 interface TaskModalProps {
   entityType: string;
@@ -116,9 +116,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      response = await sendPostRequest(endpoint, JSON.stringify(formData));
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      response = await res.json();
     } else {
-      response = await updateEntity(endpoint, JSON.stringify(formData));
+      const res = await fetch("/api/registry/entity", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          agentApi: endpoint,
+        }),
+      });
+      response = await res.json();
     }
     setResponse(response);
     setFormFields([]);

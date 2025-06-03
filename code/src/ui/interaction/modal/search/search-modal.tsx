@@ -13,7 +13,7 @@ import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
 import Modal from 'ui/interaction/modal/modal';
 import ResponseComponent from 'ui/text/response/response';
-import { CustomAgentResponseBody } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 
 interface SearchModalProps {
   id: string;

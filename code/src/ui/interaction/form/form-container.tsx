@@ -20,16 +20,12 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
-import {
-  CustomAgentResponseBody,
-  sendGetRequest,
-  sendPostRequest,
-} from "utils/server-actions";
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+import { CustomAgentResponseBody } from "types/backend-agent";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -124,11 +120,11 @@ function FormContents(
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = status.iri;
     formData[FORM_STATES.DATE] = new Date().toISOString().split("T")[0];
-    const response: CustomAgentResponseBody = await sendPostRequest(
-      endpoint,
-      JSON.stringify(formData)
-    );
-    setResponse(response);
+    const requestBody: string = JSON.stringify(formData)
+    const init: RequestInit = { method: "POST", headers: { "Content-Type": "application/json" }, body: requestBody }
+    const res: Response = await fetch(endpoint, init)
+    const agentResponseBody: CustomAgentResponseBody = await res.json()
+    setResponse(agentResponseBody);
   };
 
   // A hook that fetches the form template for executing an action
@@ -169,11 +165,14 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const response: CustomAgentResponseBody = await sendPostRequest(
-      `${props.agentApi}/contracts/service/commence`,
-      JSON.stringify(reqBody)
-    );
-    setResponse(response);
+    const init: RequestInit = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqBody) };
+    const response: Response = await fetch(`${props.agentApi}/contracts/service/commence`, init)
+    // sendPostRequest(
+    //   ,
+    //   
+    // );
+    const customAgentResponse: CustomAgentResponseBody = await response.json()
+    setResponse(customAgentResponse);
     setIsLoading(false);
     setTimeout(() => {
       router.back();
@@ -189,10 +188,8 @@ function FormContents(
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const response: string = await sendGetRequest(
-        `${props.agentApi}/contracts/status/${id}`
-      );
-      setStatus(JSON.parse(response));
+      const responseString: string = await fetch(`${props.agentApi}/contracts/status/${id}`).then((response) => response.text())
+      setStatus(JSON.parse(responseString));
     };
 
     if (

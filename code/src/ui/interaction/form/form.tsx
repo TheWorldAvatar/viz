@@ -10,7 +10,6 @@ import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { useDictionary } from 'hooks/useDictionary';
-import { addEntity, deleteEntity, getMatchingInstances, CustomAgentResponseBody, updateEntity } from 'utils/server-actions';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -20,6 +19,7 @@ import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
 import FormSection from './section/form-section';
 import { GetServerSidePropsContext } from 'next';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -145,42 +145,78 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
     switch (props.formType.toLowerCase()) {
       case Paths.REGISTRY_ADD: {
-        pendingResponse = await addEntity(props.agentApi, formData, props.entityType);
+        // Add entity via API route
+        const res = await fetch("/api/registry/entity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, entity: props.entityType, agentApi: props.agentApi }),
+        });
+        pendingResponse = await res.json();
+
         // For registry's primary entity, a draft lifecycle must also be generated
         if (props.isPrimaryEntity && pendingResponse.success) {
-          pendingResponse = await addEntity(props.agentApi, {
-            contract: pendingResponse.iri,
-            ...formData
-          }, "contracts/draft");
+          const draftRes = await fetch("/api/registry/entity", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contract: pendingResponse.iri,
+              ...formData,
+              entity: "contracts/draft",
+              agentApi: props.agentApi,
+            }),
+          });
+          pendingResponse = await draftRes.json();
         }
         break;
       }
       case Paths.REGISTRY_DELETE: {
-        pendingResponse = await deleteEntity(props.agentApi, formData[FORM_STATES.ID], props.entityType);
+        // Delete entity via API route
+        const params = new URLSearchParams({
+          agentApi: props.agentApi,
+          entityType: props.entityType,
+          id: formData[FORM_STATES.ID],
+        });
+        const res = await fetch(`/api/registry/entity?${params.toString()}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+        pendingResponse = await res.json();
         break;
       }
       case Paths.REGISTRY_EDIT: {
-        pendingResponse = await updateEntity(`${props.agentApi}/${props.entityType}/${formData.id}`,
-          JSON.stringify({
+        // Update entity via API route
+        const res = await fetch("/api/registry/entity", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             ...formData,
             entity: props.entityType,
-          })
-        );
+            agentApi: `${props.agentApi}/${props.entityType}/${formData.id}`,
+          }),
+        });
+        pendingResponse = await res.json();
+
         if (props.isPrimaryEntity && pendingResponse.success) {
-          pendingResponse = await updateEntity(`${props.agentApi}/contracts/draft`, JSON.stringify({
-            ...formData,
-            contract: props.primaryInstance,
-          }));
+          const draftRes = await fetch("/api/registry/entity", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...formData,
+              contract: props.primaryInstance,
+              agentApi: `${props.agentApi}/contracts/draft`,
+            }),
+          });
+          pendingResponse = await draftRes.json();
         }
         break;
       }
       case SEARCH_FORM_TYPE: {
-        // For interacting with min and max fields in the search form
         Object.keys(formData).forEach(field => {
-          // Append range key to field if they have min and max fields and values in either their min or max field
-          // eslint-disable-next-line no-prototype-builtins
-          if (formData.hasOwnProperty(`min ${field}`) && formData.hasOwnProperty(`max ${field}`) &&
-            (formData[`min ${field}`] != undefined || formData[`max ${field}`] != undefined)) {
+          if (
+            Object.prototype.hasOwnProperty.call(formData, `min ${field}`) &&
+            Object.prototype.hasOwnProperty.call(formData, `max ${field}`) &&
+            (formData[`min ${field}`] != undefined || formData[`max ${field}`] != undefined)
+          ) {
             formData = {
               ...formData,
               [field]: "range",
@@ -188,7 +224,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           }
         });
 
-        pendingResponse = await getMatchingInstances(props.agentApi, props.entityType, formData);
+        const res = await fetch("/api/registry/entity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            entityType: props.entityType,
+            agentApi: props.agentApi,
+            search: true,
+          }),
+        });
+        pendingResponse = await res.json();
+
         if (pendingResponse.success) {
           if (pendingResponse.message === "[]") {
             pendingResponse.success = false;
