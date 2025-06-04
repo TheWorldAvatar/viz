@@ -196,13 +196,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     setSelectedAddress(null);
     setIsEmptyAddress(false);
     // Start search
-    const searchParams: URLSearchParams = new URLSearchParams();
-    searchParams.append(postalCodeUnderscored, data[postalCode]);
-
-    const url: string = `${props.agentApi
-      }/location/addresses?${searchParams.toString()}`;
-    // TODO setup /registry/location api calls
-    const results = await sendGetRequest(url);
+    const searchParams: URLSearchParams = new URLSearchParams({ postal_code: data[postalCode] });
+    const url = new URL(`/api/registry/location/addresses?${searchParams.toString()}`);
+    const results = await fetch(url).then((response) => response.text());
     if (
       results ==
       "There are no address associated with the parameters in the knowledge graph."
