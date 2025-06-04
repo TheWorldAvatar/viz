@@ -3,13 +3,14 @@ import React, { ReactNode, useState } from 'react';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
+import { useDictionary } from 'hooks/useDictionary';
 import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
 import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
-import { useDictionary } from 'hooks/useDictionary';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -18,8 +19,6 @@ import FormGeocoder from './section/form-geocoder';
 import FormSchedule, { daysOfWeek } from './section/form-schedule';
 import FormSearchPeriod from './section/form-search-period';
 import FormSection from './section/form-section';
-import { GetServerSidePropsContext } from 'next';
-import { CustomAgentResponseBody } from 'types/backend-agent';
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -47,33 +46,6 @@ interface FormComponentProps {
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const bearerToken = context.req.headers['x-bearer-token']; // Access the token
-
-  if (!bearerToken) {
-    return {
-      redirect: {
-        destination: '/login', // Redirect if no token is available
-        permanent: false,
-      },
-    };
-  }
-
-  // Use the token to fetch data from the backend
-  const response = await fetch(`${process.env.VIS_BACKEND_AGENT_URL}/some-endpoint`, {
-    headers: {
-      Authorization: `Bearer ${bearerToken}`,
-    },
-  });
-
-  const data = await response.json();
-
-  return {
-    props: {
-      data,
-    },
-  };
-}
 
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
