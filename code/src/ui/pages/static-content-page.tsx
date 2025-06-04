@@ -37,7 +37,7 @@ export default function StaticContentPage({
   if (childNodes != null) {
     return (
       <div
-        className="w-full h-full flex flex-col justify-center items-center md:mb-16 lg:mb-0"
+        className=" w-full h-full flex flex-col justify-center items-center md:mb-16 lg:mb-0"
         key="static-content-page"
       >
         <ReturnButton />

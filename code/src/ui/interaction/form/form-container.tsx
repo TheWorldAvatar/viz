@@ -237,7 +237,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-2 border-t border-border">
+      <div className="flex justify-between p-2 border-t border-border mt-6">
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}

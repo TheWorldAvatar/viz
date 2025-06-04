@@ -64,9 +64,7 @@ export default function FormInputContainer(
           </Tooltip>
         </span>
         {props.formatLabel && (
-          <span className="ml-2 text-gray-600 text-lg">
-            {props.formatLabel}
-          </span>
+          <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
         )}
       </label>
       <div className="flex items-center justify-end gap-6">
@@ -76,14 +74,13 @@ export default function FormInputContainer(
             icon="add"
             url={props.redirectOptions.addUrl}
             isActive={false}
-            isTransparent={true}
           />
         )}
         {props.redirectOptions?.view && (
           <ClickActionButton
-            icon={"arrow_forward"}
+            icon="arrow_forward"
+            label="View"
             onClick={props.redirectOptions.view}
-            className={styles["info-text-redirect-button"]}
           />
         )}
       </div>

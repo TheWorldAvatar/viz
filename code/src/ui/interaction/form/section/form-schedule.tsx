@@ -189,7 +189,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       className="p-8 bg-muted border-1 border-border rounded-lg m-4 "
       style={{ marginBottom: "1rem" }}
     >
-      <legend className="text-md xl:text-lg font-bold">
+      <legend className="text-md xl:text-lg  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </legend>
       {isLoading && <LoadingSpinner isSmall={true} />}
@@ -258,7 +258,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
+                  className={`w-16 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
                     props.options?.disabled && "cursor-not-allowed"
                   }`}
                   step={"1"}

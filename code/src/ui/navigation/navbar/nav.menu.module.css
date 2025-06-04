@@ -1,5 +1,6 @@
 .hamburgerMenuButton {
   margin-right: 1rem !important;
+  background-color: transparent !important;
 }
 
 .hamburgerMenuButton span {

@@ -108,6 +108,7 @@
   --color-accent: rgba(35, 103, 118, 25%);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
+  --color-inverse-primary: var(--background-inverse-primary);
 }
 
 * {

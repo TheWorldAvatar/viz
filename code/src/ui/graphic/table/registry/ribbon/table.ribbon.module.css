@@ -20,7 +20,7 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  padding: 0.25rem 1.0rem !important;
+  padding: 0.25rem 1rem !important;
   margin: 0 !important;
   border: none !important;
   border-radius: 0;
@@ -33,11 +33,6 @@
   background: none !important;
 }
 
-.action-ribbon-container {
-  display: flex;
-  justify-content: space-between;
-}
-
 .action-ribbon {
   display: flex;
   gap: 0.5rem;
@@ -45,8 +40,7 @@
 }
 
 .active-state {
-  border-bottom: 4px solid var(--text-color-links) !important;
-  background: transparent;
+  background-color: var(--background-primary);
 }
 
 @media only screen and (max-width: 480px) {

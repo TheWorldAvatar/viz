@@ -52,8 +52,9 @@ export const selectorStyles: StylesConfig<
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: "var(--background-primary)",
-    fontSize: "var(--font-size-tertiary-text)",
+    color: "var(--text-color-primary)",
+    fontSize: "var(--font-size-primary-text)",
+    marginLeft: "0.5rem",
   }),
   singleValue: (provided, { isDisabled }) => ({
     ...provided,

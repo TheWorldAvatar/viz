@@ -215,7 +215,7 @@ export function DependentFormSection(
     (currentParentOption && parentField != "")
   ) {
     return (
-      <fieldset className="border-1 border-border rounded-lg p-8 bg-muted m-4">
+      <fieldset className="rounded-lg p-8 bg-muted m-4">
         {isFetching && (
           <div className={styles["loader-container"]}>
             <LoadingSpinner isSmall={true} />
