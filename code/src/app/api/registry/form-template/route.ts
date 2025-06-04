@@ -1,9 +1,10 @@
+import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
-  const agentApi = searchParams.get("agentApi");
+  const agentApi = SettingsStore.getRegistryURL();
   const entityType = searchParams.get("entityType");
   const identifier = searchParams.get("identifier");
 

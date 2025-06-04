@@ -1,10 +1,11 @@
+import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   // agentApi is required
-  const agentApi = searchParams.get("agentApi");
+  const agentApi = SettingsStore.getRegistryURL();
   if (!agentApi) {
     return NextResponse.json({ error: "Missing agentApi parameter" }, { status: 400 });
   }
