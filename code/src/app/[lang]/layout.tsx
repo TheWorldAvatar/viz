@@ -4,18 +4,18 @@
 
 import 'ui/css/globals.css';
 
+import { Dosis } from 'next/font/google';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
-import { Dosis } from 'next/font/google';
 
-import OptionalPages from 'io/config/optional-pages';
+import OptionalPages, { OptionalPage } from 'io/config/optional-pages';
 import SettingsStore from 'io/config/settings';
+import { Dictionary } from 'types/dictionary';
 import { UISettings } from 'types/settings';
 import GlobalContainer from 'ui/global-container';
+import { SessionInfoProvider } from 'utils/auth/SessionInfo';
 import { getDictionary } from 'utils/dictionary/dictionaries';
 import { DictionaryProvider } from 'utils/dictionary/DictionaryContext';
-import { Dictionary } from 'types/dictionary';
-import { SessionInfoProvider } from 'utils/auth/SessionInfo';
 
 
 /**
@@ -58,6 +58,7 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
     const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
     const { lang } = await params;
     const dictionary: Dictionary = await getDictionary(lang);
+    const pages: OptionalPage[] = OptionalPages.getAllPages();
 
     // Root element containing all children.
     return (
@@ -65,7 +66,7 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
             <body>
                 <DictionaryProvider dictionary={dictionary}>
                     <SessionInfoProvider>
-                        <GlobalContainer settings={uiSettings}>
+                        <GlobalContainer pages={pages} settings={uiSettings}>
                             {children}
                             {modal}
                         </GlobalContainer>

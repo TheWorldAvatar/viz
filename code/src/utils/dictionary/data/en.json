@@ -1,7 +1,4 @@
 {
-  "accessibility": {
-    "thumbnailImage": "Thumbnail icon for the '{replace}' page"
-  },
   "action": {
     "add": "add",
     "delete": "Delete",
@@ -132,6 +129,7 @@
       "help": "Get help for this web platform"
     },
     "title": {
+      "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
       "registry": "Registry",

@@ -12,6 +12,8 @@ import {
 
 interface PopoverActionButtonProps extends ActionButtonProps {
   children: React.ReactNode;
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   placement?: Placement;
 }
 
@@ -19,6 +21,8 @@ interface PopoverActionButtonProps extends ActionButtonProps {
  * A clickable button that acts as an anchor for the popover floating element.
  *
  * @param {ReactNode} children Children elements that are shown in the popover floating element.
+ * @param {boolean} isOpen Optional state for popover.
+ * @param setIsOpen Optional dispatch action to control the open state of popover.
  * @param {Placement} placement Optional position of popover.
  * @param {string} icon The Material icon name.
  * @param {string} label Optional label that is displayed on the button.
@@ -32,6 +36,8 @@ interface PopoverActionButtonProps extends ActionButtonProps {
  */
 export default function PopoverActionButton({
   children,
+  isOpen,
+  setIsOpen,
   placement,
   icon,
   label,
@@ -42,7 +48,7 @@ export default function PopoverActionButton({
   styling,
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
-  const popover = usePopover(placement);
+  const popover = usePopover(placement, isOpen, setIsOpen);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
     initial: {

@@ -29,6 +29,7 @@
     --border-primary: #dbdbdb;
     --border-secondary: #a5a5b3;
     --border-tertiary: #9898af;
+    --border: #dbdbdb;
 
     /* Button */
     --description-box: #82b29a;
@@ -65,6 +66,7 @@
     --border-primary: #434b55;
     --border-secondary: #6c7989;
     --border-tertiary: #7f8ea1;
+    --border: #2f2f36;
 
     /* Button */
     --description-box: #2b816f;
@@ -100,11 +102,12 @@
   --color-background: var(--background-primary);
   --color-foreground: var(--text-color-primary);
   --color-muted: var(--background-muted);
-  --color-border: var(--border-primary);
+  --color-border: var(--border);
   --color-primary: #82b29a;
   --color-secondary: #236776;
   --color-accent: rgba(35, 103, 118, 25%);
-  --color-inverse-primary: var(--background-inverse-primary);
+  --color-links: var(--text-color-links);
+  --color-links-hover: var(--text-color-links-hover);
 }
 
 * {
@@ -123,7 +126,7 @@ body {
   overflow: hidden;
 }
 
-a {
+/* a {
   color: var(--text-color-links);
   text-decoration: none;
   transition: color 0.5s ease;
@@ -131,7 +134,7 @@ a {
 
 a:hover {
   color: var(--text-color-links-hover) !important;
-}
+} */
 
 img {
   background-color: transparent !important;
@@ -190,15 +193,6 @@ input[type="file"] {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-#contentContainer {
-  width: 100%;
-  flex-grow: 1;
-  overflow: hidden;
-
-  display: flex;
-  flex-direction: column;
 }
 
 * {

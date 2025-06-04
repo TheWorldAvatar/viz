@@ -2,6 +2,28 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.27.5
+
+### Changes
+
+- Made the left navigation menu available on all pages
+- Made the left navigation menu collapsable
+- Changed the icons in the navigation menus
+
+## 5.27.4
+
+### Changes
+
+- Implemented Mobile Menu Navigation
+
+### Changes
+
+- Updated the landing page design
+
+### Bug Fixes
+
+- Fix the enable and disable of the help page in ui-settings
+
 ## 5.27.3
 
 ### Changes

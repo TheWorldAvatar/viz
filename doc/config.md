@@ -47,9 +47,9 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `registry`: REQUIRED. Displays the registry page if enabled
 - `links`: optional configuration for adding or updating redirect links on the landing page. This configuration can overwrite the defaults for the map, dashboard, and help modules. It requires an `ARRAY` of the following JSON format:
   - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, and `registry` accordingly.
-  - `title`: REQUIRED. Thumbnail title on landing page. Optional for only internal links, which defaults to the default if not set.
-  - `caption`: REQUIRED. Thumbnail caption on landing page. Optional for only internal links, which defaults to the default if not set.
-  - `icon`: REQUIRED. Thumbnail icon on landing page. Optional for only internal links, which defaults to the default if not set.
+  - `title`: REQUIRED. Thumbnail title on the navigation bar. Optional for only internal links, which defaults to the default if not set.
+  - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
+  - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Optional for only internal links, which defaults to the default if not set.
   - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL.
 - `resources`: optional configuration for additional resources. They follow the following format
@@ -70,9 +70,6 @@ Note that resources are optional and their configuration options can differ from
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Users must only use either white spaces or `_` to separate the words.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
-
-> [!NOTE]
-> When specifying image paths, be sure to use absolute paths beggining with a `/`
 
 <!--  -->
 
@@ -98,7 +95,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "url": "map",
       "title": "Explore",
       "caption": "Describe your map here",
-      "icon": "/images/path/to/svg.svg"
+      "icon": "map"
     }
   ],
   "resources": {
@@ -395,9 +392,7 @@ Do note that users should **NOT** delete any contents within the `defaults` dire
 
 Developers can insert landing pages alongside other supplementary pages such as about us, glossary, acknowledgements, and attributions into the platform. These optional pages must be included as `Markdown` files in the `uploads/optional-pages` directory.
 
-Do note that the supplementary pages will be inserted as thumbnails and accessed via the landing page. It is crucial to add numbers in the file name of supplementary pages to order the thumbnail display according to your preferences. Otherwise, file names are insignificant if the display order is not of utmost significance. For instance, `01.about.md` and `02.glossary.md` will be always be displayed in this sequence as 01 is smaller than 02.
-
-When linking the images in markdown, do note that any relative path should start from the `/images` path (e.g. `/images/defaults/icons/acknowledgement.svg`).
+Do note that the supplementary pages will be inserted as thumbnails and accessed via the navigation bar. It is crucial to add numbers in the file name of supplementary pages to order the thumbnail display according to your preferences. Otherwise, file names are insignificant if the display order is not of utmost significance. For instance, `01.about.md` and `02.glossary.md` will be always be displayed in this sequence as 01 is smaller than 02.
 
 ### 3.1 Fields
 
@@ -406,7 +401,7 @@ The following fields are supported, and must be added to the top of the file bef
 - `title`: Displays the title on the browser tab. Required
 - `slug`: Identifier for the page route. Required
 - `description`: Describes the page in the landing page. Required only for non-landing pages
-- `thumbnail`: Displays the associated thumbnail image in the landing page. Required only for non-landing pages
+- `thumbnail`: Displays the associated thumbnail image in the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Required only for non-landing pages
 
 ### 3.2 Sample
 
