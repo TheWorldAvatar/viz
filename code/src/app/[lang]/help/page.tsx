@@ -22,7 +22,7 @@ const markdowner = markdownIt({
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
   const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.HELP);
   return {
     title: metadata?.title ?? PageTitles.HELP,

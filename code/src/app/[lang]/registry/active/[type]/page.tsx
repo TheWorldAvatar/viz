@@ -19,7 +19,7 @@ interface ActiveRegistryPageProps {
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
   const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
   return {
     title: metadata?.title ?? PageTitles.REGISTRY,
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * @returns React component for display. 
  */
 export default async function ActiveRegistryPage(props : ActiveRegistryPageProps) {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
   const resolvedParams = await props.params;
   if (!uiSettings.modules.registry || !uiSettings.resources?.registry?.data) {
     redirect(Paths.HOME);
