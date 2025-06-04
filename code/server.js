@@ -20,7 +20,6 @@ import session, { MemoryStore } from 'express-session';
 import { createClient } from "redis"
 import { RedisStore } from 'connect-redis';
 import Keycloak from 'keycloak-connect';
-import axios from 'axios';
 
 const colourReset = "\x1b[0m";
 const colourRed = "\x1b[31m";
@@ -126,33 +125,9 @@ app.prepare().then(() => {
         const useGeoServerProxy = process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true';
         console.info('Geoserver proxying is', useGeoServerProxy ? colourYellow : colourGreen, useGeoServerProxy, colourReset);
 
+        // Remove legacy GeoServer proxy route, as this is now handled by Next.js API route
         if (useGeoServerProxy) {
-            console.info('Server URL REACT_APP_SERVER_URL is ' + process.env.REACT_APP_SERVER_URL);
-            console.info('GeoServer requests from MapBox will be sent to ' + process.env.REACT_APP_SERVER_URL + '/geoserver-proxy')
-            server.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
-                const targetUrl = req.query.url;
-                let headers = { ...req.headers };
-
-                if (req.kauth?.grant) {
-                    headers['Authorization'] = 'Bearer ' + req.kauth.grant.access_token.token;
-                }
-
-                try {
-                    // Forward the request to the target URL with the modified headers
-                    const response = await axios({
-                        url: targetUrl,
-                        method: req.method,
-                        headers: headers,
-                        responseType: 'stream', // To stream the response back
-                    });
-
-                    // Pipe the response back to the client
-                    response.data.pipe(res);
-                } catch (err) {
-                    // most of these errors can probably be ignored
-                    console.error(err);
-                }
-            });
+            console.info('GeoServer proxying is now handled by the Next.js API route at /api/geoserver-proxy');
         }
     }
 

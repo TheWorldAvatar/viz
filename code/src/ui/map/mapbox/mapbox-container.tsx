@@ -68,7 +68,7 @@ export default function MapboxMapComponent(props: MapProperties) {
                         const params = new URLSearchParams(urlObject.search);
                         if (params.get('request') === 'GetMap') {
                             // not sure if this will work across all conditions
-                            const proxyUrl = `${process.env.REACT_APP_SERVER_URL}/geoserver-proxy?url=${encodeURIComponent(url)}`;
+                            const proxyUrl = `/api/geoserver-proxy?url=${encodeURIComponent(url)}`;
                             return {
                                 url: proxyUrl
                             };
