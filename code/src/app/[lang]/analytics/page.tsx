@@ -5,8 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { UISettings } from 'types/settings';
-import { NavBarItemProps } from 'ui/navigation/navbar/navbar-item';
+import { NavBarItemSettings, UISettings } from 'types/settings';
 
 
 /**
@@ -16,7 +15,7 @@ import { NavBarItemProps } from 'ui/navigation/navbar/navbar-item';
  */
 export async function generateMetadata(): Promise<Metadata> {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
-  const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.DASHBOARD);
+  const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.DASHBOARD);
   return {
     title: metadata?.title ?? PageTitles.DASHBOARD,
   }

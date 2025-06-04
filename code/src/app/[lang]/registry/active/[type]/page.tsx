@@ -3,9 +3,8 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { UISettings } from 'types/settings';
+import { NavBarItemSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
-import { NavBarItemProps } from 'ui/navigation/navbar/navbar-item';
 
 interface ActiveRegistryPageProps {
   params: Promise<{
@@ -20,7 +19,7 @@ interface ActiveRegistryPageProps {
  */
 export async function generateMetadata(): Promise<Metadata> {
   const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
-  const metadata: NavBarItemProps = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
+  const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
   return {
     title: metadata?.title ?? PageTitles.REGISTRY,
   }
