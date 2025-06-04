@@ -18,7 +18,7 @@ interface ArchiveRegistryPageProps {
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
   return {
     title: metadata?.title ?? PageTitles.REGISTRY,
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * @returns React component for display. 
  */
 export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistryPageProps>) {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   const resolvedParams = await props.params
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (

@@ -10,7 +10,7 @@ import { getScenarios } from 'utils/getScenarios';
 
 export const dynamic = 'force-dynamic';
 
-const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
+const uiSettings: UISettings = SettingsStore.getUISettings();
 const scenarioUrl = uiSettings.resources?.scenario?.url;
 const scenarioDataset = uiSettings.resources?.scenario?.data;
 const scenarioResource: UISettings['resources']['scenario'] | undefined = uiSettings.resources?.scenario;

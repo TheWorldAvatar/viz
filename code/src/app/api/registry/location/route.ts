@@ -4,7 +4,7 @@ import { UISettings } from "types/settings";
 
 export async function GET(req: NextRequest) {
 
-    const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
+    const uiSettings: UISettings = SettingsStore.getUISettings();
     const agentApiUrl = uiSettings?.resources?.registry?.url;
 
     const { searchParams } = new URL(req.url);
