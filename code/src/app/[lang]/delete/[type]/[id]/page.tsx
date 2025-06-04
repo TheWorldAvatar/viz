@@ -37,7 +37,7 @@ export default async function DeleteFormPage(props: Readonly<DeleteFormPageProps
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={Paths.REGISTRY_DELETE}
-      agentApi={uiSettings?.resources?.registry?.url}
+      agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={false}
     />

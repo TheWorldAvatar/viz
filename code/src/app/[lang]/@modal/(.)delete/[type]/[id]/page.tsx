@@ -35,7 +35,7 @@ export default async function InterceptFormDeletePage(props: Readonly<InterceptD
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={Paths.REGISTRY_DELETE}
-      agentApi={uiSettings?.resources?.registry?.url}
+      agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={true}
     />
