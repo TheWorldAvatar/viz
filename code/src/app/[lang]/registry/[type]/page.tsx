@@ -39,7 +39,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
       <RegistryTableComponent
         entityType={resolvedParams.type}
         lifecycleStage={Paths.REGISTRY_GENERAL}
-        registryAgentApi={uiSettings.resources?.registry?.url}
+        registryAgentApi={SettingsStore.getRegistryURL()}
       />
     );
   } else {
