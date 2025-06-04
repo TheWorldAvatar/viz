@@ -53,7 +53,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           if (pathNameEnd === props.entityType) {
             // Fetch active contracts
             const activeRes = await fetch(
-              `/api/registry/lifecycle-data?agentApi=${encodeURIComponent(props.registryAgentApi)}&currentStage=active&entityType=${props.entityType}`,
+              `/api/registry/lifecycle-data?currentStage=active&entityType=${props.entityType}`,
               { cache: 'no-store', credentials: 'same-origin' }
             );
             let activeInstances = await activeRes.json();
@@ -69,7 +69,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
 
             // Fetch archived contracts
             const archivedRes = await fetch(
-              `/api/registry/lifecycle-data?agentApi=${encodeURIComponent(props.registryAgentApi)}&currentStage=archive&entityType=${props.entityType}`,
+              `/api/registry/lifecycle-data?currentStage=archive&entityType=${props.entityType}`,
               { cache: 'no-store', credentials: 'same-origin' }
             );
             const archivedInstances = await archivedRes.json();
@@ -78,7 +78,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           } else {
             // Fetch service tasks for a specific contract
             const params = new URLSearchParams({
-              agentApi: props.registryAgentApi,
               contractType: props.entityType,
               id: pathNameEnd,
             });
@@ -93,7 +92,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           const date = new Date(selectedDate);
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
           const params = new URLSearchParams({
-            agentApi: props.registryAgentApi,
             contractType: props.entityType,
             time: unixTimestamp.toString(),
           });
@@ -104,13 +102,13 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           instances = await res.json();
         } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
           const res = await fetch(
-            `/api/registry/data?agentApi=${encodeURIComponent(props.registryAgentApi)}&entityType=${props.entityType}&requireLabel=true`,
+            `/api/registry/data?entityType=${props.entityType}&requireLabel=true`,
             { cache: 'no-store', credentials: 'same-origin' }
           );
           instances = await res.json();
         } else {
           const res = await fetch(
-            `/api/registry/lifecycle-data?agentApi=${encodeURIComponent(props.registryAgentApi)}&currentStage=${props.lifecycleStage}&entityType=${props.entityType}`,
+            `/api/registry/lifecycle-data?currentStage=${props.lifecycleStage}&entityType=${props.entityType}`,
             { cache: 'no-store', credentials: 'same-origin' }
           );
           instances = await res.json();
@@ -162,7 +160,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           <SummarySection
             id={pathNameEnd}
             entityType={props.entityType}
-            registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
           currentInstances.length > 0 ?

@@ -114,7 +114,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      const res = await fetch("/api/registry/contracts/service", {
+      const res = await fetch("/api/registry/contract/service", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -168,22 +168,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     // Target id is optional, and will default to form
-    const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
+    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShapeOrGroup[] = await fetch(`/api/registry/lifecycle-form-template?agentApi=${endpoint}&lifecycleStage=${lifecycleStage}&eventType=${eventType}&identifier=${targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER}`)
+      const template: PropertyShapeOrGroup[] = await fetch(`/api/registry/lifecycle-form-template?lifecycleStage=${lifecycleStage}&eventType=${eventType}&identifier=${targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER}`)
         .then(res => res.json());
       setFormFields(template);
       setIsFetching(false);
     }
 
     if (isDispatchAction) {
-      getFormTemplate(props.registryAgentApi, "service", "dispatch", props.task.id);
+      getFormTemplate("service", "dispatch", props.task.id);
     } else if (isCompleteAction) {
-      getFormTemplate(props.registryAgentApi, "service", "complete");
+      getFormTemplate("service", "complete");
     } else if (isReportAction) {
-      getFormTemplate(props.registryAgentApi, "service", "report");
+      getFormTemplate("service", "report");
     } else if (isCancelAction) {
-      getFormTemplate(props.registryAgentApi, "service", "cancel");
+      getFormTemplate("service", "cancel");
     }
   }, [isDispatchAction, isCompleteAction, isReportAction, isCancelAction]);
 

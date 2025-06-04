@@ -13,7 +13,6 @@ import AccordionField from 'ui/text/accordion/accordion-field';
 interface SummarySectionProps {
   id: string;
   entityType: string;
-  registryAgentApi: string;
 }
 
 /**
@@ -33,8 +32,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const url = new URL('/api/registry/data', window.location.origin)
-        url.searchParams.set('agentApi', props.registryAgentApi);
+        const url = new URL('/api/registry/data')
         url.searchParams.set('entityType', props.entityType);
         url.searchParams.set('identifier', props.id);
         url.searchParams.set('requireLabel', 'true');

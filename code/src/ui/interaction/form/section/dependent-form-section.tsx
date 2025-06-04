@@ -59,7 +59,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await fetch(`/api/registry/data?AgentApi=${encodeURIComponent(props.agentApi)}&entityType=${field.dependentOn.label}&identifier=${getAfterDelimiter(currentParentOption, "/")}&subEntityType=${entityType}`)
+          entities = await fetch(`/api/registry/data?entityType=${field.dependentOn.label}&identifier=${getAfterDelimiter(currentParentOption, "/")}&subEntityType=${entityType}`)
             .then(res => res.json());
         }
         // If there is no valid parent option, there should be no entity
@@ -73,7 +73,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         entities = await fetch(url).then((response) => response.json())
 
       } else {
-        entities = await fetch(`/api/registry/data?AgentApi=${props.agentApi}&entityType=&{entityType}`).then((res) => res.json())
+        entities = await fetch(`/api/registry/data?entityType=&{entityType}`).then((res) => res.json())
       }
 
       // By default, id is empty

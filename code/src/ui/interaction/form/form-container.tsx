@@ -117,7 +117,7 @@ function FormContents(
       [FORM_STATES.CONTRACT]: status.iri,
       [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
     };
-    const res = await fetch("/api/registry/contracts", {
+    const res = await fetch("/api/registry/contract", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -167,7 +167,7 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const res = await fetch("/api/registry/contracts", {
+    const res = await fetch("/api/registry/contract", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -193,10 +193,9 @@ function FormContents(
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
       const params = new URLSearchParams({
-        agentApi: props.agentApi,
         id,
       });
-      const res = await fetch(`/api/registry/contract-status?${params.toString()}`, {
+      const res = await fetch(`/api/registry/contract/status?${params.toString()}`, {
         cache: 'no-store',
         credentials: 'same-origin'
       });
