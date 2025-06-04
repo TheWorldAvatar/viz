@@ -74,10 +74,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      // TODO setup contracts/schedule API route
-      const response: string = await sendGetRequest(
-        `${props.agentApi}/contracts/schedule/${props.form.getValues("id")}`
-      );
+      const response: string = await fetch(`/api/registry/contract/schedule?agentApi=${props.agentApi}&id=${props.form.getValues("id")}`).then((res) => res.text())
       const jsonResponse: RegistryFieldValues = JSON.parse(response);
 
       // Retrieve recurrence and selected service option
