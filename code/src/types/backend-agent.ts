@@ -1,6 +1,4 @@
-import { NextResponse } from "next/server";
-
-export interface CustomAgentResponseBody extends NextResponse {
+export type CustomAgentResponseBody = {
     message: string;
     success?: boolean;
     iri?: string;
