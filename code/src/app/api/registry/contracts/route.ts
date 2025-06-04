@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Build the external endpoint
-    const url = `${agentApi}/contracts/archive/${action}`;
+    const url = `${agentApi}/contracts/${action}`;
 
     // Proxy the request
     const externalRes = await fetch(url, {

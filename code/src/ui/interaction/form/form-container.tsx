@@ -96,28 +96,36 @@ function FormContents(
   const rescindContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    await rescindOrTerminateAction(formData, "rescind");
+    await rescindOrTerminateAction(formData, "archive/rescind");
   };
 
   // Terminate the target contract
   const terminateContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    await rescindOrTerminateAction(formData, "terminate");
+    await rescindOrTerminateAction(formData, "archive/terminate");
   };
 
   // Reusable action method to rescind or terminate the contract via internal proxy API route
   const rescindOrTerminateAction = async (
     formData: FieldValues,
-    action: "rescind" | "terminate"
+    action: "archive/rescind" | "archive/terminate"
   ) => {
     // Add contract and date field
-    formData[FORM_STATES.CONTRACT] = status.iri;
-    formData[FORM_STATES.DATE] = new Date().toISOString().split("T")[0];
-    const requestBody: string = JSON.stringify(formData)
-    const init: RequestInit = { method: "POST", headers: { "Content-Type": "application/json" }, body: requestBody }
-    const res: Response = await fetch(endpoint, init)
-    const agentResponseBody: CustomAgentResponseBody = await res.json()
+    const payload = {
+      ...formData,
+      [FORM_STATES.CONTRACT]: status.iri,
+      [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
+    };
+    const res = await fetch("/api/registry/contracts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action,
+        formData: payload,
+      }),
+    });
+    const agentResponseBody: CustomAgentResponseBody = await res.json();
     setResponse(agentResponseBody);
   };
 
@@ -159,13 +167,15 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const init: RequestInit = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqBody) };
-    const response: Response = await fetch(`${props.agentApi}/contracts/service/commence`, init)
-    // sendPostRequest(
-    //   ,
-    //   
-    // );
-    const customAgentResponse: CustomAgentResponseBody = await response.json()
+    const res = await fetch("/api/registry/contracts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "service/commence",
+        formData: reqBody,
+      }),
+    });
+    const customAgentResponse: CustomAgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setIsLoading(false);
     setTimeout(() => {
@@ -182,7 +192,15 @@ function FormContents(
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const responseString: string = await fetch(`${props.agentApi}/contracts/status/${id}`).then((response) => response.text())
+      const params = new URLSearchParams({
+        agentApi: props.agentApi,
+        id,
+      });
+      const res = await fetch(`/api/registry/contract-status?${params.toString()}`, {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const responseString = await res.text();
       setStatus(JSON.parse(responseString));
     };
 
