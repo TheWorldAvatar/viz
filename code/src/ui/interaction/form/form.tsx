@@ -96,10 +96,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       const updatedProperties: PropertyShapeOrGroup[] =
         parsePropertyShapeOrGroupList(initialState, template.property);
-      console.log({
-        ...template,
-        property: updatedProperties,
-      });
 
       setFormTemplate({
         ...template,

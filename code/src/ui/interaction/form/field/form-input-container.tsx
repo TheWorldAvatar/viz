@@ -68,16 +68,17 @@ export default function FormInputContainer(
             {props.formatLabel}
           </span>
         )}
+      </label>
+      <div className="flex items-center justify-end gap-6">
         {props.redirectOptions?.addUrl && (
           <RedirectButton
+            label="Add"
             icon="add"
             url={props.redirectOptions.addUrl}
             isActive={false}
             isTransparent={true}
           />
         )}
-      </label>
-      <div>
         {props.redirectOptions?.view && (
           <ClickActionButton
             icon={"arrow_forward"}
@@ -85,8 +86,8 @@ export default function FormInputContainer(
             className={styles["info-text-redirect-button"]}
           />
         )}
-        {props.children}
       </div>
+      <div>{props.children}</div>
 
       <FormErrorComponent error={props.error} />
     </>
