@@ -96,26 +96,20 @@ function FormContents(
   const rescindContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    rescindOrTerminateAction(
-      formData,
-      `${props.agentApi}/contracts/archive/rescind`
-    );
+    await rescindOrTerminateAction(formData, "rescind");
   };
 
   // Terminate the target contract
   const terminateContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    rescindOrTerminateAction(
-      formData,
-      `${props.agentApi}/contracts/archive/terminate`
-    );
+    await rescindOrTerminateAction(formData, "terminate");
   };
 
-  // Reusable action method to rescind or terminate the contract
+  // Reusable action method to rescind or terminate the contract via internal proxy API route
   const rescindOrTerminateAction = async (
     formData: FieldValues,
-    endpoint: string
+    action: "rescind" | "terminate"
   ) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = status.iri;
