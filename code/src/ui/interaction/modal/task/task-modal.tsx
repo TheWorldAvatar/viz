@@ -88,48 +88,46 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, []);
 
   const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    let url = `${props.registryAgentApi}/contracts/service/`;
+    let action = "";
     if (isDispatchAction) {
-      url += "dispatch";
-      // Enum should be always be 0 to update dispatch
+      action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
     } else if (isCompleteAction) {
-      url += "complete";
+      action = "complete";
       formData[FORM_STATES.ORDER] = 1;
     } else if (isCancelAction) {
-      url += "cancel";
+      action = "cancel";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else if (isReportAction) {
-      url += "report";
+      action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else {
       return;
     }
-    // Submit post requests if they are not dispatch action
-    submitLifecycleAction(formData, url, !isDispatchAction);
+    submitLifecycleAction(formData, action, !isDispatchAction);
   }
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
-  const submitLifecycleAction = async (formData: FieldValues, endpoint: string, isPost: boolean) => {
+  const submitLifecycleAction = async (formData: FieldValues, action: string, isPost: boolean) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/registry/contracts/service", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          action,
+          formData,
+        }),
       });
       response = await res.json();
     } else {
       const res = await fetch("/api/registry/entity", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          agentApi: endpoint,
-        }),
+        body: JSON.stringify(formData),
       });
       response = await res.json();
     }
