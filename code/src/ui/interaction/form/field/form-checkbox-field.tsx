@@ -12,8 +12,6 @@ export interface InputFieldProps {
   options?: FormFieldOptions;
 }
 
-const formCheckboxStyles = "";
-
 /**
  * This component renders a button field similar to a checkbox for a form.
  *

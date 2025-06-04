@@ -14,9 +14,9 @@
 }
 
 .form-input-label {
-  margin-right: 0.5rem;
   margin-bottom: 0.2rem;
-  font-size: var(--font-size-tertiary-text);
+  margin-top: 0.5rem;
+  font-size: var(--font-size-primary-text);
   white-space: nowrap;
   text-align: left;
 }
@@ -37,11 +37,11 @@
   background-color: var(--background-muted);
   font-size: var(--font-size-primary-text);
   color: var(--text-color-primary);
-  box-shadow: 0 0 0.7rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.1);
 }
 
 .input-disabled {
-  border: 1px inset var(--border-primary);
+  border: 1px solid var(--border-primary);
   background-color: var(--background-muted);
   opacity: 0.75;
 }
@@ -57,12 +57,14 @@
 .dtpicker {
   height: 1.8rem;
   width: 100%;
-  max-width: 100%;
-  padding-left: 0.25rem;
-
-  background-color: var(--background-primary);
-  font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
+  max-width: none;
+  padding: 1.2rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-primary);
+  background-color: var(--background-muted);
+  font-size: var(--font-size-primary-text);
+  color: var(--text-color-primary);
+  box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.1);
 }
 
 .dtpicker::-webkit-calendar-picker-indicator {

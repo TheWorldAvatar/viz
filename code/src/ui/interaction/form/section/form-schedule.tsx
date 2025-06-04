@@ -1,6 +1,3 @@
-import fieldStyles from "../field/field.module.css";
-import styles from "../form.module.css";
-
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -23,6 +20,8 @@ import { sendGetRequest } from "utils/server-actions";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
+import Tooltip from "ui/interaction/tooltip/tooltip";
+import { Icon } from "@mui/material";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -170,6 +169,9 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     }
   }, [selectedServiceOption]);
 
+  // Combined description for tooltip
+  const combinedDescription = `${dict.title.description}: ${serviceDescription}`;
+
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
     if (value === singleService) {
@@ -194,8 +196,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       {!isLoading && (
         <>
           <div className="flex flex-col basis-full mb-4 gap-4">
-            <label className="text-lg font-bold" htmlFor="select-input">
+            <label
+              className="text-lg font-bold flex gap-4"
+              htmlFor="select-input"
+            >
               {dict.title.serviceType}
+              <Tooltip text={combinedDescription} placement="right">
+                <Icon className="material-symbols-outlined">{"info"}</Icon>
+              </Tooltip>
             </label>
             <SimpleSelector
               options={[
@@ -213,12 +221,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
               }
             />
-            <p className={fieldStyles["info-text"]}>
-              <b className={fieldStyles["field-text"]}>
-                {dict.title.description}:{" "}
-              </b>
-              {serviceDescription}
-            </p>
           </div>
           <FormFieldComponent
             field={{
@@ -249,7 +251,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             />
           )}
           {selectedServiceOption === regularService && (
-            <div className="w-full m-2">
+            <div className="w-full mt-6">
               <div style={{ margin: "0 0 0.75rem" }}>
                 <span className="text-lg">{dict.form.repeatEvery}</span>
                 <input
@@ -285,7 +287,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             </div>
           )}
           <div className="w-full">
-            <h1 className="text-lg" style={{ margin: "0 0.25rem" }}>
+            <h1 className="text-xl font-bold mb-4 mt-6">
               {dict.form.timeSlot}
             </h1>
             <FormFieldComponent
@@ -295,7 +297,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 name: { "@value": "from" },
                 fieldId: FORM_STATES.TIME_SLOT_START,
                 datatype: "time",
-                description: { "@value": "" },
+                description: { "@value": dict.form.fromTimeSlotDesc },
                 order: 0,
               }}
               form={props.form}
@@ -308,7 +310,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 name: { "@value": "to" },
                 fieldId: FORM_STATES.TIME_SLOT_END,
                 datatype: "time",
-                description: { "@value": "" },
+                description: { "@value": dict.form.toTimeSlotDesc },
                 order: 1,
               }}
               form={props.form}
