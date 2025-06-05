@@ -37,7 +37,7 @@ export default function StaticContentPage({
   if (childNodes != null) {
     return (
       <div
-        className=" w-full h-full flex flex-col justify-center items-center "
+        className="w-full h-full flex flex-col justify-center items-center "
         key="static-content-page"
       >
         <div className="grow h-full w-full overflow-y-hidden   bg-muted border-border rounded-xl border-1 p-5 shadow-2xl">

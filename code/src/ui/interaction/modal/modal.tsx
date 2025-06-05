@@ -63,7 +63,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className="relative flex flex-col w-11/12 h-4/5 md:h-fit md:w-3/4 xl:w-3/5 mx-auto justify-between py-4 px-8 bg-muted border-1 shadow-2xl border-border rounded-xl"
+                  className="relative flex flex-col w-11/12 h-4/5 md:h-fit md:w-11/12 xl:w-3/5 mx-auto justify-between py-4 px-4 md:px-8 bg-muted border-1 shadow-2xl border-border rounded-xl"
                 >
                   <ClickActionButton
                     icon={"close"}
