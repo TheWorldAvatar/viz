@@ -96,20 +96,20 @@ function FormContents(
   const rescindContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    await rescindOrTerminateAction(formData, "archive/rescind");
+    await rescindOrTerminateAction(formData, "rescind");
   };
 
   // Terminate the target contract
   const terminateContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    await rescindOrTerminateAction(formData, "archive/terminate");
+    await rescindOrTerminateAction(formData, "terminate");
   };
 
   // Reusable action method to rescind or terminate the contract via internal proxy API route
   const rescindOrTerminateAction = async (
     formData: FieldValues,
-    action: "archive/rescind" | "archive/terminate"
+    action: "rescind" | "terminate"
   ) => {
     // Add contract and date field
     const payload = {
@@ -117,13 +117,12 @@ function FormContents(
       [FORM_STATES.CONTRACT]: status.iri,
       [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
     };
-    const res = await fetch("/api/registry/contract", {
+    const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "archive", action), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action,
-        formData: payload,
-      }),
+      cache: 'no-store',
+      credentials: 'same-origin',
+      body: JSON.stringify({ formData: payload }),
     });
     const agentResponseBody: CustomAgentResponseBody = await res.json();
     setResponse(agentResponseBody);
@@ -160,13 +159,12 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const res = await fetch("/api/registry/contract", {
+    const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "service", "commence"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "service/commence",
-        formData: reqBody,
-      }),
+      cache: 'no-store',
+      credentials: 'same-origin',
+      body: JSON.stringify({ formData: reqBody }),
     });
     const customAgentResponse: CustomAgentResponseBody = await res.json();
     setResponse(customAgentResponse);

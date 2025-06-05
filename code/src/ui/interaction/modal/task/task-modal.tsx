@@ -10,7 +10,7 @@ import useRefresh from 'hooks/useRefresh';
 import { PermissionScheme } from 'types/auth';
 import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FORM_IDENTIFIER, FormType, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
+import { FORM_IDENTIFIER, FormType, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -114,19 +114,20 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      const res = await fetch("/api/registry/contract/service", {
+      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "service", action), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action,
-          formData,
-        }),
+        cache: 'no-store',
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
       });
       response = await res.json();
     } else {
-      const res = await fetch("/api/registry/entity", {
+      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "service", action), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        cache: 'no-store',
+        credentials: 'same-origin',
         body: JSON.stringify(formData),
       });
       response = await res.json();

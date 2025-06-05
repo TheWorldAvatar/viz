@@ -63,7 +63,7 @@ export default class InternalApiServices {
         urlParams = new URLSearchParams({
           stage: params[0],
           type: params[1],
-          identifier: params[2],
+          identifier: params[2] ?? null,
         });
         break;
       case InternalApiIdentifier.FORM:

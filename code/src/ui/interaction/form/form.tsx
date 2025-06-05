@@ -123,23 +123,25 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     switch (props.formType) {
       case FormType.ADD: {
         // Add entity via API route
-        const res = await fetch("/api/registry/entity", {
+        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...formData, entity: props.entityType, agentApi: props.agentApi }),
+          cache: 'no-store',
+          credentials: 'same-origin',
+          body: JSON.stringify({ ...formData }),
         });
         pendingResponse = await res.json();
 
         // For registry's primary entity, a draft lifecycle must also be generated
         if (props.isPrimaryEntity && pendingResponse.success) {
-          const draftRes = await fetch("/api/registry/entity", {
+          const draftRes = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, "contracts/draft"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            cache: 'no-store',
+            credentials: 'same-origin',
             body: JSON.stringify({
               contract: pendingResponse.iri,
-              ...formData,
-              entity: "contracts/draft",
-              agentApi: props.agentApi,
+              ...formData
             }),
           });
           pendingResponse = await draftRes.json();
@@ -148,39 +150,35 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormType.DELETE: {
         // Delete entity via API route
-        const params = new URLSearchParams({
-          agentApi: props.agentApi,
-          entityType: props.entityType,
-          id: formData[FORM_STATES.ID],
-        });
-        const res = await fetch(`/api/registry/entity?${params.toString()}`, {
+        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "false", formData[FORM_STATES.ID]), {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
+          cache: 'no-store',
+          credentials: 'same-origin',
         });
         pendingResponse = await res.json();
         break;
       }
       case FormType.EDIT: {
         // Update entity via API route
-        const res = await fetch("/api/registry/entity", {
+        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "false", formData.id), {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...formData,
-            entity: props.entityType,
-            agentApi: `${props.agentApi}/${props.entityType}/${formData.id}`,
-          }),
+          cache: 'no-store',
+          credentials: 'same-origin',
+          body: JSON.stringify(formData),
         });
         pendingResponse = await res.json();
 
         if (props.isPrimaryEntity && pendingResponse.success) {
-          const draftRes = await fetch("/api/registry/entity", {
+          const draftRes = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, "/contracts/draft"), {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
+            cache: 'no-store',
+            credentials: 'same-origin',
             body: JSON.stringify({
               ...formData,
               contract: props.primaryInstance,
-              agentApi: `${props.agentApi}/contracts/draft`,
             }),
           });
           pendingResponse = await draftRes.json();
@@ -201,14 +199,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           }
         });
 
-        const res = await fetch("/api/registry/entity", {
+        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "false", "search"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          cache: 'no-store',
+          credentials: 'same-origin',
           body: JSON.stringify({
             ...formData,
-            entityType: props.entityType,
-            agentApi: props.agentApi,
-            search: true,
           }),
         });
         pendingResponse = await res.json();
