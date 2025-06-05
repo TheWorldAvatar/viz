@@ -6,13 +6,8 @@
 "use client";
 
 import styles from "./static-content-page.module.css";
-import returnButtonStyles from "../navigation/return/return.module.css";
-
 import "github-markdown-css/github-markdown.css";
-
 import { ReactNode } from "react";
-
-import ReturnButton from "ui/navigation/return/return";
 
 // Interface for properties with react nodes
 interface Props {

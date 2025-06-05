@@ -1,7 +1,5 @@
 "use client";
 
-import styles from "./form.module.css";
-
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
@@ -61,9 +59,9 @@ export default function FormContainerComponent(
       </Modal>
     );
   }
-  // h-11/12 md:h-full  w-sm md:w-full overflow-auto md:mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl md:mt-20 mb-28
+
   return (
-    <div className="flex w-[22rem] mt-10 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-background border-1 border-border rounded-lg shadow-2xl">
+    <div className="flex  mt-14 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-background border-1 border-border rounded-lg shadow-2xl">
       <FormContents {...props} />
     </div>
   );
@@ -194,7 +192,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4 text-lg font-bold">
+      <div className="text-xl font-bold">
         <span>{`${translateFormType(
           props.formType,
           dict
@@ -202,7 +200,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] p- 8">
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2 bg-amber-400">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -227,7 +225,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-2 border-t border-border mt-6">
+      <div className="flex justify-between p-2">
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}

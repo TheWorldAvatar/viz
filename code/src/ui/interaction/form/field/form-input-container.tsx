@@ -1,5 +1,3 @@
-import styles from "./field.module.css";
-
 import { FieldError } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
@@ -55,7 +53,7 @@ export default function FormInputContainer(
 
   return (
     <>
-      <label className={labelClassNames} htmlFor={props.field.fieldId}>
+      <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
         <span className="text-lg font-semibold flex gap-4">
           {parseWordsForLabels(label)}
           {props.error && "*"}
@@ -67,7 +65,7 @@ export default function FormInputContainer(
           <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
         )}
       </label>
-      <div className="flex items-center justify-end gap-6">
+      <div className="flex items-center justify-start md:justify-end gap-2 bg-orange-600">
         {props.redirectOptions?.addUrl && (
           <RedirectButton
             label="Add"

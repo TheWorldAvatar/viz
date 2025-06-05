@@ -1,4 +1,3 @@
-import styles from "../form.module.css";
 
 import { UseFormReturn } from "react-hook-form";
 
@@ -25,11 +24,11 @@ interface FormSectionProps {
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
-    <fieldset className="p-8 bg-muted border-1 border-border rounded-lg m-4  ">
-      <legend className="text-md xl:text-lg font-bold ">
+    <fieldset className="p-1 md:p-6 flex flex-col justify-center bg-background border-1 border-border rounded-lg m-4  ">
+      <legend className="text-lg  font-bold ">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
       </legend>
-      <div className="flex flex-wrap w-full">
+      <div className="bg-blue-600 ">
         {props.group.property.map((field, index) =>
           renderFormField(
             props.entityType,

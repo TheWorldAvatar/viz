@@ -185,17 +185,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <fieldset
-      className="p-8 bg-muted border-1 border-border rounded-lg m-4 "
-      style={{ marginBottom: "1rem" }}
-    >
-      <legend className="text-md xl:text-lg  font-bold">
+    <fieldset className="p-2 md:p-8 bg-green-300 border-1 border-border rounded-lg m-4 ">
+      <legend className="text-lg font-bold">
         {parseWordsForLabels(props.fieldId)}
       </legend>
       {isLoading && <LoadingSpinner isSmall={true} />}
       {!isLoading && (
         <>
-          <div className="flex flex-col basis-full mb-4 gap-4">
+          <div className="flex flex-col w-full bg-yellow-700 gap-4">
             <label
               className="text-lg font-bold flex gap-4"
               htmlFor="select-input"
@@ -251,14 +248,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             />
           )}
           {selectedServiceOption === regularService && (
-            <div className="w-full mt-6">
-              <div style={{ margin: "0 0 0.75rem" }}>
+            <div className="w-full mt-6 ">
+              <div>
                 <span className="text-lg">{dict.form.repeatEvery}</span>
                 <input
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-16 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
+                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
                     props.options?.disabled && "cursor-not-allowed"
                   }`}
                   step={"1"}
@@ -271,7 +268,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 />
                 <span className="text-lg">{dict.form.week}</span>
               </div>
-              <div className="flex justify-center items-center flex-wrap gap-4 mb-10 mt-10">
+              <div className="flex justify-center items-center flex-wrap gap-4 mb-10 mt-10 ">
                 {daysOfWeek.map((dayOfWeek, index) => {
                   return (
                     <FormCheckboxField
@@ -286,10 +283,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             </div>
           )}
-          <div className="w-full">
-            <h1 className="text-xl font-bold mb-4 mt-6">
-              {dict.form.timeSlot}
-            </h1>
+          <div className="w-full bg-red-500 ">
+            <h1 className="text-xl font-bold mb-2">{dict.form.timeSlot}</h1>
             <FormFieldComponent
               field={{
                 "@id": "string",

@@ -1,4 +1,3 @@
-import styles from "./tooltip.module.css";
 
 import {
   FloatingPortal,

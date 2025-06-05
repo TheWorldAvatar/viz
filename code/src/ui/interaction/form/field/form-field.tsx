@@ -38,8 +38,8 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
       ["string", "integer", "decimal"].includes(props.field.datatype)
     ) {
       return (
-        <div className="w-[calc(100% - 1rem)] flex flex-col basis-full p-8 bg-muted  rounded-lg m-4  ">
-          <div className={styles["form-input-container"]}>
+        <div className="p-2">
+          <div className="flex flex-col bg-violet-500 ">
             {/** Display input min max range only if this is the search form and a numerical value */}
             {formType == SEARCH_FORM_TYPE &&
             ["integer", "decimal"].includes(props.field.datatype) ? (
@@ -67,8 +67,8 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
       ["dateTime", "date", "time"].includes(props.field.datatype)
     ) {
       return (
-        <div className={styles["form-field-container"]}>
-          <div className={styles["form-input-container"]}>
+        <div className="flex flex-col basis-full w-full">
+          <div className="flex flex-col m-0 w-full">
             <FormDateTimePicker
               field={props.field}
               form={props.form}
@@ -82,8 +82,8 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
       );
     } else if (props.field.in) {
       return (
-        <div className={styles["form-field-container"]}>
-          <div className={styles["form-input-container"]}>
+        <div className="flex  flex-col basis-full w-full">
+          <div className="flex flex-col m-0 w-full">
             <OntologyConceptSelector
               agentApi={props.agentApi}
               field={props.field}
