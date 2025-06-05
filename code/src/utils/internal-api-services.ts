@@ -4,6 +4,7 @@ export enum InternalApiIdentifier {
   ADDRESS = "address",
   CONCEPT = "concept",
   CONTRACTS = "contracts",
+  CONTRACT_STATUS = "contract_status",
   EVENT = "event",
   FORM = "form",
   GEOCODING_POSTAL = "geocode_postal",
@@ -43,6 +44,11 @@ export default class InternalApiServices {
         urlParams = new URLSearchParams({
           stage: params[0],
           type: params[1],
+        });
+        break;
+      case InternalApiIdentifier.CONTRACT_STATUS:
+        urlParams = new URLSearchParams({
+          id: params[0],
         });
         break;
       case InternalApiIdentifier.INSTANCES:

@@ -45,6 +45,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       url = `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes`;
       break;
     }
+    case InternalApiIdentifier.CONTRACT_STATUS: {
+      const id: string = searchParams.get("id");
+      url = `${agentBaseApi}/contracts/status/${id}`;
+      break;
+    }
     case InternalApiIdentifier.INSTANCES: {
       const type: string = searchParams.get("type");
       const requireLabel: string = searchParams.get("label");

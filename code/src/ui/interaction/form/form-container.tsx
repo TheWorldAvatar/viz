@@ -185,10 +185,7 @@ function FormContents(
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const params = new URLSearchParams({
-        id,
-      });
-      const res = await fetch(`/api/registry/contract/status?${params.toString()}`, {
+      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONTRACT_STATUS, id), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
