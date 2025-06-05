@@ -1,6 +1,5 @@
 "use client";
 
-import fieldStyles from "ui/interaction/form/field/field.module.css";
 import styles from "./table.ribbon.module.css";
 
 import React from "react";
@@ -60,9 +59,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-    <div className=" flex flex-col  p-4 gap-4">
+    <div className="flex flex-col p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
-        <div className="flex items-center gap-8 bg-border w-fit p-1 text-center rounded-lg">
+        <div className="flex items-center justify-center gap-1 sm:gap-2 bg-border w-full max-w-fit p-1 text-center rounded-lg overflow-x-auto">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.pendingRegistry) && (
@@ -73,7 +72,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
               isHoverableDisabled={true}
               isTransparent={true}
-              className="cursor-pointer flex items-center justify-center w-fit p-2 m-0 bg-none"
               styling={{
                 active: styles["active-state"],
               }}
@@ -92,7 +90,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               }
               isHoverableDisabled={true}
               isTransparent={true}
-              className="cursor-pointer flex items-center justify-center w-fit p-2 m-0 "
               styling={{
                 active: styles["active-state"],
               }}
@@ -108,7 +105,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
               isHoverableDisabled={true}
               isTransparent={true}
-              className="cursor-pointer flex items-center justify-center w-fit p-2 m-0 bg-none"
               styling={{
                 active: styles["active-state"],
               }}
@@ -117,9 +113,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
       )}
 
-      <div className="w-full border-1 border-border" />
+      <div className="w-full border-[0.5px] border-border" />
 
-      <div className="flex justify-between">
+      <div className="flex justify-between ">
         <div className="flex items-center  ">
           <ClickActionButton
             icon={"cached"}
@@ -202,13 +198,16 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       </div>
       <div className="flex ml-2 mt-2">
         {props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
-          <div className="flex gap-4">
-            <label className={fieldStyles["form-input-label"]} htmlFor={taskId}>
+          <div className="flex items-center gap-4">
+            <label
+              className="my-1 text-sm md:text-lg text-left whitespace-nowrap"
+              htmlFor={taskId}
+            >
               {dict.action.date}:
             </label>
             <input
               id={taskId}
-              className={fieldStyles["dtpicker"]}
+              className="h-8 w-full max-w-none p-5 rounded-lg border-1 border-border bg-muted text-foreground shadow-md"
               type={"date"}
               defaultValue={props.selectedDate}
               aria-label={taskId}

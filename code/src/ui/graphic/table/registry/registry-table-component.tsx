@@ -1,7 +1,5 @@
 "use client";
 
-import styles from "./registry.table.module.css";
-
 import { Icon } from "@mui/material";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -142,8 +140,8 @@ export default function RegistryTableComponent(
   }, [task]);
 
   return (
-    <div className="grow  h-full w-full overflow-auto   mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl mt-20">
-      <div className="">
+    <div className="h-11/12 md:h-full  w-sm md:w-full overflow-auto md:mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl md:mt-20">
+      <div className="bg-gray-200 rounded-lg md:p-2 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-4 text-foreground">
           {parseWordsForLabels(props.entityType)}
         </h1>
@@ -162,7 +160,7 @@ export default function RegistryTableComponent(
       <div className="flex items-center my-4">
         {(props.lifecycleStage == Paths.REGISTRY_ACTIVE ||
           props.lifecycleStage == Paths.REGISTRY_ARCHIVE) && (
-          <div className="flex items-center gap-2 text-lg">
+          <div className="flex items-center gap-2  text-sm md:text-lg text-foreground">
             <Icon className={`material-symbols-outlined`}>info</Icon>
             {dict.message.registryInstruction}
           </div>
@@ -174,7 +172,7 @@ export default function RegistryTableComponent(
           </h2>
         )}
       </div>
-      <div className={styles["contents"]}>
+      <div className="flex flex-col overflow-auto gap-y-2">
         {props.lifecycleStage == Paths.REGISTRY_REPORT && (
           <SummarySection
             id={pathNameEnd}
