@@ -10,6 +10,7 @@ import { Dictionary } from 'types/dictionary';
 import { FormTemplate, FormType, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
+import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -64,11 +65,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       let template: FormTemplate;
       // For add form, get a blank template
       if (props.formType == FormType.ADD || props.formType == FormType.SEARCH) {
-        template = await fetch(`/api/registry/form-template?entityType=${props.entityType}`).then((res) => res.json())
-
+        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType)).then((res) => res.json())
       } else {
         // For edit and view, get template with values
-        template = await fetch(`/api/registry/form-template?entityType=${props.entityType}&identifier=${id}`).then((res) => res.json());
+        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType, id)).then((res) => res.json());
       }
       if (props.additionalFields) {
         props.additionalFields.forEach(field => template.property.push(field));

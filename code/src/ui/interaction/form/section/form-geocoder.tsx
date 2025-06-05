@@ -19,7 +19,8 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
-import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
+import { parseWordsForLabels } from "utils/client-utils";
+import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-services";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 interface FormGeocoderProps {
@@ -105,16 +106,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   useEffect(() => {
     // Declare an async function to get all address related shapes
     const getAddressShapes = async (
-      agentApi: string,
       locationIdentifier: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      // Use the API route for form template
-      const params = new URLSearchParams({
-        agentApi,
-        entityType: parseStringsForUrls(locationIdentifier)
-      });
-      const res = await fetch(`/api/registry/form-template?${params.toString()}`, {
+      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, locationIdentifier), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -175,7 +170,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     };
 
     if (formType == FormType.ADD.toString() || formType == FormType.EDIT.toString()) {
-      getAddressShapes(props.agentApi, props.field.name[VALUE_KEY]);
+      getAddressShapes(props.field.name[VALUE_KEY]);
     }
     if (formType == FormType.VIEW.toString() || formType == FormType.EDIT.toString()) {
       getGeoCoordinates(props.agentApi,
