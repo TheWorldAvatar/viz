@@ -56,14 +56,14 @@ export default function Modal(props: Readonly<ModalProps>) {
                   ...dialog.floatingStyles,
                   zIndex: 999998, // Second highest z-index so it hides other content but is hidden before tooltips
                 }}
-                className="relative flex items-center justify-center h-full w-full"
+                className="relative flex items-center justify-center h-full w-full "
                 {...dialog.getFloatingProps()}
               >
                 <div
                   style={{
                     ...transition.styles,
                   }}
-                  className="relative flex flex-col w-11/12 h-4/5 md:w-3/4 xl:w-1/2  mx-auto justify-between py-4 px-8 bg-muted border-1 shadow-2xl border-border rounded-xl"
+                  className="relative flex flex-col w-11/12 h-4/5 md:h-fit md:w-3/4 xl:w-3/5 mx-auto justify-between py-4 px-8 bg-muted border-1 shadow-2xl border-border rounded-xl"
                 >
                   <ClickActionButton
                     icon={"close"}

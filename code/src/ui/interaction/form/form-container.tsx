@@ -56,19 +56,14 @@ export default function FormContainerComponent(
 
   if (props.isModal) {
     return (
-      <Modal
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        returnPrevPage={true}
-        styles={[styles["modal"]]}
-      >
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} returnPrevPage={true}>
         <FormContents {...props} />
       </Modal>
     );
   }
-
+  // h-11/12 md:h-full  w-sm md:w-full overflow-auto md:mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl md:mt-20 mb-28
   return (
-    <div className={styles["container"]}>
+    <div className="flex mt-8 md:mt-0 flex-col h-[80vh] 2xl:w-3/4 p-8 margin-20 bg-background border-1 border-border rounded-lg shadow-2xl">
       <ReturnButton
         icon={"close"}
         className={styles.close}
