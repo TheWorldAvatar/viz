@@ -6,9 +6,8 @@ import { useEffect, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { useDictionary } from 'hooks/useDictionary';
-import { Paths } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
-import { defaultSearchOption, ID_KEY, PropertyShape, RegistryFieldValues, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, FormType, ID_KEY, PropertyShape, RegistryFieldValues, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
@@ -63,7 +62,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
             .then(res => res.json());
         }
         // If there is no valid parent option, there should be no entity
-      } else if ((formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) && field.defaultValue) {
+      } else if ((formType === FormType.VIEW.toString() || formType === FormType.DELETE.toString()) && field.defaultValue) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
         const url = new URL('/api/registry/data', window.location.origin)
@@ -93,7 +92,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         }
       }
       // Search form should always target default value
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormType.SEARCH.toString()) {
         defaultId = defaultSearchOption.type.value;
       }
       // Set the form value to the default value if available, else, default to the first option
@@ -125,7 +124,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         return a.label.localeCompare(b.label);
       });
       // Add the default search option only if this is the search form
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormType.SEARCH.toString()) {
         // Default option should only use empty string "" as the value
         formFields.unshift({
           label: defaultSearchOption.label.value,
@@ -145,7 +144,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
-    if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
+    if (formType != FormType.ADD.toString() || pathName.includes("registry")) {
       url = `../${url}`;
     }
     return (url);
@@ -156,7 +155,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     event.preventDefault();
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
+    if (formType != FormType.ADD.toString() || pathName.includes("registry")) {
       url = `../${url}`;
     }
     window.open(url, "_blank");
@@ -179,14 +178,14 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
               field={props.dependentProp}
               form={props.form}
               redirectOptions={{
-                addUrl: formType != Paths.REGISTRY && formType != Paths.REGISTRY_DELETE && formType != SEARCH_FORM_TYPE ?
+                addUrl: formType != FormType.VIEW.toString() && formType != FormType.DELETE.toString() && formType != FormType.SEARCH.toString() ?
                   genAddSubEntityUrl(queryEntityType) : undefined,
-                view: !isFetching && formType != SEARCH_FORM_TYPE && selectElements.length > 0 ?
+                view: !isFetching && formType != FormType.SEARCH.toString() && selectElements.length > 0 ?
                   openViewSubEntityModal : undefined,
               }}
               noOptionMessage={dict.message.noInstances}
               options={{
-                disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+                disabled: formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
                 labelStyle: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
               }}
             />

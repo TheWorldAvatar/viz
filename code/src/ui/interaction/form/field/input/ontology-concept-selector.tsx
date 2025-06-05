@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, FormFieldOptions, FormType, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
@@ -67,7 +67,7 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
             firstOption = "Singapore";
           }
           // Add the default search option only if this is the search form
-          if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+          if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormType.SEARCH.toString()) {
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
           }

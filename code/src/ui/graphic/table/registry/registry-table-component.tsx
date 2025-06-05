@@ -8,9 +8,8 @@ import { useEffect, useState } from 'react';
 
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
-import { Paths } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
-import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
+import { LifecycleStage, RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
 import { Status } from 'ui/text/status/status';
@@ -21,7 +20,7 @@ import TableRibbon from './ribbon/table-ribbon';
 
 interface RegistryTableComponentProps {
   entityType: string;
-  lifecycleStage: string;
+  lifecycleStage: LifecycleStage;
   registryAgentApi: string;
 }
 
@@ -29,7 +28,7 @@ interface RegistryTableComponentProps {
  * This component renders a registry table for the specified entity.
  * 
  * @param {string} entityType Type of entity for rendering.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} registryAgentApi The target endpoint for default registry agents.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
@@ -49,7 +48,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       setIsLoading(true);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (props.lifecycleStage === Paths.REGISTRY_REPORT) {
+        if (props.lifecycleStage === LifecycleStage.REPORT) {
           if (pathNameEnd === props.entityType) {
             // Fetch active contracts
             const activeRes = await fetch(
@@ -87,7 +86,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             });
             instances = await res.json();
           }
-        } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
+        } else if (props.lifecycleStage == LifecycleStage.TASKS) {
           // Fetch service tasks for a specific date
           const date = new Date(selectedDate);
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
@@ -100,7 +99,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             credentials: 'same-origin'
           });
           instances = await res.json();
-        } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
+        } else if (props.lifecycleStage == LifecycleStage.GENERAL) {
           const res = await fetch(
             `/api/registry/data?entityType=${props.entityType}&requireLabel=true`,
             { cache: 'no-store', credentials: 'same-origin' }
@@ -139,24 +138,23 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
-          registryAgentApi={props.registryAgentApi}
-          lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
+          lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
       </div>
-      {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
+      {(props.lifecycleStage == LifecycleStage.ACTIVE || props.lifecycleStage == LifecycleStage.ARCHIVE) &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
           {dict.message.registryInstruction}
         </div>}
-      {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+      {props.lifecycleStage == LifecycleStage.REPORT &&
         <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
-        {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+        {props.lifecycleStage == LifecycleStage.REPORT &&
           <SummarySection
             id={pathNameEnd}
             entityType={props.entityType}

@@ -1,9 +1,8 @@
 import { FieldValues, RegisterOptions } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 
-import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
-import { ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, SparqlResponseField, TYPE_KEY, VALUE_KEY } from "types/form";
+import { FormType, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SparqlResponseField, TYPE_KEY, VALUE_KEY } from "types/form";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -148,7 +147,7 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
 export function getDefaultVal(field: string, defaultValue: string, formType: string): boolean | number | string {
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
-    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE || !defaultValue) {
+    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString() || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
@@ -157,7 +156,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
 
   if (field == FORM_STATES.RECURRENCE) {
     // Recurrence property should have a value of 1 for the add form type, else, use the default value
-    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE) {
+    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString()) {
       return 1;
     }
     if (defaultValue === "P1D") {
@@ -175,7 +174,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
 
   if ([FORM_STATES.SUN, FORM_STATES.MON, FORM_STATES.TUES, FORM_STATES.WED, FORM_STATES.THURS, FORM_STATES.FRI, FORM_STATES.SAT].includes(field)) {
     // Any day of week property should default to false for add form type, else, use the default value
-    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE) {
+    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString()) {
       return false;
     }
     // Default value can be null, and should return false if null
@@ -242,7 +241,7 @@ export function getRegisterOptions(field: PropertyShape, formType: string): Regi
 
   // The field is required if this is currently not the search form and SHACL defines them as optional
   // Also required for start and end search period
-  if ((formType != SEARCH_FORM_TYPE && (Number(field.minCount?.[VALUE_KEY]) === 1 && Number(field.maxCount?.[VALUE_KEY]) === 1)) ||
+  if ((formType != FormType.SEARCH.toString() && (Number(field.minCount?.[VALUE_KEY]) === 1 && Number(field.maxCount?.[VALUE_KEY]) === 1)) ||
     (field.fieldId == FORM_STATES.START_TIME_PERIOD || field.fieldId == FORM_STATES.END_TIME_PERIOD)) {
     options.required = "Required";
   }
@@ -428,20 +427,20 @@ export function getMatchingConcept(mappings: OntologyConceptMappings, targetValu
 /**
  * Translates the form type from the input and dictionary.
  * 
- * @param {string} input The target input.
+ * @param {FormType} input The target input.
  * @param {Dictionary} dict The dictionary mappings.
  */
-export function translateFormType(input: string, dict: Dictionary): string {
+export function translateFormType(input: FormType, dict: Dictionary): string {
   switch (input) {
-    case Paths.REGISTRY:
+    case FormType.VIEW:
       return dict.action.view;
-    case Paths.REGISTRY_ADD:
+    case FormType.ADD:
       return dict.action.add;
-    case Paths.REGISTRY_EDIT:
+    case FormType.EDIT:
       return dict.action.edit;
-    case Paths.REGISTRY_DELETE:
+    case FormType.DELETE:
       return dict.action.delete;
-    case SEARCH_FORM_TYPE:
+    case FormType.SEARCH:
       return dict.action.search;
     default:
       break;

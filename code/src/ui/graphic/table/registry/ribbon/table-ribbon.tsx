@@ -5,24 +5,23 @@ import styles from "./table.ribbon.module.css";
 
 import React from "react";
 
+import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
+import { useDictionary } from 'hooks/useDictionary';
 import { Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
-import { RegistryFieldValues } from "types/form";
+import { LifecycleStage, RegistryFieldValues } from "types/form";
 import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
-import { useDictionary } from 'hooks/useDictionary';
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import ColumnSearchComponent from "../actions/column-search";
 
 interface TableRibbonProps {
   path: string;
   entityType: string;
-  registryAgentApi: string;
-  lifecycleStage: string;
   selectedDate: string;
+  lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
   setCurrentInstances: React.Dispatch<React.SetStateAction<RegistryFieldValues[]>>;
@@ -34,9 +33,8 @@ interface TableRibbonProps {
  *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
- * @param {string} registryAgentApi The target endpoint for default registry agents.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} selectedDate The selected date in the date field input.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate Method to update selected date.
  * @param setCurrentInstances A dispatch method to set the current instances after parsing the initial instances.
@@ -59,13 +57,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className={styles.menu}>
-      {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
+      {props.lifecycleStage !== LifecycleStage.GENERAL && (
         <div className={styles["registry-nav-ribbon"]}>
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.pendingRegistry) && <RedirectButton
             label={dict.nav.title.pending}
             icon="pending"
             url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
+            isActive={props.lifecycleStage == LifecycleStage.PENDING}
             isHoverableDisabled={true}
             isTransparent={true}
             className={styles["registry-nav-button"]}
@@ -77,7 +75,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             label={dict.nav.title.active}
             icon="schedule"
             url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE || props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+            isActive={props.lifecycleStage == LifecycleStage.ACTIVE || props.lifecycleStage == LifecycleStage.TASKS}
             isHoverableDisabled={true}
             isTransparent={true}
             className={styles["registry-nav-button"]}
@@ -89,7 +87,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             label={dict.nav.title.archive}
             icon="archive"
             url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
+            isActive={props.lifecycleStage == LifecycleStage.ARCHIVE}
             isHoverableDisabled={true}
             isTransparent={true}
             className={styles["registry-nav-button"]}
@@ -115,7 +113,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />}
         </div>
         <div className={styles["action-ribbon"]}>
-          {props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
+          {props.lifecycleStage == LifecycleStage.TASKS && (
             <div style={{ margin: "auto 0" }}>
               <label
                 className={fieldStyles["form-input-label"]}
@@ -135,7 +133,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            (props.lifecycleStage == Routes.REGISTRY_PENDING || props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
+            (props.lifecycleStage == LifecycleStage.PENDING || props.lifecycleStage == LifecycleStage.GENERAL) && (
               <RedirectButton
                 icon="add"
                 label={`${dict.action.add} ${props.entityType.replace("_", " ")}`}
@@ -144,30 +142,30 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) &&
-            (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-              props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+            (props.lifecycleStage == LifecycleStage.ACTIVE ||
+              props.lifecycleStage == LifecycleStage.TASKS) && (
               <RedirectButton
                 icon="task"
                 label={dict.action.overview}
                 url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-                isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+                isActive={props.lifecycleStage == LifecycleStage.ACTIVE}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) && (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-            props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) && (props.lifecycleStage == LifecycleStage.ACTIVE ||
+            props.lifecycleStage == LifecycleStage.TASKS) && (
               <RedirectButton
                 icon="event"
                 label={dict.action.viewTasks}
                 url={Routes.REGISTRY_TASK_DATE}
-                isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+                isActive={props.lifecycleStage == LifecycleStage.TASKS}
               />
             )}
-          {props.lifecycleStage == Routes.REGISTRY_REPORT &&
+          {props.lifecycleStage == LifecycleStage.REPORT &&
             <ReturnButton
               icon="first_page"
               label={`${dict.action.backTo} ${props.entityType.replace("_", " ")}s`}
             />}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.invoice) && props.lifecycleStage == Routes.REGISTRY_REPORT &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.invoice) && props.lifecycleStage == LifecycleStage.REPORT &&
             <RedirectButton
               icon="print"
               label={dict.action.generateReport}

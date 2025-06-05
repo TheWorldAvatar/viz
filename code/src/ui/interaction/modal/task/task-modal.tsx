@@ -7,10 +7,10 @@ import { FieldValues, SubmitHandler } from 'react-hook-form';
 import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
-import { Paths } from 'io/config/routes';
 import { PermissionScheme } from 'types/auth';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
+import { FORM_IDENTIFIER, FormType, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -21,7 +21,6 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { CustomAgentResponseBody } from 'types/backend-agent';
 
 interface TaskModalProps {
   entityType: string;
@@ -236,7 +235,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
           formRef={formRef}
           entityType={props.entityType}
-          formType={Paths.REGISTRY}
+          formType={FormType.VIEW}
           agentApi={props.registryAgentApi}
           setResponse={setResponse}
           id={getAfterDelimiter(props.task.contract, "/")}

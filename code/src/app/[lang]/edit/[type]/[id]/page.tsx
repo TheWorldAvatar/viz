@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 
-import { Modules, PageTitles, Paths } from 'io/config/routes';
+import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
+import { FormType } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import FormContainerComponent from 'ui/interaction/form/form-container';
 
@@ -36,7 +37,7 @@ export default async function EditFormPage(props: Readonly<EditFormPageProps>) {
   return (
     <FormContainerComponent
       entityType={resolvedParams?.type}
-      formType={Paths.REGISTRY_EDIT}
+      formType={FormType.EDIT}
       agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={false}

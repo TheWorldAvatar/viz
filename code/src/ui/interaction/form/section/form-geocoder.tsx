@@ -4,11 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from 'hooks/useDictionary';
-import { Paths } from "io/config/routes";
 import { Address } from "types/address";
 import { Dictionary } from "types/dictionary";
 import {
   FormTemplate,
+  FormType,
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
   PropertyShape,
@@ -174,10 +174,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       isInitialFetching.current = false;
     };
 
-    if (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) {
+    if (formType == FormType.ADD.toString() || formType == FormType.EDIT.toString()) {
       getAddressShapes(props.agentApi, props.field.name[VALUE_KEY]);
     }
-    if (formType == Paths.REGISTRY || formType == Paths.REGISTRY_EDIT) {
+    if (formType == FormType.VIEW.toString() || formType == FormType.EDIT.toString()) {
       getGeoCoordinates(props.agentApi,
         Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
     }
@@ -284,7 +284,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         />
       )}
       {!isInitialFetching.current &&
-        (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) && (
+        (formType == FormType.ADD.toString() || formType == FormType.EDIT.toString()) && (
           <div className={styles["form-dependent-button-layout"]}>
             <ClickActionButton
               icon={"search"}
@@ -340,7 +340,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             form={props.form}
             options={{
               disabled:
-                formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+                formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
             }}
           />
           <FormFieldComponent
@@ -348,7 +348,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             form={props.form}
             options={{
               disabled:
-                formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+                formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
             }}
           />
         </div>

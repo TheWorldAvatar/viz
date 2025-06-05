@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 
-import { Modules, PageTitles, Paths } from 'io/config/routes';
+import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
+import { FormType } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import FormContainerComponent from 'ui/interaction/form/form-container';
 
@@ -34,7 +35,7 @@ export default async function InterceptViewFormPage(props: Readonly<InterceptVie
   return (
     <FormContainerComponent
       entityType={resolvedParams?.type}
-      formType={Paths.REGISTRY}
+      formType={FormType.VIEW}
       agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={true}

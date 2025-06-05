@@ -5,12 +5,11 @@ import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from 'hooks/useDictionary';
-import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
   FormFieldOptions,
-  RegistryFieldValues,
-  SEARCH_FORM_TYPE,
+  FormType,
+  RegistryFieldValues
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
@@ -60,7 +59,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const regularService: string = dict.form.regularService;
   const alternateService: string = dict.form.alternateService;
   const isDisabledOption: { disabled: boolean } = {
-    disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+    disabled: formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
   // Define the state to store the selected value
@@ -112,7 +111,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       });
       setIsLoading(false);
     };
-    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE) {
+    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString()) {
       props.form.setValue(FORM_STATES.RECURRENCE, 1);
       setIsLoading(false);
     } else {
@@ -171,7 +170,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 }
               }}
               isDisabled={
-                formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
+                formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString()
               }
             />
             <p className={fieldStyles["info-text"]}>
@@ -219,8 +218,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   className={`${styles["schedule-occurrence-input"]} ${props.options?.disabled && styles["field-disabled"]}`}
                   step={"1"}
                   readOnly={
-                    formType == Paths.REGISTRY ||
-                    formType == Paths.REGISTRY_DELETE
+                    formType == FormType.VIEW.toString() ||
+                    formType == FormType.DELETE.toString()
                   }
                   aria-label={FORM_STATES.RECURRENCE}
                   {...props.form.register(FORM_STATES.RECURRENCE)}

@@ -4,11 +4,10 @@ import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
 import { useDictionary } from 'hooks/useDictionary';
-import { Paths } from 'io/config/routes';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
 import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FormTemplate, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SEARCH_FORM_TYPE, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { FormTemplate, FormType, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import FormFieldComponent from './field/form-field';
@@ -22,8 +21,8 @@ import FormSection from './section/form-section';
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
+  formType: FormType;
   entityType: string;
-  formType: string;
   agentApi: string;
   setResponse: React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>;
   id?: string;
@@ -36,8 +35,8 @@ interface FormComponentProps {
  * This component renders a dynamic form component that generates inputs based on its inputs.
  * 
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
+ * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
- * @param {string} formType The type of submission. Valid inputs include add and update.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
@@ -64,7 +63,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // Retrieve template from APIs
       let template: FormTemplate;
       // For add form, get a blank template
-      if (props.formType == Paths.REGISTRY_ADD || props.formType == SEARCH_FORM_TYPE) {
+      if (props.formType == FormType.ADD || props.formType == FormType.SEARCH) {
         template = await fetch(`/api/registry/form-template?entityType=${props.entityType}`).then((res) => res.json())
 
       } else {
@@ -115,8 +114,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     // Remove form type state before sending to backend
     delete formData[FORM_STATES.FORM_TYPE];
 
-    switch (props.formType.toLowerCase()) {
-      case Paths.REGISTRY_ADD: {
+    switch (props.formType) {
+      case FormType.ADD: {
         // Add entity via API route
         const res = await fetch("/api/registry/entity", {
           method: "POST",
@@ -141,7 +140,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case Paths.REGISTRY_DELETE: {
+      case FormType.DELETE: {
         // Delete entity via API route
         const params = new URLSearchParams({
           agentApi: props.agentApi,
@@ -155,7 +154,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
         break;
       }
-      case Paths.REGISTRY_EDIT: {
+      case FormType.EDIT: {
         // Update entity via API route
         const res = await fetch("/api/registry/entity", {
           method: "PUT",
@@ -182,7 +181,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case SEARCH_FORM_TYPE: {
+      case FormType.SEARCH: {
         Object.keys(formData).forEach(field => {
           if (
             Object.prototype.hasOwnProperty.call(formData, `min ${field}`) &&
@@ -271,7 +270,7 @@ export function renderFormField(
   form: UseFormReturn,
   currentIndex: number): ReactNode {
   const formType: string = form.getValues(FORM_STATES.FORM_TYPE);
-  const disableAllInputs: boolean = formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE;
+  const disableAllInputs: boolean = formType === FormType.VIEW.toString() || formType === FormType.DELETE.toString();
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
     return <FormSection
@@ -290,7 +289,7 @@ export function renderFormField(
     if (fieldProp.maxCount && parseInt(fieldProp.maxCount[VALUE_KEY]) === 0) {
       return;
     }
-    const disableId: boolean = formType === Paths.REGISTRY_EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
+    const disableId: boolean = formType === FormType.EDIT.toString() && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
     if (fieldProp.class) {
       if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule") {
         return <FormSchedule
@@ -311,7 +310,7 @@ export function renderFormField(
           form={form}
         />;
       }
-      if (formType === SEARCH_FORM_TYPE && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+      if (formType === FormType.SEARCH.toString() && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
         return <FormSearchPeriod
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           form={form}

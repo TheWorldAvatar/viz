@@ -9,10 +9,10 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from "hooks/useRefresh";
-import { Paths } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
+import { CustomAgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FORM_IDENTIFIER, PropertyShape } from "types/form";
+import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { ApiResponse, JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
@@ -25,12 +25,11 @@ import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-import { CustomAgentResponseBody } from "types/backend-agent";
 
 interface FormContainerComponentProps {
   entityType: string;
-  formType: string;
   agentApi: string;
+  formType: FormType;
   isPrimaryEntity?: boolean;
   isModal?: boolean;
 }
@@ -39,7 +38,7 @@ interface FormContainerComponentProps {
  * Renders a form container.
  *
  * @param {string} entityType The type of entity.
- * @param {string} formType The type of form such as add, update, delete, and view.
+ * @param {FormType} formType The type of form such as add, update, delete, and view.
  * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {boolean} isModal An optional indicator to render the form as a modal.
@@ -206,9 +205,9 @@ function FormContents(
     if (
       props.isPrimaryEntity &&
       !status &&
-      (props.formType === Paths.REGISTRY ||
-        props.formType === Paths.REGISTRY_DELETE ||
-        props.formType === Paths.REGISTRY_EDIT)
+      (props.formType === FormType.VIEW ||
+        props.formType === FormType.DELETE ||
+        props.formType === FormType.EDIT)
     ) {
       getContractStatus();
     }
@@ -262,7 +261,7 @@ function FormContents(
         )}
         <div className={styles["form-row"]}>
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === FormType.VIEW &&
             !response && status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
@@ -272,7 +271,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === FormType.VIEW &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -283,7 +282,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === FormType.VIEW &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
@@ -293,7 +292,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === FormType.VIEW &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -305,7 +304,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === FormType.VIEW &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -316,7 +315,7 @@ function FormContents(
                 isActive={false}
               />
             )}
-          {props.formType != Paths.REGISTRY && !response && <ClickActionButton
+          {props.formType != FormType.VIEW && !response && <ClickActionButton
             icon="publish"
             tooltipText={dict.action.submit}
             onClick={onSubmit}

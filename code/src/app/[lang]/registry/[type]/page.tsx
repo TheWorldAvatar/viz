@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
+import { LifecycleStage } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from 'utils/client-utils';
@@ -38,7 +39,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
     return (
       <RegistryTableComponent
         entityType={resolvedParams.type}
-        lifecycleStage={Paths.REGISTRY_GENERAL}
+        lifecycleStage={LifecycleStage.GENERAL}
         registryAgentApi={SettingsStore.getRegistryURL()}
       />
     );

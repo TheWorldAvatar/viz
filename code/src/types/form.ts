@@ -1,5 +1,3 @@
-
-export const SEARCH_FORM_TYPE = "search";
 export const CONTEXT_KEY = "@context";
 export const ID_KEY = "@id";
 export const TYPE_KEY = "@type";
@@ -7,6 +5,23 @@ export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
+
+export enum LifecycleStage {
+  GENERAL,
+  PENDING,
+  ACTIVE,
+  ARCHIVE,
+  REPORT,
+  TASKS
+}
+
+export enum FormType {
+  ADD,
+  DELETE,
+  EDIT,
+  VIEW,
+  SEARCH
+}
 
 export interface SparqlResponseField {
   value: string;
