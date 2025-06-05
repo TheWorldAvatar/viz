@@ -17,6 +17,7 @@ import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
+import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-services";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -73,7 +74,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      const response: string = await fetch(`/api/registry/contract/schedule?id=${props.form.getValues("id")}`, {
+      const response: string = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.SCHEDULE, props.form.getValues("id")), {
         cache: 'no-store',
         credentials: 'same-origin'
       }).then((res) => res.text())
