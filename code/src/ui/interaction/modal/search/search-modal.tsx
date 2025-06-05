@@ -17,7 +17,6 @@ import ResponseComponent from 'ui/text/response/response';
 
 interface SearchModalProps {
   id: string;
-  stack: string;
   show: boolean,
   setShowState: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -63,7 +62,6 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
           formRef={formRef}
           entityType={props.id}
           formType={FormType.SEARCH}
-          agentApi={`${props.stack}/vis-backend-agent`}
           setResponse={setResponse}
         />
       </section>

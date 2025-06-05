@@ -41,7 +41,6 @@ export default async function ActiveRegistryPage(props : ActiveRegistryPageProps
     <RegistryTableComponent
       entityType={resolvedParams.type}
       lifecycleStage={LifecycleStage.ACTIVE}
-      registryAgentApi={SettingsStore.getRegistryURL()}
     />
   );
 }

@@ -11,12 +11,11 @@ import { defaultSearchOption, FormType, ID_KEY, PropertyShape, RegistryFieldValu
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
+import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 import FormSelector from '../field/input/form-selector';
 import { FORM_STATES } from '../form-utils';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 
 interface DependentFormSectionProps {
-  agentApi: string;
   dependentProp: PropertyShape;
   form: UseFormReturn;
 }
@@ -24,7 +23,6 @@ interface DependentFormSectionProps {
 /**
  * This component renders a form section that has dependencies on related entities.
  * 
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */

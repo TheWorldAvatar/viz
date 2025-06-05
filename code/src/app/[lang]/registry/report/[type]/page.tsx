@@ -32,7 +32,6 @@ export default function RegistryReportPage() {
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={LifecycleStage.REPORT}
-        registryAgentApi={SettingsStore.getRegistryURL()}
       />
     );
   } else {

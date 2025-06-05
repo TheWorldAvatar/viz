@@ -24,7 +24,6 @@ import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-s
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 interface FormGeocoderProps {
-  agentApi: string;
   field: PropertyShape;
   form: UseFormReturn;
 }
@@ -32,7 +31,6 @@ interface FormGeocoderProps {
 /**
  * This component renders a geocoding section for the form.
  *
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} field The SHACL restrictions for geolocation.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
@@ -41,7 +39,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const dict: Dictionary = useDictionary();
 
   const postalCode: string = "postal code";
-  const postalCodeUnderscored: string = "postal_code";
   const latitudeShape: PropertyShape = {
     "@id": "_:latitude",
     "@type": "http://www.w3.org/ns/shacl#PropertyShape",
@@ -314,7 +311,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           {addressShapes.map((shape, index) => (
             <FormFieldComponent
               key={shape.fieldId + index}
-              agentApi={props.agentApi}
               field={shape}
               form={props.form}
             />

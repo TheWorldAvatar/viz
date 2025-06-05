@@ -32,7 +32,6 @@ export default function RegistryTaskByDatePage() {
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={LifecycleStage.TASKS}
-        registryAgentApi={SettingsStore.getRegistryURL()}
       />
     );
   } else {

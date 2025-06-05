@@ -21,7 +21,6 @@ import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-s
 
 interface FormScheduleProps {
   fieldId: string;
-  agentApi: string;
   form: UseFormReturn;
   options?: FormFieldOptions;
 }
@@ -40,7 +39,6 @@ export const daysOfWeek: string[] = [
  * This component renders a form schedule as a form section.
  *
  * @param {string} fieldId Field name.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
  */

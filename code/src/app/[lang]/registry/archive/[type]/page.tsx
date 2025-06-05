@@ -39,7 +39,6 @@ export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistr
       <RegistryTableComponent
         entityType={resolvedParams.type}
         lifecycleStage={LifecycleStage.ARCHIVE}
-        registryAgentApi={SettingsStore.getRegistryURL()}
       />
     );
   } else {

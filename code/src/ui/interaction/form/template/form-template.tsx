@@ -7,7 +7,6 @@ import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
 
 interface FormComponentProps {
-  agentApi: string;
   entityType: string;
   formRef: React.RefObject<HTMLFormElement>;
   fields: PropertyShapeOrGroup[];
@@ -17,7 +16,6 @@ interface FormComponentProps {
 /**
  * This component renders a simple form template with only field inputs.
  * 
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {string} entityType The type of entity.
  * @param {React.RefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {PropertyShapeOrGroup[]} fields The fields to render.
@@ -45,7 +43,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         <LoadingSpinner isSmall={false} /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
           .map((formField, index) => {
-            return renderFormField(props.entityType, props.agentApi, formField, form, index)
+            return renderFormField(props.entityType, formField, form, index)
           })}
     </form>
   );

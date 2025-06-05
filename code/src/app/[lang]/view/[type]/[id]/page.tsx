@@ -40,7 +40,6 @@ export default async function ViewFormPage(props: Readonly<ViewFormPageProps>) {
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={FormType.VIEW}
-      agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={false}
     />

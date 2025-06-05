@@ -10,7 +10,6 @@ import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-s
 import FormSelector from './form-selector';
 
 interface OntologyConceptSelectorProps {
-  agentApi: string;
   field: PropertyShape;
   form: UseFormReturn;
   options?: FormFieldOptions;
@@ -19,7 +18,6 @@ interface OntologyConceptSelectorProps {
 /**
  * This component renders a dropdown selector for the form.
  * 
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.

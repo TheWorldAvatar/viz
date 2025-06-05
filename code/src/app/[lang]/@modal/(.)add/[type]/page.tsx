@@ -35,7 +35,6 @@ export default async function InterceptAddFormPage(props: Readonly<InterceptAddF
     <FormContainerComponent
       entityType={resolvedParams.type}
       formType={FormType.ADD}
-      agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={true}
     />

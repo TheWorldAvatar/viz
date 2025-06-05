@@ -10,7 +10,6 @@ import FormInputMinMaxField from './input/form-min-max-input';
 import OntologyConceptSelector from './input/ontology-concept-selector';
 
 interface FormFieldProps {
-  agentApi?: string;
   field: PropertyShape;
   form: UseFormReturn;
   options?: FormFieldOptions;
@@ -19,7 +18,6 @@ interface FormFieldProps {
 /**
  * Renders a form field as part of the form component.
  * 
- * @param {string} agentApi The target agent endpoint for any registry related functionalities. Optional for dropdown
  * @param {PropertyShape} field The form field data model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
@@ -72,7 +70,6 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
         <div className={styles["form-field-container"]}>
           <div className={styles["form-input-container"]}>
             <OntologyConceptSelector
-              agentApi={props.agentApi}
               field={props.field}
               form={props.form}
               options={{

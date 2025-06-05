@@ -24,7 +24,6 @@ interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   formType: FormType;
   entityType: string;
-  agentApi: string;
   setResponse: React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>;
   id?: string;
   primaryInstance?: string;
@@ -38,15 +37,12 @@ interface FormComponentProps {
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
-
-
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
@@ -242,11 +238,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     <form ref={props.formRef} onSubmit={onSubmit}>
       {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
       {!form.formState.isLoading && formTemplate.property.map((field, index) => {
-        return renderFormField(props.entityType, props.agentApi, field, form, index);
+        return renderFormField(props.entityType, field, form, index);
       })}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && <BranchFormSection
         entityType={props.entityType}
-        agentApi={props.agentApi}
         node={formTemplate.node}
         form={form}
       />}
@@ -261,14 +256,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * based on the structure of the `field` parameter.
  *
  * @param entityType The type of entity being edited.
- * @param agentApi   The target agent API endpoint. 
  * @param field      The configuration object defining the form field.
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
  */
 export function renderFormField(
   entityType: string,
-  agentApi: string,
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
   currentIndex: number): ReactNode {
@@ -279,7 +272,6 @@ export function renderFormField(
     return <FormSection
       key={fieldset[ID_KEY] + currentIndex}
       entityType={entityType}
-      agentApi={agentApi}
       group={fieldset}
       form={form}
       options={{
@@ -298,7 +290,6 @@ export function renderFormField(
         return <FormSchedule
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           fieldId={fieldProp.name[VALUE_KEY]}
-          agentApi={agentApi}
           form={form}
           options={{
             disabled: disableAllInputs,
@@ -308,7 +299,6 @@ export function renderFormField(
       if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation") {
         return <FormGeocoder
           key={fieldProp.name[VALUE_KEY] + currentIndex}
-          agentApi={agentApi}
           field={fieldProp}
           form={form}
         />;
@@ -321,14 +311,12 @@ export function renderFormField(
       }
       return <DependentFormSection
         key={fieldProp.name[VALUE_KEY] + currentIndex}
-        agentApi={agentApi}
         dependentProp={fieldProp}
         form={form}
       />
     }
     return <FormFieldComponent
       key={fieldProp.name[VALUE_KEY] + currentIndex}
-      agentApi={agentApi}
       field={fieldProp}
       form={form}
       options={{

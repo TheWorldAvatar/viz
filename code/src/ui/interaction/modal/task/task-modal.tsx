@@ -25,7 +25,6 @@ import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-s
 
 interface TaskModalProps {
   entityType: string;
-  registryAgentApi: string;
   isOpen: boolean;
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,7 +35,6 @@ interface TaskModalProps {
  * A modal component for users to interact with their tasks while on the registry.
  * 
  * @param {string} entityType The type of entity for the task's contract.
- * @param {string} registryAgentApi The target endpoint for the default registry agent.
  * @param {boolean} isOpen Indicator if the this modal should be opened.
  * @param {RegistryTaskOption} task The current task to display.
  * @param setIsOpen Method to close or open the modal.
@@ -212,13 +210,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           formRef={formRef}
           entityType={props.entityType}
           formType={FormType.VIEW}
-          agentApi={props.registryAgentApi}
           setResponse={setResponse}
           id={getAfterDelimiter(props.task.contract, "/")}
           additionalFields={dispatchFields}
         />}
         {formFields.length > 0 && !refreshFlag && <FormTemplate
-          agentApi={props.registryAgentApi}
           entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
           formRef={formRef}
           fields={formFields}

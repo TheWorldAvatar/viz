@@ -21,7 +21,6 @@ interface SummarySectionProps {
  * 
  * @param {string} id The contract's identifier.
  * @param {string} entityType The contract resource ID.
- * @param {string} registryAgentApi The target endpoint for the registry agent.
  */
 export default function SummarySection(props: Readonly<SummarySectionProps>) {
   const dict: Dictionary = useDictionary();

@@ -38,7 +38,6 @@ export default async function EditFormPage(props: Readonly<EditFormPageProps>) {
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={FormType.EDIT}
-      agentApi={SettingsStore.getRegistryURL()}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
       isModal={false}
     />

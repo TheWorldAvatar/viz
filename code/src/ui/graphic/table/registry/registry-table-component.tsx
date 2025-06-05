@@ -22,7 +22,6 @@ import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-s
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
-  registryAgentApi: string;
 }
 
 /**
@@ -30,7 +29,6 @@ interface RegistryTableComponentProps {
  * 
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {string} registryAgentApi The target endpoint for default registry agents.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
   const dict: Dictionary = useDictionary();
@@ -161,7 +159,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       </div>
       {task && <TaskModal
         entityType={props.entityType}
-        registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
         task={task}
         setIsOpen={setIsTaskModalOpen}

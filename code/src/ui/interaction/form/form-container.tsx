@@ -29,7 +29,6 @@ import { FormTemplate } from "./template/form-template";
 
 interface FormContainerComponentProps {
   entityType: string;
-  agentApi: string;
   formType: FormType;
   isPrimaryEntity?: boolean;
   isModal?: boolean;
@@ -40,7 +39,6 @@ interface FormContainerComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as add, update, delete, and view.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {boolean} isModal An optional indicator to render the form as a modal.
  */
@@ -218,7 +216,6 @@ function FormContents(
               formRef={formRef}
               entityType={props.entityType}
               formType={props.formType}
-              agentApi={props.agentApi}
               setResponse={setResponse}
               primaryInstance={status?.iri}
               isPrimaryEntity={props.isPrimaryEntity}
@@ -226,7 +223,6 @@ function FormContents(
           ))}
         {formFields.length > 0 && (
           <FormTemplate
-            agentApi={props.agentApi}
             entityType={isRescindAction ? "rescission" : "termination"}
             formRef={formRef}
             fields={formFields}
