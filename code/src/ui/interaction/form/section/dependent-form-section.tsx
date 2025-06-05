@@ -13,6 +13,7 @@ import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
 import FormSelector from '../field/input/form-selector';
 import { FORM_STATES } from '../form-utils';
+import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 
 interface DependentFormSectionProps {
   agentApi: string;
@@ -58,21 +59,29 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await fetch(`/api/registry/data?entityType=${field.dependentOn.label}&identifier=${getAfterDelimiter(currentParentOption, "/")}&subEntityType=${entityType}`)
-            .then(res => res.json());
+          entities = await fetch(
+            InternalApiServices.getRegistryApi(
+              InternalApiIdentifier.INSTANCES, field.dependentOn.label,
+              "false",
+              getAfterDelimiter(currentParentOption, "/"),
+              entityType),
+            { cache: 'no-store', credentials: 'same-origin' }
+          ).then(res => res.json());
         }
         // If there is no valid parent option, there should be no entity
       } else if ((formType === FormType.VIEW.toString() || formType === FormType.DELETE.toString()) && field.defaultValue) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
-        const url = new URL('/api/registry/data', window.location.origin)
-        url.searchParams.set('agentApi', props.agentApi)
-        url.searchParams.set('entityType', entityType)
-        url.searchParams.set('identifier', getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/"))
-        entities = await fetch(url).then((response) => response.json())
+        entities = await fetch(InternalApiServices.getRegistryApi(
+          InternalApiIdentifier.INSTANCES, entityType, "false",
+          getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/")),
+          { cache: 'no-store', credentials: 'same-origin' }
+        ).then((response) => response.json())
 
       } else {
-        entities = await fetch(`/api/registry/data?entityType=&{entityType}`).then((res) => res.json())
+        entities = await fetch(
+          InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, entityType),
+          { cache: 'no-store', credentials: 'same-origin' }).then((res) => res.json())
       }
 
       // By default, id is empty

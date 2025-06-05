@@ -6,6 +6,7 @@ import { defaultSearchOption, FormFieldOptions, FormType, ID_KEY, ONTOLOGY_CONCE
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
+import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 import FormSelector from './form-selector';
 
 interface OntologyConceptSelectorProps {
@@ -49,13 +50,15 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
         // Extract all the concept types and extract all the types from the endpoint
         const conceptTypes: string[] = props.field.in.map(subClass => subClass[ID_KEY])
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
-          conceptTypes.map(conceptType => fetch(`/api/registry/available-types?uri=${encodeURIComponent(conceptType)}`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`Failed to fetch available types for ${conceptType}`);
-              }
-              return response.json();
-            })
+          conceptTypes.map(conceptType => fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONCEPT, conceptType), {
+            cache: 'no-store',
+            credentials: 'same-origin'
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to fetch available types for ${conceptType}`);
+            }
+            return response.json();
+          })
           )
         );
         const concepts: OntologyConcept[] = conceptsArrays.flat();

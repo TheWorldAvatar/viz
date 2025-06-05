@@ -65,10 +65,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       let template: FormTemplate;
       // For add form, get a blank template
       if (props.formType == FormType.ADD || props.formType == FormType.SEARCH) {
-        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType)).then((res) => res.json())
+        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType), {
+          cache: 'no-store',
+          credentials: 'same-origin'
+        }).then((res) => res.json())
       } else {
         // For edit and view, get template with values
-        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType, id)).then((res) => res.json());
+        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType, id), {
+          cache: 'no-store',
+          credentials: 'same-origin'
+        }).then((res) => res.json());
       }
       if (props.additionalFields) {
         props.additionalFields.forEach(field => template.property.push(field));

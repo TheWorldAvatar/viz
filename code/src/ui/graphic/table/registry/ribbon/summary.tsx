@@ -9,6 +9,7 @@ import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
+import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 
 interface SummarySectionProps {
   id: string;
@@ -32,14 +33,11 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const url = new URL('/api/registry/data')
-        url.searchParams.set('entityType', props.entityType);
-        url.searchParams.set('identifier', props.id);
-        url.searchParams.set('requireLabel', 'true');
+        const contractRes: RegistryFieldValues = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "true", props.id),
+          { cache: 'no-store', credentials: 'same-origin' }
+        ).then((response) => response.json())
 
-        const contractRes: RegistryFieldValues[] = await fetch(url).then((response) => response.json())
-
-        setContract(contractRes[0]);
+        setContract(contractRes);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching instances", error);
