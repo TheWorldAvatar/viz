@@ -61,6 +61,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       }
       break;
     }
+    case InternalApiIdentifier.EVENT: {
+      const stage = searchParams.get("stage");
+      const eventType = searchParams.get("type");
+      const identifier = searchParams.get("identifier");
+      url = `${agentBaseApi}/contracts/${stage}/${eventType}/${identifier}`
+      break;
+    }
     case InternalApiIdentifier.FORM: {
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");
@@ -69,6 +76,36 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       if (identifier != "null") {
         url += `/${encodeURIComponent(identifier)}`;
       }
+      break;
+    }
+    case InternalApiIdentifier.GEOCODING_ADDRESS: {
+      const block: string = searchParams.get("block");
+      const street: string = searchParams.get("street");
+      const urlParams = new URLSearchParams({ block, street, });
+      url = `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
+      break;
+    }
+    case InternalApiIdentifier.GEOCODING_POSTAL: {
+      const postalCode: string = searchParams.get("postalCode");
+      const urlParams = new URLSearchParams({ "postal_code": postalCode, });
+      url = `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
+      break;
+    }
+    case InternalApiIdentifier.GEOCODING_CITY: {
+      const city: string = searchParams.get("city");
+      const country: string = searchParams.get("country");
+      const urlParams = new URLSearchParams({ city, country, });
+      url = `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
+      break;
+    }
+    case InternalApiIdentifier.REVERSE_GEOCODING: {
+      const iri: string = searchParams.get("iri");
+      url = `${agentBaseApi}/location?iri=${encodeURIComponent(iri)}`;
+      break;
+    }
+    case InternalApiIdentifier.SCHEDULE: {
+      const id: string = searchParams.get("id");
+      url = `${agentBaseApi}/contracts/schedule/${id}`;
       break;
     }
     case InternalApiIdentifier.TASKS: {

@@ -4,8 +4,14 @@ export enum InternalApiIdentifier {
   ADDRESS = "address",
   CONCEPT = "concept",
   CONTRACTS = "contracts",
+  EVENT = "event",
   FORM = "form",
+  GEOCODING_POSTAL = "geocode_postal",
+  GEOCODING_ADDRESS = "geocode_address",
+  GEOCODING_CITY = "geocode_city",
+  REVERSE_GEOCODING = "geodecode",
   INSTANCES = "instances",
+  SCHEDULE = "schedule",
   TASKS = "tasks",
 }
 
@@ -47,10 +53,44 @@ export default class InternalApiServices {
           subtype: params[3] ?? null,
         });
         break;
+      case InternalApiIdentifier.EVENT:
+        urlParams = new URLSearchParams({
+          stage: params[0],
+          type: params[1],
+          identifier: params[2],
+        });
+        break;
       case InternalApiIdentifier.FORM:
         urlParams = new URLSearchParams({
           type: parseStringsForUrls(params[0]),
           identifier: params[1] ?? null,
+        });
+        break;
+      case InternalApiIdentifier.GEOCODING_ADDRESS:
+        urlParams = new URLSearchParams({
+          block: params[0] ?? null,
+          street: params[1] ?? null,
+        });
+        break;
+      case InternalApiIdentifier.GEOCODING_POSTAL:
+        urlParams = new URLSearchParams({
+          postalCode: params[0] ?? null,
+        });
+        break;
+      case InternalApiIdentifier.GEOCODING_CITY:
+        urlParams = new URLSearchParams({
+          city: params[0] ?? null,
+          country: params[1] ?? null,
+        });
+        break;
+      case InternalApiIdentifier.REVERSE_GEOCODING:
+        urlParams = new URLSearchParams({
+          iri: encodeURIComponent(params[0]),
+        });
+        break;
+      case InternalApiIdentifier.SCHEDULE:
+        urlParams = new URLSearchParams({
+          id: params[0],
         });
         break;
       case InternalApiIdentifier.TASKS:

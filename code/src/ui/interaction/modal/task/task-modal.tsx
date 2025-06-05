@@ -21,6 +21,7 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
+import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 
 interface TaskModalProps {
   entityType: string;
@@ -135,42 +136,16 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     setDispatchFields([]);
   }
 
-  // A hook that fetches the form template with dispatch details included
-  useEffect(() => {
-    // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplateWithDispatchDetails = async (endpoint: string, targetId: string): Promise<void> => {
-      setIsFetching(true);
-      const id: string = getAfterDelimiter(targetId, "/");
-      const template: PropertyShape[] = await fetch(`/api/registry/lifecycle-form-template?agentApi=${endpoint}&lifecycleStage=service&eventType=dispatch&identifier=${id}`).then(res => res.json());
-      const group: PropertyGroup = {
-        "@id": "dispatch group",
-        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
-        label: {
-          "@value": dict.title.dispatchInfo
-        },
-        comment: {
-          "@value": "The dispatch details specified for this service."
-        },
-        order: 1000,
-        property: template.filter(shape => shape.name[VALUE_KEY] != "id"), // Filter out id field
-      };
-      setDispatchFields([group]);
-      setIsFetching(false);
-    }
-    // Only execute this for orders that are pending execution
-    if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
-      getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
-    }
-  }, []);
-
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     // Target id is optional, and will default to form
     const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShapeOrGroup[] = await fetch(`/api/registry/lifecycle-form-template?lifecycleStage=${lifecycleStage}&eventType=${eventType}&identifier=${targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER}`)
-        .then(res => res.json());
+      const template: PropertyShapeOrGroup[] = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      }).then(res => res.json());
       setFormFields(template);
       setIsFetching(false);
     }

@@ -20,6 +20,7 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
+import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-services";
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
@@ -132,18 +133,11 @@ function FormContents(
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     const getFormTemplate = async (
-      endpoint: string,
       lifecycleStage: string,
       eventType: string
     ): Promise<void> => {
       setIsLoading(true);
-      const params = new URLSearchParams({
-        agentApi: endpoint,
-        lifecycleStage,
-        eventType,
-        identifier: FORM_IDENTIFIER,
-      });
-      const res = await fetch(`/api/registry/geolocation/lifecycle-form-template?${params.toString()}`, {
+      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, lifecycleStage, eventType, FORM_IDENTIFIER), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -153,9 +147,9 @@ function FormContents(
     };
 
     if (isRescindAction) {
-      getFormTemplate(props.agentApi, "archive", "rescind");
+      getFormTemplate("archive", "rescind");
     } else if (isTerminateAction) {
-      getFormTemplate(props.agentApi, "archive", "terminate");
+      getFormTemplate("archive", "terminate");
     }
   }, [isRescindAction, isTerminateAction]);
 

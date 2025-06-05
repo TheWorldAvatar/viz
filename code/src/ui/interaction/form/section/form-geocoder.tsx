@@ -146,12 +146,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
 
     // Declare an async function to get geocoordinates associated with the location
     const getGeoCoordinates = async (
-      agentApi: string,
       location: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      const searchParams = new URLSearchParams({ agentApi: `${agentApi}/location`, iri: location });
-      const res = await fetch(`/api/registry/geolocation?${searchParams.toString()}`, {
+      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.REVERSE_GEOCODING, location), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -173,8 +171,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       getAddressShapes(props.field.name[VALUE_KEY]);
     }
     if (formType == FormType.VIEW.toString() || formType == FormType.EDIT.toString()) {
-      getGeoCoordinates(props.agentApi,
-        Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
+      getGeoCoordinates(Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
     }
   }, []);
 
@@ -214,18 +211,17 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     // Reset location
     setHasGeolocation(false);
     // Searches for geolocation in the following steps
-    const searchParamsList: Record<string, string | undefined>[] = [
+    const urls: string[] = [
       // First by postal code
-      { [postalCodeUnderscored]: data[postalCode] },
+      InternalApiServices.getRegistryApi(InternalApiIdentifier.GEOCODING_POSTAL, data[postalCode]),
       // If no coordinates are found, search by block (if available) and street name
-      { block: data.block, street: data.street },
+      InternalApiServices.getRegistryApi(InternalApiIdentifier.GEOCODING_ADDRESS, data.block, data.street),
       // If no coordinates are found, search for any coordinate in the same city and country
-      { city: data.city, country: data.country },
+      InternalApiServices.getRegistryApi(InternalApiIdentifier.GEOCODING_CITY, data.city, data.country),
     ];
 
-    for (const param of searchParamsList) {
-      const searchParams = new URLSearchParams({ agentApi: `${props.agentApi}/location/geocode`, ...param });
-      const res = await fetch(`/api/registry/geolocation?${searchParams.toString()}`, {
+    for (const url of urls) {
+      const res = await fetch(url, {
         cache: 'no-store',
         credentials: 'same-origin'
       });
