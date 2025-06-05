@@ -73,10 +73,11 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
 
       // By default, id is empty
       let defaultId: string = "";
-      // Only update the id if there are any entities and default value is not NA (ie null)
-      if (entities.length > 0 && field.defaultValue) {
+      // Only update the id if there are any entities
+      if (entities.length > 0) {
+        // Set the id to the first possible option
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
-        // If there is a default value, search and use the option matching the default instance's local name
+        // If there is a default value set either in the form or the field, search and use the option matching the default instance's local name
         if (props.form.getValues(field.fieldId)) {
           const defaultValueId: string = getAfterDelimiter(props.form.getValues(field.fieldId), "/");
           const matchingEntity: RegistryFieldValues = entities.find(entity =>
