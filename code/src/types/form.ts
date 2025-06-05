@@ -52,7 +52,7 @@ export interface FormArrayItemOption {
   placeholder?: string
 }
 
-export type FormTemplate = {
+export type FormTemplateType = {
   "@context": Record<string, string>;
   node: NodeShape[];
   property: PropertyShapeOrGroup[];

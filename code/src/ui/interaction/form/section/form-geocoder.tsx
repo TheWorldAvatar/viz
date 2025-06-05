@@ -7,7 +7,7 @@ import { useDictionary } from 'hooks/useDictionary';
 import { Address } from "types/address";
 import { Dictionary } from "types/dictionary";
 import {
-  FormTemplate,
+  FormTemplateType,
   FormType,
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
@@ -110,7 +110,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         cache: 'no-store',
         credentials: 'same-origin'
       });
-      const template: FormTemplate = await res.json();
+      const template: FormTemplateType = await res.json();
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;

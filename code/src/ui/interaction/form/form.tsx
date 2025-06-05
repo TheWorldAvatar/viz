@@ -7,7 +7,7 @@ import { useDictionary } from 'hooks/useDictionary';
 import { setFilterFeatureIris, setFilterTimes } from 'state/map-feature-slice';
 import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FormTemplate, FormType, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
+import { FormTemplateType, FormType, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
 import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
@@ -47,7 +47,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
-  const [formTemplate, setFormTemplate] = useState<FormTemplate>(null);
+  const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -58,7 +58,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         id: id,
       };
       // Retrieve template from APIs
-      let template: FormTemplate;
+      let template: FormTemplateType;
       // For add form, get a blank template
       if (props.formType == FormType.ADD || props.formType == FormType.SEARCH) {
         template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType), {

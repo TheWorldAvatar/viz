@@ -10,7 +10,7 @@ import useRefresh from 'hooks/useRefresh';
 import { PermissionScheme } from 'types/auth';
 import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FORM_IDENTIFIER, FormType, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
+import { FORM_IDENTIFIER, FormTemplateType, FormType, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -141,11 +141,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Target id is optional, and will default to form
     const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShapeOrGroup[] = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
+      const template: FormTemplateType = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
         cache: 'no-store',
         credentials: 'same-origin'
       }).then(res => res.json());
-      setFormFields(template);
+      setFormFields(template.property);
       setIsFetching(false);
     }
 
