@@ -7,7 +7,7 @@
 
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  color: var(--text-color-primary) !important;
+  color: var(--text-color-primary);
   transition: all 0.2s ease-in-out;
 }
 
@@ -18,12 +18,11 @@
 
 .background {
   background: var(--button-color-primary);
-  border: 1px solid transparent;
+  /* border: 1px solid transparent; */
 }
 
 .background-secondary {
   background: var(--button-color-secondary);
-  border: 1px solid var(--border-primary);
 }
 
 .background:hover {
@@ -73,6 +72,12 @@
   margin: 0 0.5rem;
   transition: all 0.2s ease-in-out;
   background-color: var(--button-color-primary);
+}
+
+.icon-only-button:hover {
+  background-color: var(--button-color-primary-active);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .popover {

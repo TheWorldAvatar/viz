@@ -308,7 +308,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             )}
           {props.formType != Paths.REGISTRY && !response && (
             <ClickActionButton
-              icon="publish"
+              icon="send"
+              label="Submit"
               tooltipText={dict.action.submit}
               onClick={onSubmit}
             />
@@ -325,7 +326,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             />
           )}
           {!response && !(isRescindAction || isTerminateAction) && (
-            <ReturnButton icon="first_page" tooltipText={dict.action.return} />
+            <ReturnButton
+              label="Return"
+              icon="keyboard_return"
+              className="ml-2"
+              tooltipText={dict.action.return}
+            />
           )}
         </div>
       </div>
