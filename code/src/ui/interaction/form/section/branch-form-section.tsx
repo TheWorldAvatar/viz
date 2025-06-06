@@ -15,7 +15,6 @@ import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
 
 interface OptionBasedFormSectionProps {
   entityType: string;
-  agentApi: string;
   node: NodeShape[];
   form: UseFormReturn;
 }
@@ -24,7 +23,6 @@ interface OptionBasedFormSectionProps {
  * in a separate selector.
  * 
  * @param {string} entityType The type of entity.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {NodeShape[]} node A list containing the potential form field configurations available.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
@@ -134,7 +132,7 @@ export default function BranchFormSection(props: Readonly<OptionBasedFormSection
         </p>
       </div>
       {selectedFields.map((field, index) => {
-        return renderFormField(props.entityType, props.agentApi, field, props.form, index);
+        return renderFormField(props.entityType, field, props.form, index);
       })}
     </>);
 }

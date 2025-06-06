@@ -11,7 +11,7 @@ import ClickActionButton from 'ui/interaction/action/click/click-button';
 import FileInputButton from 'ui/interaction/action/file/file-input';
 import Modal from 'ui/interaction/modal/modal';
 import ResponseComponent from 'ui/text/response/response';
-import { CustomAgentResponseBody } from 'utils/server-actions';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 
 interface FileModalProps {
   url: string;

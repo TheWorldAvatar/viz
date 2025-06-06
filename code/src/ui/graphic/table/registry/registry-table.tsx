@@ -7,7 +7,7 @@ import { FieldValues } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import { RegistryFieldValues, RegistryTaskOption } from "types/form";
+import { LifecycleStage, RegistryFieldValues, RegistryTaskOption } from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
@@ -15,7 +15,7 @@ import RegistryRowActions from "./actions/registry-table-action";
 
 interface RegistryTableProps {
   recordType: string;
-  lifecycleStage: string;
+  lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   limit?: number;
@@ -25,7 +25,7 @@ interface RegistryTableProps {
  * This component renders a registry of table based on the inputs.
  *
  * @param {string} recordType The type of the record.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
  * @param {number} limit Optional limit to the number of columns shown.

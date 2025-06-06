@@ -8,30 +8,27 @@ import { useEffect, useState } from 'react';
 
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
-import { Paths } from 'io/config/routes';
 import { Dictionary } from 'types/dictionary';
-import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
+import { LifecycleStage, RegistryFieldValues, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
 import { Status } from 'ui/text/status/status';
 import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
+import {makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 import RegistryTable from './registry-table';
 import SummarySection from './ribbon/summary';
 import TableRibbon from './ribbon/table-ribbon';
 
 interface RegistryTableComponentProps {
   entityType: string;
-  lifecycleStage: string;
-  registryAgentApi: string;
+  lifecycleStage: LifecycleStage;
 }
 
 /**
  * This component renders a registry table for the specified entity.
  * 
  * @param {string} entityType Type of entity for rendering.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {string} registryAgentApi The target endpoint for default registry agents.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  */
 export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
   const dict: Dictionary = useDictionary();
@@ -50,37 +47,58 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       setIsLoading(true);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (props.lifecycleStage === Paths.REGISTRY_REPORT) {
-          // If this is the base report page, users should retrieve all contracts
+        if (props.lifecycleStage === 'report') {
           if (pathNameEnd === props.entityType) {
-            instances = await getLifecycleData(props.registryAgentApi, Paths.REGISTRY_ACTIVE, props.entityType);
-            instances = instances.map(contract => {
-              return {
-                status: {
-                  value: parseWordsForLabels(Status.ACTIVE),
-                  type: "literal",
-                  dataType: "http://www.w3.org/2001/XMLSchema#string",
-                  lang: "",
-                },
-                ...contract
-              }
-            });
-            const archivedContracts: RegistryFieldValues[] = await getLifecycleData(props.registryAgentApi, Paths.REGISTRY_ARCHIVE, props.entityType);
-            instances = instances.concat(archivedContracts);
+            // Fetch active contracts
+            const activeRes = await fetch(makeInternalRegistryAPIwithParams('contracts', 'active', props.entityType),
+              { cache: 'no-store', credentials: 'same-origin' }
+            );
+            let activeInstances = await activeRes.json();
+            activeInstances = activeInstances.map((contract: RegistryFieldValues) => ({
+              status: {
+                value: parseWordsForLabels(Status.ACTIVE),
+                type: "literal",
+                dataType: "http://www.w3.org/2001/XMLSchema#string",
+                lang: "",
+              },
+              ...contract
+            }));
+
+            // Fetch archived contracts
+            const archivedRes = await fetch(makeInternalRegistryAPIwithParams('contracts', 'archive', props.entityType),
+              { cache: 'no-store', credentials: 'same-origin' }
+            );
+            const archivedInstances = await archivedRes.json();
+
+            instances = activeInstances.concat(archivedInstances);
           } else {
-            // If this is the report page for specific contracts, retrieve tasks associated with the id 
-            instances = await getServiceTasks(props.registryAgentApi, props.entityType, pathNameEnd);
+            // Fetch service tasks for a specific contract        
+            const res = await fetch(makeInternalRegistryAPIwithParams('tasks', props.entityType, pathNameEnd), {
+              cache: 'no-store',
+              credentials: 'same-origin'
+            });
+            instances = await res.json();
           }
-        } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
-          // Create a Date object from the YYYY-MM-DD string
+        } else if (props.lifecycleStage == 'tasks') {
+          // Fetch service tasks for a specific date
           const date = new Date(selectedDate);
-          // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
-        } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
-          instances = await getData(props.registryAgentApi, props.entityType, null, null, true);
+          const res = await fetch(makeInternalRegistryAPIwithParams('tasks', props.entityType, unixTimestamp.toString()), {
+            cache: 'no-store',
+            credentials: 'same-origin'
+          });
+          instances = await res.json();
+        } else if (props.lifecycleStage == 'general') {
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams('instances', props.entityType, "true"),
+            { cache: 'no-store', credentials: 'same-origin' }
+          );
+          instances = await res.json();
         } else {
-          instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
+          const res = await fetch(makeInternalRegistryAPIwithParams('contracts', props.lifecycleStage.toString(), props.entityType),
+            { cache: 'no-store', credentials: 'same-origin' }
+          );
+          instances = await res.json();
         }
         setInitialInstances(instances);
         setCurrentInstances(instances);
@@ -108,28 +126,26 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
-          registryAgentApi={props.registryAgentApi}
-          lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
+          lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
       </div>
-      {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
+      {(props.lifecycleStage == 'active' || props.lifecycleStage == 'archive') &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
           {dict.message.registryInstruction}
         </div>}
-      {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+      {props.lifecycleStage == 'report' &&
         <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
-        {props.lifecycleStage == Paths.REGISTRY_REPORT &&
+        {props.lifecycleStage == 'report' &&
           <SummarySection
             id={pathNameEnd}
             entityType={props.entityType}
-            registryAgentApi={props.registryAgentApi}
           />}
         {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
           currentInstances.length > 0 ?
@@ -143,7 +159,6 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       </div>
       {task && <TaskModal
         entityType={props.entityType}
-        registryAgentApi={props.registryAgentApi}
         isOpen={isTaskModalOpen}
         task={task}
         setIsOpen={setIsTaskModalOpen}

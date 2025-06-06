@@ -11,7 +11,6 @@ import { genEmptyArrayRow } from '../../form-utils';
 import FormFieldComponent from '../form-field';
 
 export interface FormArrayProps {
-  agentApi: string;
   fieldId: string;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
@@ -90,7 +89,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           return (
             <div key={`field-${currentIndex}-${index}`} className={styles["cell"]}>
               {config.class && <DependentFormSection
-                agentApi={props.agentApi}
                 dependentProp={{
                   ...config,
                   fieldId: fieldId,
@@ -98,7 +96,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                 form={props.form}
               />}
               {!config.class && <FormFieldComponent
-                agentApi={props.agentApi}
                 field={{
                   ...config,
                   fieldId: fieldId,

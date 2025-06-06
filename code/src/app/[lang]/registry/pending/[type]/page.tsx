@@ -18,7 +18,7 @@ interface PendingRegistryPageProps {
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.REGISTRY);
   return {
     title: metadata?.title ?? PageTitles.REGISTRY,
@@ -31,14 +31,13 @@ export async function generateMetadata(): Promise<Metadata> {
  * @returns React component for display. 
  */
 export default async function PendingRegistryPage(props: Readonly<PendingRegistryPageProps>) {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   const resolvedParams = await props.params;
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={resolvedParams.type}
-        lifecycleStage={Paths.REGISTRY_PENDING}
-        registryAgentApi={uiSettings.resources?.registry?.url}
+        lifecycleStage={'pending'}
       />
     );
   } else {

@@ -5,7 +5,6 @@ services:
     image: keycloak/keycloak:26.0
     ports:
       - "8080:8080"
-      - "8443:8443"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}    
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-theworldavatar}

@@ -41,7 +41,7 @@ export default async function App(props: Readonly<{
   params: Promise<{ lang: string }>;
 }>
 ) {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   const dict: Dictionary = await getDictionary((await props.params).lang);
   const pages: OptionalPage[] = OptionalPages.getAllPages();
 

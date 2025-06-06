@@ -5,24 +5,22 @@ import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from 'hooks/useDictionary';
-import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
   FormFieldOptions,
-  RegistryFieldValues,
-  SEARCH_FORM_TYPE,
+  FormType,
+  RegistryFieldValues
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import { extractResponseField, parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { sendGetRequest } from "utils/server-actions";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
 
 interface FormScheduleProps {
   fieldId: string;
-  agentApi: string;
   form: UseFormReturn;
   options?: FormFieldOptions;
 }
@@ -41,12 +39,11 @@ export const daysOfWeek: string[] = [
  * This component renders a form schedule as a form section.
  *
  * @param {string} fieldId Field name.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
-  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
   const dict: Dictionary = useDictionary();
   const daysOfWeekLabel: string[] = [
     dict.form.sun,
@@ -61,7 +58,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const regularService: string = dict.form.regularService;
   const alternateService: string = dict.form.alternateService;
   const isDisabledOption: { disabled: boolean } = {
-    disabled: formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE,
+    disabled: formType == "view" || formType == "delete",
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
   // Define the state to store the selected value
@@ -75,9 +72,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      const response: string = await sendGetRequest(
-        `${props.agentApi}/contracts/schedule/${props.form.getValues("id")}`
-      );
+      const response: string = await fetch(makeInternalRegistryAPIwithParams("schedule", props.form.getValues("id")), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      }).then((res) => res.text())
       const jsonResponse: RegistryFieldValues = JSON.parse(response);
 
       // Retrieve recurrence and selected service option
@@ -115,7 +113,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       });
       setIsLoading(false);
     };
-    if (formType == Paths.REGISTRY_ADD || formType == SEARCH_FORM_TYPE) {
+    if (formType == "add" || formType == "search") {
       props.form.setValue(FORM_STATES.RECURRENCE, 1);
       setIsLoading(false);
     } else {
@@ -174,7 +172,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 }
               }}
               isDisabled={
-                formType == Paths.REGISTRY || formType == Paths.REGISTRY_DELETE
+                formType == "view" || formType == "delete"
               }
             />
             <p className={fieldStyles["info-text"]}>
@@ -222,8 +220,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   className={`${styles["schedule-occurrence-input"]} ${props.options?.disabled && styles["field-disabled"]}`}
                   step={"1"}
                   readOnly={
-                    formType == Paths.REGISTRY ||
-                    formType == Paths.REGISTRY_DELETE
+                    formType == "view" ||
+                    formType == "delete"
                   }
                   aria-label={FORM_STATES.RECURRENCE}
                   {...props.form.register(FORM_STATES.RECURRENCE)}

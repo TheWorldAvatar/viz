@@ -55,7 +55,7 @@ export default async function RootLayout({ children, modal, params }: Readonly<{
     // Initialise static content
     initialise();
     // Get settings to pass to Toolbar
-    const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+    const uiSettings: UISettings = SettingsStore.getUISettings();
     const { lang } = await params;
     const dictionary: Dictionary = await getDictionary(lang);
     const pages: OptionalPage[] = OptionalPages.getAllPages();
