@@ -53,34 +53,36 @@ export default function FormInputContainer(
 
   return (
     <>
-      <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
-        <span className="text-lg font-semibold flex gap-4">
-          {parseWordsForLabels(label)}
-          {props.error && "*"}
-          <Tooltip text={description} placement="right">
-            <Icon className="material-symbols-outlined">{"info"}</Icon>
-          </Tooltip>
-        </span>
-        {props.formatLabel && (
-          <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
-        )}
-      </label>
-      <div className="flex items-center justify-start md:justify-end gap-2 bg-orange-600">
-        {props.redirectOptions?.addUrl && (
-          <RedirectButton
-            label="Add"
-            icon="add"
-            url={props.redirectOptions.addUrl}
-            isActive={false}
-          />
-        )}
-        {props.redirectOptions?.view && (
-          <ClickActionButton
-            icon="arrow_forward"
-            label="View"
-            onClick={props.redirectOptions.view}
-          />
-        )}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
+          <span className="text-lg font-semibold flex gap-4">
+            {parseWordsForLabels(label)}
+            {props.error && "*"}
+            <Tooltip text={description} placement="right">
+              <Icon className="material-symbols-outlined">{"info"}</Icon>
+            </Tooltip>
+          </span>
+          {props.formatLabel && (
+            <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
+          )}
+        </label>
+        <div className="flex items-center  gap-2">
+          {props.redirectOptions?.addUrl && (
+            <RedirectButton
+              label="Add"
+              icon="add"
+              url={props.redirectOptions.addUrl}
+              isActive={false}
+            />
+          )}
+          {props.redirectOptions?.view && (
+            <ClickActionButton
+              icon="arrow_forward"
+              label="View"
+              onClick={props.redirectOptions.view}
+            />
+          )}
+        </div>
       </div>
       <div>{props.children}</div>
 
