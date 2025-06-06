@@ -20,10 +20,13 @@
 
     /* Text colors */
     --text-color-primary: #30363d;
-    --text-color-secondary: #7f7f80;
+    --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
     --text-color-title-primary: #0b4452;
+
+    --text-color-selected: #146a7d;
+    --backgounrd-selected: #f9f9f9;
 
     /* Border colors */
     --border-primary: #dbdbdb;
@@ -61,6 +64,8 @@
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
     --text-color-title-primary: #0b4452;
+
+    --text-color-selected: #146a7d;
 
     /* Border colors */
     --border-primary: #434b55;
@@ -109,6 +114,7 @@
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
+  --color-selected: var(--text-color-selected);
 }
 
 * {

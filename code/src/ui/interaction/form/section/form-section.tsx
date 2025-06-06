@@ -1,4 +1,3 @@
-
 import { UseFormReturn } from "react-hook-form";
 
 import { FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
@@ -28,7 +27,7 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
       <legend className="text-lg  font-bold ">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
       </legend>
-      <div className="bg-blue-600 ">
+      <div className="p-2">
         {props.group.property.map((field, index) =>
           renderFormField(
             props.entityType,

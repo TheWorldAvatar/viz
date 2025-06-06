@@ -10,16 +10,14 @@ export const selectorStyles: StylesConfig<
 > = {
   control: (provided, { isDisabled }) => ({
     ...provided,
-    outline: "1px solid var(--border-border)",
+    outline: "1px solid var(--border-primary)",
     height: "1.8rem",
     width: "100%",
     maxWidth: "none",
     padding: "0.2rem",
     margin: "0",
     borderRadius: "0.5rem",
-    boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     cursor: isDisabled ? "not-allowed !important" : "default",
-    border: isDisabled ? "1px solid var(--border-border)" : "none",
     backgroundColor: "var(--background-muted)",
     opacity: isDisabled ? "0.75" : "1",
   }),
@@ -39,7 +37,6 @@ export const selectorStyles: StylesConfig<
     minWidth: "100%",
     width: "fit-content",
     border: "1px solid var(--border-primary)",
-
     zIndex: 99999,
   }),
   noOptionsMessage: (provided) => ({
@@ -88,16 +85,15 @@ export const selectorStyles: StylesConfig<
     return {
       ...provided,
 
-      backgroundColor: "var(--background-muted)",
-      color: isSelected
-        ? "var(--text-color-secondary)"
-        : "var(--text-color-primary)",
+      backgroundColor: isSelected
+        ? "var(--background-secondary)"
+        : "var(--background-muted)",
+      color: "var(--text-color-primary)",
+      fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",
       fontSize: "var(--font-size-primary)",
       "&:hover": {
-        color: isSelected
-          ? "var(--text-color-secondary)"
-          : "var(--text-color-primary)",
+        color: "var(--text-color-primary)",
         backgroundColor: isSelected
           ? "var(--background-secondary)"
           : "var(--background-tertiary)",

@@ -185,14 +185,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <fieldset className="p-2 md:p-8 bg-green-300 border-1 border-border rounded-lg m-4 ">
+    <fieldset className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 ">
       <legend className="text-lg font-bold">
         {parseWordsForLabels(props.fieldId)}
       </legend>
       {isLoading && <LoadingSpinner isSmall={true} />}
       {!isLoading && (
         <>
-          <div className="flex flex-col w-full bg-yellow-700 gap-4">
+          <div className="flex flex-col w-full gap-4">
             <label
               className="text-lg font-bold flex gap-4"
               htmlFor="select-input"
@@ -283,7 +283,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             </div>
           )}
-          <div className="w-full bg-red-500 ">
+          <div className="w-full ">
             <h1 className="text-xl font-bold mb-2">{dict.form.timeSlot}</h1>
             <FormFieldComponent
               field={{

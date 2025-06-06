@@ -141,7 +141,7 @@ export default function RegistryTableComponent(
 
   return (
     <div className="h-full w-[22rem] md:w-full overflow-auto md:mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl md:mt-20">
-      <div className="bg-gray-200 rounded-lg md:p-4 ">
+      <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-4 text-foreground">
           {parseWordsForLabels(props.entityType)}
         </h1>
