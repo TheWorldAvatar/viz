@@ -9,7 +9,7 @@ import { RegistryFieldValues } from 'types/form';
 import RedirectButton from 'ui/interaction/action/redirect/redirect-button';
 import Accordion from 'ui/text/accordion/accordion';
 import AccordionField from 'ui/text/accordion/accordion-field';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface SummarySectionProps {
   id: string;
@@ -32,7 +32,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const contractRes: RegistryFieldValues = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "true", props.id),
+        const contractRes: RegistryFieldValues = await fetch(makeInternalRegistryAPIwithParams("instances", props.entityType, "true", props.id),
           { cache: 'no-store', credentials: 'same-origin' }
         ).then((response) => response.json())
 

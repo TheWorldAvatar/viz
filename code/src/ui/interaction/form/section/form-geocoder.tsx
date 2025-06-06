@@ -8,21 +8,20 @@ import { Address } from "types/address";
 import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
-  FormType,
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
   PropertyShape,
   TYPE_KEY,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseWordsForLabels } from "utils/client-utils";
-import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-services";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 interface FormGeocoderProps {
   field: PropertyShape;
   form: UseFormReturn;
@@ -106,7 +105,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       locationIdentifier: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, locationIdentifier), {
+      const res = await fetch(makeInternalRegistryAPIwithParams('form', locationIdentifier), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -146,7 +145,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       location: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.REVERSE_GEOCODING, location), {
+      const res = await fetch(makeInternalRegistryAPIwithParams('geodecode', location), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -164,10 +163,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       isInitialFetching.current = false;
     };
 
-    if (formType == FormType.ADD.toString() || formType == FormType.EDIT.toString()) {
+    if (formType == "add" || formType == 'edit'.toString()) {
       getAddressShapes(props.field.name[VALUE_KEY]);
     }
-    if (formType == FormType.VIEW.toString() || formType == FormType.EDIT.toString()) {
+    if (formType == "view" || formType == 'edit'.toString()) {
       getGeoCoordinates(Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
     }
   }, []);
@@ -185,7 +184,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     setSelectedAddress(null);
     setIsEmptyAddress(false);
     // Start search
-    const results = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.ADDRESS, data[postalCode]), {
+    const results = await fetch(makeInternalRegistryAPIwithParams('address', data[postalCode]), {
       cache: 'no-store',
       credentials: 'same-origin'
     }).then((response) => response.text());
@@ -208,13 +207,13 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     // Reset location
     setHasGeolocation(false);
     // Searches for geolocation in the following steps
-    const urls: string[] = [
+    const urls: URL[] = [
       // First by postal code
-      InternalApiServices.getRegistryApi(InternalApiIdentifier.GEOCODING_POSTAL, data[postalCode]),
+      makeInternalRegistryAPIwithParams("geocode_postal", data[postalCode]),
       // If no coordinates are found, search by block (if available) and street name
-      InternalApiServices.getRegistryApi(InternalApiIdentifier.GEOCODING_ADDRESS, data.block, data.street),
+      makeInternalRegistryAPIwithParams('geocode_address', data.block, data.street),
       // If no coordinates are found, search for any coordinate in the same city and country
-      InternalApiServices.getRegistryApi(InternalApiIdentifier.GEOCODING_CITY, data.city, data.country),
+      makeInternalRegistryAPIwithParams('geocode_city', data.city, data.country),
     ];
 
     for (const url of urls) {
@@ -273,7 +272,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         />
       )}
       {!isInitialFetching.current &&
-        (formType == FormType.ADD.toString() || formType == FormType.EDIT.toString()) && (
+        (formType == "add" || formType == 'edit'.toString()) && (
           <div className={styles["form-dependent-button-layout"]}>
             <ClickActionButton
               icon={"search"}
@@ -328,7 +327,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             form={props.form}
             options={{
               disabled:
-                formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
+                formType == "view" || formType == "delete",
             }}
           />
           <FormFieldComponent
@@ -336,7 +335,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             form={props.form}
             options={{
               disabled:
-                formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
+                formType == "view" || formType == "delete",
             }}
           />
         </div>

@@ -144,10 +144,10 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
  * @param {string} defaultValue Default value retrieved from the backend, if any.
  * @param {string} formType The type of form.
  */
-export function getDefaultVal(field: string, defaultValue: string, formType: string): boolean | number | string {
+export function getDefaultVal(field: string, defaultValue: string, formType: FormType): boolean | number | string {
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
-    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString() || !defaultValue) {
+    if (formType == "add" || formType == "search" || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
@@ -156,7 +156,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
 
   if (field == FORM_STATES.RECURRENCE) {
     // Recurrence property should have a value of 1 for the add form type, else, use the default value
-    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString()) {
+    if (formType == "add" || formType == "search" ) {
       return 1;
     }
     if (defaultValue === "P1D") {
@@ -174,7 +174,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: str
 
   if ([FORM_STATES.SUN, FORM_STATES.MON, FORM_STATES.TUES, FORM_STATES.WED, FORM_STATES.THURS, FORM_STATES.FRI, FORM_STATES.SAT].includes(field)) {
     // Any day of week property should default to false for add form type, else, use the default value
-    if (formType == FormType.ADD.toString() || formType == FormType.SEARCH.toString()) {
+    if (formType == "add" || formType == "search") {
       return false;
     }
     // Default value can be null, and should return false if null
@@ -241,7 +241,7 @@ export function getRegisterOptions(field: PropertyShape, formType: string): Regi
 
   // The field is required if this is currently not the search form and SHACL defines them as optional
   // Also required for start and end search period
-  if ((formType != FormType.SEARCH.toString() && (Number(field.minCount?.[VALUE_KEY]) === 1 && Number(field.maxCount?.[VALUE_KEY]) === 1)) ||
+  if ((formType != "search" && (Number(field.minCount?.[VALUE_KEY]) === 1 && Number(field.maxCount?.[VALUE_KEY]) === 1)) ||
     (field.fieldId == FORM_STATES.START_TIME_PERIOD || field.fieldId == FORM_STATES.END_TIME_PERIOD)) {
     options.required = "Required";
   }
@@ -432,15 +432,15 @@ export function getMatchingConcept(mappings: OntologyConceptMappings, targetValu
  */
 export function translateFormType(input: FormType, dict: Dictionary): string {
   switch (input) {
-    case FormType.VIEW:
+    case "view":
       return dict.action.view;
-    case FormType.ADD:
+    case "add":
       return dict.action.add;
-    case FormType.EDIT:
+    case "edit":
       return dict.action.edit;
-    case FormType.DELETE:
+    case "delete":
       return dict.action.delete;
-    case FormType.SEARCH:
+    case "search":
       return dict.action.search;
     default:
       break;

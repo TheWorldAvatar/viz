@@ -8,7 +8,6 @@ import { useDictionary } from 'hooks/useDictionary';
 import { setFilterFeatureIris } from 'state/map-feature-slice';
 import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FormType } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -61,7 +60,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
         <FormComponent
           formRef={formRef}
           entityType={props.id}
-          formType={FormType.SEARCH}
+          formType={'search'}
           setResponse={setResponse}
         />
       </section>

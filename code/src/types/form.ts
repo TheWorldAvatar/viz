@@ -6,22 +6,9 @@ export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
-export enum LifecycleStage {
-  GENERAL,
-  PENDING,
-  ACTIVE,
-  ARCHIVE,
-  REPORT,
-  TASKS
-}
+export type LifecycleStage = "general" | "pending" | "active" | "archive" | "report" | "tasks"
 
-export enum FormType {
-  ADD,
-  DELETE,
-  EDIT,
-  VIEW,
-  SEARCH
-}
+export type FormType = "add" | "delete" | "edit" | "view" | "search"
 
 export interface SparqlResponseField {
   value: string;

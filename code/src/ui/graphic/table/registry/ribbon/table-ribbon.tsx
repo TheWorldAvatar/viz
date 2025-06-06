@@ -57,13 +57,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className={styles.menu}>
-      {props.lifecycleStage !== LifecycleStage.GENERAL && (
+      {props.lifecycleStage !== 'general' && (
         <div className={styles["registry-nav-ribbon"]}>
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.pendingRegistry) && <RedirectButton
             label={dict.nav.title.pending}
             icon="pending"
             url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-            isActive={props.lifecycleStage == LifecycleStage.PENDING}
+            isActive={props.lifecycleStage == 'pending'}
             isHoverableDisabled={true}
             isTransparent={true}
             className={styles["registry-nav-button"]}
@@ -75,7 +75,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             label={dict.nav.title.active}
             icon="schedule"
             url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == LifecycleStage.ACTIVE || props.lifecycleStage == LifecycleStage.TASKS}
+            isActive={props.lifecycleStage == 'active' || props.lifecycleStage == 'tasks'}
             isHoverableDisabled={true}
             isTransparent={true}
             className={styles["registry-nav-button"]}
@@ -87,7 +87,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             label={dict.nav.title.archive}
             icon="archive"
             url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-            isActive={props.lifecycleStage == LifecycleStage.ARCHIVE}
+            isActive={props.lifecycleStage == 'archive'}
             isHoverableDisabled={true}
             isTransparent={true}
             className={styles["registry-nav-button"]}
@@ -113,7 +113,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />}
         </div>
         <div className={styles["action-ribbon"]}>
-          {props.lifecycleStage == LifecycleStage.TASKS && (
+          {props.lifecycleStage == 'tasks' && (
             <div style={{ margin: "auto 0" }}>
               <label
                 className={fieldStyles["form-input-label"]}
@@ -133,7 +133,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            (props.lifecycleStage == LifecycleStage.PENDING || props.lifecycleStage == LifecycleStage.GENERAL) && (
+            (props.lifecycleStage == 'pending' || props.lifecycleStage == 'general') && (
               <RedirectButton
                 icon="add"
                 label={`${dict.action.add} ${props.entityType.replace("_", " ")}`}
@@ -142,30 +142,30 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) &&
-            (props.lifecycleStage == LifecycleStage.ACTIVE ||
-              props.lifecycleStage == LifecycleStage.TASKS) && (
+            (props.lifecycleStage == 'active' ||
+              props.lifecycleStage == 'tasks') && (
               <RedirectButton
                 icon="task"
                 label={dict.action.overview}
                 url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-                isActive={props.lifecycleStage == LifecycleStage.ACTIVE}
+                isActive={props.lifecycleStage == 'active'}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) && (props.lifecycleStage == LifecycleStage.ACTIVE ||
-            props.lifecycleStage == LifecycleStage.TASKS) && (
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.viewTask) && (props.lifecycleStage == 'active' ||
+            props.lifecycleStage == 'tasks') && (
               <RedirectButton
                 icon="event"
                 label={dict.action.viewTasks}
                 url={Routes.REGISTRY_TASK_DATE}
-                isActive={props.lifecycleStage == LifecycleStage.TASKS}
+                isActive={props.lifecycleStage == 'tasks'}
               />
             )}
-          {props.lifecycleStage == LifecycleStage.REPORT &&
+          {props.lifecycleStage == 'report' &&
             <ReturnButton
               icon="first_page"
               label={`${dict.action.backTo} ${props.entityType.replace("_", " ")}s`}
             />}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.invoice) && props.lifecycleStage == LifecycleStage.REPORT &&
+          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.invoice) && props.lifecycleStage == 'report' &&
             <RedirectButton
               icon="print"
               label={dict.action.generateReport}

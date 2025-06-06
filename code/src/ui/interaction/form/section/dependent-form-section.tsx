@@ -7,13 +7,13 @@ import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
-import { defaultSearchOption, FormType, ID_KEY, PropertyShape, RegistryFieldValues, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, ID_KEY, PropertyShape, RegistryFieldValues, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 import FormSelector from '../field/input/form-selector';
 import { FORM_STATES } from '../form-utils';
+import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -58,8 +58,8 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       if (field.dependentOn) {
         if (currentParentOption) {
           entities = await fetch(
-            InternalApiServices.getRegistryApi(
-              InternalApiIdentifier.INSTANCES, field.dependentOn.label,
+            makeInternalRegistryAPIwithParams(
+              'instances', field.dependentOn.label,
               "false",
               getAfterDelimiter(currentParentOption, "/"),
               entityType),
@@ -67,18 +67,18 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
           ).then(res => res.json());
         }
         // If there is no valid parent option, there should be no entity
-      } else if ((formType === FormType.VIEW.toString() || formType === FormType.DELETE.toString()) && field.defaultValue) {
+      } else if ((formType === "view" || formType === "delete") && field.defaultValue) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
-        entities = await fetch(InternalApiServices.getRegistryApi(
-          InternalApiIdentifier.INSTANCES, entityType, "false",
+        entities = await fetch(makeInternalRegistryAPIwithParams(
+          'instances', entityType, "false",
           getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/")),
           { cache: 'no-store', credentials: 'same-origin' }
         ).then((response) => response.json())
 
       } else {
         entities = await fetch(
-          InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, entityType),
+          makeInternalRegistryAPIwithParams('instances', entityType),
           { cache: 'no-store', credentials: 'same-origin' }).then((res) => res.json())
       }
 
@@ -99,7 +99,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         }
       }
       // Search form should always target default value
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormType.SEARCH.toString()) {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
         defaultId = defaultSearchOption.type.value;
       }
       // Set the form value to the default value if available, else, default to the first option
@@ -131,7 +131,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         return a.label.localeCompare(b.label);
       });
       // Add the default search option only if this is the search form
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormType.SEARCH.toString()) {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
         // Default option should only use empty string "" as the value
         formFields.unshift({
           label: defaultSearchOption.label.value,
@@ -151,7 +151,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
-    if (formType != FormType.ADD.toString() || pathName.includes("registry")) {
+    if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
     return (url);
@@ -162,7 +162,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     event.preventDefault();
     let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != FormType.ADD.toString() || pathName.includes("registry")) {
+    if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
     window.open(url, "_blank");
@@ -185,14 +185,14 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
               field={props.dependentProp}
               form={props.form}
               redirectOptions={{
-                addUrl: formType != FormType.VIEW.toString() && formType != FormType.DELETE.toString() && formType != FormType.SEARCH.toString() ?
+                addUrl: formType != "view" && formType != "delete" && formType != "search" ?
                   genAddSubEntityUrl(queryEntityType) : undefined,
-                view: !isFetching && formType != FormType.SEARCH.toString() && selectElements.length > 0 ?
+                view: !isFetching && formType != "search" && selectElements.length > 0 ?
                   openViewSubEntityModal : undefined,
               }}
               noOptionMessage={dict.message.noInstances}
               options={{
-                disabled: formType == FormType.VIEW.toString() || formType == FormType.DELETE.toString(),
+                disabled: formType == "view" || formType == "delete",
                 labelStyle: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
               }}
             />

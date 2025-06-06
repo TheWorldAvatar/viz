@@ -14,10 +14,10 @@ import LoadingSpinner from 'ui/graphic/loader/spinner';
 import TaskModal from 'ui/interaction/modal/task/task-modal';
 import { Status } from 'ui/text/status/status';
 import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
+import {makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 import RegistryTable from './registry-table';
 import SummarySection from './ribbon/summary';
 import TableRibbon from './ribbon/table-ribbon';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -47,10 +47,10 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       setIsLoading(true);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (props.lifecycleStage === LifecycleStage.REPORT) {
+        if (props.lifecycleStage === 'report') {
           if (pathNameEnd === props.entityType) {
             // Fetch active contracts
-            const activeRes = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONTRACTS, LifecycleStage.ACTIVE.toString(), props.entityType),
+            const activeRes = await fetch(makeInternalRegistryAPIwithParams('contracts', 'active', props.entityType),
               { cache: 'no-store', credentials: 'same-origin' }
             );
             let activeInstances = await activeRes.json();
@@ -65,7 +65,7 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             }));
 
             // Fetch archived contracts
-            const archivedRes = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONTRACTS, LifecycleStage.ARCHIVE.toString(), props.entityType),
+            const archivedRes = await fetch(makeInternalRegistryAPIwithParams('contracts', 'archive', props.entityType),
               { cache: 'no-store', credentials: 'same-origin' }
             );
             const archivedInstances = await archivedRes.json();
@@ -73,29 +73,29 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
             instances = activeInstances.concat(archivedInstances);
           } else {
             // Fetch service tasks for a specific contract        
-            const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.TASKS, props.entityType, pathNameEnd), {
+            const res = await fetch(makeInternalRegistryAPIwithParams('tasks', props.entityType, pathNameEnd), {
               cache: 'no-store',
               credentials: 'same-origin'
             });
             instances = await res.json();
           }
-        } else if (props.lifecycleStage == LifecycleStage.TASKS) {
+        } else if (props.lifecycleStage == 'tasks') {
           // Fetch service tasks for a specific date
           const date = new Date(selectedDate);
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.TASKS, props.entityType, unixTimestamp.toString()), {
+          const res = await fetch(makeInternalRegistryAPIwithParams('tasks', props.entityType, unixTimestamp.toString()), {
             cache: 'no-store',
             credentials: 'same-origin'
           });
           instances = await res.json();
-        } else if (props.lifecycleStage == LifecycleStage.GENERAL) {
+        } else if (props.lifecycleStage == 'general') {
           const res = await fetch(
-            InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "true"),
+            makeInternalRegistryAPIwithParams('instances', props.entityType, "true"),
             { cache: 'no-store', credentials: 'same-origin' }
           );
           instances = await res.json();
         } else {
-          const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONTRACTS, props.lifecycleStage.toString(), props.entityType),
+          const res = await fetch(makeInternalRegistryAPIwithParams('contracts', props.lifecycleStage.toString(), props.entityType),
             { cache: 'no-store', credentials: 'same-origin' }
           );
           instances = await res.json();
@@ -134,15 +134,15 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
           triggerRefresh={triggerRefresh}
         />
       </div>
-      {(props.lifecycleStage == LifecycleStage.ACTIVE || props.lifecycleStage == LifecycleStage.ARCHIVE) &&
+      {(props.lifecycleStage == 'active' || props.lifecycleStage == 'archive') &&
         <div className={styles["instructions"]}>
           <Icon className={`material-symbols-outlined`}>info</Icon>
           {dict.message.registryInstruction}
         </div>}
-      {props.lifecycleStage == LifecycleStage.REPORT &&
+      {props.lifecycleStage == 'report' &&
         <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
       <div className={styles["contents"]}>
-        {props.lifecycleStage == LifecycleStage.REPORT &&
+        {props.lifecycleStage == 'report' &&
           <SummarySection
             id={pathNameEnd}
             entityType={props.entityType}

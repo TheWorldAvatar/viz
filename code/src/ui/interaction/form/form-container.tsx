@@ -20,12 +20,12 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
-import InternalApiServices, { InternalApiIdentifier } from "utils/internal-api-services";
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -115,7 +115,7 @@ function FormContents(
       [FORM_STATES.CONTRACT]: status.iri,
       [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
     };
-    const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "archive", action), {
+    const res = await fetch(makeInternalRegistryAPIwithParams('event', "archive", action), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       cache: 'no-store',
@@ -134,7 +134,7 @@ function FormContents(
       eventType: string
     ): Promise<void> => {
       setIsLoading(true);
-      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, lifecycleStage, eventType, FORM_IDENTIFIER), {
+      const res = await fetch(makeInternalRegistryAPIwithParams('event', lifecycleStage, eventType, FORM_IDENTIFIER), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -157,7 +157,7 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "service", "commence"), {
+    const res = await fetch(makeInternalRegistryAPIwithParams('event', "service", "commence"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       cache: 'no-store',
@@ -181,7 +181,7 @@ function FormContents(
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONTRACT_STATUS, id), {
+      const res = await fetch(makeInternalRegistryAPIwithParams('contract_status', id), {
         cache: 'no-store',
         credentials: 'same-origin'
       });
@@ -192,9 +192,9 @@ function FormContents(
     if (
       props.isPrimaryEntity &&
       !status &&
-      (props.formType === FormType.VIEW ||
-        props.formType === FormType.DELETE ||
-        props.formType === FormType.EDIT)
+      (props.formType === 'view' ||
+        props.formType === 'delete' ||
+        props.formType === 'edit')
     ) {
       getContractStatus();
     }
@@ -246,7 +246,7 @@ function FormContents(
         )}
         <div className={styles["form-row"]}>
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === FormType.VIEW &&
+            props.formType === 'view' &&
             !response && status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
@@ -256,7 +256,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === FormType.VIEW &&
+            props.formType === 'view' &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -267,7 +267,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === FormType.VIEW &&
+            props.formType === 'view' &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
@@ -277,7 +277,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === FormType.VIEW &&
+            props.formType === 'view' &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -289,7 +289,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === FormType.VIEW &&
+            props.formType === 'view' &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -300,7 +300,7 @@ function FormContents(
                 isActive={false}
               />
             )}
-          {props.formType != FormType.VIEW && !response && <ClickActionButton
+          {props.formType != 'view' && !response && <ClickActionButton
             icon="publish"
             tooltipText={dict.action.submit}
             onClick={onSubmit}

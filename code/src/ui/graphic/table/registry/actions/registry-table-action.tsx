@@ -32,10 +32,10 @@ export default function RegistryRowActions(props: Readonly<RegistryRowActionsPro
     props.row.event_id : props.row.id ? getId(props.row.id) : props.row.iri;
 
   const handleClickView = (): void => {
-    if (props.lifecycleStage == LifecycleStage.ACTIVE || props.lifecycleStage == LifecycleStage.ARCHIVE) {
+    if (props.lifecycleStage == 'active' || props.lifecycleStage == 'archive') {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY_REPORT}/${recordId}`);
-    } else if (props.lifecycleStage == LifecycleStage.TASKS || props.lifecycleStage == LifecycleStage.REPORT) {
+    } else if (props.lifecycleStage == 'tasks' || props.lifecycleStage == 'report') {
       let status: string;
       if (props.row.order === "0" || props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent") {
         status = Status.PENDING_DISPATCH;

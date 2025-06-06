@@ -2,12 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { defaultSearchOption, FormFieldOptions, FormType, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
 import FormSelector from './form-selector';
+import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -48,7 +48,7 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
         // Extract all the concept types and extract all the types from the endpoint
         const conceptTypes: string[] = props.field.in.map(subClass => subClass[ID_KEY])
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
-          conceptTypes.map(conceptType => fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.CONCEPT, conceptType), {
+          conceptTypes.map(conceptType => fetch(makeInternalRegistryAPIwithParams('concept', conceptType), {
             cache: 'no-store',
             credentials: 'same-origin'
           }).then(response => {
@@ -68,7 +68,7 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
             firstOption = "Singapore";
           }
           // Add the default search option only if this is the search form
-          if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormType.SEARCH.toString()) {
+          if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
           }

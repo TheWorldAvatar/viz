@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
-import { FormType, PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
+import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
@@ -29,7 +29,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
     defaultValues: async (): Promise<FieldValues> => {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
-        formType: FormType.EDIT, // DEFAULT TO EDIT TYPE
+        formType: 'edit', // DEFAULT TO EDIT TYPE
       };
       const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields);
       setFormFields(fields);

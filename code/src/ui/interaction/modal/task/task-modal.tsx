@@ -10,7 +10,7 @@ import useRefresh from 'hooks/useRefresh';
 import { PermissionScheme } from 'types/auth';
 import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FORM_IDENTIFIER, FormTemplateType, FormType, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
+import { FORM_IDENTIFIER, FormTemplateType, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -21,7 +21,7 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
+import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 
 interface TaskModalProps {
   entityType: string;
@@ -112,7 +112,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "service", action), {
+      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         cache: 'no-store',
@@ -121,7 +121,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       });
       response = await res.json();
     } else {
-      const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, "service", action), {
+      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         cache: 'no-store',
@@ -141,7 +141,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Target id is optional, and will default to form
     const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: FormTemplateType = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.EVENT, lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
+      const template: FormTemplateType = await fetch(makeInternalRegistryAPIwithParams("event", lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
         cache: 'no-store',
         credentials: 'same-origin'
       }).then(res => res.json());
@@ -209,7 +209,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
           formRef={formRef}
           entityType={props.entityType}
-          formType={FormType.VIEW}
+          formType={"view"}
           setResponse={setResponse}
           id={getAfterDelimiter(props.task.contract, "/")}
           additionalFields={dispatchFields}

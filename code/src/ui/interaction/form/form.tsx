@@ -10,7 +10,7 @@ import { Dictionary } from 'types/dictionary';
 import { FormTemplateType, FormType, ID_KEY, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, TYPE_KEY, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { getAfterDelimiter } from 'utils/client-utils';
-import InternalApiServices, { InternalApiIdentifier } from 'utils/internal-api-services';
+import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 import FormFieldComponent from './field/form-field';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from './form-utils';
 import BranchFormSection from './section/branch-form-section';
@@ -60,14 +60,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // Retrieve template from APIs
       let template: FormTemplateType;
       // For add form, get a blank template
-      if (props.formType == FormType.ADD || props.formType == FormType.SEARCH) {
-        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType), {
+      if (props.formType == 'add' || props.formType == 'search') {
+        template = await fetch(makeInternalRegistryAPIwithParams('form', props.entityType), {
           cache: 'no-store',
           credentials: 'same-origin'
         }).then((res) => res.json())
       } else {
         // For edit and view, get template with values
-        template = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.FORM, props.entityType, id), {
+        template = await fetch(makeInternalRegistryAPIwithParams('form', props.entityType, id), {
           cache: 'no-store',
           credentials: 'same-origin'
         }).then((res) => res.json());
@@ -117,9 +117,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     delete formData[FORM_STATES.FORM_TYPE];
 
     switch (props.formType) {
-      case FormType.ADD: {
+      case 'add': {
         // Add entity via API route
-        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType), {
+        const res = await fetch(makeInternalRegistryAPIwithParams('address', props.entityType), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           cache: 'no-store',
@@ -130,7 +130,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         // For registry's primary entity, a draft lifecycle must also be generated
         if (props.isPrimaryEntity && pendingResponse.success) {
-          const draftRes = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, "contracts/draft"), {
+          const draftRes = await fetch(makeInternalRegistryAPIwithParams('instances', "contracts/draft"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             cache: 'no-store',
@@ -144,9 +144,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case FormType.DELETE: {
+      case 'delete': {
         // Delete entity via API route
-        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "false", formData[FORM_STATES.ID]), {
+        const res = await fetch(makeInternalRegistryAPIwithParams('instances', props.entityType, "false", formData[FORM_STATES.ID]), {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           cache: 'no-store',
@@ -155,9 +155,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
         break;
       }
-      case FormType.EDIT: {
+      case 'edit': {
         // Update entity via API route
-        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "false", formData.id), {
+        const res = await fetch(makeInternalRegistryAPIwithParams('instances', props.entityType, "false", formData.id), {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           cache: 'no-store',
@@ -167,7 +167,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
 
         if (props.isPrimaryEntity && pendingResponse.success) {
-          const draftRes = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, "/contracts/draft"), {
+          const draftRes = await fetch(makeInternalRegistryAPIwithParams('instances', "/contracts/draft"), {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             cache: 'no-store',
@@ -181,7 +181,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case FormType.SEARCH: {
+      case 'search': {
         Object.keys(formData).forEach(field => {
           if (
             Object.prototype.hasOwnProperty.call(formData, `min ${field}`) &&
@@ -195,7 +195,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           }
         });
 
-        const res = await fetch(InternalApiServices.getRegistryApi(InternalApiIdentifier.INSTANCES, props.entityType, "false", "search"), {
+        const res = await fetch(makeInternalRegistryAPIwithParams('instances', props.entityType, "false", "search"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           cache: 'no-store',
@@ -265,8 +265,8 @@ export function renderFormField(
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
   currentIndex: number): ReactNode {
-  const formType: string = form.getValues(FORM_STATES.FORM_TYPE);
-  const disableAllInputs: boolean = formType === FormType.VIEW.toString() || formType === FormType.DELETE.toString();
+  const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
+  const disableAllInputs: boolean = formType === 'view' || formType === 'delete';
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
     return <FormSection
@@ -284,7 +284,7 @@ export function renderFormField(
     if (fieldProp.maxCount && parseInt(fieldProp.maxCount[VALUE_KEY]) === 0) {
       return;
     }
-    const disableId: boolean = formType === FormType.EDIT.toString() && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
+    const disableId: boolean = formType === 'edit' && fieldProp.name[VALUE_KEY] === FORM_STATES.ID ? true : disableAllInputs;
     if (fieldProp.class) {
       if (fieldProp.class[ID_KEY] === "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule") {
         return <FormSchedule
@@ -303,7 +303,7 @@ export function renderFormField(
           form={form}
         />;
       }
-      if (formType === FormType.SEARCH.toString() && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+      if (formType === 'search' && fieldProp.class[ID_KEY] === "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
         return <FormSearchPeriod
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           form={form}

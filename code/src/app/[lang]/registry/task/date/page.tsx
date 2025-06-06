@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { LifecycleStage } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 
@@ -31,7 +30,7 @@ export default function RegistryTaskByDatePage() {
     return (
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
-        lifecycleStage={LifecycleStage.TASKS}
+        lifecycleStage={'tasks'}
       />
     );
   } else {
