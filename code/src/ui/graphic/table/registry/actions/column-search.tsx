@@ -89,14 +89,14 @@ export default function ColumnSearchComponent(
       />
       <input
         type="text"
-        className={styles["search-input"]}
+        className="w-full h-8 max-w-none p-1 bg-background text-sm text-foreground border-1 border-border rounded-lg"
         placeholder={dict.action.search}
         onChange={handleSearch}
         value={searchText}
         readOnly={false}
         aria-label={"Filter Search"}
       />
-      <div className={styles["button-container"]}>
+      <div className="flex justify-evenly">
         <ClickActionButton
           icon="search"
           tooltipText={dict.action.update}
