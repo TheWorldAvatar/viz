@@ -51,7 +51,6 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           setIsOpen={setIsMenuOpen}
           styling={{ text: styles.text }}
           isHoverableDisabled={true}
-          isTransparent={true}
           placement="bottom-end"
           className={styles.hamburgerMenuButton}
         >

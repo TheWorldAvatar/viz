@@ -41,7 +41,9 @@ export default function RedirectButton({
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     event.preventDefault();
     router.push(url);
   };
@@ -51,8 +53,9 @@ export default function RedirectButton({
       label={label}
       tooltipText={tooltipText}
       tooltipPosition={tooltipPosition}
-      className={`${isActive ? styling?.active ?? styles["active"] : ""} ${rest.className
-        }`}
+      className={`${isActive ? styling?.active ?? styles["active"] : ""} ${
+        rest.className
+      }`}
       title={rest.title}
       onClick={handleClick}
       isHoverableDisabled={isHoverableDisabled}

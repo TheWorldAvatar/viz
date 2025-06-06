@@ -24,7 +24,7 @@
 }
 
 .instructions {
-  font-size: var(--font-size-secondary-text);
+  font-size: var(--font-size-primary-text);
   padding-bottom: 0.5rem;
 }
 

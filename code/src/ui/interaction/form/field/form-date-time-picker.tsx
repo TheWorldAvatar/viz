@@ -1,10 +1,13 @@
-import styles from './field.module.css';
+import styles from "./field.module.css";
 
-import { FieldError, UseFormReturn } from 'react-hook-form';
+import { FieldError, UseFormReturn } from "react-hook-form";
 
-import { FormFieldOptions, PropertyShape, VALUE_KEY } from 'types/form';
-import { FORM_STATES, getRegisterOptions } from 'ui/interaction/form/form-utils';
-import FormInputContainer from './form-input-container';
+import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
+import {
+  FORM_STATES,
+  getRegisterOptions,
+} from "ui/interaction/form/form-utils";
+import FormInputContainer from "./form-input-container";
 
 interface FormDateTimePickerProps {
   field: PropertyShape;
@@ -14,12 +17,14 @@ interface FormDateTimePickerProps {
 
 /**
  * This component renders a date time picker for the form.
- * 
- * @param {PropertyShape} field The form field data model. 
+ *
+ * @param {PropertyShape} field The form field data model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
-export default function FormDateTimePicker(props: Readonly<FormDateTimePickerProps>) {
+export default function FormDateTimePicker(
+  props: Readonly<FormDateTimePickerProps>
+) {
   const dateType: string = "date";
   const timeType: string = "time";
 
@@ -48,7 +53,10 @@ export default function FormDateTimePicker(props: Readonly<FormDateTimePickerPro
     currentDateTime = splitFormat[0] + ":" + splitFormat[1];
   }
 
-  if (!props.form.getValues(props.field.fieldId) || props.form.getValues(props.field.fieldId) === "") {
+  if (
+    !props.form.getValues(props.field.fieldId) ||
+    props.form.getValues(props.field.fieldId) === ""
+  ) {
     props.form.setValue(props.field.fieldId, currentDateTime);
   }
 
@@ -61,11 +69,20 @@ export default function FormDateTimePicker(props: Readonly<FormDateTimePickerPro
     >
       <input
         id={props.field.fieldId}
-        className={`${styles["dtpicker"]} ${props.options?.disabled && (styles["input-disabled"] + " " + styles["field-disabled"])}`}
+        className={`${styles["dtpicker"]} ${
+          props.options?.disabled &&
+          styles["input-disabled"] + " " + styles["field-disabled"]
+        }`}
         type={inputType}
         readOnly={props.options?.disabled}
         aria-label={props.field.name[VALUE_KEY]}
-        {...props.form.register(props.field.fieldId, getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE)))}
+        {...props.form.register(
+          props.field.fieldId,
+          getRegisterOptions(
+            props.field,
+            props.form.getValues(FORM_STATES.FORM_TYPE)
+          )
+        )}
       />
     </FormInputContainer>
   );

@@ -51,21 +51,39 @@ export default function ActionButton({
   return (
     <Tooltip text={tooltipText} placement={tooltipPosition}>
       <button
-        className={`${rest.className ?? ""} ${isHoverableDisabled ? "" : styles["hover-button-container"]
-          } ${label ? styles["button-container"] : styles["icon-only-button"]
-          } ${isTransparent ? styles["background-transparent"] : label ? styles["background"] : styles["background-secondary"]}`}
+        className={`${rest.className ?? ""} ${
+          isHoverableDisabled ? "" : styles["hover-button-container"]
+        } ${label ? styles["button-container"] : styles["icon-only-button"]} ${
+          isTransparent
+            ? styles["background-transparent"]
+            : label
+            ? styles["background"]
+            : styles["background-secondary"]
+        }`}
         onClick={rest.onClick}
       >
-        {icon && <Icon
-          className={`material-symbols-outlined ${styling?.text} ${styles["icon"]
-            } ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]
+        {icon && (
+          <Icon
+            className={`material-symbols-outlined ${styling?.text} ${
+              styles["icon"]
+            } ${
+              isTransparent
+                ? styles["transparent-text-color"]
+                : styles["background-text-color"]
             } ${styling?.hover}`}
-        >
-          {icon}
-        </Icon>}
+          >
+            {icon}
+          </Icon>
+        )}
         {label && (
-          <p className={`${styling?.text} ${styles["text"]} 
-            ${isTransparent ? styles["transparent-text-color"] : styles["background-text-color"]} ${styling?.hover}`}>
+          <p
+            className={`${styling?.text} ${styles["text"]} 
+            ${
+              isTransparent
+                ? styles["transparent-text-color"]
+                : styles["background-text-color"]
+            } ${styling?.hover}`}
+          >
             {label}
           </p>
         )}
