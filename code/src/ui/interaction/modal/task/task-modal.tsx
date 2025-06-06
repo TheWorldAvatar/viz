@@ -257,24 +257,20 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.isOpen]);
 
   return (
-    <Modal
-      isOpen={props.isOpen}
-      setIsOpen={props.setIsOpen}
-      styles={[styles["modal"]]}
-    >
-      <section className={styles["section-title"]}>
-        <h1>{dict.title.actions}</h1>
-        <h2>
+    <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+      <section className="flex justify-between text-nowrap text-foreground">
+        <h1 className="text-xl font-bold">{dict.title.actions}</h1>
+        <h2 className="text-sm md:text-lg">
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className={styles["section-contents"]}>
+      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
         {!isFetching &&
           (isReportAction ||
             isCancelAction ||
             isCompleteAction ||
             isDispatchAction) && (
-            <p className={styles["instructions"]}>
+            <p className="text-lg mb-4">
               {isCompleteAction && dict.message.completeInstruction}
               {isDispatchAction &&
                 `${dict.message.dispatchInstruction} ${props.task.date}:`}
@@ -322,7 +318,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           />
         )}
       </section>
-      <section className={styles["section-footer"]}>
+      <section className="flex justify-between p-2">
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}
@@ -337,7 +333,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <ResponseComponent response={response} />
         )}
-        <div className={styles["footer-button-row"]}>
+        <div className="flex">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&

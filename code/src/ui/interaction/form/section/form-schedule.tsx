@@ -185,7 +185,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <fieldset className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 ">
+    <fieldset className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 space-y-4">
       <legend className="text-lg font-bold">
         {parseWordsForLabels(props.fieldId)}
       </legend>
@@ -283,7 +283,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             </div>
           )}
-          <div className="w-full ">
+          <div className="w-full mt-8 ">
             <h1 className="text-xl font-bold mb-2">{dict.form.timeSlot}</h1>
             <FormFieldComponent
               field={{

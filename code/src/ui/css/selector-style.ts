@@ -17,6 +17,7 @@ export const selectorStyles: StylesConfig<
     padding: "0.2rem",
     margin: "0",
     borderRadius: "0.5rem",
+    boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     cursor: isDisabled ? "not-allowed !important" : "default",
     backgroundColor: "var(--background-muted)",
     opacity: isDisabled ? "0.75" : "1",
@@ -32,12 +33,13 @@ export const selectorStyles: StylesConfig<
     ...provided,
     backgroundColor: "var(--background-muted)",
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
-    borderRadius: "0.5rem",
+    borderRadius: "0.5rem !important",
     margin: "0.25rem 0",
     minWidth: "100%",
     width: "fit-content",
     border: "1px solid var(--border-primary)",
     zIndex: 99999,
+    overflow: "hidden",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -56,7 +58,7 @@ export const selectorStyles: StylesConfig<
   singleValue: (provided, { isDisabled }) => ({
     ...provided,
     color: isDisabled
-      ? "var(--text-color-secondary)"
+      ? "var(--text-color-primary)"
       : "var(--text-color-primary)",
     fontSize: "var(--font-size-primary)",
     marginLeft: "0.25rem",
@@ -68,7 +70,6 @@ export const selectorStyles: StylesConfig<
   }),
   group: (provided) => ({
     ...provided,
-    backgroundColor: "var(--background-tertiary)",
   }),
   groupHeading: (provided) => ({
     ...provided,
@@ -78,8 +79,9 @@ export const selectorStyles: StylesConfig<
     fontWeight: "600",
     fontSize: "var(--font-size-primary)",
     padding: "0.25rem 0.5rem",
-    borderTop: "1px solid  var(--border-secondary)",
-    borderBottom: "1px solid  var(--border-secondary)",
+    borderBottom: "1px solid var(--border-secondary)",
+    borderTop: "1px solid var(--border-secondary)",
+    cursor: "text",
   }),
   option: (provided, { isDisabled, isSelected }) => {
     return {
@@ -102,8 +104,6 @@ export const selectorStyles: StylesConfig<
       textWrap: "nowrap",
       minWidth: "100%",
       width: "fit-content",
-      marginTop: "0.25rem",
-      marginBottom: "0.25rem",
     };
   },
 };

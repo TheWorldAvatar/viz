@@ -24,10 +24,10 @@ interface FormSectionProps {
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
     <fieldset className="p-1 md:p-6 flex flex-col justify-center bg-background border-1 border-border rounded-lg m-4  ">
-      <legend className="text-lg  font-bold ">
+      <legend className="text-lg  font-bold">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
       </legend>
-      <div className="p-2">
+      <div className="p-2 space-y-2">
         {props.group.property.map((field, index) =>
           renderFormField(
             props.entityType,

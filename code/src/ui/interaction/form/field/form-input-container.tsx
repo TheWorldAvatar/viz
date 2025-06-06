@@ -53,7 +53,7 @@ export default function FormInputContainer(
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between ">
         <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
           <span className="text-lg font-semibold flex gap-4">
             {parseWordsForLabels(label)}

@@ -72,7 +72,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
         <HeaderBar pages={props.pages} settings={props.settings} />
 
-        <div className="flex h-screen w-full">
+        <main className="flex h-screen w-full">
           <NavMenu
             pages={props.pages}
             settings={props.settings}
@@ -82,7 +82,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
           <div className="mx-auto mt-4 md:mt-0 flex h-4/5 items-center justify-center p-2 sm:w-sm md:h-11/12 md:w-11/12  lg:p-4  xl:w-9/12 ">
             {props.children}
           </div>
-        </div>
+        </main>
 
         <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
         {popup && <Trex callback={togglePopup} />}
