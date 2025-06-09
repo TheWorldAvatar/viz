@@ -185,10 +185,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <fieldset className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 space-y-4">
-      <legend className="text-lg font-bold">
+    <div className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 mx-auto space-y-4">
+      <h2 className="text-lg md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
-      </legend>
+      </h2>
       {isLoading && <LoadingSpinner isSmall={true} />}
       {!isLoading && (
         <>
@@ -314,6 +314,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           </div>
         </>
       )}
-    </fieldset>
+    </div>
   );
 }

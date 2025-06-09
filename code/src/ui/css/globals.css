@@ -7,7 +7,19 @@
 @media (prefers-color-scheme: light) {
   :root {
     /* Background colors */
-    --background-primary: #f9f9f9;
+    --background: #ffffff;
+    --foreground: #30363d;
+    --muted: #fafafa;
+    --muted-foreground: #30363d;
+    --border: #dbdbdb;
+    --primary: #82b29a;
+    --primary-foreground: #0d1117;
+    --seconndary: #236776;
+    --secondary-foreground: #0d1117;
+    --input: oklch(0.922 0 0);
+    --accent: rgba(35, 103, 118, 25%);
+    --accent-foreground: #0d1117;
+
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
 
@@ -33,7 +45,6 @@
     --border-primary: #dbdbdb;
     --border-secondary: #a5a5b3;
     --border-tertiary: #9898af;
-    --border: #dbdbdb;
 
     /* Button */
     --description-box: #82b29a;
@@ -48,11 +59,21 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Background colors */
-    --background-primary: #0d1117;
+    --background: #0d1117;
+    --foreground: #dde9ff;
+    --muted: #0d0e12;
+    --muted-foreground: #dde9ff;
+    --border: #2f2f36;
+    --primary: #82b29a;
+    --primary-foreground: #0d1117;
+    --seconndary: #236776;
+    --secondary-foreground: #0d1117;
+    --input: oklch(0.922 0 0);
+    --accent: rgba(35, 103, 118, 25%);
+    --accent-foreground: #0d1117;
+
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
-
-    --background-muted: #0d1117;
 
     --background-inverse-primary: rgba(44, 47, 51, 80%);
     --background-inverse-primary-rgb: 249, 249, 249;
@@ -72,7 +93,6 @@
     --border-primary: #434b55;
     --border-secondary: #ffffff;
     --border-tertiary: #7f8ea1;
-    --border: #2f2f36;
 
     /* Button */
     --description-box: #2b816f;
@@ -104,14 +124,21 @@
   --alert-color: 191, 74, 42;
 }
 
+/* Variables for Tailwind CSS, so they can be accessd as classes  */
 @theme {
-  --color-background: var(--background-primary);
-  --color-foreground: var(--text-color-primary);
-  --color-muted: var(--background-muted);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --color-primary: #82b29a;
-  --color-secondary: #236776;
-  --color-accent: rgba(35, 103, 118, 25%);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--seconndary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-background-secondary: var(--background-secondary);
+  --input: var(--input);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
@@ -132,6 +159,7 @@ body {
   background-color: var(--background-primary);
   color: var(--text-color-primary);
   overflow: hidden;
+  /* @apply bg-background text-foreground; */
 }
 
 /* a {

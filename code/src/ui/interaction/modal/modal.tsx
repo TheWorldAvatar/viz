@@ -46,7 +46,7 @@ export default function Modal(props: Readonly<ModalProps>) {
       {dialog.open && (
         <FloatingPortal>
           <FloatingOverlay
-            className="flex justify-center items-center z-[99999] bg-inverse-primary"
+            className="flex justify-center items-center z-[99999] bg-inverse-primary backdrop-blur-xs"
             lockScroll
           >
             <FloatingFocusManager context={dialog.context}>
@@ -63,7 +63,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className="relative flex flex-col w-11/12 h-fit md:h-fit md:w-11/12 xl:w-3/5 mx-auto justify-between py-4 px-4 md:px-8 bg-gray-200 border-1 shadow-2xl border-border rounded-xl"
+                  className="relative flex flex-col w-11/12 h-fit md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-gray-200 border-1 shadow-2xl border-border rounded-xl"
                 >
                   <ClickActionButton
                     icon={"close"}

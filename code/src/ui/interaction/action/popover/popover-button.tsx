@@ -9,6 +9,7 @@ import {
   Placement,
   useTransitionStyles,
 } from "@floating-ui/react";
+import { red } from "@mui/material/colors";
 
 interface PopoverActionButtonProps extends ActionButtonProps {
   children: React.ReactNode;
@@ -78,6 +79,7 @@ export default function PopoverActionButton({
             ref={popover.refs.setFloating}
             style={{
               ...popover.floatingStyles,
+
               zIndex: 999998, // Second highest z-index so it is below the tooltips
             }}
             {...popover.getFloatingProps()}

@@ -208,16 +208,16 @@ export function DependentFormSection(
     window.open(url, "_blank");
   };
 
-  // The fieldset should only be displayed if it either does not have parent elements (no dependentOn property) or
+  // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
   // the parent element has been queried and selected
   if (
     !props.dependentProp.dependentOn ||
     (currentParentOption && parentField != "")
   ) {
     return (
-      <fieldset className="rounded-lg p-8 bg-muted m-4">
+      <div className="rounded-lg p-8 m-4">
         {isFetching && (
-          <div className={styles["loader-container"]}>
+          <div className="mr-2">
             <LoadingSpinner isSmall={true} />
           </div>
         )}
@@ -254,7 +254,7 @@ export function DependentFormSection(
             />
           </div>
         )}
-      </fieldset>
+      </div>
     );
   }
 }

@@ -147,8 +147,8 @@ function NavMenuContents(
     <div
       className={`${
         props.isMobile
-          ? "flex gap-4 p-2"
-          : " bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+          ? "flex gap-4 p-2 "
+          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
       }
       ${isMenuExpanded ? "w-3xs lg:w-xs xl:flex 2xl:w-xs" : "w-24  xl:flex"}
       

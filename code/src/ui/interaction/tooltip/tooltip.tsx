@@ -47,7 +47,7 @@ export default function Tooltip(props: Readonly<TooltipProps>) {
                 style={{
                   ...transition.styles,
                 }}
-                className="box-border p-2 max-w-md break-words bg-primary text-sm text-gray-800 rounded-md shadow-sm "
+                className="box-border p-2 max-w-md break-words bg-primary text-sm text-foreground rounded-md shadow-sm "
               >
                 {props.text}
               </div>

@@ -23,10 +23,10 @@ interface FormSectionProps {
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
-    <fieldset className="p-1 md:p-6 flex flex-col justify-center bg-background border-1 border-border rounded-lg m-4  ">
-      <legend className="text-lg  font-bold">
+    <div className="p-1 md:p-6 flex flex-col justify-center mx-auto border-1 border-border bg-background  rounded-lg m-4  ">
+      <h2 className=" text-lg md:text-2xl  font-bold">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
-      </legend>
+      </h2>
       <div className="p-2 space-y-2">
         {props.group.property.map((field, index) =>
           renderFormField(
@@ -47,6 +47,6 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
           />
         )}
       </div>
-    </fieldset>
+    </div>
   );
 }
