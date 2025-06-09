@@ -1,16 +1,16 @@
 "use client";
 
-import 'mapbox-gl/dist/mapbox-gl.css';
-import styles from './geocode-map-container.module.css';
+import "mapbox-gl/dist/mapbox-gl.css";
+import styles from "./geocode-map-container.module.css";
 
-import { Map, Marker } from 'mapbox-gl';
-import { useEffect, useState } from 'react';
-import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
+import { Map, Marker } from "mapbox-gl";
+import { useEffect, useState } from "react";
+import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
-import { CameraPosition } from 'types/settings';
-import { FORM_STATES } from 'ui/interaction/form/form-utils';
-import { MapSettingsProvider } from 'ui/map/mapbox/map-settings-context';
-import MapboxMapComponent from 'ui/map/mapbox/mapbox-container';
+import { CameraPosition } from "types/settings";
+import { FORM_STATES } from "ui/interaction/form/form-utils";
+import { MapSettingsProvider } from "ui/map/mapbox/map-settings-context";
+import MapboxMapComponent from "ui/map/mapbox/mapbox-container";
 
 interface GeocodeMapContainerProps {
   form: UseFormReturn;
@@ -34,13 +34,13 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     control,
     name: FORM_STATES.LATITUDE,
   });
-  // Set a inital camera position 
+  // Set a inital camera position
   const defaultPosition: CameraPosition = {
     name: "",
     center: [longitude, latitude],
-    "zoom": 16,
-    "bearing": 0,
-    "pitch": 0,
+    zoom: 16,
+    bearing: 0,
+    pitch: 0,
   };
 
   // Create a new draggable marker on any map rerenders
@@ -49,15 +49,19 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
       const marker = new Marker({
         color: "#146a7d",
         draggable: true,
-      }).setLngLat([longitude, latitude])
+      })
+        .setLngLat([longitude, latitude])
         .addTo(map);
 
       // Marker must update the form values when draggred
       marker.on("dragend", () => {
         const lngLat = marker.getLngLat();
-        props.form.setValue(FORM_STATES.LATITUDE, lngLat.lat.toString())
-        props.form.setValue(FORM_STATES.LONGITUDE, lngLat.lng.toString())
-        props.form.setValue(props.fieldId, `POINT(${lngLat.lng}, ${lngLat.lat})`)
+        props.form.setValue(FORM_STATES.LATITUDE, lngLat.lat.toString());
+        props.form.setValue(FORM_STATES.LONGITUDE, lngLat.lng.toString());
+        props.form.setValue(
+          props.fieldId,
+          `POINT(${lngLat.lng}, ${lngLat.lat})`
+        );
       });
       setMarker(marker);
     }
@@ -67,17 +71,19 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
   useEffect(() => {
     if (map && marker) {
       marker.setLngLat([longitude, latitude]);
-      props.form.setValue(props.fieldId, `POINT(${longitude}, ${latitude})`)
+      props.form.setValue(props.fieldId, `POINT(${longitude}, ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
     }
   }, [longitude, latitude, marker, map]);
 
   return (
-    <MapSettingsProvider settings={{
-      type: "mapbox",
-      camera: null,
-      imagery: null
-    }}>
+    <MapSettingsProvider
+      settings={{
+        type: "mapbox",
+        camera: null,
+        imagery: null,
+      }}
+    >
       <MapboxMapComponent
         currentMap={map}
         styles={styles["mapContainer"]}
@@ -85,5 +91,5 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
         defaultPosition={defaultPosition}
       />
     </MapSettingsProvider>
-  )
+  );
 }

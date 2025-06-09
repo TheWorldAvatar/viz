@@ -43,60 +43,58 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   }, [props.fieldConfigs]);
 
   return (
-    <div className={styles["container"]}>
-      <div className={styles["tab-container"]}>
-        <ClickActionButton
-          icon={"add"}
-          className={`${styles["row-marker"]} ${styles["add-button-background"]}`}
-          isTransparent={true}
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-            append(emptyRow);
-          }}
-        />
-        {fields.length > 1 && (
+    <div className="flex flex-col ">
+      <div className="flex flex-col justify-start items-start gap-4 my-4">
+        <div className="flex flex-row items-center justify-start ">
           <ClickActionButton
-            icon={"remove"}
-            className={`${styles["delete-button"]} ${styles["delete-button-background"]}`}
+            icon={"add"}
+            className=""
+            isTransparent={true}
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               event.preventDefault();
-              remove(currentIndex);
-              // Adjust current index
-              if (currentIndex >= fields.length - 1) {
-                setCurrentIndex(Math.max(0, fields.length - 2));
-              }
+              append(emptyRow);
             }}
           />
-        )}
-        {Array.from({ length: fields.length }, (_, index) => (
-          <button
-            key={index}
-            className={`${styles["row-marker"]} ${
-              index === currentIndex ? styles["active"] : ""
-            }`}
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              event.preventDefault();
-              setCurrentIndex(index);
-            }}
-          >
-            {index + 1}
-          </button>
-        ))}
+          {fields.length > 1 && (
+            <ClickActionButton
+              icon={"remove"}
+              className="!bg-red-700"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                remove(currentIndex);
+                // Adjust current index
+                if (currentIndex >= fields.length - 1) {
+                  setCurrentIndex(Math.max(0, fields.length - 2));
+                }
+              }}
+            />
+          )}
+        </div>
+        <div className="flex flex-wrap gap-4 bg-gray-200 p-4 rounded-lg w-fit">
+          {Array.from({ length: fields.length }, (_, index) => (
+            <button
+              key={index}
+              className={`cursor-pointer h-6 w-6 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${
+                index === currentIndex ? "bg-background" : ""
+              }`}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                setCurrentIndex(index);
+              }}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
       </div>
-      <div
-        className={styles["row"]}
-        style={{
-          backgroundImage: `url(${backgroundImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+
+      <div className="bg-background flex flex-col w-full p-4 rounded-lg border-1 border-border">
         {props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
           return (
             <div
               key={`field-${currentIndex}-${index}`}
-              className={styles["cell"]}
+              className="flex-1 whitespace-nowrap "
             >
               {config.class && (
                 <DependentFormSection

@@ -19,7 +19,7 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from 'hooks/useDictionary';
+import { useDictionary } from "hooks/useDictionary";
 import {
   getFormTemplate,
   getGeolocation,
@@ -61,7 +61,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     order: 10,
     step: {
       "@value": "0.00000001",
-      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     minCount: {
       "@value": "1",
@@ -86,7 +86,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     order: 11,
     step: {
       "@value": "0.00000001",
-      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     datatype: "decimal",
     minCount: {
@@ -99,8 +99,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     },
   };
 
-  const isInitialFetching: React.RefObject<boolean> =
-    useRef<boolean>(true);
+  const isInitialFetching: React.RefObject<boolean> = useRef<boolean>(true);
   const [isEmptyAddress, setIsEmptyAddress] = useState<boolean>(false);
   const [hasGeolocation, setHasGeolocation] = useState<boolean>(false);
   const [addressShapes, setAddressShapes] = useState<PropertyShape[]>([]);
@@ -178,8 +177,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       getAddressShapes(props.agentApi, props.field.name[VALUE_KEY]);
     }
     if (formType == Paths.REGISTRY || formType == Paths.REGISTRY_EDIT) {
-      getGeoCoordinates(props.agentApi,
-        Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
+      getGeoCoordinates(
+        props.agentApi,
+        Array.isArray(props.field.defaultValue)
+          ? props.field.defaultValue?.[0].value
+          : props.field.defaultValue?.value
+      );
     }
   }, []);
 
@@ -199,8 +202,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     const searchParams: URLSearchParams = new URLSearchParams();
     searchParams.append(postalCodeUnderscored, data[postalCode]);
 
-    const url: string = `${props.agentApi
-      }/location/addresses?${searchParams.toString()}`;
+    const url: string = `${
+      props.agentApi
+    }/location/addresses?${searchParams.toString()}`;
     const results = await sendGetRequest(url);
     if (
       results ==
@@ -280,10 +284,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {postalCodeShape && (
-        <FormFieldComponent
-          field={postalCodeShape}
-          form={props.form}
-        />
+        <FormFieldComponent field={postalCodeShape} form={props.form} />
       )}
       {!isInitialFetching.current &&
         (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) && (
@@ -293,11 +294,14 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               tooltipText={dict.action.findAddress}
               onClick={props.form.handleSubmit(onSearchForAddress)}
             />
-            {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && <ClickActionButton
-              icon={"edit_location"}
-              tooltipText={dict.action.selectLocation}
-              onClick={props.form.handleSubmit(onGeocoding)}
-            />}
+            {addressShapes.length > 0 &&
+              (selectedAddress || isEmptyAddress) && (
+                <ClickActionButton
+                  icon={"edit_location"}
+                  tooltipText={dict.action.selectLocation}
+                  onClick={props.form.handleSubmit(onGeocoding)}
+                />
+              )}
           </div>
         )}
       {isEmptyAddress && (

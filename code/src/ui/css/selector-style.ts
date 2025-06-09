@@ -19,7 +19,7 @@ export const selectorStyles: StylesConfig<
     borderRadius: "0.5rem",
 
     cursor: isDisabled ? "not-allowed !important" : "default",
-    backgroundColor: "var(--background-muted)",
+    backgroundColor: "var(--muted)",
     opacity: isDisabled ? "0.75" : "1",
   }),
   dropdownIndicator: (provided, { isDisabled }) => ({
@@ -31,7 +31,7 @@ export const selectorStyles: StylesConfig<
   }),
   menu: (provided) => ({
     ...provided,
-    backgroundColor: "var(--background-muted)",
+    backgroundColor: "var(--muted)",
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     borderRadius: "0.5rem !important",
     margin: "0.25rem 0",
