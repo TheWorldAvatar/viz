@@ -200,7 +200,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6 ">
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6  ">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />

@@ -258,9 +258,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   return (
     <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
-      <section className="flex justify-between text-nowrap text-foreground p-2">
+      <section className="flex justify-between items-center text-nowrap text-foreground p-2">
         <h1 className="text-xl font-bold">{dict.title.actions}</h1>
-        <h2 className="text-sm md:text-lg">
+        <h2 className="text-sm md:text-lg mr-6  md:mr-8">
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>

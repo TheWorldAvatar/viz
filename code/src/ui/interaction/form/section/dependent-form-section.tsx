@@ -215,7 +215,7 @@ export function DependentFormSection(
     (currentParentOption && parentField != "")
   ) {
     return (
-      <div className="rounded-lg p-8 m-4">
+      <div className="rounded-lg  my-4">
         {isFetching && (
           <div className="mr-2">
             <LoadingSpinner isSmall={true} />

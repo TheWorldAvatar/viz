@@ -56,7 +56,15 @@ export default function Modal(props: Readonly<ModalProps>) {
                   ...dialog.floatingStyles,
                   zIndex: 999998, // Second highest z-index so it hides other content but is hidden before tooltips
                 }}
-                className="relative flex items-center justify-center h-full w-full "
+                className="relative flex items-center justify-center h-full w-full"
+                onClick={(event: React.MouseEvent) => {
+                  if (event.target === event.currentTarget) {
+                    props.setIsOpen(false);
+                    if (props.returnPrevPage) {
+                      router.back();
+                    }
+                  }
+                }}
                 {...dialog.getFloatingProps()}
               >
                 <div
@@ -67,10 +75,9 @@ export default function Modal(props: Readonly<ModalProps>) {
                 >
                   <ClickActionButton
                     icon={"close"}
-                    className={styles.close}
+                    className="absolute top-2 right-1 !bg-muted !m-0 !p-1  md:!p-1.5 !rounded-full hover:bg-primary"
                     tooltipText={dict.action.close}
                     tooltipPosition="top-end"
-                    styling={{ text: styles["close-text"] }}
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                       event.preventDefault();
                       props.setIsOpen(false);
