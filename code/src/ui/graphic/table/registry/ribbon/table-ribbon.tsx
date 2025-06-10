@@ -72,9 +72,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
               isHoverableDisabled={true}
               isTransparent={true}
-              styling={{
-                active: styles["active-state"],
-              }}
+              className={
+                props.lifecycleStage == Routes.REGISTRY_PENDING
+                  ? "!bg-background"
+                  : ""
+              }
             />
           )}
           {(!keycloakEnabled ||
@@ -90,9 +92,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               }
               isHoverableDisabled={true}
               isTransparent={true}
-              styling={{
-                active: styles["active-state"],
-              }}
+              className={
+                props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
+                props.lifecycleStage == Routes.REGISTRY_TASK_DATE
+                  ? "!bg-background"
+                  : ""
+              }
             />
           )}
           {(!keycloakEnabled ||
@@ -105,9 +110,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
               isHoverableDisabled={true}
               isTransparent={true}
-              styling={{
-                active: styles["active-state"],
-              }}
+              className={
+                props.lifecycleStage == Routes.REGISTRY_ARCHIVE
+                  ? "!bg-background"
+                  : ""
+              }
             />
           )}
         </div>

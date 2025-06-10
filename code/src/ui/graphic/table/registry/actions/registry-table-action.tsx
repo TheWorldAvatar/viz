@@ -94,7 +94,7 @@ export default function RegistryRowActions(
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center ">
       <MaterialIconButton
         iconName="open_in_new"
         iconStyles={[iconStyles["medium-icon"], styles["expand-icon"]]}
