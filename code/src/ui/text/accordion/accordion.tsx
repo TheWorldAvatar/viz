@@ -27,18 +27,26 @@ export default function Accordion(props: Readonly<AccordionProps>) {
   return (
     <div className="w-md bg-gray-200 rounded-md">
       <button
-        className="flex justify-between items-center cursor-pointer w-full p-2 bg-gray-300 rounded-lg"
+        className="flex justify-between items-center cursor-pointer w-full p-2 bg-gray-300 rounded-lg transition-colors duration-200 hover:bg-gray-400"
         onClick={toggleAccordion}
       >
         <p className="text-foreground">{props.title}</p>
-        <span className="text-sm md:text-lg">
+        <span
+          className={`text-sm md:text-lg transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        >
           {props.isLoading && <LoadingSpinner isSmall={true} />}
-          {!props.isLoading && (isOpen ? <>&#x25B2;</> : <>&#x25BC;</>)}
+          {!props.isLoading && <>&#x25BC;</>}
         </span>
       </button>
-      {isOpen && (
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
         <div className="p-2 md:p-4 flex flex-col gap-2">{props.children}</div>
-      )}
+      </div>
     </div>
   );
 }
