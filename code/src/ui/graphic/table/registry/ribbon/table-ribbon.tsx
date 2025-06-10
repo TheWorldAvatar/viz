@@ -115,7 +115,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
       <div className="w-full border-[0.5px] border-border" />
 
-      <div className="flex justify-between flex-wrap ">
+      <div className="flex justify-between md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-center !-ml-2 ">
           <ClickActionButton
             icon={"cached"}
