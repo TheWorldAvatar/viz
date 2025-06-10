@@ -1,9 +1,6 @@
-import styles from "./array.module.css";
-
 import React, { useMemo, useState } from "react";
 import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 
-import { useBackgroundImageUrl } from "hooks/useBackgroundImageUrl";
 import { FormFieldOptions, PropertyShape } from "types/form";
 import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
@@ -31,7 +28,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const { control } = props.form;
-  const backgroundImageUrl: string = useBackgroundImageUrl();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -43,12 +39,12 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   }, [props.fieldConfigs]);
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <div className="flex flex-col justify-start items-start gap-4 my-4">
         <div className="flex flex-row items-center justify-start ">
           <ClickActionButton
             icon={"add"}
-            className=""
+            className="!-mr-1"
             isTransparent={true}
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               event.preventDefault();
@@ -58,7 +54,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           {fields.length > 1 && (
             <ClickActionButton
               icon={"remove"}
-              className="!bg-red-700"
+              className="!bg-red-700/70"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
                 remove(currentIndex);
@@ -74,7 +70,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           {Array.from({ length: fields.length }, (_, index) => (
             <button
               key={index}
-              className={`cursor-pointer h-6 w-6 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${
+              className={`cursor-pointer h-6 w-6 md:h-8 md:w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${
                 index === currentIndex ? "bg-background" : ""
               }`}
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {

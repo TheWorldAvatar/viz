@@ -1,5 +1,3 @@
-import styles from "./input.module.css";
-
 import React, { useMemo, useRef } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -140,15 +138,17 @@ export default function NumericInputField(
           )
         )}
       />
-      <div className="flex absolute -right-2 top-0 ">
+      <div className="flex absolute -right-2 top-0  ">
         <ClickActionButton
           icon="add"
+          className="!rounded-l-lg !rounded-r-none !-mr-2"
           tooltipText={dict.action.clickIncrease}
           isTransparent={true}
           onClick={handleIncrement}
         />
         <ClickActionButton
           icon="remove"
+          className="!rounded-l-none !rounded-r-lg !bg-red-700/70"
           tooltipText={dict.action.clickDecrease}
           isTransparent={true}
           onClick={handleDecrement}
