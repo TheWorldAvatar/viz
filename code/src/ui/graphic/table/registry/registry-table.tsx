@@ -1,8 +1,8 @@
 import styles from "./registry.table.module.css";
 
-import { Table, TableColumnsType, Typography } from 'antd';
+import { Table, TableColumnsType, Typography } from "antd";
 
-import React from 'react';
+import React from "react";
 import { FieldValues } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -39,7 +39,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return [
       {
         key: "actions",
-        title: '',
+        title: "",
         className: styles["header"],
         render: (_, record) => (
           <RegistryRowActions
@@ -49,8 +49,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             setTask={props.setTask}
           />
         ),
-        fixed: 'left',
-        width: 60
+        fixed: "left",
+        width: 60,
       },
       // Get instances with the most number of fields
       ...Object.keys(
@@ -80,9 +80,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             if (field.toLowerCase() === "status") {
               return <StatusComponent status={`${value}`} />;
             }
-            return <Typography.Text className={styles["row-cell"]}>
-              {parseWordsForLabels(`${value}`)}
-            </Typography.Text>
+            return (
+              <Typography.Text>
+                {parseWordsForLabels(`${value}`)}
+              </Typography.Text>
+            );
           },
           sorter: (a: FieldValues, b: FieldValues) => {
             if (!a[field] || !b[field]) return 0;
@@ -114,7 +116,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <AntDesignConfig>
       <Table
-        className={styles["table"]}
+        className="w-full overflow-x-auto rounded-lg "
         rowClassName={styles["row"]}
         dataSource={data}
         columns={columns}
@@ -123,10 +125,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           pageSizeOptions: [5, 10, 20],
           showSizeChanger: true,
           showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
-          position: ['bottomCenter']
+          position: ["bottomRight"],
         }}
-        rowKey={(record) => record.event_id ?? record.id ?? record.iri ?? record.key}
-        scroll={{ x: 'max-content' }}
+        rowKey={(record) =>
+          record.event_id ?? record.id ?? record.iri ?? record.key
+        }
+        scroll={{ x: "max-content" }}
         size="middle"
         sticky={{ offsetHeader: 0 }}
         bordered={false}
@@ -139,9 +143,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           filterReset: dict.action.clear.toUpperCase(),
           filterEmptyText: dict.message.noData,
           filterSearchPlaceholder: dict.action.search,
-          emptyText: (
-            <span>{dict.message.noData}</span>
-          )
+          emptyText: <span>{dict.message.noData}</span>,
         }}
       />
     </AntDesignConfig>
