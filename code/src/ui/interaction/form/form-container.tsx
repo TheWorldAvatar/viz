@@ -61,7 +61,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className="flex  mt-14 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-gray-200 border-1 border-border rounded-lg shadow-2xl">
+    <div className="flex  mt-14 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-zinc-100 border-1 border-border rounded-lg shadow-2xl">
       <FormContents {...props} />
     </div>
   );

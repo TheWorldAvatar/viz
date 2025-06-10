@@ -71,11 +71,11 @@ export default function Modal(props: Readonly<ModalProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className="relative flex flex-col w-11/12 h-fit md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-gray-200 border-1 shadow-2xl border-border rounded-xl"
+                  className="relative flex flex-col w-11/12 h-fit md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 border-1 shadow-2xl border-border rounded-xl"
                 >
                   <ClickActionButton
                     icon={"close"}
-                    className="absolute top-2 right-1 !bg-muted !m-0 !p-1  md:!p-1.5 !rounded-full hover:bg-primary"
+                    className="absolute top-2 right-1 !bg-muted !m-0 !p-1  md:!p-1 lg:!p-1.5 !rounded-full hover:bg-primary"
                     tooltipText={dict.action.close}
                     tooltipPosition="top-end"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) => {

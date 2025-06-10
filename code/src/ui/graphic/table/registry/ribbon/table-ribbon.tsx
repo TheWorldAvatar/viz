@@ -115,8 +115,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
       <div className="w-full border-[0.5px] border-border" />
 
-      <div className="flex justify-between">
-        <div className="flex items-center  ">
+      <div className="flex justify-between flex-wrap ">
+        <div className="flex items-center !-ml-2 ">
           <ClickActionButton
             icon={"cached"}
             onClick={triggerRefresh}
@@ -129,7 +129,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />
           )}
         </div>
-        <div className="flex  items-center gap-2 ">
+        <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
