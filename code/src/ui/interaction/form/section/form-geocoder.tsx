@@ -274,10 +274,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   };
 
   return (
-    <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>
+    <div className="mt-6">
+      <h2 className="text-lg font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
-      </legend>
+      </h2>
       {isInitialFetching.current && (
         <div className={styles["loader-container"]}>
           <LoadingSpinner isSmall={true} />
@@ -359,6 +359,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           />
         </div>
       )}
-    </fieldset>
+    </div>
   );
 }

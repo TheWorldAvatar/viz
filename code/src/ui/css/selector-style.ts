@@ -17,7 +17,6 @@ export const selectorStyles: StylesConfig<
     padding: "0.2rem",
     margin: "0",
     borderRadius: "0.5rem",
-
     cursor: isDisabled ? "not-allowed !important" : "default",
     backgroundColor: "var(--muted)",
     opacity: isDisabled ? "0.75" : "1",
