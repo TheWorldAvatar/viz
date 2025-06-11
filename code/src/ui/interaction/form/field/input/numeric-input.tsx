@@ -148,7 +148,7 @@ export default function NumericInputField(
         />
         <ClickActionButton
           icon="remove"
-          className="!rounded-l-none !rounded-r-lg !bg-red-700/70"
+          className="!rounded-l-none !rounded-r-lg !bg-red-300 hover:!bg-red-400/80"
           tooltipText={dict.action.clickDecrease}
           isTransparent={true}
           onClick={handleDecrement}

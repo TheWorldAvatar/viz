@@ -145,6 +145,8 @@
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
   --color-selected: var(--text-color-selected);
+  --breakpoint-xs-mobile: 355px;
+  --breakpoint-sm-mobile: 400px;
 }
 
 * {
