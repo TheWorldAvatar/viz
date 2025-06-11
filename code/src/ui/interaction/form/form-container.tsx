@@ -287,9 +287,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 icon="edit"
+                label="Edit"
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 isActive={false}
+                className="!bg-blue-400 hover:!bg-blue-500 "
               />
             )}
           {(!keycloakEnabled ||
@@ -301,9 +303,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 icon="delete"
+                label="Delete"
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 isActive={false}
+                className="!bg-red-400 hover:!bg-red-500/80 "
               />
             )}
           {props.formType != Paths.REGISTRY && !response && (
@@ -318,6 +322,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
               icon={"first_page"}
+              className="!bg-gray-300 hover:!bg-gray-400/80"
               tooltipText={dict.action.cancel}
               onClick={() => {
                 setIsRescindAction(false);
@@ -328,8 +333,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {!response && !(isRescindAction || isTerminateAction) && (
             <ReturnButton
               label="Return"
-              icon="keyboard_return"
-              className="ml-2"
+              icon={"first_page"}
+              className="ml-2 !bg-gray-300 hover:!bg-gray-400/80"
               tooltipText={dict.action.return}
             />
           )}

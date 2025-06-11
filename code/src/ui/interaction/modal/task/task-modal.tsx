@@ -333,7 +333,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <ResponseComponent response={response} />
         )}
-        <div className="flex">
+        <div className="flex flex-wrap gap-2 justify-end items-center">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
@@ -347,6 +347,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <ClickActionButton
                 icon={"done_outline"}
+                label="Complete"
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />
@@ -363,8 +364,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <ClickActionButton
                 icon={"assignment"}
+                label="Assign"
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
+                className="!bg-blue-400 hover:!bg-blue-500 "
               />
             )}
           {(!keycloakEnabled ||
@@ -379,8 +382,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <ClickActionButton
                 icon={"cancel"}
+                label="Cancel"
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
+                className="!bg-red-400 hover:!bg-red-500/80 "
               />
             )}
           {(!keycloakEnabled ||
@@ -395,8 +400,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <ClickActionButton
                 icon={"report"}
+                label="Report"
                 tooltipText={dict.action.report}
                 onClick={genBooleanClickHandler(setIsReportAction)}
+                className="!bg-yellow-400 hover:!bg-yellow-500/80 "
               />
             )}
           {!response &&
@@ -405,7 +412,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isDispatchAction ||
               isReportAction) && (
               <ClickActionButton
-                icon={"publish"}
+                icon={"send"}
+                label="Submit"
                 tooltipText={dict.action.submit}
                 onClick={onSubmit}
               />
@@ -416,8 +424,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             isReportAction) && (
             <ClickActionButton
               icon={"first_page"}
+              label="Return"
               tooltipText={dict.action.return}
               onClick={onReturnInAction}
+              className="!bg-gray-300 hover:!bg-gray-400/80"
             />
           )}
         </div>

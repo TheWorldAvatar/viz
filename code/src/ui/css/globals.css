@@ -8,6 +8,7 @@
   :root {
     /* Background colors */
     --background: #ffffff;
+    --background-primary: #ffffff;
     --foreground: #30363d;
     --muted: #fafafa;
     --muted-foreground: #30363d;
@@ -60,6 +61,7 @@
   :root {
     /* Background colors */
     --background: #0d1117;
+    --background-primary: #0d1117;
     --foreground: #dde9ff;
     --muted: #0d0e12;
     --muted-foreground: #dde9ff;

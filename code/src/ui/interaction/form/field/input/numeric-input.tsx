@@ -121,7 +121,7 @@ export default function NumericInputField(
   };
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block w-full">
       <input
         id={props.field.fieldId}
         type="text"
