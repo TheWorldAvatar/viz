@@ -1,7 +1,4 @@
 {
-  "accessibility": {
-    "thumbnailImage": "Thumbnail-Symbol für die Seite'{replace}'"
-  },
   "action": {
     "add": "Hinzufügen",
     "edit": "Bearbeiten",
@@ -130,6 +127,7 @@
       "help": "Hilfe für diese Webplattform"
     },
     "title": {
+      "home": "Startseite",
       "map": "Karte",
       "dashboard": "Analyse",
       "registry": "Register",

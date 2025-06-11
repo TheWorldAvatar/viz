@@ -1,10 +1,10 @@
 "use client";
 
-
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
+import { OptionalPage } from "io/config/optional-pages";
 import { Routes } from "io/config/routes";
 import { useEffect, useMemo } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
@@ -12,8 +12,10 @@ import { UISettings } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
+import { NavMenu } from "ui/navigation/navbar/nav-menu";
 
 interface HeaderBarProps {
+  pages: OptionalPage[];
   settings: UISettings;
 }
 
@@ -83,6 +85,14 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
+        <div className="flex xl:hidden">
+          <NavMenu
+            pages={props.pages}
+            settings={props.settings}
+            isMobile={true}
+          />
+        </div>
+
         {keycloakEnabled && <KeycloakUserButton />}
       </div>
     </div>
