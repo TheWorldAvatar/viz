@@ -225,7 +225,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-2">
+      <div className="flex justify-between p-2 ">
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}
@@ -239,7 +239,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         {!formRef.current?.formState?.isSubmitting && response && (
           <ResponseComponent response={response} />
         )}
-        <div className="flex">
+        <div className="flex flex-wrap gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
@@ -249,6 +249,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
+                label="Rescind"
+                className="mr-2 !bg-yellow-300 hover:!bg-yellow-500/80 "
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
@@ -262,8 +264,10 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Terminate Button
                 icon={"cancel"}
+                label="Cancel"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
+                className="!bg-red-300 hover:!bg-red-500/80 "
               />
             )}
           {(!keycloakEnabled ||
@@ -274,6 +278,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
                 icon={"done_outline"}
+                label="Approve"
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
@@ -291,7 +296,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 isActive={false}
-                className="!bg-blue-400 hover:!bg-blue-500 "
+                className="!bg-blue-300 hover:!bg-blue-500/80 "
               />
             )}
           {(!keycloakEnabled ||
@@ -307,7 +312,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 isActive={false}
-                className="!bg-red-400 hover:!bg-red-500/80 "
+                className="!bg-red-300 hover:!bg-red-500/80 "
               />
             )}
           {props.formType != Paths.REGISTRY && !response && (

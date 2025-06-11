@@ -33,15 +33,15 @@
   max-width: none;
   padding: 1.2rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border-primary);
-  background-color: var(--background-muted);
+  border: 1px solid var(--border);
+  background-color: var(--muted);
   font-size: var(--font-size-primary-text);
-  color: var(--text-color-primary);
+  color: var(--foregroundy);
 }
 
 .input-disabled {
-  border: 1px solid var(--border-primary);
-  background-color: var(--background-muted);
+  border: 1px solid var(--border);
+  background-color: var(--muted);
   opacity: 0.75;
 }
 
@@ -59,10 +59,10 @@
   max-width: none;
   padding: 1.2rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border-primary);
-  background-color: var(--background-muted);
+  border: 1px solid var(--border);
+  background-color: var(--muted);
   font-size: var(--font-size-primary-text);
-  color: var(--text-color-primary);
+  color: var(--foreground);
 }
 
 .dtpicker::-webkit-calendar-picker-indicator {
@@ -77,20 +77,20 @@
   padding: 0.5rem 1.5vw;
   background-color: var(--background-tertiary);
   font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
+  color: var(--foreground);
   width: 10vw;
 }
 
 .form-checkbox-hover:hover {
-  outline: 2px solid var(--border-primary);
+  outline: 2px solid var(--border);
   background-color: var(--background-secondary);
-  color: var(--text-color-secondary);
+  color: var(--foreground);
 }
 
 .form-checkbox-checked {
   outline: 2px solid #52b7a5 !important;
-  background-color: var(--background-primary);
-  color: var(--text-color-primary);
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .info-icon {
