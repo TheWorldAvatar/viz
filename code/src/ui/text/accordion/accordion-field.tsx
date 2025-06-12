@@ -1,4 +1,3 @@
-import styles from "./accordion.module.css";
 
 import { parseWordsForLabels } from "utils/client-utils";
 

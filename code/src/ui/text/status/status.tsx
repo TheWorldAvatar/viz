@@ -1,6 +1,5 @@
 import { Dictionary } from "types/dictionary";
 
-
 export const Status: {
   [key: string]: string;
 } = {
