@@ -52,7 +52,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           styling={{ text: styles.text }}
           isHoverableDisabled={true}
           placement="bottom-end"
-          className={styles.hamburgerMenuButton}
+          className="!mr-4 !bg-transparent"
         >
           <NavMenuContents
             {...props}
