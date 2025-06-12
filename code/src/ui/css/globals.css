@@ -112,7 +112,7 @@
 **/
 :root {
   /** Fonts **/
-  --font-family-primary: "Helvetica Now", sans-serif;
+  --font-family-primary: "Inter", sans-serif;
   --font-size-root: 14pt;
   --font-size-h1: 1.8rem;
   --font-size-h2: 1.3rem;
@@ -168,7 +168,7 @@ body {
   background-color: var(--background-primary);
   color: var(--text-color-primary);
   overflow: hidden;
-  /* @apply bg-background text-foreground; */
+  @apply bg-background text-foreground;
 }
 
 /* a {

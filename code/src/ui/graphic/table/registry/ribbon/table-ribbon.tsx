@@ -57,9 +57,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-    <div className="flex flex-col p-2 gap-2 md:gap-4 ">
+    <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
-        <div className="flex items-center justify-center gap-1 sm:gap-2 bg-gray-200 max-w-fit p-1 text-center rounded-lg overflow-x-auto">
+        <div className="flex items-center justify-center sm:gap-4 bg-gray-200 max-w-fit  p-1.5 text-center rounded-lg">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.pendingRegistry) && (

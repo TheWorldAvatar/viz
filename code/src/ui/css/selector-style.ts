@@ -65,7 +65,7 @@ export const selectorStyles: StylesConfig<
   input: (provided) => ({
     ...provided,
     color: "var(--text-color-primary)",
-    fontSize: "var(--font-size-tertiary-text)",
+    fontSize: "var(--font-size-primary)",
   }),
   group: (provided) => ({
     ...provided,

@@ -51,7 +51,7 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
   }, []);
 
   return (
-    <div className="flex justify-between items-center  ">
+    <div className="flex justify-between items-center">
       <Accordion title={dict.title.description} isLoading={isLoading}>
         {contract &&
           Object.keys(contract).map((field, index) => {

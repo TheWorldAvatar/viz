@@ -32,7 +32,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
       >
         <p className="text-foreground">{props.title}</p>
         <span
-          className={`text-sm md:text-lg transition-transform duration-300 ${
+          className={`text-sm md:text-lg  transition-transform duration-300 ${
             isOpen ? "rotate-180" : ""
           }`}
         >

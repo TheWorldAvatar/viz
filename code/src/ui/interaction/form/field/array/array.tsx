@@ -54,7 +54,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           {fields.length > 1 && (
             <ClickActionButton
               icon={"remove"}
-              className="!bg-red-300 hover:!bg-red-400/80 dark:!bg-red-400 dark:hover:!bg-red-500/80"
+              className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
                 remove(currentIndex);
