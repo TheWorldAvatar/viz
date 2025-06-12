@@ -1,7 +1,7 @@
 "use client";
 
 import "mapbox-gl/dist/mapbox-gl.css";
-import styles from "./map-container.module.css";
+
 
 import { FilterSpecification, Map } from "mapbox-gl";
 import { useEffect, useMemo, useState } from "react";
@@ -247,7 +247,7 @@ export default function MapContainer(props: MapContainerProps) {
       {mapSettings?.["type"] === "cesium" && <div></div>}
 
       {/* Container elements */}
-      <div className={styles.componentContainer}>
+      <div className="w-full flex flex-grow flex-col pointer-events-none z-[1]">
         {/* Map controls ribbon */}
         <Ribbon
           map={map}
@@ -259,7 +259,7 @@ export default function MapContainer(props: MapContainerProps) {
 
         {/* Map information panel */}
         {!showScenarioSelector && dataStore && (
-          <div className={styles.upperContainer}>
+          <div className="w-full min-h-[225px] flex-grow-95 flex">
             <FloatingPanelContainer
               map={map}
               dataStore={dataStore}
@@ -270,7 +270,7 @@ export default function MapContainer(props: MapContainerProps) {
             />
           </div>
         )}
-        <div className={styles.lowerContainer} />
+        <div className="w-full min-h-[50px] flex-grow-5 bg-red-500 opacity-0" />
       </div>
     </>
   );
