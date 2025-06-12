@@ -141,14 +141,14 @@ export default function NumericInputField(
       <div className="flex absolute -right-2 top-0  ">
         <ClickActionButton
           icon="add"
-          className="!rounded-l-lg !rounded-r-none !-mr-2"
+          className="!rounded-l-lg !rounded-r-none !-mr-2 "
           tooltipText={dict.action.clickIncrease}
           isTransparent={true}
           onClick={handleIncrement}
         />
         <ClickActionButton
           icon="remove"
-          className="!rounded-l-none !rounded-r-lg !bg-red-300 hover:!bg-red-400/80"
+          className="!rounded-l-none !rounded-r-lg !bg-red-300 hover:!bg-red-400/80 dark:!bg-red-400 dark:hover:!bg-red-500/80"
           tooltipText={dict.action.clickDecrease}
           isTransparent={true}
           onClick={handleDecrement}

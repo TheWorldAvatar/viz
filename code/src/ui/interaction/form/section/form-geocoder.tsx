@@ -275,11 +275,11 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
 
   return (
     <div className="mt-6">
-      <h2 className="text-lg font-bold text-foreground">
+      <h2 className="text-2xl font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
       </h2>
       {isInitialFetching.current && (
-        <div className={styles["loader-container"]}>
+        <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
@@ -288,7 +288,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       )}
       {!isInitialFetching.current &&
         (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) && (
-          <div className={styles["form-dependent-button-layout"]}>
+          <div className="flex my-4 gap-1 -ml-2">
             <ClickActionButton
               icon={"search"}
               tooltipText={dict.action.findAddress}
@@ -298,6 +298,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               (selectedAddress || isEmptyAddress) && (
                 <ClickActionButton
                   icon={"edit_location"}
+                  label="Select Location"
                   tooltipText={dict.action.selectLocation}
                   onClick={props.form.handleSubmit(onGeocoding)}
                 />
@@ -305,16 +306,16 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
         )}
       {isEmptyAddress && (
-        <div style={{ margin: "0.5rem 0.75rem" }}>
+        <div className="m-2">
           <ErrorComponent message={dict.message.noAddressFound} />
         </div>
       )}
       {addresses.length > 0 && !selectedAddress && (
-        <div className={styles["form-menu"]}>
+        <div className="flex flex-col w-fit my-2 ">
           {addresses.map((address, index) => (
             <button
               key={address.street + index}
-              className={styles["form-menu-item"]}
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg "
               onClick={() => handleAddressClick(address)}
             >
               {String.fromCharCode(62)} {address.block}{" "}
@@ -324,7 +325,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && (
-        <div className={styles["form-fieldset-contents"]}>
+        <div className="flex flex-wrap w-full p-0 m-0">
           {addressShapes.map((shape, index) => (
             <FormFieldComponent
               key={shape.fieldId + index}
@@ -336,7 +337,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {hasGeolocation && (
-        <div className={styles["form-fieldset-contents"]}>
+        <div className="flex flex-wrap w-full">
           <GeocodeMapContainer
             form={props.form}
             fieldId={props.field.fieldId}

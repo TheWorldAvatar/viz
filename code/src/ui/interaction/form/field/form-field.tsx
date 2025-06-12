@@ -38,7 +38,7 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
       ["string", "integer", "decimal"].includes(props.field.datatype)
     ) {
       return (
-        <div className="-p-2">
+        <div className="-p-2 flex flex-col basis-full w-full">
           <div className="flex flex-col">
             {/** Display input min max range only if this is the search form and a numerical value */}
             {formType == SEARCH_FORM_TYPE &&
