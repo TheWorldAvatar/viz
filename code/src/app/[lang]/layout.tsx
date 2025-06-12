@@ -62,7 +62,7 @@ export default async function RootLayout({
 
   // Root element containing all children.
   return (
-    <html lang={lang} className={dosis.className}>
+    <html lang={lang}>
       <body className={inter.className}>
         <DictionaryProvider dictionary={dictionary}>
           <SessionInfoProvider>
