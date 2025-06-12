@@ -2,7 +2,6 @@
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-
 import { FilterSpecification, Map } from "mapbox-gl";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

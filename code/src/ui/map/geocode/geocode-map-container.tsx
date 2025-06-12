@@ -86,7 +86,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     >
       <MapboxMapComponent
         currentMap={map}
-        styles={styles["mapContainer"]}
+        styles="flex w-full h-[50vh] my-4 rounded-lg bg-white shadow-lg pointer-events-auto"
         setMap={setMap}
         defaultPosition={defaultPosition}
       />
