@@ -10,7 +10,7 @@ interface LoadingSpinnerProps {
  * @param {boolean} isSmall Indicates if the loading spinner should be small or not.
  */
 export default function LoadingSpinner(props: Readonly<LoadingSpinnerProps>) {
-  const sizeClasses = props.isSmall ? "w-4 h-4" : "w-12 h-12";
+  const sizeClasses = props.isSmall ? "w-4 h-4" : "w-10 h-10";
   return (
     <svg
       className={`text-gray-300 animate-spin relative overflow-hidden z-[1] flex items-ceter justify-center m-auto ${sizeClasses}`}
