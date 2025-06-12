@@ -1,7 +1,6 @@
 import IconComponent from "ui/graphic/icon/icon";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 
-
 interface HeaderFieldProps {
   name: string;
   icon: string;
