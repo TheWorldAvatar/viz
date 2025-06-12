@@ -1,4 +1,3 @@
-import styles from "./loader.module.css";
 
 interface LoadingSpinnerProps {
   isSmall: boolean;

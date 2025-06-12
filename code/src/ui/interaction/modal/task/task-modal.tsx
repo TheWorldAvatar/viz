@@ -367,7 +367,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 label="Assign"
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
-                className="!bg-blue-300 hover:!bg-blue-500/80 "
+                className="!bg-blue-300 hover:!bg-blue-500/80 dark:!bg-blue-800 dark:hover:!bg-blue-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -385,7 +385,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 label="Cancel"
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
-                className="!bg-red-300 hover:!bg-red-500/80 "
+                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -403,7 +403,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 label="Report"
                 tooltipText={dict.action.report}
                 onClick={genBooleanClickHandler(setIsReportAction)}
-                className="!bg-yellow-300 hover:!bg-yellow-500/80 "
+                className="!bg-amber-300 hover:!bg-amber-500/80 dark:!bg-amber-800 dark:hover:!bg-amber-900/80"
               />
             )}
           {!response &&

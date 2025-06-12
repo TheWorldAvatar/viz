@@ -61,7 +61,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className="flex  mt-14 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-zinc-100 border-1 border-border rounded-lg shadow-2xl">
+    <div className="flex  mt-14 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-zinc-100 dark:bg-modal-bg-dark border-1 border-border rounded-lg shadow-2xl">
       <FormContents {...props} />
     </div>
   );
@@ -250,7 +250,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <ClickActionButton // Rescind Button
                 icon={"error"}
                 label="Rescind"
-                className="mr-2 !bg-yellow-300 hover:!bg-yellow-500/80 "
+                className="mr-2 !bg-amber-300 hover:!bg-amber-500/80 dark:!bg-amber-800 dark:hover:!bg-amber-900/80"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
@@ -267,7 +267,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label="Cancel"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
-                className="!bg-red-300 hover:!bg-red-500/80 "
+                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -296,7 +296,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 isActive={false}
-                className="!bg-blue-300 hover:!bg-blue-500/80 "
+                className="!bg-blue-300 hover:!bg-blue-500/80 dark:!bg-blue-800 dark:hover:!bg-blue-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -312,7 +312,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 isActive={false}
-                className="!bg-red-300 hover:!bg-red-500/80 "
+                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
           {props.formType != Paths.REGISTRY && !response && (
