@@ -1,7 +1,7 @@
 "use client";
 
 import "mapbox-gl/dist/mapbox-gl.css";
-import styles from "./geocode-map-container.module.css";
+
 
 import { Map, Marker } from "mapbox-gl";
 import { useEffect, useState } from "react";
