@@ -168,7 +168,6 @@ body {
   background-color: var(--background-primary);
   color: var(--text-color-primary);
   overflow: hidden;
-  @apply bg-background text-foreground;
 }
 
 /* a {

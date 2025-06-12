@@ -140,9 +140,9 @@ export default function RegistryTableComponent(
   }, [task]);
 
   return (
-    <div className="h-[80vh] xs-mobile:w-[22rem]  sm-mobile:w-[25rem] mt-16  md:w-full overflow-auto md:mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl md:mt-20">
+    <div className="h-[80vh] md:h-full xs-mobile:w-[22rem]  sm-mobile:w-[25rem] mt-16 md:w-full overflow-auto md:mb-20 bg-muted border-border rounded-xl border-1 p-6 shadow-2xl md:mt-20">
       <div className="rounded-lg md:p-4 ">
-        <h1 className="text-2xl md:text-4xl font-bold mb-4 text-foreground">
+        <h1 className="text-2xl md:text-4xl font-bold mb-4 ">
           {parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
@@ -160,13 +160,13 @@ export default function RegistryTableComponent(
       <div className="flex items-center my-4">
         {(props.lifecycleStage == Paths.REGISTRY_ACTIVE ||
           props.lifecycleStage == Paths.REGISTRY_ARCHIVE) && (
-          <div className="flex items-center gap-2  text-sm md:text-lg text-foreground">
+          <div className="flex items-center gap-2  text-sm md:text-md text-foreground">
             <Icon className={`material-symbols-outlined`}>info</Icon>
             {dict.message.registryInstruction}
           </div>
         )}
         {props.lifecycleStage == Paths.REGISTRY_REPORT && (
-          <h2 className="text-lg flex-wap">
+          <h2 className="text-md md:text-lg t  flex-wrap">
             {dict.title.serviceSummary}
             <hr />
           </h2>

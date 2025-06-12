@@ -1,5 +1,3 @@
-import styles from "./registry.table.module.css";
-
 import { Table, TableColumnsType, Typography } from "antd";
 
 import React from "react";
@@ -40,7 +38,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       {
         key: "actions",
         title: "",
-        className: styles["header"],
+        className: "border-border border-r-[0.5px]  shadow-2xl ",
         render: (_, record) => (
           <RegistryRowActions
             recordType={props.recordType}
@@ -71,7 +69,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         return {
           key: field,
           dataIndex: field,
-          className: styles["header"],
+          className: "border-b-1 border-border",
           title: title,
           ellipsis: true,
           width: minWidth,
@@ -116,8 +114,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <AntDesignConfig>
       <Table
-        className="w-full overflow-x-auto rounded-lg "
-        rowClassName={styles["row"]}
+        className="w-full overflow-x-auto rounded-lg"
+        rowClassName="bg-background"
         dataSource={data}
         columns={columns}
         pagination={{
