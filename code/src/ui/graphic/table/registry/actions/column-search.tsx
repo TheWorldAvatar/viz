@@ -1,4 +1,3 @@
-import styles from "./column-search.module.css";
 
 import React, { useMemo, useState } from "react";
 

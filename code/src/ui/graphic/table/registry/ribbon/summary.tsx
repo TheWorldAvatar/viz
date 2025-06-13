@@ -1,4 +1,3 @@
-import styles from "./summary.module.css";
 
 import { useEffect, useState } from "react";
 

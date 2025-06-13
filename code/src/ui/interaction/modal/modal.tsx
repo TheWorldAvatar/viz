@@ -1,4 +1,3 @@
-import styles from "./modal.module.css";
 
 import {
   FloatingFocusManager,
