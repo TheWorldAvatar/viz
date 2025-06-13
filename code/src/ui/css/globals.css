@@ -53,6 +53,8 @@
     --button-color-primary-active: #6fa085;
     --button-color-secondary: #18677a;
     --button-color-secondary-hover: #0b4452;
+    --destructive: oklch(0.577 0.245 27.325);
+    --ring: oklch(0.708 0 0);
   }
 }
 
@@ -104,6 +106,8 @@
     --button-color-primary-active: #42664f;
     --button-color-secondary: #7acadb;
     --button-color-secondary-hover: #35a7c0;
+    --destructive: oklch(0.704 0.191 22.216);
+    --ring: oklch(0.556 0 0);
   }
 }
 
@@ -145,6 +149,8 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-background-secondary: var(--background-secondary);
+  --color-destructive: var(--destructive);
+  --color-ring: var(--ring);
   --input: var(--input);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
