@@ -18,6 +18,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void; // Optional click handler
 }
 
+// LoadingSpinner component to show a spinner when the button is in loading state
 const LoadingSpinner = ({
   size = "md",
 }: {
