@@ -1,6 +1,5 @@
-import IconComponent from 'ui/graphic/icon/icon';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
-import styles from './header.module.css';
+import IconComponent from "ui/graphic/icon/icon";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 
 interface HeaderFieldProps {
   name: string;
@@ -14,7 +13,7 @@ interface HeaderFieldProps {
 
 /**
  * This component renders a header field.
- * 
+ *
  * @param {string} name Header name displayed.
  * @param {string} icon The icon to display in this header.
  * @param {string} containerStyle Styling for the container.
@@ -25,28 +24,22 @@ interface HeaderFieldProps {
  */
 export default function HeaderField(props: Readonly<HeaderFieldProps>) {
   return (
-    <div style={{ paddingLeft: props.spacing }} className={props.containerStyle} onClick={props.toggleExpansion}>
-      {!props.isLoading &&
-        <IconComponent
-          icon={props.icon}
-          classes={styles.icon}
-        />
-      }
+    <div
+      style={{ paddingLeft: props.spacing }}
+      className={props.containerStyle}
+      onClick={props.toggleExpansion}
+    >
+      {!props.isLoading && <IconComponent icon={props.icon} classes="w-4" />}
 
       {/* Renders a loading indicator when required, or else, shows the required icon */}
-      {props.isLoading &&
-        <div className={`${styles.iconContainer} ${styles.icon}`}>
-          <LoadingSpinner isSmall={true}
-          />
+      {props.isLoading && (
+        <div className="w-4">
+          <LoadingSpinner isSmall={true} />
         </div>
-      }
+      )}
 
       {/* Header Name */}
-      <div className={props.headerNameStyle}>
-        {props.name}
-      </div>
-
-
+      <div className={props.headerNameStyle}>{props.name}</div>
     </div>
   );
 }

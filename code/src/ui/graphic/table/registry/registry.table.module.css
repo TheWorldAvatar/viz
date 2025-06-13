@@ -24,7 +24,7 @@
 }
 
 .instructions {
-  font-size: var(--font-size-secondary-text);
+  font-size: var(--font-size-primary-text);
   padding-bottom: 0.5rem;
 }
 
@@ -63,9 +63,9 @@
 }
 
 .expand-icon {
-  color: var(--text-color-links) !important;
+  color: var(--button-color-primary) !important;
 }
 
 .expand-icon:hover {
-  color: var(--text-color-links-hover) !important;
+  color: var(--button-color-primary-active) !important;
 }

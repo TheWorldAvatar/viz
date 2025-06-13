@@ -1,4 +1,3 @@
-import styles from "../form.module.css";
 
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
@@ -19,7 +18,7 @@ import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from 'hooks/useDictionary';
+import { useDictionary } from "hooks/useDictionary";
 import {
   getFormTemplate,
   getGeolocation,
@@ -61,7 +60,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     order: 10,
     step: {
       "@value": "0.00000001",
-      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     minCount: {
       "@value": "1",
@@ -86,7 +85,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     order: 11,
     step: {
       "@value": "0.00000001",
-      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     datatype: "decimal",
     minCount: {
@@ -99,8 +98,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     },
   };
 
-  const isInitialFetching: React.RefObject<boolean> =
-    useRef<boolean>(true);
+  const isInitialFetching: React.RefObject<boolean> = useRef<boolean>(true);
   const [isEmptyAddress, setIsEmptyAddress] = useState<boolean>(false);
   const [hasGeolocation, setHasGeolocation] = useState<boolean>(false);
   const [addressShapes, setAddressShapes] = useState<PropertyShape[]>([]);
@@ -178,8 +176,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       getAddressShapes(props.agentApi, props.field.name[VALUE_KEY]);
     }
     if (formType == Paths.REGISTRY || formType == Paths.REGISTRY_EDIT) {
-      getGeoCoordinates(props.agentApi,
-        Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
+      getGeoCoordinates(
+        props.agentApi,
+        Array.isArray(props.field.defaultValue)
+          ? props.field.defaultValue?.[0].value
+          : props.field.defaultValue?.value
+      );
     }
   }, []);
 
@@ -199,8 +201,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     const searchParams: URLSearchParams = new URLSearchParams();
     searchParams.append(postalCodeUnderscored, data[postalCode]);
 
-    const url: string = `${props.agentApi
-      }/location/addresses?${searchParams.toString()}`;
+    const url: string = `${
+      props.agentApi
+    }/location/addresses?${searchParams.toString()}`;
     const results = await sendGetRequest(url);
     if (
       results ==
@@ -270,47 +273,48 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   };
 
   return (
-    <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>
+    <div className="mt-6">
+      <h2 className="text-2xl font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
-      </legend>
+      </h2>
       {isInitialFetching.current && (
-        <div className={styles["loader-container"]}>
+        <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
       {postalCodeShape && (
-        <FormFieldComponent
-          field={postalCodeShape}
-          form={props.form}
-        />
+        <FormFieldComponent field={postalCodeShape} form={props.form} />
       )}
       {!isInitialFetching.current &&
         (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) && (
-          <div className={styles["form-dependent-button-layout"]}>
+          <div className="flex my-4 gap-1 -ml-2">
             <ClickActionButton
               icon={"search"}
               tooltipText={dict.action.findAddress}
               onClick={props.form.handleSubmit(onSearchForAddress)}
             />
-            {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && <ClickActionButton
-              icon={"edit_location"}
-              tooltipText={dict.action.selectLocation}
-              onClick={props.form.handleSubmit(onGeocoding)}
-            />}
+            {addressShapes.length > 0 &&
+              (selectedAddress || isEmptyAddress) && (
+                <ClickActionButton
+                  icon={"edit_location"}
+                  label="Select Location"
+                  tooltipText={dict.action.selectLocation}
+                  onClick={props.form.handleSubmit(onGeocoding)}
+                />
+              )}
           </div>
         )}
       {isEmptyAddress && (
-        <div style={{ margin: "0.5rem 0.75rem" }}>
+        <div className="m-2">
           <ErrorComponent message={dict.message.noAddressFound} />
         </div>
       )}
       {addresses.length > 0 && !selectedAddress && (
-        <div className={styles["form-menu"]}>
+        <div className="flex flex-col w-fit my-2 ">
           {addresses.map((address, index) => (
             <button
               key={address.street + index}
-              className={styles["form-menu-item"]}
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg "
               onClick={() => handleAddressClick(address)}
             >
               {String.fromCharCode(62)} {address.block}{" "}
@@ -320,7 +324,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && (
-        <div className={styles["form-fieldset-contents"]}>
+        <div className="flex flex-wrap w-full p-0 m-0">
           {addressShapes.map((shape, index) => (
             <FormFieldComponent
               key={shape.fieldId + index}
@@ -332,7 +336,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {hasGeolocation && (
-        <div className={styles["form-fieldset-contents"]}>
+        <div className="flex flex-wrap w-full">
           <GeocodeMapContainer
             form={props.form}
             fieldId={props.field.fieldId}
@@ -355,6 +359,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           />
         </div>
       )}
-    </fieldset>
+    </div>
   );
 }

@@ -1,13 +1,11 @@
 "use client";
 
-import styles from "./form.module.css";
-
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
-import { useDictionary } from 'hooks/useDictionary';
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { Paths } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
@@ -55,34 +53,24 @@ export default function FormContainerComponent(
   const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
 
   if (props.isModal) {
-    return (<Modal
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      returnPrevPage={true}
-      styles={[styles["modal"]]}
-    >
-      <FormContents {...props} />
-    </Modal>
+    return (
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} returnPrevPage={true}>
+        <FormContents {...props} />
+      </Modal>
     );
   }
 
-  return (<div className={styles["container"]}>
-    <ReturnButton
-      icon={"close"}
-      className={styles.close}
-      styling={{ text: styles["close-text"] }}
-    />
-    <FormContents {...props} />
-  </div>
+  return (
+    <div className="flex  mt-14 md:mt-0 md:w-full xl:w-4/5  flex-col h-[80vh] 2xl:w-3/4 p-4 md:p-8 margin-20 bg-zinc-100 dark:bg-modal-bg-dark border-1 border-border rounded-lg shadow-2xl">
+      <FormContents {...props} />
+    </div>
   );
 }
 
-function FormContents(
-  props: Readonly<FormContainerComponentProps>
-) {
+function FormContents(props: Readonly<FormContainerComponentProps>) {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
-  const keycloakEnabled = process.env.KEYCLOAK === 'true';
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -204,12 +192,15 @@ function FormContents(
 
   return (
     <>
-      <div className={`${styles["form-title"]} ${styles["form-row"]}`}>
-        <span>{`${translateFormType(props.formType, dict).toUpperCase()} ${props.entityType
+      <div className="text-xl font-bold">
+        <span>{`${translateFormType(
+          props.formType,
+          dict
+        ).toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className={styles["form-contents"]}>
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6  ">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -234,7 +225,7 @@ function FormContents(
           />
         )}
       </div>
-      <div className={styles["form-footer"]}>
+      <div className="flex justify-between p-2 ">
         {!formRef.current?.formState?.isSubmitting && !response && (
           <ClickActionButton
             icon={"cached"}
@@ -248,82 +239,110 @@ function FormContents(
         {!formRef.current?.formState?.isSubmitting && response && (
           <ResponseComponent response={response} />
         )}
-        <div className={styles["form-row"]}>
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+        <div className="flex flex-wrap gap-2 justify-end items-center ">
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
             props.formType === Paths.REGISTRY &&
-            !response && status?.message === ENTITY_STATUS.ACTIVE &&
+            !response &&
+            status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
                 icon={"error"}
+                label="Rescind"
+                className="mr-2 !bg-amber-300 hover:!bg-amber-500/80 dark:!bg-amber-800 dark:hover:!bg-amber-900/80"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Terminate Button
                 icon={"cancel"}
+                label="Cancel"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
+                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
                 icon={"done_outline"}
+                label="Approve"
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 icon="edit"
+                label="Edit"
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 isActive={false}
+                className="!bg-blue-300 hover:!bg-blue-500/80 dark:!bg-blue-800 dark:hover:!bg-blue-900/80"
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
             props.formType === Paths.REGISTRY &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 icon="delete"
+                label="Delete"
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 isActive={false}
+                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
-          {props.formType != Paths.REGISTRY && !response && <ClickActionButton
-            icon="publish"
-            tooltipText={dict.action.submit}
-            onClick={onSubmit}
-          />}
-          {!response && (isRescindAction || isTerminateAction) &&
+          {props.formType != Paths.REGISTRY && !response && (
+            <ClickActionButton
+              icon="send"
+              label="Submit"
+              tooltipText={dict.action.submit}
+              onClick={onSubmit}
+            />
+          )}
+          {!response && (isRescindAction || isTerminateAction) && (
             <ClickActionButton
               // Remove the rescind and terminate action view back to original view if no response
               icon={"first_page"}
+              className="!bg-gray-300 hover:!bg-gray-400/80"
               tooltipText={dict.action.cancel}
               onClick={() => {
                 setIsRescindAction(false);
                 setIsTerminateAction(false);
               }}
-            />}
-          {!response && !(isRescindAction || isTerminateAction) &&
+            />
+          )}
+          {!response && !(isRescindAction || isTerminateAction) && (
             <ReturnButton
-              icon="first_page"
+              label="Return"
+              icon={"first_page"}
+              className="ml-2 !bg-gray-300 hover:!bg-gray-400/80"
               tooltipText={dict.action.return}
-            />}
+            />
+          )}
         </div>
       </div>
     </>

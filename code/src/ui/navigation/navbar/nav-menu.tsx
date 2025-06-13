@@ -1,7 +1,5 @@
 "use client";
 
-import styles from "./nav.menu.module.css";
-
 import React, { useMemo, useState } from "react";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
@@ -49,11 +47,9 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           icon={"menu"}
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
-          styling={{ text: styles.text }}
           isHoverableDisabled={true}
-          isTransparent={true}
           placement="bottom-end"
-          className={styles.hamburgerMenuButton}
+          className="!mr-4 !bg-transparent"
         >
           <NavMenuContents
             {...props}
@@ -148,8 +144,8 @@ function NavMenuContents(
     <div
       className={`${
         props.isMobile
-          ? "flex gap-4 p-2"
-          : " bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+          ? "flex gap-4 p-2 "
+          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
       }
       ${isMenuExpanded ? "w-3xs lg:w-xs xl:flex 2xl:w-xs" : "w-24  xl:flex"}
       
