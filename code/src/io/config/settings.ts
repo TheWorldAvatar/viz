@@ -77,7 +77,10 @@ export default class SettingsStore {
     this.MAP_SETTINGS = JSON.parse(settings);
   }
 
-  public static getRegistryURL(): string {
+  public static async getRegistryURL(): Promise<string> {
+    if (!this.UI_SETTINGS) {
+      this.readInitialisationSettings();
+    }
     return this.UI_SETTINGS.resources.registry.url
   }
 

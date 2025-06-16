@@ -4,7 +4,7 @@ import { CustomAgentResponseBody } from "types/backend-agent";
 import { LifecycleStage } from "types/form";
 import { InternalApiIdentifier } from "types/backend-agent";
 
-const agentBaseApi: string = SettingsStore.getRegistryURL();
+const agentBaseApi: string = await SettingsStore.getRegistryURL();
 
 /**
  * GET request handler
