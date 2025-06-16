@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 import { Routes } from "io/config/routes";
@@ -71,9 +70,9 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
       </Accordion>
       <div className="ml-0 ">
         <RedirectButton
-          icon="read_more"
+          size="icon"
+          leftIcon="read_more"
           url={`${Routes.REGISTRY}/${props.entityType}/${props.id}`}
-          isActive={false}
           tooltipText={dict.action.viewMore}
         />
       </div>

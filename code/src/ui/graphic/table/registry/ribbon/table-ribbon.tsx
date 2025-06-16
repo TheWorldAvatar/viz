@@ -65,15 +65,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             permissionScheme.hasPermissions.pendingRegistry) && (
             <RedirectButton
               label={dict.nav.title.pending}
-              icon="pending"
+              leftIcon="pending"
               url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-              isActive={props.lifecycleStage == Routes.REGISTRY_PENDING}
-              isHoverableDisabled={true}
-              isTransparent={true}
-              className={
+              variant={
                 props.lifecycleStage == Routes.REGISTRY_PENDING
-                  ? "!bg-background"
-                  : ""
+                  ? "active"
+                  : "secondary"
               }
             />
           )}
@@ -82,19 +79,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             permissionScheme.hasPermissions.activeArchiveRegistry) && (
             <RedirectButton
               label={dict.nav.title.active}
-              icon="schedule"
+              leftIcon="schedule"
               url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-              isActive={
+              variant={
                 props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
                 props.lifecycleStage == Routes.REGISTRY_TASK_DATE
-              }
-              isHoverableDisabled={true}
-              isTransparent={true}
-              className={
-                props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-                props.lifecycleStage == Routes.REGISTRY_TASK_DATE
-                  ? "!bg-background"
-                  : ""
+                  ? "active"
+                  : "secondary"
               }
             />
           )}
@@ -103,15 +94,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             permissionScheme.hasPermissions.activeArchiveRegistry) && (
             <RedirectButton
               label={dict.nav.title.archive}
-              icon="archive"
+              leftIcon="archive"
               url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-              isActive={props.lifecycleStage == Routes.REGISTRY_ARCHIVE}
-              isHoverableDisabled={true}
-              isTransparent={true}
-              className={
+              variant={
                 props.lifecycleStage == Routes.REGISTRY_ARCHIVE
-                  ? "!bg-background"
-                  : ""
+                  ? "active"
+                  : "secondary"
               }
             />
           )}
@@ -148,13 +136,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             (props.lifecycleStage == Routes.REGISTRY_PENDING ||
               props.lifecycleStage == Routes.REGISTRY_GENERAL) && (
               <RedirectButton
-                icon="add"
+                leftIcon="add"
                 label={`${dict.action.add} ${props.entityType.replace(
                   "_",
                   " "
                 )}`}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
-                isActive={false}
               />
             )}
           {(!keycloakEnabled ||
@@ -163,10 +150,14 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
               props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
-                icon="task"
+                leftIcon="task"
                 label={dict.action.overview}
                 url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-                isActive={props.lifecycleStage == Routes.REGISTRY_ACTIVE}
+                variant={
+                  props.lifecycleStage == Routes.REGISTRY_ACTIVE
+                    ? "active"
+                    : "primary"
+                }
               />
             )}
           {(!keycloakEnabled ||
@@ -175,15 +166,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
               props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
               <RedirectButton
-                icon="event"
+                leftIcon="event"
                 label={dict.action.viewTasks}
                 url={Routes.REGISTRY_TASK_DATE}
-                isActive={props.lifecycleStage == Routes.REGISTRY_TASK_DATE}
+                variant={
+                  props.lifecycleStage == Routes.REGISTRY_TASK_DATE
+                    ? "active"
+                    : "primary"
+                }
               />
             )}
           {props.lifecycleStage == Routes.REGISTRY_REPORT && (
             <ReturnButton
-              icon="first_page"
+              leftIcon="first_page"
               label={`${dict.action.backTo} ${props.entityType.replace(
                 "_",
                 " "
@@ -195,10 +190,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             permissionScheme.hasPermissions.invoice) &&
             props.lifecycleStage == Routes.REGISTRY_REPORT && (
               <RedirectButton
-                icon="print"
+                leftIcon="print"
                 label={dict.action.generateReport}
                 url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
-                isActive={false}
               />
             )}
           {(!keycloakEnabled ||

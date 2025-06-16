@@ -70,9 +70,8 @@ export default function FormInputContainer(
           {props.redirectOptions?.addUrl && (
             <RedirectButton
               label="Add"
-              icon="add"
+              leftIcon="add"
               url={props.redirectOptions.addUrl}
-              isActive={false}
             />
           )}
           {props.redirectOptions?.view && (

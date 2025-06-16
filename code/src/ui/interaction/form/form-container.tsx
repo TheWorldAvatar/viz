@@ -292,12 +292,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
-                icon="edit"
+                leftIcon="edit"
                 label="Edit"
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
-                isActive={false}
-                className="!bg-blue-300 hover:!bg-blue-500/80 dark:!bg-blue-800 dark:hover:!bg-blue-900/80"
+                variant="secondary"
               />
             )}
           {(!keycloakEnabled ||
@@ -308,12 +307,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
-                icon="delete"
+                leftIcon="delete"
                 label="Delete"
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
-                isActive={false}
-                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
+                variant="destructive"
               />
             )}
           {props.formType != Paths.REGISTRY && !response && (
@@ -339,8 +337,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {!response && !(isRescindAction || isTerminateAction) && (
             <ReturnButton
               label="Return"
-              icon={"first_page"}
-              className="ml-2 !bg-gray-300 hover:!bg-gray-400/80"
+              leftIcon={"first_page"}
+              className="ml-2"
+              variant="secondary"
               tooltipText={dict.action.return}
             />
           )}

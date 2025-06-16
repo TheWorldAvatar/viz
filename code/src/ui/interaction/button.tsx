@@ -3,7 +3,7 @@ import { Placement } from "@floating-ui/react";
 import { Icon } from "@mui/material";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
     | "link"
     | "primary"
