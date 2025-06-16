@@ -83,5 +83,5 @@ export function makeInternalRegistryAPIwithParams(internalIdentifier: InternalAp
       });
       break;
   }
-  return `${prefixedRegistryURL}${internalIdentifier}${searchParams.toString()}`;
+  return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
 }
