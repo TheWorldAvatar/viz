@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { CustomAgentResponseBody } from "types/backend-agent";
 import { LifecycleStage } from "types/form";
 import { InternalApiIdentifier } from "types/backend-agent";
+import { logColours } from "utils/logColours";
 
 const agentBaseApi: string = await SettingsStore.getRegistryURL();
 
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   });
 
   if (!res.ok) {
-    return NextResponse.json({ error: "Request is unsuccessful." }, { status: res.status });
+    return await handleExternalBadRequest(res, url);
   }
 
   const data = await res.json();
@@ -249,4 +250,22 @@ async function sendRequest(url: string, methodType: "POST" | "PUT" | "DELETE", b
     ...responseBody,
     success: response.ok
   };
+}
+
+async function handleExternalBadRequest(res: Response, url: string) {
+  let externalErrorMessage: unknown;
+  try {
+    externalErrorMessage = await res.clone().json();
+  } catch {
+    externalErrorMessage = await res.text();
+  }
+  console.error(`${logColours.Red}Error${logColours.Reset} fetching from external API: ${logColours.Yellow}${url}${logColours.Reset}:`, externalErrorMessage);
+  return NextResponse.json(
+    {
+      error: "External request unsuccessful.",
+      statustext: res.statusText,
+      externalResponse: externalErrorMessage,
+    },
+    { status: res.status }
+  );
 }
