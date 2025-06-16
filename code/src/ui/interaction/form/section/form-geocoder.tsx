@@ -163,10 +163,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       isInitialFetching.current = false;
     };
 
-    if (formType == "add" || formType == 'edit'.toString()) {
+    if (formType == "add" || formType == 'edit') {
       getAddressShapes(props.field.name[VALUE_KEY]);
     }
-    if (formType == "view" || formType == 'edit'.toString()) {
+    if (formType == "view" || formType == 'edit') {
       getGeoCoordinates(Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
     }
   }, []);
@@ -272,7 +272,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         />
       )}
       {!isInitialFetching.current &&
-        (formType == "add" || formType == 'edit'.toString()) && (
+        (formType == "add" || formType == 'edit') && (
           <div className={styles["form-dependent-button-layout"]}>
             <ClickActionButton
               icon={"search"}
