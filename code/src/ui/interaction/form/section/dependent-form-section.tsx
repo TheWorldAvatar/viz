@@ -1,19 +1,16 @@
 import fieldStyles from "../field/field.module.css";
 
-
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
-import { Paths } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
   defaultSearchOption,
   ID_KEY,
   PropertyShape,
   RegistryFieldValues,
-  SEARCH_FORM_TYPE,
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -23,12 +20,11 @@ import {
   getAfterDelimiter,
   parseStringsForUrls,
 } from "utils/client-utils";
-import { getData } from "utils/server-actions";
 import FormSelector from "../field/input/form-selector";
 import { FORM_STATES } from "../form-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface DependentFormSectionProps {
-  agentApi: string;
   dependentProp: PropertyShape;
   form: UseFormReturn;
 }
@@ -36,7 +32,6 @@ interface DependentFormSectionProps {
 /**
  * This component renders a form section that has dependencies on related entities.
  *
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
@@ -77,32 +72,43 @@ export function DependentFormSection(
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await getData(
-            props.agentApi,
-            field.dependentOn.label,
-            getAfterDelimiter(currentParentOption, "/"),
-            entityType
-          );
+          entities = await fetch(
+            makeInternalRegistryAPIwithParams(
+              "instances",
+              field.dependentOn.label,
+              "false",
+              getAfterDelimiter(currentParentOption, "/"),
+              entityType
+            ),
+            { cache: "no-store", credentials: "same-origin" }
+          ).then((res) => res.json());
         }
         // If there is no valid parent option, there should be no entity
       } else if (
-        (formType === Paths.REGISTRY || formType === Paths.REGISTRY_DELETE) &&
+        (formType === "view" || formType === "delete") &&
         field.defaultValue
       ) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
-        entities = await getData(
-          props.agentApi,
-          entityType,
-          getAfterDelimiter(
-            Array.isArray(field.defaultValue)
-              ? field.defaultValue?.[0].value
-              : field.defaultValue?.value,
-            "/"
-          )
-        );
+        entities = await fetch(
+          makeInternalRegistryAPIwithParams(
+            "instances",
+            entityType,
+            "false",
+            getAfterDelimiter(
+              Array.isArray(field.defaultValue)
+                ? field.defaultValue?.[0].value
+                : field.defaultValue?.value,
+              "/"
+            )
+          ),
+          { cache: "no-store", credentials: "same-origin" }
+        ).then((response) => response.json());
       } else {
-        entities = await getData(props.agentApi, entityType);
+        entities = await fetch(
+          makeInternalRegistryAPIwithParams("instances", entityType),
+          { cache: "no-store", credentials: "same-origin" }
+        ).then((res) => res.json());
       }
 
       // By default, id is empty
@@ -132,7 +138,7 @@ export function DependentFormSection(
         }
       }
       // Search form should always target default value
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
         defaultId = defaultSearchOption.type.value;
       }
       // Set the form value to the default value if available, else, default to the first option
@@ -166,7 +172,7 @@ export function DependentFormSection(
         return a.label.localeCompare(b.label);
       });
       // Add the default search option only if this is the search form
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
         // Default option should only use empty string "" as the value
         formFields.unshift({
           label: defaultSearchOption.label.value,
@@ -186,7 +192,7 @@ export function DependentFormSection(
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
-    if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
+    if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
     return url;
@@ -202,7 +208,7 @@ export function DependentFormSection(
       "/"
     )}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != Paths.REGISTRY_ADD || pathName.includes("registry")) {
+    if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
     window.open(url, "_blank");
@@ -229,23 +235,21 @@ export function DependentFormSection(
               form={props.form}
               redirectOptions={{
                 addUrl:
-                  formType != Paths.REGISTRY &&
-                  formType != Paths.REGISTRY_DELETE &&
-                  formType != SEARCH_FORM_TYPE
+                  formType != "view" &&
+                  formType != "delete" &&
+                  formType != "search"
                     ? genAddSubEntityUrl(queryEntityType)
                     : undefined,
                 view:
                   !isFetching &&
-                  formType != SEARCH_FORM_TYPE &&
+                  formType != "search" &&
                   selectElements.length > 0
                     ? openViewSubEntityModal
                     : undefined,
               }}
               noOptionMessage={dict.message.noInstances}
               options={{
-                disabled:
-                  formType == Paths.REGISTRY ||
-                  formType == Paths.REGISTRY_DELETE,
+                disabled: formType == "view" || formType == "delete",
                 labelStyle: [
                   fieldStyles["form-input-label-add"],
                   fieldStyles["form-input-label"],

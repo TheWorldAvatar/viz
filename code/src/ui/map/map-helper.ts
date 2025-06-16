@@ -416,7 +416,6 @@ function refreshLiveData(
   setInterval(() => {
     data?.getLayerList().forEach((layer) => {
       if (layer.isLive) {
-        console.log("refreshing " + layer.id);
         const source = map.getSource(layer.source.id);
         const mapboxLayer = map.getLayer(layer.id);
         if (source && mapboxLayer) {

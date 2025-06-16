@@ -1,6 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
+import { CustomAgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { CustomAgentResponseBody } from "utils/server-actions";
 
 interface ResponseComponentProps<> {
   response: CustomAgentResponseBody;

@@ -7,7 +7,6 @@ import { renderFormField } from "../form";
 
 interface FormSectionProps {
   entityType: string;
-  agentApi: string;
   group: PropertyGroup;
   form: UseFormReturn;
   options?: FormFieldOptions;
@@ -16,7 +15,6 @@ interface FormSectionProps {
  * This component renders a form section.
  *
  * @param {string} entityType The type of entity.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyGroup} group Fieldset group model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
@@ -29,17 +27,10 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
       </h2>
       <div className="p-2 space-y-2">
         {props.group.property.map((field, index) =>
-          renderFormField(
-            props.entityType,
-            props.agentApi,
-            field,
-            props.form,
-            index
-          )
+          renderFormField(props.entityType, field, props.form, index)
         )}
         {props.group.multipleProperty.length > 0 && (
           <FormArray
-            agentApi={props.agentApi}
             fieldId={props.group.label[VALUE_KEY]}
             fieldConfigs={props.group.multipleProperty}
             form={props.form}

@@ -9,7 +9,7 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
-import { CustomAgentResponseBody } from "utils/server-actions";
+import { CustomAgentResponseBody } from "types/backend-agent";
 import Button from "ui/interaction/button";
 
 interface FileModalProps {

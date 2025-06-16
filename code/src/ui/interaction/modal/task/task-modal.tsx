@@ -6,18 +6,17 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
-import { Paths } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
+import { CustomAgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FORM_IDENTIFIER,
-  PropertyGroup,
-  PropertyShape,
+  FormTemplateType,
   PropertyShapeOrGroup,
   RegistryTaskOption,
-  VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
@@ -26,17 +25,10 @@ import ResponseComponent from "ui/text/response/response";
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
-import {
-  getLifecycleFormTemplate,
-  CustomAgentResponseBody,
-  sendPostRequest,
-  updateEntity,
-} from "utils/server-actions";
-import Button from "ui/interaction/button";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface TaskModalProps {
   entityType: string;
-  registryAgentApi: string;
   isOpen: boolean;
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,7 +39,6 @@ interface TaskModalProps {
  * A modal component for users to interact with their tasks while on the registry.
  *
  * @param {string} entityType The type of entity for the task's contract.
- * @param {string} registryAgentApi The target endpoint for the default registry agent.
  * @param {boolean} isOpen Indicator if the this modal should be opened.
  * @param {RegistryTaskOption} task The current task to display.
  * @param setIsOpen Method to close or open the modal.
@@ -109,11 +100,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   ) => {
     let url = `${props.registryAgentApi}/contracts/service/`;
     if (isDispatchAction) {
-      url += "dispatch";
-      // Enum should be always be 0 to update dispatch
+      action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
     } else if (isCompleteAction) {
-      url += "complete";
+      action = "complete";
       formData[FORM_STATES.ORDER] = 1;
     } else if (isCancelAction) {
       url += "cancel";
@@ -143,9 +133,29 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      response = await sendPostRequest(endpoint, JSON.stringify(formData));
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("event", "service", action),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify(formData),
+        }
+      );
+      response = await res.json();
     } else {
-      response = await updateEntity(endpoint, JSON.stringify(formData));
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("event", "service", action),
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify(formData),
+        }
+      );
+      response = await res.json();
     }
     setResponse(response);
     setFormFields([]);
@@ -220,11 +230,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         props.task.id
       );
     } else if (isCompleteAction) {
-      getFormTemplate(props.registryAgentApi, "service", "complete");
+      getFormTemplate("service", "complete");
     } else if (isReportAction) {
-      getFormTemplate(props.registryAgentApi, "service", "report");
+      getFormTemplate("service", "report");
     } else if (isCancelAction) {
-      getFormTemplate(props.registryAgentApi, "service", "cancel");
+      getFormTemplate("service", "cancel");
     }
   }, [isDispatchAction, isCompleteAction, isReportAction, isCancelAction]);
 
@@ -263,13 +273,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
+      <section className={styles["section-contents"]}>
         {!isFetching &&
           (isReportAction ||
             isCancelAction ||
             isCompleteAction ||
             isDispatchAction) && (
-            <p className="text-lg mb-4">
+            <p className={styles["instructions"]}>
               {isCompleteAction && dict.message.completeInstruction}
               {isDispatchAction &&
                 `${dict.message.dispatchInstruction} ${props.task.date}:`}

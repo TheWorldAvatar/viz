@@ -6,14 +6,14 @@ import React from "react";
 import { FieldValues } from "react-hook-form";
 
 import { Routes } from "io/config/routes";
-import { RegistryTaskOption } from "types/form";
+import { LifecycleStage, RegistryTaskOption } from "types/form";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
 import { Status } from "ui/text/status/status";
 import { getId } from "utils/client-utils";
 
 interface RegistryRowActionsProps {
   recordType: string;
-  lifecycleStage: string;
+  lifecycleStage: LifecycleStage;
   row: FieldValues;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
 }
@@ -22,7 +22,7 @@ interface RegistryRowActionsProps {
  * Renders the possible row actions for each row in the registry.
  *
  * @param {string} recordType The type of the record.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {FieldValues} row Row values.
  * @param setTask A dispatch method to set the task option when required.
  */
@@ -37,15 +37,12 @@ export default function RegistryRowActions(
     : props.row.iri;
 
   const handleClickView = (): void => {
-    if (
-      props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-      props.lifecycleStage == Routes.REGISTRY_ARCHIVE
-    ) {
+    if (props.lifecycleStage == "active" || props.lifecycleStage == "archive") {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY_REPORT}/${recordId}`);
     } else if (
-      props.lifecycleStage == Routes.REGISTRY_TASK_DATE ||
-      props.lifecycleStage == Routes.REGISTRY_REPORT
+      props.lifecycleStage == "tasks" ||
+      props.lifecycleStage == "report"
     ) {
       let status: string;
       if (

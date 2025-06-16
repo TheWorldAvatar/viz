@@ -6,14 +6,13 @@ import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris } from "state/map-feature-slice";
+import { CustomAgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { SEARCH_FORM_TYPE } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
-import { CustomAgentResponseBody } from "utils/server-actions";
-import Button from "ui/interaction/button";
 
 interface SearchModalProps {
   id: string;
@@ -63,8 +62,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
         <FormComponent
           formRef={formRef}
           entityType={props.id}
-          formType={SEARCH_FORM_TYPE}
-          agentApi={`${props.stack}/vis-backend-agent`}
+          formType={"search"}
           setResponse={setResponse}
         />
       </section>

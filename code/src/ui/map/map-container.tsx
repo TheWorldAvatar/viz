@@ -38,7 +38,7 @@ import { MapSettingsProvider } from "./mapbox/map-settings-context";
 interface MapContainerProps {
   scenarioURL: string;
   scenarioDataset: string;
-  mapSettings: string;
+  mapSettings: MapSettings;
   data: string;
   scenarios: ScenarioDefinition[];
 }
@@ -65,7 +65,7 @@ export default function MapContainer(props: MapContainerProps) {
 
   // Memoizes parsing of settings only once initially to prevent any unintended calls
   const mapSettings: MapSettings = useMemo(() => {
-    return JSON.parse(props.mapSettings);
+    return props.mapSettings;
   }, []);
 
   const defaultPosition: CameraPosition = useMemo(() => {

@@ -8,7 +8,6 @@ import FormFieldComponent from "../form-field";
 import Button from "ui/interaction/button";
 
 export interface FormArrayProps {
-  agentApi: string;
   fieldId: string;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
@@ -95,7 +94,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             >
               {config.class && (
                 <DependentFormSection
-                  agentApi={props.agentApi}
                   dependentProp={{
                     ...config,
                     fieldId: fieldId,
@@ -105,7 +103,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               )}
               {!config.class && (
                 <FormFieldComponent
-                  agentApi={props.agentApi}
                   field={{
                     ...config,
                     fieldId: fieldId,

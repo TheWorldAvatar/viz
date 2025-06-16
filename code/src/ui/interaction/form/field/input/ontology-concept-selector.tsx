@@ -2,15 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
-import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, SEARCH_FORM_TYPE, VALUE_KEY } from 'types/form';
+import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
-import { getAvailableTypes } from 'utils/server-actions';
 import FormSelector from './form-selector';
+import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 
 interface OntologyConceptSelectorProps {
-  agentApi: string;
   field: PropertyShape;
   form: UseFormReturn;
   options?: FormFieldOptions;
@@ -19,7 +18,6 @@ interface OntologyConceptSelectorProps {
 /**
  * This component renders a dropdown selector for the form.
  * 
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
@@ -50,7 +48,16 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
         // Extract all the concept types and extract all the types from the endpoint
         const conceptTypes: string[] = props.field.in.map(subClass => subClass[ID_KEY])
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
-          conceptTypes.map(conceptType => getAvailableTypes(props.agentApi, encodeURIComponent(conceptType)))
+          conceptTypes.map(conceptType => fetch(makeInternalRegistryAPIwithParams('concept', conceptType), {
+            cache: 'no-store',
+            credentials: 'same-origin'
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to fetch available types for ${conceptType}`);
+            }
+            return response.json();
+          })
+          )
         );
         const concepts: OntologyConcept[] = conceptsArrays.flat();
         if (concepts && concepts.length > 0) {
@@ -61,7 +68,7 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
             firstOption = "Singapore";
           }
           // Add the default search option only if this is the search form
-          if (props.form.getValues(FORM_STATES.FORM_TYPE) === SEARCH_FORM_TYPE) {
+          if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
           }
