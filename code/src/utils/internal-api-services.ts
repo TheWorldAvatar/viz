@@ -68,7 +68,7 @@ export function makeInternalRegistryAPIwithParams(internalIdentifier: InternalAp
       break;
     case "geodecode":
       searchParams = new URLSearchParams({
-        iri: encodeURIComponent(params[0]),
+        iri: params[0],
       });
       break;
     case "schedule":
