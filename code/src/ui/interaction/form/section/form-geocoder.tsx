@@ -207,7 +207,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     // Reset location
     setHasGeolocation(false);
     // Searches for geolocation in the following steps
-    const urls: URL[] = [
+    const internalApiPaths: string[] = [
       // First by postal code
       makeInternalRegistryAPIwithParams("geocode_postal", data[postalCode]),
       // If no coordinates are found, search by block (if available) and street name
@@ -216,7 +216,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       makeInternalRegistryAPIwithParams('geocode_city', data.city, data.country),
     ];
 
-    for (const url of urls) {
+    for (const url of internalApiPaths) {
       const res = await fetch(url, {
         cache: 'no-store',
         credentials: 'same-origin'
