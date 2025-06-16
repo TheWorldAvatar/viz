@@ -1,12 +1,11 @@
-import { Metadata } from 'next';
 import markdownIt from "markdown-it";
+import { Metadata } from 'next';
 
-import StaticContentPage from 'ui/pages/static-content-page';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
 import OptionalPages, { OptionalPage } from 'io/config/optional-pages';
-import SettingsStore from 'io/config/settings';
-import { UISettings } from 'types/settings';
 import { Modules, PageTitles } from 'io/config/routes';
+import SettingsStore from 'io/config/settings';
+import { NavBarItemSettings, UISettings } from 'types/settings';
+import StaticContentPage from 'ui/pages/static-content-page';
 
 // Utilities to render markdown into HTML
 const markdowner = markdownIt({
@@ -22,8 +21,8 @@ const markdowner = markdownIt({
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
-  const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.HELP);
+  const uiSettings: UISettings = SettingsStore.getUISettings();
+  const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.HELP);
   return {
     title: metadata?.title ?? PageTitles.HELP,
   }

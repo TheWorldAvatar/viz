@@ -8,6 +8,8 @@ import { FloatingPortal, Placement, useTransitionStyles } from "@floating-ui/rea
 
 interface PopoverActionButtonProps extends ActionButtonProps {
   children: React.ReactNode;
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   placement?: Placement;
 }
 
@@ -15,6 +17,8 @@ interface PopoverActionButtonProps extends ActionButtonProps {
  * A clickable button that acts as an anchor for the popover floating element.
  *
  * @param {ReactNode} children Children elements that are shown in the popover floating element.
+ * @param {boolean} isOpen Optional state for popover.
+ * @param setIsOpen Optional dispatch action to control the open state of popover.
  * @param {Placement} placement Optional position of popover.
  * @param {string} icon The Material icon name.
  * @param {string} label Optional label that is displayed on the button.
@@ -24,9 +28,12 @@ interface PopoverActionButtonProps extends ActionButtonProps {
  * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
  * @param {string} styling.hover An optional styling object for hover effects on text and icon.
  * @param {string} styling.text An optional styling object for text and icon.
+ * @param {string} styling.container An optional styling object for the pop up container.
  */
 export default function PopoverActionButton({
   children,
+  isOpen,
+  setIsOpen,
   placement,
   icon,
   label,
@@ -37,7 +44,7 @@ export default function PopoverActionButton({
   styling,
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
-  const popover = usePopover(placement);
+  const popover = usePopover(placement, isOpen, setIsOpen);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
     initial: {
@@ -77,7 +84,7 @@ export default function PopoverActionButton({
             style={{
               ...transition.styles,
             }}
-            className={styles.popover}
+            className={`${styles.popover} ${styling?.container}`}
           >
             {children}
           </div>

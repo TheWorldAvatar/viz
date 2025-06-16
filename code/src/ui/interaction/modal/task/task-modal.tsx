@@ -7,10 +7,10 @@ import { FieldValues, SubmitHandler } from 'react-hook-form';
 import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from 'hooks/useRefresh';
-import { Paths } from 'io/config/routes';
 import { PermissionScheme } from 'types/auth';
+import { CustomAgentResponseBody } from 'types/backend-agent';
 import { Dictionary } from 'types/dictionary';
-import { FORM_IDENTIFIER, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryTaskOption, VALUE_KEY } from 'types/form';
+import { FORM_IDENTIFIER, FormTemplateType, PropertyShapeOrGroup, RegistryTaskOption } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import ClickActionButton from 'ui/interaction/action/click/click-button';
 import { FormComponent } from 'ui/interaction/form/form';
@@ -21,11 +21,10 @@ import ResponseComponent from 'ui/text/response/response';
 import { getTranslatedStatusLabel, Status } from 'ui/text/status/status';
 import { getAfterDelimiter } from 'utils/client-utils';
 import { genBooleanClickHandler } from 'utils/event-handler';
-import { getLifecycleFormTemplate, CustomAgentResponseBody, sendPostRequest, updateEntity } from 'utils/server-actions';
+import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
 
 interface TaskModalProps {
   entityType: string;
-  registryAgentApi: string;
   isOpen: boolean;
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,7 +35,6 @@ interface TaskModalProps {
  * A modal component for users to interact with their tasks while on the registry.
  * 
  * @param {string} entityType The type of entity for the task's contract.
- * @param {string} registryAgentApi The target endpoint for the default registry agent.
  * @param {boolean} isOpen Indicator if the this modal should be opened.
  * @param {RegistryTaskOption} task The current task to display.
  * @param setIsOpen Method to close or open the modal.
@@ -88,92 +86,77 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, []);
 
   const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
-    let url = `${props.registryAgentApi}/contracts/service/`;
+    let action = "";
     if (isDispatchAction) {
-      url += "dispatch";
-      // Enum should be always be 0 to update dispatch
+      action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
     } else if (isCompleteAction) {
-      url += "complete";
+      action = "complete";
       formData[FORM_STATES.ORDER] = 1;
     } else if (isCancelAction) {
-      url += "cancel";
+      action = "cancel";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else if (isReportAction) {
-      url += "report";
+      action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else {
       return;
     }
-    // Submit post requests if they are not dispatch action
-    submitLifecycleAction(formData, url, !isDispatchAction);
+    submitLifecycleAction(formData, action, !isDispatchAction);
   }
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
-  const submitLifecycleAction = async (formData: FieldValues, endpoint: string, isPost: boolean) => {
+  const submitLifecycleAction = async (formData: FieldValues, action: string, isPost: boolean) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      response = await sendPostRequest(endpoint, JSON.stringify(formData));
+      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: 'no-store',
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
+      });
+      response = await res.json();
     } else {
-      response = await updateEntity(endpoint, JSON.stringify(formData));
+      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        cache: 'no-store',
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
+      });
+      response = await res.json();
     }
     setResponse(response);
     setFormFields([]);
     setDispatchFields([]);
   }
 
-  // A hook that fetches the form template with dispatch details included
-  useEffect(() => {
-    // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplateWithDispatchDetails = async (endpoint: string, targetId: string): Promise<void> => {
-      setIsFetching(true);
-      const id: string = getAfterDelimiter(targetId, "/");
-      const template: PropertyShape[] = await getLifecycleFormTemplate(endpoint, "service", "dispatch", id);
-      const group: PropertyGroup = {
-        "@id": "dispatch group",
-        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
-        label: {
-          "@value": dict.title.dispatchInfo
-        },
-        comment: {
-          "@value": "The dispatch details specified for this service."
-        },
-        order: 1000,
-        property: template.filter(shape => shape.name[VALUE_KEY] != "id"), // Filter out id field
-      };
-      setDispatchFields([group]);
-      setIsFetching(false);
-    }
-    // Only execute this for orders that are pending execution
-    if (props.task.status === Status.PENDING_EXECUTION || props.task.status === Status.COMPLETED) {
-      getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
-    }
-  }, []);
-
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     // Target id is optional, and will default to form
-    const getFormTemplate = async (endpoint: string, lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
+    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const template: PropertyShapeOrGroup[] = await getLifecycleFormTemplate(endpoint, lifecycleStage, eventType,
-        targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER // use the target id if available, else, default to an empty form
-      );
-      setFormFields(template);
+      const template: FormTemplateType = await fetch(makeInternalRegistryAPIwithParams("event", lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      }).then(res => res.json());
+      setFormFields(template.property);
       setIsFetching(false);
     }
 
     if (isDispatchAction) {
-      getFormTemplate(props.registryAgentApi, "service", "dispatch", props.task.id);
+      getFormTemplate("service", "dispatch", props.task.id);
     } else if (isCompleteAction) {
-      getFormTemplate(props.registryAgentApi, "service", "complete");
+      getFormTemplate("service", "complete");
     } else if (isReportAction) {
-      getFormTemplate(props.registryAgentApi, "service", "report");
+      getFormTemplate("service", "report");
     } else if (isCancelAction) {
-      getFormTemplate(props.registryAgentApi, "service", "cancel");
+      getFormTemplate("service", "cancel");
     }
   }, [isDispatchAction, isCompleteAction, isReportAction, isCancelAction]);
 
@@ -226,14 +209,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!(isReportAction || isCancelAction || isCompleteAction || isDispatchAction || isFetching) && !refreshFlag && <FormComponent
           formRef={formRef}
           entityType={props.entityType}
-          formType={Paths.REGISTRY}
-          agentApi={props.registryAgentApi}
+          formType={"view"}
           setResponse={setResponse}
           id={getAfterDelimiter(props.task.contract, "/")}
           additionalFields={dispatchFields}
         />}
         {formFields.length > 0 && !refreshFlag && <FormTemplate
-          agentApi={props.registryAgentApi}
           entityType={isReportAction ? "report" : isCancelAction ? "cancellation" : "dispatch"}
           formRef={formRef}
           fields={formFields}

@@ -9,10 +9,10 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { useDictionary } from 'hooks/useDictionary';
 import useRefresh from "hooks/useRefresh";
-import { Paths } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
+import { CustomAgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FORM_IDENTIFIER, PropertyShape } from "types/form";
+import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { ApiResponse, JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
@@ -20,22 +20,16 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
-import {
-  getLifecycleFormTemplate,
-  CustomAgentResponseBody,
-  sendGetRequest,
-  sendPostRequest,
-} from "utils/server-actions";
 import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface FormContainerComponentProps {
   entityType: string;
-  formType: string;
-  agentApi: string;
+  formType: FormType;
   isPrimaryEntity?: boolean;
   isModal?: boolean;
 }
@@ -44,8 +38,7 @@ interface FormContainerComponentProps {
  * Renders a form container.
  *
  * @param {string} entityType The type of entity.
- * @param {string} formType The type of form such as add, update, delete, and view.
- * @param {string} agentApi The target agent endpoint for any registry related functionalities.
+ * @param {FormType} formType The type of form such as add, update, delete, and view.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {boolean} isModal An optional indicator to render the form as a modal.
  */
@@ -101,60 +94,59 @@ function FormContents(
   const rescindContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    rescindOrTerminateAction(
-      formData,
-      `${props.agentApi}/contracts/archive/rescind`
-    );
+    await rescindOrTerminateAction(formData, "rescind");
   };
 
   // Terminate the target contract
   const terminateContract: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    rescindOrTerminateAction(
-      formData,
-      `${props.agentApi}/contracts/archive/terminate`
-    );
+    await rescindOrTerminateAction(formData, "terminate");
   };
 
-  // Reusable action method to rescind or terminate the contract
+  // Reusable action method to rescind or terminate the contract via internal proxy API route
   const rescindOrTerminateAction = async (
     formData: FieldValues,
-    endpoint: string
+    action: "rescind" | "terminate"
   ) => {
     // Add contract and date field
-    formData[FORM_STATES.CONTRACT] = status.iri;
-    formData[FORM_STATES.DATE] = new Date().toISOString().split("T")[0];
-    const response: CustomAgentResponseBody = await sendPostRequest(
-      endpoint,
-      JSON.stringify(formData)
-    );
-    setResponse(response);
+    const payload = {
+      ...formData,
+      [FORM_STATES.CONTRACT]: status.iri,
+      [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
+    };
+    const res = await fetch(makeInternalRegistryAPIwithParams('event', "archive", action), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: 'no-store',
+      credentials: 'same-origin',
+      body: JSON.stringify({ formData: payload }),
+    });
+    const agentResponseBody: CustomAgentResponseBody = await res.json();
+    setResponse(agentResponseBody);
   };
 
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     const getFormTemplate = async (
-      endpoint: string,
       lifecycleStage: string,
       eventType: string
     ): Promise<void> => {
       setIsLoading(true);
-      const template: PropertyShape[] = await getLifecycleFormTemplate(
-        endpoint,
-        lifecycleStage,
-        eventType,
-        FORM_IDENTIFIER
-      );
+      const res = await fetch(makeInternalRegistryAPIwithParams('event', lifecycleStage, eventType, FORM_IDENTIFIER), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const template: PropertyShape[] = await res.json();
       setFormFields(template);
       setIsLoading(false);
     };
 
     if (isRescindAction) {
-      getFormTemplate(props.agentApi, "archive", "rescind");
+      getFormTemplate("archive", "rescind");
     } else if (isTerminateAction) {
-      getFormTemplate(props.agentApi, "archive", "terminate");
+      getFormTemplate("archive", "terminate");
     }
   }, [isRescindAction, isTerminateAction]);
 
@@ -165,11 +157,15 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const response: CustomAgentResponseBody = await sendPostRequest(
-      `${props.agentApi}/contracts/service/commence`,
-      JSON.stringify(reqBody)
-    );
-    setResponse(response);
+    const res = await fetch(makeInternalRegistryAPIwithParams('event', "service", "commence"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: 'no-store',
+      credentials: 'same-origin',
+      body: JSON.stringify({ formData: reqBody }),
+    });
+    const customAgentResponse: CustomAgentResponseBody = await res.json();
+    setResponse(customAgentResponse);
     setIsLoading(false);
     setTimeout(() => {
       router.back();
@@ -185,18 +181,20 @@ function FormContents(
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const response: string = await sendGetRequest(
-        `${props.agentApi}/contracts/status/${id}`
-      );
-      setStatus(JSON.parse(response));
+      const res = await fetch(makeInternalRegistryAPIwithParams('contract_status', id), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      });
+      const responseString = await res.text();
+      setStatus(JSON.parse(responseString));
     };
 
     if (
       props.isPrimaryEntity &&
       !status &&
-      (props.formType === Paths.REGISTRY ||
-        props.formType === Paths.REGISTRY_DELETE ||
-        props.formType === Paths.REGISTRY_EDIT)
+      (props.formType === 'view' ||
+        props.formType === 'delete' ||
+        props.formType === 'edit')
     ) {
       getContractStatus();
     }
@@ -218,7 +216,6 @@ function FormContents(
               formRef={formRef}
               entityType={props.entityType}
               formType={props.formType}
-              agentApi={props.agentApi}
               setResponse={setResponse}
               primaryInstance={status?.iri}
               isPrimaryEntity={props.isPrimaryEntity}
@@ -226,7 +223,6 @@ function FormContents(
           ))}
         {formFields.length > 0 && (
           <FormTemplate
-            agentApi={props.agentApi}
             entityType={isRescindAction ? "rescission" : "termination"}
             formRef={formRef}
             fields={formFields}
@@ -250,7 +246,7 @@ function FormContents(
         )}
         <div className={styles["form-row"]}>
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === 'view' &&
             !response && status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <ClickActionButton // Rescind Button
@@ -260,7 +256,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === 'view' &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -271,7 +267,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === 'view' &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
               <ClickActionButton // Approval button
@@ -281,7 +277,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === 'view' &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -293,7 +289,7 @@ function FormContents(
               />
             )}
           {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === Paths.REGISTRY &&
+            props.formType === 'view' &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -304,7 +300,7 @@ function FormContents(
                 isActive={false}
               />
             )}
-          {props.formType != Paths.REGISTRY && !response && <ClickActionButton
+          {props.formType != 'view' && !response && <ClickActionButton
             icon="publish"
             tooltipText={dict.action.submit}
             onClick={onSubmit}
