@@ -1,15 +1,14 @@
-
 import React, { useMemo, useState } from "react";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SimpleSelector, {
   SelectOption,
 } from "ui/interaction/dropdown/simple-selector";
 import { extractResponseField, parseWordsForLabels } from "utils/client-utils";
+import Button from "ui/interaction/button";
 
 interface ColumnSearchComponentProps {
   instances: RegistryFieldValues[];
@@ -96,13 +95,15 @@ export default function ColumnSearchComponent(
         aria-label={"Filter Search"}
       />
       <div className="flex justify-evenly">
-        <ClickActionButton
-          icon="search"
+        <Button
+          size="icon"
+          leftIcon="search"
           tooltipText={dict.action.update}
           onClick={handleUpdate}
         />
-        <ClickActionButton
-          icon="replay"
+        <Button
+          size="icon"
+          leftIcon="replay"
           tooltipText={dict.action.clear}
           onClick={handleClear}
         />

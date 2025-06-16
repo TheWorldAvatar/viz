@@ -2,10 +2,10 @@ import React, { useMemo, useState } from "react";
 import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { FormFieldOptions, PropertyShape } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
 import { genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
+import Button from "ui/interaction/button";
 
 export interface FormArrayProps {
   agentApi: string;
@@ -41,20 +41,21 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col justify-start items-start gap-4 my-4">
-        <div className="flex flex-row items-center justify-start ">
-          <ClickActionButton
-            icon={"add"}
-            className="!-mr-1"
-            isTransparent={true}
+        <div className="flex flex-row items-center justify-start gap-2">
+          <Button
+            size="icon"
+            leftIcon="add"
+            className=""
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               event.preventDefault();
               append(emptyRow);
             }}
           />
           {fields.length > 1 && (
-            <ClickActionButton
-              icon={"remove"}
-              className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
+            <Button
+              leftIcon="remove"
+              size="icon"
+              variant="destructive"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
                 remove(currentIndex);

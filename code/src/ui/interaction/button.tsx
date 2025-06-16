@@ -8,11 +8,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     | "link"
     | "primary"
     | "secondary"
-    | "danger"
+    | "destructive"
     | "success"
     | "warning"
     | "outline"
-    | "ghost";
+    | "ghost"
+    | "active";
   size?: "sm" | "md" | "lg" | "default" | "icon";
   spinnerSize?: "sm" | "md" | "lg" | "icon";
   leftIcon?: "string" | React.ReactNode;
@@ -110,16 +111,18 @@ export default function Button({
     warning:
       "bg-amber-300 hover:bg-amber-500/80 dark:bg-amber-800 dark:hover:bg-amber-900/80",
     secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-    danger:
+    destructive:
       "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
     outline:
       "bg-transparent border border-border text-gray-700 hover:bg-gray-100",
-    ghost: "bg-transparent text-gray-700 hover:bg-gray-100",
+    ghost: "bg-transparent text-gray-700 hover:bg-gray-200",
+    active:
+      "bg-background border-1 border-black/10 text-gray-800 hover:bg-gray-200",
   };
 
   // Define styles for each size
   const sizeStyles = {
-    sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+    sm: "h-9 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
     md: "px-4 py-2 text-base",
     default: "h-9 px-4 py-2 has-[>svg]:px-3",
     lg: "h-10 rounded-md px-6 has-[>svg]:px-4",

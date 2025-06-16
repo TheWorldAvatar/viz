@@ -1,4 +1,3 @@
-
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -10,8 +9,8 @@ import React from "react";
 import { useDialog } from "hooks/float/useDialog";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import { useRouter } from "next/navigation";
+import Button from "../button";
 
 interface ModalProps {
   isOpen: boolean;
@@ -72,9 +71,11 @@ export default function Modal(props: Readonly<ModalProps>) {
                   }}
                   className="relative flex flex-col w-11/12 h-fit md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl"
                 >
-                  <ClickActionButton
-                    icon={"close"}
-                    className="absolute top-2 right-1 !bg-muted !m-0 !p-1  md:!p-1 lg:!p-1.5 !rounded-full hover:bg-primary"
+                  <Button
+                    leftIcon="close"
+                    size="icon"
+                    variant="ghost"
+                    className="absolute top-2 right-1 !rounded-full"
                     tooltipText={dict.action.close}
                     tooltipPosition="top-end"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) => {

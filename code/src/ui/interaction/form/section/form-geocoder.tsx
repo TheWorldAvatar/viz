@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
@@ -14,7 +13,6 @@ import {
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
@@ -26,6 +24,7 @@ import {
 } from "utils/server-actions";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
+import Button from "ui/interaction/button";
 
 interface FormGeocoderProps {
   agentApi: string;
@@ -287,17 +286,19 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       )}
       {!isInitialFetching.current &&
         (formType == Paths.REGISTRY_ADD || formType == Paths.REGISTRY_EDIT) && (
-          <div className="flex my-4 gap-1 -ml-2">
-            <ClickActionButton
-              icon={"search"}
+          <div className="flex my-4 gap-1 ">
+            <Button
+              leftIcon="search"
+              size="icon"
               tooltipText={dict.action.findAddress}
               onClick={props.form.handleSubmit(onSearchForAddress)}
             />
             {addressShapes.length > 0 &&
               (selectedAddress || isEmptyAddress) && (
-                <ClickActionButton
-                  icon={"edit_location"}
+                <Button
+                  leftIcon="edit_location"
                   label="Select Location"
+                  size="sm"
                   tooltipText={dict.action.selectLocation}
                   onClick={props.form.handleSubmit(onGeocoding)}
                 />
@@ -310,11 +311,11 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {addresses.length > 0 && !selectedAddress && (
-        <div className="flex flex-col w-fit my-2 ">
+        <div className="grid grid-col-1 lg:grid-cols-2  w-fit my-2 gap-2 ">
           {addresses.map((address, index) => (
             <button
               key={address.street + index}
-              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg "
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
               onClick={() => handleAddressClick(address)}
             >
               {String.fromCharCode(62)} {address.block}{" "}

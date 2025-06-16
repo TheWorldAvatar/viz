@@ -2,13 +2,13 @@ import { FieldError } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
 import { useDictionary } from "hooks/useDictionary";
 import { Icon } from "@mui/material";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import Button from "ui/interaction/button";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -76,8 +76,8 @@ export default function FormInputContainer(
             />
           )}
           {props.redirectOptions?.view && (
-            <ClickActionButton
-              icon="arrow_forward"
+            <Button
+              leftIcon="arrow_forward"
               label="View"
               onClick={props.redirectOptions.view}
             />

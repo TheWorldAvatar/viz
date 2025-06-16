@@ -6,13 +6,13 @@ import { Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import { useDictionary } from "hooks/useDictionary";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import ColumnSearchComponent from "../actions/column-search";
+import Button from "ui/interaction/button";
 
 interface TableRibbonProps {
   path: string;
@@ -122,11 +122,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
       <div className="flex justify-between md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-center !-ml-2 ">
-          <ClickActionButton
-            icon={"cached"}
-            onClick={triggerRefresh}
-            isTransparent={true}
-          />
+          <Button size="icon" leftIcon="cached" onClick={triggerRefresh} />
           {props.instances.length > 0 && (
             <ColumnSearchComponent
               instances={props.instances}
@@ -134,6 +130,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />
           )}
         </div>
+        {/* <Button
+          variant="secondary"
+          size="lg"
+          disabled={true}
+          loading
+          leftIcon={
+            <Icon className="material-symbols-outlined ">{"download"}</Icon>
+          }
+        >
+          Hello
+        </Button> */}
         <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
           {(!keycloakEnabled ||
             !permissionScheme ||

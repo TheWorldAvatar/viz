@@ -24,11 +24,11 @@ import {
   sendGetRequest,
   sendPostRequest,
 } from "utils/server-actions";
-import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+import Button from "../button";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -227,11 +227,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       </div>
       <div className="flex justify-between p-2 ">
         {!formRef.current?.formState?.isSubmitting && !response && (
-          <ClickActionButton
-            icon={"cached"}
+          <Button
+            leftIcon="cached"
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
-            isTransparent={true}
+            size="icon"
           />
         )}
         {formRef.current?.formState?.isSubmitting ||
@@ -247,10 +247,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
-              <ClickActionButton // Rescind Button
-                icon={"error"}
+              <Button // Rescind Button
+                leftIcon="error"
                 label="Rescind"
-                className="mr-2 !bg-amber-300 hover:!bg-amber-500/80 dark:!bg-amber-800 dark:hover:!bg-amber-900/80"
+                variant="warning"
+                className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
@@ -262,12 +263,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
-              <ClickActionButton // Terminate Button
-                icon={"cancel"}
+              <Button // Terminate Button
+                leftIcon="cancel"
                 label="Cancel"
+                variant="destructive"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
-                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -276,8 +277,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             props.formType === Paths.REGISTRY &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
-              <ClickActionButton // Approval button
-                icon={"done_outline"}
+              <Button // Approval button
+                leftIcon="done_outline"
                 label="Approve"
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
@@ -316,18 +317,18 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               />
             )}
           {props.formType != Paths.REGISTRY && !response && (
-            <ClickActionButton
-              icon="send"
+            <Button
+              leftIcon="send"
               label="Submit"
               tooltipText={dict.action.submit}
               onClick={onSubmit}
             />
           )}
           {!response && (isRescindAction || isTerminateAction) && (
-            <ClickActionButton
+            <Button
               // Remove the rescind and terminate action view back to original view if no response
-              icon={"first_page"}
-              className="!bg-gray-300 hover:!bg-gray-400/80"
+              leftIcon="first_page"
+              variant="secondary"
               tooltipText={dict.action.cancel}
               onClick={() => {
                 setIsRescindAction(false);

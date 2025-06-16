@@ -6,11 +6,11 @@ import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import FileInputButton from "ui/interaction/action/file/file-input";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { CustomAgentResponseBody } from "utils/server-actions";
+import Button from "ui/interaction/button";
 
 interface FileModalProps {
   url: string;
@@ -86,8 +86,10 @@ export default function FileModal(props: Readonly<FileModalProps>) {
             response && <ResponseComponent response={response} />}
           {isUploading && <LoadingSpinner isSmall={false} />}
           {!response?.success && (
-            <ClickActionButton
-              icon={"keyboard_tab"}
+            <Button
+              leftIcon="keyboard_tab"
+              size="icon"
+              className="mt-2"
               onClick={onSubmit}
               tooltipText={dict.action.submit}
               tooltipPosition="bottom-start"

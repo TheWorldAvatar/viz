@@ -4,11 +4,11 @@ import { UseFormReturn } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import {
   FORM_STATES,
   getRegisterOptions,
 } from "ui/interaction/form/form-utils";
+import Button from "ui/interaction/button";
 
 export interface NumericInputFieldProps {
   field: PropertyShape;
@@ -138,19 +138,18 @@ export default function NumericInputField(
           )
         )}
       />
-      <div className="flex absolute -right-2 top-0  ">
-        <ClickActionButton
-          icon="add"
-          className="!rounded-l-lg !rounded-r-none !-mr-2 "
+      <div className="flex absolute -right-2 top-0  mr-2">
+        <Button
+          leftIcon="add"
+          className="rounded-l-lg rounded-r-none "
           tooltipText={dict.action.clickIncrease}
-          isTransparent={true}
           onClick={handleIncrement}
         />
-        <ClickActionButton
-          icon="remove"
-          className="!rounded-l-none !rounded-r-lg !bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
+        <Button
+          leftIcon="remove"
+          variant="destructive"
+          className="rounded-l-none rounded-r-lg"
           tooltipText={dict.action.clickDecrease}
-          isTransparent={true}
           onClick={handleDecrement}
         />
       </div>

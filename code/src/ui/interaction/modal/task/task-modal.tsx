@@ -18,7 +18,6 @@ import {
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
@@ -33,6 +32,7 @@ import {
   sendPostRequest,
   updateEntity,
 } from "utils/server-actions";
+import Button from "ui/interaction/button";
 
 interface TaskModalProps {
   entityType: string;
@@ -319,11 +319,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       </section>
       <section className="flex justify-between p-2">
         {!formRef.current?.formState?.isSubmitting && !response && (
-          <ClickActionButton
-            icon={"cached"}
-            onClick={triggerRefresh}
-            isTransparent={true}
-          />
+          <Button leftIcon="cached" size="icon" onClick={triggerRefresh} />
         )}
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
@@ -344,8 +340,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isDispatchAction ||
               isReportAction
             ) && (
-              <ClickActionButton
-                icon={"done_outline"}
+              <Button
+                leftIcon="done_outline"
                 label="Complete"
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
@@ -361,12 +357,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isDispatchAction ||
               isReportAction
             ) && (
-              <ClickActionButton
-                icon={"assignment"}
+              <Button
+                leftIcon="assignment"
                 label="Assign"
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
-                className="!bg-blue-300 hover:!bg-blue-500/80 dark:!bg-blue-800 dark:hover:!bg-blue-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -379,12 +374,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isDispatchAction ||
               isReportAction
             ) && (
-              <ClickActionButton
-                icon={"cancel"}
+              <Button
+                leftIcon="cancel"
                 label="Cancel"
+                variant="destructive"
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
-                className="!bg-red-300 hover:!bg-red-500/80 dark:!bg-red-800 dark:hover:!bg-red-900/80"
               />
             )}
           {(!keycloakEnabled ||
@@ -397,12 +392,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isDispatchAction ||
               isReportAction
             ) && (
-              <ClickActionButton
-                icon={"report"}
+              <Button
+                leftIcon="report"
                 label="Report"
+                variant="warning"
                 tooltipText={dict.action.report}
                 onClick={genBooleanClickHandler(setIsReportAction)}
-                className="!bg-amber-300 hover:!bg-amber-500/80 dark:!bg-amber-800 dark:hover:!bg-amber-900/80"
               />
             )}
           {!response &&
@@ -410,8 +405,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isCompleteAction ||
               isDispatchAction ||
               isReportAction) && (
-              <ClickActionButton
-                icon={"send"}
+              <Button
+                leftIcon="send"
                 label="Submit"
                 tooltipText={dict.action.submit}
                 onClick={onSubmit}
@@ -421,12 +416,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             isCompleteAction ||
             isDispatchAction ||
             isReportAction) && (
-            <ClickActionButton
-              icon={"first_page"}
+            <Button
+              leftIcon="first_page"
+              variant="secondary"
               label="Return"
               tooltipText={dict.action.return}
               onClick={onReturnInAction}
-              className="!bg-gray-300 hover:!bg-gray-400/80"
             />
           )}
         </div>
