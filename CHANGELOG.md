@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.28.0
+
+### Changes
+
+- Beginning of major data fetching overhaul, starting with registry data. External API calls are now proxied through `next.js` via custom API routes as specified in [the guides](https://nextjs.org/docs/pages/building-your-application/routing/api-routes). Future versions will replace Scenario API endpoints as well as the geoserver proxy and other external calls.
+
+### Improvements
+
+- The above design pattern significantly bolsters security of the viz app against SSRF and potential DDOS vulnerability.
+
 ## 5.27.5
 
 ### Changes
@@ -15,9 +25,6 @@
 ### Changes
 
 - Implemented Mobile Menu Navigation
-
-### Changes
-
 - Updated the landing page design
 
 ### Bug Fixes

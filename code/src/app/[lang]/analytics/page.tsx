@@ -14,7 +14,7 @@ import { NavBarItemSettings, UISettings } from 'types/settings';
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.DASHBOARD);
   return {
     title: metadata?.title ?? PageTitles.DASHBOARD,
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * @returns React component for display. 
  */
 export default function DashContainer() {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getDefaultSettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   if (uiSettings.resources?.dashboard?.url) {
     return (
       <div className={styles.dashContainer}>

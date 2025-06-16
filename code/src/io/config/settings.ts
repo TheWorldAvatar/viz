@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { JsonObject } from 'types/json';
-import { UISettings } from 'types/settings';
+import { MapSettings, UISettings } from 'types/settings';
 
 /**
  * Handles the retrieval and storage of settings from the user provided configuration files.
@@ -16,29 +16,29 @@ import { UISettings } from 'types/settings';
 export default class SettingsStore {
 
   // Location of all configuration files
-  private static readonly DEFAULT_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
+  private static readonly UI_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
   private static readonly DATA_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/data-settings.json");
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
 
   // Cached settings
-  private static DEFAULT_SETTINGS: string | null = null;
-  private static MAP_SETTINGS: string | null = null;
+  private static UI_SETTINGS: UISettings | null = null;
+  private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
 
   /**
    * Retrieves default settings
    */
-  public static getDefaultSettings(): string {
-    if (!this.DEFAULT_SETTINGS) {
+  public static getUISettings(): UISettings {
+    if (!this.UI_SETTINGS) {
       this.readInitialisationSettings();
     }
-    return this.DEFAULT_SETTINGS;
+    return this.UI_SETTINGS;
   }
 
   /**
    * Retrieves default map settings
    */
-  public static getMapSettings(): string {
+  public static getMapSettings(): MapSettings {
     if (!this.MAP_SETTINGS) {
       this.readMapSettings();
     }
@@ -59,14 +59,14 @@ export default class SettingsStore {
    * Reads the initialisation settings.
    */
   public static readInitialisationSettings(): void {
-    const settings: string = this.readFile(this.DEFAULT_SETTINGS_FILE);
+    const settings: string = this.readFile(this.UI_SETTINGS_FILE);
     const jsonifiedSettings: UISettings = JSON.parse(settings);
     if (jsonifiedSettings.resources?.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== ""){
       jsonifiedSettings.modules.dashboard = true;
     } else {
       jsonifiedSettings.modules.dashboard = false;
     }
-    this.DEFAULT_SETTINGS = JSON.stringify(jsonifiedSettings);
+    this.UI_SETTINGS = jsonifiedSettings;
   }
 
   /**
@@ -74,7 +74,14 @@ export default class SettingsStore {
    */
   public static readMapSettings(): void {
     const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
-    this.MAP_SETTINGS = settings;
+    this.MAP_SETTINGS = JSON.parse(settings);
+  }
+
+  public static async getRegistryURL(): Promise<string> {
+    if (!this.UI_SETTINGS) {
+      this.readInitialisationSettings();
+    }
+    return this.UI_SETTINGS.resources.registry.url
   }
 
   /**
