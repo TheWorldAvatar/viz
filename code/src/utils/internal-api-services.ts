@@ -14,7 +14,7 @@ export function makeInternalRegistryAPIwithParams(internalIdentifier: InternalAp
       break;
     case "concept":
       searchParams = new URLSearchParams({
-        uri: encodeURIComponent(params[0]),
+        uri: params[0],
       });
       break;
     case "contracts":

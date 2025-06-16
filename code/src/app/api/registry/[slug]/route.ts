@@ -126,7 +126,7 @@ function makeExternalEndpoint(agentBaseApi: string, slug: InternalApiIdentifier,
       const uri: string = searchParams.get("uri");
 
       const urlObj: URL = new URL(`${agentBaseApi}/type`);
-      urlObj.searchParams.set("uri", encodeURIComponent(uri));
+      urlObj.searchParams.set("uri", uri);
       return urlObj.toString();
     }
     case "contracts": {
