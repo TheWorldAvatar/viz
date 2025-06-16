@@ -59,7 +59,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== Routes.REGISTRY_GENERAL && (
-        <div className="flex items-center justify-center sm:gap-4 bg-gray-200 max-w-fit  p-1.5 text-center rounded-lg">
+        <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 max-w-fit p-1.5 text-center rounded-lg flex-wrap">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.pendingRegistry) && (
@@ -110,7 +110,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
       <div className="flex justify-between md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-center !-ml-2 ">
-          <Button size="icon" leftIcon="cached" onClick={triggerRefresh} />
+          <Button
+            className="ml-2"
+            size="icon"
+            leftIcon="cached"
+            onClick={triggerRefresh}
+          />
           {props.instances.length > 0 && (
             <ColumnSearchComponent
               instances={props.instances}
@@ -118,17 +123,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />
           )}
         </div>
-        {/* <Button
-          variant="secondary"
-          size="lg"
-          disabled={true}
-          loading
-          leftIcon={
-            <Icon className="material-symbols-outlined ">{"download"}</Icon>
-          }
-        >
-          Hello
-        </Button> */}
         <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
           {(!keycloakEnabled ||
             !permissionScheme ||

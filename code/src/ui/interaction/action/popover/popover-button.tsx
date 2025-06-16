@@ -1,16 +1,14 @@
 "use client";
 
-import styles from "../action.module.css";
-
-import ActionButton, { ActionButtonProps } from "../action";
 import { usePopover } from "hooks/float/usePopover";
+import Button, { ButtonProps } from "ui/interaction/button";
 import {
   FloatingPortal,
   Placement,
   useTransitionStyles,
 } from "@floating-ui/react";
 
-interface PopoverActionButtonProps extends ActionButtonProps {
+interface PopoverActionButtonProps extends ButtonProps {
   children: React.ReactNode;
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,28 +22,28 @@ interface PopoverActionButtonProps extends ActionButtonProps {
  * @param {boolean} isOpen Optional state for popover.
  * @param setIsOpen Optional dispatch action to control the open state of popover.
  * @param {Placement} placement Optional position of popover.
- * @param {string} icon The Material icon name.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {Placement} tooltipPosition Optional tooltip positioning.
- * @param {boolean} isHoverableDisabled An optional parameter to disable hovering effects.
- * @param {boolean} isTransparent An optional parameter to create a transparent icon button.
- * @param {string} styling.hover An optional styling object for hover effects on text and icon.
- * @param {string} styling.text An optional styling object for text and icon.
- * @param {string} styling.container An optional styling object for the pop up container.
+ * @param {string} leftIcon Optional left icon, can be a string or React node.
+ * @param {string} rightIcon Optional right icon, can be a string or React node.
+ * @param {string} size Optional button size, e.g., "sm", "md", "lg", "default", or "icon".
+ * @param {string} variant Optional button variant, e.g., "primary", "secondary", "destructive", etc.
+ * @param {ButtonProps} rest Additional button properties that are passed to the button component.
+
  */
 export default function PopoverActionButton({
   children,
   isOpen,
   setIsOpen,
   placement,
-  icon,
+  leftIcon,
+  rightIcon,
   label,
+  size,
   tooltipText,
   tooltipPosition,
-  isHoverableDisabled,
-  isTransparent,
-  styling,
+  variant,
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const popover = usePopover(placement, isOpen, setIsOpen);
@@ -60,16 +58,17 @@ export default function PopoverActionButton({
   return (
     <>
       <div ref={popover.refs.setReference} {...popover.getReferenceProps()}>
-        <ActionButton
-          icon={icon}
+        <Button
+          leftIcon={leftIcon}
+          rightIcon={rightIcon}
           className={rest.className}
           label={label}
           tooltipText={tooltipText}
           tooltipPosition={tooltipPosition}
           onClick={rest.onClick}
-          isHoverableDisabled={isHoverableDisabled}
-          isTransparent={isTransparent}
-          styling={styling}
+          size={size}
+          variant={variant}
+          {...rest}
         />
       </div>
       {popover.isOpen && (
@@ -78,7 +77,6 @@ export default function PopoverActionButton({
             ref={popover.refs.setFloating}
             style={{
               ...popover.floatingStyles,
-
               zIndex: 999998, // Second highest z-index so it is below the tooltips
             }}
             {...popover.getFloatingProps()}
@@ -87,7 +85,7 @@ export default function PopoverActionButton({
               style={{
                 ...transition.styles,
               }}
-              className={`${styles.popover} ${styling?.container}`}
+              className="flex flex-col gap-y-[0.5rem] p-2 bg-muted border-1 border-border rounded-lg shadow-md"
             >
               {children}
             </div>

@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
+
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SimpleSelector, {
   SelectOption,
@@ -72,9 +73,10 @@ export default function ColumnSearchComponent(
   return (
     <PopoverActionButton
       placement="bottom-start"
-      icon="search"
+      leftIcon="search"
       tooltipText={dict.action.filter}
-      isTransparent={true}
+      size="icon"
+      className="ml-2"
     >
       <SimpleSelector
         options={columnSearchOptions}
