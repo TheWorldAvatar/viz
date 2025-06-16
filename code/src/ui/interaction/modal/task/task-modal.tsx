@@ -360,6 +360,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="assignment"
                 label="Assign"
+                variant="success"
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />

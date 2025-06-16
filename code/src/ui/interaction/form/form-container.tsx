@@ -296,7 +296,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label="Edit"
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
-                variant="secondary"
+                variant="success"
               />
             )}
           {(!keycloakEnabled ||
