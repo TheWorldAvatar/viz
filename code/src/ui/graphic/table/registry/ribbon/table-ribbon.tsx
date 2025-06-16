@@ -8,12 +8,11 @@ import { Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
-import ColumnSearchComponent from "../actions/column-search";
 import Button from "ui/interaction/button";
+import ColumnSearchComponent from "../actions/column-search";
 
 interface TableRibbonProps {
   path: string;
@@ -161,7 +160,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
           {props.lifecycleStage == Routes.REGISTRY_REPORT && (
             <ReturnButton
-              icon="first_page"
+              leftIcon="first_page"
               label={`${dict.action.backTo} ${props.entityType.replace(
                 "_",
                 " "
@@ -173,10 +172,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             permissionScheme.hasPermissions.invoice) &&
             props.lifecycleStage == Routes.REGISTRY_REPORT && (
               <RedirectButton
-                icon="print"
+                leftIcon="print"
                 label={dict.action.generateReport}
                 url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
-                isActive={false}
               />
             )}
           {(!keycloakEnabled ||

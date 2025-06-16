@@ -37,8 +37,7 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
                 form={props.form}
                 options={{ labelStyle: [styles["form-input-label"]] }}
               />
-            ) : (
-              <FormInputField
+              : <FormInputField
                 field={props.field}
                 form={props.form}
                 options={{
@@ -46,8 +45,7 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
                   inputStyle: [styles["form-input-value"]],
                   labelStyle: [styles["form-input-label"]],
                 }}
-              />
-            )}
+              />}
           </div>
         </div>
       );

@@ -14,10 +14,7 @@ export default function KeycloakUserButton() {
 
   return (
     <PopoverActionButton
-      icon={"person"}
-      styling={{ text: styles.text }}
-      isHoverableDisabled={true}
-      isTransparent={true}
+      leftIcon={"person"}
       placement="bottom"
       className={styles.userMenuButton}
     >

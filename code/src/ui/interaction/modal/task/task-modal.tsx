@@ -13,7 +13,7 @@ import {
   FORM_IDENTIFIER,
   FormTemplateType,
   PropertyShapeOrGroup,
-  RegistryTaskOption,
+  RegistryTaskOption
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
@@ -95,10 +95,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     []
   );
 
-  const taskSubmitAction: SubmitHandler<FieldValues> = async (
-    formData: FieldValues
-  ) => {
-    let url = `${props.registryAgentApi}/contracts/service/`;
+  const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+    let action = "";
     if (isDispatchAction) {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
@@ -106,129 +104,62 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       action = "complete";
       formData[FORM_STATES.ORDER] = 1;
     } else if (isCancelAction) {
-      url += "cancel";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
-        props.task.status
-      );
+      action = "cancel";
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else if (isReportAction) {
-      url += "report";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
-        props.task.status
-      );
+      action = "report";
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
     } else {
       return;
     }
-    // Submit post requests if they are not dispatch action
-    submitLifecycleAction(formData, url, !isDispatchAction);
-  };
+    submitLifecycleAction(formData, action, !isDispatchAction);
+  }
+
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
-  const submitLifecycleAction = async (
-    formData: FieldValues,
-    endpoint: string,
-    isPost: boolean
-  ) => {
+  const submitLifecycleAction = async (formData: FieldValues, action: string, isPost: boolean) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      const res = await fetch(
-        makeInternalRegistryAPIwithParams("event", "service", action),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-          credentials: "same-origin",
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: 'no-store',
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
+      });
       response = await res.json();
     } else {
-      const res = await fetch(
-        makeInternalRegistryAPIwithParams("event", "service", action),
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-          credentials: "same-origin",
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        cache: 'no-store',
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
+      });
       response = await res.json();
     }
     setResponse(response);
     setFormFields([]);
     setDispatchFields([]);
-  };
-
+  }
   // A hook that fetches the form template with dispatch details included
   useEffect(() => {
     // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplateWithDispatchDetails = async (
-      endpoint: string,
-      targetId: string
-    ): Promise<void> => {
+    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
-      const id: string = getAfterDelimiter(targetId, "/");
-      const template: PropertyShape[] = await getLifecycleFormTemplate(
-        endpoint,
-        "service",
-        "dispatch",
-        id
-      );
-      const group: PropertyGroup = {
-        "@id": "dispatch group",
-        "@type": "http://www.w3.org/ns/shacl#PropertyGroup",
-        label: {
-          "@value": dict.title.dispatchInfo,
-        },
-        comment: {
-          "@value": "The dispatch details specified for this service.",
-        },
-        order: 1000,
-        property: template.filter((shape) => shape.name[VALUE_KEY] != "id"), // Filter out id field
-      };
-      setDispatchFields([group]);
+      const template: FormTemplateType = await fetch(makeInternalRegistryAPIwithParams("event", lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
+        cache: 'no-store',
+        credentials: 'same-origin'
+      }).then(res => res.json());
+      setFormFields(template.property);
       setIsFetching(false);
-    };
-    // Only execute this for orders that are pending execution
-    if (
-      props.task.status === Status.PENDING_EXECUTION ||
-      props.task.status === Status.COMPLETED
-    ) {
-      getFormTemplateWithDispatchDetails(props.registryAgentApi, props.task.id);
     }
-  }, []);
-
-  // A hook that fetches the form template for executing an action
-  useEffect(() => {
-    // Declare an async function to retrieve the form template for executing the target action
-    // Target id is optional, and will default to form
-    const getFormTemplate = async (
-      endpoint: string,
-      lifecycleStage: string,
-      eventType: string,
-      targetId?: string
-    ): Promise<void> => {
-      setIsFetching(true);
-      const template: PropertyShapeOrGroup[] = await getLifecycleFormTemplate(
-        endpoint,
-        lifecycleStage,
-        eventType,
-        targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER // use the target id if available, else, default to an empty form
-      );
-      setFormFields(template);
-      setIsFetching(false);
-    };
 
     if (isDispatchAction) {
-      getFormTemplate(
-        props.registryAgentApi,
-        "service",
-        "dispatch",
-        props.task.id
-      );
+      getFormTemplate("service", "dispatch", props.task.id);
     } else if (isCompleteAction) {
       getFormTemplate("service", "complete");
     } else if (isReportAction) {
@@ -273,13 +204,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className={styles["section-contents"]}>
+      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
         {!isFetching &&
           (isReportAction ||
             isCancelAction ||
             isCompleteAction ||
             isDispatchAction) && (
-            <p className={styles["instructions"]}>
+            <p className="text-lg mb-4">
               {isCompleteAction && dict.message.completeInstruction}
               {isDispatchAction &&
                 `${dict.message.dispatchInstruction} ${props.task.date}:`}
@@ -304,8 +235,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             <FormComponent
               formRef={formRef}
               entityType={props.entityType}
-              formType={Paths.REGISTRY}
-              agentApi={props.registryAgentApi}
+              formType={"view"}
               setResponse={setResponse}
               id={getAfterDelimiter(props.task.contract, "/")}
               additionalFields={dispatchFields}
@@ -313,13 +243,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           )}
         {formFields.length > 0 && !refreshFlag && (
           <FormTemplate
-            agentApi={props.registryAgentApi}
             entityType={
               isReportAction
                 ? "report"
                 : isCancelAction
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -348,7 +277,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
             props.task.status.toLowerCase().trim() ==
-              Status.PENDING_EXECUTION &&
+            Status.PENDING_EXECUTION &&
             !(
               isCancelAction ||
               isCompleteAction ||
@@ -432,14 +361,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             isCompleteAction ||
             isDispatchAction ||
             isReportAction) && (
-            <Button
-              leftIcon="first_page"
-              variant="secondary"
-              label="Return"
-              tooltipText={dict.action.return}
-              onClick={onReturnInAction}
-            />
-          )}
+              <Button
+                leftIcon="first_page"
+                variant="secondary"
+                label="Return"
+                tooltipText={dict.action.return}
+                onClick={onReturnInAction}
+              />
+            )}
         </div>
       </section>
     </Modal>
