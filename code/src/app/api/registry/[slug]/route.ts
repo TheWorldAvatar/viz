@@ -227,7 +227,7 @@ async function parseBody(req: NextRequest) {
   }
 }
 
-async function sendRequest(url: string, methodType: string, bearerToken: string | null, body?: string): Promise<CustomAgentResponseBody> {
+async function sendRequest(url: string, methodType: "POST" | "PUT" | "DELETE", bearerToken: string | null, body?: string): Promise<CustomAgentResponseBody> {
   const options: RequestInit = {
     method: methodType,
     headers: {
