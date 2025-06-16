@@ -70,9 +70,9 @@ export default function Button({
       "bg-amber-300 hover:bg-amber-500/80 dark:bg-amber-800 dark:hover:bg-amber-900/80",
     secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
     destructive:
-      "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+      "bg-destructive text-primary-foreground shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
     outline:
-      "bg-transparent border border-border text-gray-700 hover:bg-gray-100",
+      "bg-transparent border border-border text-gray-700 hover:bg-gray-200",
     ghost: "bg-transparent text-gray-700 hover:bg-gray-200",
     active:
       "bg-background border-1 border-border text-gray-800 hover:bg-gray-200 ",

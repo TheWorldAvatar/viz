@@ -319,7 +319,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       </section>
       <section className="flex justify-between p-2">
         {!formRef.current?.formState?.isSubmitting && !response && (
-          <Button leftIcon="cached" size="icon" onClick={triggerRefresh} />
+          <Button
+            leftIcon="cached"
+            variant="outline"
+            size="icon"
+            onClick={triggerRefresh}
+          />
         )}
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
@@ -360,7 +365,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="assignment"
                 label="Assign"
-                variant="success"
+                variant="primary"
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
               />
@@ -378,7 +383,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="cancel"
                 label="Cancel"
-                variant="destructive"
+                variant="secondary"
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
               />
@@ -396,7 +401,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="report"
                 label="Report"
-                variant="warning"
+                variant="secondary"
                 tooltipText={dict.action.report}
                 onClick={genBooleanClickHandler(setIsReportAction)}
               />

@@ -229,6 +229,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         {!formRef.current?.formState?.isSubmitting && !response && (
           <Button
             leftIcon="cached"
+            variant="outline"
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
@@ -250,7 +251,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button // Rescind Button
                 leftIcon="error"
                 label="Rescind"
-                variant="warning"
+                variant="secondary"
                 className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
@@ -266,7 +267,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button // Terminate Button
                 leftIcon="cancel"
                 label="Cancel"
-                variant="destructive"
+                variant="secondary"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
@@ -296,7 +297,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 label="Edit"
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
-                variant="success"
+                variant="primary"
               />
             )}
           {(!keycloakEnabled ||
