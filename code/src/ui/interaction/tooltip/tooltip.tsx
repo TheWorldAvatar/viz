@@ -1,58 +1,57 @@
 import styles from './tooltip.module.css';
 
-import React, { useState } from "react";
-import { autoUpdate, flip, FloatingPortal, offset, shift, useFloating, useHover, useInteractions } from "@floating-ui/react";
+import { FloatingPortal, Placement, useTransitionStyles } from "@floating-ui/react";
+import { useTooltip } from 'hooks/float/useTooltip';
 
 export interface TooltipProps {
     text: string;
     children: React.ReactNode;
-    placement?: 'top' | 'bottom' | 'left' | 'right';
+    placement?: Placement;
 }
 
-export function useTooltip(text?: string) {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-
-    const { refs, floatingStyles, context } = useFloating({
-        open: isOpen && !!text,
-        onOpenChange: setIsOpen,
-        middleware: [offset(8), flip(), shift()],
-        whileElementsMounted: autoUpdate,
-        placement: "top"
+/**
+ * A floating component to render labels upon hovering or focus.
+ * 
+ * @param {string} text Tooltip text content.
+ * @param {Placement} placement Position of tooltip.
+ */
+export default function Tooltip(props: Readonly<TooltipProps>) {
+    const tooltip = useTooltip(props.placement);
+    const transition = useTransitionStyles(tooltip.context, {
+        duration: 200,
+        initial: {
+            opacity: 0,
+            transform: "scale(0.9)",
+        },
     });
-
-    const hover = useHover(context, {
-        enabled: !!text,
-        move: false
-    });
-
-    const { getReferenceProps } = useInteractions([hover]);
-
-    return {
-        isOpen,
-        refs,
-        floatingStyles,
-        getReferenceProps,
-        text
-    };
-}
-
-export function renderTooltip(tooltipProps: ReturnType<typeof useTooltip>) {
-    const { isOpen, refs, floatingStyles, text } = tooltipProps;
-
-    if (!isOpen || !text) return null;
-
     return (
-        <FloatingPortal>
+        <>
             <div
-                ref={refs.setFloating}
-                style={{
-                    ...floatingStyles,
-                    zIndex: 999999 // Highest z-index so it is above modal content
-                }}
-                className={styles.tooltip}
+                ref={tooltip.refs.setReference}
+                {...tooltip.getReferenceProps()}
             >
-                {text}
+                {props.children}
             </div>
-        </FloatingPortal >
+            {// Render tooltip only if the text is provided and the tooltip is open
+                props.text && tooltip.isOpen && transition.isMounted && <FloatingPortal>
+                    <div
+                        ref={tooltip.refs.setFloating}
+                        style={{
+                            ...tooltip.floatingStyles,
+                            zIndex: 999999 // Highest z-index so it is above modal content
+                        }}
+                        {...tooltip.getFloatingProps()}
+                    >
+                        <div
+                            style={{
+                                ...transition.styles,
+                            }}
+                            className={styles.tooltip}
+                        >
+                            {props.text}
+                        </div>
+                    </div>
+                </FloatingPortal >}
+        </>
     );
-}
+};

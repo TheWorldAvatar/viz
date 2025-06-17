@@ -1,4 +1,5 @@
-import { DefaultPageThumbnailProps } from "ui/pages/page-thumbnail";
+import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
+import { HasPermissions } from "./auth";
 
 /**
  * Interface of default settings for landing page.
@@ -7,17 +8,15 @@ export type UISettings = {
   branding: {
     'navbarLogo': string | string[]; // Backwards compatibility but do not use this going forward
     'navbar': string | string[];
-    'landing': string;
-    'landingDark': string;
   },
-  modules: {  
-    'landing' : boolean;
-    'map' : boolean;
-    'dashboard' : boolean;  
-    'help' : boolean;
-    'registry' : boolean;
+  modules: {
+    'landing': boolean;
+    'map': boolean;
+    'dashboard': boolean;
+    'help': boolean;
+    'registry': boolean;
   },
-  links?: DefaultPageThumbnailProps[],
+  links?: NavBarItemSettings[],
   resources?: {
     [key: 'scenario' | 'registry' | string]: {
       url: string;
@@ -25,6 +24,15 @@ export type UISettings = {
       paths?: string[];
     };
   }
+}
+
+export interface NavBarItemSettings {
+  url: string;
+  title: string;
+  icon: string;
+  type: NavBarItemType;
+  caption?: string;
+  permission?: keyof HasPermissions;
 }
 
 // Interface of map settings for visualisation page

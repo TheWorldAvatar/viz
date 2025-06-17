@@ -7,22 +7,14 @@ updates:
           - "*"
     directory: "/code"
     schedule:
-      interval: "weekly"
-    reviewers:
-      - "Ushcode"
-
+      interval: "monthly"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: "weekly"
-    reviewers:
-      - "Ushcode"
-
+      interval: "monthly"
       
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-    reviewers:
-      - "Ushcode"
+      interval: "monthly"

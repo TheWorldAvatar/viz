@@ -4,10 +4,12 @@
     "delete": "Delete",
     "edit": "Edit",
     "view": "view",
+    "close": "Close",
     "refresh": "Refresh",
     "backTo": "back to",
     "export": "export data",
     "overview": "overview",
+    "file": "Choose file",
     "filter": "Filter",
     "search": "SEARCH",
     "showAll": "SHOW ALL",
@@ -110,6 +112,10 @@
     "mapSelectInstruction": "Select a feature...",
     "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
     "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information.",
+    "noFileChosen": "No file chosen",
+    "noFileChosenError": "No file is chosen. Please choose a file.",
+    "fileUploadError": "File upload failed! Please try again.",
+    "contactTechTeam": "Contact your technical team if assistance is required.",
     "na": "Not applicable"
   },
   "nav": {
@@ -121,6 +127,7 @@
       "help": "Get help for this web platform"
     },
     "title": {
+      "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
       "registry": "Registry",
@@ -130,11 +137,13 @@
       "archive": "Archive"
     },
     "tooltip": {
-      "home": "Return to landing page.",
-      "map": "Geospatial view.",
-      "dashboard": "Analytics view.",
-      "registry": "Open registry.",
-      "help": "Open help page."
+      "home": "Return to landing page",
+      "map": "Geospatial view",
+      "dashboard": "Analytics view",
+      "registry": "Open registry",
+      "help": "Open help page",
+      "landingRedirect": "Click to open the '{replace}' page",
+      "fileUpload": "Click to upload a file"
     }
   },
   "title": {

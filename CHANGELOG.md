@@ -1,7 +1,106 @@
-
 # TWA-VF Change Log
 
-[//]: # (Note that version headers need to start with "## " characters to be picked up by some automated scripts)
+[//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
+
+## 5.28.3
+
+### Chores
+
+- Bump node version in dockerfile to 24.2
+
+## 5.28.2
+
+### Chores
+
+- Dependabot _security_ update #218
+
+## 5.28.1
+
+### Chores
+
+- Dependabot update #220
+
+### Changes
+
+- Beginning of major data fetching overhaul, starting with registry data. External API calls are now proxied through `next.js` via custom API routes as specified in [the guides](https://nextjs.org/docs/pages/building-your-application/routing/api-routes). Future versions will replace Scenario API endpoints as well as the geoserver proxy and other external calls.
+
+### Improvements
+
+- The above design pattern significantly bolsters security of the viz app against SSRF and potential DDOS vulnerability.
+
+## 5.27.5
+
+### Changes
+
+- Made the left navigation menu available on all pages
+- Made the left navigation menu collapsable
+- Changed the icons in the navigation menus
+
+## 5.27.4
+
+### Changes
+
+- Implemented Mobile Menu Navigation
+- Updated the landing page design
+
+### Bug Fixes
+
+- Fix the enable and disable of the help page in ui-settings
+
+## 5.27.3
+
+### Changes
+
+- Updated the landing page design
+
+### Bug Fixes
+
+- Fix the enable and disable of the help page in ui-settings
+
+## 5.27.2
+
+### Changes
+
+- Updated the user menu design
+
+## 5.27.1
+
+### Chores
+
+- Dependabot update #201
+
+## 5.27.0
+
+###
+
+- Initial test configuration using jest. Coverage to be extended
+
+## 5.26.1
+
+### Updates
+
+- Dependabot update #196
+
+## 5.26.0
+
+### Updates
+
+- Update node to v24
+
+## 5.25.0
+
+### Changes
+
+- Addition of a file upload functionality with permissions to a target endpoint on the landing page
+- Simplify page thumbnail code
+- Created reusable tooltips, popovers, and modals using Floating UI
+- Replaced all MUI tooltips and react-modal modals with the new floating elements
+- Updated tooltip messages
+- Removed react-modal library
+
+### Bug fix
+
+- Fix the console error when keycloak is disabled but user credentials are being fetched
 
 ## 5.24.5
 
@@ -72,14 +171,14 @@
 ### Changes
 
 - Ignore authorisation in language middleware to prevent incorrect redirection when keycloak is deployed on the same host but different path to the main viz
-  
+
 ## 5.22.1
 
 ### Changes
 
 - Dependabot bump #163
 - Update package manager version
-  
+
 ## 5.22.0
 
 ### Changes
@@ -89,7 +188,7 @@
 - Pass credentials where relevant
 - Simplify some data fetching
 - Simplify some scenario state management
-  
+
 ## 5.21.0
 
 ### Changes
@@ -121,14 +220,14 @@
 ### Changes
 
 - Patch issue introduced by updating to express 5.x
-- Keycloak now defaults to protecting all pages. NB this is a breaking change if you previously had * as a keycloak protected pages env variable. Remove it for this behaviour
+- Keycloak now defaults to protecting all pages. NB this is a breaking change if you previously had \* as a keycloak protected pages env variable. Remove it for this behaviour
 
 ## 5.19.1
 
 ### Changes
 
 - Dependency bumps. See #151
-  
+
 ## 5.19.0
 
 ### Changes
@@ -154,7 +253,7 @@
 - dependabot version bump #136
 - add an `.nvmrc` for local node management
 - update `pnpm`
-  
+
 ## 5.18.4
 
 ### Changes
@@ -166,13 +265,13 @@
 ### Improvements
 
 - dependency bumps
-  
+
 ## 5.18.2
 
 ### Bug Fixes
 
 - Fix type errors introduced in v5.18.1
-  
+
 ## 5.18.1
 
 ### Changes
@@ -231,7 +330,7 @@
 
 ### Changes
 
- This PR was created by the Combine PRs action by combining the following PRs:
+This PR was created by the Combine PRs action by combining the following PRs:
 
 - #106 build(deps-dev): bump eslint from 9.20.0 to 9.21.0 in /code
 - #105 build(deps): bump @mui/material from 6.4.3 to 6.4.5 in /code
@@ -488,7 +587,7 @@
 ### Features
 
 - Extension of the form UI for search capabilities
-- Addition of initial search capabilities for the map visualisation* Addition of time slots for the form schedule section
+- Addition of initial search capabilities for the map visualisation\* Addition of time slots for the form schedule section
 - Modify the registry to work with the new vis backend agent
 - Consolidation of the urls of assets as constants in one file
 
@@ -629,4 +728,4 @@
 
 ### Bug Fixes
 
-- _No bug fixes present.
+- \_No bug fixes present.

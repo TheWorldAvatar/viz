@@ -1,12 +1,14 @@
-name: Lint and check types of TypeScript code
+name: Run Tests
 
 on:
+  workflow_dispatch: 
   pull_request:
     branches:
       - main
     paths:
       - code/**
-      - code/* 
+      - code/*
+      - Dockerfile
   workflow_run:
     workflows: ["Check Version"]
     types:
@@ -16,7 +18,7 @@ permissions:
   contents: read
 
 jobs:
-  cache-install-lint-tsc:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,10 +43,6 @@ jobs:
         run: pnpm install
         working-directory: code 
 
-      - name: Lint TypeScript code
-        run: pnpm lint
-        working-directory: code
-
-      - name: Check Types
-        run: pnpm tsc
+      - name: Run tests
+        run: pnpm test
         working-directory: code

@@ -4,10 +4,12 @@
     "edit": "Bearbeiten",
     "delete": "Löschen",
     "view": "Ansicht",
+    "close": "Schließen",
     "refresh": "Aktualisieren",
     "backTo": "zurück zu",
     "export": "daten exportieren",
     "overview": "Übersicht",
+    "file": "Datei auswählen",
     "filter": "Filter",
     "search": "Suche",
     "showAll": "Alles anzeigen",
@@ -110,6 +112,10 @@
     "mapSelectInstruction": "eine Funktion auswählen...",
     "mapSelectFeature": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
     "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich entdeckt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten.",
+    "noFileChosen": "Keine Datei ausgewählt",
+    "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
+    "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "na": "Nicht anwendbar"
   },
   "nav": {
@@ -121,6 +127,7 @@
       "help": "Hilfe für diese Webplattform erhalten"
     },
     "title": {
+      "home": "Startseite",
       "map": "Karte",
       "dashboard": "Armaturenbrett",
       "registry": "Registry",
@@ -130,11 +137,13 @@
       "archive": "Archiv"
     },
     "tooltip": {
-      "home": "Zurück zur landing page.",
-      "map": "Geografische ansicht.",
-      "dashboard": "Analyse-ansicht.",
-      "registry": "Öffnen Sie das Register.",
-      "help": "Hilfeseite öffnen."
+      "home": "Zurück zur landing page",
+      "map": "Geografische ansicht",
+      "dashboard": "Analyse-ansicht",
+      "registry": "Öffnen Sie das Register",
+      "help": "Hilfeseite öffnen",
+      "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
+      "fileUpload": "Klicken Sie zum Hochladen einer Datei"
     }
   },
   "title": {

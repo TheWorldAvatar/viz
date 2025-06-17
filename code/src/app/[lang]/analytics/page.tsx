@@ -5,8 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { UISettings } from 'types/settings';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { NavBarItemSettings, UISettings } from 'types/settings';
 
 
 /**
@@ -15,8 +14,8 @@ import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
-  const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.DASHBOARD);
+  const uiSettings: UISettings = SettingsStore.getUISettings();
+  const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.DASHBOARD);
   return {
     title: metadata?.title ?? PageTitles.DASHBOARD,
   }
@@ -28,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * @returns React component for display. 
  */
 export default function DashContainer() {
-  const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
+  const uiSettings: UISettings = SettingsStore.getUISettings();
   if (uiSettings.resources?.dashboard?.url) {
     return (
       <div className={styles.dashContainer}>

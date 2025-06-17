@@ -1,21 +1,20 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { Modules, PageTitles, Paths } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { Paths, PageTitles, Modules } from 'io/config/routes';
 import { ScenarioDefinition, ScenarioDescription } from 'types/scenario';
-import { UISettings } from 'types/settings';
-import { getScenarios } from 'utils/getScenarios';
-import { DefaultPageThumbnailProps } from 'ui/pages/page-thumbnail';
+import { NavBarItemSettings, UISettings } from 'types/settings';
 import MapContainer from 'ui/map/map-container';
+import { getScenarios } from 'utils/getScenarios';
 
 export const dynamic = 'force-dynamic';
 
-const uiSettings: UISettings = JSON.parse(SettingsStore.getUISettings());
+const uiSettings: UISettings = SettingsStore.getUISettings();
 const scenarioUrl = uiSettings.resources?.scenario?.url;
 const scenarioDataset = uiSettings.resources?.scenario?.data;
 const scenarioResource: UISettings['resources']['scenario'] | undefined = uiSettings.resources?.scenario;
-const mapModule : UISettings['modules']['map']= uiSettings.modules.map;
+const mapModule: UISettings['modules']['map'] = uiSettings.modules.map;
 
 /**
  * Set page metadata.
@@ -23,7 +22,7 @@ const mapModule : UISettings['modules']['map']= uiSettings.modules.map;
  * @returns metadata promise.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const metadata: DefaultPageThumbnailProps = uiSettings.links?.find(link => link.url === Modules.MAP);
+  const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.MAP);
   return {
     title: metadata?.title ?? PageTitles.MAP,
   }
@@ -48,7 +47,7 @@ export default async function MapPage() {
         console.error(`Error populating scenarios selector`, error);
       }
     }
-    
+
     SettingsStore.readMapSettings();
     await SettingsStore.readMapDataSettings();
 

@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { JsonObject } from 'types/json';
-import { UISettings } from 'types/settings';
+import { MapSettings, UISettings } from 'types/settings';
 
 /**
  * Handles the retrieval and storage of settings from the user provided configuration files.
@@ -21,16 +21,16 @@ export default class SettingsStore {
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
 
   // Cached settings
-  private static UI_SETTINGS: string | null = null;
-  private static MAP_SETTINGS: string | null = null;
+  private static UI_SETTINGS: UISettings | null = null;
+  private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
 
   /**
    * Retrieves default settings
    */
-  public static getUISettings(): string {
+  public static getUISettings(): UISettings {
     if (!this.UI_SETTINGS) {
-      this.readUISettings();
+      this.readInitialisationSettings();
     }
     return this.UI_SETTINGS;
   }
@@ -38,7 +38,7 @@ export default class SettingsStore {
   /**
    * Retrieves default map settings
    */
-  public static getMapSettings(): string {
+  public static getMapSettings(): MapSettings {
     if (!this.MAP_SETTINGS) {
       this.readMapSettings();
     }
@@ -58,12 +58,15 @@ export default class SettingsStore {
   /**
    * Reads the initialisation settings.
    */
-  public static readUISettings(): void {
+  public static readInitialisationSettings(): void {
     const settings: string = this.readFile(this.UI_SETTINGS_FILE);
     const jsonifiedSettings: UISettings = JSON.parse(settings);
-    if (jsonifiedSettings.modules.dashboard && (!jsonifiedSettings.resources?.dashboard?.url || jsonifiedSettings.resources.dashboard.url.trim() === "")) {
-      console.error('\x1b[31m%s\x1b[0m', 'ERROR: modules.dashboard module set to true but resources.dashboard.url is empty');    }
-    this.UI_SETTINGS = JSON.stringify(jsonifiedSettings);
+    if (jsonifiedSettings.resources?.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== ""){
+      jsonifiedSettings.modules.dashboard = true;
+    } else {
+      jsonifiedSettings.modules.dashboard = false;
+    }
+    this.UI_SETTINGS = jsonifiedSettings;
   }
 
   /**
@@ -71,7 +74,14 @@ export default class SettingsStore {
    */
   public static readMapSettings(): void {
     const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
-    this.MAP_SETTINGS = settings;
+    this.MAP_SETTINGS = JSON.parse(settings);
+  }
+
+  public static async getRegistryURL(): Promise<string> {
+    if (!this.UI_SETTINGS) {
+      this.readInitialisationSettings();
+    }
+    return this.UI_SETTINGS.resources.registry.url
   }
 
   /**

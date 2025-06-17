@@ -3,7 +3,7 @@
 import styles from './ribbon-component.module.css';
 
 import React from 'react';
-import { Tooltip } from '@mui/material';
+import Tooltip from 'ui/interaction/tooltip/tooltip';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOption, setOption } from 'state/ribbon-component-slice';
 import IconComponent from 'ui/graphic/icon/icon';
@@ -39,13 +39,8 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
     }
 
     return (
-        <div className={classNames.join(" ")} onClick={handleClick}>
-            <Tooltip
-                title={props.tooltip}
-                enterDelay={1000}
-                leaveDelay={100}
-                placement="bottom-start">
-
+        <Tooltip text={props.tooltip} placement="bottom-start">
+            <div className={classNames.join(" ")} onClick={handleClick}>
                 <div>
                     <div className={styles.ribbonComponentInner}>
                         {props.icon &&
@@ -60,7 +55,7 @@ export default function RibbonComponentToggle(props: Readonly<RibbonComponentTog
                             </div>}
                     </div>
                 </div>
-            </Tooltip>
-        </div>
+            </div>
+        </Tooltip>
     );
 }
