@@ -69,6 +69,12 @@
 
 - Dependabot update #201
 
+## 5.24.5
+
+### Changes
+
+- Address server side request forgery risk
+
 ## 5.27.0
 
 ###
