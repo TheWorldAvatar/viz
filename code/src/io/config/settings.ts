@@ -7,6 +7,7 @@ import path from 'path';
 
 import { JsonObject } from 'types/json';
 import { MapSettings, UISettings } from 'types/settings';
+import { logColours } from 'utils/logColours';
 
 /**
  * Handles the retrieval and storage of settings from the user provided configuration files.
@@ -25,19 +26,21 @@ export default class SettingsStore {
   private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
 
+
   /**
-   * Retrieves default settings
+   * Retrieves UI settings from `SettingsStore` class
    */
   public static getUISettings(): UISettings {
     if (!this.UI_SETTINGS) {
-      this.readInitialisationSettings();
+
+      this.readUISettings();
     }
     return this.UI_SETTINGS;
   }
 
   /**
-   * Retrieves default map settings
-   */
+   * Retrieves map display settings from `SettingsStore` class
+  */
   public static getMapSettings(): MapSettings {
     if (!this.MAP_SETTINGS) {
       this.readMapSettings();
@@ -46,7 +49,7 @@ export default class SettingsStore {
   }
 
   /**
-   * Retrieves data settings for populating map.
+   * Retrieves map data settings from `SettingsStore` class
    */
   public static getMapDataSettings(): string {
     if (!this.MAP_DATA_SETTINGS) {
@@ -58,20 +61,18 @@ export default class SettingsStore {
   /**
    * Reads the initialisation settings.
    */
-  public static readInitialisationSettings(): void {
+  public static readUISettings(): void {
     const settings: string = this.readFile(this.UI_SETTINGS_FILE);
     const jsonifiedSettings: UISettings = JSON.parse(settings);
-    if (jsonifiedSettings.resources?.dashboard && jsonifiedSettings.resources?.dashboard?.url.trim() !== ""){
-      jsonifiedSettings.modules.dashboard = true;
-    } else {
-      jsonifiedSettings.modules.dashboard = false;
+    if (jsonifiedSettings.modules.dashboard && !jsonifiedSettings.resources?.dashboard?.url) {
+      console.warn(`${logColours.Yellow}modules.dashboard${logColours.Reset} module set to true but ${logColours.Yellow}resources.dashboard.url${logColours.Reset} is empty`);
     }
     this.UI_SETTINGS = jsonifiedSettings;
   }
 
   /**
-   * Reads the map settings file and sets the string version to SettingsStore private field.
-   */
+   * Reads the map settings file and sets the string version to SettingsStore private field
+  */
   public static readMapSettings(): void {
     const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
     this.MAP_SETTINGS = JSON.parse(settings);
@@ -79,14 +80,15 @@ export default class SettingsStore {
 
   public static async getRegistryURL(): Promise<string> {
     if (!this.UI_SETTINGS) {
-      this.readInitialisationSettings();
+      this.readUISettings();
     }
     return this.UI_SETTINGS.resources.registry.url
   }
 
+
   /**
- * Reads the data settings for populating the map.
- */
+   * Reads the data settings for populating the map
+  */
   public static async readMapDataSettings(): Promise<void> {
     try {
       // Retrieve datasets from data settings file
@@ -122,7 +124,7 @@ export default class SettingsStore {
    * 
    * @param file Config file path.
    * @throws When the configuration file is invalid or not found.
-   */
+  */
   private static readFile(file: string): string {
     const contents: string = fs.readFileSync(file, "utf-8");
     return contents;
