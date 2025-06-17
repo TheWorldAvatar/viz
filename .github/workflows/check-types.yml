@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - code/**
-      - code/* 
+      - code/*
+      - Dockerfile
   workflow_run:
     workflows: ["Check Version"]
     types:
