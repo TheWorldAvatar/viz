@@ -52,7 +52,6 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   return (
     <Provider store={reduxStore}>
       <div
-        id="globalContainer"
         onContextMenu={handleContextMenu}
         onClick={closeContextMenu} // Close context menu when clicking elsewhere
         style={{
