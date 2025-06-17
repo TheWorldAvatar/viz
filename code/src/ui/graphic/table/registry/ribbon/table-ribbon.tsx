@@ -135,8 +135,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.viewTask) &&
-            (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-              props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+            (props.lifecycleStage == "active" ||
+              props.lifecycleStage == "tasks") && (
               <RedirectButton
                 leftIcon="task"
                 label={dict.action.overview}
@@ -149,8 +149,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.viewTask) &&
-            (props.lifecycleStage == Routes.REGISTRY_ACTIVE ||
-              props.lifecycleStage == Routes.REGISTRY_TASK_DATE) && (
+            (props.lifecycleStage == "active" ||
+              props.lifecycleStage == "tasks") && (
               <RedirectButton
                 leftIcon="event"
                 label={dict.action.viewTasks}
@@ -158,7 +158,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 variant={props.lifecycleStage == "tasks" ? "active" : "primary"}
               />
             )}
-          {props.lifecycleStage == Routes.REGISTRY_REPORT && (
+          {props.lifecycleStage == "report" && (
             <ReturnButton
               leftIcon="first_page"
               label={`${dict.action.backTo} ${props.entityType.replace(
@@ -170,7 +170,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.invoice) &&
-            props.lifecycleStage == Routes.REGISTRY_REPORT && (
+            props.lifecycleStage == "report" && (
               <RedirectButton
                 leftIcon="print"
                 label={dict.action.generateReport}
@@ -185,7 +185,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
       </div>
       <div className="flex ml-2 mt-2">
-        {props.lifecycleStage == Routes.REGISTRY_TASK_DATE && (
+        {props.lifecycleStage == "tasks" && (
           <div className="flex items-center gap-4">
             <label
               className="my-1 text-sm md:text-lg text-left whitespace-nowrap"
