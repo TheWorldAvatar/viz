@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import styles from "./keycloak-user-button.module.css";
 import { useUserDisplayName } from "hooks/auth/useUserDisplayName";
 import PopoverActionButton from "../action/popover/popover-button";
 
@@ -14,9 +13,11 @@ export default function KeycloakUserButton() {
 
   return (
     <PopoverActionButton
-      leftIcon={"person"}
+      leftIcon="person"
+      size="icon"
+      variant="primary"
       placement="bottom"
-      className={styles.userMenuButton}
+      className="w-12 h-12 !rounded-full mr-4"
     >
       <div className="flex flex-col justify-center items-center p-1">
         <div className="p-2">

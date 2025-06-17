@@ -44,12 +44,13 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
     return (
       <div className="flex xl:hidden">
         <PopoverActionButton
-          icon={"menu"}
+          variant="ghost"
+          leftIcon="menu"
+          size="icon"
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
-          isHoverableDisabled={true}
           placement="bottom-end"
-          className="!mr-4 !bg-transparent"
+          className="mr-4 w-12 h-12 "
         >
           <NavMenuContents
             {...props}
