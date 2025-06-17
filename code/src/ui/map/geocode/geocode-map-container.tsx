@@ -2,7 +2,6 @@
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-
 import { Map, Marker } from "mapbox-gl";
 import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
@@ -84,12 +83,14 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
         imagery: null,
       }}
     >
-      <MapboxMapComponent
-        currentMap={map}
-        styles="flex w-full h-[50vh] my-4 rounded-lg bg-white shadow-lg pointer-events-auto"
-        setMap={setMap}
-        defaultPosition={defaultPosition}
-      />
+      <div className="flex  w-full h-[50vh]  my-4 ">
+        <MapboxMapComponent
+          currentMap={map}
+          styles="pointer-events-auto"
+          setMap={setMap}
+          defaultPosition={defaultPosition}
+        />
+      </div>
     </MapSettingsProvider>
   );
 }

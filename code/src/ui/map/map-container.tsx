@@ -228,48 +228,44 @@ export default function MapContainer(props: MapContainerProps) {
         />
       )}
 
-      {/* Mapbox map */}
-      <MapSettingsProvider settings={mapSettings}>
-        {mapSettings?.["type"] === "mapbox" && (
-          <MapboxMapComponent
-            currentMap={map}
-            styles="mapContainer"
-            setMap={setMap}
-            defaultPosition={defaultPosition}
-            imageryOption={currentImageryOption}
-            hideLabels={mapSettings.hideLabels}
-          />
-        )}
-      </MapSettingsProvider>
-
-      {/* Cesium map */}
-      {mapSettings?.["type"] === "cesium" && <div></div>}
-
       {/* Container elements */}
-      <div className="w-full flex flex-grow flex-col pointer-events-none z-[1]">
+      <div className="relative w-full h-full overflow-auto -mt-0.5 ">
         {/* Map controls ribbon */}
-        <Ribbon
-          map={map}
-          startingIndex={0}
-          mapSettings={mapSettings}
-          toggleScenarioSelection={setShowScenarioSelector}
-          hasScenario={!!selectedScenarioID}
-        />
+        <div className="h-full w-full flex flex-col pointer-events-auto ">
+          <Ribbon
+            map={map}
+            startingIndex={0}
+            mapSettings={mapSettings}
+            toggleScenarioSelection={setShowScenarioSelector}
+            hasScenario={!!selectedScenarioID}
+          />
 
-        {/* Map information panel */}
-        {!showScenarioSelector && dataStore && (
-          <div className="w-full min-h-[225px] flex-grow-95 flex">
-            <FloatingPanelContainer
-              map={map}
-              dataStore={dataStore}
-              icons={mapSettings.icons}
-              legend={mapSettings.legend}
-              scenarioDimensions={scenarioDimensions}
-              isDimensionsFetching={isDimensionsFetching}
+          {/* Map information panel */}
+          {!showScenarioSelector && dataStore && (
+            <div className="w-full min-h-[225px] flex-grow-95 flex  ">
+              <FloatingPanelContainer
+                map={map}
+                dataStore={dataStore}
+                icons={mapSettings.icons}
+                legend={mapSettings.legend}
+                scenarioDimensions={scenarioDimensions}
+                isDimensionsFetching={isDimensionsFetching}
+              />
+            </div>
+          )}
+        </div>
+        <div className="absolute top-0 left-0 w-full h-full py-8 ">
+          <MapSettingsProvider settings={mapSettings}>
+            <MapboxMapComponent
+              currentMap={map}
+              styles="h-full w-full"
+              setMap={setMap}
+              defaultPosition={defaultPosition}
+              imageryOption={currentImageryOption}
+              hideLabels={mapSettings.hideLabels}
             />
-          </div>
-        )}
-        <div className="w-full min-h-[50px] flex-grow-5 bg-red-500 opacity-0" />
+          </MapSettingsProvider>
+        </div>
       </div>
     </>
   );

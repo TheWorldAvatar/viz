@@ -15,6 +15,7 @@ import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import { Icon } from "@mui/material";
+import { usePathname } from "next/navigation";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -42,7 +43,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <div className="flex xl:hidden">
+      <div className="flex">
         <PopoverActionButton
           variant="ghost"
           leftIcon="menu"
@@ -153,7 +154,9 @@ function NavMenuContents(
          flex-col justify-start transition-all duration-200 ease-in-out`}
     >
       <button
-        className={`hidden xl:flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 ${
+        className={`${
+          props.isMobile ? "hidden" : "xl:flex"
+        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 ${
           isMenuExpanded
             ? "mr-2 self-end rounded-md -mb-8 "
             : " justify-center items-center rounded-full -mb-4"

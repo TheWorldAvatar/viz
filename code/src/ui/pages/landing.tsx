@@ -38,7 +38,7 @@ export default function LandingPage(props: Readonly<LandingPageProps>) {
   const introClasses = ["markdown-body", styles.introInner].join(" ");
 
   return (
-    <div className="bg-muted border-border flex h-full flex-col rounded-xl border-1 p-5 shadow-2xl">
+    <div className="bg-muted border-border   rounded-xl border-1  shadow-2xl mx-auto mt-4 flex h-10/12  p-2 sm:w-sm md:h-10/12 md:w-11/12 lg:h-11/12 lg:w-11/12 lg:p-4  xl:h-10/12 xl:w-9/12 2xl:h-11/12 ">
       <div
         className={introClasses}
         dangerouslySetInnerHTML={{
