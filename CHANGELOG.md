@@ -2,7 +2,23 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
-## 5.28.0
+## 5.28.3
+
+### Chores
+
+- Bump node version in dockerfile to 24.2
+
+## 5.28.2
+
+### Chores
+
+- Dependabot _security_ update #218
+
+## 5.28.1
+
+### Chores
+
+- Dependabot update #220
 
 ### Changes
 
