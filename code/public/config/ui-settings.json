@@ -1,40 +1,15 @@
 {
-  "branding": {
+    "$schema": "../../src/types/ui-settings.schema.json",
+    "branding": {
     "navbar": [
-      "/images/defaults/icons/twa.svg",
-      "/images/wsp/cmcl-logo.svg",
-      "/images/wsp/wappen_pirmasens.svg"
-    ],
-    "landing": "/images/defaults/icons/twa.svg",
-    "landingDark": "/images/defaults/icons/twa.svg"
-  },
-  "modules": {
-    "landing": true,
-    "help": true,
-    "map": false,
-    "dashboard": false,
-    "registry": true
-  },
-  "links": [
-    {
-      "url": "https://wsp.theworldavatar.io/export",
-      "title": "Exportieren",
-      "caption": "Export für REGIE68",
-      "icon": "file_upload"
+      "/images/defaults/icons/twa.svg"
+    ]
     },
-    {
-      "url": "https://wsp.theworldavatar.io/upload",
-      "title": "Daten hochladen",
-      "caption": "Importieren Sie Ihre Daten, indem Sie eine CSV-Datei hochladen",
-      "icon": "download",
-      "type": "file",
-      "permission": "operation"
-    }
-  ],
-  "resources": {
-    "registry": {
-      "url": "https://bnl.theworldavatar.io/backend",
-      "data": "job"
-    }
+    "modules": {
+        "landing": true,
+        "help": true,
+        "map": true,
+    "dashboard": false,
+    "registry": false
   }
 }
