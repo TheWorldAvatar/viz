@@ -86,9 +86,9 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
       <div className="flex  w-full h-[50vh]  my-4 ">
         <MapboxMapComponent
           currentMap={map}
-          styles="pointer-events-auto"
           setMap={setMap}
           defaultPosition={defaultPosition}
+          styles="w-full h-[50vh]"
         />
       </div>
     </MapSettingsProvider>

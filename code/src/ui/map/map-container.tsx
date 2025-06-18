@@ -258,7 +258,7 @@ export default function MapContainer(props: MapContainerProps) {
           <MapSettingsProvider settings={mapSettings}>
             <MapboxMapComponent
               currentMap={map}
-              styles="h-full w-full"
+              styles="h-[94vh]"
               setMap={setMap}
               defaultPosition={defaultPosition}
               imageryOption={currentImageryOption}
