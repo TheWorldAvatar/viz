@@ -43,6 +43,8 @@ const AntDesignConfig: React.FC<AntDesignConfigProps> = ({ children }) => {
             colorPrimary: "var(--foreground)",
             colorBgContainer: "var(--muted)",
             itemInputBg: "var(--background)",
+            colorBgTextHover: "var(--table-header-bg)",
+            itemActiveBg: "var(--table-header-bg)",
           },
           Dropdown: {
             controlItemBgHover: "var(--background-tertiary)",

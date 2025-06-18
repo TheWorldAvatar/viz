@@ -104,9 +104,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             className="ml-2"
             size="icon"
             leftIcon="cached"
+            variant="outline"
             onClick={triggerRefresh}
           />
-          {props.instances.length > 0 && (
+          {props.instances.length > 1 && (
             <ColumnSearchComponent
               instances={props.instances}
               setCurrentInstances={props.setCurrentInstances}

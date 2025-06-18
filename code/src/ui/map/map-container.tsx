@@ -254,7 +254,7 @@ export default function MapContainer(props: MapContainerProps) {
             </div>
           )}
         </div>
-        <div className="absolute top-0 left-0 w-full h-full py-8  ">
+        <div className="absolute top-0 left-0  w-full h-full py-8">
           <MapSettingsProvider settings={mapSettings}>
             <MapboxMapComponent
               currentMap={map}

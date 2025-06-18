@@ -74,6 +74,7 @@ export default function ColumnSearchComponent(
     <PopoverActionButton
       placement="bottom-start"
       leftIcon="search"
+      variant="outline"
       tooltipText={dict.action.filter}
       size="icon"
       className="ml-2"
@@ -100,12 +101,14 @@ export default function ColumnSearchComponent(
         <Button
           size="icon"
           leftIcon="search"
+          variant="outline"
           tooltipText={dict.action.update}
           onClick={handleUpdate}
         />
         <Button
           size="icon"
           leftIcon="replay"
+          variant="outline"
           tooltipText={dict.action.clear}
           onClick={handleClear}
         />
