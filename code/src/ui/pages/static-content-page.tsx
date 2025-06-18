@@ -32,7 +32,7 @@ export default function StaticContentPage({
   if (childNodes != null) {
     return (
       <div
-        className=" mx-auto    flex h-10/12  p-2 sm:w-sm md:h-10/12 md:w-11/12 lg:h-11/12 lg:w-11/12   xl:h-10/12 xl:w-9/12 2xl:h-11/12 "
+        className=" mx-auto    flex h-10/12  p-2 sm:w-sm md:h-10/12 md:w-11/12 lg:h-11/12 lg:w-11/12   xl:h-10/12 xl:w-9/12 2xl:h-10/12 "
         key="static-content-page"
       >
         <div className="grow h-full w-full overflow-y-hidden  bg-muted border-border rounded-xl border-1 p-5 shadow-2xl ">
@@ -43,7 +43,7 @@ export default function StaticContentPage({
   } else if (childString != null) {
     return (
       <div
-        className=" mx-auto mt-4 flex h-10/12  p-2 sm:w-sm md:h-10/12 md:w-11/12 lg:h-11/12 lg:w-11/12   xl:h-10/12 xl:w-9/12 2xl:h-11/12 "
+        className=" mx-auto mt-4 flex h-10/12  p-2 sm:w-sm md:h-10/12 md:w-11/12 lg:h-11/12 lg:w-11/12   xl:h-10/12 xl:w-9/12 2xl:h-10/12 "
         key="static-content-page"
       >
         <div className="grow h-full w-full overflow-y-hidden  bg-muted border-border rounded-xl border-1 p-5 shadow-2xl">
