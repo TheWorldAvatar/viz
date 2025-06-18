@@ -66,12 +66,12 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             />
           )}
         </div>
-        <div className="flex flex-wrap gap-4 bg-gray-200 p-4 rounded-lg w-fit">
+        <div className="flex flex-wrap gap-4  rounded-lg w-fit">
           {Array.from({ length: fields.length }, (_, index) => (
             <button
               key={index}
-              className={`cursor-pointer h-6 w-6 md:h-8 md:w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${
-                index === currentIndex ? "bg-background" : ""
+              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${
+                index === currentIndex ? "bg-primary " : ""
               }`}
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();

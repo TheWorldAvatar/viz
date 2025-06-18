@@ -73,7 +73,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
         <HeaderBar pages={props.pages} settings={props.settings} />
 
-        <main className="flex h-screen w-full p-0.5">
+        <main className="flex h-screen w-full p-0.5 ">
           {!pathname.endsWith("map") && (
             <NavMenu
               pages={props.pages}

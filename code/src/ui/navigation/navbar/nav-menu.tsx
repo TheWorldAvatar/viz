@@ -156,7 +156,7 @@ function NavMenuContents(
       <button
         className={`${
           props.isMobile ? "hidden" : "xl:flex"
-        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 ${
+        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
           isMenuExpanded
             ? "mr-2 self-end rounded-md -mb-8 "
             : " justify-center items-center rounded-full -mb-4"

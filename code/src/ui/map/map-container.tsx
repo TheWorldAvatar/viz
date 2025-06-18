@@ -229,7 +229,7 @@ export default function MapContainer(props: MapContainerProps) {
       )}
 
       {/* Container elements */}
-      <div className="relative w-full h-full overflow-auto -mt-0.5 ">
+      <div className="relative w-full h-full overflow-auto border-0  ">
         {/* Map controls ribbon */}
         <div className="h-full w-full flex flex-col pointer-events-auto ">
           <Ribbon
@@ -254,7 +254,7 @@ export default function MapContainer(props: MapContainerProps) {
             </div>
           )}
         </div>
-        <div className="absolute top-0 left-0 w-full h-full py-8 ">
+        <div className="absolute top-0 left-0 w-full h-full py-8  ">
           <MapSettingsProvider settings={mapSettings}>
             <MapboxMapComponent
               currentMap={map}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -24,9 +23,9 @@ export default function Accordion(props: Readonly<AccordionProps>) {
   };
 
   return (
-    <div className="w-md bg-gray-200 rounded-md">
+    <div className="w-md bg-gray-200 dark:bg-zinc-900  rounded-md">
       <button
-        className="flex justify-between items-center cursor-pointer w-full p-2 bg-gray-300 rounded-lg transition-colors duration-200 hover:bg-gray-400"
+        className="flex justify-between items-center cursor-pointer w-full p-2 bg-gray-300 dark:bg-zinc-800   rounded-lg transition-colors duration-200 hover:bg-gray-400 dark:hover:bg-zinc-700"
         onClick={toggleAccordion}
       >
         <p className="text-foreground">{props.title}</p>

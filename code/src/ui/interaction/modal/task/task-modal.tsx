@@ -13,7 +13,7 @@ import {
   FORM_IDENTIFIER,
   FormTemplateType,
   PropertyShapeOrGroup,
-  RegistryTaskOption
+  RegistryTaskOption,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
@@ -95,7 +95,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     []
   );
 
-  const taskSubmitAction: SubmitHandler<FieldValues> = async (formData: FieldValues) => {
+  const taskSubmitAction: SubmitHandler<FieldValues> = async (
+    formData: FieldValues
+  ) => {
     let action = "";
     if (isDispatchAction) {
       action = "dispatch";
@@ -105,58 +107,83 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       formData[FORM_STATES.ORDER] = 1;
     } else if (isCancelAction) {
       action = "cancel";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
+        props.task.status
+      );
     } else if (isReportAction) {
       action = "report";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(props.task.status);
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
+        props.task.status
+      );
     } else {
       return;
     }
     submitLifecycleAction(formData, action, !isDispatchAction);
-  }
-
+  };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
-  const submitLifecycleAction = async (formData: FieldValues, action: string, isPost: boolean) => {
+  const submitLifecycleAction = async (
+    formData: FieldValues,
+    action: string,
+    isPost: boolean
+  ) => {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
     let response: CustomAgentResponseBody;
     if (isPost) {
-      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: 'no-store',
-        credentials: 'same-origin',
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("event", "service", action),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify(formData),
+        }
+      );
       response = await res.json();
     } else {
-      const res = await fetch(makeInternalRegistryAPIwithParams("event", "service", action), {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        cache: 'no-store',
-        credentials: 'same-origin',
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("event", "service", action),
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify(formData),
+        }
+      );
       response = await res.json();
     }
     setResponse(response);
     setFormFields([]);
     setDispatchFields([]);
-  }
+  };
   // A hook that fetches the form template with dispatch details included
   useEffect(() => {
     // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
+    const getFormTemplate = async (
+      lifecycleStage: string,
+      eventType: string,
+      targetId?: string
+    ): Promise<void> => {
       setIsFetching(true);
-      const template: FormTemplateType = await fetch(makeInternalRegistryAPIwithParams("event", lifecycleStage, eventType, targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER), {
-        cache: 'no-store',
-        credentials: 'same-origin'
-      }).then(res => res.json());
+      const template: FormTemplateType = await fetch(
+        makeInternalRegistryAPIwithParams(
+          "event",
+          lifecycleStage,
+          eventType,
+          targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER
+        ),
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      ).then((res) => res.json());
       setFormFields(template.property);
       setIsFetching(false);
-    }
+    };
 
     if (isDispatchAction) {
       getFormTemplate("service", "dispatch", props.task.id);
@@ -247,8 +274,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isReportAction
                 ? "report"
                 : isCancelAction
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -277,7 +304,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
             props.task.status.toLowerCase().trim() ==
-            Status.PENDING_EXECUTION &&
+              Status.PENDING_EXECUTION &&
             !(
               isCancelAction ||
               isCompleteAction ||
@@ -361,14 +388,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             isCompleteAction ||
             isDispatchAction ||
             isReportAction) && (
-              <Button
-                leftIcon="first_page"
-                variant="secondary"
-                label="Return"
-                tooltipText={dict.action.return}
-                onClick={onReturnInAction}
-              />
-            )}
+            <Button
+              leftIcon="first_page"
+              variant="secondary"
+              label="Return"
+              tooltipText={dict.action.return}
+              onClick={onReturnInAction}
+            />
+          )}
         </div>
       </section>
     </Modal>

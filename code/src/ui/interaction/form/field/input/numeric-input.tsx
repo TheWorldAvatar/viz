@@ -147,7 +147,7 @@ export default function NumericInputField(
         />
         <Button
           leftIcon="remove"
-          variant="destructive"
+          variant="secondary"
           className="rounded-l-none rounded-r-lg"
           tooltipText={dict.action.clickDecrease}
           onClick={handleDecrement}

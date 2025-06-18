@@ -57,7 +57,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" && (
-        <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 max-w-fit p-1.5 text-center rounded-lg flex-wrap">
+        <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 dark:bg-zinc-800   max-w-fit p-1.5 text-center rounded-lg flex-wrap">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.pendingRegistry) && (
@@ -65,9 +65,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.pending}
               leftIcon="pending"
               url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-              variant={
-                props.lifecycleStage == "pending" ? "active" : "secondary"
-              }
+              variant={props.lifecycleStage == "pending" ? "active" : "ghost"}
             />
           )}
           {(!keycloakEnabled ||
@@ -81,7 +79,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 props.lifecycleStage == "active" ||
                 props.lifecycleStage == "tasks"
                   ? "active"
-                  : "secondary"
+                  : "ghost"
               }
             />
           )}
@@ -92,9 +90,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.archive}
               leftIcon="archive"
               url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-              variant={
-                props.lifecycleStage == "archive" ? "active" : "secondary"
-              }
+              variant={props.lifecycleStage == "archive" ? "active" : "ghost"}
             />
           )}
         </div>

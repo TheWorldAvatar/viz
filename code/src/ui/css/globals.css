@@ -55,6 +55,10 @@
     --button-color-secondary-hover: #0b4452;
     --destructive: oklch(58.305% 0.23863 28.392 / 0.76);
     --ring: oklch(0.708 0 0);
+
+    /* Table */
+    --table-header-bg: #e5e7eb;
+    --table-hover-bg: #71717b;
   }
 }
 
@@ -108,6 +112,10 @@
     --button-color-secondary-hover: #35a7c0;
     --destructive: oklch(0.704 0.191 22.216);
     --ring: oklch(0.556 0 0);
+
+    /* Table */
+    --table-header-bg: #27272a;
+    --table-hover-bg: #3f3f46;
   }
 }
 
@@ -156,6 +164,8 @@
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
   --color-selected: var(--text-color-selected);
+  --color-table-header-bg: var(--table-header);
+  --color-table-hover-bg: var(--table-hover-bg);
   --breakpoint-xs-mobile: 355px;
   --breakpoint-sm-mobile: 400px;
 }

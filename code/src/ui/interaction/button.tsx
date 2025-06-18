@@ -72,10 +72,11 @@ export default function Button({
     destructive:
       "bg-destructive text-primary-foreground shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
     outline:
-      "bg-transparent border border-border text-gray-700 hover:bg-gray-200",
-    ghost: "bg-transparent text-gray-700 hover:bg-gray-200",
+      "bg-transparent border border-border text-foreground hover:bg-gray-200 dark:hover:text-background",
+    ghost:
+      "bg-transparent text-foreground hover:bg-gray-300 dark:hover:bg-zinc-700",
     active:
-      "bg-background border-1 border-border text-gray-800 hover:bg-gray-200 ",
+      "bg-background border-1 border-border text-gray-800 hover:bg-gray-200 dark:bg-muted dark:text-foreground dark:hover:bg-zinc-900",
   };
 
   // Define styles for each size

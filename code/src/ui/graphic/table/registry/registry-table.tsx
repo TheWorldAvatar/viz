@@ -5,7 +5,11 @@ import { FieldValues } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, RegistryFieldValues, RegistryTaskOption } from "types/form";
+import {
+  LifecycleStage,
+  RegistryFieldValues,
+  RegistryTaskOption,
+} from "types/form";
 import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
@@ -69,7 +73,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         return {
           key: field,
           dataIndex: field,
-          className: "border-b-1 border-border",
+          className: "border-b-1 border-border bg-muted  ",
           title: title,
           ellipsis: true,
           width: minWidth,
@@ -79,7 +83,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               return <StatusComponent status={`${value}`} />;
             }
             return (
-              <Typography.Text>
+              <Typography.Text
+                style={{ color: "var(--foreground)" }}
+                className=""
+              >
                 {parseWordsForLabels(`${value}`)}
               </Typography.Text>
             );
@@ -114,7 +121,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <AntDesignConfig>
       <Table
-        className="w-full overflow-x-auto rounded-lg"
+        className="w-full overflow-x-auto rounded-lg "
         rowClassName="bg-background"
         dataSource={data}
         columns={columns}
