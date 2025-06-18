@@ -16,7 +16,7 @@ import { useMapSettings } from "./map-settings-context";
  */
 interface MapProperties {
   currentMap: Map;
-  styles: string;
+  styles?: string;
   setMap: React.Dispatch<React.SetStateAction<Map>>;
   defaultPosition: CameraPosition;
   imageryOption?: ImageryOption;
@@ -108,7 +108,7 @@ export default function MapboxMapComponent(props: MapProperties) {
   return (
     <div
       ref={mapContainerRef}
-      className=" h-[94vh] w-full  pointer-events-auto  "
+      className={` w-full  pointer-events-auto  ${props.styles}`}
     />
   );
 }
