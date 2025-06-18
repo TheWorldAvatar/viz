@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 
+import { Icon } from "@mui/material";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import { Assets } from "io/config/assets";
@@ -14,8 +15,6 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
-import { Icon } from "@mui/material";
-import { usePathname } from "next/navigation";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
