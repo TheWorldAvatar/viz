@@ -181,7 +181,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         </div>
       </div>
-      <div className="flex ml-2 mt-2">
+      <div className="flex ml-2 ">
         {props.lifecycleStage == "tasks" && (
           <div className="flex items-center gap-4">
             <label

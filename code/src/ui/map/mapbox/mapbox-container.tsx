@@ -108,7 +108,7 @@ export default function MapboxMapComponent(props: MapProperties) {
   return (
     <div
       ref={mapContainerRef}
-      className=" h-full w-full  pointer-events-auto inset-1 "
+      className=" h-[94vh] w-full  pointer-events-auto  "
     />
   );
 }

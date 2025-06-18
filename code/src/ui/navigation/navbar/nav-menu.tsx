@@ -167,18 +167,7 @@ function NavMenuContents(
           {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
         </Icon>
       </button>
-      {props.isMobile && props.settings?.modules?.landing && (
-        <NavBarItem
-          title={dict.nav.title.home}
-          icon="home"
-          url={Routes.HOME}
-          isMobile={props.isMobile}
-          setIsOpen={props.setIsMenuOpen}
-          isMenuExpanded={isMenuExpanded}
-        />
-      )}
-
-      {!props.isMobile && props.settings?.modules?.landing && (
+      {props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
@@ -224,7 +213,7 @@ function NavMenuContents(
           title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
           icon={dashboardLinkProps?.icon ?? "dashboard"}
           url={Routes.DASHBOARD}
-          isMobile={false}
+          isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
             isMenuExpanded
