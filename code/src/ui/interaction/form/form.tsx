@@ -21,6 +21,7 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { getAfterDelimiter } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
@@ -361,7 +362,6 @@ export function renderFormField(
     if (!fieldProp.maxCount || (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)) {
       return <FormArray
         key={fieldProp.name[VALUE_KEY] + currentIndex}
-        agentApi={agentApi}
         fieldId={fieldProp.name[VALUE_KEY]}
         minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
         maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
