@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.29.1
+
+### Changes
+
+- Improved configuration of dashboard
+
 ## 5.29.0
 
 ### Changes
