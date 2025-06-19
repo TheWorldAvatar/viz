@@ -298,7 +298,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               (selectedAddress || isEmptyAddress) && (
                 <Button
                   leftIcon="edit_location"
-                  label="Select Location"
+                  label={dict.action.selectLocation}
                   size="sm"
                   tooltipText={dict.action.selectLocation}
                   onClick={props.form.handleSubmit(onGeocoding)}

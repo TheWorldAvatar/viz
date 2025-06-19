@@ -313,7 +313,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <Button
                 leftIcon="done_outline"
-                label="Complete"
+                label={dict.action.complete}
                 tooltipText={dict.action.complete}
                 onClick={genBooleanClickHandler(setIsCompleteAction)}
               />
@@ -330,7 +330,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <Button
                 leftIcon="assignment"
-                label="Assign"
+                label={dict.action.dispatch}
                 variant="primary"
                 tooltipText={dict.action.dispatch}
                 onClick={genBooleanClickHandler(setIsDispatchAction)}
@@ -348,7 +348,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <Button
                 leftIcon="cancel"
-                label="Cancel"
+                label={dict.action.cancel}
                 variant="secondary"
                 tooltipText={dict.action.cancel}
                 onClick={genBooleanClickHandler(setIsCancelAction)}
@@ -366,7 +366,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             ) && (
               <Button
                 leftIcon="report"
-                label="Report"
+                label={dict.action.report}
                 variant="secondary"
                 tooltipText={dict.action.report}
                 onClick={genBooleanClickHandler(setIsReportAction)}
@@ -379,7 +379,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isReportAction) && (
               <Button
                 leftIcon="send"
-                label="Submit"
+                label={dict.action.submit}
                 tooltipText={dict.action.submit}
                 onClick={onSubmit}
               />
@@ -391,7 +391,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             <Button
               leftIcon="first_page"
               variant="secondary"
-              label="Return"
+              label={dict.action.return}
               tooltipText={dict.action.return}
               onClick={onReturnInAction}
             />

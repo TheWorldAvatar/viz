@@ -1,12 +1,13 @@
 {
   "action": {
     "add": "add",
+    "addItem": "add {replace}",
     "delete": "Delete",
     "edit": "Edit",
     "view": "view",
     "close": "Close",
     "refresh": "Refresh",
-    "backTo": "back to",
+    "backTo": "back to {replace}s",
     "export": "export data",
     "overview": "overview",
     "file": "Choose file",

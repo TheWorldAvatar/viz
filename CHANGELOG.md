@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.29.2
+
+### Changes
+
+- Update German translations
+
+### Bug Fixes
+
+- Fixed untranslated button texts
+
 ## 5.29.1
 
 ### Changes
