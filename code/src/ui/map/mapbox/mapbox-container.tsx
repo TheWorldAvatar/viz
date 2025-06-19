@@ -1,12 +1,12 @@
-import "mapbox-gl/dist/mapbox-gl.css";
-import "./mapbox.css";
+import 'mapbox-gl/dist/mapbox-gl.css';
+import './mapbox.css';
 
-import mapboxgl, { Map } from "mapbox-gl";
-import React, { useEffect, useRef } from "react";
+import mapboxgl, { Map } from 'mapbox-gl';
+import React, { useEffect, useRef } from 'react';
 
-import { CameraPosition, ImageryOption } from "types/settings";
-import { togglePlacenames } from "../map-helper";
-import { useMapSettings } from "./map-settings-context";
+import { CameraPosition, ImageryOption } from 'types/settings';
+import { togglePlacenames } from '../map-helper';
+import { useMapSettings } from './map-settings-context';
 /**
  * @param {Map} map The reference to the current map (if any).
  * @param {string} styles The css styles for the mapbox container.
@@ -16,7 +16,7 @@ import { useMapSettings } from "./map-settings-context";
  */
 interface MapProperties {
   currentMap: Map;
-  styles?: string;
+    styles: string;
   setMap: React.Dispatch<React.SetStateAction<Map>>;
   defaultPosition: CameraPosition;
   imageryOption?: ImageryOption;
@@ -47,9 +47,9 @@ export default function MapboxMapComponent(props: MapProperties) {
     props.currentMap?.remove();
 
     const defaultImagery: ImageryOption = props.imageryOption ?? {
-      name: "Standard (Night)",
-      url: "mapbox://styles/mapbox/standard",
-      time: "dusk",
+            "name": "Standard (Night)",
+            "url": "mapbox://styles/mapbox/standard",
+            "time": "dusk"
     };
 
     mapboxgl.accessToken = process.env.MAPBOX_API_KEY;
@@ -83,31 +83,23 @@ export default function MapboxMapComponent(props: MapProperties) {
             }
         });
 
-    map.addControl(
-      new mapboxgl.ScaleControl() as mapboxgl.IControl,
-      "bottom-right"
-    );
+        map.addControl(new mapboxgl.ScaleControl() as mapboxgl.IControl, "bottom-right");
     map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
     map.on("style.load", function () {
       // Hide labels if specified
-      if (props.hideLabels) {
-        togglePlacenames(mapSettings.imagery, map);
-      }
+            if (props.hideLabels) { togglePlacenames(mapSettings.imagery, map) }
       // Update time if using new v3 standard style
-      if (defaultImagery.time != null) {
-        map.setConfigProperty("basemap", "lightPreset", defaultImagery.time);
-      }
+            if (defaultImagery.time != null) { map.setConfigProperty("basemap", "lightPreset", defaultImagery.time); }
       // Map is only settable after the styles have loaded
       props.setMap(map);
     });
   };
 
   return (
-    <div
-      ref={mapContainerRef}
-      className={` w-full  pointer-events-auto  ${props.styles}`}
-    />
+        <>
+            <div id="mapContainer" ref={mapContainerRef} className={props.styles} />
+        </>
   );
 }
 
