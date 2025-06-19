@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.29.0
+
+### Changes
+
+- New Registry redesign
+
+### Bug Fixes
+
+- Fixed optional configuration file setup
+
 ## 5.28.3
 
 ### Chores

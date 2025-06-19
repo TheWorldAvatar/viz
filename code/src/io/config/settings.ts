@@ -81,7 +81,7 @@ export default class SettingsStore {
     if (!this.UI_SETTINGS) {
       this.readUISettings();
     }
-    return this.UI_SETTINGS.resources.registry.url
+    return this.UI_SETTINGS.resources?.registry?.url ?? "";
   }
 
 

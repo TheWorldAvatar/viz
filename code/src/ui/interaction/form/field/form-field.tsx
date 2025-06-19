@@ -1,6 +1,6 @@
-import styles from './field.module.css';
+import styles from "./field.module.css";
 
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn } from "react-hook-form";
 
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from 'types/form';
 import { FORM_STATES } from '../form-utils';
@@ -28,16 +28,16 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
   if (!(formType == "search" && props.field.name[VALUE_KEY] == "id")) {
     if (props.field.datatype && ["string", "integer", "decimal"].includes(props.field.datatype)) {
       return (
-        <div className={styles["form-field-container"]}>
-          <div className={styles["form-input-container"]}>
+        <div className="-p-2 flex flex-col basis-full w-full">
+          <div className="flex flex-col">
             {/** Display input min max range only if this is the search form and a numerical value */}
             {formType == "search" && ["integer", "decimal"].includes(props.field.datatype)
               ? <FormInputMinMaxField
                 field={props.field}
                 form={props.form}
                 options={{ labelStyle: [styles["form-input-label"]] }}
-              /> :
-              <FormInputField
+              />
+              : <FormInputField
                 field={props.field}
                 form={props.form}
                 options={{
@@ -45,21 +45,23 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
                   inputStyle: [styles["form-input-value"]],
                   labelStyle: [styles["form-input-label"]],
                 }}
-              />
-            }
+              />}
           </div>
         </div>
       );
-    } else if (props.field.datatype && ["dateTime", "date", "time"].includes(props.field.datatype)) {
+    } else if (
+      props.field.datatype &&
+      ["dateTime", "date", "time"].includes(props.field.datatype)
+    ) {
       return (
-        <div className={styles["form-field-container"]}>
-          <div className={styles["form-input-container"]}>
+        <div className="flex flex-col basis-full w-full">
+          <div className="flex flex-col m-0 w-full">
             <FormDateTimePicker
               field={props.field}
               form={props.form}
               options={{
                 ...props.options,
-                labelStyle: [styles["form-input-label"]]
+                labelStyle: [styles["form-input-label"]],
               }}
             />
           </div>
@@ -67,8 +69,8 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
       );
     } else if (props.field.in) {
       return (
-        <div className={styles["form-field-container"]}>
-          <div className={styles["form-input-container"]}>
+        <div className="flex  flex-col basis-full w-full">
+          <div className="flex flex-col m-0 w-full">
             <OntologyConceptSelector
               field={props.field}
               form={props.form}

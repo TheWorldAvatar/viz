@@ -31,8 +31,7 @@
   align-items: center;
 }
 
-.header
-{
+.header {
   font-size: var(--font-size-primary-text);
 }
 

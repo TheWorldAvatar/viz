@@ -13,6 +13,7 @@ import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavMenu } from "ui/navigation/navbar/nav-menu";
+import { usePathname } from "next/navigation";
 
 interface HeaderBarProps {
   pages: OptionalPage[];
@@ -24,6 +25,7 @@ interface HeaderBarProps {
  */
 export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   const dict = useDictionary();
+  const pathname = usePathname();
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const contextDict = dict.context;
@@ -56,7 +58,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <div
       id="headerbar"
-      className="bg-muted border-b-border z-[999] flex h-16 min-h-16 items-center justify-between overflow-hidden border-b"
+      className="bg-muted border-b-border z-[999] flex h-[6vh] min-h-[6vh] items-center justify-between overflow-hidden border-b "
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
@@ -85,7 +87,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
       {/* Render each component as required */}
       <div className="flex items-center justify-center">
-        <div className="flex xl:hidden">
+        <div className={`flex ${pathname.endsWith("map") ? "" : "xl:hidden"} `}>
           <NavMenu
             pages={props.pages}
             settings={props.settings}

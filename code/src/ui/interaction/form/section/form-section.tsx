@@ -1,12 +1,9 @@
-
-import styles from "../form.module.css";
-
 import { UseFormReturn } from "react-hook-form";
 
 import { FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
-import FormArray from '../field/array/array';
-import { renderFormField } from '../form';
+import FormArray from "../field/array/array";
+import { renderFormField } from "../form";
 
 interface FormSectionProps {
   entityType: string;
@@ -24,17 +21,23 @@ interface FormSectionProps {
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
-    <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>{parseWordsForLabels(props.group.label[VALUE_KEY])}</legend>
-      <div className={styles["form-fieldset-contents"]}>
+    <div className="p-1 md:p-6 flex flex-col justify-center mx-auto border-1 border-border bg-background  rounded-lg m-4  ">
+      <h2 className=" text-lg md:text-2xl  font-bold">
+        {parseWordsForLabels(props.group.label[VALUE_KEY])}
+      </h2>
+      <div className="p-2 space-y-2">
         {props.group.property.map((field, index) =>
-          renderFormField(props.entityType, field, props.form, index))}
-        {props.group.multipleProperty.length > 0 && <FormArray
-          fieldId={props.group.label[VALUE_KEY]}
-          fieldConfigs={props.group.multipleProperty}
-          form={props.form}
-          options={props.options}
-        />}
+          renderFormField(props.entityType, field, props.form, index)
+        )}
+        {props.group.multipleProperty.length > 0 && (
+          <FormArray
+            fieldId={props.group.label[VALUE_KEY]}
+            fieldConfigs={props.group.multipleProperty}
+            form={props.form}
+            options={props.options}
+          />
+        )}
       </div>
-    </fieldset>);
+    </div>
+  );
 }

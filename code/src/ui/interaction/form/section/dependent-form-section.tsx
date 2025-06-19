@@ -1,19 +1,28 @@
-import fieldStyles from '../field/field.module.css';
-import styles from '../form.module.css';
+import fieldStyles from "../field/field.module.css";
 
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
-import { useDictionary } from 'hooks/useDictionary';
-import { Dictionary } from 'types/dictionary';
-import { defaultSearchOption, ID_KEY, PropertyShape, RegistryFieldValues, VALUE_KEY } from 'types/form';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
-import { extractResponseField, getAfterDelimiter, parseStringsForUrls } from 'utils/client-utils';
-import FormSelector from '../field/input/form-selector';
-import { FORM_STATES } from '../form-utils';
-import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
+import {
+  defaultSearchOption,
+  ID_KEY,
+  PropertyShape,
+  RegistryFieldValues,
+  VALUE_KEY,
+} from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
+import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import {
+  extractResponseField,
+  getAfterDelimiter,
+  parseStringsForUrls,
+} from "utils/client-utils";
+import FormSelector from "../field/input/form-selector";
+import { FORM_STATES } from "../form-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -22,11 +31,13 @@ interface DependentFormSectionProps {
 
 /**
  * This component renders a form section that has dependencies on related entities.
- * 
+ *
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
-export function DependentFormSection(props: Readonly<DependentFormSectionProps>) {
+export function DependentFormSection(
+  props: Readonly<DependentFormSectionProps>
+) {
   const pathName: string = usePathname();
   const dict: Dictionary = useDictionary();
 
@@ -51,7 +62,11 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
   // If parent options are available, the list will be refetched on parent option change
   useEffect(() => {
     // Declare an async function to retrieve the list of dependent entities for the dropdown selector
-    const getDependencies = async (entityType: string, field: PropertyShape, form: UseFormReturn) => {
+    const getDependencies = async (
+      entityType: string,
+      field: PropertyShape,
+      form: UseFormReturn
+    ) => {
       setIsFetching(true);
       let entities: RegistryFieldValues[] = [];
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
@@ -59,27 +74,41 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         if (currentParentOption) {
           entities = await fetch(
             makeInternalRegistryAPIwithParams(
-              'instances', field.dependentOn.label,
+              "instances",
+              field.dependentOn.label,
               "false",
               getAfterDelimiter(currentParentOption, "/"),
-              entityType),
-            { cache: 'no-store', credentials: 'same-origin' }
-          ).then(res => res.json());
+              entityType
+            ),
+            { cache: "no-store", credentials: "same-origin" }
+          ).then((res) => res.json());
         }
         // If there is no valid parent option, there should be no entity
-      } else if ((formType === "view" || formType === "delete") && field.defaultValue) {
+      } else if (
+        (formType === "view" || formType === "delete") &&
+        field.defaultValue
+      ) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
-        entities = await fetch(makeInternalRegistryAPIwithParams(
-          'instances', entityType, "false",
-          getAfterDelimiter(Array.isArray(field.defaultValue) ? field.defaultValue?.[0].value : field.defaultValue?.value, "/")),
-          { cache: 'no-store', credentials: 'same-origin' }
-        ).then((response) => response.json())
-
+        entities = await fetch(
+          makeInternalRegistryAPIwithParams(
+            "instances",
+            entityType,
+            "false",
+            getAfterDelimiter(
+              Array.isArray(field.defaultValue)
+                ? field.defaultValue?.[0].value
+                : field.defaultValue?.value,
+              "/"
+            )
+          ),
+          { cache: "no-store", credentials: "same-origin" }
+        ).then((response) => response.json());
       } else {
         entities = await fetch(
-          makeInternalRegistryAPIwithParams('instances', entityType),
-          { cache: 'no-store', credentials: 'same-origin' }).then((res) => res.json())
+          makeInternalRegistryAPIwithParams("instances", entityType),
+          { cache: "no-store", credentials: "same-origin" }
+        ).then((res) => res.json());
       }
 
       // By default, id is empty
@@ -89,12 +118,22 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
         // If there is a default value, search and use the option matching the default instance's local name
         if (props.form.getValues(field.fieldId)) {
-          const defaultValueId: string = getAfterDelimiter(props.form.getValues(field.fieldId), "/");
-          const matchingEntity: RegistryFieldValues = entities.find(entity =>
-            getAfterDelimiter(extractResponseField(entity, FORM_STATES.ID)?.value, "/") === defaultValueId
+          const defaultValueId: string = getAfterDelimiter(
+            props.form.getValues(field.fieldId),
+            "/"
+          );
+          const matchingEntity: RegistryFieldValues = entities.find(
+            (entity) =>
+              getAfterDelimiter(
+                extractResponseField(entity, FORM_STATES.ID)?.value,
+                "/"
+              ) === defaultValueId
           );
           if (matchingEntity) {
-            defaultId = extractResponseField(matchingEntity, FORM_STATES.IRI)?.value;
+            defaultId = extractResponseField(
+              matchingEntity,
+              FORM_STATES.IRI
+            )?.value;
           }
         }
       }
@@ -116,15 +155,17 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
         } else if (fields.includes("street")) {
           displayField = "street";
         } else {
-          displayField = Object.keys(fields).find((key => key != "id" && key != "iri"));
+          displayField = Object.keys(fields).find(
+            (key) => key != "id" && key != "iri"
+          );
         }
-        entities.forEach(entity => {
+        entities.forEach((entity) => {
           const formOption: SelectOption = {
             value: extractResponseField(entity, FORM_STATES.IRI)?.value,
             label: extractResponseField(entity, displayField)?.value,
           };
           formFields.push(formOption);
-        })
+        });
       }
       // Sort the fields by the labels
       formFields.sort((a, b) => {
@@ -141,7 +182,7 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
       // Update select options
       setSelectElements(formFields);
       setIsFetching(false);
-    }
+    };
 
     if (parentField !== "" || currentParentOption !== null) {
       getDependencies(queryEntityType, props.dependentProp, props.form);
@@ -154,13 +195,18 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
-    return (url);
+    return url;
   };
 
   // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
-    let url: string = `../view/${queryEntityType}/${getAfterDelimiter(currentOption, "/")}`;
+    let url: string = `../view/${queryEntityType}/${getAfterDelimiter(
+      currentOption,
+      "/"
+    )}`;
     // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
     if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
@@ -168,36 +214,51 @@ export function DependentFormSection(props: Readonly<DependentFormSectionProps>)
     window.open(url, "_blank");
   };
 
-  // The fieldset should only be displayed if it either does not have parent elements (no dependentOn property) or 
+  // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
   // the parent element has been queried and selected
-  if (!props.dependentProp.dependentOn || (currentParentOption && parentField != "")) {
+  if (
+    !props.dependentProp.dependentOn ||
+    (currentParentOption && parentField != "")
+  ) {
     return (
-      <fieldset className={styles["form-dependent-fieldset"]}>
-        {isFetching &&
-          <div className={styles["loader-container"]}>
+      <div className="rounded-lg  my-4">
+        {isFetching && (
+          <div className="mr-2">
             <LoadingSpinner isSmall={true} />
           </div>
-        }
+        )}
         {!isFetching && (
-          <div className={fieldStyles["form-input-container"]}>
+          <div className="flex flex-col w-full gap-2">
             <FormSelector
               selectOptions={selectElements}
               field={props.dependentProp}
               form={props.form}
               redirectOptions={{
-                addUrl: formType != "view" && formType != "delete" && formType != "search" ?
-                  genAddSubEntityUrl(queryEntityType) : undefined,
-                view: !isFetching && formType != "search" && selectElements.length > 0 ?
-                  openViewSubEntityModal : undefined,
+                addUrl:
+                  formType != "view" &&
+                  formType != "delete" &&
+                  formType != "search"
+                    ? genAddSubEntityUrl(queryEntityType)
+                    : undefined,
+                view:
+                  !isFetching &&
+                  formType != "search" &&
+                  selectElements.length > 0
+                    ? openViewSubEntityModal
+                    : undefined,
               }}
               noOptionMessage={dict.message.noInstances}
               options={{
                 disabled: formType == "view" || formType == "delete",
-                labelStyle: [fieldStyles["form-input-label-add"], fieldStyles["form-input-label"]],
+                labelStyle: [
+                  fieldStyles["form-input-label-add"],
+                  fieldStyles["form-input-label"],
+                ],
               }}
             />
           </div>
         )}
-      </fieldset>);
+      </div>
+    );
   }
 }
