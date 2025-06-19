@@ -22,9 +22,9 @@ import { DictionaryProvider } from "utils/dictionary/DictionaryContext";
  * first loaded. Runs on the server.
  */
 function initialise() {
-  SettingsStore.readInitialisationSettings();
-  // Cache contents of optional static pages
-  OptionalPages.loadPages();
+    SettingsStore.readUISettings();
+    // Cache contents of optional static pages
+    OptionalPages.loadPages();
 }
 
 const inter = Inter({

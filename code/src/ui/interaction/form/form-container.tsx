@@ -263,7 +263,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
                 leftIcon="error"
-                label="Rescind"
+                label={dict.action.rescind}
                 variant="secondary"
                 className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
@@ -279,7 +279,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
                 leftIcon="cancel"
-                label="Cancel"
+                label={dict.action.cancel}
                 variant="secondary"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
@@ -293,7 +293,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             status?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
-                label="Approve"
+                label={dict.action.approve}
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
@@ -307,7 +307,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 leftIcon="edit"
-                label="Edit"
+                label={dict.action.edit}
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 variant="primary"
@@ -322,7 +322,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 leftIcon="delete"
-                label="Delete"
+                label={dict.action.delete}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 variant="destructive"
@@ -331,7 +331,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {props.formType != "view" && !response && (
             <Button
               leftIcon="send"
-              label="Submit"
+              label={dict.action.submit}
               tooltipText={dict.action.submit}
               onClick={onSubmit}
             />
@@ -350,7 +350,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           )}
           {!response && !(isRescindAction || isTerminateAction) && (
             <ReturnButton
-              label="Return"
+              label={dict.action.return}
               leftIcon={"first_page"}
               className="ml-2"
               variant="secondary"
