@@ -13,6 +13,7 @@ import ContextMenu from "./interaction/context-menu/context-menu";
 import HeaderBar from "./interaction/header/headerbar";
 import Footer from "./text/footer";
 import { NavMenu } from "./navigation/navbar/nav-menu";
+import { usePathname } from "next/navigation";
 
 // Incoming properties for global container
 interface GlobalContainerProps {
@@ -32,6 +33,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
     y: number;
   }>({ x: 0, y: 0 });
   const backgroundImageUrl: string = useBackgroundImageUrl();
+  const pathname = usePathname();
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -49,43 +51,43 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
     setContextMenuVisible(false);
   };
 
-  return <Provider store={reduxStore}>
-    <div
-      id="globalContainer"
-      onContextMenu={handleContextMenu}
-      onClick={closeContextMenu} // Close context menu when clicking elsewhere
-      style={{
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
-      {contextMenuVisible && (
-        <ContextMenu
-          x={contextMenuPosition.x}
-          y={contextMenuPosition.y}
-          showContextMenu={contextMenuVisible}
-        />
-      )}
+  return (
+    <Provider store={reduxStore}>
+      <div
+        onContextMenu={handleContextMenu}
+        onClick={closeContextMenu} // Close context menu when clicking elsewhere
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
+        {contextMenuVisible && (
+          <ContextMenu
+            x={contextMenuPosition.x}
+            y={contextMenuPosition.y}
+            showContextMenu={contextMenuVisible}
+          />
+        )}
 
-      <HeaderBar pages={props.pages} settings={props.settings} />
+        <HeaderBar pages={props.pages} settings={props.settings} />
 
-      <div className="flex h-screen w-full">
-        <NavMenu
-          pages={props.pages}
-          settings={props.settings}
-          isMobile={false}
-        />
-
-        <div className="mx-auto mt-4 flex h-4/5 items-center justify-center p-2 sm:w-sm md:h-11/12 md:w-11/12 lg:h-11/12 lg:w-11/12 lg:p-4 xl:mt-0 xl:h-10/12 xl:w-9/12 2xl:h-11/12">
+        <main className="flex h-screen w-full">
+          {!pathname.endsWith("map") && (
+            <NavMenu
+              pages={props.pages}
+              settings={props.settings}
+              isMobile={false}
+            />
+          )}
           {props.children}
-        </div>
-      </div>
+        </main>
 
-      <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
-      {popup && <Trex callback={togglePopup} />}
-      <Footer />
-    </div>
-  </Provider>;
+        <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
+        {popup && <Trex callback={togglePopup} />}
+        <Footer />
+      </div>
+    </Provider>
+  );
 }

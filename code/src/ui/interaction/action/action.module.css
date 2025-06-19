@@ -4,31 +4,30 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  margin: 0.5rem 0 0.25rem 0;
+
   padding: 0.5rem 1rem;
-  border-radius: 0.1rem;
+  border-radius: 0.5rem;
   color: var(--text-color-primary);
   transition: all 0.2s ease-in-out;
 }
 
 .active {
-  background: var(--button-color-primary-active) !important;
+  background: var(--background-primary) !important;
+  border: 1px solid var(--background-inverse-primary);
   transform: translateY(-1px);
 }
 
 .background {
   background: var(--button-color-primary);
-  border: 1px solid transparent;
+  /* border: 1px solid transparent; */
 }
 
 .background-secondary {
   background: var(--button-color-secondary);
-  border: 1px solid var(--border-primary);
 }
 
 .background:hover {
   background-color: var(--button-color-primary-active);
-  transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -38,14 +37,16 @@
 }
 
 .icon {
-  font-size: var(--small-icon-size) !important;
+  font-size: var(--icon-size) !important;
   transition: color 0.2s ease;
+  color: var(--text-color-primary) !important;
 }
 
 .text {
-  font-size: var(--font-size-tertiary-text);
+  font-size: var(--font-size-primary);
+  color: var(--text-color-primary) !important;
   margin-left: 0.5rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .background-text-color {
@@ -65,27 +66,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem;
-  border-radius: 0.4rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   margin: 0 0.5rem;
   transition: all 0.2s ease-in-out;
+  background-color: var(--button-color-primary);
+}
+
+.icon-only-button:hover {
+  background-color: var(--button-color-primary-active);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .popover {
   display: flex;
   flex-direction: column;
-  row-gap: .5rem;
+  row-gap: 0.5rem;
   padding: 0.5rem;
 
-  background-color: var(--background-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: 0.2rem;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
 }
 
 @media only screen and (max-width: 480px) {
   .button-container {
-    width: 100%;
-    margin-bottom: 0.5rem;
+    padding: 0.5rem 0.5rem;
   }
 }

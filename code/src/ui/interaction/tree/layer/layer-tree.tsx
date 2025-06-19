@@ -1,15 +1,15 @@
-import styles from './layer-tree.module.css';
+import styles from "./layer-tree.module.css";
 
-import React from 'react';
-import { Map } from 'mapbox-gl';
+import React from "react";
+import { Map } from "mapbox-gl";
 
-import { DataGroup } from 'io/data/data-group';
-import { DataLayer } from 'io/data/data-layer';
-import { DataStore } from 'io/data/data-store';
-import { JsonObject } from 'types/json';
-import { MapLayerGroup, MapLayer } from 'types/map-layer';
-import { IconSettings } from 'types/settings';
-import LayerTreeHeader from './layer-tree-content';
+import { DataGroup } from "io/data/data-group";
+import { DataLayer } from "io/data/data-layer";
+import { DataStore } from "io/data/data-store";
+import { JsonObject } from "types/json";
+import { MapLayerGroup, MapLayer } from "types/map-layer";
+import { IconSettings } from "types/settings";
+import LayerTreeHeader from "./layer-tree-content";
 
 // type definition for incoming properties
 interface LayerTreeProps {
@@ -25,19 +25,22 @@ interface LayerTreeProps {
  * with optional icons, in a LayerTree component.
  */
 export default function LayerTree(props: Readonly<LayerTreeProps>) {
-  return <div className={styles.layerTreeContainer}>
-    {props.mapGroups.map((mapLayerGroup) => {
-      return (
-        <LayerTreeHeader
-          map={props.map}
-          group={mapLayerGroup}
-          depth={0}
-          parentShowChildren={mapLayerGroup.showChildren}
-          setMapGroups={props.setMapGroups}
-          key={mapLayerGroup.name}
-        />)
-    })}
-  </div>;
+  return (
+    <div className={styles.layerTreeContainer}>
+      {props.mapGroups.map((mapLayerGroup) => {
+        return (
+          <LayerTreeHeader
+            map={props.map}
+            group={mapLayerGroup}
+            depth={0}
+            parentShowChildren={mapLayerGroup.showChildren}
+            setMapGroups={props.setMapGroups}
+            key={mapLayerGroup.name}
+          />
+        );
+      })}
+    </div>
+  );
 }
 
 /**
@@ -69,7 +72,12 @@ export function parseIntoTreeStucture(
  * @param parentGroup parent tree group.
  * @param icons The mappings for icon names to their corresponding url.
  */
-function recurseParseTreeStructure( groupIndex: number, results: MapLayerGroup[], dataGroup: DataGroup, parentGroup: MapLayerGroup, icons: IconSettings
+function recurseParseTreeStructure(
+  groupIndex: number,
+  results: MapLayerGroup[],
+  dataGroup: DataGroup,
+  parentGroup: MapLayerGroup,
+  icons: IconSettings
 ): void {
   const mapLayerGroup: MapLayerGroup = {
     name: dataGroup.name,
@@ -101,16 +109,23 @@ function recurseParseTreeStructure( groupIndex: number, results: MapLayerGroup[]
       address: dataGroup.name + "." + key,
       ids: collectIDs(layers),
       icon: getIcon(layers, icons),
-      grouping: layers.find(layer => layer.grouping !== undefined)?.grouping,
-      isVisible: layers.find(layer => layer.cachedVisibility !== null)?.cachedVisibility,
+      grouping: layers.find((layer) => layer.grouping !== undefined)?.grouping,
+      isVisible: layers.find((layer) => layer.cachedVisibility !== null)
+        ?.cachedVisibility,
     };
     mapLayerGroup.layers.push(mapLayer);
   }
 
   // Recurse down
   dataGroup.subGroups.map((subGroup, subGroupIndex) => {
-    recurseParseTreeStructure(subGroupIndex, results, subGroup, mapLayerGroup, icons);
-  })
+    recurseParseTreeStructure(
+      subGroupIndex,
+      results,
+      subGroup,
+      mapLayerGroup,
+      icons
+    );
+  });
 
   if (parentGroup == null) {
     results.push(mapLayerGroup);
@@ -132,20 +147,25 @@ function collectIDs(layers: DataLayer[]): string {
   return ids.join(" ");
 }
 
-/** Retrieve the icon from the current layers. This method will prioritise line colors over the icon if available. 
+/** Retrieve the icon from the current layers. This method will prioritise line colors over the icon if available.
  *
  * @param {DataLayers[]} layers Layers within the grouped layers.
  * @param {IconSettings} icons The mappings for icon names to their corresponding url.
  * @returns {string} the icon name
  */
 function getIcon(layers: DataLayer[], icons: IconSettings): string {
-  const overridelayer: DataLayer = layers.find(layer => layer.definition?.layerTreeIconOverride);
+  const overridelayer: DataLayer = layers.find(
+    (layer) => layer.definition?.layerTreeIconOverride
+  );
   if (overridelayer) {
-    const iconOverride: string = overridelayer.definition.layerTreeIconOverride as string
+    const iconOverride: string = overridelayer.definition
+      .layerTreeIconOverride as string;
     return icons[iconOverride];
   }
   // Retrieve the line and return its color if available
-  const lineLayer: DataLayer = layers.find(layer => layer.definition?.type === 'line');
+  const lineLayer: DataLayer = layers.find(
+    (layer) => layer.definition?.type === "line"
+  );
   if (lineLayer) {
     const paint: JsonObject = lineLayer?.definition?.paint as JsonObject;
     if (typeof paint["line-color"] === "string") {
@@ -153,7 +173,9 @@ function getIcon(layers: DataLayer[], icons: IconSettings): string {
     }
   }
   // Retrieve the circle symbol layer and return its color if available
-  const circleLayer: DataLayer = layers.find(layer => layer.definition?.type === "circle");
+  const circleLayer: DataLayer = layers.find(
+    (layer) => layer.definition?.type === "circle"
+  );
   if (circleLayer) {
     const paint: JsonObject = circleLayer?.definition?.paint as JsonObject;
     if (typeof paint["circle-color"] === "string") {
@@ -161,7 +183,11 @@ function getIcon(layers: DataLayer[], icons: IconSettings): string {
     }
   }
   // If no line is available, retrieve the icon image if available
-  const layer: DataLayer = layers.find(layer => isJsonObject(layer.definition?.layout) && isString(layer.definition.layout["icon-image"]));
+  const layer: DataLayer = layers.find(
+    (layer) =>
+      isJsonObject(layer.definition?.layout) &&
+      isString(layer.definition.layout["icon-image"])
+  );
   if (layer) {
     const layout: JsonObject = layer?.definition?.layout as JsonObject;
     if (typeof layout["icon-image"] === "string") {
@@ -170,15 +196,15 @@ function getIcon(layers: DataLayer[], icons: IconSettings): string {
     }
   }
   // Otherwise, defaults to null
-  return null
+  return null;
 }
 
 // Disable eslint for the typeguard functions to allow compilation
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function isJsonObject(obj: any): obj is JsonObject {
-  return typeof obj === 'object' && !Array.isArray(obj);
+  return typeof obj === "object" && !Array.isArray(obj);
 }
 
 function isString(value: any): value is string {
-  return typeof value === 'string';
+  return typeof value === "string";
 }

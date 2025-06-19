@@ -1,6 +1,6 @@
-import { useDictionary } from 'hooks/useDictionary';
-import { Dictionary } from 'types/dictionary';
-import { CustomAgentResponseBody } from 'utils/server-actions';
+import { useDictionary } from "hooks/useDictionary";
+import { CustomAgentResponseBody } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
 
 interface ResponseComponentProps<> {
   response: CustomAgentResponseBody;
@@ -8,15 +8,19 @@ interface ResponseComponentProps<> {
 
 /**
  * Renders the response message for dialogs after submission.
- * 
+ *
  * @param {CustomAgentResponseBody} response Response to display.
  */
-export default function ResponseComponent(props: Readonly<ResponseComponentProps>) {
+export default function ResponseComponent(
+  props: Readonly<ResponseComponentProps>
+) {
   const dict: Dictionary = useDictionary();
   if (props.response) {
-    const textColor: string = props.response?.success ? "#52B7A5" : "#D7653D";
+    const textColor: string = props.response?.success
+      ? "text-green-600"
+      : "text-red-600";
     return (
-      <div style={{ color: textColor, overflowY: "auto", height: "5vh", width: "100%" }}>
+      <div className={`${textColor} overflow-auto h-[5vh] w-full`}>
         {props.response.message}
         <br />
         {props.response.success ? "" : dict.message.contactTechTeam}
