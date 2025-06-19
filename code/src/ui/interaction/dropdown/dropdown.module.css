@@ -34,7 +34,7 @@
   height: 2rem;
   width: 100%;
   max-width: 6rem;
-  background-color: var(--background-tertiary);
+  background-color: white;
   color: var(--background-inverse-primary);
   border-radius: 0.2rem;
   font-size: var(--font-size-tertiary-text);

@@ -1,9 +1,7 @@
-import styles from "../form.module.css";
-
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
-import { useDictionary } from 'hooks/useDictionary';
+import { useDictionary } from "hooks/useDictionary";
 import { Address } from "types/address";
 import { Dictionary } from "types/dictionary";
 import {
@@ -12,16 +10,17 @@ import {
   PropertyGroup,
   PropertyShape,
   TYPE_KEY,
-  VALUE_KEY
+  VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import ClickActionButton from "ui/interaction/action/click/click-button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import ErrorComponent from "ui/text/error/error";
 import { parseWordsForLabels } from "utils/client-utils";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import Button from "ui/interaction/button";
+
 interface FormGeocoderProps {
   field: PropertyShape;
   form: UseFormReturn;
@@ -52,7 +51,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     order: 10,
     step: {
       "@value": "0.00000001",
-      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     minCount: {
       "@value": "1",
@@ -77,7 +76,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     order: 11,
     step: {
       "@value": "0.00000001",
-      "@type": "http://www.w3.org/2001/XMLSchema#decimal"
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     datatype: "decimal",
     minCount: {
@@ -90,8 +89,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     },
   };
 
-  const isInitialFetching: React.RefObject<boolean> =
-    useRef<boolean>(true);
+  const isInitialFetching: React.RefObject<boolean> = useRef<boolean>(true);
   const [isEmptyAddress, setIsEmptyAddress] = useState<boolean>(false);
   const [hasGeolocation, setHasGeolocation] = useState<boolean>(false);
   const [addressShapes, setAddressShapes] = useState<PropertyShape[]>([]);
@@ -105,10 +103,13 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       locationIdentifier: string
     ): Promise<void> => {
       isInitialFetching.current = true;
-      const res = await fetch(makeInternalRegistryAPIwithParams('form', locationIdentifier), {
-        cache: 'no-store',
-        credentials: 'same-origin'
-      });
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("form", locationIdentifier),
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      );
       const template: FormTemplateType = await res.json();
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
@@ -141,14 +142,15 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     };
 
     // Declare an async function to get geocoordinates associated with the location
-    const getGeoCoordinates = async (
-      location: string
-    ): Promise<void> => {
+    const getGeoCoordinates = async (location: string): Promise<void> => {
       isInitialFetching.current = true;
-      const res = await fetch(makeInternalRegistryAPIwithParams('geodecode', location), {
-        cache: 'no-store',
-        credentials: 'same-origin'
-      });
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("geodecode", location),
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      );
       const coordinates: number[] = await res.json();
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
@@ -163,11 +165,15 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       isInitialFetching.current = false;
     };
 
-    if (formType == "add" || formType == 'edit') {
+    if (formType == "add" || formType == "edit") {
       getAddressShapes(props.field.name[VALUE_KEY]);
     }
-    if (formType == "view" || formType == 'edit') {
-      getGeoCoordinates(Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value);
+    if (formType == "view" || formType == "edit") {
+      getGeoCoordinates(
+        Array.isArray(props.field.defaultValue)
+          ? props.field.defaultValue?.[0].value
+          : props.field.defaultValue?.value
+      );
     }
   }, []);
 
@@ -184,10 +190,13 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     setSelectedAddress(null);
     setIsEmptyAddress(false);
     // Start search
-    const results = await fetch(makeInternalRegistryAPIwithParams('address', data[postalCode]), {
-      cache: 'no-store',
-      credentials: 'same-origin'
-    }).then((response) => response.text());
+    const results = await fetch(
+      makeInternalRegistryAPIwithParams("address", data[postalCode]),
+      {
+        cache: "no-store",
+        credentials: "same-origin",
+      }
+    ).then((response) => response.text());
     if (
       results ==
       "There are no address associated with the parameters in the knowledge graph."
@@ -211,15 +220,23 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       // First by postal code
       makeInternalRegistryAPIwithParams("geocode_postal", data[postalCode]),
       // If no coordinates are found, search by block (if available) and street name
-      makeInternalRegistryAPIwithParams('geocode_address', data.block, data.street),
+      makeInternalRegistryAPIwithParams(
+        "geocode_address",
+        data.block,
+        data.street
+      ),
       // If no coordinates are found, search for any coordinate in the same city and country
-      makeInternalRegistryAPIwithParams('geocode_city', data.city, data.country),
+      makeInternalRegistryAPIwithParams(
+        "geocode_city",
+        data.city,
+        data.country
+      ),
     ];
 
     for (const url of internalApiPaths) {
       const res = await fetch(url, {
-        cache: 'no-store',
-        credentials: 'same-origin'
+        cache: "no-store",
+        credentials: "same-origin",
       });
       const coordinates: number[] = await res.json();
       if (coordinates.length === 2) {
@@ -256,47 +273,50 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   };
 
   return (
-    <fieldset className={styles["form-fieldset"]}>
-      <legend className={styles["form-fieldset-label"]}>
+    <div className="mt-6">
+      <h2 className="text-2xl font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
-      </legend>
+      </h2>
       {isInitialFetching.current && (
-        <div className={styles["loader-container"]}>
+        <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
       {postalCodeShape && (
-        <FormFieldComponent
-          field={postalCodeShape}
-          form={props.form}
-        />
+        <FormFieldComponent field={postalCodeShape} form={props.form} />
       )}
       {!isInitialFetching.current &&
-        (formType == "add" || formType == 'edit') && (
-          <div className={styles["form-dependent-button-layout"]}>
-            <ClickActionButton
-              icon={"search"}
+        (formType == "add" || formType == "edit") && (
+          <div className="flex my-4 gap-1 ">
+            <Button
+              leftIcon="search"
+              size="icon"
               tooltipText={dict.action.findAddress}
               onClick={props.form.handleSubmit(onSearchForAddress)}
             />
-            {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && <ClickActionButton
-              icon={"edit_location"}
-              tooltipText={dict.action.selectLocation}
-              onClick={props.form.handleSubmit(onGeocoding)}
-            />}
+            {addressShapes.length > 0 &&
+              (selectedAddress || isEmptyAddress) && (
+                <Button
+                  leftIcon="edit_location"
+                  label="Select Location"
+                  size="sm"
+                  tooltipText={dict.action.selectLocation}
+                  onClick={props.form.handleSubmit(onGeocoding)}
+                />
+              )}
           </div>
         )}
       {isEmptyAddress && (
-        <div style={{ margin: "0.5rem 0.75rem" }}>
+        <div className="m-2">
           <ErrorComponent message={dict.message.noAddressFound} />
         </div>
       )}
       {addresses.length > 0 && !selectedAddress && (
-        <div className={styles["form-menu"]}>
+        <div className="grid grid-col-1 lg:grid-cols-2  w-fit my-2 gap-2 ">
           {addresses.map((address, index) => (
             <button
               key={address.street + index}
-              className={styles["form-menu-item"]}
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
               onClick={() => handleAddressClick(address)}
             >
               {String.fromCharCode(62)} {address.block}{" "}
@@ -306,7 +326,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && (
-        <div className={styles["form-fieldset-contents"]}>
+        <div className="flex flex-wrap w-full p-0 m-0">
           {addressShapes.map((shape, index) => (
             <FormFieldComponent
               key={shape.fieldId + index}
@@ -317,7 +337,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {hasGeolocation && (
-        <div className={styles["form-fieldset-contents"]}>
+        <div className="flex flex-wrap w-full">
           <GeocodeMapContainer
             form={props.form}
             fieldId={props.field.fieldId}
@@ -326,20 +346,18 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             field={latitudeShape}
             form={props.form}
             options={{
-              disabled:
-                formType == "view" || formType == "delete",
+              disabled: formType == "view" || formType == "delete",
             }}
           />
           <FormFieldComponent
             field={longitudeShape}
             form={props.form}
             options={{
-              disabled:
-                formType == "view" || formType == "delete",
+              disabled: formType == "view" || formType == "delete",
             }}
           />
         </div>
       )}
-    </fieldset>
+    </div>
   );
 }

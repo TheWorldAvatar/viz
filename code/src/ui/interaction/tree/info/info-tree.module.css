@@ -1,5 +1,5 @@
 .initialContent {
-  padding: 1rem
+  padding: 1rem;
 }
 
 .infoPanelContainer {
@@ -19,7 +19,7 @@
   padding: 0.5rem;
   border-style: solid;
   border-color: var(--border-secondary);
-  border-width: 0px 0px .12rem 0px;
+  border-width: 0px 0px 0.12rem 0px;
 }
 
 .tab-container {
@@ -127,7 +127,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0.5rem
+  margin: 0.5rem;
 }
 
 .iconContainer {

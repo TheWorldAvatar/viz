@@ -1,13 +1,11 @@
 "use client";
 
-import styles from "./form.module.css";
-
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
-import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
-import { useDictionary } from 'hooks/useDictionary';
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { PermissionScheme } from "types/auth";
 import { CustomAgentResponseBody } from "types/backend-agent";
@@ -20,12 +18,12 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
-import ClickActionButton from "../action/click/click-button";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import Button from "../button";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -48,34 +46,24 @@ export default function FormContainerComponent(
   const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
 
   if (props.isModal) {
-    return (<Modal
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      returnPrevPage={true}
-      styles={[styles["modal"]]}
-    >
-      <FormContents {...props} />
-    </Modal>
+    return (
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} returnPrevPage={true}>
+        <FormContents {...props} />
+      </Modal>
     );
   }
 
-  return (<div className={styles["container"]}>
-    <ReturnButton
-      icon={"close"}
-      className={styles.close}
-      styling={{ text: styles["close-text"] }}
-    />
-    <FormContents {...props} />
-  </div>
+  return (
+    <div className="relative flex flex-col w-11/12 h-[80vh] md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-8  xl:mt-2.5 ">
+      <FormContents {...props} />
+    </div>
   );
 }
 
-function FormContents(
-  props: Readonly<FormContainerComponentProps>
-) {
+function FormContents(props: Readonly<FormContainerComponentProps>) {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
-  const keycloakEnabled = process.env.KEYCLOAK === 'true';
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -115,13 +103,16 @@ function FormContents(
       [FORM_STATES.CONTRACT]: status.iri,
       [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
     };
-    const res = await fetch(makeInternalRegistryAPIwithParams('event', "archive", action), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      cache: 'no-store',
-      credentials: 'same-origin',
-      body: JSON.stringify({ formData: payload }),
-    });
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "archive", action),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ formData: payload }),
+      }
+    );
     const agentResponseBody: CustomAgentResponseBody = await res.json();
     setResponse(agentResponseBody);
   };
@@ -134,10 +125,18 @@ function FormContents(
       eventType: string
     ): Promise<void> => {
       setIsLoading(true);
-      const res = await fetch(makeInternalRegistryAPIwithParams('event', lifecycleStage, eventType, FORM_IDENTIFIER), {
-        cache: 'no-store',
-        credentials: 'same-origin'
-      });
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams(
+          "event",
+          lifecycleStage,
+          eventType,
+          FORM_IDENTIFIER
+        ),
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      );
       const template: PropertyShape[] = await res.json();
       setFormFields(template);
       setIsLoading(false);
@@ -157,13 +156,16 @@ function FormContents(
       contract: status.iri,
       remarks: "Contract has been approved successfully!",
     };
-    const res = await fetch(makeInternalRegistryAPIwithParams('event', "service", "commence"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      cache: 'no-store',
-      credentials: 'same-origin',
-      body: JSON.stringify({ formData: reqBody }),
-    });
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ formData: reqBody }),
+      }
+    );
     const customAgentResponse: CustomAgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setIsLoading(false);
@@ -181,10 +183,13 @@ function FormContents(
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const res = await fetch(makeInternalRegistryAPIwithParams('contract_status', id), {
-        cache: 'no-store',
-        credentials: 'same-origin'
-      });
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("contract_status", id),
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      );
       const responseString = await res.text();
       setStatus(JSON.parse(responseString));
     };
@@ -192,9 +197,9 @@ function FormContents(
     if (
       props.isPrimaryEntity &&
       !status &&
-      (props.formType === 'view' ||
-        props.formType === 'delete' ||
-        props.formType === 'edit')
+      (props.formType === "view" ||
+        props.formType === "delete" ||
+        props.formType === "edit")
     ) {
       getContractStatus();
     }
@@ -202,12 +207,15 @@ function FormContents(
 
   return (
     <>
-      <div className={`${styles["form-title"]} ${styles["form-row"]}`}>
-        <span>{`${translateFormType(props.formType, dict).toUpperCase()} ${props.entityType
+      <div className="text-xl font-bold">
+        <span>{`${translateFormType(
+          props.formType,
+          dict
+        ).toUpperCase()} ${props.entityType
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className={styles["form-contents"]}>
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6  ">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -230,13 +238,14 @@ function FormContents(
           />
         )}
       </div>
-      <div className={styles["form-footer"]}>
+      <div className="flex justify-between p-2 ">
         {!formRef.current?.formState?.isSubmitting && !response && (
-          <ClickActionButton
-            icon={"cached"}
+          <Button
+            leftIcon="cached"
+            variant="outline"
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
-            isTransparent={true}
+            size="icon"
           />
         )}
         {formRef.current?.formState?.isSubmitting ||
@@ -244,82 +253,110 @@ function FormContents(
         {!formRef.current?.formState?.isSubmitting && response && (
           <ResponseComponent response={response} />
         )}
-        <div className={styles["form-row"]}>
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === 'view' &&
-            !response && status?.message === ENTITY_STATUS.ACTIVE &&
+        <div className="flex flex-wrap gap-2 justify-end items-center ">
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
+            props.formType === "view" &&
+            !response &&
+            status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
-              <ClickActionButton // Rescind Button
-                icon={"error"}
+              <Button // Rescind Button
+                leftIcon="error"
+                label="Rescind"
+                variant="secondary"
+                className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation) &&
-            props.formType === 'view' &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
+            props.formType === "view" &&
             !response &&
             status?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
-              <ClickActionButton // Terminate Button
-                icon={"cancel"}
+              <Button // Terminate Button
+                leftIcon="cancel"
+                label="Cancel"
+                variant="secondary"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === 'view' &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.formType === "view" &&
             !response &&
             status?.message === ENTITY_STATUS.PENDING && (
-              <ClickActionButton // Approval button
-                icon={"done_outline"}
+              <Button // Approval button
+                leftIcon="done_outline"
+                label="Approve"
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === 'view' &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.formType === "view" &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
-                icon="edit"
+                leftIcon="edit"
+                label="Edit"
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
-                isActive={false}
+                variant="primary"
               />
             )}
-          {(!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.sales) &&
-            props.formType === 'view' &&
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.formType === "view" &&
             !response &&
             (status?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
-                icon="delete"
+                leftIcon="delete"
+                label="Delete"
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
-                isActive={false}
+                variant="destructive"
               />
             )}
-          {props.formType != 'view' && !response && <ClickActionButton
-            icon="publish"
-            tooltipText={dict.action.submit}
-            onClick={onSubmit}
-          />}
-          {!response && (isRescindAction || isTerminateAction) &&
-            <ClickActionButton
+          {props.formType != "view" && !response && (
+            <Button
+              leftIcon="send"
+              label="Submit"
+              tooltipText={dict.action.submit}
+              onClick={onSubmit}
+            />
+          )}
+          {!response && (isRescindAction || isTerminateAction) && (
+            <Button
               // Remove the rescind and terminate action view back to original view if no response
-              icon={"first_page"}
+              leftIcon="first_page"
+              variant="secondary"
               tooltipText={dict.action.cancel}
               onClick={() => {
                 setIsRescindAction(false);
                 setIsTerminateAction(false);
               }}
-            />}
-          {!response && !(isRescindAction || isTerminateAction) &&
+            />
+          )}
+          {!response && !(isRescindAction || isTerminateAction) && (
             <ReturnButton
-              icon="first_page"
+              label="Return"
+              leftIcon={"first_page"}
+              className="ml-2"
+              variant="secondary"
               tooltipText={dict.action.return}
-            />}
+            />
+          )}
         </div>
       </div>
     </>
