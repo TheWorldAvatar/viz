@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
     if (!targetUrl) {
         return NextResponse.json({ error: "Missing 'url' query parameter" }, { status: 400 });
     }
-
     // Copy headers, but remove host and connection headers
     const headers: Record<string, string> = {};
     req.headers.forEach((value, key) => {
@@ -16,8 +15,13 @@ export async function GET(req: NextRequest) {
             headers[key] = value;
         }
     });
-
-    // const bearerToken = TODO
+    
+    // Get the bearer token from the custom header
+    const bearerToken = req.headers.get("x-bearer-token");
+    
+    if (bearerToken) {
+        headers["Authorization"] = `Bearer ${bearerToken}`;
+    }
 
     try {
         const response = await fetch(targetUrl, {
