@@ -1,14 +1,14 @@
 {
-    "$schema": "../../src/types/ui-settings.schema.json",
-    "branding": {
+  "$schema": "../../src/types/ui-settings.schema.json",
+  "branding": {
     "navbar": [
       "/images/defaults/icons/twa.svg"
     ]
-    },
-    "modules": {
-        "landing": true,
-        "help": true,
-        "map": true,
+  },
+  "modules": {
+    "landing": true,
+    "help": true,
+    "map": true,
     "dashboard": false,
     "registry": false
   }
