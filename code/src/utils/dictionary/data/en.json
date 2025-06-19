@@ -1,7 +1,4 @@
 {
-  "accessibility": {
-    "thumbnailImage": "Thumbnail icon for the '{replace}' page"
-  },
   "action": {
     "add": "add",
     "delete": "Delete",
@@ -54,7 +51,9 @@
     "endDateDesc": "Effective end date of service",
     "timeSlot": "Time Slot",
     "from": "From",
+    "fromTimeSlotDesc": "Start time of the service window",
     "to": "To",
+    "toTimeSlotDesc": "End time of the service window",
     "sun": "Sun",
     "mon": "Mon",
     "tue": "Tue",
@@ -131,6 +130,7 @@
       "help": "Get help for this web platform"
     },
     "title": {
+      "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
       "registry": "Registry",

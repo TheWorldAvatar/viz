@@ -1,5 +1,3 @@
-
-export const SEARCH_FORM_TYPE = "search";
 export const CONTEXT_KEY = "@context";
 export const ID_KEY = "@id";
 export const TYPE_KEY = "@type";
@@ -7,6 +5,10 @@ export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
+
+export type LifecycleStage = "general" | "pending" | "active" | "archive" | "report" | "tasks"
+
+export type FormType = "add" | "delete" | "edit" | "view" | "search"
 
 export interface SparqlResponseField {
   value: string;
@@ -37,7 +39,7 @@ export interface FormArrayItemOption {
   placeholder?: string
 }
 
-export type FormTemplate = {
+export type FormTemplateType = {
   "@context": Record<string, string>;
   node: NodeShape[];
   property: PropertyShapeOrGroup[];

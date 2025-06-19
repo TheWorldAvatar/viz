@@ -1,25 +1,28 @@
-import styles from './modal.module.css';
+import {
+  FloatingFocusManager,
+  FloatingOverlay,
+  FloatingPortal,
+  useTransitionStyles,
+} from "@floating-ui/react";
+import React from "react";
 
-import { FloatingFocusManager, FloatingOverlay, FloatingPortal, useTransitionStyles } from '@floating-ui/react';
-import React from 'react';
-
-import { useDialog } from 'hooks/float/useDialog';
-import { useDictionary } from 'hooks/useDictionary';
-import { Dictionary } from 'types/dictionary';
-import ClickActionButton from 'ui/interaction/action/click/click-button';
-import { useRouter } from 'next/navigation';
+import { useDialog } from "hooks/float/useDialog";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
+import { useRouter } from "next/navigation";
+import Button from "../button";
 
 interface ModalProps {
-  isOpen: boolean,
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  returnPrevPage?: boolean,
-  styles?: string[],
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  returnPrevPage?: boolean;
+  styles?: string[];
   children: React.ReactNode;
 }
 
 /**
  * A reusable component for defining modals.
- * 
+ *
  * @param {boolean} isOpen Indicates if modal should be initially open.
  * @param  setIsOpen Sets the isOpen parameter.
  * @param {boolean} returnPrevPage Indicates if the modal should return to the previous page upon closing.
@@ -38,45 +41,58 @@ export default function Modal(props: Readonly<ModalProps>) {
   });
   return (
     <>
-      {dialog.open && <FloatingPortal>
-        <FloatingOverlay className={styles.overlay} lockScroll>
-          <FloatingFocusManager context={dialog.context}>
-            <div
-              ref={dialog.refs.setFloating}
-              style={{
-                ...dialog.floatingStyles,
-                zIndex: 999998 // Second highest z-index so it hides other content but is hidden before tooltips
-              }}
-              className={styles["content-container"]}
-              {...dialog.getFloatingProps()}
-            >
+      {dialog.open && (
+        <FloatingPortal>
+          <FloatingOverlay
+            className="flex justify-center items-center z-[99999] bg-inverse-primary backdrop-blur-xs"
+            lockScroll
+          >
+            <FloatingFocusManager context={dialog.context}>
               <div
+                ref={dialog.refs.setFloating}
                 style={{
-                  ...transition.styles,
+                  ...dialog.floatingStyles,
+                  zIndex: 999998, // Second highest z-index so it hides other content but is hidden before tooltips
                 }}
-                className={`${styles.modal} ${props.styles?.join(" ")}`}
-              >
-                <ClickActionButton
-                  icon={"close"}
-                  className={styles.close}
-                  tooltipText={dict.action.close}
-                  tooltipPosition="top-end"
-                  styling={{ text: styles["close-text"] }}
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                    event.preventDefault();
+                className="relative flex items-center justify-center h-full w-full"
+                onClick={(event: React.MouseEvent) => {
+                  if (event.target === event.currentTarget) {
                     props.setIsOpen(false);
                     if (props.returnPrevPage) {
                       router.back();
                     }
+                  }
+                }}
+                {...dialog.getFloatingProps()}
+              >
+                <div
+                  style={{
+                    ...transition.styles,
                   }}
-                />
-                {props.children}
+                  className="relative flex flex-col w-11/12 h-11/12 md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl"
+                >
+                  <Button
+                    leftIcon="close"
+                    size="icon"
+                    variant="ghost"
+                    className="absolute top-2 right-1 !rounded-full"
+                    tooltipText={dict.action.close}
+                    tooltipPosition="top-end"
+                    onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                      event.preventDefault();
+                      props.setIsOpen(false);
+                      if (props.returnPrevPage) {
+                        router.back();
+                      }
+                    }}
+                  />
+                  {props.children}
+                </div>
               </div>
-            </div>
-          </FloatingFocusManager>
-        </FloatingOverlay>
-      </FloatingPortal >
-      }
+            </FloatingFocusManager>
+          </FloatingOverlay>
+        </FloatingPortal>
+      )}
     </>
   );
 }

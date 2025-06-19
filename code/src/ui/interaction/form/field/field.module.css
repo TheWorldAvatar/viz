@@ -14,9 +14,9 @@
 }
 
 .form-input-label {
-  margin-right: 0.5rem;
   margin-bottom: 0.2rem;
-  font-size: var(--font-size-tertiary-text);
+  margin-top: 0.5rem;
+  font-size: var(--font-size-primary-text);
   white-space: nowrap;
   text-align: left;
 }
@@ -31,16 +31,17 @@
   width: 100%;
   height: 1.8rem;
   max-width: none;
-  padding: 0.2rem;
-
-  background-color: var(--background-primary);
-  font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
+  padding: 1.2rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--muted);
+  font-size: var(--font-size-primary-text);
+  color: var(--foregroundy);
 }
 
 .input-disabled {
-  border: 1px inset var(--border-primary);
-  background-color: var(--background-secondary);
+  border: 1px solid var(--border);
+  background-color: var(--muted);
   opacity: 0.75;
 }
 
@@ -55,12 +56,13 @@
 .dtpicker {
   height: 1.8rem;
   width: 100%;
-  max-width: 100%;
-  padding-left: 0.25rem;
-
-  background-color: var(--background-primary);
-  font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
+  max-width: none;
+  padding: 1.2rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--muted);
+  font-size: var(--font-size-primary-text);
+  color: var(--foreground);
 }
 
 .dtpicker::-webkit-calendar-picker-indicator {
@@ -75,20 +77,20 @@
   padding: 0.5rem 1.5vw;
   background-color: var(--background-tertiary);
   font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
+  color: var(--foreground);
   width: 10vw;
 }
 
 .form-checkbox-hover:hover {
-  outline: 2px solid var(--border-primary);
+  outline: 2px solid var(--border);
   background-color: var(--background-secondary);
-  color: var(--text-color-secondary);
+  color: var(--foreground);
 }
 
 .form-checkbox-checked {
-  outline: 2px solid #52B7A5 !important;
-  background-color: var(--background-primary);
-  color: var(--text-color-primary);
+  outline: 2px solid #52b7a5 !important;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .info-icon {
@@ -98,35 +100,6 @@
 
 .info-icon:hover {
   color: var(--text-color-links-hover);
-}
-
-.info-text-container {
-  display: flex;
-  justify-content: space-between;
-}
-
-.info-text {
-  position: relative;
-  padding: 0.5rem 0.5rem;
-  margin: 1rem 0 0.5rem;
-  width: 100%;
-
-  background-color: var(--description-box);
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-  font-size: var(--font-size-tertiary-text);
-  text-wrap: wrap;
-  line-height: 1.25rem;
-}
-
-.info-text:before {
-  pointer-events: none;
-  content: "";
-  position: absolute;
-  top: -1rem;
-
-  border: solid transparent;
-  border-bottom-color: var(--description-box);
-  border-width: 0.5rem;
 }
 
 .info-text-redirect-button {

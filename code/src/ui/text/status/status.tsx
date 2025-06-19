@@ -1,5 +1,4 @@
-import { Dictionary } from 'types/dictionary';
-import styles from './status.module.css';
+import { Dictionary } from "types/dictionary";
 
 export const Status: {
   [key: string]: string;
@@ -20,7 +19,10 @@ interface StatusComponentProps<> {
   status: string;
 }
 
-export function getTranslatedStatusLabel(status: string, dict: Dictionary): string {
+export function getTranslatedStatusLabel(
+  status: string,
+  dict: Dictionary
+): string {
   switch (status.toLowerCase()) {
     case Status.AVAILABLE:
       return dict.title.available;
@@ -49,7 +51,7 @@ export function getTranslatedStatusLabel(status: string, dict: Dictionary): stri
 
 /**
  * Renders the status with a circle indicator.
- * 
+ *
  * @param {string} status The status to display.
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
@@ -72,9 +74,14 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   }
 
   return (
-    <span className={styles.container}>
-      <span className={styles.circle} style={{ borderColor: statusColor }}></span>
-      <p className={styles.text} style={{ color: statusColor }}>{props.status}</p>
+    <span className="inline-flex items-center">
+      <span
+        className="h-2 w-2 mx-1 rounded-full bg-background border-1 border-solid"
+        style={{ borderColor: statusColor }}
+      ></span>
+      <p className="text-xs" style={{ color: statusColor }}>
+        {props.status}
+      </p>
     </span>
   );
 }

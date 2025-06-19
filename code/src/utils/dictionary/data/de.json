@@ -1,7 +1,4 @@
 {
-  "accessibility": {
-    "thumbnailImage": "Thumbnail-Symbol für die Seite'{replace}'"
-  },
   "action": {
     "add": "hinzufügen",
     "edit": "Bearbeiten",
@@ -54,7 +51,9 @@
     "endDateDesc": "Datum des effektiven Endes des Dienstes",
     "timeSlot": "Zeitschlitz",
     "from": "Von",
+    "fromTimeSlotDesc": "Start time of the service window",
     "to": "To",
+    "toTimeSlotDesc": "End time of the service window",
     "sun": "Sonntag",
     "mon": "Montag",
     "tue": "Dienstag",
@@ -131,6 +130,7 @@
       "help": "Hilfe für diese Webplattform erhalten"
     },
     "title": {
+      "home": "Startseite",
       "map": "Karte",
       "dashboard": "Armaturenbrett",
       "registry": "Registry",

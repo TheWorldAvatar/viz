@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import styles from "./keycloak-user-button.module.css";
 import { useUserDisplayName } from "hooks/auth/useUserDisplayName";
 import PopoverActionButton from "../action/popover/popover-button";
 
@@ -14,22 +13,23 @@ export default function KeycloakUserButton() {
 
   return (
     <PopoverActionButton
-      icon={"person"}
-      isHoverableDisabled={true}
-      isTransparent={true}
-      styling={{
-        text: styles.text,
-        container: styles.userMenuContainer,
-      }}
-      placement="bottom-end"
-      className={styles.userMenuButton}
+      leftIcon="person"
+      size="icon"
+      variant="primary"
+      placement="bottom"
+      className="w-12 h-12 !rounded-full mr-4"
     >
-      <div className={styles.userMenuContainer}>
-        <div className={styles.userButtons}>
-          <span className={styles.userMenuText}>{userDisplayName}</span>
+      <div className="flex flex-col justify-center items-center p-1">
+        <div className="p-2">
+          <span className="text-md font-bold">{userDisplayName}</span>
         </div>
-        <div className={styles.userButtons}>
-          <Link className={styles.userMenuText} prefetch={false} href="/logout">
+        <hr className="w-full border-t border-border my-1" />
+        <div className="p-2">
+          <Link
+            className="py-2 px-8 rounded-md transition-colors duration-200 hover:bg-gray-300"
+            prefetch={false}
+            href="/logout"
+          >
             Log Out
           </Link>
         </div>

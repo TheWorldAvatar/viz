@@ -1,9 +1,5 @@
-import { NavBarItemProps } from "ui/navigation/navbar/navbar-item";
+import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
-
-interface PageThumbnailPropsWithPermissions extends NavBarItemProps {
-  permission?: keyof HasPermissions;
-}
 
 /**
  * Interface of default settings for landing page.
@@ -20,7 +16,7 @@ export type UISettings = {
     'help': boolean;
     'registry': boolean;
   },
-  links?: PageThumbnailPropsWithPermissions[],
+  links?: NavBarItemSettings[],
   resources?: {
     [key: 'scenario' | 'registry' | string]: {
       url: string;
@@ -28,6 +24,15 @@ export type UISettings = {
       paths?: string[];
     };
   }
+}
+
+export interface NavBarItemSettings {
+  url: string;
+  title: string;
+  icon: string;
+  type: NavBarItemType;
+  caption?: string;
+  permission?: keyof HasPermissions;
 }
 
 // Interface of map settings for visualisation page

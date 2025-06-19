@@ -1,19 +1,15 @@
-import styles from './array.module.css';
+import React, { useMemo, useState } from "react";
+import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 
-import React, { useMemo, useState } from 'react';
-import { FieldValues, useFieldArray, UseFormReturn } from 'react-hook-form';
-
-import { useBackgroundImageUrl } from 'hooks/useBackgroundImageUrl';
-import { useDictionary } from 'hooks/useDictionary';
-import { Dictionary } from 'types/dictionary';
-import { FormFieldOptions, PropertyShape } from 'types/form';
-import ClickActionButton from 'ui/interaction/action/click/click-button';
-import { DependentFormSection } from 'ui/interaction/form/section/dependent-form-section';
-import { genEmptyArrayRow } from '../../form-utils';
-import FormFieldComponent from '../form-field';
+import { FormFieldOptions, PropertyShape } from "types/form";
+import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
+import { genEmptyArrayRow } from "../../form-utils";
+import FormFieldComponent from "../form-field";
+import Button from "ui/interaction/button";
+import { Dictionary } from "types/dictionary";
+import { useDictionary } from "hooks/useDictionary";
 
 export interface FormArrayProps {
-  agentApi: string;
   fieldId: string;
   minSize: number;
   maxSize: number;
@@ -25,9 +21,8 @@ export interface FormArrayProps {
 /**
  * This component renders an array of inputs for a form.
  * It allows users to add, remove, and navigate between multiple entries of the same form fields.
- * 
- * @param {string} agentApi The API endpoint of the agent. 
- * @param {string} fieldId The field ID for the array. 
+ *
+ * @param {string} fieldId The field ID for the array.
  * @param {number} minSize The minimum size of the array. 
  * @param {number} maxSize The maximum size of the array. 
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field. 
@@ -40,8 +35,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   const dict: Dictionary = useDictionary();
   // Min size defaults to 1. Users can only set it as 0 or 1
   const minArraySize: number = Number.isNaN(props.minSize) || props.minSize != 0 ? 1 : props.minSize;
-  const backgroundImageUrl: string = useBackgroundImageUrl();
   const { control } = props.form;
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: props.fieldId,
@@ -52,70 +47,80 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   }, [props.fieldConfigs]);
 
   return (
-    <div className={styles["container"]}>
-      <div className={styles["tab-container"]}>
-        {!props.options?.disabled && (Number.isNaN(props.maxSize) || fields.length < props.maxSize) && <ClickActionButton
-          icon={"add"}
-          className={`${styles["row-marker"]} ${styles["add-button-background"]}`}
-          isTransparent={true}
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-            append(emptyRow);
-          }}
-        />}
-        {!props.options?.disabled && fields.length > minArraySize && <ClickActionButton
-          icon={"remove"}
-          className={`${styles["delete-button"]} ${styles["delete-button-background"]}`}
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-            remove(currentIndex);
-            // Adjust current index
-            if (currentIndex >= fields.length - 1) {
-              setCurrentIndex(Math.max(0, fields.length - 2));
-            }
-          }}
-        />}
-        {Array.from({ length: fields.length }, (_, index) => (
-          <button
-            key={index}
-            className={`${styles["row-marker"]} ${index === currentIndex ? styles["active"] : ""}`}
+    <div className="flex flex-col">
+      <div className="flex flex-col justify-start items-start gap-4 my-4">
+        <div className="flex flex-row items-center justify-start gap-2">
+          {!props.options?.disabled && (Number.isNaN(props.maxSize) || fields.length < props.maxSize) && <Button
+            size="icon"
+            leftIcon="add"
+            className=""
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
               event.preventDefault();
-              setCurrentIndex(index);
+              append(emptyRow);
             }}
-          >
-            {index + 1}
-          </button>
-        ))}
+          />}
+          {!props.options?.disabled && fields.length > minArraySize && (
+            <Button
+              leftIcon="remove"
+              size="icon"
+              variant="destructive"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                remove(currentIndex);
+                // Adjust current index
+                if (currentIndex >= fields.length - 1) {
+                  setCurrentIndex(Math.max(0, fields.length - 2));
+                }
+              }}
+            />
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-4  rounded-lg w-fit">
+          {Array.from({ length: fields.length }, (_, index) => (
+            <button
+              key={index}
+              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${index === currentIndex ? "bg-primary " : ""
+                }`}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                setCurrentIndex(index);
+              }}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className={styles["row"]}
-        style={{
-          backgroundImage: `url(${backgroundImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}>
-        {fields.length == 0 && <p className={styles["row-text"]}>{dict.message.arrayInstruction}</p>}
+
+      <div className="bg-background flex flex-col w-full p-4 rounded-lg border-1 border-border">
+        {fields.length == 0 && <p className="flex ">{dict.message.arrayInstruction}</p>}
         {fields.length > 0 && props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
           return (
-            <div key={`field-${currentIndex}-${index}`} className={styles["cell"]}>
-              {config.class && <DependentFormSection
-                agentApi={props.agentApi}
-                dependentProp={{
-                  ...config,
-                  fieldId: fieldId,
-                }}
-                form={props.form}
-              />}
-              {!config.class && <FormFieldComponent
-                agentApi={props.agentApi}
-                field={{
-                  ...config,
-                  fieldId: fieldId,
-                }}
-                form={props.form}
-                options={props.options}
-              />}
+            <div
+              key={`field-${currentIndex}-${index}`}
+              className="flex-1 whitespace-nowrap "
+            >
+              {config.class && (
+                <DependentFormSection
+                  dependentProp={{
+                    ...config,
+                    fieldId: fieldId,
+                  }}
+                  form={props.form}
+                />
+              )}
+              {!config.class && (
+                <FormFieldComponent
+                  field={{
+                    ...config,
+                    fieldId: fieldId,
+                  }}
+                  form={props.form}
+                  options={props.options}
+                />
+              )}
             </div>
           );
         })}

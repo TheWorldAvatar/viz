@@ -55,6 +55,4 @@ Additionally, an information panel containing the map layers, legend, and featur
 
 Contact the <a href="mailto:support@cmclinnovations.com">CMCL technical team</a> today!
 
-
-
 //TODO failure states
