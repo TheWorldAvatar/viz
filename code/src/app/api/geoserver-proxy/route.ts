@@ -1,7 +1,6 @@
 // Next.js API route for proxying GeoServer requests
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import axios from "axios";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -21,12 +20,13 @@ export async function GET(req: NextRequest) {
     // const bearerToken = TODO
 
     try {
-        const response = await axios.get(targetUrl, {
+        const response = await fetch(targetUrl, {
+            method: "GET",
             headers,
-            responseType: "arraybuffer",
         });
-        const contentType = response.headers["content-type"] || "application/octet-stream";
-        return new NextResponse(response.data, {
+        const contentType = response.headers.get("content-type") || "application/octet-stream";
+        const buffer = await response.arrayBuffer();
+        return new NextResponse(Buffer.from(buffer), {
             status: response.status,
             headers: {
                 "content-type": contentType,
@@ -34,18 +34,11 @@ export async function GET(req: NextRequest) {
             },
         });
     } catch (error) {
-        // error is unknown, but axios errors have response property
-        let status = 500;
-        let message = "Proxy error";
+        const status = 500;
+        let message = "Geoserver proxy error";
         if (typeof error === "object" && error !== null) {
-            // Try to extract status and message from axios error
-            const err = error as Record<string, unknown>;
-            if (err.response && typeof err.response === "object" && err.response !== null) {
-                const resp = err.response as Record<string, unknown>;
-                if (typeof resp.status === "number") status = resp.status;
-                if (resp.data) message = String(resp.data);
-            } else if (typeof err.message === "string") {
-                message = err.message;
+            if (error instanceof Error && error.message) {
+                message = error.message;
             }
         }
         return NextResponse.json({ error: message }, { status });
