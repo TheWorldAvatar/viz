@@ -1,12 +1,13 @@
 {
   "action": {
     "add": "Hinzufügen",
+    "addItem": "{replace} hinzufügen",
     "edit": "Bearbeiten",
     "delete": "Löschen",
     "view": "Anzeigen",
     "close": "Schließen",
     "refresh": "Aktualisieren",
-    "backTo": "Zurück zu",
+    "backTo": "Zurück zur {replace}",
     "export": "Daten exportieren",
     "overview": "Auftragsübersicht",
     "file": "Datei auswählen",
