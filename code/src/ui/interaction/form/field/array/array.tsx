@@ -94,7 +94,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
       </div>
 
       <div className="bg-background flex flex-col w-full p-4 rounded-lg border-1 border-border">
-        {fields.length == 0 && <p className="flex ">{dict.message.arrayInstruction}</p>}
+        {fields.length == 0 && <p>{dict.message.arrayInstruction}</p>}
         {fields.length > 0 && props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
           return (

@@ -1,8 +1,0 @@
-.row-text {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  font-size: var(--font-size-tertiary-text);
-  color: var(--text-color-secondary);
-}
