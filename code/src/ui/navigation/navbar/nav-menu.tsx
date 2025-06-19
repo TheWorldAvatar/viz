@@ -1,9 +1,8 @@
 "use client";
 
-import styles from "./nav.menu.module.css";
-
 import React, { useMemo, useState } from "react";
 
+import { Icon } from "@mui/material";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import { Assets } from "io/config/assets";
@@ -16,7 +15,6 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
-import { Icon } from "@mui/material";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -44,16 +42,15 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <div className="flex xl:hidden">
+      <div className="flex">
         <PopoverActionButton
-          icon={"menu"}
+          variant="ghost"
+          leftIcon="menu"
+          size="icon"
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
-          styling={{ text: styles.text }}
-          isHoverableDisabled={true}
-          isTransparent={true}
           placement="bottom-end"
-          className={styles.hamburgerMenuButton}
+          className="mr-4 w-12 h-12 "
         >
           <NavMenuContents
             {...props}
@@ -148,15 +145,17 @@ function NavMenuContents(
     <div
       className={`${
         props.isMobile
-          ? "flex gap-4 p-2"
-          : " bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+          ? "flex gap-4 p-2 "
+          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
       }
       ${isMenuExpanded ? "w-3xs lg:w-xs xl:flex 2xl:w-xs" : "w-24  xl:flex"}
       
          flex-col justify-start transition-all duration-200 ease-in-out`}
     >
       <button
-        className={`hidden xl:flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 ${
+        className={`${
+          props.isMobile ? "hidden" : "xl:flex"
+        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
           isMenuExpanded
             ? "mr-2 self-end rounded-md -mb-8 "
             : " justify-center items-center rounded-full -mb-4"
@@ -167,18 +166,7 @@ function NavMenuContents(
           {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
         </Icon>
       </button>
-      {props.isMobile && props.settings?.modules?.landing && (
-        <NavBarItem
-          title={dict.nav.title.home}
-          icon="home"
-          url={Routes.HOME}
-          isMobile={props.isMobile}
-          setIsOpen={props.setIsMenuOpen}
-          isMenuExpanded={isMenuExpanded}
-        />
-      )}
-
-      {!props.isMobile && props.settings?.modules?.landing && (
+      {props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
@@ -224,7 +212,7 @@ function NavMenuContents(
           title={dashboardLinkProps?.title ?? dict.nav.title.dashboard}
           icon={dashboardLinkProps?.icon ?? "dashboard"}
           url={Routes.DASHBOARD}
-          isMobile={false}
+          isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
             isMenuExpanded

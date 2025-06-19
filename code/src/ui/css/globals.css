@@ -7,34 +7,58 @@
 @media (prefers-color-scheme: light) {
   :root {
     /* Background colors */
-    --background-primary: #f9f9f9;
+    --background: #ffffff;
+    --background-primary: #ffffff;
+    --foreground: #30363d;
+    --muted: #fafafa;
+    --muted-foreground: #30363d;
+    --border: #dbdbdb;
+    --primary: #82b29a;
+    --primary-foreground: #0d1117;
+    --seconndary: #236776;
+    --secondary-foreground: #0d1117;
+    --input: oklch(0.922 0 0);
+    --accent: rgba(35, 103, 118, 25%);
+    --accent-foreground: #0d1117;
+
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
 
     --background-muted: #fafafa;
 
-    --background-inverse-primary: #0d1117;
+    --background-inverse-primary: rgba(44, 47, 51, 80%);
     --background-inverse-primary-rgb: 13, 17, 23;
     --background-inverse-secondary: #30363d;
     --background-inverse-tertiary: #434c57;
 
     /* Text colors */
     --text-color-primary: #30363d;
-    --text-color-secondary: #7f7f80;
+    --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
     --text-color-title-primary: #0b4452;
 
+    /* Select input colors */
+    --text-color-selected: #146a7d;
+    --background-selected: #f9f9f9;
+
     /* Border colors */
-    --border-primary: #b6b6bf;
+    --border-primary: #dbdbdb;
     --border-secondary: #a5a5b3;
     --border-tertiary: #9898af;
-    --border: #dbdbdb;
 
     /* Button */
     --description-box: #82b29a;
+    --button-color-primary: #82b29a;
+    --button-color-primary-active: #6fa085;
     --button-color-secondary: #18677a;
     --button-color-secondary-hover: #0b4452;
+    --destructive: oklch(58.305% 0.23863 28.392 / 0.76);
+    --ring: oklch(0.708 0 0);
+
+    /* Table */
+    --table-header-bg: #e5e7eb;
+    --table-hover-bg: #d1d5dc;
   }
 }
 
@@ -44,13 +68,24 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Background colors */
+    --background: #0d1117;
     --background-primary: #0d1117;
+    --foreground: #dde9ff;
+    --muted: #0d0e12;
+    --muted-foreground: #dde9ff;
+    --border: #2f2f36;
+    --primary: #4f7a5f;
+    --primary-foreground: #0d1117;
+    --seconndary: #236776;
+    --secondary-foreground: #0d1117;
+    --input: oklch(0.922 0 0);
+    --accent: rgba(35, 103, 118, 25%);
+    --accent-foreground: #0d1117;
+
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
 
-    --background-muted: #0d1117;
-
-    --background-inverse-primary: #f9f9f9;
+    --background-inverse-primary: rgba(44, 47, 51, 80%);
     --background-inverse-primary-rgb: 249, 249, 249;
     --background-inverse-secondary: #efefef;
     --background-inverse-tertiary: #e5e5e5;
@@ -62,16 +97,25 @@
     --text-color-links-hover: #20aac9;
     --text-color-title-primary: #0b4452;
 
+    --text-color-selected: #146a7d;
+
     /* Border colors */
     --border-primary: #434b55;
-    --border-secondary: #6c7989;
+    --border-secondary: #ffffff;
     --border-tertiary: #7f8ea1;
-    --border: #2f2f36;
 
     /* Button */
     --description-box: #2b816f;
+    --button-color-primary: #4f7a5f;
+    --button-color-primary-active: #42664f;
     --button-color-secondary: #7acadb;
     --button-color-secondary-hover: #35a7c0;
+    --destructive: oklch(0.704 0.191 22.216);
+    --ring: oklch(0.556 0 0);
+
+    /* Table */
+    --table-header-bg: #27272a;
+    --table-hover-bg: #3f3f46;
   }
 }
 
@@ -80,7 +124,7 @@
 **/
 :root {
   /** Fonts **/
-  --font-family-primary: "Helvetica Now", sans-serif;
+  --font-family-primary: "Inter", sans-serif;
   --font-size-root: 14pt;
   --font-size-h1: 1.8rem;
   --font-size-h2: 1.3rem;
@@ -93,21 +137,37 @@
   --smallest-icon-size: 0.6rem;
 
   /* Button colors */
-  --button-color-primary: #83c38d;
-  --button-color-primary-active: #65a671;
+  /* --button-color-primary: #82b29a;
+  --button-color-primary-active: #6fa085; */
   --alert-color: 191, 74, 42;
 }
 
+/* Variables for Tailwind CSS, so they can be accessd as classes  */
 @theme {
-  --color-background: var(--background-primary);
-  --color-foreground: var(--text-color-primary);
-  --color-muted: var(--background-muted);
+  --color-background: var(--background);
+  --color-modal-bg-dark: #0a0a0a;
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --color-primary: #82b29a;
-  --color-secondary: #236776;
-  --color-accent: rgba(35, 103, 118, 25%);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--seconndary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-background-secondary: var(--background-secondary);
+  --color-destructive: var(--destructive);
+  --color-ring: var(--ring);
+  --input: var(--input);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
+  --color-inverse-primary: var(--background-inverse-primary);
+  --color-selected: var(--text-color-selected);
+  --color-table-header-bg: var(--table-header);
+  --color-table-hover-bg: var(--table-hover-bg);
+  --breakpoint-xs-mobile: 355px;
+  --breakpoint-sm-mobile: 400px;
 }
 
 * {
@@ -152,18 +212,6 @@ input[type="file"] {
 /**
     Constants for our own CSS classes (across all themes).
 **/
-.mapContainer {
-  position: absolute !important;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-
-  flex-grow: 0;
-  pointer-events: all;
-  background-color: white;
-}
 
 .partner-button {
   width: 50%;
@@ -185,14 +233,6 @@ input[type="file"] {
 .partner-button:after {
   display: block;
   padding-bottom: 100%;
-}
-
-#globalContainer {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
 * {

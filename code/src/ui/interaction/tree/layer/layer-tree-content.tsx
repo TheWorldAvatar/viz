@@ -1,19 +1,21 @@
+import iconStyles from "ui/graphic/icon/icon-button.module.css";
+import styles from "./layer-tree.module.css";
 
+import { Map } from "mapbox-gl";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import SVG from "react-inlinesvg";
 
-import iconStyles from 'ui/graphic/icon/icon-button.module.css';
-import styles from './layer-tree.module.css';
-
-import { Map } from 'mapbox-gl';
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import SVG from 'react-inlinesvg';
-
-import { MapLayer, MapLayerGroup } from 'types/map-layer';
-import IconComponent from 'ui/graphic/icon/icon';
-import MaterialIconButton from 'ui/graphic/icon/icon-button';
-import SimpleDropdownField from 'ui/interaction/dropdown/simple-dropdown';
-import SearchModal from 'ui/interaction/modal/search/search-modal';
-import { setFilterFeatureIris, setFilterLayerIds, setFilterTimes } from 'state/map-feature-slice';
+import { MapLayer, MapLayerGroup } from "types/map-layer";
+import IconComponent from "ui/graphic/icon/icon";
+import MaterialIconButton from "ui/graphic/icon/icon-button";
+import SimpleDropdownField from "ui/interaction/dropdown/simple-dropdown";
+import SearchModal from "ui/interaction/modal/search/search-modal";
+import {
+  setFilterFeatureIris,
+  setFilterLayerIds,
+  setFilterTimes,
+} from "state/map-feature-slice";
 
 // type definition for incoming properties
 interface LayerTreeHeaderProps {
@@ -39,16 +41,20 @@ interface LayerTreeEntryProps {
  * @param {MapLayerGroup} group The map layer group to render.
  * @param {number} depth The current depth to this tree.
  * @param {boolean} parentShowChildren An indicator based on the parent node that shows children or not.
-*/
+ */
 export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
   // Size of left hand indentation
   const spacing: string = props.depth * 0.8 + "rem";
   const group: MapLayerGroup = props.group;
   const groupings: string[] = props.group.groupings;
-  const initialState: boolean = props.parentShowChildren ? group.showChildren : false;
+  const initialState: boolean = props.parentShowChildren
+    ? group.showChildren
+    : false;
   const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState<boolean>(initialState);
-  const [currentGroupingView, setCurrentGroupingView] = useState<string>(groupings.length > 0 ? groupings[0] : "");
+  const [currentGroupingView, setCurrentGroupingView] = useState<string>(
+    groupings.length > 0 ? groupings[0] : ""
+  );
   const [isSearchOpenState, setIsSearchOpenState] = useState<boolean>(false);
 
   // A function to hide or show the current group's content and its associated layers based on the expansion button
@@ -56,16 +62,23 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
     // The data layers should be shown when parents are expanded, and hidden when closed
     if (props.map?.isStyleLoaded()) {
       // In the case when parent do not want to show children, the toggle should then inverse this and show it
-      const assumedVisibilityState: boolean = props.parentShowChildren ? isExpanded : false;
+      const assumedVisibilityState: boolean = props.parentShowChildren
+        ? isExpanded
+        : false;
       recurseToggleChildVisibility(group, assumedVisibilityState);
       // Update the state of the map groups
-      props.setMapGroups(prevMapLayers => recursiveSubGroupFinder(prevMapLayers, group.address));
+      props.setMapGroups((prevMapLayers) =>
+        recursiveSubGroupFinder(prevMapLayers, group.address)
+      );
       setIsExpanded(!isExpanded);
     }
   };
 
   // A function that recursively toggle the children's layers according to the present state
-  const recurseToggleChildVisibility = (group: MapLayerGroup, beforeVisibleState: boolean) => {
+  const recurseToggleChildVisibility = (
+    group: MapLayerGroup,
+    beforeVisibleState: boolean
+  ) => {
     group.subGroups.forEach((subGroup) => {
       recurseToggleChildVisibility(subGroup, beforeVisibleState);
     });
@@ -73,29 +86,40 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
       // The beforeVisibleState should only be used if there is no groupings
       // If there are groupings, the currently selected view will either be closed or open depending on the current isExpanded state
       // Non-selected views and their layers should never be displayed, and will be default to true
-      const visibleState: boolean = currentGroupingView === "" ? beforeVisibleState : layer.grouping === currentGroupingView ? isExpanded : true;
+      const visibleState: boolean =
+        currentGroupingView === ""
+          ? beforeVisibleState
+          : layer.grouping === currentGroupingView
+          ? isExpanded
+          : true;
       toggleMapLayerVisibility(layer.ids, visibleState);
     });
-  }
+  };
 
   // A recursive finder that searches for the subgroup matching the input address.
   // If found, inverse the show children property and update the map groups state.
-  const recursiveSubGroupFinder = (mapLayers: MapLayerGroup[], address: string): MapLayerGroup[] => {
-    return mapLayers.map(layer => {
+  const recursiveSubGroupFinder = (
+    mapLayers: MapLayerGroup[],
+    address: string
+  ): MapLayerGroup[] => {
+    return mapLayers.map((layer) => {
       if (layer.address === address) {
         // Found the subgroup with matching address
         // Update the required property
         return { ...layer, showChildren: !layer.showChildren };
       } else if (layer.subGroups && layer.subGroups.length > 0) {
         // Recursively traverse subgroups
-        return { ...layer, subGroups: recursiveSubGroupFinder(layer.subGroups, address) };
+        return {
+          ...layer,
+          subGroups: recursiveSubGroupFinder(layer.subGroups, address),
+        };
       }
       return layer;
     });
   };
 
   /** A method that toggles map layer visibility based on the current state.
-   * Currently visible layers will become hidden. 
+   * Currently visible layers will become hidden.
    * Currently hidden layers will become shown.
    */
   const toggleMapLayerVisibility = (layerIds: string, isVisible: boolean) => {
@@ -107,7 +131,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         props.map?.setLayoutProperty(id, "visibility", "visible");
       }
     });
-  }
+  };
 
   /** A method that toggles the grouping visibility based on the currently selected view
    */
@@ -127,18 +151,20 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
     }
     // Set current grouping view
     setCurrentGroupingView(currentView);
-  }
+  };
 
   /** A method that handles any changes required when the user changes the selected option for groupings if available
    */
-  const handleGroupingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleGroupingChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     toggleGroupingVisibility(event.target.value);
   };
 
   /** A method to open the search modal on click.
-  */
+   */
   const openSearchModal = () => {
-    const layerIds: string[] = group.layers.map(layer => layer.ids)
+    const layerIds: string[] = group.layers.map((layer) => layer.ids);
     // Add filter layer IDs
     dispatch(setFilterLayerIds(layerIds));
     // Reset filtered features state when opened
@@ -182,52 +208,59 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         )}
 
         {/* A button to open the search modal when available */}
-        {group.search && <MaterialIconButton
-          iconName={"find_replace"}
-          iconStyles={[iconStyles.hover]}
-          onClick={openSearchModal}
-        />}
-        {group.search && isSearchOpenState && <SearchModal
-          id={group.search}
-          stack={group.stack}
-          show={isSearchOpenState}
-          setShowState={setIsSearchOpenState}
-        />}
+        {group.search && (
+          <MaterialIconButton
+            iconName={"find_replace"}
+            iconStyles={[iconStyles.hover]}
+            onClick={openSearchModal}
+          />
+        )}
+        {group.search && isSearchOpenState && (
+          <SearchModal
+            id={group.search}
+            stack={group.stack}
+            show={isSearchOpenState}
+            setShowState={setIsSearchOpenState}
+          />
+        )}
       </div>
 
       {/* Conditionally show subgroups when expanded */}
-      {
-        isExpanded && (
-          <div className={styles.treeEntryContent}>
-            {group.layers.map((layer) => {
-              if (groupings.length === 0 || layer.grouping === currentGroupingView) {
-                return (
-                  <LayerTreeEntry
-                    map={props.map}
-                    key={layer.address}
-                    layer={layer}
-                    depth={props.depth + 1}
-                    currentGrouping={currentGroupingView}
-                    handleLayerVisibility={toggleMapLayerVisibility}
-                  />)
-              }
-            })}
-
-            {group.subGroups.map((subGroup) => {
+      {isExpanded && (
+        <div className={styles.treeEntryContent}>
+          {group.layers.map((layer) => {
+            if (
+              groupings.length === 0 ||
+              layer.grouping === currentGroupingView
+            ) {
               return (
-                <LayerTreeHeader
+                <LayerTreeEntry
                   map={props.map}
-                  key={subGroup.name}
-                  group={subGroup}
+                  key={layer.address}
+                  layer={layer}
                   depth={props.depth + 1}
-                  parentShowChildren={isExpanded}
-                  setMapGroups={props.setMapGroups}
-                />)
-            })}
-          </div>
-        )
-      }
-    </div >
+                  currentGrouping={currentGroupingView}
+                  handleLayerVisibility={toggleMapLayerVisibility}
+                />
+              );
+            }
+          })}
+
+          {group.subGroups.map((subGroup) => {
+            return (
+              <LayerTreeHeader
+                map={props.map}
+                key={subGroup.name}
+                group={subGroup}
+                depth={props.depth + 1}
+                parentShowChildren={isExpanded}
+                setMapGroups={props.setMapGroups}
+              />
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -250,7 +283,9 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
   const [isVisible, setIsVisible] = useState<boolean>(
     // If the map has loaded (ie users are still on the page but switch components), retrieve the current state
     // Else, follow the data's initial state
-    props.map?.loaded() ? props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible" : props.currentGrouping === layer.grouping || layer.isVisible
+    props.map?.loaded()
+      ? props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible"
+      : props.currentGrouping === layer.grouping || layer.isVisible
   );
 
   /** This method toggles the layer visibility when the layer icon is clicked
@@ -259,15 +294,32 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
     // Toggle visibility on the map based on current state
     props.handleLayerVisibility(layer.ids, isVisible);
     // Get current visibility state of the layer after any toggling
-    setIsVisible(props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible");
+    setIsVisible(
+      props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible"
+    );
   };
   let iconDisplay;
   if (layer.icon?.startsWith("l#")) {
-    iconDisplay = <span className={iconStyles["line-icon"]} style={{ background: layer.icon.substring(1) }}></span>
+    iconDisplay = (
+      <span
+        className={iconStyles["line-icon"]}
+        style={{ background: layer.icon.substring(1) }}
+      ></span>
+    );
   } else if (layer.icon?.startsWith("c#")) {
-    iconDisplay = <span className={iconStyles["circle-icon"]} style={{ background: layer.icon.substring(1) }}></span>
+    iconDisplay = (
+      <span
+        className={iconStyles["circle-icon"]}
+        style={{ background: layer.icon.substring(1) }}
+      ></span>
+    );
   } else {
-    iconDisplay = <IconComponent icon={layer.icon} classes={iconStyles["small-icon-image"]} />
+    iconDisplay = (
+      <IconComponent
+        icon={layer.icon}
+        classes={iconStyles["small-icon-image"]}
+      />
+    );
   }
   return (
     <div className={styles.treeEntry} key={layer.name}>
@@ -276,9 +328,7 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
         <span style={{ width: spacing }} />
 
         {/* Layer's icon, if present. Either creates a line or icon for display */}
-        {layer.icon && (
-          iconDisplay
-        )}
+        {layer.icon && iconDisplay}
 
         {/* Name of group */}
         <div className={styles.textContainer}>

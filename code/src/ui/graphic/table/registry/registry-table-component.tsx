@@ -1,48 +1,55 @@
-"use client"
+"use client";
 
-import styles from './registry.table.module.css';
+import { Icon } from "@mui/material";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { Icon } from '@mui/material';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
-import { useDictionary } from 'hooks/useDictionary';
-import useRefresh from 'hooks/useRefresh';
-import { Paths } from 'io/config/routes';
-import { Dictionary } from 'types/dictionary';
-import { RegistryFieldValues, RegistryTaskOption } from 'types/form';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
-import TaskModal from 'ui/interaction/modal/task/task-modal';
-import { Status } from 'ui/text/status/status';
-import { getAfterDelimiter, parseWordsForLabels } from 'utils/client-utils';
-import { getData, getLifecycleData, getServiceTasks } from 'utils/server-actions';
-import RegistryTable from './registry-table';
-import SummarySection from './ribbon/summary';
-import TableRibbon from './ribbon/table-ribbon';
+import { useDictionary } from "hooks/useDictionary";
+import useRefresh from "hooks/useRefresh";
+import { Dictionary } from "types/dictionary";
+import {
+  LifecycleStage,
+  RegistryFieldValues,
+  RegistryTaskOption,
+} from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
+import TaskModal from "ui/interaction/modal/task/task-modal";
+import { Status } from "ui/text/status/status";
+import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import RegistryTable from "./registry-table";
+import SummarySection from "./ribbon/summary";
+import TableRibbon from "./ribbon/table-ribbon";
 
 interface RegistryTableComponentProps {
   entityType: string;
-  lifecycleStage: string;
-  registryAgentApi: string;
+  lifecycleStage: LifecycleStage;
 }
 
 /**
  * This component renders a registry table for the specified entity.
- * 
+ *
  * @param {string} entityType Type of entity for rendering.
- * @param {string} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {string} registryAgentApi The target endpoint for default registry agents.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  */
-export default function RegistryTableComponent(props: Readonly<RegistryTableComponentProps>) {
+export default function RegistryTableComponent(
+  props: Readonly<RegistryTableComponentProps>
+) {
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const [refreshFlag, triggerRefresh] = useRefresh();
-  const [initialInstances, setInitialInstances] = useState<RegistryFieldValues[]>([]);
-  const [currentInstances, setCurrentInstances] = useState<RegistryFieldValues[]>([]);
+  const [initialInstances, setInitialInstances] = useState<
+    RegistryFieldValues[]
+  >([]);
+  const [currentInstances, setCurrentInstances] = useState<
+    RegistryFieldValues[]
+  >([]);
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -50,43 +57,99 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
       setIsLoading(true);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (props.lifecycleStage === Paths.REGISTRY_REPORT) {
-          // If this is the base report page, users should retrieve all contracts
+        if (props.lifecycleStage === "report") {
           if (pathNameEnd === props.entityType) {
-            instances = await getLifecycleData(props.registryAgentApi, Paths.REGISTRY_ACTIVE, props.entityType);
-            instances = instances.map(contract => {
-              return {
+            // Fetch active contracts
+            const activeRes = await fetch(
+              makeInternalRegistryAPIwithParams(
+                "contracts",
+                "active",
+                props.entityType
+              ),
+              { cache: "no-store", credentials: "same-origin" }
+            );
+            let activeInstances = await activeRes.json();
+            activeInstances = activeInstances.map(
+              (contract: RegistryFieldValues) => ({
                 status: {
                   value: parseWordsForLabels(Status.ACTIVE),
                   type: "literal",
                   dataType: "http://www.w3.org/2001/XMLSchema#string",
                   lang: "",
                 },
-                ...contract
-              }
-            });
-            const archivedContracts: RegistryFieldValues[] = await getLifecycleData(props.registryAgentApi, Paths.REGISTRY_ARCHIVE, props.entityType);
-            instances = instances.concat(archivedContracts);
+                ...contract,
+              })
+            );
+
+            // Fetch archived contracts
+            const archivedRes = await fetch(
+              makeInternalRegistryAPIwithParams(
+                "contracts",
+                "archive",
+                props.entityType
+              ),
+              { cache: "no-store", credentials: "same-origin" }
+            );
+            const archivedInstances = await archivedRes.json();
+
+            instances = activeInstances.concat(archivedInstances);
           } else {
-            // If this is the report page for specific contracts, retrieve tasks associated with the id 
-            instances = await getServiceTasks(props.registryAgentApi, props.entityType, pathNameEnd);
+            // Fetch service tasks for a specific contract
+            const res = await fetch(
+              makeInternalRegistryAPIwithParams(
+                "tasks",
+                props.entityType,
+                pathNameEnd
+              ),
+              {
+                cache: "no-store",
+                credentials: "same-origin",
+              }
+            );
+            instances = await res.json();
           }
-        } else if (props.lifecycleStage == Paths.REGISTRY_TASK_DATE) {
-          // Create a Date object from the YYYY-MM-DD string
+        } else if (props.lifecycleStage == "tasks") {
+          // Fetch service tasks for a specific date
           const date = new Date(selectedDate);
-          // Convert to Unix timestamp in seconds (divide milliseconds by 1000)
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          instances = await getServiceTasks(props.registryAgentApi, props.entityType, null, unixTimestamp);
-        } else if (props.lifecycleStage == Paths.REGISTRY_GENERAL) {
-          instances = await getData(props.registryAgentApi, props.entityType, null, null, true);
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams(
+              "tasks",
+              props.entityType,
+              unixTimestamp.toString()
+            ),
+            {
+              cache: "no-store",
+              credentials: "same-origin",
+            }
+          );
+          instances = await res.json();
+        } else if (props.lifecycleStage == "general") {
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams(
+              "instances",
+              props.entityType,
+              "true"
+            ),
+            { cache: "no-store", credentials: "same-origin" }
+          );
+          instances = await res.json();
         } else {
-          instances = await getLifecycleData(props.registryAgentApi, props.lifecycleStage, props.entityType);
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams(
+              "contracts",
+              props.lifecycleStage.toString(),
+              props.entityType
+            ),
+            { cache: "no-store", credentials: "same-origin" }
+          );
+          instances = await res.json();
         }
         setInitialInstances(instances);
         setCurrentInstances(instances);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching instances', error);
+        console.error("Error fetching instances", error);
       }
     };
 
@@ -99,56 +162,67 @@ export default function RegistryTableComponent(props: Readonly<RegistryTableComp
     if (task) {
       setIsTaskModalOpen(true);
     }
-  }, [task])
+  }, [task]);
 
   return (
-    <div className={styles["container"]}>
-      <div className={styles["title"]}>
-        <h1>{parseWordsForLabels(props.entityType)}</h1>
+    <div className="bg-muted border-border   rounded-xl border-1  shadow-2xl mx-auto mt-4 overflow-auto h-10/12  p-2 sm:w-sm md:h-10/12 md:w-11/12 lg:h-11/12 lg:w-11/12 lg:p-4  xl:h-10/12 xl:w-9/12 2xl:h-10/12">
+      <div className="rounded-lg md:p-4 ">
+        <h1 className="text-2xl md:text-4xl font-bold mb-4 ">
+          {parseWordsForLabels(props.entityType)}
+        </h1>
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
-          registryAgentApi={props.registryAgentApi}
-          lifecycleStage={props.lifecycleStage}
           selectedDate={selectedDate}
+          lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
           setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
       </div>
-      {(props.lifecycleStage == Paths.REGISTRY_ACTIVE || props.lifecycleStage == Paths.REGISTRY_ARCHIVE) &&
-        <div className={styles["instructions"]}>
-          <Icon className={`material-symbols-outlined`}>info</Icon>
-          {dict.message.registryInstruction}
-        </div>}
-      {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-        <h2 className={styles["instructions"]}>{dict.title.serviceSummary}<hr /></h2>}
-      <div className={styles["contents"]}>
-        {props.lifecycleStage == Paths.REGISTRY_REPORT &&
-          <SummarySection
-            id={pathNameEnd}
-            entityType={props.entityType}
-            registryAgentApi={props.registryAgentApi}
-          />}
-        {refreshFlag || isLoading ? <LoadingSpinner isSmall={false} /> :
-          currentInstances.length > 0 ?
-            <RegistryTable
-              recordType={props.entityType}
-              lifecycleStage={props.lifecycleStage}
-              setTask={setTask}
-              instances={currentInstances}
-              limit={3}
-            /> : <div className={styles["instructions"]}>{dict.message.noResultFound}</div>}
+      <div className="flex items-center ml-6">
+        {(props.lifecycleStage == "active" ||
+          props.lifecycleStage == "archive") && (
+          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+            <Icon className={`material-symbols-outlined`}>info</Icon>
+            {dict.message.registryInstruction}
+          </div>
+        )}
+        {props.lifecycleStage == "report" && (
+          <h2 className="text-md md:text-lg t  flex-wrap">
+            {dict.title.serviceSummary}
+            <hr />
+          </h2>
+        )}
       </div>
-      {task && <TaskModal
-        entityType={props.entityType}
-        registryAgentApi={props.registryAgentApi}
-        isOpen={isTaskModalOpen}
-        task={task}
-        setIsOpen={setIsTaskModalOpen}
-        setTask={setTask}
-      />}
+      <div className="flex flex-col overflow-auto gap-y-2 p-4">
+        {props.lifecycleStage == "report" && (
+          <SummarySection id={pathNameEnd} entityType={props.entityType} />
+        )}
+        {refreshFlag || isLoading ? (
+          <LoadingSpinner isSmall={false} />
+        ) : currentInstances.length > 0 ? (
+          <RegistryTable
+            recordType={props.entityType}
+            lifecycleStage={props.lifecycleStage}
+            setTask={setTask}
+            instances={currentInstances}
+            limit={3}
+          />
+        ) : (
+          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
+        )}
+      </div>
+      {task && (
+        <TaskModal
+          entityType={props.entityType}
+          isOpen={isTaskModalOpen}
+          task={task}
+          setIsOpen={setIsTaskModalOpen}
+          setTask={setTask}
+        />
+      )}
     </div>
   );
 }
