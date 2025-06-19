@@ -129,30 +129,6 @@ nextApp.prepare().then(() => {
         if (useGeoServerProxy) {
             console.info('Server URL REACT_APP_SERVER_URL is ' + process.env.REACT_APP_SERVER_URL);
             console.info('GeoServer requests from MapBox will be sent to ' + process.env.REACT_APP_SERVER_URL + '/geoserver-proxy')
-            server.get('/geoserver-proxy', keycloak.protect(), async (req, res) => {
-                const targetUrl = req.query.url;
-                let headers = { ...req.headers };
-
-                if (req.kauth?.grant) {
-                    headers['Authorization'] = 'Bearer ' + req.kauth.grant.access_token.token;
-                }
-
-                try {
-                    // Forward the request to the target URL with the modified headers
-                    const response = await axios({
-                        url: targetUrl,
-                        method: req.method,
-                        headers: headers,
-                        responseType: 'stream', // To stream the response back
-                    });
-
-                    // Pipe the response back to the client
-                    response.data.pipe(res);
-                } catch (err) {
-                    // most of these errors can probably be ignored
-                    console.error(err);
-                }
-            });
         }
     }
 
