@@ -163,7 +163,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
         credentials: "same-origin",
-        body: JSON.stringify({ formData: reqBody }),
+        body: JSON.stringify({ ...reqBody }),
       }
     );
     const customAgentResponse: CustomAgentResponseBody = await res.json();
