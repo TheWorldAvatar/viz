@@ -2,14 +2,22 @@ import iconStyles from "ui/graphic/icon/icon-button.module.css";
 import styles from "../registry.table.module.css";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import React from "react";
-import { FieldValues } from "react-hook-form";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { Routes } from "io/config/routes";
 import { LifecycleStage, RegistryTaskOption } from "types/form";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
 import { Status } from "ui/text/status/status";
 import { getId } from "utils/client-utils";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import Button from "ui/interaction/button";
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { genBooleanClickHandler } from "utils/event-handler";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 interface RegistryRowActionsProps {
   recordType: string;
@@ -35,6 +43,10 @@ export default function RegistryRowActions(
     : props.row.id
     ? getId(props.row.id)
     : props.row.iri;
+
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
+  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const dict: Dictionary = useDictionary();
 
   const handleClickView = (): void => {
     if (props.lifecycleStage == "active" || props.lifecycleStage == "archive") {
@@ -83,6 +95,7 @@ export default function RegistryRowActions(
         status: status,
         contract: props.row.id,
         date: props.row.date,
+        type: "default",
       });
     } else {
       // Move to the view modal page for the specific record
@@ -97,6 +110,53 @@ export default function RegistryRowActions(
         iconStyles={[iconStyles["medium-icon"], styles["expand-icon"]]}
         onClick={handleClickView}
       />
+      <PopoverActionButton
+        placement="bottom-start"
+        leftIcon="more_vert"
+        variant="ghost"
+        tooltipText="Actions"
+        size="icon"
+        className="ml-2"
+      >
+        <div className="p-2 ">
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.completeTask) && (
+            <Button
+              leftIcon="done_outline"
+              label="Complete"
+              tooltipText={dict.action.complete}
+              onClick={() => {
+                props.setTask({
+                  id: recordId,
+                  status: Status.PENDING_EXECUTION,
+                  contract: props.row.id,
+                  date: props.row.date,
+                  type: "complete",
+                });
+              }}
+            />
+          )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) && (
+            <Button
+              leftIcon="assignment"
+              label="Assign"
+              tooltipText={dict.action.dispatch}
+              onClick={() => {
+                props.setTask({
+                  id: recordId,
+                  status: Status.COMPLETED,
+                  contract: props.row.id,
+                  date: props.row.date,
+                  type: "dispatch",
+                });
+              }}
+            />
+          )}
+        </div>
+      </PopoverActionButton>
     </div>
   );
 }
