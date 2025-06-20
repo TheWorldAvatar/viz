@@ -279,10 +279,10 @@ function NavMenuContents(
       {props.settings.links?.map((externalLink, index) => {
         if (
           ![
-            Routes.MAP,
-            Routes.DASHBOARD,
-            Routes.HELP,
-            Routes.REGISTRY,
+            Modules.DASHBOARD,
+            Modules.HELP,
+            Modules.MAP,
+            Modules.REGISTRY,
           ].includes(externalLink.url) &&
           // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
           // IF there is a permission set with authentication enabled, check if the user has the specified permission
