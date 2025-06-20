@@ -25,18 +25,18 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
       <h2 className=" text-lg md:text-2xl  font-bold">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
       </h2>
-      <div className="p-2 space-y-2">
-        {props.group.property.map((field, index) =>
-          renderFormField(props.entityType, field, props.form, index)
-        )}
-        {props.group.multipleProperty.length > 0 && (
+      <div className="p-2 space-y-2">     
+        {!props.group.maxCount || (props.group.maxCount && parseInt(props.group.maxCount?.[VALUE_KEY]) > 1) ?
           <FormArray
             fieldId={props.group.label[VALUE_KEY]}
-            fieldConfigs={props.group.multipleProperty}
+            minSize={parseInt(props.group.minCount?.[VALUE_KEY])}
+            maxSize={parseInt(props.group.maxCount?.[VALUE_KEY])}
+            fieldConfigs={props.group.property}
             form={props.form}
             options={props.options}
-          />
-        )}
+          /> : props.group.property.map((field, index) =>
+            renderFormField(props.entityType, field, props.form, index))
+        }
       </div>
     </div>
   );
