@@ -269,7 +269,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {!response && props.task.type !== "default" && (
             <Button
               leftIcon="send"
-              label="Submit"
+              label={dict.action.submit}
               tooltipText={dict.action.submit}
               onClick={onSubmit}
             />

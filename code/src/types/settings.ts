@@ -21,9 +21,14 @@ export type UISettings = {
     [key: 'scenario' | 'registry' | 'dashboard' | string]: {
       url: string;
       data?: string;
-      paths?: string[];
+      paths?: ResourcesPathSettings[];
     };
   }
+}
+
+export interface ResourcesPathSettings {
+  type: string;
+  icon?: string;
 }
 
 export interface NavBarItemSettings {

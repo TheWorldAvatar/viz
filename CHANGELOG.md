@@ -2,6 +2,27 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.29.3
+
+### Changes
+
+- Added an additional tag for setting general registry nav icons
+
+### Bug Fixes
+
+- Fixed duplicate default navigation elements
+- Fixed missing icons in navigation elements
+
+## 5.29.2
+
+### Changes
+
+- Update German translations
+
+### Bug Fixes
+
+- Fixed untranslated button texts
+
 ## 5.29.1
 
 ### Changes
