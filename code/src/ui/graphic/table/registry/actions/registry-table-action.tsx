@@ -64,7 +64,7 @@ export default function RegistryRowActions(
   };
 
   return (
-    <div className="flex items-center justify-center ">
+    <div className="flex items-center">
       <MaterialIconButton
         iconName="open_in_new"
         iconStyles={[iconStyles["medium-icon"], styles["expand-icon"]]}
@@ -72,24 +72,26 @@ export default function RegistryRowActions(
       />
       {(props.lifecycleStage === "report" ||
         props.lifecycleStage === "tasks") &&
-        <PopoverActionButton
-          placement="bottom-start"
-          leftIcon="more_vert"
-          variant="ghost"
-          tooltipText="Actions"
-          size="icon"
-          className="ml-2"
-        >
-          <div className=" space-y-2 ">
+        !(props.row?.event === "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" ||
+          props.row?.event === "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent") && <PopoverActionButton
+            placement="bottom-start"
+            leftIcon="more_vert"
+            variant="ghost"
+            tooltipText="Actions"
+            size="icon"
+            className="ml-2"
+          >
+          <div className="flex flex-col items-center justify-center space-y-2 ">
             {(!keycloakEnabled ||
               !permissionScheme ||
-              permissionScheme.hasPermissions.completeTask) && (
+              permissionScheme.hasPermissions.completeTask) &&
+              (props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent" ||
+                props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent") && (
                 <Button
+                  variant="ghost"
                   leftIcon="done_outline"
-                  variant="outline"
-                  size="sm"
+                  size="icon"
                   iconSize="small"
-                  label={dict.action.complete}
                   tooltipText={dict.action.complete}
                   tooltipPosition="top"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "complete"))}
@@ -98,13 +100,13 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              props.row.status !== Status.COMPLETED && (
+              (props.row.event !== "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" &&
+                props.row.event !== "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent") && (
                 <Button
+                  variant="ghost"
                   leftIcon="assignment"
-                  variant="outline"
-                  size="sm"
+                  size="icon"
                   iconSize="small"
-                  label={dict.action.dispatch}
                   tooltipText={dict.action.dispatch}
                   tooltipPosition="top"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "dispatch"))}
@@ -113,13 +115,13 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.reportTask) &&
-              props.row.status !== Status.COMPLETED && (
+              (props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
+                props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
                 <Button
+                  variant="ghost"
                   leftIcon="cancel"
-                  size="sm"
+                  size="icon"
                   iconSize="small"
-                  label={dict.action.cancel}
-                  variant="outline"
                   tooltipText={dict.action.cancel}
                   tooltipPosition="top"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "cancel"))}
@@ -128,13 +130,13 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              props.row.status !== Status.COMPLETED && (
+              (props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
+                props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
                 <Button
+                  variant="ghost"
                   leftIcon="report"
-                  size="sm"
+                  size="icon"
                   iconSize="small"
-                  label={dict.action.report}
-                  variant="outline"
                   tooltipText={dict.action.report}
                   tooltipPosition="bottom"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "report"))}
