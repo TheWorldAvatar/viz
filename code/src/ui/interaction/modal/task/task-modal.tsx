@@ -100,7 +100,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(formData, action, props.task.type !== "dispatch" || props.task.type !== "complete");
+    submitLifecycleAction(formData, action, props.task.type !== "dispatch" && props.task.type !== "complete");
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -161,6 +161,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         }
       ).then((res) => res.json());
       setFormFields(template.property);
+      setIsFetching(false);
     }
 
     if (props.task.type === "dispatch") {
@@ -201,7 +202,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         </h2>
       </section>
       <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
-        {!isFetching && props.task.type !== "default" && (
+        {props.task.type !== "default" && (
           <p className="text-lg mb-4">
             {props.task.type === "complete" && dict.message.completeInstruction}
             {props.task.type === "dispatch" &&
@@ -215,15 +216,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               )}`}
           </p>
         )}
-        {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
-        {!(props.task.type !== "default" || isFetching) && !refreshFlag && (
+        {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
+        {props.task.type === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
             setResponse={setResponse}
             id={getAfterDelimiter(props.task.contract, "/")}
-            additionalFields={dispatchFields}
           />
         )}
         {formFields.length > 0 && !refreshFlag && (
