@@ -27,6 +27,7 @@ import { getAfterDelimiter } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
+
 interface TaskModalProps {
   entityType: string;
   isOpen: boolean;
@@ -58,9 +59,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
   const [isReportAction, setIsReportAction] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [dispatchFields, setDispatchFields] = useState<PropertyShapeOrGroup[]>(
-    []
-  );
   const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -118,7 +116,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(formData, action, !isDispatchAction);
+    submitLifecycleAction(formData, action, !(isDispatchAction || isCompleteAction));
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -158,16 +156,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
     setResponse(response);
     setFormFields([]);
-    setDispatchFields([]);
   };
-  // A hook that fetches the form template with dispatch details included
+
+  // A hook that fetches the form template for executing an action
   useEffect(() => {
-    // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplate = async (
-      lifecycleStage: string,
-      eventType: string,
-      targetId?: string
-    ): Promise<void> => {
+    // Declare an async function to retrieve the form template for executing the target action
+    // Target id is optional, and will default to form
+    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
       const template: FormTemplateType = await fetch(
         makeInternalRegistryAPIwithParams(
@@ -182,13 +177,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         }
       ).then((res) => res.json());
       setFormFields(template.property);
-      setIsFetching(false);
-    };
+    }
 
     if (isDispatchAction) {
       getFormTemplate("service", "dispatch", props.task.id);
     } else if (isCompleteAction) {
-      getFormTemplate("service", "complete");
+      getFormTemplate("service", "complete", props.task.id);
     } else if (isReportAction) {
       getFormTemplate("service", "report");
     } else if (isCancelAction) {
@@ -219,7 +213,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setIsReportAction(false);
       setResponse(null);
       setFormFields([]);
-      setDispatchFields([]);
     }
   }, [props.isOpen]);
 
@@ -265,7 +258,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               formType={"view"}
               setResponse={setResponse}
               id={getAfterDelimiter(props.task.contract, "/")}
-              additionalFields={dispatchFields}
             />
           )}
         {formFields.length > 0 && !refreshFlag && (
@@ -274,8 +266,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               isReportAction
                 ? "report"
                 : isCancelAction
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -300,11 +292,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <ResponseComponent response={response} />
         )}
         <div className="flex flex-wrap gap-2 justify-end items-center">
+          {/**
+             * Completion details can only be updated by users with:
+             * CompleteTask permission in the dispatch stage, OR
+             * Operation permission in the completed stage.
+             * Complete task is typically given to simple users who are only allowed to view tasks.
+             * */}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
-            props.task.status.toLowerCase().trim() ==
-              Status.PENDING_EXECUTION &&
+            (props.task.status.toLowerCase().trim() ==
+              Status.PENDING_EXECUTION || props.task.status.toLowerCase().trim() ==
+              Status.COMPLETED) &&
             !(
               isCancelAction ||
               isCompleteAction ||
@@ -321,7 +320,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
             !(
               isCancelAction ||
               isCompleteAction ||
@@ -388,16 +386,16 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             isCompleteAction ||
             isDispatchAction ||
             isReportAction) && (
-            <Button
-              leftIcon="first_page"
-              variant="secondary"
-              label={dict.action.return}
-              tooltipText={dict.action.return}
-              onClick={onReturnInAction}
-            />
-          )}
+              <Button
+                leftIcon="first_page"
+                variant="secondary"
+                label={dict.action.return}
+                tooltipText={dict.action.return}
+                onClick={onReturnInAction}
+              />
+            )}
         </div>
       </section>
-    </Modal>
+    </Modal >
   );
 }

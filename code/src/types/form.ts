@@ -85,7 +85,8 @@ export interface PropertyGroup {
   comment: JsonLdLiteral;
   order: number;
   property: PropertyShape[];
-  multipleProperty?: PropertyShape[];
+  minCount?: JsonLdLiteral;
+  maxCount?: JsonLdLiteral;
 }
 
 interface DependentInstance {
