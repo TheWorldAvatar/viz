@@ -1,7 +1,7 @@
 
 import { useRouter } from "next/navigation";
 
-import React from "react";
+import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
@@ -44,6 +44,7 @@ export default function RegistryRowActions(
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
   const handleClickView = (): void => {
     if (props.lifecycleStage == "active" || props.lifecycleStage == "archive") {
@@ -85,6 +86,8 @@ export default function RegistryRowActions(
         tooltipText={dict.title.actions}
         size="icon"
         className="ml-2"
+        isOpen={isActionMenuOpen}
+        setIsOpen={setIsActionMenuOpen}
       >
         <div className="flex flex-col items-center justify-center space-y-2 ">
           <Button
@@ -94,7 +97,10 @@ export default function RegistryRowActions(
             iconSize="small"
             tooltipText={parseWordsForLabels(dict.action.view)}
             tooltipPosition="right"
-            onClick={() => props.setTask(genTaskOption(recordId, props.row, "default"))}
+            onClick={() => {
+              setIsActionMenuOpen(false);
+              props.setTask(genTaskOption(recordId, props.row, "default"));
+            }}
           />
 
           {(!keycloakEnabled ||
@@ -109,7 +115,10 @@ export default function RegistryRowActions(
                 iconSize="small"
                 tooltipText={dict.action.complete}
                 tooltipPosition="right"
-                onClick={() => props.setTask(genTaskOption(recordId, props.row, "complete"))}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  props.setTask(genTaskOption(recordId, props.row, "complete"));
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -124,7 +133,10 @@ export default function RegistryRowActions(
                 iconSize="small"
                 tooltipText={dict.action.dispatch}
                 tooltipPosition="right"
-                onClick={() => props.setTask(genTaskOption(recordId, props.row, "dispatch"))}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  props.setTask(genTaskOption(recordId, props.row, "dispatch"));
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -139,7 +151,10 @@ export default function RegistryRowActions(
                 iconSize="small"
                 tooltipText={dict.action.cancel}
                 tooltipPosition="right"
-                onClick={() => props.setTask(genTaskOption(recordId, props.row, "cancel"))}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  props.setTask(genTaskOption(recordId, props.row, "cancel"));
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -154,7 +169,10 @@ export default function RegistryRowActions(
                 iconSize="small"
                 tooltipText={dict.action.report}
                 tooltipPosition="right"
-                onClick={() => props.setTask(genTaskOption(recordId, props.row, "report"))}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  props.setTask(genTaskOption(recordId, props.row, "report"));
+                }}
               />
             )}
         </div>
