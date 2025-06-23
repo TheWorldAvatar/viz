@@ -2,6 +2,18 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.29.4
+
+### Changes
+
+- Enable users to view or update completion records even after completed
+- Bump min version of `VisBackend Agent` from `v1.5.1` to `v1.6.1`
+- Rework viz to be compatible with `v1.6.1` of the `VisBackend Agent`
+
+### Bug Fixes
+
+- Fixed the completion and dispatch record retrieval to work with arrays
+
 ## 5.29.3
 
 ### Changes
