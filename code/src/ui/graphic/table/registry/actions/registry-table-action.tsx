@@ -41,8 +41,8 @@ export default function RegistryRowActions(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -60,31 +60,31 @@ export default function RegistryRowActions(
       if (
         props.row.order === "0" ||
         props.row.event ===
-          "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
+        "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
       ) {
         status = Status.PENDING_DISPATCH;
       } else if (
         props.row.order === "1" ||
         props.row.event ===
-          "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
+        "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
       ) {
         status = Status.PENDING_EXECUTION;
       } else if (
         props.row.order === "2" ||
         props.row.event ===
-          "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
+        "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
       ) {
         status = Status.COMPLETED;
       } else if (
         props.row.order === "3" ||
         props.row.event ===
-          "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+        "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
       ) {
         status = Status.CANCELLED;
       } else if (
         props.row.order === "4" ||
         props.row.event ===
-          "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
+        "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
       ) {
         status = Status.INCOMPLETE;
       } else {
@@ -110,108 +110,111 @@ export default function RegistryRowActions(
         iconStyles={[iconStyles["medium-icon"], styles["expand-icon"]]}
         onClick={handleClickView}
       />
-      <PopoverActionButton
-        placement="bottom-start"
-        leftIcon="more_vert"
-        variant="ghost"
-        tooltipText="Actions"
-        size="icon"
-        className="ml-2"
-      >
-        <div className=" space-y-2 ">
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) && (
-            <Button
-              leftIcon="done_outline"
-              variant="outline"
-              size="sm"
-              iconSize="small"
-              label={dict.action.complete}
-              tooltipText={dict.action.complete}
-              tooltipPosition="top"
-              onClick={() => {
-                props.setTask({
-                  id: recordId,
-                  status: Status.PENDING_EXECUTION,
-                  contract: props.row.id,
-                  date: props.row.date,
-                  type: "complete",
-                });
-              }}
-            />
-          )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            props.row.status !== Status.COMPLETED && (
-              <Button
-                leftIcon="assignment"
-                variant="outline"
-                size="sm"
-                iconSize="small"
-                label={dict.action.dispatch}
-                tooltipText={dict.action.dispatch}
-                tooltipPosition="top"
-                onClick={() => {
-                  props.setTask({
-                    id: recordId,
-                    status: Status.PENDING_DISPATCH,
-                    contract: props.row.id,
-                    date: props.row.date,
-                    type: "dispatch",
-                  });
-                }}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.reportTask) &&
-            props.row.status !== Status.COMPLETED && (
-              <Button
-                leftIcon="cancel"
-                size="sm"
-                iconSize="small"
-                label={dict.action.cancel}
-                variant="outline"
-                tooltipText={dict.action.cancel}
-                tooltipPosition="top"
-                onClick={() => {
-                  props.setTask({
-                    id: recordId,
-                    status: Status.CANCELLED,
-                    contract: props.row.id,
-                    date: props.row.date,
-                    type: "cancel",
-                  });
-                }}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            props.row.status !== Status.COMPLETED && (
-              <Button
-                leftIcon="report"
-                size="sm"
-                iconSize="small"
-                label={dict.action.report}
-                variant="outline"
-                tooltipText={dict.action.report}
-                tooltipPosition="bottom"
-                onClick={() => {
-                  props.setTask({
-                    id: recordId,
-                    status: Status.INCOMPLETE,
-                    contract: props.row.id,
-                    date: props.row.date,
-                    type: "report",
-                  });
-                }}
-              />
-            )}
-        </div>
-      </PopoverActionButton>
+      {props.lifecycleStage === "report" ||
+        props.lifecycleStage === "tasks"
+        && <PopoverActionButton
+          placement="bottom-start"
+          leftIcon="more_vert"
+          variant="ghost"
+          tooltipText="Actions"
+          size="icon"
+          className="ml-2"
+        >
+          <div className=" space-y-2 ">
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.completeTask) && (
+                <Button
+                  leftIcon="done_outline"
+                  variant="outline"
+                  size="sm"
+                  iconSize="small"
+                  label={dict.action.complete}
+                  tooltipText={dict.action.complete}
+                  tooltipPosition="top"
+                  onClick={() => {
+                    props.setTask({
+                      id: recordId,
+                      status: Status.PENDING_EXECUTION,
+                      contract: props.row.id,
+                      date: props.row.date,
+                      type: "complete",
+                    });
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+              props.row.status !== Status.COMPLETED && (
+                <Button
+                  leftIcon="assignment"
+                  variant="outline"
+                  size="sm"
+                  iconSize="small"
+                  label={dict.action.dispatch}
+                  tooltipText={dict.action.dispatch}
+                  tooltipPosition="top"
+                  onClick={() => {
+                    props.setTask({
+                      id: recordId,
+                      status: Status.PENDING_DISPATCH,
+                      contract: props.row.id,
+                      date: props.row.date,
+                      type: "dispatch",
+                    });
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.reportTask) &&
+              props.row.status !== Status.COMPLETED && (
+                <Button
+                  leftIcon="cancel"
+                  size="sm"
+                  iconSize="small"
+                  label={dict.action.cancel}
+                  variant="outline"
+                  tooltipText={dict.action.cancel}
+                  tooltipPosition="top"
+                  onClick={() => {
+                    props.setTask({
+                      id: recordId,
+                      status: Status.CANCELLED,
+                      contract: props.row.id,
+                      date: props.row.date,
+                      type: "cancel",
+                    });
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+              props.row.status !== Status.COMPLETED && (
+                <Button
+                  leftIcon="report"
+                  size="sm"
+                  iconSize="small"
+                  label={dict.action.report}
+                  variant="outline"
+                  tooltipText={dict.action.report}
+                  tooltipPosition="bottom"
+                  onClick={() => {
+                    props.setTask({
+                      id: recordId,
+                      status: Status.INCOMPLETE,
+                      contract: props.row.id,
+                      date: props.row.date,
+                      type: "report",
+                    });
+                  }}
+                />
+              )}
+          </div>
+        </PopoverActionButton>
+      }
     </div>
   );
 }
