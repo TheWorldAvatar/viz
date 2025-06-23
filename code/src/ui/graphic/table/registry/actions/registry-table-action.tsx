@@ -93,7 +93,7 @@ export default function RegistryRowActions(
                   size="icon"
                   iconSize="small"
                   tooltipText={dict.action.complete}
-                  tooltipPosition="top"
+                  tooltipPosition="right"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "complete"))}
                 />
               )}
@@ -108,7 +108,7 @@ export default function RegistryRowActions(
                   size="icon"
                   iconSize="small"
                   tooltipText={dict.action.dispatch}
-                  tooltipPosition="top"
+                  tooltipPosition="right"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "dispatch"))}
                 />
               )}
@@ -123,7 +123,7 @@ export default function RegistryRowActions(
                   size="icon"
                   iconSize="small"
                   tooltipText={dict.action.cancel}
-                  tooltipPosition="top"
+                  tooltipPosition="right"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "cancel"))}
                 />
               )}
@@ -138,7 +138,7 @@ export default function RegistryRowActions(
                   size="icon"
                   iconSize="small"
                   tooltipText={dict.action.report}
-                  tooltipPosition="bottom"
+                  tooltipPosition="right"
                   onClick={() => props.setTask(genTaskOption(recordId, props.row, "report"))}
                 />
               )}
