@@ -7,7 +7,7 @@ import React from "react";
 import { FieldValues } from "react-hook-form";
 
 import { Routes } from "io/config/routes";
-import { LifecycleStage, RegistryTaskOption } from "types/form";
+import { LifecycleStage, RegistryTaskOption, RegistryTaskType } from "types/form";
 import MaterialIconButton from "ui/graphic/icon/icon-button";
 import { Status } from "ui/text/status/status";
 import { getId } from "utils/client-utils";
@@ -56,47 +56,7 @@ export default function RegistryRowActions(
       props.lifecycleStage == "tasks" ||
       props.lifecycleStage == "report"
     ) {
-      let status: string;
-      if (
-        props.row.order === "0" ||
-        props.row.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
-      ) {
-        status = Status.PENDING_DISPATCH;
-      } else if (
-        props.row.order === "1" ||
-        props.row.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
-      ) {
-        status = Status.PENDING_EXECUTION;
-      } else if (
-        props.row.order === "2" ||
-        props.row.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
-      ) {
-        status = Status.COMPLETED;
-      } else if (
-        props.row.order === "3" ||
-        props.row.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
-      ) {
-        status = Status.CANCELLED;
-      } else if (
-        props.row.order === "4" ||
-        props.row.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
-      ) {
-        status = Status.INCOMPLETE;
-      } else {
-        status = "";
-      }
-      props.setTask({
-        id: recordId,
-        status: status,
-        contract: props.row.id,
-        date: props.row.date,
-        type: "default",
-      });
+      props.setTask(genTaskOption(recordId, props.row, "default"));
     } else {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
@@ -132,15 +92,7 @@ export default function RegistryRowActions(
                   label={dict.action.complete}
                   tooltipText={dict.action.complete}
                   tooltipPosition="top"
-                  onClick={() => {
-                    props.setTask({
-                      id: recordId,
-                      status: Status.PENDING_EXECUTION,
-                      contract: props.row.id,
-                      date: props.row.date,
-                      type: "complete",
-                    });
-                  }}
+                  onClick={() => props.setTask(genTaskOption(recordId, props.row, "complete"))}
                 />
               )}
             {(!keycloakEnabled ||
@@ -155,15 +107,7 @@ export default function RegistryRowActions(
                   label={dict.action.dispatch}
                   tooltipText={dict.action.dispatch}
                   tooltipPosition="top"
-                  onClick={() => {
-                    props.setTask({
-                      id: recordId,
-                      status: Status.PENDING_DISPATCH,
-                      contract: props.row.id,
-                      date: props.row.date,
-                      type: "dispatch",
-                    });
-                  }}
+                  onClick={() => props.setTask(genTaskOption(recordId, props.row, "dispatch"))}
                 />
               )}
             {(!keycloakEnabled ||
@@ -178,15 +122,7 @@ export default function RegistryRowActions(
                   variant="outline"
                   tooltipText={dict.action.cancel}
                   tooltipPosition="top"
-                  onClick={() => {
-                    props.setTask({
-                      id: recordId,
-                      status: Status.CANCELLED,
-                      contract: props.row.id,
-                      date: props.row.date,
-                      type: "cancel",
-                    });
-                  }}
+                  onClick={() => props.setTask(genTaskOption(recordId, props.row, "cancel"))}
                 />
               )}
             {(!keycloakEnabled ||
@@ -201,15 +137,7 @@ export default function RegistryRowActions(
                   variant="outline"
                   tooltipText={dict.action.report}
                   tooltipPosition="bottom"
-                  onClick={() => {
-                    props.setTask({
-                      id: recordId,
-                      status: Status.INCOMPLETE,
-                      contract: props.row.id,
-                      date: props.row.date,
-                      type: "report",
-                    });
-                  }}
+                  onClick={() => props.setTask(genTaskOption(recordId, props.row, "report"))}
                 />
               )}
           </div>
@@ -217,4 +145,49 @@ export default function RegistryRowActions(
       }
     </div>
   );
+}
+
+// Generates a task option based on the input parameters
+function genTaskOption(recordId: string, row: FieldValues, taskType: RegistryTaskType): RegistryTaskOption {
+  let status: string;
+  if (
+    row.order === "0" ||
+    row.event ===
+    "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
+  ) {
+    status = Status.PENDING_DISPATCH;
+  } else if (
+    row.order === "1" ||
+    row.event ===
+    "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
+  ) {
+    status = Status.PENDING_EXECUTION;
+  } else if (
+    row.order === "2" ||
+    row.event ===
+    "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
+  ) {
+    status = Status.COMPLETED;
+  } else if (
+    row.order === "3" ||
+    row.event ===
+    "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+  ) {
+    status = Status.CANCELLED;
+  } else if (
+    row.order === "4" ||
+    row.event ===
+    "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
+  ) {
+    status = Status.INCOMPLETE;
+  } else {
+    status = "";
+  }
+  return {
+    id: recordId,
+    status: status,
+    contract: row.id,
+    date: row.date,
+    type: taskType,
+  };
 }
