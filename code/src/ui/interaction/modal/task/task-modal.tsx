@@ -3,10 +3,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
-import { PermissionScheme } from "types/auth";
+
 import { CustomAgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -24,8 +23,10 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter } from "utils/client-utils";
-import { genBooleanClickHandler } from "utils/event-handler";
+
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
 
 interface TaskModalProps {
@@ -46,32 +47,19 @@ interface TaskModalProps {
  * @param setTask A dispatch method to set the task option when required.
  */
 export default function TaskModal(props: Readonly<TaskModalProps>) {
-  const dict: Dictionary = useDictionary();
-  const permissionScheme: PermissionScheme = usePermissionScheme();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
+  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const dict: Dictionary = useDictionary();
 
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   // Form actions
-  const [isDispatchAction, setIsDispatchAction] = useState<boolean>(false);
-  const [isCompleteAction, setIsCompleteAction] = useState<boolean>(false);
-  const [isCancelAction, setIsCancelAction] = useState<boolean>(false);
-  const [isReportAction, setIsReportAction] = useState<boolean>(false);
+
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
-
-  // Return back to the non-action page
-  const onReturnInAction: React.MouseEventHandler<HTMLButtonElement> = () => {
-    setIsDispatchAction(false);
-    setIsCompleteAction(false);
-    setIsCancelAction(false);
-    setIsReportAction(false);
-    setResponse(null);
-    setFormFields([]);
-  };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
@@ -97,18 +85,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData: FieldValues
   ) => {
     let action = "";
-    if (isDispatchAction) {
+    if (props.task.type === "dispatch") {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
-    } else if (isCompleteAction) {
+    } else if (props.task.type === "complete") {
       action = "complete";
       formData[FORM_STATES.ORDER] = 1;
-    } else if (isCancelAction) {
+    } else if (props.task.type === "cancel") {
       action = "cancel";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
         props.task.status
       );
-    } else if (isReportAction) {
+    } else if (props.task.type === "report") {
       action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
         props.task.status
@@ -116,7 +104,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(formData, action, !(isDispatchAction || isCompleteAction));
+    submitLifecycleAction(formData, action, props.task.type !== "dispatch" && props.task.type !== "complete");
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -177,27 +165,24 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         }
       ).then((res) => res.json());
       setFormFields(template.property);
+      setIsFetching(false);
     }
 
-    if (isDispatchAction) {
+    if (props.task.type === "dispatch") {
       getFormTemplate("service", "dispatch", props.task.id);
-    } else if (isCompleteAction) {
+    } else if (props.task.type === "complete") {
       getFormTemplate("service", "complete", props.task.id);
-    } else if (isReportAction) {
+    } else if (props.task.type === "report") {
       getFormTemplate("service", "report");
-    } else if (isCancelAction) {
+    } else if (props.task.type === "cancel") {
       getFormTemplate("service", "cancel");
     }
-  }, [isDispatchAction, isCompleteAction, isReportAction, isCancelAction]);
+  }, [props.task.type]);
 
   // Closes the modal only if response is successfull
   useEffect(() => {
     if (response?.success) {
       setTimeout(() => {
-        setIsDispatchAction(false);
-        setIsCompleteAction(false);
-        setIsCancelAction(false);
-        setIsReportAction(false);
         setResponse(null);
         props.setIsOpen(false);
       }, 2000);
@@ -207,10 +192,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Reset the states when the modal is closed
   useEffect(() => {
     if (!props.isOpen) {
-      setIsDispatchAction(false);
-      setIsCompleteAction(false);
-      setIsCancelAction(false);
-      setIsReportAction(false);
       setResponse(null);
       setFormFields([]);
     }
@@ -225,47 +206,36 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         </h2>
       </section>
       <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
-        {!isFetching &&
-          (isReportAction ||
-            isCancelAction ||
-            isCompleteAction ||
-            isDispatchAction) && (
-            <p className="text-lg mb-4">
-              {isCompleteAction && dict.message.completeInstruction}
-              {isDispatchAction &&
-                `${dict.message.dispatchInstruction} ${props.task.date}:`}
-              {isCancelAction &&
-                `${dict.message.cancelInstruction} ${props.task.date}:`}
-              {isReportAction &&
-                `${dict.message.reportInstruction.replace(
-                  "{date}",
-                  props.task.date
-                )}`}
-            </p>
-          )}
-        {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
-        {!(
-          isReportAction ||
-          isCancelAction ||
-          isCompleteAction ||
-          isDispatchAction ||
-          isFetching
-        ) &&
-          !refreshFlag && (
-            <FormComponent
-              formRef={formRef}
-              entityType={props.entityType}
-              formType={"view"}
-              setResponse={setResponse}
-              id={getAfterDelimiter(props.task.contract, "/")}
-            />
-          )}
+        {props.task.type !== "default" && (
+          <p className="text-lg mb-4">
+            {props.task.type === "complete" && dict.message.completeInstruction}
+            {props.task.type === "dispatch" &&
+              `${dict.message.dispatchInstruction} ${props.task.date}:`}
+            {props.task.type === "cancel" &&
+              `${dict.message.cancelInstruction} ${props.task.date}:`}
+            {props.task.type === "report" &&
+              `${dict.message.reportInstruction.replace(
+                "{date}",
+                props.task.date
+              )}`}
+          </p>
+        )}
+        {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
+        {props.task.type === "default" && !(refreshFlag || isFetching) && (
+          <FormComponent
+            formRef={formRef}
+            entityType={props.entityType}
+            formType={"view"}
+            setResponse={setResponse}
+            id={getAfterDelimiter(props.task.contract, "/")}
+          />
+        )}
         {formFields.length > 0 && !refreshFlag && (
           <FormTemplate
             entityType={
-              isReportAction
+              props.task.type === "report"
                 ? "report"
-                : isCancelAction
+                : props.task.type === "cancel"
                   ? "cancellation"
                   : "dispatch"
             }
@@ -292,106 +262,19 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <ResponseComponent response={response} />
         )}
         <div className="flex flex-wrap gap-2 justify-end items-center">
-          {/**
-             * Completion details can only be updated by users with:
-             * CompleteTask permission in the dispatch stage, OR
-             * Operation permission in the completed stage.
-             * Complete task is typically given to simple users who are only allowed to view tasks.
-             * */}
+          <div className="flex-grow" />
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) &&
-            (props.task.status.toLowerCase().trim() ==
-              Status.PENDING_EXECUTION || props.task.status.toLowerCase().trim() ==
-              Status.COMPLETED) &&
-            !(
-              isCancelAction ||
-              isCompleteAction ||
-              isDispatchAction ||
-              isReportAction
-            ) && (
-              <Button
-                leftIcon="done_outline"
-                label={dict.action.complete}
-                tooltipText={dict.action.complete}
-                onClick={genBooleanClickHandler(setIsCompleteAction)}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            !(
-              isCancelAction ||
-              isCompleteAction ||
-              isDispatchAction ||
-              isReportAction
-            ) && (
-              <Button
-                leftIcon="assignment"
-                label={dict.action.dispatch}
-                variant="primary"
-                tooltipText={dict.action.dispatch}
-                onClick={genBooleanClickHandler(setIsDispatchAction)}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-            !(
-              isCancelAction ||
-              isCompleteAction ||
-              isDispatchAction ||
-              isReportAction
-            ) && (
-              <Button
-                leftIcon="cancel"
-                label={dict.action.cancel}
-                variant="secondary"
-                tooltipText={dict.action.cancel}
-                onClick={genBooleanClickHandler(setIsCancelAction)}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.reportTask) &&
-            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
-            !(
-              isCancelAction ||
-              isCompleteAction ||
-              isDispatchAction ||
-              isReportAction
-            ) && (
-              <Button
-                leftIcon="report"
-                label={dict.action.report}
-                variant="secondary"
-                tooltipText={dict.action.report}
-                onClick={genBooleanClickHandler(setIsReportAction)}
-              />
-            )}
-          {!response &&
-            (isCancelAction ||
-              isCompleteAction ||
-              isDispatchAction ||
-              isReportAction) && (
+            (permissionScheme.hasPermissions.completeTask && props.task.type === "complete") ||
+            (permissionScheme.hasPermissions.reportTask && props.task.type === "report") ||
+            (permissionScheme.hasPermissions.operation && (props.task.type === "dispatch" || props.task.type === "cancel"))
+          ) &&
+            !response && props.task.type !== "default" && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
                 onClick={onSubmit}
-              />
-            )}
-          {(isCancelAction ||
-            isCompleteAction ||
-            isDispatchAction ||
-            isReportAction) && (
-              <Button
-                leftIcon="first_page"
-                variant="secondary"
-                label={dict.action.return}
-                tooltipText={dict.action.return}
-                onClick={onReturnInAction}
               />
             )}
         </div>

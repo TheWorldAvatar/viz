@@ -142,7 +142,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       case "add": {
         // Add entity via API route
         const res = await fetch(
-          makeInternalRegistryAPIwithParams("address", props.entityType),
+          makeInternalRegistryAPIwithParams("instances", props.entityType),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

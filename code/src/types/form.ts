@@ -6,9 +6,15 @@ export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
-export type LifecycleStage = "general" | "pending" | "active" | "archive" | "report" | "tasks"
+export type LifecycleStage =
+  | "general"
+  | "pending"
+  | "active"
+  | "archive"
+  | "report"
+  | "tasks";
 
-export type FormType = "add" | "delete" | "edit" | "view" | "search"
+export type FormType = "add" | "delete" | "edit" | "view" | "search";
 
 export interface SparqlResponseField {
   value: string;
@@ -18,11 +24,14 @@ export interface SparqlResponseField {
 }
 export interface FormFieldOptions {
   disabled?: boolean;
-  labelStyle?: string[],
-  inputStyle?: string[],
+  labelStyle?: string[];
+  inputStyle?: string[];
 }
 
-export type RegistryFieldValues = Record<string, SparqlResponseField | SparqlResponseField[]>;
+export type RegistryFieldValues = Record<
+  string,
+  SparqlResponseField | SparqlResponseField[]
+>;
 
 export type OntologyConceptMappings = Record<string, OntologyConcept[]>;
 
@@ -36,7 +45,7 @@ export type OntologyConcept = {
 export interface FormArrayItemOption {
   fieldId: string;
   label: string;
-  placeholder?: string
+  placeholder?: string;
 }
 
 export type FormTemplateType = {
@@ -49,7 +58,7 @@ export interface NodeShape {
   label: JsonLdLiteral;
   comment: JsonLdLiteral;
   property: PropertyShapeOrGroup[];
-};
+}
 
 export type PropertyShapeOrGroup = PropertyShape | PropertyGroup;
 
@@ -121,12 +130,20 @@ export const defaultSearchOption: OntologyConcept = {
     type: "literal",
     dataType: "http://www.w3.org/2001/XMLSchema#string",
     lang: "",
-  }
-}
+  },
+};
 
 export interface RegistryTaskOption {
   id: string;
   contract: string;
   status: string;
   date: string;
+  type: RegistryTaskType;
 }
+
+export type RegistryTaskType =
+  | "dispatch"
+  | "complete"
+  | "cancel"
+  | "report"
+  | "default";
