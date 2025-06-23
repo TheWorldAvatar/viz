@@ -111,7 +111,15 @@
                         "paths": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "icon": {
+                                        "type": "string"
+                                    }
+                                }
                             }
                         }
                     },

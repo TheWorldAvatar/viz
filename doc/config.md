@@ -67,7 +67,9 @@ Note that resources are optional and their configuration options can differ from
 - Registry: Activate the `registry` page based on the backend resource indicated in the `url` parameter. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). Note that this will require at least one of the `data` or `paths` property to be valid.
   - `url`: The registry agent endpoint (close it with /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
-  - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Users must only use either white spaces or `_` to separate the words.
+  - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
+    - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
+    - `icon`: Optional parameter to display an icon from the icon library.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
 
