@@ -77,7 +77,7 @@ export default function RegistryRowActions(
             placement="bottom-start"
             leftIcon="more_vert"
             variant="ghost"
-            tooltipText="Actions"
+            tooltipText={dict.title.actions}
             size="icon"
             className="ml-2"
           >
