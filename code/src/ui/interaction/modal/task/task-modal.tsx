@@ -301,8 +301,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
-            props.task.status.toLowerCase().trim() ==
-            Status.PENDING_EXECUTION &&
+            (props.task.status.toLowerCase().trim() ==
+              Status.PENDING_EXECUTION || props.task.status.toLowerCase().trim() ==
+              Status.COMPLETED) &&
             !(
               isCancelAction ||
               isCompleteAction ||
@@ -385,14 +386,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             isCompleteAction ||
             isDispatchAction ||
             isReportAction) && (
-            <Button
-              leftIcon="first_page"
-              variant="secondary"
-              label={dict.action.return}
-              tooltipText={dict.action.return}
-              onClick={onReturnInAction}
-            />
-          )}
+              <Button
+                leftIcon="first_page"
+                variant="secondary"
+                label={dict.action.return}
+                tooltipText={dict.action.return}
+                onClick={onReturnInAction}
+              />
+            )}
         </div>
       </section>
     </Modal >
