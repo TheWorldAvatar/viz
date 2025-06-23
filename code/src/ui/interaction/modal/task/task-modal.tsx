@@ -26,6 +26,7 @@ import { getAfterDelimiter } from "utils/client-utils";
 
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
+
 interface TaskModalProps {
   entityType: string;
   isOpen: boolean;
@@ -52,9 +53,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Form actions
 
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [dispatchFields, setDispatchFields] = useState<PropertyShapeOrGroup[]>(
-    []
-  );
   const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -102,7 +100,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(formData, action, props.task.type !== "dispatch");
+    submitLifecycleAction(formData, action, props.task.type !== "dispatch" || props.task.type !== "complete");
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -142,16 +140,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
     setResponse(response);
     setFormFields([]);
-    setDispatchFields([]);
   };
-  // A hook that fetches the form template with dispatch details included
+
+  // A hook that fetches the form template for executing an action
   useEffect(() => {
-    // Declare an async function to retrieve the form template with dispatch details
-    const getFormTemplate = async (
-      lifecycleStage: string,
-      eventType: string,
-      targetId?: string
-    ): Promise<void> => {
+    // Declare an async function to retrieve the form template for executing the target action
+    // Target id is optional, and will default to form
+    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
       setIsFetching(true);
       const template: FormTemplateType = await fetch(
         makeInternalRegistryAPIwithParams(
@@ -166,13 +161,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         }
       ).then((res) => res.json());
       setFormFields(template.property);
-      setIsFetching(false);
-    };
+    }
 
     if (props.task.type === "dispatch") {
       getFormTemplate("service", "dispatch", props.task.id);
     } else if (props.task.type === "complete") {
-      getFormTemplate("service", "complete");
+      getFormTemplate("service", "complete", props.task.id);
     } else if (props.task.type === "report") {
       getFormTemplate("service", "report");
     } else if (props.task.type === "cancel") {
@@ -195,7 +189,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     if (!props.isOpen) {
       setResponse(null);
       setFormFields([]);
-      setDispatchFields([]);
     }
   }, [props.isOpen]);
 
@@ -239,8 +232,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task.type === "report"
                 ? "report"
                 : props.task.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -276,6 +269,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           )}
         </div>
       </section>
-    </Modal>
+    </Modal >
   );
 }

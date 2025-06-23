@@ -21,6 +21,7 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { getAfterDelimiter } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
@@ -357,6 +358,20 @@ export function renderFormField(
       formType === "edit" && fieldProp.name[VALUE_KEY] === FORM_STATES.ID
         ? true
         : disableAllInputs;
+    // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
+    if (!fieldProp.maxCount || (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)) {
+      return <FormArray
+        key={fieldProp.name[VALUE_KEY] + currentIndex}
+        fieldId={fieldProp.name[VALUE_KEY]}
+        minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
+        maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
+        fieldConfigs={[fieldProp]}
+        form={form}
+        options={{
+          disabled: disableAllInputs,
+        }}
+      />
+    }
     if (fieldProp.class) {
       if (
         fieldProp.class[ID_KEY] ===

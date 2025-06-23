@@ -52,23 +52,13 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
     // Properties as part of a group
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
       const fieldset: PropertyGroup = field as PropertyGroup;
-      // Initialise multiple property
-      fieldset.multipleProperty = [];
-      const properties: PropertyShape[] = fieldset.property.filter(propertyShape => {
-        // When multiple fields for the same property is possible ie no max count or at least more than 1, 
-        // the property must be initialised as an array and pushed into a separate set
-        if (!propertyShape.maxCount || (propertyShape.maxCount && parseInt(propertyShape.maxCount?.[VALUE_KEY]) > 1)) {
-          const updatedPropShape: PropertyShape = updateDependentProperty(propertyShape, fields);
-          fieldset.multipleProperty.push(
-            initFormField(updatedPropShape, initialState, fieldset.label[VALUE_KEY], true)
-          );
-          return false; // Filter out from the 'properties' array
-        } else {
-          return true; // Keep in the 'properties' array
-        }
-      }).map(fieldProp => {
+      const properties: PropertyShape[] = fieldset.property.map(fieldProp => {
         // Iterate after filtering the property so that non-array fields are not parsed
         const updatedProp: PropertyShape = updateDependentProperty(fieldProp, fields);
+        // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
+        if (!fieldset.maxCount || (fieldset.maxCount && parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1)) {
+          return initFormField(updatedProp, initialState, fieldset.label[VALUE_KEY], true, parseInt(fieldset.minCount?.[VALUE_KEY]));
+        }
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
@@ -81,6 +71,10 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
       }
     } else {
       const fieldShape: PropertyShape = updateDependentProperty(field as PropertyShape, fields);
+      // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
+      if (!fieldShape.maxCount || (fieldShape.maxCount && parseInt(fieldShape.maxCount?.[VALUE_KEY]) > 1)) {
+        return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY], true, parseInt(fieldShape.minCount?.[VALUE_KEY]));
+      }
       // For groupless properties, their field ID will be directly set without further parsing
       return initFormField(fieldShape, initialState, fieldShape.name[VALUE_KEY]);
     }
@@ -95,13 +89,24 @@ export function parsePropertyShapeOrGroupList(initialState: FieldValues, fields:
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
  * @param {boolean} isArray Optional state to initialise array fields.
+ * @param {number} minSize Optional parameter to indicate the minimum array size.
  */
-function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string, isArray?: boolean): PropertyShape {
+function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: string, isArray?: boolean, minSize?: number): PropertyShape {
   let parsedFieldId: string = fieldId;
   if (isArray) {
     // Update field ID, the fieldId for an array should be its group name
     parsedFieldId = `${fieldId} ${field.name[VALUE_KEY]}`;
     let currentIndex: number = 0;
+    const minArraySize: number = Number.isNaN(minSize) || minSize != 0 ? 1 : minSize;
+
+    if (minArraySize == 0 && !field.defaultValue) {
+      outputState[fieldId] = [];
+      return {
+        ...field,
+        fieldId: parsedFieldId,
+      };
+    }
+
     if (!outputState[fieldId]) {
       outputState[fieldId] = [{}];
     }
