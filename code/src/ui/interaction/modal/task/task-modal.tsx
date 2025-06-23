@@ -25,6 +25,8 @@ import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter } from "utils/client-utils";
 
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
 
 interface TaskModalProps {
@@ -45,6 +47,8 @@ interface TaskModalProps {
  * @param setTask A dispatch method to set the task option when required.
  */
 export default function TaskModal(props: Readonly<TaskModalProps>) {
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
+  const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
 
   const formRef: React.RefObject<HTMLFormElement> =
@@ -259,14 +263,20 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         )}
         <div className="flex flex-wrap gap-2 justify-end items-center">
           <div className="flex-grow" />
-          {!response && props.task.type !== "default" && (
-            <Button
-              leftIcon="send"
-              label={dict.action.submit}
-              tooltipText={dict.action.submit}
-              onClick={onSubmit}
-            />
-          )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            (permissionScheme.hasPermissions.completeTask && props.task.type === "complete") ||
+            (permissionScheme.hasPermissions.reportTask && props.task.type === "report") ||
+            (permissionScheme.hasPermissions.operation && (props.task.type === "dispatch" || props.task.type === "cancel"))
+          ) &&
+            !response && props.task.type !== "default" && (
+              <Button
+                leftIcon="send"
+                label={dict.action.submit}
+                tooltipText={dict.action.submit}
+                onClick={onSubmit}
+              />
+            )}
         </div>
       </section>
     </Modal >
