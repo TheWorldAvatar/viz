@@ -103,7 +103,14 @@ export function DependentFormSection(
             )
           ),
           { cache: "no-store", credentials: "same-origin" }
-        ).then((response) => response.json());
+        ).then(async (response) => {
+          const responseEntity = await response.json();
+          if (Array.isArray(responseEntity)) {
+            return responseEntity;
+          } else {
+            return [responseEntity];
+          }
+        });
       } else {
         entities = await fetch(
           makeInternalRegistryAPIwithParams("instances", entityType),
@@ -118,7 +125,7 @@ export function DependentFormSection(
         // Set the id to the first possible option
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
         // If there is a default value set either in the form or the field, search and use the option matching the default instance's local name
-        if (props.form.getValues(field.fieldId)) {
+        if (props.form.getValues(field.fieldId).length > 0) {
           const defaultValueId: string = getAfterDelimiter(
             props.form.getValues(field.fieldId),
             "/"
@@ -237,14 +244,14 @@ export function DependentFormSection(
               redirectOptions={{
                 addUrl:
                   formType != "view" &&
-                  formType != "delete" &&
-                  formType != "search"
+                    formType != "delete" &&
+                    formType != "search"
                     ? genAddSubEntityUrl(queryEntityType)
                     : undefined,
                 view:
                   !isFetching &&
-                  formType != "search" &&
-                  selectElements.length > 0
+                    formType != "search" &&
+                    selectElements.length > 0
                     ? openViewSubEntityModal
                     : undefined,
               }}
