@@ -110,9 +110,9 @@ export default function RegistryRowActions(
         iconStyles={[iconStyles["medium-icon"], styles["expand-icon"]]}
         onClick={handleClickView}
       />
-      {props.lifecycleStage === "report" ||
-        props.lifecycleStage === "tasks"
-        && <PopoverActionButton
+      {(props.lifecycleStage === "report" ||
+        props.lifecycleStage === "tasks") &&
+        <PopoverActionButton
           placement="bottom-start"
           leftIcon="more_vert"
           variant="ghost"
