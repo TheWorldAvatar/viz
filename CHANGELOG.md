@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.30.1
+
+### Changes
+
+- Users are now able to directly assign, complete, cancel, or report tasks from the table
+
+### Bug Fixes
+
+- Fixed broken registry requests
+
 ## 5.30.0
 
 ### Changes
