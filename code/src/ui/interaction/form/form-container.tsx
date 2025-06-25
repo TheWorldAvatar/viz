@@ -54,7 +54,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className="relative flex flex-col w-11/12 h-[80vh] md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-8  xl:mt-2.5 ">
+    <div className="relative flex flex-col w-[95vw] h-[80vh] sm:w-[95vw] sm:h-[85vh] md:h-[85vh] md:w-[95vw] xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-4  ">
       <FormContents {...props} />
     </div>
   );

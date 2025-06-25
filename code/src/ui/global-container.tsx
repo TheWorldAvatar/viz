@@ -81,12 +81,14 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
               isMobile={false}
             />
           )}
-          {props.children}
+          <div className="flex grow flex-col gap-8 ">
+            {props.children}
+            <Footer />
+          </div>
         </main>
 
         <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
         {popup && <Trex callback={togglePopup} />}
-        <Footer />
       </div>
     </Provider>
   );
