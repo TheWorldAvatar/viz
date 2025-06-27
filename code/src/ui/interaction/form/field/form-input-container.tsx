@@ -69,15 +69,15 @@ export default function FormInputContainer(
         <div className="flex items-center  gap-2">
           {props.redirectOptions?.addUrl && (
             <RedirectButton
-              label="Add"
+              label={dict.action.add}
               leftIcon="add"
               url={props.redirectOptions.addUrl}
             />
           )}
           {props.redirectOptions?.view && (
             <Button
+              label={dict.action.view}
               leftIcon="arrow_forward"
-              label="View"
               onClick={props.redirectOptions.view}
             />
           )}
