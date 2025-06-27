@@ -44,7 +44,7 @@ export default function FormInputContainer(
 
   const description =
     props.field.description[VALUE_KEY] != ""
-      ? `${dict.title.description}: ${props.field.description[VALUE_KEY]}${
+      ? `${props.field.description[VALUE_KEY]}${
           props.selectedOption
             ? `\n\n${props.selectedOption?.label.value}: ${props.selectedOption?.description.value}`
             : ""

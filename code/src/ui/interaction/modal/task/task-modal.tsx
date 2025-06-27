@@ -207,7 +207,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       </section>
       <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
         {props.task.type !== "default" && (
-          <p className="text-lg mb-4">
+          <p className="text-lg mb-4 whitespace-pre-line">
             {props.task.type === "complete" && dict.message.completeInstruction}
             {props.task.type === "dispatch" &&
               `${dict.message.dispatchInstruction} ${props.task.date}:`}

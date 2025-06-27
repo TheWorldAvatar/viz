@@ -104,7 +104,7 @@
     "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
     "dispatchInstruction": "Weisen Sie die Ressourcen für den geplanten Dienst am {date} zu",
     "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes (oder Auftrags) am {date} an",
-    "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. Bitte geben Sie in Ihrem Bericht den Grund an:",
+    "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",

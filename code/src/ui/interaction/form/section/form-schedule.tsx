@@ -169,9 +169,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     }
   }, [selectedServiceOption]);
 
-  // Combined description for tooltip
-  const combinedDescription = `${dict.title.description}: ${serviceDescription}`;
-
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
     if (value === singleService) {
@@ -198,7 +195,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               htmlFor="select-input"
             >
               {dict.title.serviceType}
-              <Tooltip text={combinedDescription} placement="right">
+              <Tooltip text={serviceDescription} placement="right">
                 <Icon className="material-symbols-outlined">{"info"}</Icon>
               </Tooltip>
             </label>

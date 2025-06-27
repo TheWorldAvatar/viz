@@ -184,6 +184,7 @@ body {
   background-color: var(--background-primary);
   color: var(--text-color-primary);
   overflow: hidden;
+  touch-action: manipulation; /* Prevents double-tap zoom on mobile */
 }
 
 /* a {

@@ -73,7 +73,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
         <HeaderBar pages={props.pages} settings={props.settings} />
 
-        <main className="flex h-screen w-full">
+        <main className="flex h-[94vh] w-full">
           {!pathname.endsWith("map") && (
             <NavMenu
               pages={props.pages}
@@ -81,12 +81,14 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
               isMobile={false}
             />
           )}
-          {props.children}
+          <div className="flex grow flex-col gap-8 ">
+            {props.children}
+            <Footer />
+          </div>
         </main>
 
         <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
         {popup && <Trex callback={togglePopup} />}
-        <Footer />
       </div>
     </Provider>
   );

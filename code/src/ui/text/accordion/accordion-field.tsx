@@ -1,4 +1,3 @@
-
 import { parseWordsForLabels } from "utils/client-utils";
 
 interface AccordionFieldProps {
@@ -14,7 +13,7 @@ interface AccordionFieldProps {
  */
 export default function AccordionField(props: Readonly<AccordionFieldProps>) {
   return (
-    <p className="flex justify-between text-xs  py-1">
+    <p className="flex justify-between text-xs sm:text-sm md:text-base  py-1">
       <span className="font-bold">{parseWordsForLabels(props.name)}:</span>
       {parseWordsForLabels(props.value)}
     </p>

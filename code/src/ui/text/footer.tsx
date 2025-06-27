@@ -10,7 +10,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="text-foreground absolute bottom-1 left-1 flex w-full items-center justify-center bg-transparent">
+    <footer className="text-foreground flex w-full items-center justify-center bg-transparent ">
       <Image
         alt={"TWA Logo"}
         src={Assets.TWA}
