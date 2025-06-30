@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.30.3
+
+### Bug Fixes
+
+- Fixed the layout issues on mobile and tablets
+- Fixed strange hovering effects' interaction with checkbox buttons on tablets
+
 ## 5.30.2
 
 ### Bug Fixes
