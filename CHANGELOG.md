@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.30.2
+
+### Bug Fixes
+
+- Fix the missing german translations for add and view buttons
+
 ## 5.30.1
 
 ### Changes
