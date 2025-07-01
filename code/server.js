@@ -127,8 +127,7 @@ nextApp.prepare().then(() => {
 
         // Remove legacy GeoServer proxy route, as this is now handled by Next.js API route
         if (useGeoServerProxy) {
-            console.info('Server URL REACT_APP_SERVER_URL is ' + process.env.REACT_APP_SERVER_URL);
-            console.info('GeoServer requests from MapBox will be sent to ' + process.env.REACT_APP_SERVER_URL + '/geoserver-proxy')
+            console.info('GeoServer requests from MapBox will be sent to ', colourYellow, '<client-window-location>/api/geoserver-proxy', colourReset, '(the app base URL)');
         }
     }
 
