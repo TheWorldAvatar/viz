@@ -54,7 +54,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className="relative flex flex-col w-11/12 h-[80vh] md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-8  xl:mt-2.5 ">
+    <div className="relative flex flex-col w-[95vw] h-[80vh] sm:w-[95vw] sm:h-[85vh] md:h-[80vh] md:w-[95vw] lg:h-[85vh] xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -163,7 +163,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
         credentials: "same-origin",
-        body: JSON.stringify({ formData: reqBody }),
+        body: JSON.stringify({ ...reqBody }),
       }
     );
     const customAgentResponse: CustomAgentResponseBody = await res.json();
@@ -263,7 +263,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
                 leftIcon="error"
-                label="Rescind"
+                label={dict.action.rescind}
                 variant="secondary"
                 className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
@@ -279,7 +279,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
                 leftIcon="cancel"
-                label="Cancel"
+                label={dict.action.cancel}
                 variant="secondary"
                 tooltipText={`${dict.action.cancel} ${props.entityType}`}
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
@@ -293,7 +293,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             status?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
-                label="Approve"
+                label={dict.action.approve}
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
@@ -307,7 +307,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 leftIcon="edit"
-                label="Edit"
+                label={dict.action.edit}
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 variant="primary"
@@ -322,7 +322,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 leftIcon="delete"
-                label="Delete"
+                label={dict.action.delete}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 variant="destructive"
@@ -331,7 +331,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {props.formType != "view" && !response && (
             <Button
               leftIcon="send"
-              label="Submit"
+              label={dict.action.submit}
               tooltipText={dict.action.submit}
               onClick={onSubmit}
             />
@@ -350,7 +350,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           )}
           {!response && !(isRescindAction || isTerminateAction) && (
             <ReturnButton
-              label="Return"
+              label={dict.action.return}
               leftIcon={"first_page"}
               className="ml-2"
               variant="secondary"

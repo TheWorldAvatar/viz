@@ -74,7 +74,11 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   };
 
   return (
-    <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+    <Modal
+      styles={["!w-md  !h-38"]}
+      isOpen={props.isOpen}
+      setIsOpen={props.setIsOpen}
+    >
       <form ref={formRef} onSubmit={onFormSubmit}>
         <section className="flex items-center">
           <FileInputButton form={form} />

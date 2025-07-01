@@ -61,11 +61,3 @@
   display: inline-flex;
   flex-direction: row;
 }
-
-.expand-icon {
-  color: var(--button-color-primary) !important;
-}
-
-.expand-icon:hover {
-  color: var(--button-color-primary-active) !important;
-}

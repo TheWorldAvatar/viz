@@ -2,6 +2,68 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.30.3
+
+### Bug Fixes
+
+- Fixed the layout issues on mobile and tablets
+- Fixed strange hovering effects' interaction with checkbox buttons on tablets
+
+## 5.30.2
+
+### Bug Fixes
+
+- Fix the missing german translations for add and view buttons
+
+## 5.30.1
+
+### Changes
+
+- Users are now able to directly assign, complete, cancel, or report tasks from the table
+
+### Bug Fixes
+
+- Fixed broken registry requests
+
+## 5.30.0
+
+### Changes
+
+- Enable users to view or update completion records even after completed
+- Bump min version of `VisBackend Agent` from `v1.5.1` to `v1.6.1`
+- Rework viz to be compatible with `v1.6.1` of the `VisBackend Agent`
+
+### Bug Fixes
+
+- Fixed the completion and dispatch record retrieval to work with arrays
+
+## 5.29.3
+
+### Changes
+
+- Added an additional tag for setting general registry nav icons
+
+### Bug Fixes
+
+- Fixed duplicate default navigation elements
+- Fixed missing icons in navigation elements
+
+## 5.29.2
+
+### Changes
+
+- Update German translations
+
+### Bug Fixes
+
+- Fixed untranslated button texts
+
+## 5.29.1
+
+### Changes
+
+- Improved configuration of dashboard
+
 ## 5.29.0
 
 ### Changes

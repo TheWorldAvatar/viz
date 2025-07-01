@@ -36,7 +36,7 @@ export default function FormCheckboxField(props: Readonly<InputFieldProps>) {
             }}
             className={`outline-none border-1 border-gray-500 rounded-xl p-4 bg-muted text-sm text-foreground w-24 ${
               value && "bg-primary"
-            } ${!props.options?.disabled && "hover:bg-accent"} ${
+            } ${!props.options?.disabled && "lg:hover:bg-accent"} ${
               props.options?.disabled ? "cursor-not-allowed" : "cursor-pointer"
             }`}
           >

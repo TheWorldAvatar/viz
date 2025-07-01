@@ -18,6 +18,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg" | "default" | "icon";
   leftIcon?: "string" | React.ReactNode;
   rightIcon?: "string" | React.ReactNode;
+  iconSize?: "inherit" | "medium" | "small" | "large";
   loading?: boolean;
   label?: string;
   tooltipText?: string;
@@ -45,6 +46,7 @@ export default function Button({
   className, // Allow custom classes to be passed in
   variant = "primary", // Default variant
   size = "md", // Default size
+  iconSize = "medium", // Default icon size
   onClick,
   leftIcon,
   rightIcon,
@@ -123,13 +125,21 @@ export default function Button({
           {loading && <LoadingSpinner isSmall={true} />}
           {!loading && leftIcon && (
             <span className="flex items-center">
-              {<Icon className="material-symbols-outlined">{leftIcon}</Icon>}
+              {
+                <Icon fontSize={iconSize} className="material-symbols-outlined">
+                  {leftIcon}
+                </Icon>
+              }
             </span>
           )}
           <span>{children || label}</span>
           {!loading && rightIcon && (
             <span className="flex items-center">
-              {<Icon className="material-symbols-outlined">{rightIcon}</Icon>}
+              {
+                <Icon fontSize={iconSize} className="material-symbols-outlined">
+                  {rightIcon}
+                </Icon>
+              }
             </span>
           )}
         </div>

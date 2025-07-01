@@ -18,12 +18,17 @@ export type UISettings = {
   },
   links?: NavBarItemSettings[],
   resources?: {
-    [key: 'scenario' | 'registry' | string]: {
+    [key: 'scenario' | 'registry' | 'dashboard' | string]: {
       url: string;
       data?: string;
-      paths?: string[];
+      paths?: ResourcesPathSettings[];
     };
   }
+}
+
+export interface ResourcesPathSettings {
+  type: string;
+  icon?: string;
 }
 
 export interface NavBarItemSettings {

@@ -6,9 +6,13 @@ import { DependentFormSection } from "ui/interaction/form/section/dependent-form
 import { genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
 import Button from "ui/interaction/button";
+import { Dictionary } from "types/dictionary";
+import { useDictionary } from "hooks/useDictionary";
 
 export interface FormArrayProps {
   fieldId: string;
+  minSize: number;
+  maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
   options?: FormFieldOptions;
@@ -19,13 +23,18 @@ export interface FormArrayProps {
  * It allows users to add, remove, and navigate between multiple entries of the same form fields.
  *
  * @param {string} fieldId The field ID for the array.
- * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
+ * @param {number} minSize The minimum size of the array. 
+ * @param {number} maxSize The maximum size of the array. 
+ * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field. 
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const dict: Dictionary = useDictionary();
+  // Min size defaults to 1. Users can only set it as 0 or 1
+  const minArraySize: number = Number.isNaN(props.minSize) || props.minSize != 0 ? 1 : props.minSize;
   const { control } = props.form;
 
   const { fields, append, remove } = useFieldArray({
@@ -41,7 +50,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     <div className="flex flex-col">
       <div className="flex flex-col justify-start items-start gap-4 my-4">
         <div className="flex flex-row items-center justify-start gap-2">
-          <Button
+          {!props.options?.disabled && (Number.isNaN(props.maxSize) || fields.length < props.maxSize) && <Button
             size="icon"
             leftIcon="add"
             className=""
@@ -49,8 +58,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               event.preventDefault();
               append(emptyRow);
             }}
-          />
-          {fields.length > 1 && (
+          />}
+          {!props.options?.disabled && fields.length > minArraySize && (
             <Button
               leftIcon="remove"
               size="icon"
@@ -66,13 +75,13 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             />
           )}
         </div>
+
         <div className="flex flex-wrap gap-4  rounded-lg w-fit">
           {Array.from({ length: fields.length }, (_, index) => (
             <button
               key={index}
-              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${
-                index === currentIndex ? "bg-primary " : ""
-              }`}
+              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-foreground rounded-sm ${index === currentIndex ? "bg-primary " : ""
+                }`}
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
                 setCurrentIndex(index);
@@ -85,7 +94,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
       </div>
 
       <div className="bg-background flex flex-col w-full p-4 rounded-lg border-1 border-border">
-        {props.fieldConfigs.map((config, index) => {
+        {fields.length == 0 && <p>{dict.message.arrayInstruction}</p>}
+        {fields.length > 0 && props.fieldConfigs.map((config, index) => {
           const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
           return (
             <div
