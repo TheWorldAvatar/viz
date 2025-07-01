@@ -64,7 +64,7 @@ export default function MapboxMapComponent(props: MapProperties) {
             transformRequest: (url: string) => {
                 if (process.env.REACT_APP_USE_GEOSERVER_PROXY === 'true') {
                     try {
-                        const urlObject = new URL(url);
+                        const urlObject = new URL(url, window.location.href);
                         const params = new URLSearchParams(urlObject.search);
                         if (params.get('request') === 'GetMap') {
                             // not sure if this will work across all conditions
