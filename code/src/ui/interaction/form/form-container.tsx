@@ -16,7 +16,7 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
-import { getAfterDelimiter } from "utils/client-utils";
+import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
@@ -211,7 +211,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         <span>{`${translateFormType(
           props.formType,
           dict
-        ).toUpperCase()} ${props.entityType
+        ).toUpperCase()} ${parseWordsForLabels(props.entityType)
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>

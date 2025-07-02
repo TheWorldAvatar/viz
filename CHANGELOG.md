@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.30.5
+
+### Changes
+
+- Fixed issues with the UTF-8 encoding which was causing issues with some characters when translating from German to English. 
+
+## 5.30.4
+
+### Bug Fixes
+
+- Increased the size of the buttons in the action menu
+- Fixed permissions of the action buttons
+
 ## 5.30.3
 
 ### Bug Fixes

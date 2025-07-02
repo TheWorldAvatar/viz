@@ -5,7 +5,6 @@ import React, { useMemo, useState } from "react";
 import { Icon } from "@mui/material";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
-import { Assets } from "io/config/assets";
 import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
@@ -266,9 +265,9 @@ function NavMenuContents(
             caption={
               isMenuExpanded
                 ? dict.nav.caption.generalReg.replace(
-                  "{replace}",
-                  parseWordsForLabels(path.type).toLowerCase()
-                )
+                    "{replace}",
+                    parseWordsForLabels(path.type).toLowerCase()
+                  )
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}

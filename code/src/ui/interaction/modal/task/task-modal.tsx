@@ -22,12 +22,11 @@ import { FormTemplate } from "ui/interaction/form/template/form-template";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
-import { getAfterDelimiter } from "utils/client-utils";
+import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { PermissionScheme } from "types/auth";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
-
 
 interface TaskModalProps {
   entityType: string;
@@ -104,7 +103,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(formData, action, props.task.type !== "dispatch" && props.task.type !== "complete");
+    submitLifecycleAction(
+      formData,
+      action,
+      props.task.type !== "dispatch" && props.task.type !== "complete"
+    );
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -150,7 +153,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     // Target id is optional, and will default to form
-    const getFormTemplate = async (lifecycleStage: string, eventType: string, targetId?: string): Promise<void> => {
+    const getFormTemplate = async (
+      lifecycleStage: string,
+      eventType: string,
+      targetId?: string
+    ): Promise<void> => {
       setIsFetching(true);
       const template: FormTemplateType = await fetch(
         makeInternalRegistryAPIwithParams(
@@ -166,7 +173,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       ).then((res) => res.json());
       setFormFields(template.property);
       setIsFetching(false);
-    }
+    };
 
     if (props.task.type === "dispatch") {
       getFormTemplate("service", "dispatch", props.task.id);
@@ -200,7 +207,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   return (
     <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
       <section className="flex justify-between items-center text-nowrap text-foreground p-2">
-        <h1 className="text-xl font-bold">{dict.title.actions}</h1>
+        <h1 className="text-xl font-bold">
+          {parseWordsForLabels(dict.title.actions)}
+        </h1>
         <h2 className="text-sm md:text-lg mr-4  md:mr-8">
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
@@ -220,7 +229,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               )}`}
           </p>
         )}
-        {isFetching || refreshFlag && <LoadingSpinner isSmall={false} />}
+        {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
         {props.task.type === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}
@@ -236,8 +245,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task.type === "report"
                 ? "report"
                 : props.task.type === "cancel"
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -265,11 +274,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <div className="flex-grow" />
           {(!keycloakEnabled ||
             !permissionScheme ||
-            (permissionScheme.hasPermissions.completeTask && props.task.type === "complete") ||
-            (permissionScheme.hasPermissions.reportTask && props.task.type === "report") ||
-            (permissionScheme.hasPermissions.operation && (props.task.type === "dispatch" || props.task.type === "cancel"))
-          ) &&
-            !response && props.task.type !== "default" && (
+            (permissionScheme.hasPermissions.completeTask &&
+              props.task.type === "complete") ||
+            (permissionScheme.hasPermissions.reportTask &&
+              props.task.type === "report") ||
+            (permissionScheme.hasPermissions.operation &&
+              (props.task.type === "dispatch" ||
+                props.task.type === "cancel"))) &&
+            !response &&
+            props.task.type !== "default" && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
@@ -279,6 +292,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
         </div>
       </section>
-    </Modal >
+    </Modal>
   );
 }
