@@ -1,4 +1,3 @@
-
 import { useRouter } from "next/navigation";
 
 import React, { useState } from "react";
@@ -7,7 +6,11 @@ import { FieldValues } from "react-hook-form";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
-import { LifecycleStage, RegistryTaskOption, RegistryTaskType } from "types/form";
+import {
+  LifecycleStage,
+  RegistryTaskOption,
+  RegistryTaskType,
+} from "types/form";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import Button from "ui/interaction/button";
 import { Status } from "ui/text/status/status";
@@ -38,8 +41,8 @@ export default function RegistryRowActions(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-      ? getId(props.row.id)
-      : props.row.iri;
+    ? getId(props.row.id)
+    : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -61,158 +64,180 @@ export default function RegistryRowActions(
     }
   };
 
-  const showsExpandedTask: boolean = (props.lifecycleStage === "report" || props.lifecycleStage === "tasks") &&
-    !(props.row?.event === "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" ||
-      props.row?.event === "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent");
+  const showsExpandedTask: boolean =
+    (props.lifecycleStage === "report" || props.lifecycleStage === "tasks") &&
+    !(
+      props.row?.event ===
+        "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" ||
+      props.row?.event ===
+        "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+    );
 
   return (
     <div className="flex items-center justify-center">
-      {!showsExpandedTask &&
+      {!showsExpandedTask && (
         <Button
           variant="ghost"
           leftIcon="open_in_new"
           size="icon"
-          iconSize="small"
+          iconSize="medium"
           className="text-primary"
           tooltipText={parseWordsForLabels(dict.action.view)}
           tooltipPosition="right"
           onClick={handleClickView}
         />
-      }
-      {showsExpandedTask && <PopoverActionButton
-        placement="bottom-start"
-        leftIcon="more_vert"
-        variant="ghost"
-        tooltipText={dict.title.actions}
-        size="icon"
-        className="ml-2"
-        isOpen={isActionMenuOpen}
-        setIsOpen={setIsActionMenuOpen}
-      >
-        <div className="flex flex-col items-center justify-center space-y-2 ">
-          <Button
-            variant="ghost"
-            leftIcon="open_in_new"
-            size="icon"
-            iconSize="small"
-            tooltipText={parseWordsForLabels(dict.action.view)}
-            tooltipPosition="right"
-            onClick={() => {
-              setIsActionMenuOpen(false);
-              props.setTask(genTaskOption(recordId, props.row, "default"));
-            }}
-          />
+      )}
+      {showsExpandedTask && (
+        <PopoverActionButton
+          placement="bottom-start"
+          leftIcon="more_vert"
+          variant="ghost"
+          tooltipText={dict.title.actions}
+          size="icon"
+          className="ml-2"
+          isOpen={isActionMenuOpen}
+          setIsOpen={setIsActionMenuOpen}
+        >
+          <div className="flex flex-col space-y-8 lg:space-y-4 ">
+            <Button
+              variant="ghost"
+              leftIcon="open_in_new"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={parseWordsForLabels(dict.action.view)}
+              onClick={() => {
+                setIsActionMenuOpen(false);
+                props.setTask(genTaskOption(recordId, props.row, "default"));
+              }}
+            />
 
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) &&
-            (props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent" ||
-              props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent") && (
-              <Button
-                variant="ghost"
-                leftIcon="done_outline"
-                size="icon"
-                iconSize="small"
-                tooltipText={dict.action.complete}
-                tooltipPosition="right"
-                onClick={() => {
-                  setIsActionMenuOpen(false);
-                  props.setTask(genTaskOption(recordId, props.row, "complete"));
-                }}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            (props.row.event !== "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" &&
-              props.row.event !== "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent") && (
-              <Button
-                variant="ghost"
-                leftIcon="assignment"
-                size="icon"
-                iconSize="small"
-                tooltipText={dict.action.dispatch}
-                tooltipPosition="right"
-                onClick={() => {
-                  setIsActionMenuOpen(false);
-                  props.setTask(genTaskOption(recordId, props.row, "dispatch"));
-                }}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.reportTask) &&
-            (props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
-              props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
-              <Button
-                variant="ghost"
-                leftIcon="cancel"
-                size="icon"
-                iconSize="small"
-                tooltipText={dict.action.cancel}
-                tooltipPosition="right"
-                onClick={() => {
-                  setIsActionMenuOpen(false);
-                  props.setTask(genTaskOption(recordId, props.row, "cancel"));
-                }}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            (props.row.event === "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
-              props.row.event === "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
-              <Button
-                variant="ghost"
-                leftIcon="report"
-                size="icon"
-                iconSize="small"
-                tooltipText={dict.action.report}
-                tooltipPosition="right"
-                onClick={() => {
-                  setIsActionMenuOpen(false);
-                  props.setTask(genTaskOption(recordId, props.row, "report"));
-                }}
-              />
-            )}
-        </div>
-      </PopoverActionButton>
-      }
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.completeTask) &&
+              (props.row.event ===
+                "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent" ||
+                props.row.event ===
+                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent") && (
+                <Button
+                  variant="ghost"
+                  leftIcon="done_outline"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.complete}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(
+                      genTaskOption(recordId, props.row, "complete")
+                    );
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+              props.row.event !==
+                "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" &&
+              props.row.event !==
+                "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent" && (
+                <Button
+                  variant="ghost"
+                  leftIcon="assignment"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.dispatch}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(
+                      genTaskOption(recordId, props.row, "dispatch")
+                    );
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+              (props.row.event ===
+                "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
+                props.row.event ===
+                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
+                <Button
+                  variant="ghost"
+                  leftIcon="cancel"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.cancel}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(genTaskOption(recordId, props.row, "cancel"));
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.reportTask) &&
+              (props.row.event ===
+                "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
+                props.row.event ===
+                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
+                <Button
+                  variant="ghost"
+                  leftIcon="report"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.report}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(genTaskOption(recordId, props.row, "report"));
+                  }}
+                />
+              )}
+          </div>
+        </PopoverActionButton>
+      )}
     </div>
   );
 }
 
 // Generates a task option based on the input parameters
-function genTaskOption(recordId: string, row: FieldValues, taskType: RegistryTaskType): RegistryTaskOption {
+function genTaskOption(
+  recordId: string,
+  row: FieldValues,
+  taskType: RegistryTaskType
+): RegistryTaskOption {
   let status: string;
   if (
     row.order === "0" ||
     row.event ===
-    "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
+      "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
   ) {
     status = Status.PENDING_DISPATCH;
   } else if (
     row.order === "1" ||
     row.event ===
-    "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
+      "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
   ) {
     status = Status.PENDING_EXECUTION;
   } else if (
     row.order === "2" ||
     row.event ===
-    "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
+      "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
   ) {
     status = Status.COMPLETED;
   } else if (
     row.order === "3" ||
     row.event ===
-    "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+      "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
   ) {
     status = Status.CANCELLED;
   } else if (
     row.order === "4" ||
     row.event ===
-    "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
+      "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
   ) {
     status = Status.INCOMPLETE;
   } else {
