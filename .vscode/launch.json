@@ -6,10 +6,44 @@
     "configurations": [
         {
             "type": "node-terminal",
-            "name": "Debug dev server",
+            "name": "server-side",
             "request": "launch",
-            "command": "npm run dev",
+            "command": "pnpm dev",
             "cwd": "${workspaceFolder}/code"
+        },
+        {
+            "name": "client-side",
+            "type": "msedge",
+            "request": "launch",
+            "url": "http://localhost:3000",
+        },
+        {
+            "name": "Next.js: debug full stack",
+            "cwd": "${workspaceFolder}/code",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": [
+                "run",
+                "dev",
+                "--inspect",
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "serverReadyAction": {
+                "action": "debugWithEdge",
+                "killOnServerStop": true,
+                "pattern": "Running at *",
+                "uriFormat": "%s",
+                "webRoot": "${workspaceFolder}/code"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack (Server + Client)",
+            "configurations": ["server-side", "client-side"]
         }
     ]
 }
