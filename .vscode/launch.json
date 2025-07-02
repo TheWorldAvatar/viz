@@ -39,5 +39,11 @@
                 "webRoot": "${workspaceFolder}/code"
             }
         }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack (Server + Client)",
+            "configurations": ["server-side", "client-side"]
+        }
     ]
 }
