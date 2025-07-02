@@ -13,6 +13,7 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import ColumnSearchComponent from "../actions/column-search";
+import { parseWordsForLabels } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -61,38 +62,38 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.pendingRegistry) && (
-              <RedirectButton
-                label={dict.nav.title.pending}
-                leftIcon="pending"
-                url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-                variant={props.lifecycleStage == "pending" ? "active" : "ghost"}
-              />
-            )}
+            <RedirectButton
+              label={dict.nav.title.pending}
+              leftIcon="pending"
+              url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+              variant={props.lifecycleStage == "pending" ? "active" : "ghost"}
+            />
+          )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.activeArchiveRegistry) && (
-              <RedirectButton
-                label={dict.nav.title.active}
-                leftIcon="schedule"
-                url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-                variant={
-                  props.lifecycleStage == "active" ||
-                    props.lifecycleStage == "tasks"
-                    ? "active"
-                    : "ghost"
-                }
-              />
-            )}
+            <RedirectButton
+              label={dict.nav.title.active}
+              leftIcon="schedule"
+              url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
+              variant={
+                props.lifecycleStage == "active" ||
+                props.lifecycleStage == "tasks"
+                  ? "active"
+                  : "ghost"
+              }
+            />
+          )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.activeArchiveRegistry) && (
-              <RedirectButton
-                label={dict.nav.title.archive}
-                leftIcon="archive"
-                url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-                variant={props.lifecycleStage == "archive" ? "active" : "ghost"}
-              />
-            )}
+            <RedirectButton
+              label={dict.nav.title.archive}
+              leftIcon="archive"
+              url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
+              variant={props.lifecycleStage == "archive" ? "active" : "ghost"}
+            />
+          )}
         </div>
       )}
 
@@ -122,11 +123,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               props.lifecycleStage == "general") && (
               <RedirectButton
                 leftIcon="add"
-                label={dict.action.addItem.replace("{replace}",
-                  props.entityType.replace(
-                    "_",
-                    " "
-                  ))}
+                label={parseWordsForLabels(
+                  dict.action.addItem.replace(
+                    "{replace}",
+                    props.entityType.replace("_", " ")
+                  )
+                )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
               />
             )}
@@ -159,11 +161,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {props.lifecycleStage == "report" && (
             <ReturnButton
               leftIcon="first_page"
-              label={dict.action.backTo.replace("{replace}",
-                props.entityType.replace(
-                  "_",
-                  " "
-                ))}
+              label={dict.action.backTo.replace(
+                "{replace}",
+                props.entityType.replace("_", " ")
+              )}
             />
           )}
           {(!keycloakEnabled ||
@@ -179,8 +180,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-              <DownloadButton instances={props.instances} />
-            )}
+            <DownloadButton instances={props.instances} />
+          )}
         </div>
       </div>
       <div className="flex ml-2 ">
