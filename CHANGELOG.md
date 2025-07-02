@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.30.4
+
+### Bug Fixes
+
+- Increased the size of the buttons in the action menu
+- Fixed permissions of the action buttons
+
 ## 5.30.3
 
 ### Bug Fixes
