@@ -158,7 +158,7 @@ export default function RegistryRowActions(
               )}
             {(!keycloakEnabled ||
               !permissionScheme ||
-              permissionScheme.hasPermissions.reportTask) &&
+              permissionScheme.hasPermissions.operation) &&
               (props.row.event ===
                 "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
                 props.row.event ===
@@ -178,7 +178,7 @@ export default function RegistryRowActions(
               )}
             {(!keycloakEnabled ||
               !permissionScheme ||
-              permissionScheme.hasPermissions.operation) &&
+              permissionScheme.hasPermissions.reportTask) &&
               (props.row.event ===
                 "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
                 props.row.event ===
