@@ -127,6 +127,7 @@
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
       "registry": "Manage your records",
+      "submission": "Submit a new record",
       "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
     },
@@ -134,7 +135,8 @@
       "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
-      "registry": "Registry",
+      "registry": "Registry Records",
+      "submission": "Registry Submission",
       "help": "Help Centre",
       "pending": "Pending",
       "active": "Active",
