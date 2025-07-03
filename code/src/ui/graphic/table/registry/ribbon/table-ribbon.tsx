@@ -57,7 +57,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
-      {props.lifecycleStage !== "general" && (
+      {/* LEAVE COMMENTED. IT WILL BE USED WHEN IMPLEMENTING THE OUTSANDING AND CLOSED TASK TABS */}
+      {/* {props.lifecycleStage !== "general" && (
         <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 dark:bg-zinc-800   max-w-fit p-1.5 text-center rounded-lg flex-wrap">
           {(!keycloakEnabled ||
             !permissionScheme ||
@@ -95,7 +96,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />
           )}
         </div>
-      )}
+      )} */}
 
       <div className="w-full border-[0.5px] border-border" />
 
@@ -130,32 +131,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   )
                 )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.viewTask) &&
-            (props.lifecycleStage == "active" ||
-              props.lifecycleStage == "tasks") && (
-              <RedirectButton
-                leftIcon="task"
-                label={dict.action.overview}
-                url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-                variant={
-                  props.lifecycleStage == "active" ? "active" : "primary"
-                }
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.viewTask) &&
-            (props.lifecycleStage == "active" ||
-              props.lifecycleStage == "tasks") && (
-              <RedirectButton
-                leftIcon="event"
-                label={dict.action.viewTasks}
-                url={Routes.REGISTRY_TASK_DATE}
-                variant={props.lifecycleStage == "tasks" ? "active" : "primary"}
               />
             )}
           {props.lifecycleStage == "report" && (

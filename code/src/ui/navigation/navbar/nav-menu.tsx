@@ -238,11 +238,31 @@ function NavMenuContents(
       )}
 
       {props.settings.modules.registry &&
-        props.settings.resources?.registry?.data && (
+        props.settings.resources?.registry?.data &&
+        (!keycloakEnabled || permissionScheme?.hasPermissions.viewTask) && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}
-            url={registryUrl}
+            url={Routes.REGISTRY_TASK_DATE}
+            isMobile={props.isMobile}
+            caption={
+              isMenuExpanded
+                ? registryLinkProps?.caption ?? dict.nav.caption.registry
+                : undefined
+            }
+            setIsOpen={props.setIsMenuOpen}
+            isMenuExpanded={isMenuExpanded}
+          />
+        )}
+      {props.settings.modules.registry &&
+        props.settings.resources?.registry?.data &&
+        (!keycloakEnabled ||
+          permissionScheme?.hasPermissions.sales ||
+          permissionScheme?.hasPermissions.operation) && (
+          <NavBarItem
+            title={registryLinkProps?.title ?? dict.nav.title.submission}
+            icon={registryLinkProps?.icon ?? "work"}
+            url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
             isMobile={props.isMobile}
             caption={
               isMenuExpanded
