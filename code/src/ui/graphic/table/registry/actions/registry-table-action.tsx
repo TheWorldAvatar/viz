@@ -41,8 +41,8 @@ export default function RegistryRowActions(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -57,7 +57,7 @@ export default function RegistryRowActions(
       props.lifecycleStage == "tasks" ||
       props.lifecycleStage == "report"
     ) {
-      props.setTask(genTaskOption(recordId, props.row, "default"));
+      props.setTask(genTaskOption(recordId, props.row, "default", dict));
     } else {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
@@ -67,10 +67,7 @@ export default function RegistryRowActions(
   const showsExpandedTask: boolean =
     (props.lifecycleStage === "report" || props.lifecycleStage === "tasks") &&
     !(
-      props.row?.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" ||
-      props.row?.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+      props.row?.status.toLowerCase() === dict.title.incomplete || props.row?.status.toLowerCase() === dict.title.cancelled
     );
 
   return (
@@ -108,17 +105,14 @@ export default function RegistryRowActions(
               label={parseWordsForLabels(dict.action.view)}
               onClick={() => {
                 setIsActionMenuOpen(false);
-                props.setTask(genTaskOption(recordId, props.row, "default"));
+                props.setTask(genTaskOption(recordId, props.row, "default", dict));
               }}
             />
 
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.completeTask) &&
-              (props.row.event ===
-                "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent" ||
-                props.row.event ===
-                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent") && (
+              (props.row?.status.toLowerCase() === dict.title.ongoing || props.row?.status.toLowerCase() === dict.title.completed) && (
                 <Button
                   variant="ghost"
                   leftIcon="done_outline"
@@ -129,7 +123,7 @@ export default function RegistryRowActions(
                   onClick={() => {
                     setIsActionMenuOpen(false);
                     props.setTask(
-                      genTaskOption(recordId, props.row, "complete")
+                      genTaskOption(recordId, props.row, "complete", dict)
                     );
                   }}
                 />
@@ -137,10 +131,8 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              props.row.event !==
-                "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" &&
-              props.row.event !==
-                "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent" && (
+              props.row?.status.toLowerCase() !== dict.title.incomplete &&
+              props.row?.status.toLowerCase() !== dict.title.cancelled && (
                 <Button
                   variant="ghost"
                   leftIcon="assignment"
@@ -151,7 +143,7 @@ export default function RegistryRowActions(
                   onClick={() => {
                     setIsActionMenuOpen(false);
                     props.setTask(
-                      genTaskOption(recordId, props.row, "dispatch")
+                      genTaskOption(recordId, props.row, "dispatch", dict)
                     );
                   }}
                 />
@@ -159,10 +151,7 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              (props.row.event ===
-                "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
-                props.row.event ===
-                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
+              (props.row?.status.toLowerCase() === dict.title.outstanding || props.row?.status.toLowerCase() === dict.title.ongoing) && (
                 <Button
                   variant="ghost"
                   leftIcon="cancel"
@@ -172,17 +161,14 @@ export default function RegistryRowActions(
                   label={dict.action.cancel}
                   onClick={() => {
                     setIsActionMenuOpen(false);
-                    props.setTask(genTaskOption(recordId, props.row, "cancel"));
+                    props.setTask(genTaskOption(recordId, props.row, "cancel", dict));
                   }}
                 />
               )}
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.reportTask) &&
-              (props.row.event ===
-                "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
-                props.row.event ===
-                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
+              (props.row?.status.toLowerCase() === dict.title.outstanding || props.row?.status.toLowerCase() === dict.title.ongoing) && (
                 <Button
                   variant="ghost"
                   leftIcon="report"
@@ -192,7 +178,7 @@ export default function RegistryRowActions(
                   label={dict.action.report}
                   onClick={() => {
                     setIsActionMenuOpen(false);
-                    props.setTask(genTaskOption(recordId, props.row, "report"));
+                    props.setTask(genTaskOption(recordId, props.row, "report", dict));
                   }}
                 />
               )}
@@ -207,37 +193,33 @@ export default function RegistryRowActions(
 function genTaskOption(
   recordId: string,
   row: FieldValues,
-  taskType: RegistryTaskType
+  taskType: RegistryTaskType,
+  dict: Dictionary,
 ): RegistryTaskOption {
   let status: string;
   if (
     row.order === "0" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
+    row.status.toLowerCase() === dict.title.outstanding
   ) {
     status = Status.PENDING_DISPATCH;
   } else if (
     row.order === "1" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
+    row.status.toLowerCase() === dict.title.ongoing
   ) {
     status = Status.PENDING_EXECUTION;
   } else if (
     row.order === "2" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
+    row.status.toLowerCase() === dict.title.completed
   ) {
     status = Status.COMPLETED;
   } else if (
     row.order === "3" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+    row.status.toLowerCase() === dict.title.cancelled
   ) {
     status = Status.CANCELLED;
   } else if (
     row.order === "4" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
+    row.status.toLowerCase() === dict.title.incomplete
   ) {
     status = Status.INCOMPLETE;
   } else {

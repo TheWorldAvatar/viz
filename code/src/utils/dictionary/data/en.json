@@ -163,6 +163,8 @@
     "incomplete": "incomplete",
     "rescinded": "rescinded",
     "terminated": "terminated",
+    "ongoing": "in transit",
+    "outstanding": "outstanding",
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "searchCriteria": "SEARCH CRITERIA",

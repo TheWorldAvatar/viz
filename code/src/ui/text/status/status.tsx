@@ -41,9 +41,9 @@ export function getTranslatedStatusLabel(
     case Status.TERMINATED:
       return dict.title.terminated;
     case Status.PENDING_DISPATCH:
-      return dict.title.pendingDispatch;
+      return dict.title.outstanding;
     case Status.PENDING_EXECUTION:
-      return dict.title.pendingExecution;
+      return dict.title.ongoing;
     default:
       return null;
   }

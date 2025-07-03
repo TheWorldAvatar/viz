@@ -127,7 +127,7 @@ export default function RegistryTableComponent(
             }
           );
           const resBody: AgentResponseBody = await res.json();
-          instances = resBody.data.items as RegistryFieldValues[] ?? [];
+          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
         } else if (props.lifecycleStage == "general") {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
