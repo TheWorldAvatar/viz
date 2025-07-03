@@ -8,7 +8,7 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { PermissionScheme } from "types/auth";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { ApiResponse, JsonObject } from "types/json";
@@ -18,12 +18,12 @@ import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
+import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import Button from "../button";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -71,7 +71,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<ApiResponse>(null);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [response, setResponse] = useState<AgentResponseBody>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -113,7 +113,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         body: JSON.stringify({ formData: payload }),
       }
     );
-    const agentResponseBody: CustomAgentResponseBody = await res.json();
+    const agentResponseBody: AgentResponseBody = await res.json();
     setResponse(agentResponseBody);
   };
 
@@ -137,7 +137,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           credentials: "same-origin",
         }
       );
-      const template: PropertyShape[] = await res.json();
+      const responseBody: AgentResponseBody = await res.json();
+      const template: PropertyShape[] =( responseBody.data?.items as Record<string, unknown>[])?.[0]?.property as PropertyShape[]  ;
       setFormFields(template);
       setIsLoading(false);
     };
@@ -166,7 +167,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         body: JSON.stringify({ ...reqBody }),
       }
     );
-    const customAgentResponse: CustomAgentResponseBody = await res.json();
+    const customAgentResponse: AgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setIsLoading(false);
     setTimeout(() => {

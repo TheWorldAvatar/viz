@@ -6,7 +6,7 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FORM_IDENTIFIER,
@@ -24,9 +24,9 @@ import ResponseComponent from "ui/text/response/response";
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { PermissionScheme } from "types/auth";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { PermissionScheme } from "types/auth";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface TaskModalProps {
   entityType: string;
@@ -56,7 +56,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Form actions
 
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [response, setResponse] = useState<AgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
 
@@ -119,7 +119,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
-    let response: CustomAgentResponseBody;
+    let response: AgentResponseBody;
     if (isPost) {
       const res = await fetch(
         makeInternalRegistryAPIwithParams("event", "service", action),
@@ -170,7 +170,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           cache: "no-store",
           credentials: "same-origin",
         }
-      ).then((res) => res.json());
+      ).then(async (res) => {
+        const resBody: AgentResponseBody = await res.json();
+        return resBody.data?.items?.[0] as FormTemplateType;
+      });
       setFormFields(template.property);
       setIsFetching(false);
     };
@@ -188,7 +191,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   // Closes the modal only if response is successfull
   useEffect(() => {
-    if (response?.success) {
+    if (!response?.error) {
       setTimeout(() => {
         setResponse(null);
         props.setIsOpen(false);
@@ -245,8 +248,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task.type === "report"
                 ? "report"
                 : props.task.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}

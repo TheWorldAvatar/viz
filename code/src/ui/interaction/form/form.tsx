@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
@@ -35,7 +35,7 @@ interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   formType: FormType;
   entityType: string;
-  setResponse: React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>;
+  setResponse: React.Dispatch<React.SetStateAction<AgentResponseBody>>;
   id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
@@ -48,7 +48,7 @@ interface FormComponentProps {
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
- * @param {React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
+ * @param {React.Dispatch<React.SetStateAction<AgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
@@ -78,7 +78,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             cache: "no-store",
             credentials: "same-origin",
           }
-        ).then((res) => res.json());
+        ).then(async (res) => {
+          const body: AgentResponseBody = await res.json();
+          return body.data?.items?.[0] as FormTemplateType;
+        });
       } else {
         // For edit and view, get template with values
         template = await fetch(
@@ -108,7 +111,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
-    let pendingResponse: CustomAgentResponseBody;
+    let pendingResponse: AgentResponseBody;
     // For single service
     if (formData[FORM_STATES.RECURRENCE] == 0) {
       const startDate: string = formData[FORM_STATES.START_DATE];
@@ -154,7 +157,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
 
         // For registry's primary entity, a draft lifecycle must also be generated
-        if (props.isPrimaryEntity && pendingResponse.success) {
+        if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
             makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
             {
@@ -163,7 +166,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               cache: "no-store",
               credentials: "same-origin",
               body: JSON.stringify({
-                contract: pendingResponse.iri,
+                contract: pendingResponse.data?.id,
                 ...formData,
               }),
             }
@@ -210,7 +213,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
         pendingResponse = await res.json();
 
-        if (props.isPrimaryEntity && pendingResponse.success) {
+        if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
             makeInternalRegistryAPIwithParams("instances", "/contracts/draft"),
             {
@@ -262,22 +265,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
         pendingResponse = await res.json();
 
-        if (pendingResponse.success) {
-          if (pendingResponse.message === "[]") {
-            pendingResponse.success = false;
-            pendingResponse.message = dict.message.noMatchFeature;
+        if (res.ok) {
+          if (pendingResponse.data?.items?.length === 0) {
+            pendingResponse.data.message = dict.message.noMatchFeature;
           } else {
-            dispatch(setFilterFeatureIris(JSON.parse(pendingResponse.message)));
-            pendingResponse.message = dict.message.matchedFeatures;
+            dispatch(setFilterFeatureIris(pendingResponse.data?.items as string[]));
+            pendingResponse.data.message = dict.message.matchedFeatures;
           }
+
           if (
             formData[FORM_STATES.START_TIME_PERIOD] &&
             formData[FORM_STATES.END_TIME_PERIOD]
           ) {
             // Only display this message if there is no features based on static meta data but the search period is required
-            if (!pendingResponse.success) {
-              pendingResponse.success = true;
-              pendingResponse.message = dict.message.noMatchMetaWithTime;
+            if (pendingResponse.data?.items?.length === 0) {
+              pendingResponse.data.message = dict.message.noMatchMetaWithTime;
             }
             // Convert date to UNIX Epoch Timestamp
             const startTime: number = Math.floor(
@@ -403,7 +405,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod
