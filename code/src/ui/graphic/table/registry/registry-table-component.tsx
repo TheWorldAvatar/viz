@@ -138,7 +138,7 @@ export default function RegistryTableComponent(
             { cache: "no-store", credentials: "same-origin" }
           );
           const resBody: AgentResponseBody = await res.json();
-          instances = resBody.data.items as RegistryFieldValues[] ?? [];
+          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
         } else {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -149,7 +149,7 @@ export default function RegistryTableComponent(
             { cache: "no-store", credentials: "same-origin" }
           );
           const resBody: AgentResponseBody = await res.json();
-          instances = resBody.data.items as RegistryFieldValues[] ?? [];
+          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
         }
         setInitialInstances(instances);
         setCurrentInstances(instances);

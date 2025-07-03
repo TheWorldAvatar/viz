@@ -23,7 +23,7 @@ export default function ResponseComponent(
       <div className={`${textColor} overflow-auto h-[5vh] w-full`}>
         {props.response?.data?.message || props.response?.error?.message}
         <br />
-        {props.response?.error ? "" : dict.message.contactTechTeam}
+        {props.response?.error ? dict.message.contactTechTeam : ""}
       </div>
     );
   } else {

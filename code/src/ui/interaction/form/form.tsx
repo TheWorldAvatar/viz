@@ -90,7 +90,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             cache: "no-store",
             credentials: "same-origin",
           }
-        ).then((res) => res.json());
+        ).then(async (res) => {
+          const body: AgentResponseBody = await res.json();
+          return body.data?.items?.[0] as FormTemplateType;
+        });
       }
       if (props.additionalFields) {
         props.additionalFields.forEach((field) =>
