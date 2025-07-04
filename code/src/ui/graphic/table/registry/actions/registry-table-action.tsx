@@ -67,7 +67,8 @@ export default function RegistryRowActions(
   const showsExpandedTask: boolean =
     (props.lifecycleStage === "report" || props.lifecycleStage === "tasks") &&
     !(
-      props.row?.status?.toLowerCase() === dict.title.incomplete || props.row?.status?.toLowerCase() === dict.title.cancelled
+      props.row?.status?.toLowerCase() === dict.title.issue?.toLowerCase() ||
+      props.row?.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
     );
 
   return (
@@ -112,7 +113,8 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.completeTask) &&
-              (props.row?.status?.toLowerCase() === dict.title.ongoing || props.row?.status?.toLowerCase() === dict.title.completed) && (
+              (props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase() ||
+                props.row?.status?.toLowerCase() === dict.title.completed?.toLowerCase()) && (
                 <Button
                   variant="ghost"
                   leftIcon="done_outline"
@@ -131,8 +133,8 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              props.row?.status?.toLowerCase() !== dict.title.incomplete &&
-              props.row?.status?.toLowerCase() !== dict.title.cancelled && (
+              props.row?.status?.toLowerCase() !== dict.title.issue?.toLowerCase() &&
+              props.row?.status?.toLowerCase() !== dict.title.cancelled?.toLowerCase() && (
                 <Button
                   variant="ghost"
                   leftIcon="assignment"
@@ -151,7 +153,8 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              (props.row?.status?.toLowerCase() === dict.title.outstanding || props.row?.status?.toLowerCase() === dict.title.ongoing) && (
+              (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
+                props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) && (
                 <Button
                   variant="ghost"
                   leftIcon="cancel"
@@ -168,7 +171,8 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.reportTask) &&
-              (props.row?.status?.toLowerCase() === dict.title.outstanding || props.row?.status?.toLowerCase() === dict.title.ongoing) && (
+              (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
+                props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) && (
                 <Button
                   variant="ghost"
                   leftIcon="report"
@@ -199,27 +203,27 @@ function genTaskOption(
   let status: string;
   if (
     row.order === "0" ||
-    row.status?.toLowerCase() === dict.title.outstanding
+    row.status?.toLowerCase() === dict.title.new?.toLowerCase()
   ) {
     status = Status.PENDING_DISPATCH;
   } else if (
     row.order === "1" ||
-    row.status?.toLowerCase() === dict.title.ongoing
+    row.status?.toLowerCase() === dict.title.assigned?.toLowerCase()
   ) {
     status = Status.PENDING_EXECUTION;
   } else if (
     row.order === "2" ||
-    row.status?.toLowerCase() === dict.title.completed
+    row.status?.toLowerCase() === dict.title.completed?.toLowerCase()
   ) {
     status = Status.COMPLETED;
   } else if (
     row.order === "3" ||
-    row.status?.toLowerCase() === dict.title.cancelled
+    row.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
   ) {
     status = Status.CANCELLED;
   } else if (
     row.order === "4" ||
-    row.status?.toLowerCase() === dict.title.incomplete
+    row.status?.toLowerCase() === dict.title.issue?.toLowerCase()
   ) {
     status = Status.INCOMPLETE;
   } else {
