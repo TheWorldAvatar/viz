@@ -67,7 +67,7 @@ export default function RegistryRowActions(
   const showsExpandedTask: boolean =
     (props.lifecycleStage === "report" || props.lifecycleStage === "tasks") &&
     !(
-      props.row?.status.toLowerCase() === dict.title.incomplete || props.row?.status.toLowerCase() === dict.title.cancelled
+      props.row?.status?.toLowerCase() === dict.title.incomplete || props.row?.status?.toLowerCase() === dict.title.cancelled
     );
 
   return (
@@ -112,7 +112,7 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.completeTask) &&
-              (props.row?.status.toLowerCase() === dict.title.ongoing || props.row?.status.toLowerCase() === dict.title.completed) && (
+              (props.row?.status?.toLowerCase() === dict.title.ongoing || props.row?.status?.toLowerCase() === dict.title.completed) && (
                 <Button
                   variant="ghost"
                   leftIcon="done_outline"
@@ -131,8 +131,8 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              props.row?.status.toLowerCase() !== dict.title.incomplete &&
-              props.row?.status.toLowerCase() !== dict.title.cancelled && (
+              props.row?.status?.toLowerCase() !== dict.title.incomplete &&
+              props.row?.status?.toLowerCase() !== dict.title.cancelled && (
                 <Button
                   variant="ghost"
                   leftIcon="assignment"
@@ -151,7 +151,7 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
-              (props.row?.status.toLowerCase() === dict.title.outstanding || props.row?.status.toLowerCase() === dict.title.ongoing) && (
+              (props.row?.status?.toLowerCase() === dict.title.outstanding || props.row?.status?.toLowerCase() === dict.title.ongoing) && (
                 <Button
                   variant="ghost"
                   leftIcon="cancel"
@@ -168,7 +168,7 @@ export default function RegistryRowActions(
             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.reportTask) &&
-              (props.row?.status.toLowerCase() === dict.title.outstanding || props.row?.status.toLowerCase() === dict.title.ongoing) && (
+              (props.row?.status?.toLowerCase() === dict.title.outstanding || props.row?.status?.toLowerCase() === dict.title.ongoing) && (
                 <Button
                   variant="ghost"
                   leftIcon="report"
@@ -199,27 +199,27 @@ function genTaskOption(
   let status: string;
   if (
     row.order === "0" ||
-    row.status.toLowerCase() === dict.title.outstanding
+    row.status?.toLowerCase() === dict.title.outstanding
   ) {
     status = Status.PENDING_DISPATCH;
   } else if (
     row.order === "1" ||
-    row.status.toLowerCase() === dict.title.ongoing
+    row.status?.toLowerCase() === dict.title.ongoing
   ) {
     status = Status.PENDING_EXECUTION;
   } else if (
     row.order === "2" ||
-    row.status.toLowerCase() === dict.title.completed
+    row.status?.toLowerCase() === dict.title.completed
   ) {
     status = Status.COMPLETED;
   } else if (
     row.order === "3" ||
-    row.status.toLowerCase() === dict.title.cancelled
+    row.status?.toLowerCase() === dict.title.cancelled
   ) {
     status = Status.CANCELLED;
   } else if (
     row.order === "4" ||
-    row.status.toLowerCase() === dict.title.incomplete
+    row.status?.toLowerCase() === dict.title.incomplete
   ) {
     status = Status.INCOMPLETE;
   } else {

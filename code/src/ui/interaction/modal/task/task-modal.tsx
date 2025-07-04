@@ -242,7 +242,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             id={getAfterDelimiter(props.task.contract, "/")}
           />
         )}
-        {formFields.length > 0 && !refreshFlag && (
+        {formFields?.length > 0 && !refreshFlag && (
           <FormTemplate
             entityType={
               props.task.type === "report"
