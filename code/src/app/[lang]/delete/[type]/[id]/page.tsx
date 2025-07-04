@@ -37,7 +37,7 @@ export default async function DeleteFormPage(props: Readonly<DeleteFormPageProps
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={'delete'}
-      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isPrimaryEntity={decodeURIComponent(uiSettings?.resources?.registry?.data) === decodeURIComponent(resolvedParams?.type)}
       isModal={false}
     />
   );

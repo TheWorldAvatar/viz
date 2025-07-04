@@ -4,13 +4,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
+import Button from "ui/interaction/button";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
-import { CustomAgentResponseBody } from "types/backend-agent";
-import Button from "ui/interaction/button";
 
 interface FileModalProps {
   url: string;
@@ -31,7 +31,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [response, setResponse] = useState<AgentResponseBody>(null);
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let response;
@@ -44,22 +44,22 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           method: "POST",
           body: fileData,
         });
-        const jsonResp: CustomAgentResponseBody = await response.json();
+        const jsonResp: AgentResponseBody = await response.json();
         setResponse(jsonResp);
       } catch (error) {
         console.error("There was an error uploading the file:", error);
-        setResponse({ success: false, message: dict.message.fileUploadError });
+        setResponse({ apiVersion: "", error: { code: 400, message: dict.message.fileUploadError } });
       } finally {
         setIsUploading(false);
       }
     } else {
-      setResponse({ success: false, message: dict.message.noFileChosenError });
+      setResponse({ apiVersion: "", error: { code: 400, message: dict.message.noFileChosenError } });
     }
   });
 
   // Closes the modal only if response is successfull
   useEffect(() => {
-    if (response?.success) {
+    if (!response?.error) {
       setTimeout(() => {
         setResponse(null);
         props.setIsOpen(false);
@@ -89,7 +89,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
             !isUploading &&
             response && <ResponseComponent response={response} />}
           {isUploading && <LoadingSpinner isSmall={false} />}
-          {!response?.success && (
+          {!!response?.error && (
             <Button
               leftIcon="keyboard_tab"
               size="icon"

@@ -8,22 +8,22 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { PermissionScheme } from "types/auth";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
-import { ApiResponse, JsonObject } from "types/json";
+import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
 import Modal from "ui/interaction/modal/modal";
 import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
 import ReturnButton from "../action/redirect/return-button";
+import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import Button from "../button";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -70,8 +70,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
-  const [status, setStatus] = useState<ApiResponse>(null);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [status, setStatus] = useState<AgentResponseBody>(null);
+  const [response, setResponse] = useState<AgentResponseBody>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -100,7 +100,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     // Add contract and date field
     const payload = {
       ...formData,
-      [FORM_STATES.CONTRACT]: status.iri,
+      [FORM_STATES.CONTRACT]: status?.data?.id,
       [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
     };
     const res = await fetch(
@@ -113,7 +113,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         body: JSON.stringify({ formData: payload }),
       }
     );
-    const agentResponseBody: CustomAgentResponseBody = await res.json();
+    const agentResponseBody: AgentResponseBody = await res.json();
     setResponse(agentResponseBody);
   };
 
@@ -137,7 +137,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           credentials: "same-origin",
         }
       );
-      const template: PropertyShape[] = await res.json();
+      const responseBody: AgentResponseBody = await res.json();
+      const template: PropertyShape[] = (responseBody.data?.items as Record<string, unknown>[])?.[0]?.property as PropertyShape[];
       setFormFields(template);
       setIsLoading(false);
     };
@@ -153,7 +154,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
     const reqBody: JsonObject = {
-      contract: status.iri,
+      contract: status?.data?.id,
       remarks: "Contract has been approved successfully!",
     };
     const res = await fetch(
@@ -166,7 +167,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         body: JSON.stringify({ ...reqBody }),
       }
     );
-    const customAgentResponse: CustomAgentResponseBody = await res.json();
+    const customAgentResponse: AgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setIsLoading(false);
     setTimeout(() => {
@@ -190,8 +191,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           credentials: "same-origin",
         }
       );
-      const responseString = await res.text();
-      setStatus(JSON.parse(responseString));
+      const resBody: AgentResponseBody = await res.json();
+      setStatus(resBody);
     };
 
     if (
@@ -225,7 +226,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               entityType={props.entityType}
               formType={props.formType}
               setResponse={setResponse}
-              primaryInstance={status?.iri}
+              primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
             />
           ))}
@@ -259,7 +260,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
             !response &&
-            status?.message === ENTITY_STATUS.ACTIVE &&
+            status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
                 leftIcon="error"
@@ -275,7 +276,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
             !response &&
-            status?.message === ENTITY_STATUS.ACTIVE &&
+            status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
                 leftIcon="cancel"
@@ -290,7 +291,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
             !response &&
-            status?.message === ENTITY_STATUS.PENDING && (
+            status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
                 label={dict.action.approve}
@@ -303,7 +304,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
             !response &&
-            (status?.message === ENTITY_STATUS.PENDING ||
+            (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 leftIcon="edit"
@@ -318,7 +319,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
             !response &&
-            (status?.message === ENTITY_STATUS.PENDING ||
+            (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 leftIcon="delete"

@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
 import { GroupBase, OptionsOrGroups } from 'react-select';
 
+import { AgentResponseBody } from 'types/backend-agent';
 import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, VALUE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
 import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
-import FormSelector from './form-selector';
 import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
+import FormSelector from './form-selector';
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -51,11 +52,12 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
           conceptTypes.map(conceptType => fetch(makeInternalRegistryAPIwithParams('concept', conceptType), {
             cache: 'no-store',
             credentials: 'same-origin'
-          }).then(response => {
+          }).then(async (response) => {
             if (!response.ok) {
               throw new Error(`Failed to fetch available types for ${conceptType}`);
             }
-            return response.json();
+            const resBody: AgentResponseBody = await response.json();
+            return resBody.data?.items as OntologyConcept[];
           })
           )
         );

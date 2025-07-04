@@ -23,6 +23,7 @@ import {
 import FormSelector from "../field/input/form-selector";
 import { FORM_STATES } from "../form-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { AgentResponseBody } from "types/backend-agent";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -81,7 +82,10 @@ export function DependentFormSection(
               entityType
             ),
             { cache: "no-store", credentials: "same-origin" }
-          ).then((res) => res.json());
+          ).then(async (res) => {
+            const responseEntity: AgentResponseBody = await res.json();
+            return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          });
         }
         // If there is no valid parent option, there should be no entity
       } else if (
@@ -104,18 +108,17 @@ export function DependentFormSection(
           ),
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (response) => {
-          const responseEntity = await response.json();
-          if (Array.isArray(responseEntity)) {
-            return responseEntity;
-          } else {
-            return [responseEntity];
-          }
+          const responseEntity: AgentResponseBody = await response.json();
+          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
         });
       } else {
         entities = await fetch(
           makeInternalRegistryAPIwithParams("instances", entityType),
           { cache: "no-store", credentials: "same-origin" }
-        ).then((res) => res.json());
+        ).then(async (res) => {
+          const responseEntity: AgentResponseBody = await res.json();
+          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+        });
       }
 
       // By default, id is empty

@@ -35,7 +35,7 @@ export default async function InterceptViewFormPage(props: Readonly<InterceptVie
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={'view'}
-      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isPrimaryEntity={decodeURIComponent(uiSettings?.resources?.registry?.data) === decodeURIComponent(resolvedParams?.type)}
       isModal={true}
     />
   );

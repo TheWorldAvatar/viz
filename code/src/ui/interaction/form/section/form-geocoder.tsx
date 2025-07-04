@@ -20,6 +20,7 @@ import FormFieldComponent from "../field/form-field";
 import { FORM_STATES } from "../form-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import Button from "ui/interaction/button";
+import { AgentResponseBody } from "types/backend-agent";
 
 interface FormGeocoderProps {
   field: PropertyShape;
@@ -110,7 +111,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           credentials: "same-origin",
         }
       );
-      const template: FormTemplateType = await res.json();
+      const resBody: AgentResponseBody = await res.json();
+      const template: FormTemplateType = resBody?.data?.items?.[0] as FormTemplateType;
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;
@@ -151,7 +153,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           credentials: "same-origin",
         }
       );
-      const coordinates: number[] = await res.json();
+      const resBody: AgentResponseBody = await res.json();
+      const coordinates: number[] = (resBody.data?.items as Record<string, unknown>[])?.[0]?.coordinates as number[];
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
         setHasGeolocation(true);
@@ -190,20 +193,26 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     setSelectedAddress(null);
     setIsEmptyAddress(false);
     // Start search
-    const results = await fetch(
+    const results: AgentResponseBody = await fetch(
       makeInternalRegistryAPIwithParams("address", data[postalCode]),
       {
         cache: "no-store",
         credentials: "same-origin",
       }
-    ).then((response) => response.text());
+    ).then((response) => response.json());
     if (
-      results ==
-      "There are no address associated with the parameters in the knowledge graph."
+      results.data?.message
     ) {
       setIsEmptyAddress(true);
     } else {
-      setAddresses(JSON.parse(results));
+      setAddresses((results.data?.items as Record<string, unknown>[]).map(address => {
+        return {
+          block: address.block as string ?? null,
+          street: address.street as string,
+          city: address.city as string,
+          country: address.country as string,
+        };
+      }));
     }
   };
 
@@ -238,7 +247,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         cache: "no-store",
         credentials: "same-origin",
       });
-      const coordinates: number[] = await res.json();
+
+      const resBody: AgentResponseBody = await res.json();
+      const coordinates: number[] = (resBody.data?.items as Record<string, unknown>[])?.[0]?.coordinates as number[];
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
         setHasGeolocation(true);
