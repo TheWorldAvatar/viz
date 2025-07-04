@@ -6,13 +6,13 @@ export const Status: {
   AVAILABLE: "available",
   UNAVAILABLE: "unavailable",
   ACTIVE: "active",
+  NEW: "open",
+  ASSIGNED: "assigned",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
-  INCOMPLETE: "incomplete",
+  ISSUE: "issue",
   RESCINDED: "rescinded",
   TERMINATED: "terminated",
-  PENDING_DISPATCH: "pending dispatch",
-  PENDING_EXECUTION: "pending execution",
 };
 
 interface StatusComponentProps<> {
@@ -30,20 +30,20 @@ export function getTranslatedStatusLabel(
       return dict.title.unavailable;
     case Status.ACTIVE:
       return dict.title.active;
+    case Status.ASSIGNED:
+      return dict.title.assigned;
     case Status.COMPLETED:
       return dict.title.completed;
     case Status.CANCELLED:
       return dict.title.cancelled;
-    case Status.INCOMPLETE:
-      return dict.title.incomplete;
+    case Status.NEW:
+      return dict.title.new;
+    case Status.ISSUE:
+      return dict.title.issue;
     case Status.RESCINDED:
       return dict.title.rescinded;
     case Status.TERMINATED:
       return dict.title.terminated;
-    case Status.PENDING_DISPATCH:
-      return dict.title.outstanding;
-    case Status.PENDING_EXECUTION:
-      return dict.title.ongoing;
     default:
       return null;
   }

@@ -70,7 +70,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const getPrevEventOccurrenceEnum = useCallback(
     (currentStatus: string): number => {
       // Enum should be 0 for order received at pending dispatch state
-      if (currentStatus === Status.PENDING_DISPATCH) {
+      if (currentStatus === Status.NEW) {
         return 0;
       } else {
         // Enum will be 1 as there is already a dispatch event instantiated

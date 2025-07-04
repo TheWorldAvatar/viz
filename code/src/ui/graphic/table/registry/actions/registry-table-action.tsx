@@ -205,12 +205,12 @@ function genTaskOption(
     row.order === "0" ||
     row.status?.toLowerCase() === dict.title.new?.toLowerCase()
   ) {
-    status = Status.PENDING_DISPATCH;
+    status = Status.NEW;
   } else if (
     row.order === "1" ||
     row.status?.toLowerCase() === dict.title.assigned?.toLowerCase()
   ) {
-    status = Status.PENDING_EXECUTION;
+    status = Status.ASSIGNED;
   } else if (
     row.order === "2" ||
     row.status?.toLowerCase() === dict.title.completed?.toLowerCase()
@@ -225,7 +225,7 @@ function genTaskOption(
     row.order === "4" ||
     row.status?.toLowerCase() === dict.title.issue?.toLowerCase()
   ) {
-    status = Status.INCOMPLETE;
+    status = Status.ISSUE;
   } else {
     status = "";
   }
