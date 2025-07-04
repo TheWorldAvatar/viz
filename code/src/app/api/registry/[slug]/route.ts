@@ -22,12 +22,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   if (!url) {
     return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
   }
+  // Get the Accept-Language header from the request
+  const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken = req.headers.get("x-bearer-token");
 
   // Proxy the request to the backend
   const res = await fetch(url, {
     headers: {
+      ...(acceptLanguageHeader && { 'Accept-Language': acceptLanguageHeader }),
       ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
     },
     cache: "no-store",
@@ -65,9 +68,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
   }
 
+  // Get the Accept-Language header from the request
+  const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken = req.headers.get("x-bearer-token");
-  const responseBody: AgentResponseBody = await sendRequest(url, "POST", bearerToken, JSON.stringify(body));
+  const responseBody: AgentResponseBody = await sendRequest(url, acceptLanguageHeader, "POST", bearerToken, JSON.stringify(body));
   return NextResponse.json(responseBody);
 }
 
@@ -91,9 +96,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug
   if (!url) {
     return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
   }
+  // Get the Accept-Language header from the request
+  const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken = req.headers.get("x-bearer-token");
-  const responseBody: AgentResponseBody = await sendRequest(url, "PUT", bearerToken, JSON.stringify(body));
+  const responseBody: AgentResponseBody = await sendRequest(url, acceptLanguageHeader, "PUT", bearerToken, JSON.stringify(body));
   return NextResponse.json(responseBody);
 }
 
@@ -112,9 +119,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ s
   if (!url) {
     return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
   }
+  // Get the Accept-Language header from the request
+  const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken: string | null = req.headers.get("x-bearer-token");
-  const responseBody: AgentResponseBody = await sendRequest(url, "DELETE", bearerToken);
+  const responseBody: AgentResponseBody = await sendRequest(url, acceptLanguageHeader, "DELETE", bearerToken);
   return NextResponse.json(responseBody);
 }
 
@@ -231,11 +240,12 @@ async function parseBody(req: NextRequest): Promise<AgentResponseBody> {
   }
 }
 
-async function sendRequest(url: string, methodType: "POST" | "PUT" | "DELETE", bearerToken: string | null, body?: string): Promise<AgentResponseBody> {
+async function sendRequest(url: string, acceptLanguageHeader: string, methodType: "POST" | "PUT" | "DELETE", bearerToken: string | null, body?: string): Promise<AgentResponseBody> {
   const options: RequestInit = {
     method: methodType,
     headers: {
       "Content-Type": "application/json",
+      ...(acceptLanguageHeader && { 'Accept-Language': acceptLanguageHeader }),
       ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
     },
     cache: "no-store",
