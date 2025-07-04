@@ -191,7 +191,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   // Closes the modal only if response is successfull
   useEffect(() => {
-    if (!response?.error) {
+    if (response && !response?.error) {
       setTimeout(() => {
         setResponse(null);
         props.setIsOpen(false);
