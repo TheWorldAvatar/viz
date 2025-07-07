@@ -56,9 +56,8 @@ export default function RegistryRowActions(
   const [response, setResponse] = useState<CustomAgentResponseBody>(null);
   const [isApproved, setIsApproved] = useState<boolean>(false);
 
-
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    setIsApproved(false)
+    setIsApproved(false);
     setIsActionMenuOpen(false);
     const reqBody: JsonObject = {
       contract: recordId,
@@ -74,7 +73,7 @@ export default function RegistryRowActions(
         body: JSON.stringify({ ...reqBody }),
       }
     );
-    setIsApproved(true)
+    setIsApproved(true);
     const customAgentResponse: CustomAgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setTimeout(() => {
@@ -108,17 +107,16 @@ export default function RegistryRowActions(
 
   return (
     <div className="flex items-center justify-center">
-  
-    {isApproved && (
-      <Toast
-        message="Contract has been approved successfully!"
-        type="success"
-        duration={4000}
-        position="bottom-right"
-        isOpen={isApproved}
-        setIsOpen={() => setIsApproved(false)}
-      />
-    )}
+      {isApproved && (
+        <Toast
+          message="Contract has been approved successfully!"
+          type="success"
+          duration={4000}
+          position="bottom-right"
+          isOpen={isApproved}
+          setIsOpen={() => setIsApproved(false)}
+        />
+      )}
       <PopoverActionButton
         placement="bottom-start"
         leftIcon="more_vert"
