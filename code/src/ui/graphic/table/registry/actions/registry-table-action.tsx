@@ -18,6 +18,10 @@ import { getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { CustomAgentResponseBody } from "types/backend-agent";
+import { JsonObject } from "types/json";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 
 interface RegistryRowActionsProps {
   recordType: string;
@@ -48,6 +52,32 @@ export default function RegistryRowActions(
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+
+  const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    setIsLoading(true);
+    const reqBody: JsonObject = {
+      contract: recordId,
+      remarks: "Contract has been approved successfully!",
+    };
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
+      }
+    );
+    const customAgentResponse: CustomAgentResponseBody = await res.json();
+    setResponse(customAgentResponse);
+    setIsLoading(false);
+    setTimeout(() => {
+      router.back();
+    }, 2000);
+  };
 
   const handleClickView = (): void => {
     if (props.lifecycleStage == "active" || props.lifecycleStage == "archive") {
@@ -75,17 +105,108 @@ export default function RegistryRowActions(
 
   return (
     <div className="flex items-center justify-center">
+      {isLoading && <LoadingSpinner isSmall={false} />}
       {!showsExpandedTask && (
-        <Button
+        <PopoverActionButton
+          placement="bottom-start"
+          leftIcon="more_vert"
           variant="ghost"
-          leftIcon="open_in_new"
+          tooltipText={dict.title.actions}
           size="icon"
-          iconSize="medium"
-          className="text-primary"
-          tooltipText={parseWordsForLabels(dict.action.view)}
-          tooltipPosition="right"
-          onClick={handleClickView}
-        />
+          className="ml-2"
+          isOpen={isActionMenuOpen}
+          setIsOpen={setIsActionMenuOpen}
+        >
+          <div className="flex flex-col space-y-8 lg:space-y-4 ">
+            <Button
+              variant="ghost"
+              leftIcon="open_in_new"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={parseWordsForLabels(dict.action.view)}
+              onClick={() => {
+                setIsActionMenuOpen(false);
+                handleClickView();
+              }}
+            />
+
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+              props.lifecycleStage === "active" && (
+                <Button
+                  variant="ghost"
+                  leftIcon="cancel"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.cancel}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(genTaskOption(recordId, props.row, "cancel"));
+                  }}
+                />
+              )}
+
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.sales) &&
+              props.lifecycleStage === "pending" && (
+                <Button
+                  variant="ghost"
+                  leftIcon="done_outline"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.approve}
+                  onClick={onApproval}
+                />
+              )}
+
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.sales) &&
+              (props.lifecycleStage === "pending" ||
+                props.lifecycleStage === "general") && (
+                <Button
+                  variant="ghost"
+                  leftIcon="edit"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.edit}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    router.push(
+                      `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
+                    );
+                  }}
+                />
+              )}
+
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.sales) &&
+              (props.lifecycleStage === "pending" ||
+                props.lifecycleStage === "general") && (
+                <Button
+                  variant="ghost"
+                  leftIcon="delete"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.delete}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    router.push(
+                      `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
+                    );
+                  }}
+                />
+              )}
+          </div>
+        </PopoverActionButton>
       )}
       {showsExpandedTask && (
         <PopoverActionButton
