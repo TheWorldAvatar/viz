@@ -21,6 +21,7 @@ import { Dictionary } from "types/dictionary";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { JsonObject } from "types/json";
 import Toast from "ui/interaction/action/toast/toast";
+import { AgentResponseBody } from "types/backend-agent";
 
 interface RegistryRowActionsProps {
   recordType: string;
@@ -44,20 +45,19 @@ export default function RegistryRowActions(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-      ? getId(props.row.id)
-      : props.row.iri;
+    ? getId(props.row.id)
+    : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [response, setResponse] = useState<AgentResponseBody>(null);
   const [isApproved, setIsApproved] = useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsApproved(false);
-    setIsActionMenuOpen(false);
     const reqBody: JsonObject = {
       contract: recordId,
       remarks: "Contract has been approved successfully!",
@@ -72,9 +72,9 @@ export default function RegistryRowActions(
         body: JSON.stringify({ ...reqBody }),
       }
     );
-    setIsApproved(true);
-    const customAgentResponse: CustomAgentResponseBody = await res.json();
+    const customAgentResponse: AgentResponseBody = await res.json();
     setResponse(customAgentResponse);
+    setIsApproved(true);
     setTimeout(() => {
       router.back();
     }, 2000);
@@ -135,14 +135,97 @@ export default function RegistryRowActions(
             onClick={() => {
               setIsActionMenuOpen(false);
               if (showsExpandedTask) {
-                props.setTask(genTaskOption(recordId, props.row, "default",dict));
+                props.setTask(genTaskOption(recordId, props.row, "default", dict));
               } else {
                 handleClickView();
               }
             }}
           />
 
-            {(!keycloakEnabled ||
+          {!showsExpandedTask && (
+            <>
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                props.lifecycleStage === "active" && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="cancel"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.cancel}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(recordId, props.row, "cancel" , dict)
+                      );
+                    }}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.sales) &&
+                props.lifecycleStage === "pending" && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="done_outline"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.approve}
+                    onClick={onApproval}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.sales) &&
+                (props.lifecycleStage === "pending" ||
+                  props.lifecycleStage === "general") && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="edit"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.edit}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      router.push(
+                        `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
+                      );
+                    }}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.sales) &&
+                (props.lifecycleStage === "pending" ||
+                  props.lifecycleStage === "general") && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="delete"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.delete}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      router.push(
+                        `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
+                      );
+                    }}
+                  />
+                )}
+            </>
+          )}
+
+          {showsExpandedTask && (
+            <>
+             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.completeTask) &&
               (props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase() ||
@@ -182,7 +265,7 @@ export default function RegistryRowActions(
                   }}
                 />
               )}
-            {(!keycloakEnabled ||
+             {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.operation) &&
               (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
@@ -200,7 +283,7 @@ export default function RegistryRowActions(
                   }}
                 />
               )}
-            {(!keycloakEnabled ||
+              {(!keycloakEnabled ||
               !permissionScheme ||
               permissionScheme.hasPermissions.reportTask) &&
               (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
@@ -218,9 +301,10 @@ export default function RegistryRowActions(
                   }}
                 />
               )}
-          </div>
-        </PopoverActionButton>
-      )}
+            </>
+          )}
+        </div>
+      </PopoverActionButton>
     </div>
   );
 }
@@ -230,7 +314,7 @@ function genTaskOption(
   recordId: string,
   row: FieldValues,
   taskType: RegistryTaskType,
-  dict: Dictionary,
+  dict: Dictionary
 ): RegistryTaskOption {
   let status: string;
   if (
