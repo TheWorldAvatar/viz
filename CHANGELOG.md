@@ -2,6 +2,10 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.31.0
+
+- Viz now requires no external dependency at docker container spinup / next app build time
+
 ## 5.30.5
 
 ### Changes
