@@ -57,12 +57,9 @@ export default function RegistryRowActions(
   const [isApproved, setIsApproved] = useState<boolean>(false);
 
 
-  
-
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-
     setIsApproved(false)
-  
+    setIsActionMenuOpen(false);
     const reqBody: JsonObject = {
       contract: recordId,
       remarks: "Contract has been approved successfully!",
@@ -77,10 +74,9 @@ export default function RegistryRowActions(
         body: JSON.stringify({ ...reqBody }),
       }
     );
+    setIsApproved(true)
     const customAgentResponse: CustomAgentResponseBody = await res.json();
     setResponse(customAgentResponse);
-    setIsApproved(true)
-  
     setTimeout(() => {
       router.back();
     }, 2000);
