@@ -5,9 +5,3 @@ export type JsonObject = {
 
 // For dealing with array of JSON objects with unknown structure.
 export type JsonArray = JsonObject[];
-
-// For API response from the vis backend agent
-export interface ApiResponse {
-    iri: string;
-    message: string;
-}

@@ -35,7 +35,7 @@ export default async function InterceptEditFormPage(props: Readonly<InterceptEdi
     <FormContainerComponent
       entityType={resolvedParams?.type}
       formType={'edit'}
-      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isPrimaryEntity={decodeURIComponent(uiSettings?.resources?.registry?.data) === decodeURIComponent(resolvedParams?.type)}
       isModal={true}
     />
   );

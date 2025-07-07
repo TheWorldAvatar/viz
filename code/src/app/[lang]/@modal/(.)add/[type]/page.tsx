@@ -34,7 +34,7 @@ export default async function InterceptAddFormPage(props: Readonly<InterceptAddF
     <FormContainerComponent
       entityType={resolvedParams.type}
       formType={'add'}
-      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isPrimaryEntity={decodeURIComponent(uiSettings?.resources?.registry?.data) === decodeURIComponent(resolvedParams?.type)}
       isModal={true}
     />
   );

@@ -20,6 +20,7 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import SummarySection from "./ribbon/summary";
 import TableRibbon from "./ribbon/table-ribbon";
+import { AgentResponseBody } from "types/backend-agent";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -68,7 +69,8 @@ export default function RegistryTableComponent(
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
-            let activeInstances = await activeRes.json();
+            const activeResBody: AgentResponseBody = await activeRes.json();
+            let activeInstances = activeResBody.data.items as RegistryFieldValues[] ?? [];
             activeInstances = activeInstances.map(
               (contract: RegistryFieldValues) => ({
                 status: {
@@ -90,8 +92,8 @@ export default function RegistryTableComponent(
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
-            const archivedInstances = await archivedRes.json();
-
+            const archivedResponseBody: AgentResponseBody = await archivedRes.json();
+            const archivedInstances: RegistryFieldValues[] = archivedResponseBody.data.items as RegistryFieldValues[] ?? [];
             instances = activeInstances.concat(archivedInstances);
           } else {
             // Fetch service tasks for a specific contract
@@ -106,7 +108,8 @@ export default function RegistryTableComponent(
                 credentials: "same-origin",
               }
             );
-            instances = await res.json();
+            const resBody: AgentResponseBody = await res.json();
+            instances = resBody.data?.items as RegistryFieldValues[] ?? [];
           }
         } else if (props.lifecycleStage == "tasks") {
           // Fetch service tasks for a specific date
@@ -123,7 +126,8 @@ export default function RegistryTableComponent(
               credentials: "same-origin",
             }
           );
-          instances = await res.json();
+          const resBody: AgentResponseBody = await res.json();
+          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
         } else if (props.lifecycleStage == "general") {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -133,7 +137,8 @@ export default function RegistryTableComponent(
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
-          instances = await res.json();
+          const resBody: AgentResponseBody = await res.json();
+          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
         } else {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -143,7 +148,8 @@ export default function RegistryTableComponent(
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
-          instances = await res.json();
+          const resBody: AgentResponseBody = await res.json();
+          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
         }
         setInitialInstances(instances);
         setCurrentInstances(instances);
@@ -184,11 +190,11 @@ export default function RegistryTableComponent(
       <div className="flex items-center ml-6">
         {(props.lifecycleStage == "active" ||
           props.lifecycleStage == "archive") && (
-          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
-            <Icon className={`material-symbols-outlined`}>info</Icon>
-            {dict.message.registryInstruction}
-          </div>
-        )}
+            <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+              <Icon className={`material-symbols-outlined`}>info</Icon>
+              {dict.message.registryInstruction}
+            </div>
+          )}
         {props.lifecycleStage == "report" && (
           <h2 className="text-md md:text-lg t  flex-wrap">
             {dict.title.serviceSummary}

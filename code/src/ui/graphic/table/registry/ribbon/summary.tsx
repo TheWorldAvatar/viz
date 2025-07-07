@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
@@ -38,7 +39,10 @@ export default function SummarySection(props: Readonly<SummarySectionProps>) {
             props.id
           ),
           { cache: "no-store", credentials: "same-origin" }
-        ).then((response) => response.json());
+        ).then(async (response) => {
+          const agentResponseBody: AgentResponseBody = await response.json();
+          return agentResponseBody.data?.items?.[0] as RegistryFieldValues;
+        });
 
         setContract(contractRes);
         setIsLoading(false);

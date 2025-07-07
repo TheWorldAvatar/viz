@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris } from "state/map-feature-slice";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
@@ -28,7 +28,7 @@ export const SHOW_ALL_FEATURE_INDICATOR: string = "all";
  */
 export default function SearchModal(props: Readonly<SearchModalProps>) {
   const dispatch = useDispatch();
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [response, setResponse] = useState<AgentResponseBody>(null);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const dict: Dictionary = useDictionary();
@@ -46,7 +46,8 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
 
   // Closes the search modal only if response is successfull
   useEffect(() => {
-    if (response?.success) {
+    // Error message indicates an unsuccessful response
+    if (!response?.error) {
       setTimeout(() => props.setShowState(false), 2000);
     }
   }, [response]);

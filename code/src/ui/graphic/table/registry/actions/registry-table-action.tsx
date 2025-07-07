@@ -19,7 +19,6 @@ import { getId, parseWordsForLabels } from "utils/client-utils";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { CustomAgentResponseBody } from "types/backend-agent";
 import { JsonObject } from "types/json";
 import Toast from "ui/interaction/action/toast/toast";
 
@@ -45,8 +44,8 @@ export default function RegistryRowActions(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -89,7 +88,7 @@ export default function RegistryRowActions(
       props.lifecycleStage == "tasks" ||
       props.lifecycleStage == "report"
     ) {
-      props.setTask(genTaskOption(recordId, props.row, "default"));
+      props.setTask(genTaskOption(recordId, props.row, "default", dict));
     } else {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
@@ -99,10 +98,8 @@ export default function RegistryRowActions(
   const showsExpandedTask: boolean =
     (props.lifecycleStage === "report" || props.lifecycleStage === "tasks") &&
     !(
-      props.row?.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" ||
-      props.row?.event ===
-        "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+      props.row?.status?.toLowerCase() === dict.title.issue?.toLowerCase() ||
+      props.row?.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
     );
 
   return (
@@ -138,188 +135,92 @@ export default function RegistryRowActions(
             onClick={() => {
               setIsActionMenuOpen(false);
               if (showsExpandedTask) {
-                props.setTask(genTaskOption(recordId, props.row, "default"));
+                props.setTask(genTaskOption(recordId, props.row, "default",dict));
               } else {
                 handleClickView();
               }
             }}
           />
 
-          {!showsExpandedTask && (
-            <>
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === "active" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="cancel"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.cancel}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(recordId, props.row, "cancel")
-                      );
-                    }}
-                  />
-                )}
-
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.sales) &&
-                props.lifecycleStage === "pending" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="done_outline"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.approve}
-                    onClick={onApproval}
-                  />
-                )}
-
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.sales) &&
-                (props.lifecycleStage === "pending" ||
-                  props.lifecycleStage === "general") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="edit"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.edit}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      router.push(
-                        `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
-                      );
-                    }}
-                  />
-                )}
-
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.sales) &&
-                (props.lifecycleStage === "pending" ||
-                  props.lifecycleStage === "general") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="delete"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.delete}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      router.push(
-                        `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
-                      );
-                    }}
-                  />
-                )}
-            </>
-          )}
-
-          {showsExpandedTask && (
-            <>
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.completeTask) &&
-                (props.row.event ===
-                  "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent" ||
-                  props.row.event ===
-                    "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="done_outline"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.complete}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(recordId, props.row, "complete")
-                      );
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                props.row.event !==
-                  "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent" &&
-                props.row.event !==
-                  "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="assignment"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.dispatch}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(recordId, props.row, "dispatch")
-                      );
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                (props.row.event ===
-                  "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
-                  props.row.event ===
-                    "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="cancel"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.cancel}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(recordId, props.row, "cancel")
-                      );
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.reportTask) &&
-                (props.row.event ===
-                  "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent" ||
-                  props.row.event ===
-                    "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="report"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.report}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(recordId, props.row, "report")
-                      );
-                    }}
-                  />
-                )}
-            </>
-          )}
-        </div>
-      </PopoverActionButton>
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.completeTask) &&
+              (props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase() ||
+                props.row?.status?.toLowerCase() === dict.title.completed?.toLowerCase()) && (
+                <Button
+                  variant="ghost"
+                  leftIcon="done_outline"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.complete}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(
+                      genTaskOption(recordId, props.row, "complete" , dict)
+                    );
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+             props.row?.status?.toLowerCase() !== dict.title.issue?.toLowerCase() &&
+              props.row?.status?.toLowerCase() !== dict.title.cancelled?.toLowerCase() && (
+                <Button
+                  variant="ghost"
+                  leftIcon="assignment"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.dispatch}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(
+                      genTaskOption(recordId, props.row, "dispatch" , dict)
+                    );
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.operation) &&
+              (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
+                props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) && (
+                <Button
+                  variant="ghost"
+                  leftIcon="cancel"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.cancel}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(genTaskOption(recordId, props.row, "cancel" , dict));
+                  }}
+                />
+              )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.reportTask) &&
+              (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
+                props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) && (
+                <Button
+                  variant="ghost"
+                  leftIcon="report"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.report}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    props.setTask(genTaskOption(recordId, props.row, "report" , dict));
+                  }}
+                />
+              )}
+          </div>
+        </PopoverActionButton>
+      )}
     </div>
   );
 }
@@ -328,39 +229,35 @@ export default function RegistryRowActions(
 function genTaskOption(
   recordId: string,
   row: FieldValues,
-  taskType: RegistryTaskType
+  taskType: RegistryTaskType,
+  dict: Dictionary,
 ): RegistryTaskOption {
   let status: string;
   if (
     row.order === "0" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/OrderReceivedEvent"
+    row.status?.toLowerCase() === dict.title.new?.toLowerCase()
   ) {
-    status = Status.PENDING_DISPATCH;
+    status = Status.NEW;
   } else if (
     row.order === "1" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/ServiceDispatchEvent"
+    row.status?.toLowerCase() === dict.title.assigned?.toLowerCase()
   ) {
-    status = Status.PENDING_EXECUTION;
+    status = Status.ASSIGNED;
   } else if (
     row.order === "2" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/ServiceDeliveryEvent"
+    row.status?.toLowerCase() === dict.title.completed?.toLowerCase()
   ) {
     status = Status.COMPLETED;
   } else if (
     row.order === "3" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/TerminatedServiceEvent"
+    row.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
   ) {
     status = Status.CANCELLED;
   } else if (
     row.order === "4" ||
-    row.event ===
-      "https://www.theworldavatar.com/kg/ontoservice/IncidentReportEvent"
+    row.status?.toLowerCase() === dict.title.issue?.toLowerCase()
   ) {
-    status = Status.INCOMPLETE;
+    status = Status.ISSUE;
   } else {
     status = "";
   }
