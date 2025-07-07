@@ -1,3 +1,4 @@
+import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
 export const Status: {
@@ -56,17 +57,19 @@ export function getTranslatedStatusLabel(
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusColor: string;
+  const dict: Dictionary = useDictionary();
 
   switch (props.status.toLowerCase()) {
-    case Status.AVAILABLE:
-    case Status.ACTIVE:
+    case dict.title.available.toLowerCase():
+    case dict.title.active.toLowerCase():
+    case dict.title.new.toLowerCase():
       statusColor = "#52B7A5";
       break;
-    case Status.UNAVAILABLE:
-    case Status.CANCELLED:
-    case Status.INCOMPLETE:
-    case Status.RESCINDED:
-    case Status.TERMINATED:
+    case dict.title.unavailable.toLowerCase():
+    case dict.title.cancelled.toLowerCase():
+    case dict.title.issue.toLowerCase():
+    case dict.title.rescinded.toLowerCase():
+    case dict.title.terminated.toLowerCase():
       statusColor = "#D7653D";
       break;
     default:
