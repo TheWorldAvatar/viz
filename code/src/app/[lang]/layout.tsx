@@ -4,7 +4,7 @@
 
 import "ui/css/globals.css";
 
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import React from "react";
 import { ToastContainer } from "react-toastify";
 
@@ -22,13 +22,22 @@ import { DictionaryProvider } from "utils/dictionary/DictionaryContext";
  * first loaded. Runs on the server.
  */
 function initialise() {
-    SettingsStore.readUISettings();
-    // Cache contents of optional static pages
-    OptionalPages.loadPages();
+  SettingsStore.readUISettings();
+  // Cache contents of optional static pages
+  OptionalPages.loadPages();
 }
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    {
+      path: "./fonts/Inter/Inter-VariableFont_opsz,wght.ttf",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Inter/Inter-Italic-VariableFont_opsz,wght.ttf",
+      style: "italic",
+    }
+  ],
   variable: "--font-inter",
 });
 
