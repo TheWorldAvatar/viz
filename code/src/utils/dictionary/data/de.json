@@ -145,6 +145,7 @@
       "map": "Geografische Ansicht",
       "dashboard": "Analyseansicht",
       "registry": "Register öffnen",
+      "submission": "Registry Submission",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
       "fileUpload": "Klicken Sie zum Hochladen einer Datei"
