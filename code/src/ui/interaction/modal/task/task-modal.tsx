@@ -28,6 +28,7 @@ import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import ReturnButton from "../../action/redirect/return-button";
 
 interface TaskModalProps {
   entityType: string;
@@ -354,6 +355,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={onSubmit}
               />
             )}
+            {!response &&  
+                        <ReturnButton
+                          label={dict.action.return}
+                          leftIcon={"first_page"}
+                          variant="secondary"
+                          tooltipText={dict.action.return}
+                        />
+                      }
         </div>
       </section>
     </Modal>
