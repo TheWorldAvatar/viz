@@ -26,6 +26,7 @@ services:
         description: "TWA Visualisation Platform image."
     volumes:
       - ./code/public:/twa/public/
+      - public-hash:/twa/.public_hash
     ports:
       - "3000:3000"
 
@@ -34,3 +35,7 @@ secrets:
     file: ./mapbox_username
   mapbox_api_key:
     file: ./mapbox_api_key
+
+volumes:
+  public-hash:
+
