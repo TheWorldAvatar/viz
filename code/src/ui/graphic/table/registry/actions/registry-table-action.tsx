@@ -54,10 +54,8 @@ export default function RegistryRowActions(
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
   const [response, setResponse] = useState<AgentResponseBody>(null);
-  const [isApproved, setIsApproved] = useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    setIsApproved(false);
     const reqBody: JsonObject = {
       contract: recordId,
       remarks: "Contract has been approved successfully!",
@@ -75,7 +73,6 @@ export default function RegistryRowActions(
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
     setResponse(customAgentResponse);
-    setIsApproved(true);
   };
 
   const handleClickView = (): void => {
@@ -102,16 +99,7 @@ export default function RegistryRowActions(
 
   return (
     <div className="flex items-center justify-center">
-      {isApproved && (
-        <Toast
-          message={response?.data?.message || response?.error?.message}
-          type={response?.data?.message ? "success" : "error"}
-          duration={4000}
-          position="bottom-right"
-          isOpen={isApproved}
-          setIsOpen={() => setIsApproved(false)}
-        />
-      )}
+      {<Toast response={response} duration={4000} position="bottom-right" />}
       <PopoverActionButton
         placement="bottom-start"
         leftIcon="more_vert"
@@ -133,7 +121,9 @@ export default function RegistryRowActions(
             onClick={() => {
               setIsActionMenuOpen(false);
               if (showsExpandedTask) {
-                props.setTask(genTaskOption(recordId, props.row, "default", dict));
+                props.setTask(
+                  genTaskOption(recordId, props.row, "default", dict)
+                );
               } else {
                 handleClickView();
               }
@@ -156,7 +146,7 @@ export default function RegistryRowActions(
                     onClick={() => {
                       setIsActionMenuOpen(false);
                       props.setTask(
-                        genTaskOption(recordId, props.row, "cancel" , dict)
+                        genTaskOption(recordId, props.row, "cancel", dict)
                       );
                     }}
                   />
@@ -223,82 +213,94 @@ export default function RegistryRowActions(
 
           {showsExpandedTask && (
             <>
-             {(!keycloakEnabled ||
-              !permissionScheme ||
-              permissionScheme.hasPermissions.completeTask) &&
-              (props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase() ||
-                props.row?.status?.toLowerCase() === dict.title.completed?.toLowerCase()) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="done_outline"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
-                  label={dict.action.complete}
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    props.setTask(
-                      genTaskOption(recordId, props.row, "complete" , dict)
-                    );
-                  }}
-                />
-              )}
-            {(!keycloakEnabled ||
-              !permissionScheme ||
-              permissionScheme.hasPermissions.operation) &&
-             props.row?.status?.toLowerCase() !== dict.title.issue?.toLowerCase() &&
-              props.row?.status?.toLowerCase() !== dict.title.cancelled?.toLowerCase() && (
-                <Button
-                  variant="ghost"
-                  leftIcon="assignment"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
-                  label={dict.action.dispatch}
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    props.setTask(
-                      genTaskOption(recordId, props.row, "dispatch" , dict)
-                    );
-                  }}
-                />
-              )}
-             {(!keycloakEnabled ||
-              !permissionScheme ||
-              permissionScheme.hasPermissions.operation) &&
-              (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
-                props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="cancel"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
-                  label={dict.action.cancel}
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    props.setTask(genTaskOption(recordId, props.row, "cancel" , dict));
-                  }}
-                />
-              )}
               {(!keycloakEnabled ||
-              !permissionScheme ||
-              permissionScheme.hasPermissions.reportTask) &&
-              (props.row?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
-                props.row?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="report"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
-                  label={dict.action.report}
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    props.setTask(genTaskOption(recordId, props.row, "report" , dict));
-                  }}
-                />
-              )}
+                !permissionScheme ||
+                permissionScheme.hasPermissions.completeTask) &&
+                (props.row?.status?.toLowerCase() ===
+                  dict.title.assigned?.toLowerCase() ||
+                  props.row?.status?.toLowerCase() ===
+                    dict.title.completed?.toLowerCase()) && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="done_outline"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.complete}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(recordId, props.row, "complete", dict)
+                      );
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                props.row?.status?.toLowerCase() !==
+                  dict.title.issue?.toLowerCase() &&
+                props.row?.status?.toLowerCase() !==
+                  dict.title.cancelled?.toLowerCase() && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="assignment"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.dispatch}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(recordId, props.row, "dispatch", dict)
+                      );
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                (props.row?.status?.toLowerCase() ===
+                  dict.title.new?.toLowerCase() ||
+                  props.row?.status?.toLowerCase() ===
+                    dict.title.assigned?.toLowerCase()) && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="cancel"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.cancel}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(recordId, props.row, "cancel", dict)
+                      );
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.reportTask) &&
+                (props.row?.status?.toLowerCase() ===
+                  dict.title.new?.toLowerCase() ||
+                  props.row?.status?.toLowerCase() ===
+                    dict.title.assigned?.toLowerCase()) && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="report"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.report}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(recordId, props.row, "report", dict)
+                      );
+                    }}
+                  />
+                )}
             </>
           )}
         </div>

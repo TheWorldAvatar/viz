@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useFloating,
   autoUpdate,
@@ -12,25 +12,27 @@ import {
 } from "@floating-ui/react";
 import { Icon } from "@mui/material";
 import Button from "ui/interaction/button";
+import { AgentResponseBody } from "types/backend-agent";
 
 interface ToastProps {
-  message: string;
-  type?: "success" | "error" | "warning" | "info";
+  response: AgentResponseBody;
   duration?: number;
-  isOpen: boolean;
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top-center" | "bottom-center";
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top-center"
+    | "bottom-center";
 }
 
 export default function Toast({
-  message,
-  type = "info",
+  response,
   duration = 4000,
-  isOpen,
-  setIsOpen,
   position = "bottom-right",
 }: ToastProps) {
-  const [isVisible, setIsVisible] = useState(isOpen);
+  const [isVisible, setIsVisible] = useState(true);
+  const toastType: "success" | "error" = response?.error ? "error" : "success";
 
   const { refs, context } = useFloating({
     open: isVisible,
@@ -49,42 +51,34 @@ export default function Toast({
 
   // Auto-close timer
   useEffect(() => {
-    // Skip auto-close for error toasts - they must be manually closed
-    if (type === "error") {
-      return;
-    }
-    
-    if (isOpen && duration && duration > 0) {
+    if (toastType !== "error" && duration && duration > 0) {
       const timer = setTimeout(() => {
         handleClose();
       }, duration);
 
       return () => clearTimeout(timer);
     }
-  }, [isOpen, duration, type]);
+  }, [duration]);
 
   // Sync with parent state
-  useEffect(() => {
-    setIsVisible(isOpen);
-  }, [isOpen]);
+  // useEffect(() => {
+  //   setIsVisible(isOpen);
+  // }, [isOpen]);
 
   const handleClose = () => {
     setIsVisible(false);
-    setIsOpen(false);
   };
 
   // Define toast styles based on type
   const getToastStyles = () => {
-    const baseStyles = "flex items-center gap-3 p-4 rounded-lg shadow-xl border border-border min-w-48 md:min-w-80 max-w-xs md:max-w-md";
-    
-    switch (type) {
+    const baseStyles =
+      "flex items-center gap-3 p-4 rounded-lg shadow-xl border border-border min-w-48 md:min-w-80 max-w-xs md:max-w-md";
+
+    switch (toastType) {
       case "success":
         return `${baseStyles} bg-green-50 border-green-200 text-green-800`;
       case "error":
         return `${baseStyles} bg-red-50 border-red-200 text-red-800`;
-      case "warning":
-        return `${baseStyles} bg-yellow-50 border-yellow-200 text-yellow-800`;
-      case "info":
       default:
         return `${baseStyles} bg-blue-50 border-blue-200 text-blue-800`;
     }
@@ -92,14 +86,11 @@ export default function Toast({
 
   // Get icon based on type
   const getIcon = () => {
-    switch (type) {
+    switch (toastType) {
       case "success":
         return "check_circle";
       case "error":
         return "error";
-      case "warning":
-        return "warning";
-      case "info":
       default:
         return "info";
     }
@@ -131,12 +122,14 @@ export default function Toast({
     <FloatingPortal>
       <div
         ref={refs.setFloating}
-        className={`fixed z-50 ${getPositionStyles()}`}
+        className={`fixed z-[9999] ${getPositionStyles()}`}
         {...getFloatingProps()}
       >
         <div className={getToastStyles()}>
           <Icon className="material-symbols-outlined">{getIcon()}</Icon>
-          <span className="flex-1 text-sm font-medium">{message}</span>
+          <span className="flex-1 text-sm font-medium">
+            {response?.data?.message || response?.error?.message}
+          </span>
           <Button
             leftIcon="close"
             size="icon"
@@ -150,4 +143,3 @@ export default function Toast({
     </FloatingPortal>
   );
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FieldValues, SubmitHandler } from "react-hook-form";
+import { FieldValues, set, SubmitHandler } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
@@ -21,7 +21,7 @@ import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
+
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 
@@ -30,12 +30,14 @@ import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import ReturnButton from "../../action/redirect/return-button";
 
+
 interface TaskModalProps {
   entityType: string;
   isOpen: boolean;
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  setResponse: React.Dispatch<React.SetStateAction<AgentResponseBody>>;
 }
 
 /**
@@ -59,7 +61,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Form actions
 
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [response, setResponse] = useState<AgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
 
@@ -148,7 +149,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       );
       response = await res.json();
     }
-    setResponse(response);
+    props.setResponse(response);
+    if (response && !response?.error) {
+      setTimeout(() => {
+        props.setIsOpen(false);
+      }, 2000);
+    }
     setFormFields([]);
   };
 
@@ -192,20 +198,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   }, [taskType]);
 
-  // Closes the modal only if response is successfull
-  useEffect(() => {
-    if (response && !response?.error) {
-      setTimeout(() => {
-        setResponse(null);
-        props.setIsOpen(false);
-      }, 2000);
-    }
-  }, [response]);
-
   // Reset the states when the modal is closed
   useEffect(() => {
     if (!props.isOpen) {
-      setResponse(null);
       setFormFields([]);
     }
   }, [props.isOpen]);
@@ -241,7 +236,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
-            setResponse={setResponse}
+            setResponse={props.setResponse}
             id={getAfterDelimiter(props.task.contract, "/")}
           />
         )}
@@ -261,7 +256,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         )}
       </section>
       <section className="flex justify-between p-2">
-        {!formRef.current?.formState?.isSubmitting && !response && (
+        {!formRef.current?.formState?.isSubmitting &&  (
           <Button
             leftIcon="cached"
             variant="outline"
@@ -269,14 +264,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             onClick={triggerRefresh}
           />
         )}
-
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
         )}
 
-        {!formRef.current?.formState?.isSubmitting && (
+        {/* {!formRef.current?.formState?.isSubmitting && (
           <ResponseComponent response={response} />
-        )}
+        )} */}
         <div className="flex flex-wrap gap-2 justify-end items-center">
           <div className="flex-grow" />
           {(!keycloakEnabled ||
@@ -346,7 +340,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               taskType === "report") ||
             (permissionScheme.hasPermissions.operation &&
               (taskType === "dispatch" || taskType === "cancel"))) &&
-            !response &&
             props.task.type !== "default" && (
               <Button
                 leftIcon="send"
@@ -355,14 +348,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={onSubmit}
               />
             )}
-            {!response &&  
-                        <ReturnButton
-                          label={dict.action.return}
-                          leftIcon={"first_page"}
-                          variant="secondary"
-                          tooltipText={dict.action.return}
-                        />
-                      }
+          {(
+            <ReturnButton
+              label={dict.action.return}
+              leftIcon={"first_page"}
+              variant="secondary"
+              tooltipText={dict.action.return}
+            />
+          )}
         </div>
       </section>
     </Modal>

@@ -21,6 +21,7 @@ import RegistryTable from "./registry-table";
 import SummarySection from "./ribbon/summary";
 import TableRibbon from "./ribbon/table-ribbon";
 import { AgentResponseBody } from "types/backend-agent";
+import Toast from "ui/interaction/action/toast/toast";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -51,6 +52,7 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
+  const [response, setResponse] = useState<AgentResponseBody>(null);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -70,7 +72,8 @@ export default function RegistryTableComponent(
               { cache: "no-store", credentials: "same-origin" }
             );
             const activeResBody: AgentResponseBody = await activeRes.json();
-            let activeInstances = activeResBody.data.items as RegistryFieldValues[] ?? [];
+            let activeInstances =
+              (activeResBody.data.items as RegistryFieldValues[]) ?? [];
             activeInstances = activeInstances.map(
               (contract: RegistryFieldValues) => ({
                 status: {
@@ -92,8 +95,10 @@ export default function RegistryTableComponent(
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
-            const archivedResponseBody: AgentResponseBody = await archivedRes.json();
-            const archivedInstances: RegistryFieldValues[] = archivedResponseBody.data.items as RegistryFieldValues[] ?? [];
+            const archivedResponseBody: AgentResponseBody =
+              await archivedRes.json();
+            const archivedInstances: RegistryFieldValues[] =
+              (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
             instances = activeInstances.concat(archivedInstances);
           } else {
             // Fetch service tasks for a specific contract
@@ -109,7 +114,7 @@ export default function RegistryTableComponent(
               }
             );
             const resBody: AgentResponseBody = await res.json();
-            instances = resBody.data?.items as RegistryFieldValues[] ?? [];
+            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
           }
         } else if (props.lifecycleStage == "tasks") {
           // Fetch service tasks for a specific date
@@ -127,7 +132,7 @@ export default function RegistryTableComponent(
             }
           );
           const resBody: AgentResponseBody = await res.json();
-          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         } else if (props.lifecycleStage == "general") {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -138,7 +143,7 @@ export default function RegistryTableComponent(
             { cache: "no-store", credentials: "same-origin" }
           );
           const resBody: AgentResponseBody = await res.json();
-          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         } else {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -149,7 +154,7 @@ export default function RegistryTableComponent(
             { cache: "no-store", credentials: "same-origin" }
           );
           const resBody: AgentResponseBody = await res.json();
-          instances = resBody.data?.items as RegistryFieldValues[] ?? [];
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         }
         setInitialInstances(instances);
         setCurrentInstances(instances);
@@ -190,11 +195,11 @@ export default function RegistryTableComponent(
       <div className="flex items-center ml-6">
         {(props.lifecycleStage == "active" ||
           props.lifecycleStage == "archive") && (
-            <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
-              <Icon className={`material-symbols-outlined`}>info</Icon>
-              {dict.message.registryInstruction}
-            </div>
-          )}
+          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+            <Icon className={`material-symbols-outlined`}>info</Icon>
+            {dict.message.registryInstruction}
+          </div>
+        )}
         {props.lifecycleStage == "report" && (
           <h2 className="text-md md:text-lg t  flex-wrap">
             {dict.title.serviceSummary}
@@ -227,7 +232,11 @@ export default function RegistryTableComponent(
           task={task}
           setIsOpen={setIsTaskModalOpen}
           setTask={setTask}
+          setResponse={setResponse}
         />
+      )}
+      {response && (
+        <Toast response={response} duration={10000} position="bottom-right" />
       )}
     </div>
   );
