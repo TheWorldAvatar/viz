@@ -6,8 +6,6 @@ import "ui/css/globals.css";
 
 import { Inter } from "next/font/google";
 import React from "react";
-import { ToastContainer } from "react-toastify";
-
 import OptionalPages, { OptionalPage } from "io/config/optional-pages";
 import SettingsStore from "io/config/settings";
 import { Dictionary } from "types/dictionary";
@@ -22,9 +20,9 @@ import { DictionaryProvider } from "utils/dictionary/DictionaryContext";
  * first loaded. Runs on the server.
  */
 function initialise() {
-    SettingsStore.readUISettings();
-    // Cache contents of optional static pages
-    OptionalPages.loadPages();
+  SettingsStore.readUISettings();
+  // Cache contents of optional static pages
+  OptionalPages.loadPages();
 }
 
 const inter = Inter({
@@ -72,7 +70,6 @@ export default async function RootLayout({
             </GlobalContainer>
           </SessionInfoProvider>
         </DictionaryProvider>
-        <ToastContainer />
       </body>
     </html>
   );
