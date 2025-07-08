@@ -29,13 +29,11 @@ if [ -f "$HASH_FILE" ]; then
     echo "No changes detected in $WATCH_DIR. Skipping build."
   else
     echo "Changes detected in $WATCH_DIR. Rebuilding..."
-    pnpm run build
-    echo "$CURRENT_HASH" > "$HASH_FILE"
+    pnpm run build && echo "$CURRENT_HASH" > "$HASH_FILE"
   fi
 else
   echo "Hash file not found. Running initial build..."
-  pnpm run build
-  echo "$CURRENT_HASH" > "$HASH_FILE"
+  pnpm run build && echo "$CURRENT_HASH" > "$HASH_FILE"
 fi
 
 # Check if the .next directory exists
