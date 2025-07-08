@@ -14,6 +14,7 @@ import GlobalContainer from "ui/global-container";
 import { SessionInfoProvider } from "utils/auth/SessionInfo";
 import { getDictionary } from "utils/dictionary/dictionaries";
 import { DictionaryProvider } from "utils/dictionary/DictionaryContext";
+import { Toaster } from "sonner";
 
 /**
  * Performs initialisation when the platform is
@@ -67,6 +68,7 @@ export default async function RootLayout({
             <GlobalContainer pages={pages} settings={uiSettings}>
               {children}
               {modal}
+              <Toaster />
             </GlobalContainer>
           </SessionInfoProvider>
         </DictionaryProvider>

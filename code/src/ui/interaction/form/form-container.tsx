@@ -23,7 +23,8 @@ import ReturnButton from "../action/redirect/return-button";
 import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-import Toast from "../action/toast/toast";
+
+import { toast } from "../action/toast/toast-new";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -217,6 +218,29 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     }
   }, []);
 
+  useEffect(() => {
+    if (response) {
+      const message = response?.data?.message || response?.error?.message;
+      const toastType = response?.error ? "error" : "success";
+      const title = response?.error ? "Error" : "Success";
+
+      toast({
+        title: title,
+        duration: toastType === "error" ? Infinity : 4000, // No auto-dismiss for errors
+        description: message,
+        type: toastType,
+        button: {
+          label: "Dismiss",
+          onClick: () => {
+            // No need to dismiss explicitly here, sonner handles it if duration is set
+            // or if the dismiss button within the custom Toast component is clicked.
+            // If you want to clear the response state after dismissal:
+            setResponse(null);
+          },
+        },
+      });
+    }
+  }, [response]);
   return (
     <>
       <div className="text-xl font-bold">
@@ -262,9 +286,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
-        {!formRef.current?.formState?.isSubmitting && response && (
-          <Toast response={response} duration={6000} position="bottom-right" />
-        )}
+        {/* {!formRef.current?.formState?.isSubmitting &&
+          response &&
+          toast.custom(response?.data?.message || response?.error?.message)} */}
         <div className="flex flex-wrap gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
