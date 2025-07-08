@@ -126,7 +126,7 @@ export default class SettingsStore {
   */
   private static readFile(file: string): string {
     const contents: string = fs.readFileSync(file, "utf-8");
-    return contents;
+    return decodeURIComponent(contents);
   }
 }
 // End of class.
