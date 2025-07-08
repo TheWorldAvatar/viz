@@ -72,12 +72,10 @@ export default function RegistryRowActions(
         body: JSON.stringify({ ...reqBody }),
       }
     );
+    setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setIsApproved(true);
-    setTimeout(() => {
-      router.back();
-    }, 2000);
   };
 
   const handleClickView = (): void => {
@@ -106,8 +104,8 @@ export default function RegistryRowActions(
     <div className="flex items-center justify-center">
       {isApproved && (
         <Toast
-          message="Contract has been approved successfully!"
-          type="success"
+          message={response?.data?.message || response?.error?.message}
+          type={response?.data?.message ? "success" : "error"}
           duration={4000}
           position="bottom-right"
           isOpen={isApproved}

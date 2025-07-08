@@ -4,9 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
   useFloating,
   autoUpdate,
-  offset,
-  flip,
-  shift,
   useClick,
   useDismiss,
   useRole,
@@ -16,7 +13,7 @@ import {
 import { Icon } from "@mui/material";
 import Button from "ui/interaction/button";
 
-export interface ToastProps {
+interface ToastProps {
   message: string;
   type?: "success" | "error" | "warning" | "info";
   duration?: number;
@@ -38,13 +35,6 @@ export default function Toast({
   const { refs, context } = useFloating({
     open: isVisible,
     onOpenChange: setIsVisible,
-    middleware: [
-      offset(10),
-      flip({
-        fallbackAxisSideDirection: "end",
-      }),
-      shift({ padding: 5 }),
-    ],
     whileElementsMounted: autoUpdate,
   });
 
@@ -59,6 +49,11 @@ export default function Toast({
 
   // Auto-close timer
   useEffect(() => {
+    // Skip auto-close for error toasts - they must be manually closed
+    if (type === "error") {
+      return;
+    }
+    
     if (isOpen && duration && duration > 0) {
       const timer = setTimeout(() => {
         handleClose();
@@ -66,7 +61,7 @@ export default function Toast({
 
       return () => clearTimeout(timer);
     }
-  }, [isOpen, duration]);
+  }, [isOpen, duration, type]);
 
   // Sync with parent state
   useEffect(() => {
@@ -80,7 +75,7 @@ export default function Toast({
 
   // Define toast styles based on type
   const getToastStyles = () => {
-    const baseStyles = "flex items-center gap-3 p-4 rounded-lg shadow-xl border border-border min-w-80 max-w-md";
+    const baseStyles = "flex items-center gap-3 p-4 rounded-lg shadow-xl border border-border min-w-48 md:min-w-80 max-w-xs md:max-w-md";
     
     switch (type) {
       case "success":
