@@ -34,10 +34,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const resolvedParams = await props.params;
-  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == resolvedParams.type)) {
+  const decodedType:string = decodeURIComponent(resolvedParams.type);
+  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == decodedType)) {
     return (
       <RegistryTableComponent
-        entityType={resolvedParams.type}
+        entityType={decodedType}
         lifecycleStage={'general'}
       />
     );

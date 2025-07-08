@@ -1,3 +1,4 @@
+import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
 export const Status: {
@@ -6,13 +7,13 @@ export const Status: {
   AVAILABLE: "available",
   UNAVAILABLE: "unavailable",
   ACTIVE: "active",
+  NEW: "open",
+  ASSIGNED: "assigned",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
-  INCOMPLETE: "incomplete",
+  ISSUE: "issue",
   RESCINDED: "rescinded",
   TERMINATED: "terminated",
-  PENDING_DISPATCH: "pending dispatch",
-  PENDING_EXECUTION: "pending execution",
 };
 
 interface StatusComponentProps<> {
@@ -30,20 +31,20 @@ export function getTranslatedStatusLabel(
       return dict.title.unavailable;
     case Status.ACTIVE:
       return dict.title.active;
+    case Status.ASSIGNED:
+      return dict.title.assigned;
     case Status.COMPLETED:
       return dict.title.completed;
     case Status.CANCELLED:
       return dict.title.cancelled;
-    case Status.INCOMPLETE:
-      return dict.title.incomplete;
+    case Status.NEW:
+      return dict.title.new;
+    case Status.ISSUE:
+      return dict.title.issue;
     case Status.RESCINDED:
       return dict.title.rescinded;
     case Status.TERMINATED:
       return dict.title.terminated;
-    case Status.PENDING_DISPATCH:
-      return dict.title.pendingDispatch;
-    case Status.PENDING_EXECUTION:
-      return dict.title.pendingExecution;
     default:
       return null;
   }
@@ -56,17 +57,19 @@ export function getTranslatedStatusLabel(
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusColor: string;
+  const dict: Dictionary = useDictionary();
 
   switch (props.status.toLowerCase()) {
-    case Status.AVAILABLE:
-    case Status.ACTIVE:
+    case dict.title.available.toLowerCase():
+    case dict.title.active.toLowerCase():
+    case dict.title.new.toLowerCase():
       statusColor = "#52B7A5";
       break;
-    case Status.UNAVAILABLE:
-    case Status.CANCELLED:
-    case Status.INCOMPLETE:
-    case Status.RESCINDED:
-    case Status.TERMINATED:
+    case dict.title.unavailable.toLowerCase():
+    case dict.title.cancelled.toLowerCase():
+    case dict.title.issue.toLowerCase():
+    case dict.title.rescinded.toLowerCase():
+    case dict.title.terminated.toLowerCase():
       statusColor = "#D7653D";
       break;
     default:

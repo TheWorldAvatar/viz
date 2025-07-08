@@ -31,11 +31,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InterceptFormDeletePage(props: Readonly<InterceptDeleteFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
     <FormContainerComponent
-      entityType={resolvedParams?.type}
+      entityType={decodedType}
       formType={'delete'}
-      isPrimaryEntity={uiSettings?.resources?.registry?.data === resolvedParams?.type}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
       isModal={true}
     />
   );

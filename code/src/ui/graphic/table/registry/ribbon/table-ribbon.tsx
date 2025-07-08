@@ -13,7 +13,6 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import ColumnSearchComponent from "../actions/column-search";
-import { parseWordsForLabels } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -123,11 +122,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               props.lifecycleStage == "general") && (
               <RedirectButton
                 leftIcon="add"
-                label={parseWordsForLabels(
-                  dict.action.addItem.replace(
-                    "{replace}",
-                    props.entityType.replace("_", " ")
-                  )
+                label={dict.action.addItem.replace(
+                  "{replace}",
+                  props.entityType.replace("_", " ")
                 )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
               />
