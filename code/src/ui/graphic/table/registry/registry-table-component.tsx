@@ -236,7 +236,7 @@ export default function RegistryTableComponent(
         />
       )}
       {response && (
-        <Toast response={response} duration={10000} position="bottom-right" />
+        <Toast response={response} duration={6000} position="bottom-right" />
       )}
     </div>
   );

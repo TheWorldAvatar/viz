@@ -100,7 +100,7 @@ export default function RegistryRowActions(
   return (
     <div className="flex items-center justify-center">
       {response && (
-        <Toast response={response} duration={4000} position="bottom-right" />
+        <Toast response={response} duration={6000} position="bottom-right" />
       )}
       <PopoverActionButton
         placement="bottom-start"

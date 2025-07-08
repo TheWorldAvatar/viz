@@ -174,7 +174,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     setResponse(customAgentResponse);
     setIsLoading(false);
 
-    if (response && !response?.error) {
+    if (!response?.error) {
       setTimeout(() => {
         router.back();
       }, 2000);
@@ -263,7 +263,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
         {!formRef.current?.formState?.isSubmitting && response && (
-          <Toast response={response} duration={4000} position="bottom-right" />
+          <Toast response={response} duration={6000} position="bottom-right" />
         )}
         <div className="flex flex-wrap gap-2 justify-end items-center ">
           {(!keycloakEnabled ||

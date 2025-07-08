@@ -72,7 +72,7 @@ export default function Toast({
   // Define toast styles based on type
   const getToastStyles = () => {
     const baseStyles =
-      "flex items-center gap-3 p-4 rounded-lg shadow-xl border border-border min-w-48 md:min-w-80 max-w-xs md:max-w-md";
+      "flex items-center gap-3 p-4 rounded-lg shadow-xl border border-border min-w-48 md:min-w-80 max-w-xs md:max-w-lg  ";
 
     switch (toastType) {
       case "success":
@@ -126,15 +126,20 @@ export default function Toast({
         {...getFloatingProps()}
       >
         <div className={getToastStyles()}>
-          <Icon className="material-symbols-outlined">{getIcon()}</Icon>
-          <span className="flex-1 text-sm font-medium">
-            {response?.data?.message || response?.error?.message}
-          </span>
+          <Icon className="material-symbols-outlined flex-shrink-0 mt-0.5">
+            {getIcon()}
+          </Icon>
+          <div className="flex-grow min-w-0">
+            {/* Added min-w-0 for flex items to prevent overflow */}
+            <span className="text-sm font-medium break-words">
+              {response?.data?.message || response?.error?.message}
+            </span>
+          </div>
           <Button
             leftIcon="close"
             size="icon"
             variant="ghost"
-            className="!rounded-full dark:!text-black dark:hover:!text-white"
+            className="!rounded-full dark:!text-black dark:hover:!text-white flex-shrink-0"
             onClick={handleClose}
             aria-label="Close toast"
           />
