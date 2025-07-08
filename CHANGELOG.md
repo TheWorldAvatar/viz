@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.32.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.6.1` to `v1.8.1`
+- Rework viz to be compatible with `v1.8.1` of the `VisBackend Agent`
+- Update decoding of settings and items in registry
+- Translatable statuses are now displayed in registry
+
 ## 5.31.0
 
 - Viz now requires no external dependency at docker container spinup / next app build time
