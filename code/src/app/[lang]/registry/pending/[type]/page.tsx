@@ -36,7 +36,7 @@ export default async function PendingRegistryPage(props: Readonly<PendingRegistr
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
-        entityType={resolvedParams.type}
+        entityType={decodeURIComponent(resolvedParams.type)}
         lifecycleStage={'pending'}
       />
     );

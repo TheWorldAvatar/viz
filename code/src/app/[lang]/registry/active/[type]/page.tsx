@@ -38,7 +38,7 @@ export default async function ActiveRegistryPage(props : ActiveRegistryPageProps
 
   return (
     <RegistryTableComponent
-      entityType={resolvedParams.type}
+      entityType={decodeURIComponent(resolvedParams.type)}
       lifecycleStage={'active'}
     />
   );

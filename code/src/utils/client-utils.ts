@@ -82,13 +82,10 @@ export function setSelectedFeature(
  * @param {string} str input string.
  */
 export function parseWordsForLabels(str: string): string {
-  // Decode the string first to handle URL-encoded characters, like ä and ß
-  const decodedStr: string = decodeURIComponent(str);
-
-  if (isValidIRI(decodedStr)) {
-    return getAfterDelimiter(decodedStr, "/");
+  if (isValidIRI(str)) {
+    return getAfterDelimiter(str, "/");
   }
-  return decodedStr
+  return str
     .toLowerCase()
     .replaceAll("_", " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2")
