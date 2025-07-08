@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FieldValues, set, SubmitHandler } from "react-hook-form";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
@@ -29,7 +29,6 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import ReturnButton from "../../action/redirect/return-button";
-
 
 interface TaskModalProps {
   entityType: string;
@@ -256,7 +255,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         )}
       </section>
       <section className="flex justify-between p-2">
-        {!formRef.current?.formState?.isSubmitting &&  (
+        {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
             variant="outline"
@@ -348,14 +347,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={onSubmit}
               />
             )}
-          {(
+          {
             <ReturnButton
               label={dict.action.return}
               leftIcon={"first_page"}
               variant="secondary"
               tooltipText={dict.action.return}
             />
-          )}
+          }
         </div>
       </section>
     </Modal>

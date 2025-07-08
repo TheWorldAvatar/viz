@@ -15,7 +15,6 @@ import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
 import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
@@ -24,6 +23,7 @@ import ReturnButton from "../action/redirect/return-button";
 import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+import Toast from "../action/toast/toast";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -138,8 +138,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         }
       );
       const responseBody: AgentResponseBody = await res.json();
-      const template: PropertyShape[] = (responseBody.data?.items as Record<string, unknown>[])?.[0]?.property as PropertyShape[];
+      const template: PropertyShape[] = (
+        responseBody.data?.items as Record<string, unknown>[]
+      )?.[0]?.property as PropertyShape[];
       setFormFields(template);
+
       setIsLoading(false);
     };
 
@@ -170,14 +173,22 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     const customAgentResponse: AgentResponseBody = await res.json();
     setResponse(customAgentResponse);
     setIsLoading(false);
-    setTimeout(() => {
-      router.back();
-    }, 2000);
+
+    if (response && !response?.error) {
+      setTimeout(() => {
+        router.back();
+      }, 2000);
+    }
   };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
       formRef.current.requestSubmit();
+      if (!response?.error) {
+        setTimeout(() => {
+          router.back();
+        }, 2000);
+      }
     }
   };
 
@@ -252,7 +263,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
         {!formRef.current?.formState?.isSubmitting && response && (
-          <ResponseComponent response={response} />
+          <Toast response={response} duration={4000} position="bottom-right" />
         )}
         <div className="flex flex-wrap gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
