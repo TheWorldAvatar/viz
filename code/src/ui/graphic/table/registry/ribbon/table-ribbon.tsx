@@ -56,49 +56,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
-      {/* LEAVE COMMENTED. IT WILL BE USED WHEN IMPLEMENTING THE OUTSANDING AND CLOSED TASK TABS */}
-      {/* {props.lifecycleStage !== "general" && (
-        <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 dark:bg-zinc-800   max-w-fit p-1.5 text-center rounded-lg flex-wrap">
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.pendingRegistry) && (
-            <RedirectButton
-              label={dict.nav.title.pending}
-              leftIcon="pending"
-              url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-              variant={props.lifecycleStage == "pending" ? "active" : "ghost"}
-            />
-          )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.activeArchiveRegistry) && (
-            <RedirectButton
-              label={dict.nav.title.active}
-              leftIcon="schedule"
-              url={`${Routes.REGISTRY_ACTIVE}/${props.entityType}`}
-              variant={
-                props.lifecycleStage == "active" ||
-                props.lifecycleStage == "tasks"
-                  ? "active"
-                  : "ghost"
-              }
-            />
-          )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.activeArchiveRegistry) && (
-            <RedirectButton
-              label={dict.nav.title.archive}
-              leftIcon="archive"
-              url={`${Routes.REGISTRY_ARCHIVE}/${props.entityType}`}
-              variant={props.lifecycleStage == "archive" ? "active" : "ghost"}
-            />
-          )}
-        </div>
-      )} */}
-
       <div className="w-full border-[0.5px] border-border" />
-
       <div className="flex justify-between md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-center !-ml-2 ">
           <Button

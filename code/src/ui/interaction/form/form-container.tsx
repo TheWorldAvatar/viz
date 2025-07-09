@@ -117,7 +117,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     const agentResponseBody: AgentResponseBody = await res.json();
     setResponse(agentResponseBody);
     toast({
-      duration: agentResponseBody?.error ? 1000000000 : 5000,
       message:
         agentResponseBody?.data?.message || agentResponseBody?.error?.message,
       type: agentResponseBody?.error ? "error" : "success",
@@ -179,7 +178,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
     const customAgentResponse: AgentResponseBody = await res.json();
     toast({
-      duration: customAgentResponse?.error ? 1000000000 : 5000,
       message:
         customAgentResponse?.data?.message ||
         customAgentResponse?.error?.message,

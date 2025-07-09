@@ -302,7 +302,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
     }
     toast({
-      duration: pendingResponse?.error ? 1000000000 : 5000,
       message:
         pendingResponse?.data?.message || pendingResponse?.error?.message,
       type: pendingResponse?.error ? "error" : "success",

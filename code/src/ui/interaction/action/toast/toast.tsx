@@ -13,16 +13,22 @@ interface ToastProps {
   duration?: number;
 }
 
-/** I recommend abstracting the toast function
- *  so that you can call it without having to use toast.custom everytime. */
+/**
+ * This component is used to display toast notifications.
+ * It uses the `sonner` library to create custom toast notifications.
+ * @param {string | number} id - The unique identifier for the toast.
+ * @param {string} message - The message to display in the toast.
+ * @param {string} type- The type of toast (success or error).
+ * @param {number} duration - The duration for which the toast should be visible (in milliseconds).
+ */
+
 export function toast(toast: Omit<ToastProps, "id">) {
   return sonnerToast.custom(
     (id) => <Toast id={id} message={toast.message} type={toast.type} />,
-    { duration: toast.duration || 4000 } // Default duration if not provided
+    { duration: toast.type === "error" ? 1000000000 : 5000 } // Default duration if not provided
   );
 }
 
-/** A fully custom toast that still maintains the animations and interactions. */
 function Toast(props: ToastProps) {
   const { message, id, type } = props;
   const dict: Dictionary = useDictionary();

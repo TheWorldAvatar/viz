@@ -71,7 +71,6 @@ export default function RegistryRowActions(
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
     toast({
-      duration: customAgentResponse?.error ? 1000000000 : 5000,
       message:
         customAgentResponse?.data?.message ||
         customAgentResponse?.error?.message,

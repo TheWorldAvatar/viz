@@ -149,7 +149,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       response = await res.json();
     }
     toast({
-      duration: response?.error ? 1000000000 : 5000,
       message: response?.data?.message || response?.error?.message,
       type: response?.error ? "error" : "success",
     });
