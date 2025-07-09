@@ -305,11 +305,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
-    toast({
-      message:
-        pendingResponse?.data?.message || pendingResponse?.error?.message,
-      type: pendingResponse?.error ? "error" : "success",
-    });
+    toast(pendingResponse?.data?.message || pendingResponse?.error?.message,
+      pendingResponse?.error ? "error" : "success");
   });
 
   return (

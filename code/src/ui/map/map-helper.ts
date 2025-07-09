@@ -397,10 +397,7 @@ export function locateUser(map: Map): void {
       });
     },
     () => {
-      toast({
-        message: "Cannot read user's location without browser authorisation.",
-        type: "error",
-      });
+      toast("Cannot read user's location without browser authorisation.", "error");
     }
   );
 }

@@ -116,11 +116,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
     const agentResponseBody: AgentResponseBody = await res.json();
     setResponse(agentResponseBody);
-    toast({
-      message:
-        agentResponseBody?.data?.message || agentResponseBody?.error?.message,
-      type: agentResponseBody?.error ? "error" : "success",
-    });
+    toast(agentResponseBody?.data?.message || agentResponseBody?.error?.message,
+      agentResponseBody?.error ? "error" : "success");
   };
 
   // A hook that fetches the form template for executing an action
@@ -177,12 +174,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const customAgentResponse: AgentResponseBody = await res.json();
-    toast({
-      message:
-        customAgentResponse?.data?.message ||
-        customAgentResponse?.error?.message,
-      type: customAgentResponse?.error ? "error" : "success",
-    });
+    toast(customAgentResponse?.data?.message || customAgentResponse?.error?.message,
+      customAgentResponse?.error ? "error" : "success");
     setIsLoading(false);
 
     if (!customAgentResponse?.error) {

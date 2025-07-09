@@ -44,30 +44,20 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           body: fileData,
         });
         const jsonResp: AgentResponseBody = await response.json();
-        toast({
-          message:
-            jsonResp?.data?.message ||
-            jsonResp?.error?.message,
-          type: jsonResp?.error ? "error" : "success",
-        });
+        toast(jsonResp?.data?.message || jsonResp?.error?.message,
+          jsonResp?.error ? "error" : "success");
         // Closes the modal only if response is successfull
         setTimeout(() => {
           props.setIsOpen(false);
         }, 2000);
       } catch (error) {
         console.error("There was an error uploading the file:", error);
-        toast({
-          message: dict.message.fileUploadError,
-          type: "error",
-        });
+        toast(dict.message.fileUploadError, "error");
       } finally {
         setIsUploading(false);
       }
     } else {
-      toast({
-        message: dict.message.noFileChosenError,
-        type: "error",
-      });
+      toast(dict.message.noFileChosenError, "error");
     }
   });
 

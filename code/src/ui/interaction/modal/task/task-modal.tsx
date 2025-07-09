@@ -148,10 +148,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       );
       response = await res.json();
     }
-    toast({
-      message: response?.data?.message || response?.error?.message,
-      type: response?.error ? "error" : "success",
-    });
+    toast(response?.data?.message || response?.error?.message,
+      response?.error ? "error" : "success");
     if (response && !response?.error) {
       setTimeout(() => {
         props.setIsOpen(false);
@@ -247,8 +245,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               taskType === "report"
                 ? "report"
                 : taskType === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}

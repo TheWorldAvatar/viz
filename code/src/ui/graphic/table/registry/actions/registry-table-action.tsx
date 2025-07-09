@@ -45,8 +45,8 @@ export default function RegistryRowActions(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -70,12 +70,8 @@ export default function RegistryRowActions(
     );
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
-    toast({
-      message:
-        customAgentResponse?.data?.message ||
-        customAgentResponse?.error?.message,
-      type: customAgentResponse?.error ? "error" : "success",
-    });
+    toast(customAgentResponse?.data?.message || customAgentResponse?.error?.message,
+      customAgentResponse?.error ? "error" : "success");
   };
 
   const handleClickView = (): void => {
@@ -221,7 +217,7 @@ export default function RegistryRowActions(
                 (props.row?.status?.toLowerCase() ===
                   dict.title.assigned?.toLowerCase() ||
                   props.row?.status?.toLowerCase() ===
-                    dict.title.completed?.toLowerCase()) && (
+                  dict.title.completed?.toLowerCase()) && (
                   <Button
                     variant="ghost"
                     leftIcon="done_outline"
@@ -241,9 +237,9 @@ export default function RegistryRowActions(
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
                 props.row?.status?.toLowerCase() !==
-                  dict.title.issue?.toLowerCase() &&
+                dict.title.issue?.toLowerCase() &&
                 props.row?.status?.toLowerCase() !==
-                  dict.title.cancelled?.toLowerCase() && (
+                dict.title.cancelled?.toLowerCase() && (
                   <Button
                     variant="ghost"
                     leftIcon="assignment"
@@ -265,7 +261,7 @@ export default function RegistryRowActions(
                 (props.row?.status?.toLowerCase() ===
                   dict.title.new?.toLowerCase() ||
                   props.row?.status?.toLowerCase() ===
-                    dict.title.assigned?.toLowerCase()) && (
+                  dict.title.assigned?.toLowerCase()) && (
                   <Button
                     variant="ghost"
                     leftIcon="cancel"
@@ -287,7 +283,7 @@ export default function RegistryRowActions(
                 (props.row?.status?.toLowerCase() ===
                   dict.title.new?.toLowerCase() ||
                   props.row?.status?.toLowerCase() ===
-                    dict.title.assigned?.toLowerCase()) && (
+                  dict.title.assigned?.toLowerCase()) && (
                   <Button
                     variant="ghost"
                     leftIcon="report"
