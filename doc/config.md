@@ -46,7 +46,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `help`: REQUIRED. Displays help page if enabled
   - `registry`: REQUIRED. Displays the registry page if enabled
 - `links`: optional configuration for adding or updating redirect links on the landing page. This configuration can overwrite the defaults for the map, dashboard, and help modules. It requires an `ARRAY` of the following JSON format:
-  - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, and `registry` accordingly.
+  - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, `registry`, and `registry-submission` accordingly.
   - `title`: REQUIRED. Thumbnail title on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Optional for only internal links, which defaults to the default if not set.

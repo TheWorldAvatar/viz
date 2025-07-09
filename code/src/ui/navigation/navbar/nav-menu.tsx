@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { Icon } from "@mui/material";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
@@ -116,18 +116,9 @@ function NavMenuContents(
   const registryLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.REGISTRY
   );
-  const registryUrl: string = useMemo(() => {
-    // Defaults to pending registry with no route or scheme is disabled
-    let url: string = `${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`;
-    if (permissionScheme?.registryPageLink) {
-      url = permissionScheme?.registryPageLink;
-      // Only update the permission route if they are pending or active
-      if (url === Routes.REGISTRY_PENDING || url === Routes.REGISTRY_ACTIVE) {
-        url = `${url}/${props.settings.resources?.registry?.data}`;
-      }
-    }
-    return url;
-  }, [permissionScheme]);
+  const registrySubmissionLinkProps: NavBarItemSettings = props.settings.links?.find(
+    (link) => link.url === `${Modules.REGISTRY}-submission`
+  );
 
   function createHandleFileUploadClick(
     url: string
@@ -142,23 +133,20 @@ function NavMenuContents(
 
   return (
     <div
-      className={`${
-        props.isMobile
-          ? "flex gap-4 p-2 "
-          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
-      }
+      className={`${props.isMobile
+        ? "flex gap-4 p-2 "
+        : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+        }
       ${isMenuExpanded ? "w-3xs lg:w-xs xl:flex 2xl:w-xs" : "w-24  xl:flex"}
       
          flex-col justify-start transition-all duration-200 ease-in-out`}
     >
       <button
-        className={`${
-          props.isMobile ? "hidden" : "xl:flex"
-        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
-          isMenuExpanded
+        className={`${props.isMobile ? "hidden" : "xl:flex"
+          }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
             ? "mr-2 self-end rounded-md -mb-8 "
             : " justify-center items-center rounded-full -mb-4"
-        }`}
+          }`}
         onClick={() => setIsMenuExpanded(!isMenuExpanded)}
       >
         <Icon className="material-symbols-outlined">
@@ -239,30 +227,30 @@ function NavMenuContents(
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
-        (!keycloakEnabled || permissionScheme?.hasPermissions.viewTask) && (
+        (!keycloakEnabled ||
+          permissionScheme?.hasPermissions.pendingRegistry) && (
           <NavBarItem
-            title={registryLinkProps?.title ?? dict.nav.title.registry}
-            icon={registryLinkProps?.icon ?? "table_chart"}
-            url={Routes.REGISTRY_TASK_DATE}
+            title={registrySubmissionLinkProps?.title ?? dict.nav.title.submission}
+            icon={registrySubmissionLinkProps?.icon ?? "work"}
+            url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
             isMobile={props.isMobile}
             caption={
               isMenuExpanded
-                ? registryLinkProps?.caption ?? dict.nav.caption.registry
+                ? registrySubmissionLinkProps?.caption ?? dict.nav.caption.submission
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}
             isMenuExpanded={isMenuExpanded}
           />
         )}
+
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
-        (!keycloakEnabled ||
-          permissionScheme?.hasPermissions.sales ||
-          permissionScheme?.hasPermissions.operation) && (
+        (!keycloakEnabled || permissionScheme?.hasPermissions.activeArchiveRegistry) && (
           <NavBarItem
-            title={registryLinkProps?.title ?? dict.nav.title.submission}
-            icon={registryLinkProps?.icon ?? "work"}
-            url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
+            title={registryLinkProps?.title ?? dict.nav.title.registry}
+            icon={registryLinkProps?.icon ?? "table_chart"}
+            url={Routes.REGISTRY_TASK_DATE}
             isMobile={props.isMobile}
             caption={
               isMenuExpanded
@@ -285,9 +273,9 @@ function NavMenuContents(
             caption={
               isMenuExpanded
                 ? dict.nav.caption.generalReg.replace(
-                    "{replace}",
-                    parseWordsForLabels(path.type).toLowerCase()
-                  )
+                  "{replace}",
+                  parseWordsForLabels(path.type).toLowerCase()
+                )
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}

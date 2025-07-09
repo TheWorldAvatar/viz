@@ -127,8 +127,8 @@
     "caption": {
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
-      "registry": "Manage your records",
-      "submission": "Submit a new record",
+      "registry": "Manage your orders",
+      "submission": "Manage your submissions",
       "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
     },

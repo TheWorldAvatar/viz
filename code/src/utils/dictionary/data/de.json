@@ -128,6 +128,7 @@
       "map": "Visualisierung von Geodaten",
       "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
       "registry": "Verwalten Sie Ihre Datensätze",
+      "submission": "Manage your submissions",
       "generalReg": "{replace} verwalten",
       "help": "Hilfe für diese Webplattform"
     },
@@ -136,6 +137,7 @@
       "map": "Karte",
       "dashboard": "Analyse",
       "registry": "Register",
+      "submission": "Registry Submission",
       "help": "Hilfe-Center",
       "pending": "Ausstehend",
       "active": "Aktiv",
