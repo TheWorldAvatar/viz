@@ -41,6 +41,7 @@ interface FormComponentProps {
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
+  setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -53,6 +54,7 @@ interface FormComponentProps {
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
+ * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
@@ -295,6 +297,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             );
             dispatch(setFilterTimes([startTime, endTime]));
           }
+          // Closes the search modal only if response is successful
+          setTimeout(() => props.setShowSearchModalState(false), 2000);
         }
         break;
       }
@@ -419,7 +423,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod

@@ -269,9 +269,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <LoadingSpinner isSmall={false} />
         )}
 
-        {/* {!formRef.current?.formState?.isSubmitting && (
-          <ResponseComponent response={response} />
-        )} */}
         <div className="flex flex-wrap gap-2 justify-end items-center">
           <div className="flex-grow" />
           {(!keycloakEnabled ||
