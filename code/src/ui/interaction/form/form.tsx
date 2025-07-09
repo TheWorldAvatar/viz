@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -58,6 +58,7 @@ interface FormComponentProps {
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
+  const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
@@ -297,8 +298,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             );
             dispatch(setFilterTimes([startTime, endTime]));
           }
-          // Closes the search modal only if response is successful
-          setTimeout(() => props.setShowSearchModalState(false), 2000);
         }
         break;
       }
@@ -307,6 +306,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     }
     toast(pendingResponse?.data?.message || pendingResponse?.error?.message,
       pendingResponse?.error ? "error" : "success");
+    // For successful responses, either close the modal or go back to previous page
+    if (!pendingResponse?.error) {
+      setTimeout(() => {
+        if (props.formType === "search") {
+          props.setShowSearchModalState(false)
+        } else {
+          router.back();
+        }
+      }, 2000);
+    }
   });
 
   return (

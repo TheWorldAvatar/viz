@@ -72,7 +72,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<AgentResponseBody>(null);
-  const [response, setResponse] = useState<AgentResponseBody>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -115,7 +114,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const agentResponseBody: AgentResponseBody = await res.json();
-    setResponse(agentResponseBody);
     toast(agentResponseBody?.data?.message || agentResponseBody?.error?.message,
       agentResponseBody?.error ? "error" : "success");
   };
@@ -188,11 +186,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
       formRef.current.requestSubmit();
-      if (!response?.error) {
-        setTimeout(() => {
-          router.back();
-        }, 2000);
-      }
     }
   };
 
@@ -254,7 +247,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
       </div>
       <div className="flex justify-between p-2 ">
-        {!formRef.current?.formState?.isSubmitting && !response && (
+        {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
             variant="outline"
@@ -270,7 +263,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
-            !response &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
@@ -286,7 +278,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
-            !response &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
@@ -301,7 +292,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
@@ -314,7 +304,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
@@ -329,7 +318,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
@@ -340,7 +328,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="destructive"
               />
             )}
-          {props.formType != "view" && !response && (
+          {props.formType != "view" && (
             <Button
               leftIcon="send"
               label={dict.action.submit}
@@ -348,7 +336,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               onClick={onSubmit}
             />
           )}
-          {!response && (isRescindAction || isTerminateAction) && (
+          {isRescindAction || isTerminateAction && (
             <Button
               // Remove the rescind and terminate action view back to original view if no response
               leftIcon="first_page"
@@ -360,7 +348,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               }}
             />
           )}
-          {!response && !(isRescindAction || isTerminateAction) && (
+          {!(isRescindAction || isTerminateAction) && (
             <ReturnButton
               label={dict.action.return}
               leftIcon={"first_page"}
