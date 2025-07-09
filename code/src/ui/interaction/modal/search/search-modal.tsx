@@ -1,7 +1,7 @@
 "use client";
 import styles from "./search.modal.module.css";
 
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
