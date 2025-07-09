@@ -31,11 +31,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InterceptViewFormPage(props: Readonly<InterceptViewFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
     <FormContainerComponent
-      entityType={resolvedParams?.type}
+      entityType={decodedType}
       formType={'view'}
-      isPrimaryEntity={decodeURIComponent(uiSettings?.resources?.registry?.data) === decodeURIComponent(resolvedParams?.type)}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
       isModal={true}
     />
   );

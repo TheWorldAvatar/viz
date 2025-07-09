@@ -4,7 +4,7 @@
 
 import "ui/css/globals.css";
 
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import React from "react";
 import OptionalPages, { OptionalPage } from "io/config/optional-pages";
 import SettingsStore from "io/config/settings";
@@ -26,8 +26,17 @@ function initialise() {
   OptionalPages.loadPages();
 }
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    {
+      path: "./fonts/Inter/Inter-VariableFont_opsz,wght.ttf",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Inter/Inter-Italic-VariableFont_opsz,wght.ttf",
+      style: "italic",
+    }
+  ],
   variable: "--font-inter",
 });
 

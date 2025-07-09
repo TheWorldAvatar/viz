@@ -1,7 +1,6 @@
 services:
-  # Empty visualisation image for deployment.
-  base:
-    image: ghcr.io/theworldavatar/viz:5.30.5
+  viz:
+    image: ghcr.io/theworldavatar/viz:5.32.0
     container_name: "viz"
     restart: "no"
     environment:
@@ -27,6 +26,7 @@ services:
         description: "TWA Visualisation Platform image."
     volumes:
       - ./code/public:/twa/public/
+      - public-hash:/twa/.public_hash
     ports:
       - "3000:3000"
 
@@ -35,3 +35,7 @@ secrets:
     file: ./mapbox_username
   mapbox_api_key:
     file: ./mapbox_api_key
+
+volumes:
+  public-hash:
+

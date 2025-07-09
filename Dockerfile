@@ -14,6 +14,7 @@
 FROM node:24.2-slim AS base
 RUN corepack enable
 WORKDIR /twa
+RUN mkdir .public_hash
 ENV NEXT_TELEMETRY_DISABLED 1
 COPY ./code/package.json  ./
 

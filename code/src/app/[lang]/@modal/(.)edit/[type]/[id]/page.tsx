@@ -31,11 +31,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InterceptEditFormPage(props: Readonly<InterceptEditFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
     <FormContainerComponent
-      entityType={resolvedParams?.type}
+      entityType={decodedType}
       formType={'edit'}
-      isPrimaryEntity={decodeURIComponent(uiSettings?.resources?.registry?.data) === decodeURIComponent(resolvedParams?.type)}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
       isModal={true}
     />
   );
