@@ -31,11 +31,12 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import { toast } from "ui/interaction/action/toast/toast";
+
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   formType: FormType;
   entityType: string;
-  setResponse: React.Dispatch<React.SetStateAction<AgentResponseBody>>;
   id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
@@ -48,7 +49,6 @@ interface FormComponentProps {
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
- * @param {React.Dispatch<React.SetStateAction<AgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
@@ -272,7 +272,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           if (pendingResponse.data?.items?.length === 0) {
             pendingResponse.data.message = dict.message.noMatchFeature;
           } else {
-            dispatch(setFilterFeatureIris(pendingResponse.data?.items as string[]));
+            dispatch(
+              setFilterFeatureIris(pendingResponse.data?.items as string[])
+            );
             pendingResponse.data.message = dict.message.matchedFeatures;
           }
 
@@ -299,7 +301,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
-    props.setResponse(pendingResponse);
+    toast({
+      duration: pendingResponse?.error ? 1000000000 : 5000,
+      message:
+        pendingResponse?.data?.message || pendingResponse?.error?.message,
+      type: pendingResponse?.error ? "error" : "success",
+    });
   });
 
   return (
@@ -364,18 +371,23 @@ export function renderFormField(
         ? true
         : disableAllInputs;
     // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
-    if (!fieldProp.maxCount || (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)) {
-      return <FormArray
-        key={fieldProp.name[VALUE_KEY] + currentIndex}
-        fieldId={fieldProp.name[VALUE_KEY]}
-        minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
-        maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
-        fieldConfigs={[fieldProp]}
-        form={form}
-        options={{
-          disabled: disableAllInputs,
-        }}
-      />
+    if (
+      !fieldProp.maxCount ||
+      (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)
+    ) {
+      return (
+        <FormArray
+          key={fieldProp.name[VALUE_KEY] + currentIndex}
+          fieldId={fieldProp.name[VALUE_KEY]}
+          minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
+          maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
+          fieldConfigs={[fieldProp]}
+          form={form}
+          options={{
+            disabled: disableAllInputs,
+          }}
+        />
+      );
     }
     if (fieldProp.class) {
       if (
@@ -408,7 +420,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod

@@ -68,7 +68,7 @@ export default async function RootLayout({
             <GlobalContainer pages={pages} settings={uiSettings}>
               {children}
               {modal}
-              <Toaster />
+              <Toaster duration={Infinity} />
             </GlobalContainer>
           </SessionInfoProvider>
         </DictionaryProvider>

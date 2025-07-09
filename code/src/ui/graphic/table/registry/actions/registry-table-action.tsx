@@ -20,7 +20,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { JsonObject } from "types/json";
-import Toast from "ui/interaction/action/toast/toast";
+import { toast } from "ui/interaction/action/toast/toast";
 import { AgentResponseBody } from "types/backend-agent";
 
 interface RegistryRowActionsProps {
@@ -53,8 +53,6 @@ export default function RegistryRowActions(
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
-  const [response, setResponse] = useState<AgentResponseBody>(null);
-
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
       contract: recordId,
@@ -72,7 +70,13 @@ export default function RegistryRowActions(
     );
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
-    setResponse(customAgentResponse);
+    toast({
+      duration: customAgentResponse?.error ? 1000000000 : 5000,
+      message:
+        customAgentResponse?.data?.message ||
+        customAgentResponse?.error?.message,
+      type: customAgentResponse?.error ? "error" : "success",
+    });
   };
 
   const handleClickView = (): void => {
@@ -99,9 +103,6 @@ export default function RegistryRowActions(
 
   return (
     <div className="flex items-center justify-center">
-      {response && (
-        <Toast response={response} duration={6000} position="bottom-right" />
-      )}
       <PopoverActionButton
         placement="bottom-start"
         leftIcon="more_vert"

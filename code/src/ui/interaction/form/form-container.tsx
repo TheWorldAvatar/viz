@@ -24,7 +24,7 @@ import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
-import { toast } from "../action/toast/toast-new";
+import { toast } from "../action/toast/toast";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -116,6 +116,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
     const agentResponseBody: AgentResponseBody = await res.json();
     setResponse(agentResponseBody);
+    toast({
+      duration: agentResponseBody?.error ? 1000000000 : 5000,
+      message:
+        agentResponseBody?.data?.message || agentResponseBody?.error?.message,
+      type: agentResponseBody?.error ? "error" : "success",
+    });
   };
 
   // A hook that fetches the form template for executing an action
@@ -172,10 +178,16 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const customAgentResponse: AgentResponseBody = await res.json();
-    setResponse(customAgentResponse);
+    toast({
+      duration: customAgentResponse?.error ? 1000000000 : 5000,
+      message:
+        customAgentResponse?.data?.message ||
+        customAgentResponse?.error?.message,
+      type: customAgentResponse?.error ? "error" : "success",
+    });
     setIsLoading(false);
 
-    if (!response?.error) {
+    if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();
       }, 2000);
@@ -218,29 +230,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     }
   }, []);
 
-  useEffect(() => {
-    if (response) {
-      const message = response?.data?.message || response?.error?.message;
-      const toastType = response?.error ? "error" : "success";
-      const title = response?.error ? "Error" : "Success";
-
-      toast({
-        title: title,
-        duration: toastType === "error" ? Infinity : 4000, // No auto-dismiss for errors
-        description: message,
-        type: toastType,
-        button: {
-          label: "Dismiss",
-          onClick: () => {
-            // No need to dismiss explicitly here, sonner handles it if duration is set
-            // or if the dismiss button within the custom Toast component is clicked.
-            // If you want to clear the response state after dismissal:
-            setResponse(null);
-          },
-        },
-      });
-    }
-  }, [response]);
   return (
     <>
       <div className="text-xl font-bold">
@@ -260,7 +249,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formRef={formRef}
               entityType={props.entityType}
               formType={props.formType}
-              setResponse={setResponse}
               primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
             />
@@ -286,9 +274,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
-        {/* {!formRef.current?.formState?.isSubmitting &&
-          response &&
-          toast.custom(response?.data?.message || response?.error?.message)} */}
         <div className="flex flex-wrap gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||

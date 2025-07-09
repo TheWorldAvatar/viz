@@ -21,7 +21,6 @@ import RegistryTable from "./registry-table";
 import SummarySection from "./ribbon/summary";
 import TableRibbon from "./ribbon/table-ribbon";
 import { AgentResponseBody } from "types/backend-agent";
-import Toast from "ui/interaction/action/toast/toast";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -52,7 +51,6 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
-  const [response, setResponse] = useState<AgentResponseBody>(null);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -232,11 +230,7 @@ export default function RegistryTableComponent(
           task={task}
           setIsOpen={setIsTaskModalOpen}
           setTask={setTask}
-          setResponse={setResponse}
         />
-      )}
-      {response && (
-        <Toast response={response} duration={6000} position="bottom-right" />
       )}
     </div>
   );

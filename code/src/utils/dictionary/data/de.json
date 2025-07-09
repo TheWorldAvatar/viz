@@ -4,6 +4,7 @@
     "addItem": "{replace} hinzufügen",
     "edit": "Bearbeiten",
     "delete": "Löschen",
+    "dismiss": "Dismiss",
     "view": "Anzeigen",
     "close": "Schließen",
     "refresh": "Aktualisieren",
@@ -169,6 +170,8 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "searchPeriod": "Suchzeitraum",
-    "searchCriteria": "SUCHKRITERIEN"
+    "searchCriteria": "SUCHKRITERIEN",
+    "success": "Success",
+    "error": "Error"
   }
 }

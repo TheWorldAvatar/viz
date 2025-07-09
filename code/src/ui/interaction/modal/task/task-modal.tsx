@@ -30,13 +30,14 @@ import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import ReturnButton from "../../action/redirect/return-button";
 
+import { toast } from "ui/interaction/action/toast/toast";
+
 interface TaskModalProps {
   entityType: string;
   isOpen: boolean;
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  setResponse: React.Dispatch<React.SetStateAction<AgentResponseBody>>;
 }
 
 /**
@@ -58,7 +59,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   // Form actions
-
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
@@ -148,7 +148,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       );
       response = await res.json();
     }
-    props.setResponse(response);
+    toast({
+      duration: response?.error ? 1000000000 : 5000,
+      message: response?.data?.message || response?.error?.message,
+      type: response?.error ? "error" : "success",
+    });
     if (response && !response?.error) {
       setTimeout(() => {
         props.setIsOpen(false);
@@ -235,7 +239,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
-            setResponse={props.setResponse}
             id={getAfterDelimiter(props.task.contract, "/")}
           />
         )}
