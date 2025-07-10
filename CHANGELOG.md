@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.33.0
+
+### Changes
+
+- Split Registry into two pages: `Registry Submissions` for previously Pending contracts and `Registry Records` for tasks
+- Added toast notifications
+- Fix view sizes for tablets
+
 ## 5.32.0
 
 ### Changes
