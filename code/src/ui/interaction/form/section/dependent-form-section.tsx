@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   defaultSearchOption,
   ID_KEY,
   PropertyShape,
   RegistryFieldValues,
+  SparqlResponseField,
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -20,10 +22,9 @@ import {
   getAfterDelimiter,
   parseStringsForUrls,
 } from "utils/client-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { FORM_STATES } from "../form-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { AgentResponseBody } from "types/backend-agent";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -127,12 +128,14 @@ export function DependentFormSection(
       if (entities.length > 0) {
         // Set the id to the first possible option
         defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
-        // If there is a default value set either in the form or the field, search and use the option matching the default instance's local name
-        if (props.form.getValues(field.fieldId).length > 0) {
-          const defaultValueId: string = getAfterDelimiter(
-            props.form.getValues(field.fieldId),
-            "/"
-          );
+        // Has existing value that is set in the form or field
+        const hasExistingValue: boolean = props.form.getValues(field.fieldId).length > 0;
+        // If there is an existing or default value possible, search and use the option matching the default instance's local name
+        if (hasExistingValue || props.dependentProp?.defaultValue) {
+          // Existing value must take precedence over default value
+          const defaultValueId: string = hasExistingValue ? getAfterDelimiter(props.form.getValues(field.fieldId), "/") :
+            getAfterDelimiter((props.dependentProp?.defaultValue as SparqlResponseField).value, "/");
+
           const matchingEntity: RegistryFieldValues = entities.find(
             (entity) =>
               getAfterDelimiter(
