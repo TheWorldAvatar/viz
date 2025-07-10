@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.33.1
+
+### Changes
+
+- Changed the styles of the landing page
+
 ## 5.33.0
 
 ### Changes
@@ -27,7 +33,7 @@
 
 ### Changes
 
-- Fixed issues with the UTF-8 encoding which was causing issues with some characters when translating from German to English. 
+- Fixed issues with the UTF-8 encoding which was causing issues with some characters when translating from German to English.
 
 ## 5.30.4
 
