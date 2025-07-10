@@ -1,15 +1,15 @@
 .introInner {
-    background-color: transparent !important;
-    margin-bottom: 10px;
-    overflow-y: auto;
-    padding: 2rem;
+  background-color: transparent !important;
+  margin-bottom: 10px;
+  overflow-y: auto;
+  padding: 2rem;
+  width: 100%;
 }
 
 .introInner h2 {
-    font-size: var(--font-size-h2) !important;
+  font-size: var(--font-size-h2) !important;
 }
 
 .introInner p {
-    font-size: var(--font-size-primary-text) !important;
+  font-size: var(--font-size-primary-text) !important;
 }
-
