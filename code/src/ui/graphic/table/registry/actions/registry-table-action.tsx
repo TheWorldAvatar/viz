@@ -17,11 +17,11 @@ import { Status } from "ui/text/status/status";
 import { getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { JsonObject } from "types/json";
 import { toast } from "ui/interaction/action/toast/toast";
-import { AgentResponseBody } from "types/backend-agent";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 interface RegistryRowActionsProps {
   recordType: string;
@@ -95,10 +95,22 @@ export default function RegistryRowActions(
       props.row?.status?.toLowerCase() === dict.title.issue?.toLowerCase() ||
       props.row?.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
     );
+  const isSubmissionPage: boolean = props.lifecycleStage == "pending";
 
   return (
     <div className="flex items-center justify-center">
-      <PopoverActionButton
+      {!isSubmissionPage && !showsExpandedTask && (
+        <Button
+          variant="ghost"
+          leftIcon="open_in_new"
+          size="icon"
+          iconSize="medium"
+          tooltipText={parseWordsForLabels(dict.action.view)}
+          tooltipPosition="right"
+          onClick={handleClickView}
+        />
+      )}
+      {(isSubmissionPage || showsExpandedTask) && <PopoverActionButton
         placement="bottom-start"
         leftIcon="more_vert"
         variant="ghost"
@@ -118,17 +130,17 @@ export default function RegistryRowActions(
             label={parseWordsForLabels(dict.action.view)}
             onClick={() => {
               setIsActionMenuOpen(false);
-              if (showsExpandedTask) {
+              if (isSubmissionPage) {
+                handleClickView();
+              } else {
                 props.setTask(
                   genTaskOption(recordId, props.row, "default", dict)
                 );
-              } else {
-                handleClickView();
               }
             }}
           />
 
-          {!showsExpandedTask && (
+          {isSubmissionPage && (
             <>
               {(!keycloakEnabled ||
                 !permissionScheme ||
@@ -209,7 +221,7 @@ export default function RegistryRowActions(
             </>
           )}
 
-          {showsExpandedTask && (
+          {!isSubmissionPage && (
             <>
               {(!keycloakEnabled ||
                 !permissionScheme ||
@@ -302,7 +314,7 @@ export default function RegistryRowActions(
             </>
           )}
         </div>
-      </PopoverActionButton>
+      </PopoverActionButton>}
     </div>
   );
 }
