@@ -28,7 +28,6 @@ import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import ReturnButton from "../../action/redirect/return-button";
 
 import { toast } from "ui/interaction/action/toast/toast";
 
@@ -153,9 +152,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     if (response && !response?.error) {
       setTimeout(() => {
         props.setIsOpen(false);
+        // Reset states on successful submission
+        props.setTask(null);
+        setFormFields([]);
       }, 2000);
     }
-    setFormFields([]);
   };
 
   // A hook that fetches the form template for executing an action
@@ -197,13 +198,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       getFormTemplate("service", "cancel");
     }
   }, [taskType]);
-
-  // Reset the states when the modal is closed
-  useEffect(() => {
-    if (!props.isOpen) {
-      setFormFields([]);
-    }
-  }, [props.isOpen]);
 
   return (
     <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
@@ -272,9 +266,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
-            (props.task.status.toLowerCase().trim() ==
-              Status.PENDING_EXECUTION ||
-              props.task.status.toLowerCase().trim() == Status.COMPLETED) &&
+            (props.task?.status?.toLowerCase() == dict.title.assigned?.toLowerCase() ||
+              props.task?.status?.toLowerCase() == dict.title.completed?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -288,6 +281,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
+            props.task?.status?.toLowerCase() !== dict.title.issue?.toLowerCase() &&
+            props.task?.status?.toLowerCase() !== dict.title.cancelled?.toLowerCase() &&
             taskType === "default" && (
               <Button
                 leftIcon="assignment"
@@ -301,7 +296,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            (props.task?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
+              props.task?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 variant="secondary"
@@ -316,7 +312,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.reportTask) &&
-            props.task.status.toLowerCase().trim() != Status.COMPLETED &&
+            (props.task?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
+              props.task?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 variant="secondary"
@@ -344,14 +341,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={onSubmit}
               />
             )}
-          {
-            <ReturnButton
-              label={dict.action.return}
-              leftIcon={"first_page"}
-              variant="secondary"
-              tooltipText={dict.action.return}
-            />
-          }
+          <Button
+            leftIcon="first_page"
+            variant="secondary"
+            label={dict.action.return}
+            tooltipText={dict.action.return}
+            onClick={() => {
+              props.setIsOpen(false);
+              // Reset states on return
+              props.setTask(null);
+              setFormFields([]);
+            }}
+          />
         </div>
       </section>
     </Modal>
