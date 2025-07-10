@@ -15,7 +15,6 @@ import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
 import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
@@ -24,6 +23,8 @@ import ReturnButton from "../action/redirect/return-button";
 import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
+
+import { toast } from "../action/toast/toast";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -71,7 +72,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<AgentResponseBody>(null);
-  const [response, setResponse] = useState<AgentResponseBody>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -114,7 +114,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const agentResponseBody: AgentResponseBody = await res.json();
-    setResponse(agentResponseBody);
+    toast(agentResponseBody?.data?.message || agentResponseBody?.error?.message,
+      agentResponseBody?.error ? "error" : "success");
   };
 
   // A hook that fetches the form template for executing an action
@@ -138,8 +139,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         }
       );
       const responseBody: AgentResponseBody = await res.json();
-      const template: PropertyShape[] = (responseBody.data?.items as Record<string, unknown>[])?.[0]?.property as PropertyShape[];
+      const template: PropertyShape[] = (
+        responseBody.data?.items as Record<string, unknown>[]
+      )?.[0]?.property as PropertyShape[];
       setFormFields(template);
+
       setIsLoading(false);
     };
 
@@ -168,11 +172,15 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const customAgentResponse: AgentResponseBody = await res.json();
-    setResponse(customAgentResponse);
+    toast(customAgentResponse?.data?.message || customAgentResponse?.error?.message,
+      customAgentResponse?.error ? "error" : "success");
     setIsLoading(false);
-    setTimeout(() => {
-      router.back();
-    }, 2000);
+
+    if (!customAgentResponse?.error) {
+      setTimeout(() => {
+        router.back();
+      }, 2000);
+    }
   };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -225,7 +233,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formRef={formRef}
               entityType={props.entityType}
               formType={props.formType}
-              setResponse={setResponse}
               primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
             />
@@ -240,7 +247,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
       </div>
       <div className="flex justify-between p-2 ">
-        {!formRef.current?.formState?.isSubmitting && !response && (
+        {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
             variant="outline"
@@ -251,15 +258,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
-        {!formRef.current?.formState?.isSubmitting && response && (
-          <ResponseComponent response={response} />
-        )}
         <div className="flex flex-wrap gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
-            !response &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
@@ -275,7 +278,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
-            !response &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
@@ -290,7 +292,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
@@ -303,7 +304,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
@@ -318,7 +318,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
@@ -329,7 +328,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="destructive"
               />
             )}
-          {props.formType != "view" && !response && (
+          {props.formType != "view" && (
             <Button
               leftIcon="send"
               label={dict.action.submit}
@@ -337,7 +336,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               onClick={onSubmit}
             />
           )}
-          {!response && (isRescindAction || isTerminateAction) && (
+          {isRescindAction || isTerminateAction && (
             <Button
               // Remove the rescind and terminate action view back to original view if no response
               leftIcon="first_page"
@@ -349,7 +348,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               }}
             />
           )}
-          {!response && !(isRescindAction || isTerminateAction) && (
+          {!(isRescindAction || isTerminateAction) && (
             <ReturnButton
               label={dict.action.return}
               leftIcon={"first_page"}

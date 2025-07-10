@@ -6,8 +6,6 @@ import "ui/css/globals.css";
 
 import localFont from "next/font/local";
 import React from "react";
-import { ToastContainer } from "react-toastify";
-
 import OptionalPages, { OptionalPage } from "io/config/optional-pages";
 import SettingsStore from "io/config/settings";
 import { Dictionary } from "types/dictionary";
@@ -16,6 +14,7 @@ import GlobalContainer from "ui/global-container";
 import { SessionInfoProvider } from "utils/auth/SessionInfo";
 import { getDictionary } from "utils/dictionary/dictionaries";
 import { DictionaryProvider } from "utils/dictionary/DictionaryContext";
+import { Toaster } from "sonner";
 
 /**
  * Performs initialisation when the platform is
@@ -78,10 +77,10 @@ export default async function RootLayout({
             <GlobalContainer pages={pages} settings={uiSettings}>
               {children}
               {modal}
+              <Toaster duration={Infinity} />
             </GlobalContainer>
           </SessionInfoProvider>
         </DictionaryProvider>
-        <ToastContainer />
       </body>
     </html>
   );

@@ -4,9 +4,6 @@
 
 "use client";
 
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 import { reduxStore } from "app/store";
 import { DataStore } from "io/data/data-store";
 import { Map } from "mapbox-gl";
@@ -17,6 +14,7 @@ import {
   ImageryOptions,
   MapSettings,
 } from "types/settings";
+import { toast } from "ui/interaction/action/toast/toast";
 import { addIcons } from "./mapbox/mapbox-icon-loader";
 import { addAllLayers, addLayer } from "./mapbox/mapbox-layer-utils";
 import { addAllSources, addSource } from "./mapbox/mapbox-source-utils";
@@ -399,10 +397,7 @@ export function locateUser(map: Map): void {
       });
     },
     () => {
-      toast.warning(
-        "Cannot read user's location without browser authorisation.",
-        {}
-      );
+      toast("Cannot read user's location without browser authorisation.", "error");
     }
   );
 }

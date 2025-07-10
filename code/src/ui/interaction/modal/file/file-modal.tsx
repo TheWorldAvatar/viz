@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -8,9 +8,9 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
+import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
 
 interface FileModalProps {
   url: string;
@@ -31,7 +31,6 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [response, setResponse] = useState<AgentResponseBody>(null);
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let response;
@@ -45,27 +44,22 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           body: fileData,
         });
         const jsonResp: AgentResponseBody = await response.json();
-        setResponse(jsonResp);
+        toast(jsonResp?.data?.message || jsonResp?.error?.message,
+          jsonResp?.error ? "error" : "success");
+        // Closes the modal only if response is successfull
+        setTimeout(() => {
+          props.setIsOpen(false);
+        }, 2000);
       } catch (error) {
         console.error("There was an error uploading the file:", error);
-        setResponse({ apiVersion: "", error: { code: 400, message: dict.message.fileUploadError } });
+        toast(dict.message.fileUploadError, "error");
       } finally {
         setIsUploading(false);
       }
     } else {
-      setResponse({ apiVersion: "", error: { code: 400, message: dict.message.noFileChosenError } });
+      toast(dict.message.noFileChosenError, "error");
     }
   });
-
-  // Closes the modal only if response is successfull
-  useEffect(() => {
-    if (!response?.error) {
-      setTimeout(() => {
-        setResponse(null);
-        props.setIsOpen(false);
-      }, 2000);
-    }
-  }, [response]);
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
@@ -75,7 +69,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
 
   return (
     <Modal
-      styles={["!w-md  !h-38"]}
+      styles={["!w-md !h-38"]}
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
     >
@@ -85,20 +79,15 @@ export default function FileModal(props: Readonly<FileModalProps>) {
         </section>
 
         <section className="flex justify-between mt-2 border-t-1 border-border">
-          {!formRef.current?.formState?.isSubmitting &&
-            !isUploading &&
-            response && <ResponseComponent response={response} />}
           {isUploading && <LoadingSpinner isSmall={false} />}
-          {!!response?.error && (
-            <Button
-              leftIcon="keyboard_tab"
-              size="icon"
-              className="mt-2"
-              onClick={onSubmit}
-              tooltipText={dict.action.submit}
-              tooltipPosition="bottom-start"
-            />
-          )}
+          <Button
+            leftIcon="keyboard_tab"
+            size="icon"
+            className="mt-2"
+            onClick={onSubmit}
+            tooltipText={dict.action.submit}
+            tooltipPosition="bottom-start"
+          />
         </section>
       </form>
     </Modal>

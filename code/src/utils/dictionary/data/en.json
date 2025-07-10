@@ -3,6 +3,7 @@
     "add": "add",
     "addItem": "add {replace}",
     "delete": "Delete",
+    "dismiss": "Dismiss",
     "edit": "Edit",
     "view": "view",
     "close": "Close",
@@ -126,7 +127,8 @@
     "caption": {
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
-      "registry": "Manage your records",
+      "registry": "Manage your orders",
+      "submission": "Manage your submissions",
       "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
     },
@@ -134,7 +136,8 @@
       "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
-      "registry": "Registry",
+      "registry": "Registry Records",
+      "submission": "Registry Submission",
       "help": "Help Centre",
       "pending": "Pending",
       "active": "Active",
@@ -168,6 +171,8 @@
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "searchCriteria": "SEARCH CRITERIA",
-    "searchPeriod": "Search Period"
+    "searchPeriod": "Search Period",
+    "success": "Success",
+    "error": "Error"
   }
 }

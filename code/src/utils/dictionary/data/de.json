@@ -4,6 +4,7 @@
     "addItem": "{replace} hinzufügen",
     "edit": "Bearbeiten",
     "delete": "Löschen",
+    "dismiss": "Dismiss",
     "view": "Anzeigen",
     "close": "Schließen",
     "refresh": "Aktualisieren",
@@ -127,6 +128,7 @@
       "map": "Visualisierung von Geodaten",
       "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
       "registry": "Verwalten Sie Ihre Datensätze",
+      "submission": "Manage your submissions",
       "generalReg": "{replace} verwalten",
       "help": "Hilfe für diese Webplattform"
     },
@@ -135,6 +137,7 @@
       "map": "Karte",
       "dashboard": "Analyse",
       "registry": "Register",
+      "submission": "Registry Submission",
       "help": "Hilfe-Center",
       "pending": "Ausstehend",
       "active": "Aktiv",
@@ -145,6 +148,7 @@
       "map": "Geografische Ansicht",
       "dashboard": "Analyseansicht",
       "registry": "Register öffnen",
+      "submission": "Registry Submission",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
       "fileUpload": "Klicken Sie zum Hochladen einer Datei"
@@ -168,6 +172,8 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "searchPeriod": "Suchzeitraum",
-    "searchCriteria": "SUCHKRITERIEN"
+    "searchCriteria": "SUCHKRITERIEN",
+    "success": "Success",
+    "error": "Error"
   }
 }

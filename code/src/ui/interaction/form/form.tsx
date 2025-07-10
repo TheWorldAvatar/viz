@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -31,15 +31,17 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import { toast } from "ui/interaction/action/toast/toast";
+
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   formType: FormType;
   entityType: string;
-  setResponse: React.Dispatch<React.SetStateAction<AgentResponseBody>>;
   id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
+  setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -48,14 +50,15 @@ interface FormComponentProps {
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
- * @param {React.Dispatch<React.SetStateAction<AgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
+ * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
+  const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
@@ -272,7 +275,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           if (pendingResponse.data?.items?.length === 0) {
             pendingResponse.data.message = dict.message.noMatchFeature;
           } else {
-            dispatch(setFilterFeatureIris(pendingResponse.data?.items as string[]));
+            dispatch(
+              setFilterFeatureIris(pendingResponse.data?.items as string[])
+            );
             pendingResponse.data.message = dict.message.matchedFeatures;
           }
 
@@ -299,7 +304,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
-    props.setResponse(pendingResponse);
+    toast(pendingResponse?.data?.message || pendingResponse?.error?.message,
+      pendingResponse?.error ? "error" : "success");
+    // For successful responses, either close the modal or go back to previous page
+    if (!pendingResponse?.error) {
+      setTimeout(() => {
+        if (props.formType === "search") {
+          props.setShowSearchModalState(false)
+        } else {
+          router.back();
+        }
+      }, 2000);
+    }
   });
 
   return (
@@ -364,18 +380,23 @@ export function renderFormField(
         ? true
         : disableAllInputs;
     // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
-    if (!fieldProp.maxCount || (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)) {
-      return <FormArray
-        key={fieldProp.name[VALUE_KEY] + currentIndex}
-        fieldId={fieldProp.name[VALUE_KEY]}
-        minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
-        maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
-        fieldConfigs={[fieldProp]}
-        form={form}
-        options={{
-          disabled: disableAllInputs,
-        }}
-      />
+    if (
+      !fieldProp.maxCount ||
+      (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)
+    ) {
+      return (
+        <FormArray
+          key={fieldProp.name[VALUE_KEY] + currentIndex}
+          fieldId={fieldProp.name[VALUE_KEY]}
+          minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
+          maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
+          fieldConfigs={[fieldProp]}
+          form={form}
+          options={{
+            disabled: disableAllInputs,
+          }}
+        />
+      );
     }
     if (fieldProp.class) {
       if (
