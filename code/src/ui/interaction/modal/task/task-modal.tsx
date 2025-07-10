@@ -336,7 +336,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               taskType === "report") ||
             (permissionScheme.hasPermissions.operation &&
               (taskType === "dispatch" || taskType === "cancel"))) &&
-            props.task.type !== "default" && (
+            taskType !== "default" && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
