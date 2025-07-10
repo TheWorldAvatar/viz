@@ -2,7 +2,8 @@ import { FieldValues, RegisterOptions } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 
 import { Dictionary } from "types/dictionary";
-import { FormType, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, SparqlResponseField, TYPE_KEY, VALUE_KEY } from "types/form";
+import { FormType, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryFieldValues, SparqlResponseField, TYPE_KEY, VALUE_KEY } from "types/form";
+import { extractResponseField, getAfterDelimiter } from "utils/client-utils";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -118,7 +119,7 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
         if (!outputState[fieldId][index]) {
           outputState[fieldId][index] = {};
         }
-        outputState[fieldId][index][parsedFieldId] = defaultValue.value;
+        outputState[fieldId][index][parsedFieldId] = defaultValue?.value;
         currentIndex = index; // Always update the current index following default values
       });
     } else {
@@ -161,7 +162,7 @@ export function getDefaultVal(field: string, defaultValue: string, formType: For
 
   if (field == FORM_STATES.RECURRENCE) {
     // Recurrence property should have a value of 1 for the add form type, else, use the default value
-    if (formType == "add" || formType == "search" ) {
+    if (formType == "add" || formType == "search") {
       return 1;
     }
     if (defaultValue === "P1D") {
@@ -428,6 +429,30 @@ export function getMatchingConcept(mappings: OntologyConceptMappings, targetValu
   });
   return match;
 }
+
+/**
+ * Find the matching dropdown option value based on the default value.
+ * 
+ * @param {string} defaultValue Matching value.
+ * @param {RegistryFieldValues[]} entities Options to match with.
+ */
+export function findMatchingDropdownOptionValue(defaultValue: string, entities: RegistryFieldValues[]): string {
+  const matchingEntity: RegistryFieldValues = entities.find(
+    (entity) =>
+      getAfterDelimiter(
+        extractResponseField(entity, FORM_STATES.ID)?.value,
+        "/"
+      ) === defaultValue
+  );
+  if (matchingEntity) {
+    return extractResponseField(
+      matchingEntity,
+      FORM_STATES.IRI,
+    )?.value;
+  }
+  return null;
+}
+
 
 /**
  * Translates the form type from the input and dictionary.

@@ -24,7 +24,7 @@ import {
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
-import { FORM_STATES } from "../form-utils";
+import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -131,26 +131,25 @@ export function DependentFormSection(
           // Optional fields should default to empty string
           defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
         }
-        // Has existing value that is set in the form or field
-        const hasExistingValue: boolean = props.form.getValues(field.fieldId).length > 0;
-        // If there is an existing or default value possible, search and use the option matching the default instance's local name
-        if (hasExistingValue || props.dependentProp?.defaultValue) {
-          // Existing value must take precedence over default value
-          const defaultValueId: string = hasExistingValue ? getAfterDelimiter(props.form.getValues(field.fieldId), "/") :
-            getAfterDelimiter((props.dependentProp?.defaultValue as SparqlResponseField).value, "/");
-
-          const matchingEntity: RegistryFieldValues = entities.find(
-            (entity) =>
-              getAfterDelimiter(
-                extractResponseField(entity, FORM_STATES.ID)?.value,
-                "/"
-              ) === defaultValueId
-          );
-          if (matchingEntity) {
-            defaultId = extractResponseField(
-              matchingEntity,
-              FORM_STATES.IRI
-            )?.value;
+        const fieldValue = props.form.getValues(field.fieldId);
+        // Find best matching value if there is an existing or default value;
+        // Existing value must take precedence
+        if (fieldValue && fieldValue.length > 0) {
+          const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
+          const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+          if (result != null) {
+            defaultId = result;
+          }
+        } else if (props.dependentProp?.defaultValue) {
+          const defaults: SparqlResponseField | SparqlResponseField[] = props.dependentProp?.defaultValue
+          // If this is not an array or the array's first item is not null
+          if (!(Array.isArray(defaults) && defaults[0] == null)) {
+            const defaultField: SparqlResponseField = Array.isArray(defaults) ? defaults[0] : defaults;
+            const defaultValueId: string = getAfterDelimiter(defaultField.value, "/");
+            const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+            if (result != null) {
+              defaultId = result;
+            }
           }
         }
       }
