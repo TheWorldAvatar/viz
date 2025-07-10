@@ -126,8 +126,11 @@ export function DependentFormSection(
       let defaultId: string = "";
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        // Set the id to the first possible option
-        defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
+        if (props.dependentProp?.minCount?.[VALUE_KEY] != "0") {
+          // Set the id to the first possible option when this is not optional
+          // Optional fields should default to empty string
+          defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
+        }
         // Has existing value that is set in the form or field
         const hasExistingValue: boolean = props.form.getValues(field.fieldId).length > 0;
         // If there is an existing or default value possible, search and use the option matching the default instance's local name
