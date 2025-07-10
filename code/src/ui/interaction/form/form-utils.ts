@@ -100,15 +100,21 @@ function initFormField(field: PropertyShape, outputState: FieldValues, fieldId: 
     let currentIndex: number = 0;
     const minArraySize: number = Number.isNaN(minSize) || minSize != 0 ? 1 : minSize;
 
+    // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
-      outputState[fieldId] = [];
+      // If this is the first field item, initialise it as empty
+      if (!outputState[fieldId]) {
+        outputState[fieldId] = [];
+      }
+      // Terminate early
       return {
         ...field,
         fieldId: parsedFieldId,
       };
     }
 
-    if (!outputState[fieldId]) {
+    // Initialise with an empty item as there is a default value
+    if (!outputState[fieldId] || outputState[fieldId].length === 0) {
       outputState[fieldId] = [{}];
     }
     // Append existing values if they exist
