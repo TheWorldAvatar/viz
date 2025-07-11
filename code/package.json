@@ -58,6 +58,7 @@
         "postcss": "^8.5.3",
         "react": "^19.1.0",
         "react-confetti": "^6.4.0",
+        "react-day-picker": "^9.8.0",
         "react-dom": "^19.1.0",
         "react-hook-form": "^7.56.0",
         "react-inlinesvg": "^4.2.0",

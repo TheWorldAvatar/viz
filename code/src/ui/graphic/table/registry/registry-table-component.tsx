@@ -48,9 +48,17 @@ export default function RegistryTableComponent(
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
+
+  // lazy initialization
+  // We get the date only on the initial render, this way selectedDate is always an object that represents a date range,
+  // even if the from and to properties are undefined. By providing an initial object, we ensure this.
+  const [selectedDate, setSelectedDate] = useState<{
+    from?: string;
+    to?: string;
+  }>(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return { from: today, to: undefined };
+  });
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -61,7 +69,6 @@ export default function RegistryTableComponent(
         if (props.lifecycleStage === "report") {
           if (pathNameEnd === props.entityType) {
             // Fetch active contracts
-            // scheduled tasks
             const activeRes = await fetch(
               makeInternalRegistryAPIwithParams(
                 "contracts",
@@ -86,7 +93,6 @@ export default function RegistryTableComponent(
             );
 
             // Fetch archived contracts
-            // closed tasks
             const archivedRes = await fetch(
               makeInternalRegistryAPIwithParams(
                 "contracts",
@@ -119,22 +125,61 @@ export default function RegistryTableComponent(
           }
         } else if (props.lifecycleStage == "tasks") {
           // outstanding
-          // Fetch service tasks for a specific date
-          const date = new Date(selectedDate);
-          const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
-              "tasks",
-              props.entityType,
-              unixTimestamp.toString()
-            ),
-            {
-              cache: "no-store",
-              credentials: "same-origin",
+          // Fetch service tasks for a specific date range
+          // Use selectedDate.from and selectedDate.to
+          // Need to adapt `makeInternalRegistryAPIwithParams`
+          // or the backend API to accept a date range (e.g., start_timestamp, end_timestamp)
+          if (selectedDate.from) {
+            const startDate = new Date(selectedDate.from);
+            const startTimestamp: number = Math.floor(
+              startDate.getTime() / 1000
+            );
+            let endTimestamp: number | undefined;
+
+            if (selectedDate.to) {
+              const endDate = new Date(selectedDate.to);
+              endTimestamp = Math.floor(endDate.getTime() / 1000);
             }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+
+            // Example: sending start and end timestamps in the URL or body
+            // We'll likely need to adjust makeInternalRegistryAPIwithParams or the backend
+            // to handle a date range. For now, this is a placeholder.
+            const res = await fetch(
+              makeInternalRegistryAPIwithParams(
+                "tasks",
+                props.entityType,
+                `${startTimestamp.toString()}${
+                  endTimestamp ? `/${endTimestamp.toString()}` : ""
+                }` // Example of passing range
+              ),
+              {
+                cache: "no-store",
+                credentials: "same-origin",
+              }
+            );
+            const resBody: AgentResponseBody = await res.json();
+            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+          } else {
+            // Handle case where no 'from' date is selected for tasks
+            instances = [];
+          }
+
+          // BEFORE
+          // const date = new Date(selectedDate);
+          // const unixTimestamp: number = Math.floor(date.getTime() / 1000);
+          // const res = await fetch(
+          //   makeInternalRegistryAPIwithParams(
+          //     "tasks",
+          //     props.entityType,
+          //     unixTimestamp.toString()
+          //   ),
+          //   {
+          //     cache: "no-store",
+          //     credentials: "same-origin",
+          //   }
+          // );
+          // const resBody: AgentResponseBody = await res.json();
+          // instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         } else if (props.lifecycleStage == "general") {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -166,10 +211,11 @@ export default function RegistryTableComponent(
       }
     };
 
+    // Trigger fetchData when isTaskModalOpen, refreshFlag, or selectedDate (range) changes
     if (!isTaskModalOpen || refreshFlag) {
       fetchData();
     }
-  }, [isTaskModalOpen, selectedDate, refreshFlag]);
+  }, [isTaskModalOpen, selectedDate, refreshFlag]); // Include selectedDate in dependencies
 
   useEffect(() => {
     if (task) {
@@ -187,10 +233,10 @@ export default function RegistryTableComponent(
           path={pathNameEnd}
           entityType={props.entityType}
           selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
-          setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
       </div>

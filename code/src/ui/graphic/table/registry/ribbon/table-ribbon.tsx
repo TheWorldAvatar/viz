@@ -1,6 +1,12 @@
 "use client";
 
-import React from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
@@ -13,14 +19,18 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import ColumnSearchComponent from "../actions/column-search";
+import { DayPicker, DateRange, getDefaultClassNames } from "react-day-picker";
+import "react-day-picker/style.css";
 
 interface TableRibbonProps {
   path: string;
   entityType: string;
-  selectedDate: string;
+  selectedDate: { from?: string; to?: string };
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
-  setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedDate: React.Dispatch<
+    React.SetStateAction<{ from?: string; to?: string }>
+  >;
   setCurrentInstances: React.Dispatch<
     React.SetStateAction<RegistryFieldValues[]>
   >;
@@ -32,10 +42,10 @@ interface TableRibbonProps {
  *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
- * @param {string} selectedDate The selected date in the date field input.
+ * @param {object} selectedDate The selected date range object with 'from' and 'to' date strings.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
- * @param setSelectedDate Method to update selected date.
+ * @param setSelectedDate A dispatch method to update selected date range.
  * @param setCurrentInstances A dispatch method to set the current instances after parsing the initial instances.
  * @param triggerRefresh Method to trigger refresh.
  */
@@ -44,15 +54,69 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const taskId: string = "task date";
+  const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
+  const dayPickerRef = useRef<HTMLDivElement>(null);
+  const defaultDayPickerClassNames = getDefaultClassNames();
 
-  // Handle change event for the date input
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setSelectedDate(event.target.value);
+  // Format Date to 'YYYY-MM-DD' string
+  const formatDateToYYYYMMDD = (date: Date): string => {
+    if (!date || isNaN(date.getTime())) {
+      throw new Error("Invalid date provided");
+    }
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-indexed
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
+
+  const dayPickerSelectedRange: DateRange = {
+    from: props.selectedDate?.from
+      ? new Date(props.selectedDate.from)
+      : undefined,
+    to: props.selectedDate?.to ? new Date(props.selectedDate.to) : undefined,
+  };
+
+  const handleDateSelect = useCallback(
+    (range: DateRange | undefined) => {
+      props.setSelectedDate({
+        from: range?.from ? formatDateToYYYYMMDD(range.from) : undefined,
+        to: range?.to ? formatDateToYYYYMMDD(range.to) : undefined,
+      });
+    },
+    [props.setSelectedDate]
+  );
 
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
+
+  // Close DayPicker if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dayPickerRef.current &&
+        !dayPickerRef.current.contains(event.target as Node)
+      ) {
+        setIsDayPickerOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const displayedDateRange = useMemo(() => {
+    return props.selectedDate.from
+      ? props.selectedDate.to
+        ? `${formatDateToYYYYMMDD(
+            new Date(props.selectedDate.from)
+          )} to ${formatDateToYYYYMMDD(new Date(props.selectedDate.to))}`
+        : formatDateToYYYYMMDD(new Date(props.selectedDate.from)) // If only 'from' is selected
+      : "";
+  }, [props.selectedDate]); // If nothing is selected
+
+  console.log("Props", props.selectedDate, "Displayed:", displayedDateRange);
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -153,10 +217,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         </div>
       </div>
-      <div className="flex ml-2 ">
+      <div className="flex ml-2 " ref={dayPickerRef}>
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed") && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 relative">
             <label
               className="my-1 text-sm md:text-lg text-left whitespace-nowrap"
               htmlFor={taskId}
@@ -165,12 +229,36 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </label>
             <input
               id={taskId}
-              className="h-8 w-full max-w-none p-5 rounded-lg border-1 border-border bg-muted text-foreground shadow-md"
-              type={"date"}
-              defaultValue={props.selectedDate}
+              type="text"
+              value={displayedDateRange}
+              readOnly
+              onClick={() => setIsDayPickerOpen(!isDayPickerOpen)}
+              className={`h-8 ${
+                props.selectedDate?.to ? "w-60" : "w-28"
+              } p-4 rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
               aria-label={taskId}
-              onChange={handleDateChange}
             />
+            {isDayPickerOpen && (
+              <div className="absolute z-10 bg-muted  p-2 rounded-lg shadow-lg top-full mt-2">
+                <DayPicker
+                  mode="range"
+                  selected={dayPickerSelectedRange}
+                  onSelect={handleDateSelect}
+                  classNames={{
+                    today: `border-amber-500`, // Add a border to today's date
+                    selected: `bg-amber-500 border-amber-500 `, // Highlight the selected day
+                    root: `${defaultDayPickerClassNames.root}  p-4`, // Add a shadow to the root element
+                    chevron: `${defaultDayPickerClassNames.chevron} fill-amber-500`, // Change the color of the chevron
+                    footer: `mt-4  font-bold `,
+                  }}
+                  footer={
+                    displayedDateRange
+                      ? `Selected: ${displayedDateRange}`
+                      : "Pick a date range."
+                  }
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
