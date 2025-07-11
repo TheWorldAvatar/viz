@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.33.2
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.8.1` to `v1.8.2`
+
+### Bug Fixes
+
+- Fixed the issue with default values being ignored when sent from the API, especially for partial solutions
+- Fixed form field arrays
+
 ## 5.33.1
 
 ### Changes
