@@ -11,7 +11,7 @@
 #
 
 # ---- Base Image ----
-FROM node:24.2-slim AS base
+FROM node:24.3-slim AS base
 RUN corepack enable
 WORKDIR /twa
 RUN mkdir .public_hash
