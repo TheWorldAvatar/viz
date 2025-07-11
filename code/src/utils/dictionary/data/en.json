@@ -141,7 +141,10 @@
       "help": "Help Centre",
       "pending": "Pending",
       "active": "Active",
-      "archive": "Archive"
+      "archive": "Archive",
+      "outstanding": "Outstanding",
+      "scheduled": "Scheduled",
+      "closed": "Closed"
     },
     "tooltip": {
       "home": "Return to landing page",

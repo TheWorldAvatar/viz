@@ -61,6 +61,7 @@ export default function RegistryTableComponent(
         if (props.lifecycleStage === "report") {
           if (pathNameEnd === props.entityType) {
             // Fetch active contracts
+            // scheduled tasks
             const activeRes = await fetch(
               makeInternalRegistryAPIwithParams(
                 "contracts",
@@ -85,6 +86,7 @@ export default function RegistryTableComponent(
             );
 
             // Fetch archived contracts
+            // closed tasks
             const archivedRes = await fetch(
               makeInternalRegistryAPIwithParams(
                 "contracts",
@@ -100,6 +102,7 @@ export default function RegistryTableComponent(
             instances = activeInstances.concat(archivedInstances);
           } else {
             // Fetch service tasks for a specific contract
+            // outstanding tasks
             const res = await fetch(
               makeInternalRegistryAPIwithParams(
                 "tasks",
@@ -115,6 +118,7 @@ export default function RegistryTableComponent(
             instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
           }
         } else if (props.lifecycleStage == "tasks") {
+          // outstanding
           // Fetch service tasks for a specific date
           const date = new Date(selectedDate);
           const unixTimestamp: number = Math.floor(date.getTime() / 1000);
@@ -191,8 +195,9 @@ export default function RegistryTableComponent(
         />
       </div>
       <div className="flex items-center ml-6">
-        {(props.lifecycleStage == "active" ||
-          props.lifecycleStage == "archive") && (
+        {(props.lifecycleStage == "scheduled" ||
+          props.lifecycleStage == "outstanding" ||
+          props.lifecycleStage == "closed") && (
           <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
             <Icon className={`material-symbols-outlined`}>info</Icon>
             {dict.message.registryInstruction}

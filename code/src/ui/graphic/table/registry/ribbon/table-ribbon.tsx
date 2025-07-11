@@ -56,6 +56,45 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
+      {props.lifecycleStage !== "general" &&
+        props.lifecycleStage !== "pending" && (
+          <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 dark:bg-zinc-800   max-w-fit p-1.5 text-center rounded-lg flex-wrap">
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.pendingRegistry) && (
+              <RedirectButton
+                label={dict.nav.title.outstanding}
+                leftIcon="pending"
+                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                variant={
+                  props.lifecycleStage == "outstanding" ? "active" : "ghost"
+                }
+              />
+            )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.activeArchiveRegistry) && (
+              <RedirectButton
+                label={dict.nav.title.scheduled}
+                leftIcon="schedule"
+                url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+                variant={
+                  props.lifecycleStage == "scheduled" ? "active" : "ghost"
+                }
+              />
+            )}
+            {(!keycloakEnabled ||
+              !permissionScheme ||
+              permissionScheme.hasPermissions.activeArchiveRegistry) && (
+              <RedirectButton
+                label={dict.nav.title.closed}
+                leftIcon="archive"
+                url={`${Routes.REGISTRY_TASK_CLOSED}`}
+                variant={props.lifecycleStage == "closed" ? "active" : "ghost"}
+              />
+            )}
+          </div>
+        )}
       <div className="w-full border-[0.5px] border-border" />
       <div className="flex justify-between md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-center !-ml-2 ">
@@ -115,7 +154,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
       </div>
       <div className="flex ml-2 ">
-        {props.lifecycleStage == "tasks" && (
+        {(props.lifecycleStage == "scheduled" ||
+          props.lifecycleStage == "closed") && (
           <div className="flex items-center gap-4">
             <label
               className="my-1 text-sm md:text-lg text-left whitespace-nowrap"

@@ -141,7 +141,10 @@
       "help": "Hilfe-Center",
       "pending": "Ausstehend",
       "active": "Aktiv",
-      "archive": "Archiv"
+      "archive": "Archiv",
+      "outstanding": "Outstanding",
+      "scheduled": "Scheduled",
+      "closed": "Closed"
     },
     "tooltip": {
       "home": "Zurück zur Startseite",
