@@ -20,7 +20,9 @@ import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import ColumnSearchComponent from "../actions/column-search";
 import { DayPicker, DateRange, getDefaultClassNames } from "react-day-picker";
+import { de, enGB } from "react-day-picker/locale";
 import "react-day-picker/style.css";
+import { message } from "antd";
 
 interface TableRibbonProps {
   path: string;
@@ -234,27 +236,32 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               readOnly
               onClick={() => setIsDayPickerOpen(!isDayPickerOpen)}
               className={`h-8 ${
-                props.selectedDate?.to ? "w-60" : "w-28"
+                props.selectedDate?.to ? "w-60" : "w-32"
               } p-4 rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
               aria-label={taskId}
             />
             {isDayPickerOpen && (
-              <div className="absolute z-10 bg-muted  p-2 rounded-lg shadow-lg top-full mt-2">
+              <div className="absolute z-10 bg-muted p-2 rounded-lg shadow-lg top-full mt-2">
                 <DayPicker
+                  locale={
+                    window.navigator.language.startsWith("de") ? de : enGB
+                  }
                   mode="range"
                   selected={dayPickerSelectedRange}
                   onSelect={handleDateSelect}
                   classNames={{
-                    today: `border-amber-500`, // Add a border to today's date
-                    selected: `bg-amber-500 border-amber-500 `, // Highlight the selected day
+                    today: `!bg-secondary rounded-full`, // Add a border to today's date
+                    selected: `!bg-gray-200 rounded-full`, // Highlight the selected day
                     root: `${defaultDayPickerClassNames.root}  p-4`, // Add a shadow to the root element
-                    chevron: `${defaultDayPickerClassNames.chevron} fill-amber-500`, // Change the color of the chevron
-                    footer: `mt-4  font-bold `,
+                    chevron: ` fill-primary`, // Change the color of the chevron
+                    footer: `mt-4 font-bold `,
+                    range_start: `!bg-primary`, // Highlight the start of the range
+                    range_end: `!bg-primary`, // Highlight the end of the range
                   }}
                   footer={
                     displayedDateRange
-                      ? `Selected: ${displayedDateRange}`
-                      : "Pick a date range."
+                      ? `${dict.message.selected} ${displayedDateRange}`
+                      : dict.message.noDateSelected
                   }
                 />
               </div>
@@ -265,3 +272,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     </div>
   );
 }
+
+// today: `bg-primary rounded-full`, // Add a border to today's date
+//                   selected: `bg-primary rounded-full`, // Highlight the selected day
+//                   root: `${defaultDayPickerClassNames.root}  p-4`, // Add a shadow to the root element
+//                   chevron: ` fill-primary`, // Change the color of the chevron
+//                   footer: `mt-4 font-bold`,

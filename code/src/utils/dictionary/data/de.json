@@ -121,7 +121,9 @@
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
-    "na": "Nicht anwendbar"
+    "na": "Nicht anwendbar",
+    "selected": "Selected:",
+    "noDateSelected": "Pick a date range."
   },
   "nav": {
     "caption": {
