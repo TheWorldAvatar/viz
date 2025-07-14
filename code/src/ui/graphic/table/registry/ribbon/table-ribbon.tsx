@@ -112,10 +112,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       ? props.selectedDate.to
         ? `${formatDateToYYYYMMDD(
             new Date(props.selectedDate.from)
-          )} to ${formatDateToYYYYMMDD(new Date(props.selectedDate.to))}`
+          )} - ${formatDateToYYYYMMDD(new Date(props.selectedDate.to))}`
         : formatDateToYYYYMMDD(new Date(props.selectedDate.from)) // If only 'from' is selected
       : "";
-  }, [props.selectedDate]); // If nothing is selected
+  }, [props.selectedDate]);
 
   const getDisabledDates = useMemo(() => {
     const today = new Date();
@@ -256,21 +256,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   mode="range"
                   selected={dayPickerSelectedRange}
                   onSelect={handleDateSelect}
-                  disabled={getDisabledDates} // Disable dates based on lifecycle stage
+                  disabled={getDisabledDates}
                   classNames={{
-                    today: `${
-                      props.lifecycleStage === "scheduled"
-                        ? "!bg-primary rounded-full"
-                        : "!bg-primary rounded-full"
-                    }`, // Add a border to today's date
+                    today: `!bg-primary rounded-full`,
                     selected: ``, // Highlight the selected day
-                    root: `${defaultDayPickerClassNames.root}  p-4`, // Add a shadow to the root element
-                    chevron: ` fill-primary`, // Change the color of the chevron
-                    footer: `mt-4 font-bold `,
+                    root: `${defaultDayPickerClassNames.root}  p-4`,
+                    chevron: ` fill-primary`,
+                    footer: `mt-4 font-bold flex justify-center items-center`,
                   }}
                   footer={
                     displayedDateRange
-                      ? `${dict.message.selected} ${displayedDateRange}`
+                      ? displayedDateRange
                       : dict.message.noDateSelected
                   }
                 />
@@ -282,9 +278,3 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     </div>
   );
 }
-
-// today: `bg-primary rounded-full`, // Add a border to today's date
-//                   selected: `bg-primary rounded-full`, // Highlight the selected day
-//                   root: `${defaultDayPickerClassNames.root}  p-4`, // Add a shadow to the root element
-//                   chevron: ` fill-primary`, // Change the color of the chevron
-//                   footer: `mt-4 font-bold`,
