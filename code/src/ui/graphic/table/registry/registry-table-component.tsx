@@ -56,8 +56,20 @@ export default function RegistryTableComponent(
     from?: string;
     to?: string;
   }>(() => {
-    const today = new Date().toISOString().split("T")[0];
-    return { from: today, to: undefined };
+    const today = new Date();
+    let initialDate: string;
+
+    if (props.lifecycleStage === "scheduled") {
+      // For scheduled: start with tomorrow since today and past are disabled
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      initialDate = tomorrow.toISOString().split("T")[0];
+    } else {
+      // For closed and other stages: start with today
+      initialDate = today.toISOString().split("T")[0];
+    }
+
+    return { from: initialDate, to: undefined };
   });
 
   // A hook that refetches all data when the dialogs are closed

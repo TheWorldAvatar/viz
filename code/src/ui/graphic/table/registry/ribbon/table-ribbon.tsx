@@ -22,7 +22,6 @@ import ColumnSearchComponent from "../actions/column-search";
 import { DayPicker, DateRange, getDefaultClassNames } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import "react-day-picker/style.css";
-import { message } from "antd";
 
 interface TableRibbonProps {
   path: string;
@@ -118,7 +117,15 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       : "";
   }, [props.selectedDate]); // If nothing is selected
 
-  console.log("Props", props.selectedDate, "Displayed:", displayedDateRange);
+  const getDisabledDates = useMemo(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (props.lifecycleStage === "scheduled") {
+      return { before: tomorrow }; // Disable today and all dates before today (only allow future dates)
+    }
+  }, [props.lifecycleStage]);
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -249,14 +256,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   mode="range"
                   selected={dayPickerSelectedRange}
                   onSelect={handleDateSelect}
+                  disabled={getDisabledDates} // Disable dates based on lifecycle stage
                   classNames={{
-                    today: `!bg-secondary rounded-full`, // Add a border to today's date
-                    selected: `!bg-gray-200 rounded-full`, // Highlight the selected day
+                    today: `${
+                      props.lifecycleStage === "scheduled"
+                        ? "!bg-primary rounded-full"
+                        : "!bg-primary rounded-full"
+                    }`, // Add a border to today's date
+                    selected: ``, // Highlight the selected day
                     root: `${defaultDayPickerClassNames.root}  p-4`, // Add a shadow to the root element
                     chevron: ` fill-primary`, // Change the color of the chevron
                     footer: `mt-4 font-bold `,
-                    range_start: `!bg-primary`, // Highlight the start of the range
-                    range_end: `!bg-primary`, // Highlight the end of the range
                   }}
                   footer={
                     displayedDateRange
