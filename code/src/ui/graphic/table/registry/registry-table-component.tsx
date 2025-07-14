@@ -144,7 +144,7 @@ export default function RegistryTableComponent(
                 "scheduled",
                 props.entityType,
                 startDate,
-                endDate ?? undefined
+                ...(endDate ? [endDate] : [])
               ),
               {
                 cache: "no-store",
@@ -171,7 +171,7 @@ export default function RegistryTableComponent(
                 "closed",
                 props.entityType,
                 startDate,
-                endDate ?? undefined
+                ...(endDate ? [endDate] : [])
               ),
               {
                 cache: "no-store",

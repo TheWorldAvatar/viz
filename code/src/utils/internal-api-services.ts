@@ -93,16 +93,20 @@ export function makeInternalRegistryAPIwithParams(
     case "scheduled":
       searchParams = new URLSearchParams({
         type: params[0],
-        Timestamp_start: params[1],
-        Timestamp_end: params[2],
+        start_date: params[1],
       });
+      if (params[2] && params[2] !== "undefined") {
+        searchParams.set("end_date", params[2]);
+      }
       break;
     case "closed":
       searchParams = new URLSearchParams({
         type: params[0],
-        Timestamp_start: params[1],
-        Timestamp_end: params[2],
+        start_date: params[1],
       });
+      if (params[2] && params[2] !== "undefined") {
+        searchParams.set("end_date", params[2]);
+      }
       break;
   }
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
