@@ -12,8 +12,15 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
-import { RegistryFieldValues, SparqlResponseField } from "types/form";
+import { RegistryFieldValues, SparqlResponseField , LifecycleStage } from "types/form";
 import { JsonObject } from "types/json";
+import { useMemo } from "react";
+
+
+interface DateRange {
+  from?: string;
+  to?: string;
+}
 
 /**
  * Open full screen mode.
@@ -166,4 +173,24 @@ export function extractResponseField(
   } else {
     return response[field];
   }
+}
+
+
+export function setInitialDate(lifecycleStage: LifecycleStage): DateRange {
+  return useMemo(() => {
+    const today = new Date();
+    let initialDate: string;
+
+    if (lifecycleStage === "scheduled") {
+      // For scheduled: start with tomorrow since today and past are disabled
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      initialDate = tomorrow.toISOString().split("T")[0];
+    } else {
+      // For closed and other stages: start with today
+      initialDate = today.toISOString().split("T")[0];
+    }
+
+    return { from: initialDate, to: undefined as string | undefined };
+  }, [lifecycleStage]);
 }

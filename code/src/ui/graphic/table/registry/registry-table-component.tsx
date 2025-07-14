@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
+import { setInitialDate } from "utils/client-utils";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
@@ -52,25 +53,11 @@ export default function RegistryTableComponent(
   // lazy initialization
   // We get the date only on the initial render, this way selectedDate is always an object that represents a date range,
   // even if the from and to properties are undefined. By providing an initial object, we ensure this.
+
   const [selectedDate, setSelectedDate] = useState<{
     from?: string;
     to?: string;
-  }>(() => {
-    const today = new Date();
-    let initialDate: string;
-
-    if (props.lifecycleStage === "scheduled") {
-      // For scheduled: start with tomorrow since today and past are disabled
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      initialDate = tomorrow.toISOString().split("T")[0];
-    } else {
-      // For closed and other stages: start with today
-      initialDate = today.toISOString().split("T")[0];
-    }
-
-    return { from: initialDate, to: undefined };
-  });
+  }>(setInitialDate(props.lifecycleStage));
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
