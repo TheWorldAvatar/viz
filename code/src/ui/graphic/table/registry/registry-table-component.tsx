@@ -123,34 +123,28 @@ export default function RegistryTableComponent(
             const resBody: AgentResponseBody = await res.json();
             instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
           }
-        } else if (props.lifecycleStage == "tasks") {
-          // outstanding
-          // Fetch service tasks for a specific date range
-          // Use selectedDate.from and selectedDate.to
-          // Need to adapt `makeInternalRegistryAPIwithParams`
-          // or the backend API to accept a date range (e.g., start_timestamp, end_timestamp)
+        } else if (props.lifecycleStage == "outstanding") {
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams("outstanding", props.entityType),
+            { cache: "no-store", credentials: "same-origin" }
+          );
+          const resBody: AgentResponseBody = await res.json();
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+        } else if (props.lifecycleStage == "scheduled") {
           if (selectedDate.from) {
-            const startDate = new Date(selectedDate.from);
-            const startTimestamp: number = Math.floor(
-              startDate.getTime() / 1000
-            );
-            let endTimestamp: number | undefined;
+            const startDate = selectedDate.from;
+            let endDate: string | undefined;
 
             if (selectedDate.to) {
-              const endDate = new Date(selectedDate.to);
-              endTimestamp = Math.floor(endDate.getTime() / 1000);
+              endDate = selectedDate.to;
             }
 
-            // Example: sending start and end timestamps in the URL or body
-            // We'll likely need to adjust makeInternalRegistryAPIwithParams or the backend
-            // to handle a date range. For now, this is a placeholder.
             const res = await fetch(
               makeInternalRegistryAPIwithParams(
-                "tasks",
+                "scheduled",
                 props.entityType,
-                `${startTimestamp.toString()}${
-                  endTimestamp ? `/${endTimestamp.toString()}` : ""
-                }` // Example of passing range
+                startDate,
+                endDate ?? undefined
               ),
               {
                 cache: "no-store",
@@ -163,23 +157,33 @@ export default function RegistryTableComponent(
             // Handle case where no 'from' date is selected for tasks
             instances = [];
           }
+        } else if (props.lifecycleStage == "closed") {
+          if (selectedDate.from) {
+            const startDate = selectedDate.from;
+            let endDate: string | undefined;
 
-          // BEFORE
-          // const date = new Date(selectedDate);
-          // const unixTimestamp: number = Math.floor(date.getTime() / 1000);
-          // const res = await fetch(
-          //   makeInternalRegistryAPIwithParams(
-          //     "tasks",
-          //     props.entityType,
-          //     unixTimestamp.toString()
-          //   ),
-          //   {
-          //     cache: "no-store",
-          //     credentials: "same-origin",
-          //   }
-          // );
-          // const resBody: AgentResponseBody = await res.json();
-          // instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+            if (selectedDate.to) {
+              endDate = selectedDate.to;
+            }
+
+            const res = await fetch(
+              makeInternalRegistryAPIwithParams(
+                "closed",
+                props.entityType,
+                startDate,
+                endDate ?? undefined
+              ),
+              {
+                cache: "no-store",
+                credentials: "same-origin",
+              }
+            );
+            const resBody: AgentResponseBody = await res.json();
+            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+          } else {
+            // Handle case where no 'from' date is selected for tasks
+            instances = [];
+          }
         } else if (props.lifecycleStage == "general") {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(

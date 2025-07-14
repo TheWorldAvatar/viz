@@ -4,7 +4,10 @@ import { parseStringsForUrls } from "./client-utils";
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
 
-export function makeInternalRegistryAPIwithParams(internalIdentifier: InternalApiIdentifier, ...params: string[]): string {
+export function makeInternalRegistryAPIwithParams(
+  internalIdentifier: InternalApiIdentifier,
+  ...params: string[]
+): string {
   let searchParams: URLSearchParams;
   switch (internalIdentifier) {
     case "address":
@@ -80,6 +83,25 @@ export function makeInternalRegistryAPIwithParams(internalIdentifier: InternalAp
       searchParams = new URLSearchParams({
         type: params[0],
         idOrTimestamp: params[1],
+      });
+      break;
+    case "outstanding":
+      searchParams = new URLSearchParams({
+        type: params[0],
+      });
+      break;
+    case "scheduled":
+      searchParams = new URLSearchParams({
+        type: params[0],
+        Timestamp_start: params[1],
+        Timestamp_end: params[2],
+      });
+      break;
+    case "closed":
+      searchParams = new URLSearchParams({
+        type: params[0],
+        Timestamp_start: params[1],
+        Timestamp_end: params[2],
       });
       break;
   }
