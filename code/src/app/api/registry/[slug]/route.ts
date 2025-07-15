@@ -1,6 +1,5 @@
 import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
-import { start } from "repl";
 import { AgentResponseBody, InternalApiIdentifier } from "types/backend-agent";
 import { LifecycleStage } from "types/form";
 import { logColours } from "utils/logColours";
@@ -320,7 +319,7 @@ function makeExternalEndpoint(
         new Date(endDate).getTime() / 1000
       );
 
-      let url = `${agentBaseApi}/contracts/service/scheduled?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      const url = `${agentBaseApi}/contracts/service/scheduled?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       return url;
     }
     case "closed": {
@@ -334,7 +333,7 @@ function makeExternalEndpoint(
         new Date(endDate).getTime() / 1000
       );
 
-      let url = `${agentBaseApi}/contracts/service/closed?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      const url = `${agentBaseApi}/contracts/service/closed?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       return url;
     }
     default:
