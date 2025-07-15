@@ -307,35 +307,34 @@ function makeExternalEndpoint(
     }
     case "outstanding": {
       const contractType: string = searchParams.get("type");
-      return `${agentBaseApi}/contracts/service/1752485955?type=${contractType}`;
+      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}`;
     }
     case "scheduled": {
       const contractType: string = searchParams.get("type");
       const startDate: string = searchParams.get("start_date");
       const endDate: string = searchParams.get("end_date");
+      const unixTimestampStartDate: number = Math.floor(
+        new Date(startDate).getTime() / 1000
+      );
+      const unixTimestampEndDate: number = Math.floor(
+        new Date(endDate).getTime() / 1000
+      );
 
-      let url = `${agentBaseApi}/contracts/service/1752485955&1752485956?type=${contractType}`;
-      if (startDate) {
-        url += `&start_date=${startDate}`;
-      }
-      if (endDate && endDate !== "undefined") {
-        url += `&end_date=${endDate}`;
-      }
+      let url = `${agentBaseApi}/contracts/service/scheduled?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       return url;
     }
     case "closed": {
       const contractType: string = searchParams.get("type");
       const startDate: string = searchParams.get("start_date");
       const endDate: string = searchParams.get("end_date");
+      const unixTimestampStartDate: number = Math.floor(
+        new Date(startDate).getTime() / 1000
+      );
+      const unixTimestampEndDate: number = Math.floor(
+        new Date(endDate).getTime() / 1000
+      );
 
-      // let url = `${agentBaseApi}/contracts/closed?type=${contractType}`;
-      let url = `${agentBaseApi}/contracts/service/1752485955&1752485956?type=${contractType}`;
-      if (startDate) {
-        url += `&start_date=${startDate}`;
-      }
-      if (endDate && endDate !== "undefined") {
-        url += `&end_date=${endDate}`;
-      }
+      let url = `${agentBaseApi}/contracts/service/closed?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       return url;
     }
     default:

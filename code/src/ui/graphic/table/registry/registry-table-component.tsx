@@ -130,59 +130,41 @@ export default function RegistryTableComponent(
           const resBody: AgentResponseBody = await res.json();
           instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         } else if (props.lifecycleStage == "scheduled") {
-          if (selectedDate.from) {
-            const startDate = selectedDate.from;
-            let endDate: string | undefined;
+          const startDate = selectedDate.from;
+          const endDate = selectedDate.to;
 
-            if (selectedDate.to) {
-              endDate = selectedDate.to;
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams(
+              "scheduled",
+              props.entityType,
+              startDate,
+              endDate
+            ),
+            {
+              cache: "no-store",
+              credentials: "same-origin",
             }
-
-            const res = await fetch(
-              makeInternalRegistryAPIwithParams(
-                "scheduled",
-                props.entityType,
-                startDate,
-                ...(endDate ? [endDate] : [])
-              ),
-              {
-                cache: "no-store",
-                credentials: "same-origin",
-              }
-            );
-            const resBody: AgentResponseBody = await res.json();
-            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-          } else {
-            // Handle case where no 'from' date is selected for tasks
-            instances = [];
-          }
+          );
+          const resBody: AgentResponseBody = await res.json();
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         } else if (props.lifecycleStage == "closed") {
-          if (selectedDate.from) {
-            const startDate = selectedDate.from;
-            let endDate: string | undefined;
+          const startDate = selectedDate.from;
+          const endDate = selectedDate.to;
 
-            if (selectedDate.to) {
-              endDate = selectedDate.to;
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams(
+              "closed",
+              props.entityType,
+              startDate,
+              endDate
+            ),
+            {
+              cache: "no-store",
+              credentials: "same-origin",
             }
-
-            const res = await fetch(
-              makeInternalRegistryAPIwithParams(
-                "closed",
-                props.entityType,
-                startDate,
-                ...(endDate ? [endDate] : [])
-              ),
-              {
-                cache: "no-store",
-                credentials: "same-origin",
-              }
-            );
-            const resBody: AgentResponseBody = await res.json();
-            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-          } else {
-            // Handle case where no 'from' date is selected for tasks
-            instances = [];
-          }
+          );
+          const resBody: AgentResponseBody = await res.json();
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
         } else if (props.lifecycleStage == "general") {
           const res = await fetch(
             makeInternalRegistryAPIwithParams(

@@ -12,10 +12,13 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
-import { RegistryFieldValues, SparqlResponseField , LifecycleStage } from "types/form";
+import {
+  RegistryFieldValues,
+  SparqlResponseField,
+  LifecycleStage,
+} from "types/form";
 import { JsonObject } from "types/json";
 import { useMemo } from "react";
-
 
 interface DateRange {
   from?: string;
@@ -126,7 +129,8 @@ export function getId(input: string): string {
  */
 export function isValidIRI(iri: string): boolean {
   // eslint-disable-next-line
-  const iriPattern = /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
+  const iriPattern =
+    /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
   return iriPattern.test(iri);
 }
 
@@ -175,10 +179,10 @@ export function extractResponseField(
   }
 }
 
-
 export function setInitialDate(lifecycleStage: LifecycleStage): DateRange {
   return useMemo(() => {
     const today = new Date();
+
     let initialDate: string;
 
     if (lifecycleStage === "scheduled") {
@@ -191,6 +195,6 @@ export function setInitialDate(lifecycleStage: LifecycleStage): DateRange {
       initialDate = today.toISOString().split("T")[0];
     }
 
-    return { from: initialDate, to: undefined as string | undefined };
+    return { from: initialDate, to: initialDate };
   }, [lifecycleStage]);
 }

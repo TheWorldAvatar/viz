@@ -259,7 +259,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   disabled={getDisabledDates}
                   classNames={{
                     today: `!bg-primary rounded-full`,
-                    selected: ``, // Highlight the selected day
+                    selected: ``,
                     root: `${defaultDayPickerClassNames.root}  p-4`,
                     chevron: ` fill-primary`,
                     footer: `mt-4 font-bold flex justify-center items-center`,
