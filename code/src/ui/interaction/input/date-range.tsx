@@ -81,7 +81,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               className="z-10 bg-muted p-2 rounded-lg shadow-lg mt-2 border border-border"
             >
               <DayPicker
-                locale={window.navigator.language.startsWith("de") ? de : enGB}
+                locale={dict.lang === "de" ? de : enGB}
                 mode="range"
                 selected={props.selectedDate}
                 onSelect={handleDateSelect}
