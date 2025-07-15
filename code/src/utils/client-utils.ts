@@ -129,8 +129,7 @@ export function getId(input: string): string {
  */
 export function isValidIRI(iri: string): boolean {
   // eslint-disable-next-line
-  const iriPattern =
-    /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
+  const iriPattern = /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
   return iriPattern.test(iri);
 }
 
