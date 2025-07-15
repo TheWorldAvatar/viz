@@ -232,7 +232,7 @@ function NavMenuContents(
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
         (!keycloakEnabled ||
-          permissionScheme?.hasPermissions.pendingRegistry) && (
+          permissionScheme?.hasPermissions.registrySubmission) && (
           <NavBarItem
             title={
               registrySubmissionLinkProps?.title ?? dict.nav.title.submission
@@ -254,7 +254,7 @@ function NavMenuContents(
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
         (!keycloakEnabled ||
-          permissionScheme?.hasPermissions.activeArchiveRegistry) && (
+          permissionScheme?.hasPermissions.registry) && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}

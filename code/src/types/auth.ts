@@ -20,8 +20,9 @@ export type PermissionScheme = {
  * A HasPermissions object containing user permissions to view and interact with certain components.
  */
 export type HasPermissions = {
-    pendingRegistry: boolean;
-    activeArchiveRegistry: boolean;
+    registry: boolean;
+    registrySubmission: boolean;
+    allTasks: boolean;
     invoice: boolean;
     sales: boolean;
     operation: boolean;
