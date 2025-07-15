@@ -26,7 +26,6 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   const dict: Dictionary = useDictionary();
 
   const defaultDayPickerClassNames = getDefaultClassNames();
-  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.to ? " - " + props.selectedDate.to.toLocaleDateString() : ""}`;
 
   const popover = usePopover();
   const transition = useTransitionStyles(popover.context, {
@@ -46,6 +45,8 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     },
     [props.setSelectedDate]
   );
+
+  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.from != props.selectedDate.to ? " - " + props.selectedDate.to.toLocaleDateString() : ""}`;
 
   return (
     <div className="flex items-center gap-4 relative">
