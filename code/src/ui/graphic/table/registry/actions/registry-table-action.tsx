@@ -104,7 +104,7 @@ export default function RegistryRowActions(
   const isSubmissionPage: boolean = props.lifecycleStage == "pending";
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center  ">
       {!isSubmissionPage && !showsExpandedTask && (
         <Button
           variant="ghost"

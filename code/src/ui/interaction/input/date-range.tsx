@@ -116,7 +116,7 @@ export default function DateRangeInput({
         aria-expanded={isDayPickerOpen}
       />
       {isDayPickerOpen && (
-        <div className="absolute z-10 bg-muted p-2 rounded-lg shadow-lg top-full mt-2">
+        <div className="absolute z-10 bg-muted p-2 rounded-lg shadow-lg top-full mt-2 border border-border">
           <DayPicker
             locale={window.navigator.language.startsWith("de") ? de : enGB}
             mode="range"
@@ -125,11 +125,14 @@ export default function DateRangeInput({
             disabled={getDisabledDates}
             aria-label={taskId}
             classNames={{
-              today: `!bg-primary rounded-full`,
-              selected: ``,
+              today: `text-blue-700 `,
+              selected: `bg-gray-200 dark:bg-zinc-800`,
               root: `${defaultDayPickerClassNames.root}  p-4`,
-              chevron: ` fill-primary`,
-              footer: `mt-4 font-bold flex justify-center items-center`,
+              chevron: ` fill-foreground`,
+              footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
+              range_middle: ` `,
+              range_start: `!bg-primary text-foreground rounded-full`,
+              range_end: `!bg-primary text-foreground rounded-full`,
             }}
             footer={
               displayedDateRange
