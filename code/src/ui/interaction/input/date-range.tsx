@@ -1,147 +1,123 @@
-import { DayPicker, DateRange, getDefaultClassNames } from "react-day-picker";
-import { de, enGB } from "react-day-picker/locale";
 import "react-day-picker/style.css";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { LifecycleStage } from "types/form";
-import { Dictionary } from "types/dictionary";
+
+import { FloatingPortal, useTransitionStyles } from "@floating-ui/react";
+import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
+import { useCallback, useId } from "react";
+import { DateBefore, DateRange, DayPicker, getDefaultClassNames } from "react-day-picker";
+import { de, enGB } from "react-day-picker/locale";
+import { Dictionary } from "types/dictionary";
+import { LifecycleStage } from "types/form";
 
 interface DateRangeInputProps {
-  selectedDate: { from?: string; to?: string };
-  setSelectedDate: React.Dispatch<
-    React.SetStateAction<{ from?: string; to?: string }>
-  >;
+  selectedDate: DateRange;
+  setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   lifecycleStage: LifecycleStage;
-  dayPickerRef: React.RefObject<HTMLDivElement>;
 }
 
-/**
- * @param {object} selectedDate The selected date range object with 'from' and 'to' date strings.
+/** A component to display a date range input
+ * 
+ * @param {DateRange} selectedDate The selected date range.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param dayPickerRef A reference to the DayPicker component for handling clicks outside.
  */
-
-export default function DateRangeInput({
-  selectedDate,
-  setSelectedDate,
-  lifecycleStage,
-  dayPickerRef,
-}: DateRangeInputProps) {
-  const taskId: string = "task date range";
+export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
+  const id: string = useId();
   const dict: Dictionary = useDictionary();
-  const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
+
   const defaultDayPickerClassNames = getDefaultClassNames();
+  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.to ? " - " + props.selectedDate.to.toLocaleDateString() : ""}`;
 
-  const dayPickerSelectedRange: DateRange = {
-    from: selectedDate?.from ? new Date(selectedDate.from) : undefined,
-    to: selectedDate?.to ? new Date(selectedDate.to) : undefined,
-  };
-
-  // Format Date to 'YYYY-MM-DD' string
-  const formatDateToYYYYMMDD = (date: Date): string => {
-    if (!date || isNaN(date.getTime())) {
-      throw new Error("Invalid date provided");
-    }
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-indexed
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  const popover = usePopover();
+  const transition = useTransitionStyles(popover.context, {
+    duration: 200,
+    initial: {
+      opacity: 0,
+      transform: "scale(0.9)",
+    },
+  });
 
   const handleDateSelect = useCallback(
     (range: DateRange | undefined) => {
-      setSelectedDate({
-        from: range?.from ? formatDateToYYYYMMDD(range.from) : undefined,
-        to: range?.to ? formatDateToYYYYMMDD(range.to) : undefined,
+      props.setSelectedDate({
+        from: range?.from ?? undefined,
+        to: range?.to ?? undefined,
       });
     },
-    [setSelectedDate]
+    [props.setSelectedDate]
   );
-
-  // Close DayPicker if clicked outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dayPickerRef.current &&
-        !dayPickerRef.current.contains(event.target as Node)
-      ) {
-        setIsDayPickerOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const displayedDateRange = useMemo(() => {
-    return selectedDate.from
-      ? selectedDate.to
-        ? `${formatDateToYYYYMMDD(
-            new Date(selectedDate.from)
-          )} - ${formatDateToYYYYMMDD(new Date(selectedDate.to))}`
-        : formatDateToYYYYMMDD(new Date(selectedDate.from)) // If only 'from' is selected
-      : "";
-  }, [selectedDate]);
-
-  const getDisabledDates = useMemo(() => {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    if (lifecycleStage === "scheduled") {
-      return { before: tomorrow }; // Disable today and all dates before today (only allow future dates)
-    }
-  }, [lifecycleStage]);
 
   return (
     <div className="flex items-center gap-4 relative">
       <label
         className="my-1 text-sm md:text-lg text-left whitespace-nowrap"
-        htmlFor={taskId}
+        htmlFor={id}
       >
         {dict.action.date}:
       </label>
-      <input
-        id={taskId}
-        type="text"
+      <input ref={popover.refs.setReference} {...popover.getReferenceProps()}
+        id={id}
+        type="button"
         value={displayedDateRange}
         readOnly
-        onClick={() => setIsDayPickerOpen(!isDayPickerOpen)}
-        className={`h-8 ${
-          selectedDate?.to ? "w-60" : "w-32"
-        } p-4 rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
-        aria-label={taskId}
-        aria-expanded={isDayPickerOpen}
+        className={`h-8 ${props.selectedDate?.to ? "w-60" : "w-32"
+          } rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
       />
-      {isDayPickerOpen && (
-        <div className="absolute z-10 bg-muted p-2 rounded-lg shadow-lg top-full mt-2 border border-border">
-          <DayPicker
-            locale={window.navigator.language.startsWith("de") ? de : enGB}
-            mode="range"
-            selected={dayPickerSelectedRange}
-            onSelect={handleDateSelect}
-            disabled={getDisabledDates}
-            aria-label={taskId}
-            classNames={{
-              today: `text-blue-700 `,
-              selected: `bg-gray-200 dark:bg-zinc-800`,
-              root: `${defaultDayPickerClassNames.root}  p-4`,
-              chevron: ` fill-foreground`,
-              footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
-              range_middle: ` `,
-              range_start: `!bg-primary text-foreground rounded-full`,
-              range_end: `!bg-primary text-foreground rounded-full`,
+      {popover.isOpen && (
+        <FloatingPortal>
+          <div
+            ref={popover.refs.setFloating}
+            style={{
+              ...popover.floatingStyles,
+              zIndex: 99999,
             }}
-            footer={
-              displayedDateRange
-                ? displayedDateRange
-                : dict.message.noDateSelected
-            }
-          />
-        </div>
+            {...popover.getFloatingProps()}
+          >
+            <div
+              style={{
+                ...transition.styles,
+              }}
+              className="z-10 bg-muted p-2 rounded-lg shadow-lg mt-2 border border-border"
+            >
+              <DayPicker
+                locale={window.navigator.language.startsWith("de") ? de : enGB}
+                mode="range"
+                selected={props.selectedDate}
+                onSelect={handleDateSelect}
+                disabled={getDisabledDates(props.lifecycleStage)}
+                classNames={{
+                  today: `text-blue-700 `,
+                  selected: `bg-gray-200 dark:bg-zinc-800`,
+                  root: `${defaultDayPickerClassNames.root}  p-4`,
+                  chevron: ` fill-foreground`,
+                  footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
+                  range_middle: ` `,
+                  range_start: `!bg-primary text-foreground rounded-full`,
+                  range_end: `!bg-primary text-foreground rounded-full`,
+                }}
+                footer={displayedDateRange}
+              />
+            </div>
+          </div>
+        </FloatingPortal>
       )}
     </div>
   );
+}
+
+/**
+ * Function to get disabled date range based on lifecycle stage.
+ * 
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ */
+function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  // For scheduled stage, only dates from tomorrow onwards should be available
+  // and previous days should be disabled
+  if (lifecycleStage === "scheduled") {
+    return { before: tomorrow };
+  }
+  return undefined
 }

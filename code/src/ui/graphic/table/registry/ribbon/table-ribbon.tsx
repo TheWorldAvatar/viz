@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
+import React from "react";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
@@ -11,17 +11,18 @@ import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
-import ColumnSearchComponent from "../actions/column-search";
 import DateRangeInput from "ui/interaction/input/date-range";
+import ColumnSearchComponent from "../actions/column-search";
+import { DateRange } from "react-day-picker";
 
 interface TableRibbonProps {
   path: string;
   entityType: string;
-  selectedDate: { from?: string; to?: string };
+  selectedDate: DateRange;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<
-    React.SetStateAction<{ from?: string; to?: string }>
+    React.SetStateAction<DateRange>
   >;
   setCurrentInstances: React.Dispatch<
     React.SetStateAction<RegistryFieldValues[]>
@@ -45,7 +46,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const dayPickerRef = useRef<HTMLDivElement>(null);
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
@@ -149,14 +149,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         </div>
       </div>
-      <div className="flex ml-2" ref={dayPickerRef}>
+      <div className="flex ml-2">
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed") && (
           <DateRangeInput
             selectedDate={props.selectedDate}
             setSelectedDate={props.setSelectedDate}
             lifecycleStage={props.lifecycleStage}
-            dayPickerRef={dayPickerRef}
           />
         )}
       </div>

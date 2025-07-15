@@ -13,17 +13,12 @@ import {
   setStack,
 } from "state/map-feature-slice";
 import {
+  LifecycleStage,
   RegistryFieldValues,
   SparqlResponseField,
-  LifecycleStage,
 } from "types/form";
 import { JsonObject } from "types/json";
-import { useMemo } from "react";
-
-interface DateRange {
-  from?: string;
-  to?: string;
-}
+import { DateRange } from "react-day-picker";
 
 /**
  * Open full screen mode.
@@ -178,22 +173,21 @@ export function extractResponseField(
   }
 }
 
-export function setInitialDate(lifecycleStage: LifecycleStage): DateRange {
-  return useMemo(() => {
-    const today = new Date();
 
-    let initialDate: string;
+/**
+ * Extract the inital date based on the current lifecycle stage.
+ *
+ * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
+ */
+export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage): DateRange {
+  // For closed and other stages: start with today
+  const initialDate: Date = new Date();
 
-    if (lifecycleStage === "scheduled") {
-      // For scheduled: start with tomorrow since today and past are disabled
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      initialDate = tomorrow.toISOString().split("T")[0];
-    } else {
-      // For closed and other stages: start with today
-      initialDate = today.toISOString().split("T")[0];
-    }
+  if (lifecycleStage === "scheduled") {
+    // For scheduled: start with tomorrow since today and past are disabled
+    initialDate.setDate(initialDate.getDate() + 1);
+    //tomorrow.toISOString().split("T")[0];
+  }
 
-    return { from: initialDate, to: initialDate };
-  }, [lifecycleStage]);
+  return { from: initialDate, to: initialDate };
 }
