@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.1
+
+### Chores
+
+- Dependabot update #260
+  
 ## 5.34.0
 
 ### Changes
