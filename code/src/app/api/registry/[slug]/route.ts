@@ -40,27 +40,28 @@ export async function GET(
   const bearerToken = req.headers.get("x-bearer-token");
 
   // Proxy the request to the backend
+  let res;
   try {
-    const res = await fetch(url, {
+    res = await fetch(url, {
       headers: {
         ...(acceptLanguageHeader && { "Accept-Language": acceptLanguageHeader }),
         ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
       },
       cache: "no-store",
     });
-
-    if (!res.ok) {
-      return await handleExternalBadRequest(res, url);
-    }
-
-    const data: AgentResponseBody = await res.json();
-    return NextResponse.json({
-      ...data,
-      apiVersion,
-    });
   } catch (error) {
     return NextResponse.json(handleFetchFailure(url, error));
   }
+
+  if (!res.ok) {
+    return await handleExternalBadRequest(res, url);
+  }
+  const data: AgentResponseBody = await res.json();
+  return NextResponse.json({
+    ...data,
+    apiVersion,
+  });
+
 }
 
 /**
@@ -373,15 +374,15 @@ async function sendRequest(
   if (body) {
     options.body = body;
   }
-
+  let response;
   try {
-    const response = await fetch(url, options);
+    response = await fetch(url, options);
 
-    const responseBody: AgentResponseBody = await response.json();
-    return responseBody;
   } catch (error) {
     return handleFetchFailure(url, error);
   }
+  const responseBody: AgentResponseBody = await response.json();
+  return responseBody;
 }
 
 async function handleExternalBadRequest(res: Response, url: string): Promise<NextResponse<AgentResponseBody>> {
