@@ -405,15 +405,15 @@ function handleFetchFailure(url: string, error: unknown): AgentResponseBody {
   console.error(`[API Route Error] Fetch failed for ${url}:`);
 
   if (error instanceof Error) {
-    console.error(`Error Name: ${error.name}`);
-    console.error(`Error Message: ${error.message}`);
+    console.error("Error Name: ", error.name);
+    console.error("Error Message: ", error.message);
     if (error.cause) {
-      console.error(`Error Cause:`, error.cause);
+      console.error("Error Cause:", error.cause);
 
     }
-    console.error(`Stack Trace:`, error.stack);
+    console.error("Stack Trace:", error.stack);
   } else {
-    console.error(`Unknown error type:`, error);
+    console.error("Unknown error type:", error);
   }
 
   return {
