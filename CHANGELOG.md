@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.8.2` to `v1.9.0`
+- Rework viz to be compatible with `v1.9.0` of the `VisBackend Agent`
+- Implemented the new outstanding, scheduled and closed tasks functionality in the registry
+- Added Date range filter for the scheduled and closed tasks , using react-day-picker library
+
 ## 5.33.2
 
 ### Changes

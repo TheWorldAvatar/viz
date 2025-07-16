@@ -10,9 +10,18 @@ const apiVersion: string = "5.30.5";
 /**
  * GET request handler
  */
-export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: InternalApiIdentifier }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+) {
   if (!agentBaseApi) {
-    return NextResponse.json({ apiVersion, error: { code: 400, message: "Missing registry url in settings." } }, { status: 400 });
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: { code: 400, message: "Missing registry url in settings." },
+      },
+      { status: 400 }
+    );
   }
 
   // Generate API url and parameters based on the slug
@@ -20,7 +29,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
   if (!url) {
-    return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
   }
   // Get the Accept-Language header from the request
   const acceptLanguageHeader = req.headers.get("accept-language");
@@ -30,7 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   // Proxy the request to the backend
   const res = await fetch(url, {
     headers: {
-      ...(acceptLanguageHeader && { 'Accept-Language': acceptLanguageHeader }),
+      ...(acceptLanguageHeader && { "Accept-Language": acceptLanguageHeader }),
       ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
     },
     cache: "no-store",
@@ -50,14 +62,26 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
 /**
  * POST request handler
  */
-export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: InternalApiIdentifier }> }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+) {
   if (!agentBaseApi) {
-    return NextResponse.json({ apiVersion, error: { code: 400, message: "Missing registry url in settings." } }, { status: 400 });
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: { code: 400, message: "Missing registry url in settings." },
+      },
+      { status: 400 }
+    );
   }
 
   const body = await parseBody(req);
   if (!body) {
-    return NextResponse.json({ apiVersion, error: { code: 400, message: "Missing data." } }, { status: 400 })
+    return NextResponse.json(
+      { apiVersion, error: { code: 400, message: "Missing data." } },
+      { status: 400 }
+    );
   }
 
   // Generate API url and parameters based on the slug
@@ -65,28 +89,49 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
   if (!url) {
-    return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
   }
 
   // Get the Accept-Language header from the request
   const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken = req.headers.get("x-bearer-token");
-  const responseBody: AgentResponseBody = await sendRequest(url, acceptLanguageHeader, "POST", bearerToken, JSON.stringify(body));
+  const responseBody: AgentResponseBody = await sendRequest(
+    url,
+    acceptLanguageHeader,
+    "POST",
+    bearerToken,
+    JSON.stringify(body)
+  );
   return NextResponse.json(responseBody);
 }
 
 /**
  * PUT request handler
  */
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug: InternalApiIdentifier }> }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+) {
   if (!agentBaseApi) {
-    return NextResponse.json({ apiVersion, error: { code: 400, message: "Missing registry url in settings." } }, { status: 400 });
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: { code: 400, message: "Missing registry url in settings." },
+      },
+      { status: 400 }
+    );
   }
 
   const body = await parseBody(req);
   if (!body) {
-    return NextResponse.json({ apiVersion, error: { code: 400, message: "Missing data." } }, { status: 400 })
+    return NextResponse.json(
+      { apiVersion, error: { code: 400, message: "Missing data." } },
+      { status: 400 }
+    );
   }
 
   // Generate API url and parameters based on the slug
@@ -94,22 +139,40 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
   if (!url) {
-    return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
   }
   // Get the Accept-Language header from the request
   const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken = req.headers.get("x-bearer-token");
-  const responseBody: AgentResponseBody = await sendRequest(url, acceptLanguageHeader, "PUT", bearerToken, JSON.stringify(body));
+  const responseBody: AgentResponseBody = await sendRequest(
+    url,
+    acceptLanguageHeader,
+    "PUT",
+    bearerToken,
+    JSON.stringify(body)
+  );
   return NextResponse.json(responseBody);
 }
 
 /**
  * DELETE request handler
  */
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: InternalApiIdentifier }> }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+) {
   if (!agentBaseApi) {
-    return NextResponse.json({ apiVersion, error: { code: 400, message: "Missing registry url in settings." } }, { status: 400 });
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: { code: 400, message: "Missing registry url in settings." },
+      },
+      { status: 400 }
+    );
   }
 
   // Generate API url and parameters based on the slug
@@ -117,17 +180,29 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ s
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
   if (!url) {
-    return NextResponse.json({ apiVersion, error: { code: 404, message: "This API does not exist." } }, { status: 404 })
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
   }
   // Get the Accept-Language header from the request
   const acceptLanguageHeader = req.headers.get("accept-language");
   // Get the bearer token from the custom header
   const bearerToken: string | null = req.headers.get("x-bearer-token");
-  const responseBody: AgentResponseBody = await sendRequest(url, acceptLanguageHeader, "DELETE", bearerToken);
+  const responseBody: AgentResponseBody = await sendRequest(
+    url,
+    acceptLanguageHeader,
+    "DELETE",
+    bearerToken
+  );
   return NextResponse.json(responseBody);
 }
 
-function makeExternalEndpoint(agentBaseApi: string, slug: InternalApiIdentifier, searchParams: URLSearchParams): string {
+function makeExternalEndpoint(
+  agentBaseApi: string,
+  slug: InternalApiIdentifier,
+  searchParams: URLSearchParams
+): string {
   switch (slug) {
     case "address": {
       const postalCode: string = searchParams.get("postal_code");
@@ -153,7 +228,7 @@ function makeExternalEndpoint(agentBaseApi: string, slug: InternalApiIdentifier,
       } else if (stage === "archive") {
         stagePath = "archive";
       } else {
-        throw Error('Invalid stage');
+        throw Error("Invalid stage");
       }
       return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes`;
     }
@@ -168,12 +243,14 @@ function makeExternalEndpoint(agentBaseApi: string, slug: InternalApiIdentifier,
       const subtype: string = searchParams.get("subtype");
 
       let url: string = `${agentBaseApi}/${type}`;
-      if (requireLabel === "true") { url += `/label` };
+      if (requireLabel === "true") {
+        url += `/label`;
+      }
       if (identifier != "null") {
         url += `/${identifier}`;
         if (subtype != "null") {
-          url += `/${subtype}`
-        };
+          url += `/${subtype}`;
+        }
       }
       return url;
     }
@@ -200,18 +277,18 @@ function makeExternalEndpoint(agentBaseApi: string, slug: InternalApiIdentifier,
     case "geocode_address": {
       const block: string = searchParams.get("block");
       const street: string = searchParams.get("street");
-      const urlParams = new URLSearchParams({ block, street, });
+      const urlParams = new URLSearchParams({ block, street });
       return `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
     }
     case "geocode_postal": {
       const postalCode: string = searchParams.get("postalCode");
-      const urlParams = new URLSearchParams({ "postal_code": postalCode, });
+      const urlParams = new URLSearchParams({ postal_code: postalCode });
       return `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
     }
     case "geocode_city": {
       const city: string = searchParams.get("city");
       const country: string = searchParams.get("country");
-      const urlParams = new URLSearchParams({ city, country, });
+      const urlParams = new URLSearchParams({ city, country });
       return `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
     }
     case "geodecode": {
@@ -227,6 +304,38 @@ function makeExternalEndpoint(agentBaseApi: string, slug: InternalApiIdentifier,
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}`;
     }
+    case "outstanding": {
+      const contractType: string = searchParams.get("type");
+      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}`;
+    }
+    case "scheduled": {
+      const contractType: string = searchParams.get("type");
+      const startDate: string = searchParams.get("start_date");
+      const endDate: string = searchParams.get("end_date");
+      const unixTimestampStartDate: number = Math.floor(
+        new Date(startDate).getTime() / 1000
+      );
+      const unixTimestampEndDate: number = Math.floor(
+        new Date(endDate).getTime() / 1000
+      );
+
+      const url = `${agentBaseApi}/contracts/service/scheduled?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      return url;
+    }
+    case "closed": {
+      const contractType: string = searchParams.get("type");
+      const startDate: string = searchParams.get("start_date");
+      const endDate: string = searchParams.get("end_date");
+      const unixTimestampStartDate: number = Math.floor(
+        new Date(startDate).getTime() / 1000
+      );
+      const unixTimestampEndDate: number = Math.floor(
+        new Date(endDate).getTime() / 1000
+      );
+
+      const url = `${agentBaseApi}/contracts/service/closed?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      return url;
+    }
     default:
       return null;
   }
@@ -240,16 +349,21 @@ async function parseBody(req: NextRequest): Promise<AgentResponseBody> {
   }
 }
 
-async function sendRequest(url: string, acceptLanguageHeader: string, methodType: "POST" | "PUT" | "DELETE", bearerToken: string | null, body?: string): Promise<AgentResponseBody> {
+async function sendRequest(
+  url: string,
+  acceptLanguageHeader: string,
+  methodType: "POST" | "PUT" | "DELETE",
+  bearerToken: string | null,
+  body?: string
+): Promise<AgentResponseBody> {
   const options: RequestInit = {
     method: methodType,
     headers: {
       "Content-Type": "application/json",
-      ...(acceptLanguageHeader && { 'Accept-Language': acceptLanguageHeader }),
+      ...(acceptLanguageHeader && { "Accept-Language": acceptLanguageHeader }),
       ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
     },
     cache: "no-store",
-
   };
 
   if (body) {
@@ -265,7 +379,10 @@ async function sendRequest(url: string, acceptLanguageHeader: string, methodType
 async function handleExternalBadRequest(res: Response, url: string) {
   const resBody: AgentResponseBody = await res.json();
 
-  console.error(`${logColours.Red}Error${logColours.Reset} fetching from external API: ${logColours.Yellow}${url}${logColours.Reset}:`, resBody.error?.message);
+  console.error(
+    `${logColours.Red}Error${logColours.Reset} fetching from external API: ${logColours.Yellow}${url}${logColours.Reset}:`,
+    resBody.error?.message
+  );
   return NextResponse.json(
     {
       ...resBody,

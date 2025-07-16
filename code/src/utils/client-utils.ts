@@ -12,8 +12,13 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
-import { RegistryFieldValues, SparqlResponseField } from "types/form";
+import {
+  LifecycleStage,
+  RegistryFieldValues,
+  SparqlResponseField,
+} from "types/form";
 import { JsonObject } from "types/json";
+import { DateRange } from "react-day-picker";
 
 /**
  * Open full screen mode.
@@ -166,4 +171,22 @@ export function extractResponseField(
   } else {
     return response[field];
   }
+}
+
+
+/**
+ * Extract the inital date based on the current lifecycle stage.
+ *
+ * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
+ */
+export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage): DateRange {
+  // For closed and other stages: start with today
+  const initialDate: Date = new Date();
+
+  if (lifecycleStage === "scheduled") {
+    // For scheduled: start with tomorrow since today and past are disabled
+    initialDate.setDate(initialDate.getDate() + 1);
+  }
+
+  return { from: initialDate, to: initialDate };
 }

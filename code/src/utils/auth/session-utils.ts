@@ -6,8 +6,9 @@ import { Routes } from "io/config/routes";
 import { HasPermissions, PermissionScheme } from "types/auth";
 
 const hasPermitionsInitial: HasPermissions = {
-  pendingRegistry: false,
-  activeArchiveRegistry: false,
+  registry: false,
+  registrySubmission: false,
+  allTasks: false,
   invoice: false,
   sales: false,
   operation: false,
@@ -27,17 +28,17 @@ export function parsePermissions(roles: string[]): PermissionScheme {
   }
 
   // Access to different registry depends on roles
+  if (roles.includes("registry-navigation-pending")) {
+    // Given access to registry submission
+    permissionScheme.hasPermissions.registrySubmission = true;
+  }
   if (roles.includes("registry-navigation")) {
-    permissionScheme.hasPermissions.pendingRegistry = true;
-    permissionScheme.hasPermissions.activeArchiveRegistry = true;
-  } else if (roles.includes("registry-navigation-pending")) {
-    // Users with only access to the pending registry cannot access other registries
-    permissionScheme.registryPageLink = Routes.REGISTRY_PENDING;
-  } else if (roles.includes("registry-navigation-active-archive")) {
-    // Users with only access to the active and archive registry cannot access the pending registry
-    // and will be redirected
-    permissionScheme.registryPageLink = Routes.REGISTRY_ACTIVE;
-    permissionScheme.hasPermissions.activeArchiveRegistry = true;
+    // Given access to all records in the registry
+    permissionScheme.hasPermissions.registry = true;
+    permissionScheme.hasPermissions.allTasks = true;
+  } else if (roles.includes("registry-navigation-restricted")) {
+    // Given access to only view outstanding tasks
+    permissionScheme.hasPermissions.registry = true;
   }
 
   // Roles with access to only specific routes

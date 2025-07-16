@@ -1,4 +1,5 @@
 {
+  "lang": "en",
   "action": {
     "add": "add",
     "addItem": "add {replace}",
@@ -121,7 +122,8 @@
     "noFileChosenError": "No file is chosen. Please choose a file.",
     "fileUploadError": "File upload failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
-    "na": "Not applicable"
+    "na": "Not applicable",
+    "noDateSelected": "Pick a date range."
   },
   "nav": {
     "caption": {
@@ -141,7 +143,10 @@
       "help": "Help Centre",
       "pending": "Pending",
       "active": "Active",
-      "archive": "Archive"
+      "archive": "Archive",
+      "outstanding": "Outstanding",
+      "scheduled": "Scheduled",
+      "closed": "Closed"
     },
     "tooltip": {
       "home": "Return to landing page",

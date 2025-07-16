@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
+import { DateRange } from "react-day-picker";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
@@ -15,12 +17,11 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import { Status } from "ui/text/status/status";
-import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getInitialDateFromLifecycleStage, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import SummarySection from "./ribbon/summary";
 import TableRibbon from "./ribbon/table-ribbon";
-import { AgentResponseBody } from "types/backend-agent";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -48,9 +49,8 @@ export default function RegistryTableComponent(
   const [task, setTask] = useState<RegistryTaskOption>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
+
+  const [selectedDate, setSelectedDate] = useState<DateRange>(getInitialDateFromLifecycleStage(props.lifecycleStage));
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -114,15 +114,23 @@ export default function RegistryTableComponent(
             const resBody: AgentResponseBody = await res.json();
             instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
           }
-        } else if (props.lifecycleStage == "tasks") {
-          // Fetch service tasks for a specific date
-          const date = new Date(selectedDate);
-          const unixTimestamp: number = Math.floor(date.getTime() / 1000);
+        } else if (props.lifecycleStage == "outstanding") {
+          const res = await fetch(
+            makeInternalRegistryAPIwithParams("outstanding", props.entityType),
+            { cache: "no-store", credentials: "same-origin" }
+          );
+          const resBody: AgentResponseBody = await res.json();
+          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+        } else if (props.lifecycleStage == "scheduled" || props.lifecycleStage == "closed") {
+          const startDate: string = selectedDate.from.toISOString().split("T")[0];
+          const endDate: string = selectedDate.to.toISOString().split("T")[0];
+
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
-              "tasks",
+              props.lifecycleStage == "scheduled" ? "scheduled" : "closed",
               props.entityType,
-              unixTimestamp.toString()
+              startDate,
+              endDate
             ),
             {
               cache: "no-store",
@@ -162,6 +170,7 @@ export default function RegistryTableComponent(
       }
     };
 
+    // Trigger fetchData when isTaskModalOpen, refreshFlag, or selectedDate (range) changes
     if (!isTaskModalOpen || refreshFlag) {
       fetchData();
     }
@@ -183,21 +192,22 @@ export default function RegistryTableComponent(
           path={pathNameEnd}
           entityType={props.entityType}
           selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
-          setSelectedDate={setSelectedDate}
           triggerRefresh={triggerRefresh}
         />
       </div>
       <div className="flex items-center ml-6">
-        {(props.lifecycleStage == "active" ||
-          props.lifecycleStage == "archive") && (
-          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
-            <Icon className={`material-symbols-outlined`}>info</Icon>
-            {dict.message.registryInstruction}
-          </div>
-        )}
+        {(props.lifecycleStage == "scheduled" ||
+          props.lifecycleStage == "outstanding" ||
+          props.lifecycleStage == "closed") && (
+            <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+              <Icon className={`material-symbols-outlined`}>info</Icon>
+              {dict.message.registryInstruction}
+            </div>
+          )}
         {props.lifecycleStage == "report" && (
           <h2 className="text-md md:text-lg t  flex-wrap">
             {dict.title.serviceSummary}

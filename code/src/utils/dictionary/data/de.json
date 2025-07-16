@@ -1,4 +1,5 @@
 {
+  "lang": "de",
   "action": {
     "add": "Hinzufügen",
     "addItem": "{replace} hinzufügen",
@@ -121,7 +122,8 @@
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
-    "na": "Nicht anwendbar"
+    "na": "Nicht anwendbar",
+    "noDateSelected": "Pick a date range."
   },
   "nav": {
     "caption": {
@@ -141,7 +143,10 @@
       "help": "Hilfe-Center",
       "pending": "Ausstehend",
       "active": "Aktiv",
-      "archive": "Archiv"
+      "archive": "Archiv",
+      "outstanding": "Outstanding",
+      "scheduled": "Scheduled",
+      "closed": "Closed"
     },
     "tooltip": {
       "home": "Zurück zur Startseite",
