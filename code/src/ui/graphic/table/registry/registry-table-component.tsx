@@ -100,7 +100,6 @@ export default function RegistryTableComponent(
             instances = activeInstances.concat(archivedInstances);
           } else {
             // Fetch service tasks for a specific contract
-            // outstanding tasks
             const res = await fetch(
               makeInternalRegistryAPIwithParams(
                 "tasks",
@@ -175,7 +174,7 @@ export default function RegistryTableComponent(
     if (!isTaskModalOpen || refreshFlag) {
       fetchData();
     }
-  }, [isTaskModalOpen, selectedDate, refreshFlag]); // Include selectedDate in dependencies
+  }, [isTaskModalOpen, selectedDate, refreshFlag]);
 
   useEffect(() => {
     if (task) {

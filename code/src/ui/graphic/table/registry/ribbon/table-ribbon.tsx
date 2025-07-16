@@ -35,7 +35,7 @@ interface TableRibbonProps {
  *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
- * @param {object} selectedDate The selected date range object with 'from' and 'to' date strings.
+ * @param {DateRange} selectedDate The selected date range object with 'from' and 'to' date strings.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate A dispatch method to update selected date range.
