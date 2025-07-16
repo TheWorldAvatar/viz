@@ -24,6 +24,7 @@ As the visualisation platform is intended to be customisable, [configuration fil
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
 2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.9.0`
 
+
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
 For any authorisation capabilities, refer to the [Authorisation](#4-authorisation) section. When releasing the platform as a developer, be sure to review the [Releasing](#5-release) section.
