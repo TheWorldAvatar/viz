@@ -186,7 +186,6 @@ export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage)
   if (lifecycleStage === "scheduled") {
     // For scheduled: start with tomorrow since today and past are disabled
     initialDate.setDate(initialDate.getDate() + 1);
-    //tomorrow.toISOString().split("T")[0];
   }
 
   return { from: initialDate, to: initialDate };
