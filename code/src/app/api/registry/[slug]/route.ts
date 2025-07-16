@@ -13,7 +13,7 @@ const apiVersion: string = "5.30.5";
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
-) {
+): Promise<NextResponse<AgentResponseBody>> {
   if (!agentBaseApi) {
     return NextResponse.json(
       {
@@ -40,23 +40,28 @@ export async function GET(
   const bearerToken = req.headers.get("x-bearer-token");
 
   // Proxy the request to the backend
-  const res = await fetch(url, {
-    headers: {
-      ...(acceptLanguageHeader && { "Accept-Language": acceptLanguageHeader }),
-      ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
-    },
-    cache: "no-store",
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: {
+        ...(acceptLanguageHeader && { "Accept-Language": acceptLanguageHeader }),
+        ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
+      },
+      cache: "no-store",
+    });
+  } catch (error) {
+    return NextResponse.json(handleFetchFailure(url, error));
+  }
 
   if (!res.ok) {
     return await handleExternalBadRequest(res, url);
   }
-
   const data: AgentResponseBody = await res.json();
   return NextResponse.json({
     ...data,
     apiVersion,
   });
+
 }
 
 /**
@@ -65,7 +70,7 @@ export async function GET(
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
-) {
+): Promise<NextResponse<AgentResponseBody>> {
   if (!agentBaseApi) {
     return NextResponse.json(
       {
@@ -115,7 +120,7 @@ export async function POST(
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
-) {
+): Promise<NextResponse<AgentResponseBody>> {
   if (!agentBaseApi) {
     return NextResponse.json(
       {
@@ -164,7 +169,7 @@ export async function PUT(
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
-) {
+): Promise<NextResponse<AgentResponseBody>> {
   if (!agentBaseApi) {
     return NextResponse.json(
       {
@@ -369,14 +374,18 @@ async function sendRequest(
   if (body) {
     options.body = body;
   }
+  let response;
+  try {
+    response = await fetch(url, options);
 
-  const response = await fetch(url, options);
-
+  } catch (error) {
+    return handleFetchFailure(url, error);
+  }
   const responseBody: AgentResponseBody = await response.json();
   return responseBody;
 }
 
-async function handleExternalBadRequest(res: Response, url: string) {
+async function handleExternalBadRequest(res: Response, url: string): Promise<NextResponse<AgentResponseBody>> {
   const resBody: AgentResponseBody = await res.json();
 
   console.error(
@@ -390,4 +399,28 @@ async function handleExternalBadRequest(res: Response, url: string) {
     },
     { status: resBody.error?.code }
   );
+}
+
+function handleFetchFailure(url: string, error: unknown): AgentResponseBody {
+  console.error(`[API Route Error] Fetch failed for ${url}:`);
+
+  if (error instanceof Error) {
+    console.error("Error Name: ", error.name);
+    console.error("Error Message: ", error.message);
+    if (error.cause) {
+      console.error("Error Cause:", error.cause);
+
+    }
+    console.error("Stack Trace:", error.stack);
+  } else {
+    console.error("Unknown error type:", error);
+  }
+
+  return {
+    apiVersion,
+    error: {
+      code: 500,
+      message: "Failed to connect to external service"
+    }
+  }
 }
