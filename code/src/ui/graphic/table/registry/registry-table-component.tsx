@@ -131,19 +131,19 @@ export default function RegistryTableComponent(
           props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed"
         ) {
-          const startDate: string = selectedDate.from
-            .toLocaleDateString()
-            .split("T")[0];
-          const endDate: string = selectedDate.to
-            .toLocaleDateString()
-            .split("T")[0];
+          const startDate = new Date(
+            Date.UTC(selectedDate.from.getFullYear(), selectedDate.from.getMonth(), selectedDate.from.getDate())
+          );
+          const endDate = new Date(
+            Date.UTC(selectedDate.to.getFullYear(), selectedDate.to.getMonth(), selectedDate.to.getDate())
+          );
 
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
               props.lifecycleStage == "scheduled" ? "scheduled" : "closed",
               props.entityType,
-              startDate,
-              endDate
+              startDate.getTime().toString(),
+              endDate.getTime().toString()
             ),
             {
               cache: "no-store",
@@ -216,11 +216,11 @@ export default function RegistryTableComponent(
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "outstanding" ||
           props.lifecycleStage == "closed") && (
-          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
-            <Icon className={`material-symbols-outlined`}>info</Icon>
-            {dict.message.registryInstruction}
-          </div>
-        )}
+            <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+              <Icon className={`material-symbols-outlined`}>info</Icon>
+              {dict.message.registryInstruction}
+            </div>
+          )}
         {props.lifecycleStage == "report" && (
           <h2 className="text-md md:text-lg t  flex-wrap">
             {dict.title.serviceSummary}
