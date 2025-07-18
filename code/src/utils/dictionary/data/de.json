@@ -5,7 +5,7 @@
     "addItem": "{replace} hinzufügen",
     "edit": "Bearbeiten",
     "delete": "Löschen",
-    "dismiss": "Dismiss",
+    "dismiss": "Schließen",
     "view": "Anzeigen",
     "close": "Schließen",
     "refresh": "Aktualisieren",
@@ -123,7 +123,7 @@
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "na": "Nicht anwendbar",
-    "noDateSelected": "Pick a date range."
+    "noDateSelected": "Wählen Sie einen Zeitraum aus."
   },
   "nav": {
     "caption": {
@@ -144,9 +144,9 @@
       "pending": "Ausstehend",
       "active": "Aktiv",
       "archive": "Archiv",
-      "outstanding": "Outstanding",
-      "scheduled": "Scheduled",
-      "closed": "Closed"
+      "outstanding": "Offen",
+      "scheduled": "Eingeplant",
+      "closed": "Abgeschlossen"
     },
     "tooltip": {
       "home": "Zurück zur Startseite",
@@ -178,7 +178,7 @@
     "pendingExecution": "Ausstehende Ausführung",
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
-    "success": "Success",
-    "error": "Error"
+    "success": "Erfolgreich (Übermittlung war erfolgreich)",
+    "error": "Fehlerhaft (Übermittlung war fehlerhaft)"
   }
 }
