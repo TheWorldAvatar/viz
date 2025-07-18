@@ -4,10 +4,16 @@
 
 ## 5.34.2
 
+### Bug Fixes
+
+- Fixed issue with date formatting in registry table component
+
+## 5.34.2
+
 ### Chores
 
 - Dependabot update #260
-  
+
 ## 5.34.1
 
 ### Changes
