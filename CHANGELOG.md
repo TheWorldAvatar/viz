@@ -2,6 +2,18 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.4
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.9.0` to `v1.9.2`
+- Rework viz to be compatible with `v1.9.2` of the `VisBackend Agent`
+- Update German translations
+
+### Bug Fixes
+
+- Fixed date-time issue for registry date range submissions
+
 ## 5.34.3
 
 ### Bug Fixes

@@ -313,32 +313,15 @@ function makeExternalEndpoint(
       const contractType: string = searchParams.get("type");
       return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}`;
     }
-    case "scheduled": {
-      const contractType: string = searchParams.get("type");
-      const startDate: string = searchParams.get("start_date");
-      const endDate: string = searchParams.get("end_date");
-      const unixTimestampStartDate: number = Math.floor(
-        new Date(startDate).getTime() / 1000
-      );
-      const unixTimestampEndDate: number = Math.floor(
-        new Date(endDate).getTime() / 1000
-      );
-
-      const url = `${agentBaseApi}/contracts/service/scheduled?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
-      return url;
-    }
+    case "scheduled":
     case "closed": {
       const contractType: string = searchParams.get("type");
       const startDate: string = searchParams.get("start_date");
+      const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
       const endDate: string = searchParams.get("end_date");
-      const unixTimestampStartDate: number = Math.floor(
-        new Date(startDate).getTime() / 1000
-      );
-      const unixTimestampEndDate: number = Math.floor(
-        new Date(endDate).getTime() / 1000
-      );
+      const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
 
-      const url = `${agentBaseApi}/contracts/service/closed?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      const url = `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       return url;
     }
     default:
