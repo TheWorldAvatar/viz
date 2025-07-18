@@ -2,12 +2,18 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.3
+
+### Bug Fixes
+
+- Fixed issue with date formatting in registry table component
+
 ## 5.34.2
 
 ### Chores
 
 - Dependabot update #260
-  
+
 ## 5.34.1
 
 ### Changes

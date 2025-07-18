@@ -21,9 +21,7 @@ interface TableRibbonProps {
   selectedDate: DateRange;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
-  setSelectedDate: React.Dispatch<
-    React.SetStateAction<DateRange>
-  >;
+  setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   setCurrentInstances: React.Dispatch<
     React.SetStateAction<RegistryFieldValues[]>
   >;
@@ -70,9 +68,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               label={dict.nav.title.scheduled}
               leftIcon="schedule"
               url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-              variant={
-                props.lifecycleStage == "scheduled" ? "active" : "ghost"
-              }
+              variant={props.lifecycleStage == "scheduled" ? "active" : "ghost"}
             />
             <RedirectButton
               label={dict.nav.title.closed}
@@ -136,19 +132,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-              <DownloadButton instances={props.instances} />
-            )}
+            <DownloadButton instances={props.instances} />
+          )}
         </div>
       </div>
       <div className="flex ml-2">
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed") && (
-            <DateRangeInput
-              selectedDate={props.selectedDate}
-              setSelectedDate={props.setSelectedDate}
-              lifecycleStage={props.lifecycleStage}
-            />
-          )}
+          <DateRangeInput
+            selectedDate={props.selectedDate}
+            setSelectedDate={props.setSelectedDate}
+            lifecycleStage={props.lifecycleStage}
+          />
+        )}
       </div>
     </div>
   );

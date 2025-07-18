@@ -17,7 +17,11 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import { Status } from "ui/text/status/status";
-import { getAfterDelimiter, getInitialDateFromLifecycleStage, parseWordsForLabels } from "utils/client-utils";
+import {
+  getAfterDelimiter,
+  getInitialDateFromLifecycleStage,
+  parseWordsForLabels,
+} from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import SummarySection from "./ribbon/summary";
@@ -50,7 +54,9 @@ export default function RegistryTableComponent(
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [selectedDate, setSelectedDate] = useState<DateRange>(getInitialDateFromLifecycleStage(props.lifecycleStage));
+  const [selectedDate, setSelectedDate] = useState<DateRange>(
+    getInitialDateFromLifecycleStage(props.lifecycleStage)
+  );
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -121,9 +127,16 @@ export default function RegistryTableComponent(
           );
           const resBody: AgentResponseBody = await res.json();
           instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else if (props.lifecycleStage == "scheduled" || props.lifecycleStage == "closed") {
-          const startDate: string = selectedDate.from.toISOString().split("T")[0];
-          const endDate: string = selectedDate.to.toISOString().split("T")[0];
+        } else if (
+          props.lifecycleStage == "scheduled" ||
+          props.lifecycleStage == "closed"
+        ) {
+          const startDate: string = selectedDate.from
+            .toLocaleDateString()
+            .split("T")[0];
+          const endDate: string = selectedDate.to
+            .toLocaleDateString()
+            .split("T")[0];
 
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
@@ -203,11 +216,11 @@ export default function RegistryTableComponent(
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "outstanding" ||
           props.lifecycleStage == "closed") && (
-            <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
-              <Icon className={`material-symbols-outlined`}>info</Icon>
-              {dict.message.registryInstruction}
-            </div>
-          )}
+          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+            <Icon className={`material-symbols-outlined`}>info</Icon>
+            {dict.message.registryInstruction}
+          </div>
+        )}
         {props.lifecycleStage == "report" && (
           <h2 className="text-md md:text-lg t  flex-wrap">
             {dict.title.serviceSummary}
