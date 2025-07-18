@@ -4,7 +4,12 @@ import { FloatingPortal, useTransitionStyles } from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
 import { useCallback, useId } from "react";
-import { DateBefore, DateRange, DayPicker, getDefaultClassNames } from "react-day-picker";
+import {
+  DateBefore,
+  DateRange,
+  DayPicker,
+  getDefaultClassNames,
+} from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
@@ -16,7 +21,7 @@ interface DateRangeInputProps {
 }
 
 /** A component to display a date range input
- * 
+ *
  * @param {DateRange} selectedDate The selected date range.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
@@ -46,7 +51,11 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     [props.setSelectedDate]
   );
 
-  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.from != props.selectedDate.to ? " - " + props.selectedDate.to.toLocaleDateString() : ""}`;
+  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${
+    props.selectedDate.from != props.selectedDate.to
+      ? " - " + props.selectedDate.to.toLocaleDateString()
+      : ""
+  }`;
 
   return (
     <div className="flex items-center gap-4 relative">
@@ -56,13 +65,16 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
       >
         {dict.action.date}:
       </label>
-      <input ref={popover.refs.setReference} {...popover.getReferenceProps()}
+      <input
+        ref={popover.refs.setReference}
+        {...popover.getReferenceProps()}
         id={id}
         type="button"
         value={displayedDateRange}
         readOnly
-        className={`h-8 ${props.selectedDate?.to ? "w-60" : "w-32"
-          } rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
+        className={`h-8 ${
+          props.selectedDate?.to ? "w-60" : "w-32"
+        } rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
       />
       {popover.isOpen && (
         <FloatingPortal>
@@ -108,7 +120,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
 
 /**
  * Function to get disabled date range based on lifecycle stage.
- * 
+ *
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  */
 function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
@@ -120,5 +132,5 @@ function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
   if (lifecycleStage === "scheduled") {
     return { before: tomorrow };
   }
-  return undefined
+  return undefined;
 }
