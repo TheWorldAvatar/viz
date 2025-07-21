@@ -246,7 +246,7 @@ export default function RegistryTableComponent(
           <div className="text-lg ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
-      {task && (
+      {isTaskModalOpen && task && (
         <TaskModal
           entityType={props.entityType}
           isOpen={isTaskModalOpen}
