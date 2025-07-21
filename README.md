@@ -1,4 +1,10 @@
+![GitHub Tag](https://img.shields.io/github/v/tag/TheWorldAvatar/viz?logo=git&logoColor=%20%23F05032&label=Version&labelColor=0B4452&color=0d5226)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/TheWorldAvatar/viz?logo=refinedgithub&logoColor=%239E95B7&labelColor=d9877c&color=51b7a6)
+![GitHub contributors](https://img.shields.io/github/contributors/TheWorldAvatar/viz?logo=github&logoColor=181717&color=18677a&labelColor=157b3e)
 [![Docker Image CI](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml)
+
+
+
 
 # The World Avatar (TWA) Visualisation Platform
 
