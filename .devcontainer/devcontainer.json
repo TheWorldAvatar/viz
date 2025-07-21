@@ -1,0 +1,20 @@
+{
+	"name": "Viz Dev Container",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"nodeGypDependencies": true,
+			"version": "latest",
+			"pnpmVersion": "latest",
+			"nvmVersion": "latest"
+		}
+	},
+	"mounts": [
+		"source=${localWorkspaceFolder}/.nvm,target=/home/node/.nvm,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/.pnpm,target=/home/node/.pnpm,type=bind,consistency=cached"
+	],
+	"forwardPorts": [
+		3000
+	],
+	"postCreateCommand": "pnpm install"
+}
