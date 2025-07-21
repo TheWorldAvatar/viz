@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.5
+
+### Bug Fixes
+
+- Fixed caching of table action(s) for task modal
+
 ## 5.34.4
 
 ### Changes
