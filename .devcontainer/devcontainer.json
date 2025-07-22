@@ -7,7 +7,8 @@
 			"version": "latest",
 			"pnpmVersion": "latest",
 			"nvmVersion": "latest"
-		}
+		},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
 	},
 	"mounts": [
 		// bind mount ~ ($HOME) on macOS/Linux and the user's folder (%USERPROFILE%) on Windows, change to 
