@@ -55,27 +55,38 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.allTasks) && (
-          <div className="flex  items-centre justify-between  sm:gap-4 bg-gray-200 dark:bg-zinc-800   max-w-fit p-1.5 text-center rounded-lg flex-wrap">
-            <RedirectButton
-              label={dict.nav.title.outstanding}
-              leftIcon="pending"
-              url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
-              variant={
-                props.lifecycleStage == "outstanding" ? "active" : "ghost"
-              }
-            />
-            <RedirectButton
-              label={dict.nav.title.scheduled}
-              leftIcon="schedule"
-              url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-              variant={props.lifecycleStage == "scheduled" ? "active" : "ghost"}
-            />
-            <RedirectButton
-              label={dict.nav.title.closed}
-              leftIcon="archive"
-              url={`${Routes.REGISTRY_TASK_CLOSED}`}
-              variant={props.lifecycleStage == "closed" ? "active" : "ghost"}
-            />
+          <div className="flex flex-col sm:flex-row items-center justify-between sm:gap-4 bg-gray-200 dark:bg-zinc-800 w-full sm:max-w-fit p-1.5 text-center rounded-lg gap-2">
+            <div className="w-full sm:w-auto border-b-1 border-gray-400 pb-2 sm:p-0 sm:border-0">
+              <RedirectButton
+                label={dict.nav.title.outstanding}
+                leftIcon="pending"
+                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                variant={
+                  props.lifecycleStage == "outstanding" ? "active" : "ghost"
+                }
+                className="w-full "
+              />
+            </div>
+            <div className="w-full sm:w-auto border-b-1 border-gray-400 pb-2 sm:p-0 sm:border-0">
+              <RedirectButton
+                label={dict.nav.title.scheduled}
+                leftIcon="schedule"
+                url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+                variant={
+                  props.lifecycleStage == "scheduled" ? "active" : "ghost"
+                }
+                className="w-full"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <RedirectButton
+                label={dict.nav.title.closed}
+                leftIcon="archive"
+                url={`${Routes.REGISTRY_TASK_CLOSED}`}
+                variant={props.lifecycleStage == "closed" ? "active" : "ghost"}
+                className="w-full"
+              />
+            </div>
           </div>
         )}
       <div className="w-full border-[0.5px] border-border" />
@@ -136,7 +147,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         </div>
       </div>
-      <div className="flex ml-2">
+      <div className="flex ml-2 mt-4 sm:mt-0">
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed") && (
           <DateRangeInput

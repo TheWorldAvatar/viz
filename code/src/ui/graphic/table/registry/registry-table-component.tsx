@@ -224,13 +224,13 @@ export default function RegistryTableComponent(
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "outstanding" ||
           props.lifecycleStage == "closed") && (
-          <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
+          <div className="flex items-center gap-2 mt-2  text-lg text-foreground ">
             <Icon className={`material-symbols-outlined`}>info</Icon>
             {dict.message.registryInstruction}
           </div>
         )}
         {props.lifecycleStage == "report" && (
-          <h2 className="text-md md:text-lg t  flex-wrap">
+          <h2 className="text-lg flex-wrap">
             {dict.title.serviceSummary}
             <hr />
           </h2>
