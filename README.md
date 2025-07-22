@@ -41,22 +41,18 @@ Additionally, there is a tutorial in the [example](./example/) directory, includ
 
 Information on the source code and its architecture can be found in the [code](./code/) directory. Briefly, the TWA Visualisation Platform takes the form of a [Next.js](https://nextjs.org/) application written using [TypeScript](https://www.typescriptlang.org/), utilising both client and server-side code.
 
-The reccommended way to develop viz is to work in the devcontainer configured in this repo. This requires Docker installed on your machine as well as the Dev Containers VScode extension.
+The recommended way to develop viz is to work in the `devcontainer` configured in this repo. This requires Docker installed on your machine as well as the `Dev Containers VScode` extension.
 
-Simply clone this repository, then run the command pallete (`ctrl / cmd + shift + P`) and run `Dev Containers: Reopen in Container`.
-
-Create an `.env.local` file in the code directory to configure app environment variables such as keycloak and mapbox integration
+1) Simply clone this repository, then run `VSCode`'s Command Palette (`ctrl / cmd + shift + P`) and run `Dev Containers: Reopen in Container`.
+2) Within the running container, create an `.env.local` file in the `./code` directory to configure app environment variables such as keycloak and mapbox integration
 
 - `MAPBOX_USERNAME` environment variable
 - `MAPBOX_API_KEY` environment variable
+- `KEYCLOAK` optional environment variable to set up an authorisation server if required; See [authorisation server](#4-authorisation) for more details
 
-Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./example/) directory.
-
-See [authorisation server](#4-authorisation) and update the relevant environment variables at `.env.local` if required.
-
-`node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. 
-
-Once development variables have been set up, run `pnpm dev` in from the code directory. Alternatively, go to the debug tab on VSCode to run in debug mode.
+3) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
+4) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
+5) Once installed, run `pnpm dev` from the `code` directory to set up the app server. Alternatively, go to the debug tab on VSCode to run in debug mode.
 
 ## 3. Production
 
