@@ -39,18 +39,24 @@ Additionally, there is a tutorial in the [example](./example/) directory, includ
 
 ## 2. Development
 
-Information on the source code and its architecture can be found in the [code](./code/) directory. Briefly, the TWA Visualisation Platform takes the form of a [Next.js](https://nextjs.org/) project written using [TypeScript](https://www.typescriptlang.org/), utilising both client and server-side codes.
+Information on the source code and its architecture can be found in the [code](./code/) directory. Briefly, the TWA Visualisation Platform takes the form of a [Next.js](https://nextjs.org/) application written using [TypeScript](https://www.typescriptlang.org/), utilising both client and server-side code.
 
-The development process can occur locally or in a Docker container. Please do note that it is faster to develop the platform locally, and instructions are available in the [code](./code#3-local-development-workflow) directory.
+The reccommended way to develop viz is to work in the devcontainer configured in this repo. This requires Docker installed on your machine as well as the Dev Containers VScode extension.
 
-On the other hand, Docker deployment is simplified and requires minimal setup. In order to start a Docker container, please ensure the following:
+Simply clone this repository, then run the command pallete (`ctrl / cmd + shift + P`) and run `Dev Containers: Reopen in Container`.
 
-1. Docker is installed
-2. Create files within this directory (containing the docker configurations) for `mapbox_username` and `mapbox_api_key` according to your [Mapbox](https://www.mapbox.com/) credentials. This will be passed as Docker secrets when the container is started.
-3. Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./example/) directory.
-4. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables at `docker-compose.dev.yml` if required.
+Create an `.env.local` file in the code directory to configure app environment variables such as keycloak and mapbox integration
 
-Once the above steps have been completed, run the command `docker compose -f 'docker-compose.dev.yml' up -d` in this directory. The development server will be set up at `port 3000` on your local machine at `localhost:3000`. Any code changes will be propagated, but may require a browser refresh from time to time.
+- `MAPBOX_USERNAME` environment variable
+- `MAPBOX_API_KEY` environment variable
+
+Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./example/) directory.
+
+See [authorisation server](#4-authorisation) and update the relevant environment variables at `.env.local` if required.
+
+`node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. 
+
+Once development variables have been set up, run `pnpm dev` in from the code directory. Alternatively, go to the debug tab on VSCode to run in debug mode.
 
 ## 3. Production
 
