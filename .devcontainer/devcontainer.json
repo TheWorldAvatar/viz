@@ -13,5 +13,5 @@
 	"forwardPorts": [
 		3000
 	],
-	"postCreateCommand": "cd code; pnpm install"
+	"postAttachCommand": "cd code; pnpm install"
 }
