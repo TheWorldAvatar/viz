@@ -35,7 +35,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const [contentWidthClass, setContentWidthClass] =
-    useState<string>("w-[82vw]");
+    useState<string>("w-[84vw]");
 
   const togglePopup = () => {
     setPopup(!popup);

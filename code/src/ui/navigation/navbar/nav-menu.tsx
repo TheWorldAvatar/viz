@@ -104,7 +104,7 @@ function NavMenuContents(
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
   const [navMenuWidthClass, setNavMenuWidthClass] =
-    useState<string>("w-[18vw]");
+    useState<string>("w-[16vw]");
   const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
@@ -141,8 +141,8 @@ function NavMenuContents(
       setNavMenuWidthClass("w-[6vw]");
       props.setContentWidthClass("w-[94vw]");
     } else {
-      setNavMenuWidthClass("w-[18vw]");
-      props.setContentWidthClass("w-[82vw]");
+      setNavMenuWidthClass("w-[16vw]");
+      props.setContentWidthClass("w-[84vw]");
     }
 
     setIsMenuExpanded(!isMenuExpanded);
