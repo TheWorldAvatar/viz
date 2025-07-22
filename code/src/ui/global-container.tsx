@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Konami from "react-konami-code";
 import { Provider } from "react-redux";
 
@@ -34,6 +34,8 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   }>({ x: 0, y: 0 });
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
+  const [contentWidthClass, setContentWidthClass] =
+    useState<string>("w-[86vw]");
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -73,15 +75,16 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
         <HeaderBar pages={props.pages} settings={props.settings} />
 
-        <main className="flex h-[94dvh] w-full">
+        <main className="flex h-[94dvh] w-full ">
           {!pathname.endsWith("map") && (
             <NavMenu
+              setContentWidthClass={setContentWidthClass}
               pages={props.pages}
               settings={props.settings}
               isMobile={false}
             />
           )}
-          <div className="flex grow flex-col gap-8 ">
+          <div className={`flex grow flex-col ${contentWidthClass}`}>
             {props.children}
             <Footer />
           </div>
