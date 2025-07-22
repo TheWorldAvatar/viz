@@ -104,7 +104,7 @@ function NavMenuContents(
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
   const [navMenuWidthClass, setNavMenuWidthClass] =
-    useState<string>("w-[14vw]");
+    useState<string>("w-[18vw]");
   const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
@@ -138,11 +138,11 @@ function NavMenuContents(
 
   const handleMenuToggle = () => {
     if (isMenuExpanded) {
-      setNavMenuWidthClass("w-[4dvw]");
-      props.setContentWidthClass("w-[96vw]");
+      setNavMenuWidthClass("w-[6vw]");
+      props.setContentWidthClass("w-[94vw]");
     } else {
-      setNavMenuWidthClass("w-[14vw]");
-      props.setContentWidthClass("w-[86vw]");
+      setNavMenuWidthClass("w-[18vw]");
+      props.setContentWidthClass("w-[82vw]");
     }
 
     setIsMenuExpanded(!isMenuExpanded);
@@ -153,13 +153,11 @@ function NavMenuContents(
       ref={navMenuRef}
       className={`${
         props.isMobile
-          ? "flex gap-4 p-2  w-full "
+          ? "flex gap-4 p-2 w-full"
           : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
       }
       ${navMenuWidthClass}
-   xl:flex
-      
-         flex-col justify-start transition-all duration-200 ease-in-out`}
+      xl:flex flex-col justify-start transition-all duration-200 ease-in-out `}
     >
       <button
         className={`${
