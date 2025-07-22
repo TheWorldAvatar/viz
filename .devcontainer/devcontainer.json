@@ -11,7 +11,7 @@
 	},
 	"mounts": [
 		// bind mount ~ ($HOME) on macOS/Linux and the user's folder (%USERPROFILE%) on Windows, change to 
-		"source=${localEnv:HOME}${localEnv:USERPROFILE},target=/host-home-folder,type=bind,consistency=cached",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE},target=/host-home-folder,type=bind,consistency=cached"
 	],
 	"forwardPorts": [
 		3000
