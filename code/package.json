@@ -1,6 +1,6 @@
 {
     "name": "viz",
-    "version": "5.34.5",
+    "version": "5.34.6",
     "private": true,
     "type": "module",
     "engines": {
@@ -8,7 +8,6 @@
     },
     "scripts": {
         "dev": "NODE_ENV=development node --env-file='.env.local' server.js",
-        "dev-docker": "NODE_ENV=development node server.js",
         "build": "next build",
         "start": "NODE_ENV=production node --env-file='.env.local' server.js",
         "start-docker": "NODE_ENV=production node server.js",
