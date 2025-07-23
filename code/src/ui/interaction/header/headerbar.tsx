@@ -89,6 +89,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
       <div className="flex items-center justify-center">
         <div className={`flex ${pathname.endsWith("map") ? "" : "xl:hidden"} `}>
           <NavMenu
+            setContentWidthClass={() => {}}
             pages={props.pages}
             settings={props.settings}
             isMobile={true}
