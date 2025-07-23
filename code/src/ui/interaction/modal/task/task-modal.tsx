@@ -147,8 +147,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       );
       response = await res.json();
     }
-    toast(response?.data?.message || response?.error?.message,
-      response?.error ? "error" : "success");
+    toast(
+      response?.data?.message || response?.error?.message,
+      response?.error ? "error" : "success"
+    );
     if (response && !response?.error) {
       setTimeout(() => {
         props.setIsOpen(false);
@@ -205,11 +207,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         <h1 className="text-xl font-bold">
           {parseWordsForLabels(dict.title.actions)}
         </h1>
-        <h2 className="text-sm md:text-lg mr-4  md:mr-8">
+        <h2 className="text-md md:text-lg mr-4  md:mr-8">
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
+      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2 p-1">
         {taskType !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
             {taskType === "complete" && dict.message.completeInstruction}
@@ -239,8 +241,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               taskType === "report"
                 ? "report"
                 : taskType === "cancel"
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -261,13 +263,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <LoadingSpinner isSmall={false} />
         )}
 
-        <div className="flex flex-wrap gap-2 justify-end items-center">
+        <div className="flex flex-wrap gap-2 justify-end items-center ">
           <div className="flex-grow" />
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
-            (props.task?.status?.toLowerCase() == dict.title.assigned?.toLowerCase() ||
-              props.task?.status?.toLowerCase() == dict.title.completed?.toLowerCase()) &&
+            (props.task?.status?.toLowerCase() ==
+              dict.title.assigned?.toLowerCase() ||
+              props.task?.status?.toLowerCase() ==
+                dict.title.completed?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -281,8 +285,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.task?.status?.toLowerCase() !== dict.title.issue?.toLowerCase() &&
-            props.task?.status?.toLowerCase() !== dict.title.cancelled?.toLowerCase() &&
+            props.task?.status?.toLowerCase() !==
+              dict.title.issue?.toLowerCase() &&
+            props.task?.status?.toLowerCase() !==
+              dict.title.cancelled?.toLowerCase() &&
             taskType === "default" && (
               <Button
                 leftIcon="assignment"
@@ -296,8 +302,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            (props.task?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
-              props.task?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) &&
+            (props.task?.status?.toLowerCase() ===
+              dict.title.new?.toLowerCase() ||
+              props.task?.status?.toLowerCase() ===
+                dict.title.assigned?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 variant="secondary"
@@ -312,8 +320,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.reportTask) &&
-            (props.task?.status?.toLowerCase() === dict.title.new?.toLowerCase() ||
-              props.task?.status?.toLowerCase() === dict.title.assigned?.toLowerCase()) &&
+            (props.task?.status?.toLowerCase() ===
+              dict.title.new?.toLowerCase() ||
+              props.task?.status?.toLowerCase() ===
+                dict.title.assigned?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 variant="secondary"

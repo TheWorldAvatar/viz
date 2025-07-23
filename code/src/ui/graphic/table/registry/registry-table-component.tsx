@@ -206,7 +206,7 @@ export default function RegistryTableComponent(
   return (
     <div className="bg-muted  mx-auto overflow-auto w-full p-4 h-dvh ">
       <div className="rounded-lg md:p-4 ">
-        <h1 className="text-2xl md:text-4xl font-bold mb-4 ">
+        <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
