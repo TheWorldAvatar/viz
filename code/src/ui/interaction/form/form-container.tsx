@@ -55,7 +55,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className="relative flex flex-col w-[95vw] h-[80vh] sm:w-[95vw] sm:h-[85vh] md:h-[80vh] md:w-[95vw] lg:h-[85vh] xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-4  ">
+    <div className=" flex flex-col w-full h-dvh mt-0   xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -228,7 +228,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6 p-1  ">
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6 p-1 ">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />

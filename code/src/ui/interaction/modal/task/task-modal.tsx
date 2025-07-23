@@ -211,7 +211,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2 p-1">
+      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2 p-1 ">
         {taskType !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
             {taskType === "complete" && dict.message.completeInstruction}

@@ -109,6 +109,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
                   range_end: `!bg-primary text-foreground rounded-full`,
                 }}
                 footer={displayedDateRange}
+                required={true}
               />
             </div>
           </div>
