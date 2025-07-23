@@ -159,20 +159,19 @@ function NavMenuContents(
       ${navMenuWidthClass}
       xl:flex flex-col justify-start transition-all duration-200 ease-in-out `}
     >
-      <button
-        className={`${
-          props.isMobile ? "hidden" : "xl:flex"
-        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
-          isMenuExpanded
-            ? "mr-2 self-end rounded-md -mb-8 "
-            : " justify-center items-center rounded-full -mb-4"
-        }`}
-        onClick={handleMenuToggle}
-      >
-        <Icon className="material-symbols-outlined">
-          {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-        </Icon>
-      </button>
+      {!props.isMobile && (
+        <button
+          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
+              ? "mr-2 self-end rounded-md -mb-8 "
+              : " justify-center items-center rounded-full -mb-4"
+            }`}
+          onClick={handleMenuToggle}
+        >
+          <Icon className="material-symbols-outlined">
+            {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+          </Icon>
+        </button>
+      )}
       {props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
