@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.6
+
+- Changelog should now be present on the releases page automatically configured by GitHub
+- Dockerfile no longer builds a development stage, workflow has migrated ot a devcontainer. See main README
+
+## 5.34.5
+
+### Bug Fixes
+
+- Fixed caching of table action(s) for task modal
+
 ## 5.34.4
 
 ### Changes
