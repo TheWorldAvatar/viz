@@ -19,7 +19,7 @@ export interface NavMenuProps {
   pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
-  setContentWidthClass: React.Dispatch<React.SetStateAction<string>>;
+  setContentWidthClass?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface NavMenuContentsProps extends NavMenuProps {

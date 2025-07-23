@@ -1,6 +1,5 @@
 .introInner {
   background-color: var(--muted) !important;
-  /* margin-bottom: 10px; */
   overflow-y: auto;
   padding: 2rem;
   width: 100%;
