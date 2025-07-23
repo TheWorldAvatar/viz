@@ -64,7 +64,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 variant={
                   props.lifecycleStage == "outstanding" ? "active" : "ghost"
                 }
-                className="w-full "
+                className="w-full"
               />
             </div>
             <div className="w-full sm:w-auto border-b-1 border-gray-400 pb-2 sm:p-0 sm:border-0">
@@ -90,8 +90,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           </div>
         )}
       <div className="w-full border-[0.5px] border-border" />
-      <div className="flex justify-between md:gap-2 lg:gap-0 flex-wrap ">
-        <div className="flex items-center !-ml-2 ">
+      <div className="flex justify-between items-end    md:gap-2 lg:gap-0 flex-wrap ">
+        <div className="flex items-center  !-ml-2 ">
           <Button
             className="ml-2"
             size="icon"
