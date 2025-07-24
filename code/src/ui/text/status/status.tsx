@@ -77,12 +77,12 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   }
 
   return (
-    <span className="inline-flex items-center">
+    <span className="inline-flex items-center ">
       <span
         className="h-2 w-2 mx-1 rounded-full bg-background border-1 border-solid"
         style={{ borderColor: statusColor }}
       ></span>
-      <p className="text-xs" style={{ color: statusColor }}>
+      <p className="text-lg" style={{ color: statusColor }}>
         {props.status}
       </p>
     </span>

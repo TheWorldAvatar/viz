@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.34.7
+
+- Increased the font size of the registry pages
+- Improved the layout of all pages. Now they take the full width of the container
+- Improved the mobile view for all pages
+
 ## 5.34.6
 
 - Changelog should now be present on the releases page automatically configured by GitHub

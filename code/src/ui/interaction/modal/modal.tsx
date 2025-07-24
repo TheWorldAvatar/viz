@@ -69,7 +69,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className={`relative flex flex-col w-11/12 h-11/12 md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl ${props.styles}`}
+                  className={`relative flex flex-col w-full h-dvh md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark md:border-1 md:shadow-2xl md:border-border md:rounded-xl ${props.styles}`}
                 >
                   <Button
                     leftIcon="close"

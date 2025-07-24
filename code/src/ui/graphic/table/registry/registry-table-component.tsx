@@ -132,10 +132,18 @@ export default function RegistryTableComponent(
           props.lifecycleStage == "closed"
         ) {
           const startDate = new Date(
-            Date.UTC(selectedDate.from.getFullYear(), selectedDate.from.getMonth(), selectedDate.from.getDate())
+            Date.UTC(
+              selectedDate.from.getFullYear(),
+              selectedDate.from.getMonth(),
+              selectedDate.from.getDate()
+            )
           );
           const endDate = new Date(
-            Date.UTC(selectedDate.to.getFullYear(), selectedDate.to.getMonth(), selectedDate.to.getDate())
+            Date.UTC(
+              selectedDate.to.getFullYear(),
+              selectedDate.to.getMonth(),
+              selectedDate.to.getDate()
+            )
           );
 
           const res = await fetch(
@@ -196,9 +204,9 @@ export default function RegistryTableComponent(
   }, [task]);
 
   return (
-    <div className="bg-muted border-border   rounded-xl border-1  shadow-2xl mx-auto mt-4 overflow-auto h-[81vh] w-[95vw]  p-2 sm:w-2xl md:h-[80vh] md:w-[95vw] lg:h-[85vh] lg:w-[95vw] lg:p-4  xl:h-10/12 xl:w-[70vw] 2xl:h-[85vh] ">
+    <div className="bg-muted  mx-auto overflow-auto w-full p-4 h-dvh ">
       <div className="rounded-lg md:p-4 ">
-        <h1 className="text-2xl md:text-4xl font-bold mb-4 ">
+        <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
@@ -216,13 +224,13 @@ export default function RegistryTableComponent(
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "outstanding" ||
           props.lifecycleStage == "closed") && (
-            <div className="flex items-center gap-2   text-sm md:text-md text-foreground ">
-              <Icon className={`material-symbols-outlined`}>info</Icon>
-              {dict.message.registryInstruction}
-            </div>
-          )}
+          <div className="flex items-center gap-2 mt-2  text-lg text-foreground ">
+            <Icon className={`material-symbols-outlined`}>info</Icon>
+            {dict.message.registryInstruction}
+          </div>
+        )}
         {props.lifecycleStage == "report" && (
-          <h2 className="text-md md:text-lg t  flex-wrap">
+          <h2 className="text-lg flex-wrap">
             {dict.title.serviceSummary}
             <hr />
           </h2>

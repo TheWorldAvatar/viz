@@ -183,7 +183,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   return (
     <div className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 mx-auto space-y-4">
-      <h2 className="text-lg md:text-2xl  font-bold">
+      <h2 className="text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
       {isLoading && <LoadingSpinner isSmall={true} />}

@@ -58,7 +58,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <div
       id="headerbar"
-      className="bg-muted border-b-border z-[999] flex h-[6dvh] min-h-[6dvh] items-center justify-between overflow-hidden border-b "
+      className="bg-muted border-b-border z-[999] flex h-[8dvh]  items-center justify-between overflow-hidden border-b "
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (

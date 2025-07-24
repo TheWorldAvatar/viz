@@ -42,7 +42,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       {
         key: "actions",
         title: "",
-        className: "border-border border-r-[0.5px]  shadow-2xl ",
+        className: "border-border border-r-[0.5px]  shadow-2xl  ",
         render: (_, record) => (
           <RegistryRowActions
             recordType={props.recordType}
@@ -73,7 +73,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         return {
           key: field,
           dataIndex: field,
-          className: "border-b-1 border-border bg-muted  ",
+          className: "border-b-1 border-border bg-muted text-lg  ",
           title: title,
           ellipsis: true,
           width: minWidth,
@@ -85,7 +85,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             return (
               <Typography.Text
                 style={{ color: "var(--foreground)" }}
-                className=""
+                className="!text-lg"
               >
                 {parseWordsForLabels(`${value}`)}
               </Typography.Text>
@@ -129,6 +129,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           defaultPageSize: 10,
           pageSizeOptions: [5, 10, 20],
           showSizeChanger: true,
+          size: "default",
           showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
           position: ["bottomRight"],
         }}

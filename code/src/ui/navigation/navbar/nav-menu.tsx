@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { Icon } from "@mui/material";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
@@ -19,6 +19,7 @@ export interface NavMenuProps {
   pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
+  setContentWidthClass?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface NavMenuContentsProps extends NavMenuProps {
@@ -102,6 +103,9 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
+  const [navMenuWidthClass, setNavMenuWidthClass] =
+    useState<string>("w-[16vw]");
+  const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -132,31 +136,42 @@ function NavMenuContents(
     };
   }
 
+  const handleMenuToggle = () => {
+    if (isMenuExpanded) {
+      setNavMenuWidthClass("w-[6vw]");
+      props.setContentWidthClass("w-[94vw]");
+    } else {
+      setNavMenuWidthClass("w-[16vw]");
+      props.setContentWidthClass("w-[84vw]");
+    }
+
+    setIsMenuExpanded(!isMenuExpanded);
+  };
+
   return (
     <div
+      ref={navMenuRef}
       className={`${
         props.isMobile
-          ? "flex gap-4 p-2 "
+          ? "flex gap-4 p-2 w-full"
           : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
       }
-      ${isMenuExpanded ? "w-3xs lg:w-xs xl:flex 2xl:w-xs" : "w-24  xl:flex"}
-      
-         flex-col justify-start transition-all duration-200 ease-in-out`}
+      ${navMenuWidthClass}
+      xl:flex flex-col justify-start transition-all duration-200 ease-in-out `}
     >
-      <button
-        className={`${
-          props.isMobile ? "hidden" : "xl:flex"
-        }   cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
-          isMenuExpanded
-            ? "mr-2 self-end rounded-md -mb-8 "
-            : " justify-center items-center rounded-full -mb-4"
-        }`}
-        onClick={() => setIsMenuExpanded(!isMenuExpanded)}
-      >
-        <Icon className="material-symbols-outlined">
-          {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-        </Icon>
-      </button>
+      {!props.isMobile && (
+        <button
+          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
+              ? "mr-2 self-end rounded-md -mb-8 "
+              : " justify-center items-center rounded-full -mb-4"
+            }`}
+          onClick={handleMenuToggle}
+        >
+          <Icon className="material-symbols-outlined">
+            {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+          </Icon>
+        </button>
+      )}
       {props.settings?.modules?.landing && (
         <NavBarItem
           title={dict.nav.title.home}
@@ -253,8 +268,7 @@ function NavMenuContents(
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
-        (!keycloakEnabled ||
-          permissionScheme?.hasPermissions.registry) && (
+        (!keycloakEnabled || permissionScheme?.hasPermissions.registry) && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}

@@ -90,7 +90,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               style={{
                 ...transition.styles,
               }}
-              className="z-10 bg-muted p-2 rounded-lg shadow-lg mt-2 border border-border"
+              className="z-10 bg-muted p-5 sm:p-2 rounded-lg shadow-lg mt-2 border border-border"
             >
               <DayPicker
                 locale={dict.lang === "de" ? de : enGB}
@@ -109,6 +109,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
                   range_end: `!bg-primary text-foreground rounded-full`,
                 }}
                 footer={displayedDateRange}
+                required={true}
               />
             </div>
           </div>

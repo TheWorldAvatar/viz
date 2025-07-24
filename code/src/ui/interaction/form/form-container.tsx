@@ -55,7 +55,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className="relative flex flex-col w-[95vw] h-[80vh] sm:w-[95vw] sm:h-[85vh] md:h-[80vh] md:w-[95vw] lg:h-[85vh] xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-4  ">
+    <div className=" flex flex-col w-full h-dvh mt-0   xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -114,8 +114,10 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const agentResponseBody: AgentResponseBody = await res.json();
-    toast(agentResponseBody?.data?.message || agentResponseBody?.error?.message,
-      agentResponseBody?.error ? "error" : "success");
+    toast(
+      agentResponseBody?.data?.message || agentResponseBody?.error?.message,
+      agentResponseBody?.error ? "error" : "success"
+    );
   };
 
   // A hook that fetches the form template for executing an action
@@ -172,8 +174,10 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const customAgentResponse: AgentResponseBody = await res.json();
-    toast(customAgentResponse?.data?.message || customAgentResponse?.error?.message,
-      customAgentResponse?.error ? "error" : "success");
+    toast(
+      customAgentResponse?.data?.message || customAgentResponse?.error?.message,
+      customAgentResponse?.error ? "error" : "success"
+    );
     setIsLoading(false);
 
     if (!customAgentResponse?.error) {
@@ -224,7 +228,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           .toUpperCase()
           .replace("_", " ")}`}</span>
       </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6  ">
+      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6 p-1 ">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -246,7 +250,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-2 ">
+      <div className="flex justify-between p-1 sm:p-2  items-center">
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
@@ -258,7 +262,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
-        <div className="flex flex-wrap gap-2 justify-end items-center ">
+        <div className="flex flex-wrap gap-2 justify-end items-center  ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
@@ -336,18 +340,19 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               onClick={onSubmit}
             />
           )}
-          {isRescindAction || isTerminateAction && (
-            <Button
-              // Remove the rescind and terminate action view back to original view if no response
-              leftIcon="first_page"
-              variant="secondary"
-              tooltipText={dict.action.cancel}
-              onClick={() => {
-                setIsRescindAction(false);
-                setIsTerminateAction(false);
-              }}
-            />
-          )}
+          {isRescindAction ||
+            (isTerminateAction && (
+              <Button
+                // Remove the rescind and terminate action view back to original view if no response
+                leftIcon="first_page"
+                variant="secondary"
+                tooltipText={dict.action.cancel}
+                onClick={() => {
+                  setIsRescindAction(false);
+                  setIsTerminateAction(false);
+                }}
+              />
+            ))}
           {!(isRescindAction || isTerminateAction) && (
             <ReturnButton
               label={dict.action.return}
