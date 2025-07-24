@@ -84,11 +84,11 @@ function ColumnFilterDropdown({
             ? selectedValues[0]
             : `${selectedValues.length} selected`}
         </span>
-        <span className="ml-1">▼</span>
+        <span className="ml-1">{isOpen ? "▲" : "▼"}</span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 w-fit overflow-y-auto">
           <div className="p-1">
             {options.map((option) => (
               <label
@@ -99,7 +99,7 @@ function ColumnFilterDropdown({
                   type="checkbox"
                   checked={selectedValues.includes(option)}
                   onChange={() => handleToggle(option)}
-                  className="mr-2"
+                  className="mr-2 "
                 />
                 <span className="truncate">{option || "(empty)"}</span>
               </label>
