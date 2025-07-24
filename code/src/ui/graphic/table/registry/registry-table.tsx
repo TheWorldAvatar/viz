@@ -1,6 +1,13 @@
-import { Table, TableColumnsType, Typography } from "antd";
-
-import React from "react";
+import React, { useMemo } from "react";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  getPaginationRowModel,
+} from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -10,7 +17,6 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
-import AntDesignConfig from "ui/css/ant-design-style";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
@@ -24,7 +30,7 @@ interface RegistryTableProps {
 }
 
 /**
- * This component renders a registry of table based on the inputs.
+ * This component renders a registry of table based on the inputs using TanStack Table.
  *
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
@@ -34,78 +40,14 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
-
-  // Generate a list of column headings
-  const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
-    if (props.instances?.length === 0) return [];
-    return [
-      {
-        key: "actions",
-        title: "",
-        className: "border-border border-r-[0.5px]  shadow-2xl  ",
-        render: (_, record) => (
-          <RegistryRowActions
-            recordType={props.recordType}
-            lifecycleStage={props.lifecycleStage}
-            row={record}
-            setTask={props.setTask}
-          />
-        ),
-        fixed: "left",
-        width: 60,
-      },
-      // Get instances with the most number of fields
-      ...Object.keys(
-        props.instances.reduce((prev, current) => {
-          const prevKeys = Object.keys(prev).length;
-          const currentKeys = Object.keys(current).length;
-          return prevKeys >= currentKeys ? prev : current;
-        })
-      ).map((field) => {
-        // minimum width based on field name
-        const title = parseWordsForLabels(field);
-        // Set minimum width to require space for title and icons
-        const minWidth = Math.max(
-          title.length * 15, // Compute based on title length
-          125 // Minimum width
-        );
-
-        return {
-          key: field,
-          dataIndex: field,
-          className: "border-b-1 border-border bg-muted text-lg  ",
-          title: title,
-          ellipsis: true,
-          width: minWidth,
-          render: (value: FieldValues) => {
-            if (!value) return "";
-            if (field.toLowerCase() === "status") {
-              return <StatusComponent status={`${value}`} />;
-            }
-            return (
-              <Typography.Text
-                style={{ color: "var(--foreground)" }}
-                className="!text-lg"
-              >
-                {parseWordsForLabels(`${value}`)}
-              </Typography.Text>
-            );
-          },
-          sorter: (a: FieldValues, b: FieldValues) => {
-            if (!a[field] || !b[field]) return 0;
-            return `${a[field]}`.localeCompare(`${b[field]}`);
-          },
-        };
-      }),
-    ];
-  }, [props.instances]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   // Parse row values
-  const data: FieldValues[] = React.useMemo(() => {
+  const data: FieldValues[] = useMemo(() => {
     if (props.instances?.length === 0) return [];
     // Extract only the value into the data to simplify
     return props.instances.map((instance, index) => {
-      const flattenInstance: Record<string, string> = { key: `row-${index}` };
+      const flattenInstance: Record<string, string> = { id: `row-${index}` };
       Object.keys(instance).forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
@@ -118,40 +60,209 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     });
   }, [props.instances]);
 
+  // Generate columns
+  const columns: ColumnDef<FieldValues>[] = useMemo(() => {
+    if (props.instances?.length === 0) return [];
+
+    // Get all unique fields from instances
+    const allFields = new Set<string>();
+    props.instances.forEach((instance) => {
+      Object.keys(instance).forEach((field) => allFields.add(field));
+    });
+
+    const fieldColumns: ColumnDef<FieldValues>[] = Array.from(allFields).map(
+      (field) => {
+        const title = parseWordsForLabels(field);
+        const minWidth = Math.max(title.length * 15, 125);
+
+        return {
+          accessorKey: field,
+          header: title,
+          cell: ({ getValue }) => {
+            const value = getValue();
+            if (!value) return "";
+
+            if (field.toLowerCase() === "status") {
+              return <StatusComponent status={`${value}`} />;
+            }
+
+            return (
+              <div className="text-lg text-foreground">
+                {parseWordsForLabels(`${value}`)}
+              </div>
+            );
+          },
+          size: minWidth,
+          enableSorting: true,
+        };
+      }
+    );
+
+    // Add actions column at the beginning
+    const actionsColumn: ColumnDef<FieldValues> = {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <RegistryRowActions
+          recordType={props.recordType}
+          lifecycleStage={props.lifecycleStage}
+          row={row.original}
+          setTask={props.setTask}
+        />
+      ),
+      size: 60,
+      enableSorting: false,
+    };
+
+    return [actionsColumn, ...fieldColumns];
+  }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
+    },
+  });
+
   return (
-    <AntDesignConfig>
-      <Table
-        className="w-full overflow-x-auto rounded-lg "
-        rowClassName="bg-background"
-        dataSource={data}
-        columns={columns}
-        pagination={{
-          defaultPageSize: 10,
-          pageSizeOptions: [5, 10, 20],
-          showSizeChanger: true,
-          size: "default",
-          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
-          position: ["bottomRight"],
-        }}
-        rowKey={(record) =>
-          record.event_id ?? record.id ?? record.iri ?? record.key
-        }
-        scroll={{ x: "max-content" }}
-        size="middle"
-        sticky={{ offsetHeader: 0 }}
-        bordered={false}
-        showSorterTooltip={true}
-        locale={{
-          triggerAsc: dict.action.sortasc,
-          triggerDesc: dict.action.sortdesc,
-          cancelSort: dict.action.clearSort,
-          filterConfirm: dict.action.update.toUpperCase(),
-          filterReset: dict.action.clear.toUpperCase(),
-          filterEmptyText: dict.message.noData,
-          filterSearchPlaceholder: dict.action.search,
-          emptyText: <span>{dict.message.noData}</span>,
-        }}
-      />
-    </AntDesignConfig>
+    <div className="w-full overflow-x-auto rounded-lg border border-border">
+      <div className="min-w-full">
+        <table className="w-full border-collapse">
+          <thead className="bg-muted sticky top-0 z-10">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="border-b border-border">
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="border-r border-border bg-muted text-lg font-semibold text-foreground p-3 text-left whitespace-nowrap"
+                    style={{
+                      width: header.getSize(),
+                      minWidth: header.getSize(),
+                    }}
+                  >
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={`flex items-center ${
+                          header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : ""
+                        }`}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className="bg-background hover:bg-muted/50 border-b border-border"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="border-r border-border p-3 whitespace-nowrap"
+                    style={{
+                      width: cell.column.getSize(),
+                      minWidth: cell.column.getSize(),
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between p-4 bg-muted border-t border-border">
+        <div className="text-sm text-foreground">
+          {table.getFilteredRowModel().rows.length} total
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-foreground">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </span>
+            <select
+              className="hidden md:block px-2 py-1 border border-border rounded bg-background"
+              value={table.getState().pagination.pageSize}
+              onChange={(e) => {
+                table.setPageSize(Number(e.target.value));
+              }}
+            >
+              {[5, 10, 20].map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              className="hidden md:block px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {"<<"}
+            </button>
+            <button
+              className="px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {"<"}
+            </button>
+            <button
+              className="px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              {">"}
+            </button>
+            <button
+              className="hidden md:block px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              {">>"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Empty state */}
+      {table.getRowModel().rows.length === 0 && (
+        <div className="text-center py-8 text-foreground">
+          {dict.message.noData}
+        </div>
+      )}
+    </div>
   );
 }
