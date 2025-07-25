@@ -199,19 +199,35 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const columnOptions = useMemo(() => {
     const options: Record<string, string[]> = {};
 
-    if (data.length > 0) {
-      Object.keys(data[0]).forEach((columnKey) => {
-        if (columnKey !== "id") {
-          const uniqueValues = [
-            ...new Set(data.map((row) => row[columnKey]).filter(Boolean)),
-          ];
-          options[columnKey] = uniqueValues.sort();
-        }
+    if (props.instances?.length > 0) {
+      // Get all unique fields from instances (same as in columns generation)
+      const allFields = new Set<string>();
+      props.instances.forEach((instance) => {
+        Object.keys(instance).forEach((field) => allFields.add(field));
+      });
+
+      // Generate options for each field
+      Array.from(allFields).forEach((field) => {
+        const uniqueValues = [
+          ...new Set(
+            props.instances
+              .map((instance) => {
+                const fieldValue = instance[field];
+                if (Array.isArray(fieldValue)) {
+                  return fieldValue[0]?.value || "";
+                } else {
+                  return fieldValue?.value || "";
+                }
+              })
+              .filter((val) => val !== "") // Filter out empty values
+          ),
+        ];
+        options[field] = uniqueValues.sort();
       });
     }
 
     return options;
-  }, [data]);
+  }, [props.instances]);
 
   // Generate columns
   const columns: ColumnDef<FieldValues>[] = useMemo(() => {
@@ -227,7 +243,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       (field) => {
         const title = parseWordsForLabels(field);
         const minWidth = Math.max(title.length * 15, 125);
-        const isIdField = field.toLowerCase() === "id";
+        const isIdField = field.toLowerCase().includes("id");
 
         return {
           accessorKey: field,
@@ -258,6 +274,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               filterValue.length === columnOptions[field]?.length
             ) {
               return true;
+            }
+            // If the value is empty and no empty values are in the filter options, exclude it
+            if (!value && filterValue.length > 0) {
+              return false;
             }
             return filterValue.includes(value);
           },
