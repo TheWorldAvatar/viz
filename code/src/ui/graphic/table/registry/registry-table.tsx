@@ -177,6 +177,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       (field) => {
         const title = parseWordsForLabels(field);
         const minWidth = Math.max(title.length * 15, 125);
+        const isIdField = field.toLowerCase() === "id";
 
         return {
           accessorKey: field,
@@ -197,7 +198,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           },
           size: minWidth,
           enableSorting: true,
-          enableColumnFilter: true,
+          enableColumnFilter: !isIdField,
           filterFn: (row, columnId, filterValue: string[]) => {
             const value = row.getValue(columnId) as string;
             if (!filterValue || filterValue.length === 0) return true;
@@ -280,8 +281,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             header.getContext()
                           )}
                           {{
-                            asc: " 🔼",
-                            desc: " 🔽",
+                            asc: " ▲",
+                            desc: " ▼",
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
                       )}
