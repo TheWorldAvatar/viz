@@ -396,7 +396,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   });
 
   return (
-    <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
+    <div className="w-full rounded-xl border border-border flex flex-col h-full overflow-hidden">
       {/* Table container */}
       <div className="overflow-auto flex-1 min-h-[400px]">
         <div className="min-w-full">
@@ -523,7 +523,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               {table.getPageCount()}
             </span>
             <select
-              className="hidden md:block px-2 py-1 border border-border rounded bg-background"
+              className="hidden md:block px-2 py-1.5 border border-border rounded bg-background"
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
@@ -538,34 +538,36 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              className="hidden md:block px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            <Button
+              variant="outline"
+              leftIcon="keyboard_double_arrow_left"
+              size="icon"
+              className="!hidden md:!flex"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
-            >
-              {"<<"}
-            </button>
-            <button
-              className="px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <Button
+              variant="outline"
+              leftIcon="keyboard_arrow_left"
+              size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </button>
-            <button
-              className="px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <Button
+              variant="outline"
+              leftIcon="keyboard_arrow_right"
+              size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </button>
-            <button
-              className="hidden md:block px-3 py-1 border border-border rounded bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <Button
+              variant="outline"
+              leftIcon="keyboard_double_arrow_right"
+              className="!hidden md:!flex"
+              size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
-            >
-              {">>"}
-            </button>
+            />
           </div>
         </div>
       </div>
