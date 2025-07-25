@@ -46,7 +46,7 @@ function ColumnFilterDropdown({
   const selectedValues = (column.getFilterValue() as string[]) || [];
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside or pressing escape
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -54,16 +54,25 @@ function ColumnFilterDropdown({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        setSearchTerm(""); // Clear search when closing
+        setSearchTerm("");
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        setSearchTerm("");
       }
     };
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
 
@@ -78,11 +87,12 @@ function ColumnFilterDropdown({
 
   // Determine if a checkbox should be checked
   const isChecked = (value: string) => {
-    // If no filter is applied (undefined), all checkboxes should be checked
-    if (selectedValues === undefined) {
+    if (
+      selectedValues === undefined ||
+      selectedValues.length === options.length
+    ) {
       return true;
     }
-    // If filter is an empty array, no checkboxes should be checked
     if (selectedValues.length === 0) {
       return false;
     }
@@ -112,7 +122,7 @@ function ColumnFilterDropdown({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-2 py-1 text-sm border border-border rounded bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+        className="w-full px-2 py-1 text-sm border border-border rounded bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-gray-300 flex items-center justify-between"
       >
         <span className="truncate">{getDisplayText()}</span>
         <span className="ml-1">{isOpen ? "▲" : "▼"}</span>
@@ -127,8 +137,7 @@ function ColumnFilterDropdown({
               placeholder="Search options..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-2 py-1 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={(e) => e.stopPropagation()}
+              className="w-full px-2 py-1 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-gray-300"
             />
           </div>
 
@@ -144,9 +153,9 @@ function ColumnFilterDropdown({
                     type="checkbox"
                     checked={isChecked(option)}
                     onChange={() => handleToggle(option)}
-                    className="mr-2"
+                    className="mr-2 flex-shrink-0"
                   />
-                  <span className="truncate">{option || "(empty)"}</span>
+                  <span className="break-words leading-relaxed">{option}</span>
                 </label>
               ))
             ) : (
@@ -285,7 +294,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       }
     );
 
-    // Add actions column at the beginning
+    // Action buttons column
     const actionsColumn: ColumnDef<FieldValues> = {
       id: "actions",
       header: "",
@@ -304,6 +313,67 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
     return [actionsColumn, ...fieldColumns];
   }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
+
+  // Function to get current filtered options for a column
+  const getCurrentColumnOptions = (columnId: string) => {
+    if (!table) return columnOptions[columnId] || [];
+
+    // Get all active filters except the current column
+    const activeFilters = table
+      .getState()
+      .columnFilters.filter((filter) => filter.id !== columnId);
+
+    // If no other filters are active, return all options
+    if (activeFilters.length === 0) {
+      return columnOptions[columnId] || [];
+    }
+
+    // Calculate available options based on other active filters
+    const availableOptions = new Set<string>();
+
+    // Go through all original data and check which values would be available
+    // if we applied all other filters except the current column
+    data.forEach((row) => {
+      // Check if this row would pass all other active filters
+      let passesOtherFilters = true;
+
+      for (const filter of activeFilters) {
+        const filterValue = filter.value as string[];
+        const rowValue = row[filter.id] as string;
+
+        // If no filter is applied or all values are selected, it passes
+        if (
+          !filterValue ||
+          filterValue.length === 0 ||
+          filterValue.length === columnOptions[filter.id]?.length
+        ) {
+          continue;
+        }
+
+        // If the value is empty and no empty values are in the filter options, exclude it
+        if (!rowValue && filterValue.length > 0) {
+          passesOtherFilters = false;
+          break;
+        }
+
+        // Check if the row value is in the filter
+        if (!filterValue.includes(rowValue)) {
+          passesOtherFilters = false;
+          break;
+        }
+      }
+
+      // If this row passes all other filters, add its value for the current column
+      if (passesOtherFilters) {
+        const value = row[columnId] as string;
+        if (value && value !== "") {
+          availableOptions.add(value);
+        }
+      }
+    });
+
+    return Array.from(availableOptions).sort();
+  };
 
   const table = useReactTable({
     data,
@@ -327,7 +397,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
-      {/* Table container with fixed height and scroll */}
+      {/* Table container */}
       <div className="overflow-auto flex-1 min-h-[400px]">
         <div className="min-w-full">
           <table className="w-full border-collapse">
@@ -381,7 +451,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     {column.getCanFilter() ? (
                       <ColumnFilterDropdown
                         column={column}
-                        options={columnOptions[column.id] || []}
+                        options={getCurrentColumnOptions(column.id)}
                       />
                     ) : (
                       <div className="h-8" />
@@ -399,7 +469,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="border-r border-border p-3 whitespace-nowrap"
+                      className={`border-r border-border p-3 whitespace-nowrap ${
+                        cell.column.id === "actions"
+                          ? "sticky left-0 z-10 bg-background"
+                          : ""
+                      }`}
                       style={{
                         width: cell.column.getSize(),
                         minWidth: cell.column.getSize(),
@@ -419,9 +493,18 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       </div>
 
       {/* Clear all filters button */}
-      {columnFilters.length > 0 && (
+      {table.getState().columnFilters.some((filter) => {
+        const value = filter.value as string[];
+        return value && value.length > 0;
+      }) && (
         <div className="bg-muted border-t border-border p-2 flex justify-center">
-          <Button onClick={() => setColumnFilters([])} variant="destructive">
+          <Button
+            onClick={() => {
+              table.resetColumnFilters();
+              setColumnFilters([]);
+            }}
+            variant="destructive"
+          >
             Clear All Filters
           </Button>
         </div>
