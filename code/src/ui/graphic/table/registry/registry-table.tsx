@@ -42,6 +42,7 @@ function ColumnFilterDropdown({
   options: string[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const selectedValues = (column.getFilterValue() as string[]) || [];
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +54,7 @@ function ColumnFilterDropdown({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        setSearchTerm(""); // Clear search when closing
       }
     };
 
@@ -69,8 +71,42 @@ function ColumnFilterDropdown({
     const newValues = selectedValues.includes(value)
       ? selectedValues.filter((v) => v !== value)
       : [...selectedValues, value];
-    column.setFilterValue(newValues.length > 0 ? newValues : undefined);
+
+    // Always set the filter value, even if it's an empty array
+    column.setFilterValue(newValues);
   };
+
+  // Determine if a checkbox should be checked
+  const isChecked = (value: string) => {
+    // If no filter is applied (undefined), all checkboxes should be checked
+    if (selectedValues === undefined) {
+      return true;
+    }
+    // If filter is an empty array, no checkboxes should be checked
+    if (selectedValues.length === 0) {
+      return false;
+    }
+    // Otherwise, check if this specific value is in the selected values
+    return selectedValues.includes(value);
+  };
+
+  // Get display text for the button
+  const getDisplayText = () => {
+    if (selectedValues.length === 0) {
+      return "All";
+    } else if (selectedValues.length === options.length) {
+      return "All";
+    } else if (selectedValues.length === 1) {
+      return selectedValues[0];
+    } else {
+      return `${selectedValues.length} selected`;
+    }
+  };
+
+  // Filter options based on search term
+  const filteredOptions = options.filter((option) =>
+    option.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -78,33 +114,46 @@ function ColumnFilterDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-2 py-1 text-sm border border-border rounded bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
       >
-        <span className="truncate">
-          {selectedValues.length === 0
-            ? "All"
-            : selectedValues.length === 1
-            ? selectedValues[0]
-            : `${selectedValues.length} selected`}
-        </span>
+        <span className="truncate">{getDisplayText()}</span>
         <span className="ml-1">{isOpen ? "▲" : "▼"}</span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 w-fit overflow-y-auto">
-          <div className="p-1">
-            {options.map((option) => (
-              <label
-                key={option}
-                className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedValues.includes(option)}
-                  onChange={() => handleToggle(option)}
-                  className="mr-2 "
-                />
-                <span className="truncate">{option || "(empty)"}</span>
-              </label>
-            ))}
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 w-fit overflow-y-auto min-w-[200px]">
+          {/* Search input */}
+          <div className="p-2 border-b border-border">
+            <input
+              type="text"
+              placeholder="Search options..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-2 py-1 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+
+          {/* Options list */}
+          <div className="p-1 max-h-32 overflow-y-auto">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked(option)}
+                    onChange={() => handleToggle(option)}
+                    className="mr-2"
+                  />
+                  <span className="truncate">{option || "(empty)"}</span>
+                </label>
+              ))
+            ) : (
+              <div className="px-2 py-1 text-sm text-muted-foreground">
+                No options found
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -202,7 +251,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           enableColumnFilter: !isIdField,
           filterFn: (row, columnId, filterValue: string[]) => {
             const value = row.getValue(columnId) as string;
-            if (!filterValue || filterValue.length === 0) return true;
+            // If no filter is applied (undefined) or all values are selected, show all records
+            if (
+              !filterValue ||
+              filterValue.length === 0 ||
+              filterValue.length === columnOptions[field]?.length
+            ) {
+              return true;
+            }
             return filterValue.includes(value);
           },
         };
