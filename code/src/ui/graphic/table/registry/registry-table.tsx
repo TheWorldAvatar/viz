@@ -23,6 +23,7 @@ import {
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
+import Button from "ui/interaction/button";
 
 interface RegistryTableProps {
   recordType: string;
@@ -249,9 +250,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   });
 
   return (
-    <div className="w-full rounded-lg border border-border flex flex-col h-full">
-      {/* Table container with flexible height and scroll */}
-      <div className="overflow-auto flex-1 min-h-0">
+    <div className="w-full rounded-lg border border-border flex flex-col h-full ">
+      {/* Table container with fixed height and scroll */}
+      <div className="overflow-auto flex-1 min-h-[400px] ">
         <div className="min-w-full">
           <table className="w-full border-collapse">
             <thead className="bg-muted sticky top-0 z-10">
@@ -344,12 +345,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       {/* Clear all filters button */}
       {columnFilters.length > 0 && (
         <div className="bg-muted border-t border-border p-2 flex justify-center">
-          <button
-            onClick={() => setColumnFilters([])}
-            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-          >
+          <Button onClick={() => setColumnFilters([])} variant="destructive">
             Clear All Filters
-          </button>
+          </Button>
         </div>
       )}
 
