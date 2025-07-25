@@ -306,9 +306,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   });
 
   return (
-    <div className="w-full rounded-lg border border-border flex flex-col h-full ">
+    <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
       {/* Table container with fixed height and scroll */}
-      <div className="overflow-auto flex-1 min-h-[400px] ">
+      <div className="overflow-auto flex-1 min-h-[400px]">
         <div className="min-w-full">
           <table className="w-full border-collapse">
             <thead className="bg-muted sticky top-0 z-10">
