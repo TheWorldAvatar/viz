@@ -10,6 +10,7 @@ import {
   getFilteredRowModel,
   ColumnFiltersState,
   Column,
+  VisibilityState,
 } from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 
@@ -30,6 +31,12 @@ interface RegistryTableProps {
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  sorting?: SortingState;
+  setSorting?: React.Dispatch<React.SetStateAction<SortingState>>;
+  columnFilters?: ColumnFiltersState;
+  setColumnFilters?: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
+  columnVisibility?: VisibilityState;
+  setColumnVisibility?: React.Dispatch<React.SetStateAction<VisibilityState>>;
   limit?: number;
 }
 
@@ -42,7 +49,7 @@ function ColumnFilterDropdown({
   options: string[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const selectedValues = (column.getFilterValue() as string[]) || [];
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -178,6 +185,12 @@ function ColumnFilterDropdown({
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
+ * @param {SortingState} sorting Optional sorting state to control the initial sorting of the table.
+ * @param setSorting Optional dispatch method to update sorting state of the table.
+ * @param {ColumnFiltersState} columnFilters Optional column filters state to control the column filtering.
+ * @param setColumnFilters Optional dispatch method to update column filters state.
+ * @param {VisibilityState} columnVisibility Optional column visibility state to control the visibility of the table columns.
+ * @param setColumnVisibility Optional dispatch method to update column visibility state.
  * @param {number} limit Optional limit to the number of columns shown.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
@@ -186,6 +199,38 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [isColumnVisibilityOpen, setIsColumnVisibilityOpen] =
+    useState<boolean>(false);
+  const columnVisibilityRef = useRef<HTMLDivElement>(null);
+
+  // Close column visibility dropdown when clicking outside or pressing escape
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        columnVisibilityRef.current &&
+        !columnVisibilityRef.current.contains(event.target as Node)
+      ) {
+        setIsColumnVisibilityOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsColumnVisibilityOpen(false);
+      }
+    };
+
+    if (isColumnVisibilityOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isColumnVisibilityOpen]);
 
   // Parse row values
   const data: FieldValues[] = useMemo(() => {
@@ -388,7 +433,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
     },
+    onColumnVisibilityChange: setColumnVisibility,
     initialState: {
       pagination: {
         pageSize: 10,
@@ -397,194 +444,248 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   });
 
   return (
-    <div className="w-full rounded-xl border border-border flex flex-col h-full overflow-hidden">
-      {/* Table container */}
-      <div className="overflow-auto flex-1 min-h-[400px]">
-        <div className="min-w-full">
-          <table className="w-full border-collapse">
-            <thead className="bg-muted sticky top-0 z-10">
-              {/* Header row */}
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b border-border">
-                  {headerGroup.headers.map((header) => (
+    <>
+      {/* Column Visibility Dropdown */}
+      <div className="flex justify-end">
+        <div className="relative" ref={columnVisibilityRef}>
+          <Button
+            onClick={() => setIsColumnVisibilityOpen(!isColumnVisibilityOpen)}
+            variant="outline"
+            leftIcon="view_column"
+            size="lg"
+            className="text-sm"
+          >
+            <span className="truncate">Customise Columns</span>
+            <span className="ml-2">{isColumnVisibilityOpen ? "▲" : "▼"}</span>
+          </Button>
+
+          {isColumnVisibilityOpen && (
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 w-fit md:w-full overflow-y-auto min-w-[200px]">
+              {/* Toggle All */}
+              <div className="sticky top-0 left-0 py-1 border-b border-border bg-background">
+                <label className="flex items-center cursor-pointer hover:bg-muted px-2 py-1 rounded">
+                  <input
+                    type="checkbox"
+                    checked={table.getIsAllColumnsVisible()}
+                    onChange={table.getToggleAllColumnsVisibilityHandler()}
+                    className="mr-2 "
+                  />
+                  <span className="font-medium">Toggle All</span>
+                </label>
+              </div>
+
+              {/* Individual columns */}
+              {table.getAllLeafColumns().map((column) => (
+                <label
+                  key={column.id}
+                  className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={column.getIsVisible()}
+                    onChange={column.getToggleVisibilityHandler()}
+                    className="mr-2 flex-shrink-0"
+                  />
+                  <span className="break-words lg:truncate leading-relaxed">
+                    {column.id === "actions"
+                      ? "Actions"
+                      : parseWordsForLabels(column.id)}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="w-full rounded-xl border border-border flex flex-col h-full overflow-hidden">
+        {/* Table container */}
+        <div className="overflow-auto flex-1 min-h-[400px]">
+          <div className="min-w-full">
+            <table className="w-full border-collapse">
+              <thead className="bg-muted sticky top-0 z-10">
+                {/* Header row */}
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id} className="border-b border-border">
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="border-r border-border bg-muted text-lg font-semibold text-foreground p-3 text-left whitespace-nowrap"
+                        style={{
+                          width: header.getSize(),
+                          minWidth: header.getSize(),
+                        }}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <div
+                            className={`flex items-center ${
+                              header.column.getCanSort()
+                                ? "cursor-pointer select-none"
+                                : ""
+                            }`}
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {{
+                              asc: " ▲",
+                              desc: " ▼",
+                            }[header.column.getIsSorted() as string] ?? null}
+                          </div>
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+                {/* Filter row */}
+                <tr className="border-b border-border">
+                  {table.getAllColumns().map((column) => (
                     <th
-                      key={header.id}
-                      className="border-r border-border bg-muted text-lg font-semibold text-foreground p-3 text-left whitespace-nowrap"
+                      key={column.id}
+                      className="border-r border-border bg-muted p-2"
                       style={{
-                        width: header.getSize(),
-                        minWidth: header.getSize(),
+                        width: column.getSize(),
+                        minWidth: column.getSize(),
                       }}
                     >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={`flex items-center ${
-                            header.column.getCanSort()
-                              ? "cursor-pointer select-none"
-                              : ""
-                          }`}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: " ▲",
-                            desc: " ▼",
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
+                      {column.getCanFilter() ? (
+                        <ColumnFilterDropdown
+                          column={column}
+                          options={getCurrentColumnOptions(column.id)}
+                        />
+                      ) : (
+                        <div className="h-8" />
                       )}
                     </th>
                   ))}
                 </tr>
-              ))}
-              {/* Filter row */}
-              <tr className="border-b border-border">
-                {table.getAllColumns().map((column) => (
-                  <th
-                    key={column.id}
-                    className="border-r border-border bg-muted p-2"
-                    style={{
-                      width: column.getSize(),
-                      minWidth: column.getSize(),
-                    }}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="bg-background hover:bg-muted/50 border-b border-border"
                   >
-                    {column.getCanFilter() ? (
-                      <ColumnFilterDropdown
-                        column={column}
-                        options={getCurrentColumnOptions(column.id)}
-                      />
-                    ) : (
-                      <div className="h-8" />
-                    )}
-                  </th>
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        className={`border-r border-border p-3 whitespace-nowrap ${
+                          cell.column.id === "actions"
+                            ? "sticky left-0 z-10 bg-background"
+                            : ""
+                        }`}
+                        style={{
+                          width: cell.column.getSize(),
+                          minWidth: cell.column.getSize(),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className="bg-background hover:bg-muted/50 border-b border-border"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className={`border-r border-border p-3 whitespace-nowrap ${
-                        cell.column.id === "actions"
-                          ? "sticky left-0 z-10 bg-background"
-                          : ""
-                      }`}
-                      style={{
-                        width: cell.column.getSize(),
-                        minWidth: cell.column.getSize(),
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* Clear all filters button */}
-      {table.getState().columnFilters.some((filter) => {
-        const value = filter.value as string[];
-        return value && value.length > 0;
-      }) && (
-        <div className="bg-muted border-t border-border p-2 flex justify-center">
-          <Button
-            onClick={() => {
-              table.resetColumnFilters();
-              setColumnFilters([]);
-            }}
-            variant="destructive"
-          >
-            Clear All Filters
-          </Button>
-        </div>
-      )}
-
-      {/* Pagination - fixed at bottom */}
-      <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
-        <div className="text-sm text-foreground">
-          {table.getFilteredRowModel().rows.length} of{" "}
-          {table.getCoreRowModel().rows.length} total
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-foreground">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </span>
-            <select
-              className="hidden md:block px-2 py-1.5 border border-border rounded bg-background"
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
+        {/* Clear all filters button */}
+        {table.getState().columnFilters.some((filter) => {
+          const value = filter.value as string[];
+          return value && value.length > 0;
+        }) && (
+          <div className="bg-muted border-t border-border p-2 flex justify-center">
+            <Button
+              onClick={() => {
+                table.resetColumnFilters();
+                setColumnFilters([]);
               }}
+              variant="destructive"
             >
-              {[5, 10, 20].map((pageSize) => (
-                <option
-                  className="bg-background"
-                  key={pageSize}
-                  value={pageSize}
-                >
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
+              Clear All Filters
+            </Button>
           </div>
+        )}
 
+        {/* Pagination - fixed at bottom */}
+        <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
+          <div className="text-sm text-foreground">
+            {table.getFilteredRowModel().rows.length} of{" "}
+            {table.getCoreRowModel().rows.length} total
+          </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              leftIcon="keyboard_double_arrow_left"
-              size="icon"
-              className="!hidden md:!flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            />
-            <Button
-              variant="outline"
-              leftIcon="keyboard_arrow_left"
-              size="icon"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            />
-            <Button
-              variant="outline"
-              leftIcon="keyboard_arrow_right"
-              size="icon"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            />
-            <Button
-              variant="outline"
-              leftIcon="keyboard_double_arrow_right"
-              className="!hidden md:!flex"
-              size="icon"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            />
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-foreground">
+                Page {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getPageCount()}
+              </span>
+              <select
+                className="hidden md:block px-2 py-1.5 border border-border rounded bg-background"
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+              >
+                {[5, 10, 20].map((pageSize) => (
+                  <option
+                    className="bg-background"
+                    key={pageSize}
+                    value={pageSize}
+                  >
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                leftIcon="keyboard_double_arrow_left"
+                size="icon"
+                className="!hidden md:!flex"
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+              />
+              <Button
+                variant="outline"
+                leftIcon="keyboard_arrow_left"
+                size="icon"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              />
+              <Button
+                variant="outline"
+                leftIcon="keyboard_arrow_right"
+                size="icon"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              />
+              <Button
+                variant="outline"
+                leftIcon="keyboard_double_arrow_right"
+                className="!hidden md:!flex"
+                size="icon"
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Empty state */}
-      {table.getRowModel().rows.length === 0 && (
-        <div className="text-center py-8 text-foreground">
-          {columnFilters.length > 0
-            ? "No results match your filters. Try adjusting your search criteria."
-            : dict.message.noData}
-        </div>
-      )}
-    </div>
+        {/* Empty state */}
+        {table.getRowModel().rows.length === 0 && (
+          <div className="text-center py-8 text-foreground">
+            {columnFilters.length > 0
+              ? "No results match your filters. Try adjusting your search criteria."
+              : dict.message.noData}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
