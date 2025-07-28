@@ -123,7 +123,8 @@
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "na": "Nicht anwendbar",
-    "noDateSelected": "Wählen Sie einen Zeitraum aus."
+    "noDateSelected": "Wählen Sie einen Zeitraum aus.",
+    "noVisibleColumns": "No columns are visible. Please select at least one column to display from the dropdown menu."
   },
   "nav": {
     "caption": {

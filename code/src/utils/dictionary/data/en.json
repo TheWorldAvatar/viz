@@ -123,7 +123,8 @@
     "fileUploadError": "File upload failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
     "na": "Not applicable",
-    "noDateSelected": "Pick a date range."
+    "noDateSelected": "Pick a date range.",
+    "noVisibleColumns": "No columns are visible. Please select at least one column to display from the dropdown menu."
   },
   "nav": {
     "caption": {

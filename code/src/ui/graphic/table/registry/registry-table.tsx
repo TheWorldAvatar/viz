@@ -497,6 +497,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           )}
         </div>
       </div>
+
       <div className="w-full rounded-xl border border-border flex flex-col h-full overflow-hidden">
         {/* Table container */}
         <div className="overflow-auto flex-1 min-h-[400px]">
@@ -540,7 +541,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 ))}
                 {/* Filter row */}
                 <tr className="border-b border-border">
-                  {table.getAllColumns().map((column) => (
+                  {table.getVisibleLeafColumns().map((column) => (
                     <th
                       key={column.id}
                       className="border-r border-border bg-muted p-2"
@@ -683,6 +684,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             {columnFilters.length > 0
               ? "No results match your filters. Try adjusting your search criteria."
               : dict.message.noData}
+          </div>
+        )}
+        {table.getVisibleLeafColumns().length === 0 && (
+          <div className="text-center py-8 text-foreground">
+            {dict.message.noVisibleColumns}
           </div>
         )}
       </div>
