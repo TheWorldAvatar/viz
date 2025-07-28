@@ -90,7 +90,7 @@ export default function ColumnFilterDropdown({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-2 py-1 text-sm border border-border rounded bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-gray-300 flex items-center justify-between"
+        className="w-full px-2 py-1 text-sm border border-border rounded bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-gray-300 flex items-center justify-between cursor-pointer"
       >
         <span className="truncate">{getDisplayText()}</span>
         <span className="ml-1">{isOpen ? "▲" : "▼"}</span>
