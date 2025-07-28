@@ -131,7 +131,7 @@ function ColumnFilterDropdown({
       {isOpen && (
         <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 w-fit overflow-y-auto min-w-[200px]">
           {/* Search input */}
-          <div className="p-2 border-b border-border">
+          <div className="sticky top-0 left-0 p-2 border-b border-border bg-background">
             <input
               type="text"
               placeholder="Search options..."
@@ -142,28 +142,29 @@ function ColumnFilterDropdown({
           </div>
 
           {/* Options list */}
-          <div className="p-1 max-h-32 overflow-y-auto">
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <label
-                  key={option}
-                  className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked(option)}
-                    onChange={() => handleToggle(option)}
-                    className="mr-2 flex-shrink-0"
-                  />
-                  <span className="break-words leading-relaxed">{option}</span>
-                </label>
-              ))
-            ) : (
-              <div className="px-2 py-1 text-sm text-muted-foreground">
-                No options found
-              </div>
-            )}
-          </div>
+
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
+              <label
+                key={option}
+                className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
+              >
+                <input
+                  type="checkbox"
+                  checked={isChecked(option)}
+                  onChange={() => handleToggle(option)}
+                  className="mr-2 flex-shrink-0"
+                />
+                <span className="break-words lg:truncate leading-relaxed">
+                  {option}
+                </span>
+              </label>
+            ))
+          ) : (
+            <div className="px-2 py-1 text-sm text-muted-foreground">
+              No options found
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -530,7 +531,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               }}
             >
               {[5, 10, 20].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
+                <option
+                  className="bg-background"
+                  key={pageSize}
+                  value={pageSize}
+                >
                   Show {pageSize}
                 </option>
               ))}
