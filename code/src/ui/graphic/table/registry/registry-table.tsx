@@ -445,7 +445,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <>
-      {/* Column Visibility Dropdown - only show if there's data */}
+      {/* Column Visibility Dropdown */}
       {table.getRowModel().rows.length > 0 && (
         <div className="flex justify-end">
           <div className="relative" ref={columnVisibilityRef}>
@@ -498,8 +498,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         </div>
       )}
 
-      <div className="w-full rounded-xl border border-border flex flex-col h-full overflow-hidden">
-        {/* Table container - only show if there's data */}
+      <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
+        {/* Table container */}
         {table.getRowModel().rows.length > 0 && (
           <div className="overflow-auto flex-1 min-h-[400px]">
             <div className="min-w-full">
@@ -563,6 +563,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     ))}
                   </tr>
                 </thead>
+                {/* Body rows */}
                 <tbody>
                   {table.getRowModel().rows.map((row) => (
                     <tr
@@ -596,7 +597,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           </div>
         )}
 
-        {/* Clear all filters button - only show if there's data */}
+        {/* Clear all filters button */}
         {table.getRowModel().rows.length > 0 &&
           table.getState().columnFilters.some((filter) => {
             const value = filter.value as string[];
@@ -615,7 +616,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             </div>
           )}
 
-        {/* Pagination - only show if there's data */}
+        {/* Pagination */}
         {table.getRowModel().rows.length > 0 && (
           <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
             <div className="text-sm text-foreground">
