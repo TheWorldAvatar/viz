@@ -1,7 +1,6 @@
 import { Column } from "@tanstack/react-table";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { FieldValues } from "react-hook-form";
-import Button from "ui/interaction/button";
 
 interface ColumnFilterDropdownProps {
   column: Column<FieldValues, unknown>;
