@@ -1,5 +1,5 @@
 import { Column } from "@tanstack/react-table";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { FieldValues } from "react-hook-form";
 
 interface ColumnFilterDropdownProps {
@@ -12,9 +12,9 @@ export default function ColumnFilterDropdown({
   options,
 }: ColumnFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const selectedValues = (column.getFilterValue() as string[]) || [];
+  const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const selectedValues = (column.getFilterValue() as string[]) || [];
 
   // Close dropdown when clicking outside or pressing escape
   useEffect(() => {
@@ -46,14 +46,16 @@ export default function ColumnFilterDropdown({
     };
   }, [isOpen]);
 
-  const handleToggle = (value: string) => {
-    const newValues = selectedValues.includes(value)
-      ? selectedValues.filter((v) => v !== value)
-      : [...selectedValues, value];
+  const handleToggle = useCallback(
+    (value: string) => {
+      const newValues = selectedValues.includes(value)
+        ? selectedValues.filter((v) => v !== value)
+        : [...selectedValues, value];
 
-    // Always set the filter value, even if it's an empty array
-    column.setFilterValue(newValues);
-  };
+      column.setFilterValue(newValues);
+    },
+    [selectedValues, column]
+  );
 
   // Determine if a checkbox should be checked
   const isChecked = (value: string) => {
@@ -71,48 +73,67 @@ export default function ColumnFilterDropdown({
   };
 
   // Get display text for the button
-  const getDisplayText = () => {
-    if (selectedValues.length === 0) {
+  const displayText = useMemo(() => {
+    if (
+      selectedValues.length === 0 ||
+      selectedValues.length === options.length
+    ) {
       return "All";
-    } else if (selectedValues.length === options.length) {
-      return "All";
-    } else if (selectedValues.length === 1) {
-      return selectedValues[0];
-    } else {
-      return `${selectedValues.length} selected`;
     }
-  };
+    if (selectedValues.length === 1) {
+      return selectedValues[0];
+    }
+    return `${selectedValues.length} selected`;
+  }, [selectedValues, options.length]);
 
   // Filter options based on search term
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredOptionsBySearchTerm = useMemo(
+    () =>
+      options.filter((option) =>
+        option.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [options, searchTerm]
   );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-2 py-1 text-sm border border-border rounded bg-background hover:bg-muted focus:outline-none focus:ring-2 focus:ring-gray-300 flex items-center justify-between cursor-pointer"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        type="button"
       >
-        <span className="truncate">{getDisplayText()}</span>
-        <span className="ml-1">{isOpen ? "▲" : "▼"}</span>
+        <span className="truncate">{displayText}</span>
+        <span aria-hidden="true" className="ml-1">
+          {isOpen ? "▲" : "▼"}
+        </span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 w-fit overflow-y-auto min-w-[200px]">
+        <div
+          role="listbox"
+          aria-multiselectable="true"
+          className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded shadow-lg max-h-48 w-fit overflow-y-auto min-w-[200px]"
+        >
           {/* Search input */}
           <div className="sticky top-0 left-0 p-2 border-b border-border bg-background">
             <input
               type="text"
               placeholder="Search options..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="w-full px-2 py-1 text-sm border border-border rounded bg-background focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Search filter options"
             />
           </div>
           {/* Options list */}
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option) => (
+          {filteredOptionsBySearchTerm.length > 0 ? (
+            filteredOptionsBySearchTerm.map((option) => (
               <label
                 key={option}
                 className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
@@ -122,8 +143,12 @@ export default function ColumnFilterDropdown({
                   checked={isChecked(option)}
                   onChange={() => handleToggle(option)}
                   className="mr-2 flex-shrink-0"
+                  aria-describedby={`option-${option}`}
                 />
-                <span className="break-words lg:truncate leading-relaxed">
+                <span
+                  id={`option-${option}`}
+                  className="break-words lg:truncate leading-relaxed"
+                >
                   {option}
                 </span>
               </label>
