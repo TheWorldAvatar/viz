@@ -1,6 +1,7 @@
 import { Column } from "@tanstack/react-table";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { FieldValues } from "react-hook-form";
+import Button from "ui/interaction/button";
 
 interface ColumnFilterDropdownProps {
   column: Column<FieldValues, unknown>;
@@ -141,24 +142,24 @@ export default function ColumnFilterDropdown({
           {/* Options list */}
           {filteredOptionsBySearchTerm.length > 0 ? (
             filteredOptionsBySearchTerm.map((option) => (
-              <label
+              <div
                 key={option}
-                className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
+                className="flex items-center px-2 py-1 hover:bg-muted text-sm"
               >
                 <input
                   type="checkbox"
                   checked={isChecked(option)}
                   onChange={() => handleToggle(option)}
                   className="mr-2 flex-shrink-0"
-                  aria-describedby={`option-${option}`}
-                />
-                <span
                   id={`option-${option}`}
+                />
+                <label
+                  htmlFor={`option-${option}`}
                   className="break-words lg:truncate leading-relaxed"
                 >
                   {option}
-                </span>
-              </label>
+                </label>
+              </div>
             ))
           ) : (
             <h5 className="px-2 py-1 text-sm text-foreground">

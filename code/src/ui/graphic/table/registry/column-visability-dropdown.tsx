@@ -68,40 +68,46 @@ export default function ColumnVisibilityDropdown({
           >
             {/* Toggle All */}
             <div className="sticky top-0 left-0 py-1 border-b border-border bg-background">
-              <label className="flex items-center cursor-pointer hover:bg-muted px-2 py-1 rounded">
+              <div className="flex items-center  hover:bg-muted px-2 py-1 rounded">
                 <input
                   type="checkbox"
                   checked={table.getIsAllColumnsVisible()}
                   onChange={table.getToggleAllColumnsVisibilityHandler()}
                   className="mr-2"
                   aria-label="Toggle all columns visibility"
+                  id="toggle-all-columns"
                 />
-                <span className="font-medium text-lg">Toggle All</span>
-              </label>
+                <label
+                  htmlFor="toggle-all-columns"
+                  className="font-medium text-lg"
+                >
+                  Toggle All
+                </label>
+              </div>
             </div>
 
             {/* Individual columns */}
             {table.getAllLeafColumns().map((column) => (
-              <label
+              <div
                 key={column.id}
-                className="flex items-center px-2 py-1 hover:bg-muted cursor-pointer text-sm"
+                className="flex items-center px-2 py-1 hover:bg-muted text-sm"
               >
                 <input
+                  id={`column-${column.id}`}
                   type="checkbox"
                   checked={column.getIsVisible()}
                   onChange={column.getToggleVisibilityHandler()}
                   className="mr-2 flex-shrink-0"
-                  aria-describedby={`option-${column.id}`}
                 />
-                <span
-                  id={`option-${column.id}`}
+                <label
+                  htmlFor={`column-${column.id}`}
                   className="break-words lg:truncate leading-relaxed text-lg"
                 >
                   {column.id === "actions"
                     ? "Actions"
                     : parseWordsForLabels(column.id)}
-                </span>
-              </label>
+                </label>
+              </div>
             ))}
           </div>
         )}
