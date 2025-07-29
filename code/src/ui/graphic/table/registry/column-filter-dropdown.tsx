@@ -7,6 +7,13 @@ interface ColumnFilterDropdownProps {
   options: string[];
 }
 
+/**
+ * A dropdown component for filtering table columns with checkboxes and search functionality.
+ *
+ * @param {Column} props.column - The column to filter.
+ * @param {string[]} props.options - The options to display in the dropdown.
+ */
+
 export default function ColumnFilterDropdown({
   column,
   options,
