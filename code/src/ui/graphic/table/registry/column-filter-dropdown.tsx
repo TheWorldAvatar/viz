@@ -2,13 +2,15 @@ import { Column } from "@tanstack/react-table";
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
+interface ColumnFilterDropdownProps {
+  column: Column<FieldValues, unknown>;
+  options: string[];
+}
+
 export default function ColumnFilterDropdown({
   column,
   options,
-}: {
-  column: Column<FieldValues, unknown>;
-  options: string[];
-}) {
+}: ColumnFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const selectedValues = (column.getFilterValue() as string[]) || [];

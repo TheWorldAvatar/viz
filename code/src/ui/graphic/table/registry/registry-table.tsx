@@ -24,7 +24,7 @@ import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import RegistryRowActions from "./actions/registry-table-action";
 import Button from "ui/interaction/button";
-import ColumnFilterDropdown from "./ColumnFilterDropdown";
+import ColumnFilterDropdown from "./column-filter-dropdown";
 
 interface RegistryTableProps {
   recordType: string;
