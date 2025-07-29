@@ -184,67 +184,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return [actionsColumn, ...fieldColumns];
   }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
 
-  // Function to get current filtered options for a column
-  const getCurrentColumnOptions = (columnId: string) => {
-    if (!table) return columnOptions[columnId] || [];
-
-    // Get all active filters except the current column
-    const activeFilters = table
-      .getState()
-      .columnFilters.filter((filter) => filter.id !== columnId);
-
-    // If no other filters are active, return all options
-    if (activeFilters.length === 0) {
-      return columnOptions[columnId] || [];
-    }
-
-    // Calculate available options based on other active filters
-    const availableOptions = new Set<string>();
-
-    // Go through all original data and check which values would be available
-    // if we applied all other filters except the current column
-    data.forEach((row) => {
-      // Check if this row would pass all other active filters
-      let passesOtherFilters = true;
-
-      for (const filter of activeFilters) {
-        const filterValue = filter.value as string[];
-        const rowValue = row[filter.id] as string;
-
-        // If no filter is applied or all values are selected, it passes
-        if (
-          !filterValue ||
-          filterValue.length === 0 ||
-          filterValue.length === columnOptions[filter.id]?.length
-        ) {
-          continue;
-        }
-
-        // If the value is empty and no empty values are in the filter options, exclude it
-        if (!rowValue && filterValue.length > 0) {
-          passesOtherFilters = false;
-          break;
-        }
-
-        // Check if the row value is in the filter
-        if (!filterValue.includes(rowValue)) {
-          passesOtherFilters = false;
-          break;
-        }
-      }
-
-      // If this row passes all other filters, add its value for the current column
-      if (passesOtherFilters) {
-        const value = row[columnId] as string;
-        if (value && value !== "") {
-          availableOptions.add(value);
-        }
-      }
-    });
-
-    return Array.from(availableOptions).sort();
-  };
-
   const table = useReactTable({
     data,
     columns,
@@ -263,18 +202,83 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     },
   });
 
+  // Function to get current filtered options for a column
+  const getCurrentColumnOptions = useCallback(
+    (columnId: string) => {
+      if (!table) return columnOptions[columnId] || [];
+
+      // Get all active filters except the current column
+      const activeFilters = table
+        .getState()
+        .columnFilters.filter((filter) => filter.id !== columnId);
+
+      // If no other filters are active, return all options
+      if (activeFilters.length === 0) {
+        return columnOptions[columnId] || [];
+      }
+
+      // Calculate available options based on other active filters
+      const availableOptions = new Set<string>();
+
+      // Go through all original data and check which values would be available
+      // if we applied all other filters except the current column
+      data.forEach((row) => {
+        // Check if this row would pass all other active filters
+        let passesOtherFilters = true;
+
+        for (const filter of activeFilters) {
+          const filterValue = filter.value as string[];
+          const rowValue = row[filter.id] as string;
+
+          // If no filter is applied or all values are selected, it passes
+          if (
+            !filterValue ||
+            filterValue.length === 0 ||
+            filterValue.length === columnOptions[filter.id]?.length
+          ) {
+            continue;
+          }
+
+          // If the value is empty and no empty values are in the filter options, exclude it
+          if (!rowValue && filterValue.length > 0) {
+            passesOtherFilters = false;
+            break;
+          }
+
+          // Check if the row value is in the filter
+          if (!filterValue.includes(rowValue)) {
+            passesOtherFilters = false;
+            break;
+          }
+        }
+
+        // If this row passes all other filters, add its value for the current column
+        if (passesOtherFilters) {
+          const value = row[columnId] as string;
+          if (value && value !== "") {
+            availableOptions.add(value);
+          }
+        }
+      });
+
+      return Array.from(availableOptions).sort();
+    },
+    [table, data, columnOptions]
+  );
+
   const hasRows = table.getRowModel().rows.length > 0;
   const hasVisibleColumns = table.getVisibleLeafColumns().length > 0;
-  const hasActiveFilters = useMemo(() => {
+  const hasActiveFilters = () => {
     return table.getState().columnFilters.some((filter) => {
       const value = filter.value as string[];
       return value?.length > 0;
     });
-  }, [table]);
+  };
+
   const handleClearAllFilters = useCallback(() => {
     table.resetColumnFilters();
     setColumnFilters([]);
-  }, [table, setColumnFilters]);
+  }, [table]);
 
   if (!hasRows && columnFilters.length === 0) {
     return (
@@ -394,7 +398,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         )}
 
         {/* Clear all filters button */}
-        {hasRows && hasActiveFilters && (
+        {hasRows && hasActiveFilters() && (
           <div className="bg-muted border-t border-border p-2 flex justify-center">
             <Button onClick={handleClearAllFilters} variant="destructive">
               Clear All Filters

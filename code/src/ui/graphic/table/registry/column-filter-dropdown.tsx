@@ -161,9 +161,9 @@ export default function ColumnFilterDropdown({
               </label>
             ))
           ) : (
-            <div className="px-2 py-1 text-sm text-muted-foreground">
+            <h5 className="px-2 py-1 text-sm text-foreground">
               No options found
-            </div>
+            </h5>
           )}
         </div>
       )}
