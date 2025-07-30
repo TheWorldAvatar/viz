@@ -55,37 +55,43 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.allTasks) && (
-          <div className="flex flex-col sm:flex-row items-center justify-between sm:gap-4 bg-gray-200 dark:bg-zinc-800 w-full sm:max-w-fit p-1.5 text-center rounded-lg gap-2">
-            <div className="w-full sm:w-auto border-b-1 border-gray-400 pb-2 sm:p-0 sm:border-0">
-              <RedirectButton
-                label={dict.nav.title.outstanding}
-                leftIcon="pending"
-                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
-                variant={
-                  props.lifecycleStage == "outstanding" ? "active" : "ghost"
-                }
-                className="w-full"
-              />
-            </div>
-            <div className="w-full sm:w-auto border-b-1 border-gray-400 pb-2 sm:p-0 sm:border-0">
-              <RedirectButton
-                label={dict.nav.title.scheduled}
-                leftIcon="schedule"
-                url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-                variant={
-                  props.lifecycleStage == "scheduled" ? "active" : "ghost"
-                }
-                className="w-full"
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <RedirectButton
-                label={dict.nav.title.closed}
-                leftIcon="archive"
-                url={`${Routes.REGISTRY_TASK_CLOSED}`}
-                variant={props.lifecycleStage == "closed" ? "active" : "ghost"}
-                className="w-full"
-              />
+          <div className="bg-gray-200 dark:bg-zinc-800 w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4 gap-1">
+              <div className="w-full sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.outstanding}
+                  leftIcon="pending"
+                  url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                  variant={
+                    props.lifecycleStage == "outstanding" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+
+              <div className="w-full sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.scheduled}
+                  leftIcon="schedule"
+                  url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+                  variant={
+                    props.lifecycleStage == "scheduled" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+
+              <div className="w-full sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.closed}
+                  leftIcon="archive"
+                  url={`${Routes.REGISTRY_TASK_CLOSED}`}
+                  variant={
+                    props.lifecycleStage == "closed" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
             </div>
           </div>
         )}
