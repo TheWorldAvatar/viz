@@ -494,7 +494,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         {/* Empty states */}
         {!hasRows && columnFilters.length > 0 && (
           <div className="text-center py-8 text-foreground text-lg">
-            No results match your filters. Try adjusting your search criteria.
+            {dict.message.noFilterResults}
           </div>
         )}
         {!hasVisibleColumns && (

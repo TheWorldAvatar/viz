@@ -3,6 +3,8 @@ import { FieldValues } from "react-hook-form/dist/types/fields";
 import { parseWordsForLabels } from "utils/client-utils";
 import Button from "ui/interaction/button";
 import { useEffect, useState, useRef } from "react";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 interface ColumnVisibilityDropdownProps {
   table: Table<FieldValues>;
@@ -17,6 +19,7 @@ interface ColumnVisibilityDropdownProps {
 export default function ColumnVisibilityDropdown({
   table,
 }: ColumnVisibilityDropdownProps) {
+  const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -160,8 +163,8 @@ export default function ColumnVisibilityDropdown({
 
             {/* No results message */}
             {!hasAnyResults && (
-              <div className="px-2 py-3 text-sm text-foreground text-center">
-                No columns found
+              <div className="px-2 py-3 text-sm text-foreground text-center font-bold">
+                {dict.message.noColumns}
               </div>
             )}
           </div>

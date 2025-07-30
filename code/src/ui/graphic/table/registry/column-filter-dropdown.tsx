@@ -1,6 +1,8 @@
 import { Column } from "@tanstack/react-table";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { FieldValues } from "react-hook-form";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 interface ColumnFilterDropdownProps {
   column: Column<FieldValues, unknown>;
@@ -18,6 +20,7 @@ export default function ColumnFilterDropdown({
   column,
   options,
 }: ColumnFilterDropdownProps) {
+  const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -174,7 +177,7 @@ export default function ColumnFilterDropdown({
             ))
           ) : (
             <div className="px-2 py-3 text-sm text-foreground text-center">
-              No options found
+              {dict.message.noOptions}
             </div>
           )}
         </div>
