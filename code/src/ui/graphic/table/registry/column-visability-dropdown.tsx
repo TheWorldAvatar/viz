@@ -95,7 +95,7 @@ export default function ColumnVisibilityDropdown({
           <div
             role="listbox"
             aria-multiselectable="true"
-            className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 w-fit md:w-full overflow-y-auto min-w-[200px]"
+            className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded-lg shadow-lg max-h-72 w-fit md:w-full overflow-y-auto min-w-[260px]"
           >
             {/* Search input */}
             <div className="sticky top-0 left-0 p-2 border-b border-border bg-background">
