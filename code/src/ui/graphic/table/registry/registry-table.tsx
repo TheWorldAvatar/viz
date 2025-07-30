@@ -298,7 +298,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         {hasRows && (
           <div className="overflow-auto flex-1 min-h-[400px]">
             <div className="min-w-full">
-              <table className="w-full border-collapse">
+              <table
+                aria-label={`${props.recordType} registry table`}
+                className="w-full border-collapse"
+              >
                 <thead className="bg-muted sticky top-0 z-10">
                   {/* Header row */}
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -311,12 +314,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             width: header.getSize(),
                             minWidth: header.getSize(),
                           }}
+                          scope="col"
                         >
                           {header.isPlaceholder ? null : (
                             <div
                               className={`flex items-center ${
                                 header.column.getCanSort()
-                                  ? "cursor-pointer select-none"
+                                  ? "cursor-pointer select-none hover:text-primary transition-colors"
                                   : ""
                               }`}
                               onClick={header.column.getToggleSortingHandler()}
@@ -378,6 +382,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               ? "sticky left-0 z-10 bg-background"
                               : ""
                           }`}
+                          scope={
+                            cell.column.id === "actions" ? "row" : undefined
+                          }
                           style={{
                             width: cell.column.getSize(),
                             minWidth: cell.column.getSize(),
