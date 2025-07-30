@@ -21,7 +21,15 @@ export default function ColumnFilterDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const selectedValues = (column.getFilterValue() as string[]) || [];
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isOpen]);
 
   // Close dropdown when clicking outside or pressing escape
   useEffect(() => {
@@ -65,19 +73,22 @@ export default function ColumnFilterDropdown({
   );
 
   // Determine if a checkbox should be checked
-  const isChecked = (value: string) => {
-    if (
-      selectedValues === undefined ||
-      selectedValues.length === options.length
-    ) {
-      return true;
-    }
-    if (selectedValues.length === 0) {
-      return false;
-    }
-    // Otherwise, check if this specific value is in the selected values
-    return selectedValues.includes(value);
-  };
+  const isChecked = useCallback(
+    (value: string) => {
+      if (
+        selectedValues === undefined ||
+        selectedValues.length === options.length
+      ) {
+        return true;
+      }
+      if (selectedValues.length === 0) {
+        return false;
+      }
+      // Otherwise, check if this specific value is in the selected values
+      return selectedValues.includes(value);
+    },
+    [selectedValues, options.length]
+  );
 
   // Get display text for the button
   const displayText = useMemo(() => {
@@ -94,7 +105,7 @@ export default function ColumnFilterDropdown({
   }, [selectedValues, options.length]);
 
   // Filter options based on search term
-  const filteredOptionsBySearchTerm = useMemo(
+  const filteredOptions = useMemo(
     () =>
       options.filter((option) =>
         option.toLowerCase().includes(searchTerm.toLowerCase())
@@ -130,6 +141,7 @@ export default function ColumnFilterDropdown({
           {/* Search input */}
           <div className="sticky top-0 left-0 p-2 border-b border-border bg-background">
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Search options..."
               value={searchTerm}
@@ -139,8 +151,8 @@ export default function ColumnFilterDropdown({
             />
           </div>
           {/* Options list */}
-          {filteredOptionsBySearchTerm.length > 0 ? (
-            filteredOptionsBySearchTerm.map((option) => (
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
               <div
                 key={option}
                 className="flex items-center px-2 py-1 hover:bg-muted text-sm"
@@ -161,9 +173,9 @@ export default function ColumnFilterDropdown({
               </div>
             ))
           ) : (
-            <h5 className="px-2 py-1 text-sm text-foreground">
+            <div className="px-2 py-3 text-sm text-foreground text-center">
               No options found
-            </h5>
+            </div>
           )}
         </div>
       )}
