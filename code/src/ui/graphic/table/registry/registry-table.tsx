@@ -34,7 +34,7 @@ interface RegistryTableProps {
 
 // Constants
 const DEFAULT_PAGE_SIZE = 10;
-const PAGE_SIZE_OPTIONS = [5, 10, 20];
+const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 const MIN_COLUMN_WIDTH = 125;
 const CHARACTER_WIDTH = 15;
 const ACTIONS_COLUMN_WIDTH = 60;
