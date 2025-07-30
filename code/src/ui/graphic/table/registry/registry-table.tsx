@@ -407,7 +407,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         {/* Clear all filters button */}
         {hasRows && hasActiveFilters() && (
           <div className="bg-muted border-t border-border p-2 flex justify-center">
-            <Button onClick={handleClearAllFilters} variant="destructive">
+            <Button
+              leftIcon="filter_list_off"
+              iconSize="small"
+              onClick={handleClearAllFilters}
+              variant="destructive"
+            >
               Clear All Filters
             </Button>
           </div>
