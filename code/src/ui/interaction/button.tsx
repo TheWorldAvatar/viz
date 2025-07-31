@@ -24,6 +24,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tooltipText?: string;
   tooltipPosition?: Placement;
   disabled?: boolean;
+  hasMobileIcon?: boolean;
 }
 
 /**
@@ -39,7 +40,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {Placement} tooltipPosition Optional tooltip position.
  * @param {boolean} disabled Optional disabled state for the button.
- *
+ * @param {boolean} hasMobileIcon if set to false, the button will not show icons on mobile devices.
  */
 
 export default function Button({
@@ -56,6 +57,7 @@ export default function Button({
   label,
   tooltipText,
   tooltipPosition = "top", // Default tooltip position
+  hasMobileIcon = true,
   ...props
 }: Readonly<ButtonProps>) {
   // Base styles for the button, applied to all variants and sizes
@@ -124,7 +126,11 @@ export default function Button({
         <div className={`flex items-center ${iconSpacing[size]}`}>
           {loading && <LoadingSpinner isSmall={true} />}
           {!loading && leftIcon && (
-            <span className="flex items-center">
+            <span
+              className={`${
+                hasMobileIcon ? "flex" : "hidden md:flex"
+              } items-center`}
+            >
               {
                 <Icon fontSize={iconSize} className="material-symbols-outlined">
                   {leftIcon}
@@ -134,7 +140,11 @@ export default function Button({
           )}
           <span>{children || label}</span>
           {!loading && rightIcon && (
-            <span className="flex items-center">
+            <span
+              className={`${
+                hasMobileIcon ? "flex" : "hidden md:flex"
+              } items-center`}
+            >
               {
                 <Icon fontSize={iconSize} className="material-symbols-outlined">
                   {rightIcon}
