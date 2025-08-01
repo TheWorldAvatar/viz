@@ -281,7 +281,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         {/* Table container */}
         {hasRows && (
           <div className="overflow-auto flex-1 min-h-[400px]">
-            <div className="min-w-full">
+            <div className="w-50">
               <table
                 aria-label={`${props.recordType} registry table`}
                 className="w-full border-collapse"
@@ -290,7 +290,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   {/* Combined Header and Filter row */}
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow isHeader={true} key={headerGroup.id}>
-                      <TableCell />
+                      {hasVisibleColumns && <TableCell />}
                       {headerGroup.headers.map((header) => (
                         <TableCell
                           key={header.id}
@@ -347,14 +347,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 <tbody>
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
-                      <TableCell className="sticky left-0 z-10 bg-background">
-                        <RegistryRowActions
-                          recordType={props.recordType}
-                          lifecycleStage={props.lifecycleStage}
-                          row={row.original}
-                          setTask={props.setTask}
-                        />
-                      </TableCell>
+                      {hasVisibleColumns && (
+                        <TableCell className="sticky left-0 z-10 bg-background">
+                          <RegistryRowActions
+                            recordType={props.recordType}
+                            lifecycleStage={props.lifecycleStage}
+                            row={row.original}
+                            setTask={props.setTask}
+                          />
+                        </TableCell>
+                      )}
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
