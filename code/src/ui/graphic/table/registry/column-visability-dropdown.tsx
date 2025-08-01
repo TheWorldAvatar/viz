@@ -16,14 +16,15 @@ interface ColumnVisibilityDropdownProps {
  * @param {Table<FieldValues>} props.table - The table instance containing columns.
  */
 
-export default function ColumnVisibilityDropdown({
-  table,
-}: ColumnVisibilityDropdownProps) {
+export default function ColumnVisibilityDropdown(
+  props: Readonly<ColumnVisibilityDropdownProps>
+) {
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const { table } = props;
 
   // Focus search input when dropdown opens
   useEffect(() => {

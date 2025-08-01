@@ -347,7 +347,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 <tbody>
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
-                      <TableCell>
+                      <TableCell className="sticky left-0 z-10 bg-background">
                         <RegistryRowActions
                           recordType={props.recordType}
                           lifecycleStage={props.lifecycleStage}
