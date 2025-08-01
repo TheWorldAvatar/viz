@@ -60,14 +60,16 @@ const RowDragHandleCell = ({ rowId }: { rowId: string }) => {
     id: rowId,
   });
   return (
-    <button
-      {...attributes}
-      {...listeners}
-      className="cursor-grab hover:cursor-grabbing p-1"
-      aria-label="Drag to reorder"
-    >
-      ⋮⋮
-    </button>
+    <div className="flex items-center justify-center h-full">
+      <button
+        {...attributes}
+        {...listeners}
+        className="cursor-grab hover:cursor-grabbing p-1 flex items-center justify-center"
+        aria-label="Drag to reorder"
+      >
+        ⋮⋮
+      </button>
+    </div>
   );
 };
 
@@ -80,7 +82,7 @@ const DraggableRow = ({ row }: { row: Row<FieldValues> }) => {
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition: transition,
-    opacity: isDragging ? 0.8 : 1,
+    opacity: isDragging ? 0.7 : 1,
     zIndex: isDragging ? 1000 : 0,
     position: "relative",
   };
@@ -283,7 +285,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     // Drag handle column
     const dragHandleColumn: ColumnDef<FieldValues> = {
       id: "drag-handle",
-      header: "Move",
+      header: "",
       cell: ({ row }) => <RowDragHandleCell rowId={row.id} />,
       size: 60,
       enableSorting: false,
@@ -472,7 +474,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       autoScroll={{
         threshold: { x: 0.2, y: 0.2 },
         acceleration: 5,
-        canScroll: () => true, // Disable auto-scrolling completely
       }}
     >
       {/* Column Visibility Dropdown */}
