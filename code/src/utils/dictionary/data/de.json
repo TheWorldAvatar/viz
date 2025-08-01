@@ -37,7 +37,8 @@
     "findAddress": "Adresse finden",
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
-    "clickDecrease": "Zum Verringern anklicken"
+    "clickDecrease": "Zum Verringern anklicken",
+    "clearAllFilters": "Clear all filters"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -100,6 +101,9 @@
     }
   },
   "message": {
+    "page": "Page {replace} of {replacecount}",
+    "numberOfRecords": "{replace} of {replacetotal} total",
+    "rowsPerPage": "Rows per page: ",
     "arrayInstruction": "Dieser Bereich ist leer. Klicken Sie auf „+“, um ein Element hinzuzufügen.",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",

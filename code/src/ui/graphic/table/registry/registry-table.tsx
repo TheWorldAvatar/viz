@@ -387,7 +387,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               onClick={handleClearAllFilters}
               variant="destructive"
             >
-              Clear All Filters
+              {dict.action.clearAllFilters}
             </Button>
           </div>
         )}
