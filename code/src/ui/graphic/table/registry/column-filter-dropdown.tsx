@@ -16,16 +16,15 @@ interface ColumnFilterDropdownProps {
  * @param {string[]} props.options - The options to display in the dropdown.
  */
 
-export default function ColumnFilterDropdown({
-  column,
-  options,
-}: ColumnFilterDropdownProps) {
+export default function ColumnFilterDropdown(
+  props: Readonly<ColumnFilterDropdownProps>
+) {
   const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const selectedValues = (column.getFilterValue() as string[]) || [];
+  const selectedValues = (props.column.getFilterValue() as string[]) || [];
 
   // Focus search input when dropdown opens
   useEffect(() => {
@@ -70,9 +69,9 @@ export default function ColumnFilterDropdown({
         ? selectedValues.filter((v) => v !== value)
         : [...selectedValues, value];
 
-      column.setFilterValue(newValues);
+      props.column.setFilterValue(newValues);
     },
-    [selectedValues, column]
+    [selectedValues, props.column]
   );
 
   // Determine if a checkbox should be checked
@@ -80,7 +79,7 @@ export default function ColumnFilterDropdown({
     (value: string) => {
       if (
         selectedValues === undefined ||
-        selectedValues.length === options.length
+        selectedValues.length === props.options.length
       ) {
         return true;
       }
@@ -90,14 +89,14 @@ export default function ColumnFilterDropdown({
       // Otherwise, check if this specific value is in the selected values
       return selectedValues.includes(value);
     },
-    [selectedValues, options.length]
+    [selectedValues, props.options.length]
   );
 
   // Get display text for the button
   const displayText = useMemo(() => {
     if (
       selectedValues.length === 0 ||
-      selectedValues.length === options.length
+      selectedValues.length === props.options.length
     ) {
       return "All";
     }
@@ -105,15 +104,15 @@ export default function ColumnFilterDropdown({
       return selectedValues[0];
     }
     return `${selectedValues.length} selected`;
-  }, [selectedValues, options.length]);
+  }, [selectedValues, props.options.length]);
 
   // Filter options based on search term
   const filteredOptions = useMemo(
     () =>
-      options.filter((option) =>
+      props.options.filter((option) =>
         option.toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [options, searchTerm]
+    [props.options, searchTerm]
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

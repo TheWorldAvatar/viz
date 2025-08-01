@@ -23,6 +23,9 @@ import RegistryRowActions from "./actions/registry-table-action";
 import Button from "ui/interaction/button";
 import ColumnFilterDropdown from "./column-filter-dropdown";
 import ColumnVisabilityDropdown from "./column-visability-dropdown";
+import TablePagination from "../pagination/table-pagination";
+import TableRow from "./table-row";
+import TableCell from "./table-cell";
 
 interface RegistryTableProps {
   recordType: string;
@@ -33,11 +36,9 @@ interface RegistryTableProps {
 }
 
 // Constants
-const DEFAULT_PAGE_SIZE = 10;
-const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
-const MIN_COLUMN_WIDTH = 125;
-const CHARACTER_WIDTH = 15;
-const ACTIONS_COLUMN_WIDTH = 60;
+const DEFAULT_PAGE_SIZE: number = 10;
+const MIN_COLUMN_WIDTH: number = 125;
+const CHARACTER_WIDTH: number = 15;
 
 /**
  * This component renders a registry of table based on the inputs using TanStack Table.
@@ -136,7 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             }
 
             return (
-              <div className="text-lg text-foreground">
+              <div className="text-foreground">
                 {parseWordsForLabels(`${value}`)}
               </div>
             );
@@ -164,24 +165,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       }
     );
 
-    // Action buttons column
-    const actionsColumn: ColumnDef<FieldValues> = {
-      id: "actions",
-      header: "",
-      cell: ({ row }) => (
-        <RegistryRowActions
-          recordType={props.recordType}
-          lifecycleStage={props.lifecycleStage}
-          row={row.original}
-          setTask={props.setTask}
-        />
-      ),
-      size: ACTIONS_COLUMN_WIDTH,
-      enableSorting: false,
-      enableColumnFilter: false,
-    };
-
-    return [actionsColumn, ...fieldColumns];
+    return fieldColumns;
   }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
 
   const table = useReactTable({
@@ -303,13 +287,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 className="w-full border-collapse"
               >
                 <thead className="bg-muted sticky top-0 z-10">
-                  {/* Header row */}
+                  {/* Combined Header and Filter row */}
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id} className="border-b border-border">
+                    <TableRow isHeader={true} key={headerGroup.id}>
+                      <TableCell />
                       {headerGroup.headers.map((header) => (
-                        <th
+                        <TableCell
                           key={header.id}
-                          className="border-r border-border bg-muted text-lg font-semibold text-foreground p-3 text-left whitespace-nowrap"
+                          isHeader={true}
                           style={{
                             width: header.getSize(),
                             minWidth: header.getSize(),
@@ -317,74 +302,63 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           scope="col"
                         >
                           {header.isPlaceholder ? null : (
-                            <div
-                              className={`flex items-center ${
-                                header.column.getCanSort()
-                                  ? "cursor-pointer select-none hover:text-primary transition-colors"
-                                  : ""
-                              }`}
-                              onClick={header.column.getToggleSortingHandler()}
-                              aria-label={
-                                header.column.getCanSort()
-                                  ? `Sort by ${header.column.columnDef.header}`
-                                  : undefined
-                              }
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
+                            <div className="flex flex-col gap-2">
+                              <div
+                                className={`flex items-center ${
+                                  header.column.getCanSort()
+                                    ? "cursor-pointer select-none hover:text-primary transition-colors"
+                                    : ""
+                                }`}
+                                onClick={header.column.getToggleSortingHandler()}
+                                aria-label={
+                                  header.column.getCanSort()
+                                    ? `Sort by ${header.column.columnDef.header}`
+                                    : undefined
+                                }
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                {{
+                                  asc: " ▲",
+                                  desc: " ▼",
+                                }[header.column.getIsSorted() as string] ??
+                                  null}
+                              </div>
+                              {header.column.getCanFilter() ? (
+                                <ColumnFilterDropdown
+                                  column={header.column}
+                                  options={getCurrentColumnOptions(
+                                    header.column.id
+                                  )}
+                                />
+                              ) : (
+                                <div className="h-8" />
                               )}
-                              {{
-                                asc: " ▲",
-                                desc: " ▼",
-                              }[header.column.getIsSorted() as string] ?? null}
                             </div>
                           )}
-                        </th>
+                        </TableCell>
                       ))}
-                    </tr>
+                    </TableRow>
                   ))}
-                  {/* Filter row */}
-                  <tr className="border-b border-border">
-                    {table.getVisibleLeafColumns().map((column) => (
-                      <th
-                        key={column.id}
-                        className="border-r border-border bg-muted p-2"
-                        style={{
-                          width: column.getSize(),
-                          minWidth: column.getSize(),
-                        }}
-                      >
-                        {column.getCanFilter() ? (
-                          <ColumnFilterDropdown
-                            column={column}
-                            options={getCurrentColumnOptions(column.id)}
-                          />
-                        ) : (
-                          <div className="h-8" />
-                        )}
-                      </th>
-                    ))}
-                  </tr>
                 </thead>
                 {/* Body rows */}
                 <tbody>
                   {table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="bg-background hover:bg-muted/50 border-b border-border"
-                    >
+                    <TableRow key={row.id}>
+                      <TableCell>
+                        <RegistryRowActions
+                          recordType={props.recordType}
+                          lifecycleStage={props.lifecycleStage}
+                          row={row.original}
+                          setTask={props.setTask}
+                        />
+                      </TableCell>
                       {row.getVisibleCells().map((cell) => (
-                        <td
+                        <TableCell
                           key={cell.id}
-                          className={`border-r border-border p-3 whitespace-nowrap ${
-                            cell.column.id === "actions"
-                              ? "sticky left-0 z-10 bg-background"
-                              : ""
-                          }`}
-                          scope={
-                            cell.column.id === "actions" ? "row" : undefined
-                          }
+                          scope="row"
                           style={{
                             width: cell.column.getSize(),
                             minWidth: cell.column.getSize(),
@@ -394,9 +368,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             cell.column.columnDef.cell,
                             cell.getContext()
                           )}
-                        </td>
+                        </TableCell>
                       ))}
-                    </tr>
+                    </TableRow>
                   ))}
                 </tbody>
               </table>
@@ -419,77 +393,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         )}
 
         {/* Pagination */}
-        {hasRows && (
-          <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
-            <div className="text-sm text-foreground">
-              {table.getFilteredRowModel().rows.length} of{" "}
-              {table.getCoreRowModel().rows.length} total
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-foreground">
-                  Page {table.getState().pagination.pageIndex + 1} of{" "}
-                  {table.getPageCount()}
-                </span>
-                <select
-                  className="hidden md:block px-2 py-1.5 border border-border rounded bg-background"
-                  value={table.getState().pagination.pageSize}
-                  onChange={(e) => {
-                    table.setPageSize(Number(e.target.value));
-                  }}
-                  aria-label="Select page size"
-                >
-                  {PAGE_SIZE_OPTIONS.map((pageSize) => (
-                    <option
-                      className="bg-background"
-                      key={pageSize}
-                      value={pageSize}
-                    >
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  leftIcon="keyboard_double_arrow_left"
-                  size="icon"
-                  className="!hidden md:!flex"
-                  onClick={() => table.setPageIndex(0)}
-                  disabled={!table.getCanPreviousPage()}
-                  aria-label="Go to first page"
-                />
-                <Button
-                  variant="outline"
-                  leftIcon="keyboard_arrow_left"
-                  size="icon"
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                  aria-label="Go to previous page"
-                />
-                <Button
-                  variant="outline"
-                  leftIcon="keyboard_arrow_right"
-                  size="icon"
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                  aria-label="Go to next page"
-                />
-                <Button
-                  variant="outline"
-                  leftIcon="keyboard_double_arrow_right"
-                  className="!hidden md:!flex"
-                  size="icon"
-                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                  disabled={!table.getCanNextPage()}
-                  aria-label="Go to last page"
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        {hasRows && <TablePagination table={table} />}
 
         {/* Empty states */}
         {!hasRows && columnFilters.length > 0 && (
