@@ -8,7 +8,37 @@ import {
   getPaginationRowModel,
   getFilteredRowModel,
   ColumnFiltersState,
+  Row,
 } from "@tanstack/react-table";
+// needed for table body level scope DnD setup
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  type DragEndEvent,
+  type UniqueIdentifier,
+  useSensor,
+  useSensors,
+  type Modifier,
+  type CollisionDetection,
+  getFirstCollision,
+  pointerWithin,
+  rectIntersection,
+} from "@dnd-kit/core";
+import {
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+// needed for row & cell level scope DnD setup
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { FieldValues } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
@@ -23,6 +53,64 @@ import RegistryRowActions from "./actions/registry-table-action";
 import Button from "ui/interaction/button";
 import ColumnFilterDropdown from "./column-filter-dropdown";
 import ColumnVisabilityDropdown from "./column-visability-dropdown";
+
+// Cell Component for drag handle
+const RowDragHandleCell = ({ rowId }: { rowId: string }) => {
+  const { attributes, listeners } = useSortable({
+    id: rowId,
+  });
+  return (
+    <button
+      {...attributes}
+      {...listeners}
+      className="cursor-grab hover:cursor-grabbing p-1"
+      aria-label="Drag to reorder"
+    >
+      ⋮⋮
+    </button>
+  );
+};
+
+// Draggable Row Component
+const DraggableRow = ({ row }: { row: Row<FieldValues> }) => {
+  const { transform, transition, setNodeRef, isDragging } = useSortable({
+    id: row.id,
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition,
+    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 1000 : 0,
+    position: "relative",
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className="bg-background hover:bg-muted/50 border-b border-border"
+    >
+      {row.getVisibleCells().map((cell) => (
+        <td
+          key={cell.id}
+          className={`border-r border-border p-3 whitespace-nowrap ${
+            cell.column.id === "actions"
+              ? "sticky left-0 z-10 bg-background"
+              : ""
+          }`}
+          scope={cell.column.id === "actions" ? "row" : undefined}
+          style={{
+            width: cell.column.getSize(),
+            minWidth: cell.column.getSize(),
+          }}
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
+      ))}
+    </tr>
+  );
+};
 
 interface RegistryTableProps {
   recordType: string;
@@ -53,11 +141,18 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Parse row values
-  const data: FieldValues[] = useMemo(() => {
-    if (props.instances?.length === 0) return [];
+  // State for drag and drop functionality
+  const [dragData, setDragData] = useState<FieldValues[]>([]);
+
+  // Parse row values and set drag data
+  React.useEffect(() => {
+    if (props.instances?.length === 0) {
+      setDragData([]);
+      return;
+    }
+
     // Extract only the value into the data to simplify
-    return props.instances.map((instance, index) => {
+    const parsedData = props.instances.map((instance, index) => {
       const flattenInstance: Record<string, string> = { id: `row-${index}` };
       Object.keys(instance).forEach((field) => {
         const fieldValue = instance[field];
@@ -69,7 +164,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       });
       return flattenInstance;
     });
+    setDragData(parsedData);
   }, [props.instances]);
+
+  // Use dragData instead of processing instances directly
+  const data: FieldValues[] = dragData;
 
   // Get unique values for each column for filtering
   const columnOptions = useMemo(() => {
@@ -164,7 +263,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       }
     );
 
-    // Action buttons column
+    // Action buttons a
     const actionsColumn: ColumnDef<FieldValues> = {
       id: "actions",
       header: "",
@@ -181,8 +280,83 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       enableColumnFilter: false,
     };
 
-    return [actionsColumn, ...fieldColumns];
+    // Drag handle column
+    const dragHandleColumn: ColumnDef<FieldValues> = {
+      id: "drag-handle",
+      header: "Move",
+      cell: ({ row }) => <RowDragHandleCell rowId={row.id} />,
+      size: 60,
+      enableSorting: false,
+      enableColumnFilter: false,
+    };
+
+    return [dragHandleColumn, actionsColumn, ...fieldColumns];
   }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
+
+  // Data IDs for drag and drop - use row IDs based on current order
+  const dataIds = useMemo<UniqueIdentifier[]>(
+    () => dragData?.map((_, index) => `row-${index}`) || [],
+    [dragData]
+  );
+
+  // Custom collision detection to prevent scrolling beyond table bounds
+  const customCollisionDetection: CollisionDetection = (args) => {
+    // Use closestCenter but limit to only existing sortable items
+    // This prevents the auto-scroll behavior when dragging beyond the last row
+    const closestCenterCollisions = closestCenter(args);
+
+    // Filter collisions to only include sortable items (rows)
+    return closestCenterCollisions.filter((collision) =>
+      dataIds.includes(collision.id)
+    );
+  };
+
+  // Custom modifier to restrict dragging within table bounds
+  const restrictToTableContainer: Modifier = ({
+    transform,
+    draggingNodeRect,
+    containerNodeRect,
+  }) => {
+    if (!draggingNodeRect || !containerNodeRect) {
+      return transform;
+    }
+
+    // Don't allow dragging beyond the table container
+    const minY = containerNodeRect.top - draggingNodeRect.top;
+    const maxY = containerNodeRect.bottom - draggingNodeRect.bottom;
+
+    return {
+      ...transform,
+      y: Math.min(Math.max(transform.y, minY), maxY),
+    };
+  };
+
+  // Drag and drop handlers
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      setDragData((data) => {
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {})
+  );
 
   const table = useReactTable({
     data,
@@ -192,6 +366,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    getRowId: (row, index) => `row-${index}`, // Use current index for row IDs
     state: {
       columnFilters,
     },
@@ -222,7 +397,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
       // Go through all original data and check which values would be available
       // if we applied all other filters except the current column
-      data.forEach((row) => {
+      dragData.forEach((row) => {
         // Check if this row would pass all other active filters
         let passesOtherFilters = true;
 
@@ -263,7 +438,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
       return Array.from(availableOptions).sort();
     },
-    [table, data, columnOptions]
+    [table, dragData, columnOptions]
   );
 
   const hasRows = table.getRowModel().rows.length > 0;
@@ -289,7 +464,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   }
 
   return (
-    <>
+    <DndContext
+      collisionDetection={customCollisionDetection}
+      modifiers={[restrictToVerticalAxis, restrictToTableContainer]}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
+      autoScroll={{
+        threshold: { x: 0.2, y: 0.2 },
+        acceleration: 5,
+        canScroll: () => true, // Disable auto-scrolling completely
+      }}
+    >
       {/* Column Visibility Dropdown */}
       {hasRows && <ColumnVisabilityDropdown table={table} />}
 
@@ -368,36 +553,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   </tr>
                 </thead>
                 {/* Body rows */}
-                <tbody>
-                  {table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="bg-background hover:bg-muted/50 border-b border-border"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className={`border-r border-border p-3 whitespace-nowrap ${
-                            cell.column.id === "actions"
-                              ? "sticky left-0 z-10 bg-background"
-                              : ""
-                          }`}
-                          scope={
-                            cell.column.id === "actions" ? "row" : undefined
-                          }
-                          style={{
-                            width: cell.column.getSize(),
-                            minWidth: cell.column.getSize(),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
+                <tbody className="relative">
+                  <SortableContext
+                    items={dataIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {table.getRowModel().rows.map((row) => (
+                      <DraggableRow key={row.id} row={row} />
+                    ))}
+                  </SortableContext>
                 </tbody>
               </table>
             </div>
@@ -503,6 +667,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           </div>
         )}
       </div>
-    </>
+    </DndContext>
   );
 }
