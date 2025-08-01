@@ -10,7 +10,7 @@ export const selectorStyles: StylesConfig<
 > = {
   control: (provided, { isDisabled }) => ({
     ...provided,
-    outline: "1px solid var(--border-primary)",
+    outline: "1px solid var(--border)",
     height: "2.6rem",
     width: "100%",
     maxWidth: "none",

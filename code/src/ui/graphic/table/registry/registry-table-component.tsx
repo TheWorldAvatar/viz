@@ -224,8 +224,10 @@ export default function RegistryTableComponent(
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "outstanding" ||
           props.lifecycleStage == "closed") && (
-          <div className="flex items-center gap-2 mt-2  text-lg text-foreground ">
-            <Icon className={`material-symbols-outlined`}>info</Icon>
+          <div className="flex items-center gap-2 mt-2  text-sm md:text-lg text-foreground ">
+            <Icon fontSize="small" className={`material-symbols-outlined`}>
+              info
+            </Icon>
             {dict.message.registryInstruction}
           </div>
         )}
@@ -236,7 +238,7 @@ export default function RegistryTableComponent(
           </h2>
         )}
       </div>
-      <div className="flex flex-col overflow-auto gap-y-2 p-4">
+      <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {props.lifecycleStage == "report" && (
           <SummarySection id={pathNameEnd} entityType={props.entityType} />
         )}
@@ -251,7 +253,7 @@ export default function RegistryTableComponent(
             limit={3}
           />
         ) : (
-          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
+          <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
       {isTaskModalOpen && task && (

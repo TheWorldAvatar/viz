@@ -37,7 +37,8 @@
     "findAddress": "Adresse finden",
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
-    "clickDecrease": "Zum Verringern anklicken"
+    "clickDecrease": "Zum Verringern anklicken",
+    "clearAllFilters": "Clear all filters"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -100,6 +101,9 @@
     }
   },
   "message": {
+    "page": "Page {replace} of {replacecount}",
+    "numberOfRecords": "{replace} of {replacetotal} total",
+    "rowsPerPage": "Rows per page: ",
     "arrayInstruction": "Dieser Bereich ist leer. Klicken Sie auf „+“, um ein Element hinzuzufügen.",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
@@ -123,7 +127,11 @@
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "na": "Nicht anwendbar",
-    "noDateSelected": "Wählen Sie einen Zeitraum aus."
+    "noDateSelected": "Wählen Sie einen Zeitraum aus.",
+    "noVisibleColumns": "No columns are visible. Please select at least one column to display from the dropdown menu.",
+    "noFilterResults": "No results match your filters. Try adjusting your search criteria.",
+    "noColumns": "No columns found",
+    "noOptions": "No options found"
   },
   "nav": {
     "caption": {

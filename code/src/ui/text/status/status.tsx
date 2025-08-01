@@ -67,7 +67,14 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
+      statusColor = "#D96E6E";
+      break;
     case dict.title.issue.toLowerCase():
+      statusColor = "#ffbe0b";
+      break;
+    case dict.title.completed.toLowerCase():
+      statusColor = "#52B7A5";
+      break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
       statusColor = "#D7653D";

@@ -37,7 +37,8 @@
     "findAddress": "Find address",
     "selectLocation": "Select location",
     "clickIncrease": "Click to increase",
-    "clickDecrease": "Click to decrease"
+    "clickDecrease": "Click to decrease",
+    "clearAllFilters": "Clear all filters"
   },
   "form": {
     "singleService": "Single Service",
@@ -100,6 +101,9 @@
     }
   },
   "message": {
+    "page": "Page {replace} of {replacecount}",
+    "numberOfRecords": "{replace} of {replacetotal} total",
+    "rowsPerPage": "Rows per page: ",
     "arrayInstruction": "This section is empty. Click '+' to add an item.",
     "branchInstruction": "Select the best category for your request",
     "registryInstruction": "Click on any record in the table to view its summary",
@@ -123,7 +127,11 @@
     "fileUploadError": "File upload failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
     "na": "Not applicable",
-    "noDateSelected": "Pick a date range."
+    "noDateSelected": "Pick a date range.",
+    "noVisibleColumns": "No columns are visible. Please select at least one column to display from the dropdown menu.",
+    "noFilterResults": "No results match your filters. Try adjusting your search criteria.",
+    "noColumns": "No columns found",
+    "noOptions": "No options found"
   },
   "nav": {
     "caption": {
