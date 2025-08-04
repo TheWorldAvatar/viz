@@ -108,12 +108,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
-          {props.instances.length > 1 && (
-            <ColumnSearchComponent
-              instances={props.instances}
-              setCurrentInstances={props.setCurrentInstances}
-            />
-          )}
         </div>
         <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
           {(!keycloakEnabled ||
