@@ -12,7 +12,6 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import DateRangeInput from "ui/interaction/input/date-range";
-import ColumnSearchComponent from "../actions/column-search";
 import { DateRange } from "react-day-picker";
 
 interface TableRibbonProps {
