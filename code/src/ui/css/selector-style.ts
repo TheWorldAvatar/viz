@@ -24,9 +24,7 @@ export const selectorStyles: StylesConfig<
   dropdownIndicator: (provided, { isDisabled }) => ({
     ...provided,
     marginRight: "0.5rem",
-    color: isDisabled
-      ? "var(--background-secondary)"
-      : "var(--text-color-primary)",
+    color: isDisabled ? "var(--background-secondary)" : "var(--foreground)",
   }),
   menu: (provided) => ({
     ...provided,
@@ -85,10 +83,8 @@ export const selectorStyles: StylesConfig<
   option: (provided, { isDisabled, isSelected }) => {
     return {
       ...provided,
-      backgroundColor: isSelected
-        ? "var(--background-secondary)"
-        : "var(--background-muted)",
-      color: "var(--text-color-primary)",
+      backgroundColor: "var(--background-muted)",
+      color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",
       fontSize: "var(--font-size-primary)",
@@ -102,9 +98,7 @@ export const selectorStyles: StylesConfig<
       textWrap: "nowrap",
       minWidth: "100%",
       width: "fit-content",
-      display: "flex",
-      alignItems: "center",
-      position: "relative",
+
       "&::before": isSelected
         ? {
             content: "'✓'",
