@@ -155,9 +155,7 @@ export default function ColumnVisibilityDropdown(
                     htmlFor={`column-${column.id}`}
                     className="break-words lg:truncate leading-relaxed text-lg"
                   >
-                    {column.id === "actions"
-                      ? "Actions"
-                      : parseWordsForLabels(column.id)}
+                    {parseWordsForLabels(column.id)}
                   </label>
                 </div>
               ))}
