@@ -281,7 +281,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         {/* Table container */}
         {hasRows && (
           <div className="overflow-auto flex-1 min-h-[400px]">
-            <div className="w-50">
+            <div className="min-w-full">
               <table
                 aria-label={`${props.recordType} registry table`}
                 className="w-full border-collapse"
@@ -348,7 +348,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
                       {hasVisibleColumns && (
-                        <TableCell className="sticky left-0 z-10 bg-background">
+                        <TableCell className="sticky left-0 z-10 bg-background w-16">
                           <RegistryRowActions
                             recordType={props.recordType}
                             lifecycleStage={props.lifecycleStage}
