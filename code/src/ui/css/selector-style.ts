@@ -5,18 +5,18 @@ import { SelectOption } from "ui/interaction/dropdown/simple-selector";
 // Selector styles for react select
 export const selectorStyles: StylesConfig<
   SelectOption,
-  false,
+  boolean,
   GroupBase<SelectOption>
 > = {
   control: (provided, { isDisabled }) => ({
     ...provided,
-    outline: "1px solid var(--border)",
-    height: "2.6rem",
+    border: "1px solid var(--border)",
+    height: "fit",
     width: "100%",
     maxWidth: "none",
     padding: "0.2rem",
     margin: "0",
-    borderRadius: "0.5rem",
+    borderRadius: "0.4rem",
     cursor: isDisabled ? "not-allowed !important" : "default",
     backgroundColor: "var(--muted)",
     opacity: isDisabled ? "0.75" : "1",
@@ -36,7 +36,7 @@ export const selectorStyles: StylesConfig<
     margin: "0.25rem 0",
     minWidth: "100%",
     width: "fit-content",
-    border: "1px solid var(--border-primary)",
+    border: "1px solid var(--border)",
     zIndex: 99999,
     overflow: "hidden",
   }),
@@ -85,7 +85,6 @@ export const selectorStyles: StylesConfig<
   option: (provided, { isDisabled, isSelected }) => {
     return {
       ...provided,
-
       backgroundColor: isSelected
         ? "var(--background-secondary)"
         : "var(--background-muted)",
@@ -103,6 +102,21 @@ export const selectorStyles: StylesConfig<
       textWrap: "nowrap",
       minWidth: "100%",
       width: "fit-content",
+      display: "flex",
+      alignItems: "center",
+      position: "relative",
+      "&::before": isSelected
+        ? {
+            content: "'✓'",
+            color: "var(--text-color-primary)",
+            fontWeight: "bold",
+            marginRight: "0.5rem",
+            fontSize: "0.875rem",
+          }
+        : {
+            content: "''",
+            marginRight: "1rem",
+          },
     };
   },
 };
