@@ -45,9 +45,8 @@ export default function ColumnVisibilityDropdown(
   props: Readonly<ColumnVisibilityDropdownProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { table } = props;
 
-  const columns = table.getAllLeafColumns();
+  const columns = props.table.getAllLeafColumns();
   const options: ColumnOption[] = columns.map((col) => ({
     label: parseWordsForLabels(col.id),
     value: col.id,
@@ -55,7 +54,7 @@ export default function ColumnVisibilityDropdown(
 
   // Get only the currently visible columns
   const selectedOptions = options.filter((opt) =>
-    table.getColumn(opt.value)?.getIsVisible()
+    props.table.getColumn(opt.value)?.getIsVisible()
   );
 
   const selectAllOption = {
@@ -70,7 +69,7 @@ export default function ColumnVisibilityDropdown(
     if (option.value === selectAllOption.value) {
       return isSelectAllSelected();
     }
-    return table.getColumn(option.value)?.getIsVisible() || false;
+    return props.table.getColumn(option.value)?.getIsVisible() || false;
   };
 
   const getOptions = () => [selectAllOption, ...options];
@@ -99,7 +98,7 @@ export default function ColumnVisibilityDropdown(
       actionMeta.action === "deselect-option" &&
       isSelectAllSelected()
     ) {
-      const deselectedColumn = table.getColumn(option?.value || "");
+      const deselectedColumn = props.table.getColumn(option?.value || "");
       if (deselectedColumn) {
         deselectedColumn.toggleVisibility(false);
       }
@@ -110,7 +109,7 @@ export default function ColumnVisibilityDropdown(
         // Set selected columns to visible
         newValue.forEach((opt) => {
           if (opt.value !== selectAllOption.value) {
-            table.getColumn(opt.value)?.toggleVisibility(true);
+            props.table.getColumn(opt.value)?.toggleVisibility(true);
           }
         });
       }
