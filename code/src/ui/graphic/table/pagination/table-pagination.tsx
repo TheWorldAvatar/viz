@@ -35,7 +35,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
           <div className="hidden md:flex items-center gap-2">
             <span>{dict.message.rowsPerPage}</span>
             <select
-              className=" px-2 py-1.5 border border-border rounded bg-background"
+              className="px-2 py-1.5 border border-border rounded bg-background"
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
@@ -44,7 +44,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             >
               {PAGE_SIZE_OPTIONS.map((pageSize) => (
                 <option
-                  className="bg-background p"
+                  className="bg-background"
                   key={pageSize}
                   value={pageSize}
                 >
