@@ -54,7 +54,8 @@
     --button-color-secondary: #18677a;
     --button-color-secondary-hover: #0b4452;
     --destructive: oklch(63.472% 0.17115 20.398 / 0.76);
-    --ring: oklch(0.708 0 0);
+    --ring: oklch(92.8% 0.006 264.531);
+    --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
 
     /* Table */
     --table-header-bg: #e5e7eb;
@@ -111,7 +112,8 @@
     --button-color-secondary: #7acadb;
     --button-color-secondary-hover: #35a7c0;
     --destructive: oklch(0.704 0.191 22.216);
-    --ring: oklch(0.556 0 0);
+    --ring: oklch(27.4% 0.006 286.033);
+    --ring-hover: oklch(27.4% 0.006 286.033 / 0.5);
 
     /* Table */
     --table-header-bg: #27272a;
@@ -159,6 +161,7 @@
   --color-background-secondary: var(--background-secondary);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
+  --color-ring-hover: var(--ring-hover);
   --input: var(--input);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);

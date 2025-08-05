@@ -26,6 +26,7 @@ import ColumnVisabilityDropdown from "./column-visability-dropdown";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "./table-row";
 import TableCell from "./table-cell";
+import { Icon } from "@mui/material";
 
 interface RegistryTableProps {
   recordType: string;
@@ -304,9 +305,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           {header.isPlaceholder ? null : (
                             <div className="flex flex-col gap-2">
                               <div
-                                className={`flex items-center ${
+                                className={`flex items-center gap-2 ${
                                   header.column.getCanSort()
-                                    ? "cursor-pointer select-none hover:text-primary transition-colors"
+                                    ? "cursor-pointer select-none "
                                     : ""
                                 }`}
                                 onClick={header.column.getToggleSortingHandler()}
@@ -321,8 +322,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   header.getContext()
                                 )}
                                 {{
-                                  asc: " ▲",
-                                  desc: " ▼",
+                                  asc: (
+                                    <Icon className="material-symbols-outlined">
+                                      {"arrow_upward"}
+                                    </Icon>
+                                  ),
+                                  desc: (
+                                    <Icon className="material-symbols-outlined">
+                                      {"arrow_downward"}
+                                    </Icon>
+                                  ),
                                 }[header.column.getIsSorted() as string] ??
                                   null}
                               </div>

@@ -54,7 +54,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.allTasks) && (
-          <div className="bg-gray-200 dark:bg-zinc-800 w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5">
+          <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5">
             <div className="flex  sm:items-center sm:justify-between sm:gap-4 gap-1">
               <div className="w-full sm:w-auto">
                 <RedirectButton

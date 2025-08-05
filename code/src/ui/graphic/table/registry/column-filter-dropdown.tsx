@@ -7,6 +7,7 @@ import Select, {
   MultiValue,
   OptionProps,
   ActionMeta,
+  StylesConfig,
 } from "react-select";
 import { checkboxInputsSelectorStyles } from "ui/css/selector-style";
 
@@ -51,6 +52,12 @@ export default function ColumnFilterDropdown(
     value: option,
   }));
 
+  // Check if filter is currently applied
+  const hasActiveFilter = () => {
+    const filterValue = props.column.getFilterValue() as string[] | undefined;
+    return filterValue !== undefined && filterValue.length > 0;
+  };
+
   // Check if an option is selected
   const isOptionSelected = (option: ColumnOption) => {
     const filterValue = props.column.getFilterValue() as string[] | undefined;
@@ -92,6 +99,23 @@ export default function ColumnFilterDropdown(
     }
   };
 
+  // Custom styles that change based on filter state
+  const getCustomStyles = (): StylesConfig<ColumnOption, true> => {
+    const baseStyles = checkboxInputsSelectorStyles;
+    const isFiltered = hasActiveFilter();
+
+    return {
+      ...baseStyles,
+      control: (provided, state) => ({
+        ...baseStyles.control?.(provided, state),
+        backgroundColor: isFiltered ? "var(--ring)" : "var(--background)",
+        ":hover": {
+          backgroundColor: isFiltered ? "var(--ring-hover)" : "var(--muted)",
+        },
+      }),
+    };
+  };
+
   return (
     <div className="w-full min-w-36">
       <Select
@@ -107,8 +131,8 @@ export default function ColumnFilterDropdown(
         noOptionsMessage={() => dict.message.noOptions}
         controlShouldRenderValue={false}
         isSearchable
-        className="text-base "
-        styles={checkboxInputsSelectorStyles}
+        className="text-base"
+        styles={getCustomStyles()}
       />
     </div>
   );

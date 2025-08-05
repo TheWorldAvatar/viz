@@ -129,8 +129,8 @@ export const checkboxInputsSelectorStyles: StylesConfig<
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
-    border: isFocused ? "1px solid var(--border)" : "1px solid var(--border)",
-    height: "fit",
+    border: "1px solid var(--border)",
+    height: "fit-content",
     width: "100%",
     maxWidth: "none",
     padding: "0.2rem",
@@ -205,6 +205,15 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     borderBottom: "1px solid var(--border-secondary)",
     borderTop: "1px solid var(--border-secondary)",
     cursor: "text",
+  }),
+  clearIndicator: (provided) => ({
+    ...provided,
+    color: "var(--destructive)",
+    "&:hover": {
+      color: "var(--destructive)",
+      opacity: 0.8,
+      transition: "color 0.2s ease",
+    },
   }),
   option: (provided, { isDisabled, isSelected, isFocused }) => {
     return {

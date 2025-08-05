@@ -133,6 +133,7 @@ export default function ColumnVisibilityDropdown(
           controlShouldRenderValue={false}
           isSearchable
           className="text-base"
+          isClearable={false}
           styles={checkboxInputsSelectorStyles}
         />
       </div>
