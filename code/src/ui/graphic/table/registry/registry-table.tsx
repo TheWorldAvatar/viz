@@ -300,7 +300,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             width: header.getSize(),
                             minWidth: header.getSize(),
                           }}
-                          scope="col"
                         >
                           {header.isPlaceholder ? null : (
                             <div className="flex flex-col gap-2">
@@ -357,19 +356,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
                       {hasVisibleColumns && (
-                        <TableCell className="sticky left-0 z-10 bg-background w-16">
-                          <RegistryRowActions
-                            recordType={props.recordType}
-                            lifecycleStage={props.lifecycleStage}
-                            row={row.original}
-                            setTask={props.setTask}
-                          />
-                        </TableCell>
+                        <RegistryRowActions
+                          recordType={props.recordType}
+                          lifecycleStage={props.lifecycleStage}
+                          row={row.original}
+                          setTask={props.setTask}
+                        />
                       )}
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          scope="row"
                           style={{
                             width: cell.column.getSize(),
                             minWidth: cell.column.getSize(),

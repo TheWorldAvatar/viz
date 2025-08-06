@@ -104,7 +104,10 @@ export default function RegistryRowActions(
   const isSubmissionPage: boolean = props.lifecycleStage == "pending";
 
   return (
-    <div className="flex items-center justify-center  ">
+    <th
+      aria-label="Actions"
+      className="sticky left-0 z-10 bg-background hover:bg-muted w-16 flex items-center justify-center border-r border-border p-3 whitespace-nowrap text-lg font-normal"
+    >
       {!isSubmissionPage && !showsExpandedTask && (
         <Button
           variant="ghost"
@@ -323,7 +326,7 @@ export default function RegistryRowActions(
           </div>
         </PopoverActionButton>
       )}
-    </div>
+    </th>
   );
 }
 

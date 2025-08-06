@@ -1,9 +1,7 @@
 interface TableCellProps {
   isHeader?: boolean;
   style?: React.CSSProperties;
-  scope?: string | undefined;
   children?: React.ReactNode;
-  className?: string;
 }
 
 export default function TableCell(props: Readonly<TableCellProps>) {
@@ -12,14 +10,9 @@ export default function TableCell(props: Readonly<TableCellProps>) {
   const isHeaderClasses = props.isHeader
     ? "bg-muted font-semibold text-foreground text-left"
     : "";
-  const customClasses = props.className || "";
 
   return (
-    <th
-      style={props.style}
-      className={`${baseClasses} ${isHeaderClasses} ${customClasses}`.trim()}
-      scope={props.scope}
-    >
+    <th style={props.style} className={`${baseClasses} ${isHeaderClasses}`}>
       {props.children}
     </th>
   );
