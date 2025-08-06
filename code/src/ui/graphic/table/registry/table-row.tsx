@@ -8,7 +8,6 @@ interface TableRowProps {
 /**
  * This component renders a table row.
  *
- * @param {string | number} rowKey The unique key for the row.
  * @param {boolean} isHeader Indicates if the row is a header row.
  * @param {React.ReactNode} children The content of the row.
  */
