@@ -27,7 +27,7 @@ const Option = (props: OptionProps<ColumnOption, true>) => (
         type="checkbox"
         checked={props.isSelected}
         onChange={() => null}
-        className="mr-2"
+        className="mr-3"
       />
       <label>{props.label}</label>
     </div>
