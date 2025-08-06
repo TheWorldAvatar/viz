@@ -78,7 +78,7 @@ export default function Button({
     outline:
       "bg-transparent border border-border text-foreground hover:bg-gray-200 dark:hover:text-background",
     ghost:
-      "bg-transparent text-foreground hover:bg-gray-200 dark:hover:bg-zinc-700",
+      "bg-transparent text-foreground hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors ease-linear duration-200",
     active:
       "bg-background border-1 border-border text-gray-800 hover:bg-gray-200 dark:bg-muted dark:text-foreground dark:hover:bg-zinc-900",
   };

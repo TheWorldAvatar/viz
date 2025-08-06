@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -8,7 +8,27 @@ import {
   getPaginationRowModel,
   getFilteredRowModel,
   ColumnFiltersState,
+  Row,
 } from "@tanstack/react-table";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type UniqueIdentifier,
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { FieldValues } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
@@ -27,6 +47,51 @@ import TablePagination from "../pagination/table-pagination";
 import TableRow from "./table-row";
 import TableCell from "./table-cell";
 import { Icon } from "@mui/material";
+
+function DragHandle({ id }: { id: string }) {
+  const { attributes, listeners } = useSortable({
+    id,
+  });
+
+  return (
+    <Button
+      leftIcon="drag_indicator"
+      size="icon"
+      variant="ghost"
+      {...attributes}
+      {...listeners}
+      className="cursor-grab hover:cursor-grabbing hover:bg-transparent"
+    >
+      <span className="sr-only">Drag to reorder</span>
+    </Button>
+  );
+}
+
+// Draggable Row Component
+function DraggableRow({
+  row,
+  children,
+}: {
+  row: Row<FieldValues>;
+  children: React.ReactNode;
+}) {
+  const { transform, transition, setNodeRef, isDragging } = useSortable({
+    id: row.id,
+  });
+
+  return (
+    <TableRow
+      ref={setNodeRef}
+      className={`relative z-0 ${isDragging ? "z-10 opacity-70" : ""}`}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition: transition,
+      }}
+    >
+      {children}
+    </TableRow>
+  );
+}
 
 interface RegistryTableProps {
   recordType: string;
@@ -55,22 +120,31 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Parse row values
-  const data: FieldValues[] = useMemo(() => {
-    if (props.instances?.length === 0) return [];
-    // Extract only the value into the data to simplify
-    return props.instances.map((instance, index) => {
+  // State for drag and drop functionality
+  const [data, setData] = useState<FieldValues[]>([]);
+
+  // Update data when props.instances changes
+  // This is necessary to ensure the table reflects the latest instances.
+
+  useEffect(() => {
+    if (props.instances?.length === 0) {
+      setData([]);
+      return;
+    }
+    // Parse row values
+    const parsedData = props.instances.map((instance, index) => {
       const flattenInstance: Record<string, string> = { id: `row-${index}` };
       Object.keys(instance).forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
-          flattenInstance[field] = fieldValue[0]?.value; // Handle array of SparqlResponseField
+          flattenInstance[field] = fieldValue[0]?.value;
         } else {
           flattenInstance[field] = fieldValue?.value;
         }
       });
       return flattenInstance;
     });
+    setData(parsedData);
   }, [props.instances]);
 
   // Get unique values for each column for filtering
@@ -169,6 +243,31 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return fieldColumns;
   }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
 
+  // Data IDs for drag and drop
+  const dataIds = useMemo<UniqueIdentifier[]>(
+    () => data?.map((_, index) => `row-${index}`) || [],
+    [data]
+  );
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {})
+  );
+
+  // Handle drag end
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      setData((data) => {
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
+    }
+  }
+
   const table = useReactTable({
     data,
     columns,
@@ -177,6 +276,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    getRowId: (row, index) => `row-${index}`,
     state: {
       columnFilters,
     },
@@ -283,104 +383,138 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         {hasRows && (
           <div className="overflow-auto flex-1 min-h-[400px]">
             <div className="min-w-full">
-              <table
-                aria-label={`${props.recordType} registry table`}
-                className="w-full border-collapse"
+              <DndContext
+                collisionDetection={closestCenter}
+                modifiers={[restrictToVerticalAxis]}
+                onDragEnd={handleDragEnd}
+                sensors={sensors}
               >
-                <thead className="bg-muted sticky top-0 z-10">
-                  {/* Combined Header and Filter row */}
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow isHeader={true} key={headerGroup.id}>
-                      {hasVisibleColumns && <TableCell />}
-                      {headerGroup.headers.map((header) => (
-                        <TableCell
-                          key={header.id}
-                          isHeader={true}
-                          style={{
-                            width: header.getSize(),
-                            minWidth: header.getSize(),
-                          }}
-                        >
-                          {header.isPlaceholder ? null : (
-                            <div className="flex flex-col gap-2">
-                              <div
-                                className={`flex items-center gap-2 ${
-                                  header.column.getCanSort()
-                                    ? "cursor-pointer select-none "
-                                    : ""
-                                }`}
-                                onClick={header.column.getToggleSortingHandler()}
-                                aria-label={
-                                  header.column.getCanSort()
-                                    ? `Sort by ${header.column.columnDef.header}`
-                                    : undefined
-                                }
+                <table
+                  aria-label={`${props.recordType} registry table`}
+                  className="w-full border-collapse"
+                >
+                  <thead className="bg-muted sticky top-0 z-10">
+                    {/* Combined Header and Filter row */}
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow isHeader={true} key={headerGroup.id}>
+                        {hasVisibleColumns && (
+                          <>
+                            <TableCell isHeader={true} />
+                            <TableCell isHeader={true} />
+                          </>
+                        )}
+                        {headerGroup.headers.map((header) => (
+                          <TableCell
+                            key={header.id}
+                            isHeader={true}
+                            style={{
+                              width: header.getSize(),
+                              minWidth: header.getSize(),
+                            }}
+                          >
+                            {header.isPlaceholder ? null : (
+                              <div className="flex flex-col gap-2">
+                                <div
+                                  className={`flex items-center gap-2 ${
+                                    header.column.getCanSort()
+                                      ? "cursor-pointer select-none "
+                                      : ""
+                                  }`}
+                                  onClick={header.column.getToggleSortingHandler()}
+                                  aria-label={
+                                    header.column.getCanSort()
+                                      ? `Sort by ${header.column.columnDef.header}`
+                                      : undefined
+                                  }
+                                >
+                                  {flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                  )}
+                                  {{
+                                    asc: (
+                                      <Icon className="material-symbols-outlined">
+                                        {"arrow_upward"}
+                                      </Icon>
+                                    ),
+                                    desc: (
+                                      <Icon className="material-symbols-outlined">
+                                        {"arrow_downward"}
+                                      </Icon>
+                                    ),
+                                  }[header.column.getIsSorted() as string] ??
+                                    null}
+                                </div>
+                                {header.column.getCanFilter() ? (
+                                  <ColumnFilterDropdown
+                                    column={header.column}
+                                    options={getCurrentColumnOptions(
+                                      header.column.id
+                                    )}
+                                  />
+                                ) : (
+                                  <div className="h-11" />
+                                )}
+                              </div>
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </thead>
+                  {/* Body rows */}
+                  <tbody>
+                    {table.getRowModel().rows?.length ? (
+                      <SortableContext
+                        items={dataIds}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {table.getRowModel().rows.map((row) => (
+                          <DraggableRow key={row.id} row={row}>
+                            {hasVisibleColumns && (
+                              <>
+                                <TableCell>
+                                  <DragHandle id={row.id} />
+                                </TableCell>
+                                <TableCell>
+                                  <RegistryRowActions
+                                    recordType={props.recordType}
+                                    lifecycleStage={props.lifecycleStage}
+                                    row={row.original}
+                                    setTask={props.setTask}
+                                  />
+                                </TableCell>
+                              </>
+                            )}
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell
+                                key={cell.id}
+                                style={{
+                                  width: cell.column.getSize(),
+                                  minWidth: cell.column.getSize(),
+                                }}
                               >
                                 {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
                                 )}
-                                {{
-                                  asc: (
-                                    <Icon className="material-symbols-outlined">
-                                      {"arrow_upward"}
-                                    </Icon>
-                                  ),
-                                  desc: (
-                                    <Icon className="material-symbols-outlined">
-                                      {"arrow_downward"}
-                                    </Icon>
-                                  ),
-                                }[header.column.getIsSorted() as string] ??
-                                  null}
-                              </div>
-                              {header.column.getCanFilter() ? (
-                                <ColumnFilterDropdown
-                                  column={header.column}
-                                  options={getCurrentColumnOptions(
-                                    header.column.id
-                                  )}
-                                />
-                              ) : (
-                                <div className="h-8" />
-                              )}
-                            </div>
-                          )}
+                              </TableCell>
+                            ))}
+                          </DraggableRow>
+                        ))}
+                      </SortableContext>
+                    ) : (
+                      <TableRow>
+                        <TableCell>
+                          <div className="h-24 text-center">
+                            {dict.message.noData}
+                          </div>
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </thead>
-                {/* Body rows */}
-                <tbody>
-                  {table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {hasVisibleColumns && (
-                        <RegistryRowActions
-                          recordType={props.recordType}
-                          lifecycleStage={props.lifecycleStage}
-                          row={row.original}
-                          setTask={props.setTask}
-                        />
-                      )}
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          style={{
-                            width: cell.column.getSize(),
-                            minWidth: cell.column.getSize(),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </tbody>
-              </table>
+                      </TableRow>
+                    )}
+                  </tbody>
+                </table>
+              </DndContext>
             </div>
           </div>
         )}
