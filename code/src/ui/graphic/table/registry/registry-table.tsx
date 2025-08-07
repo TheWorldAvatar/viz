@@ -1,15 +1,3 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  ColumnFiltersState,
-  Row,
-} from "@tanstack/react-table";
 import {
   closestCenter,
   DndContext,
@@ -22,8 +10,8 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
-  restrictToVerticalAxis,
   restrictToParentElement,
+  restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 import {
   arrayMove,
@@ -32,24 +20,35 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { FieldValues } from "react-hook-form";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  Row,
+  useReactTable
+} from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
+import Button from "ui/interaction/button";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import RegistryRowActions from "./actions/registry-table-action";
-import Button from "ui/interaction/button";
-import ColumnFilterDropdown from "./column-filter-dropdown";
-import ColumnVisabilityDropdown from "./column-visability-dropdown";
 import TablePagination from "../pagination/table-pagination";
-import TableRow from "./table-row";
+import RegistryRowActions from "./actions/registry-table-action";
+import HeaderCell from "./cell/header-cell";
+import ColumnVisabilityDropdown from "./column-visability-dropdown";
 import TableCell from "./table-cell";
-import { Icon } from "@mui/material";
+import TableRow from "./table-row";
 
 // Constants
 const DEFAULT_PAGE_SIZE: number = 10;
@@ -223,23 +222,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           },
           size: minWidth,
           enableSorting: true,
-          enableColumnFilter: !isIdField,
-          filterFn: (row, columnId, filterValue: string[]) => {
-            const value = row.getValue(columnId) as string;
-            // If no filter is applied (undefined) or all values are selected, show all records
-            if (
-              !filterValue ||
-              filterValue.length === 0 ||
-              filterValue.length === columnOptions[field]?.length
-            ) {
-              return true;
-            }
-            // If the value is empty and no empty values are in the filter options, exclude it
-            if (!value && filterValue.length > 0) {
-              return false;
-            }
-            return filterValue.includes(value);
-          },
         };
       }
     );
@@ -262,7 +244,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnFiltersChange: setColumnFilters,
-    getRowId: (row, index) => `row-${index}`,
+    getRowId: (_row, index) => `row-${index}`,
     state: {
       columnFilters,
     },
@@ -297,70 +279,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       });
     }
   }
-
-  // Function to get current filtered options for a column
-  const getCurrentColumnOptions = useCallback(
-    (columnId: string) => {
-      if (!table) return columnOptions[columnId] || [];
-
-      // Get all active filters except the current column
-      const activeFilters = table
-        .getState()
-        .columnFilters.filter((filter) => filter.id !== columnId);
-
-      // If no other filters are active, return all options
-      if (activeFilters.length === 0) {
-        return columnOptions[columnId] || [];
-      }
-
-      // Calculate available options based on other active filters
-      const availableOptions = new Set<string>();
-
-      // Go through all original data and check which values would be available
-      // if we applied all other filters except the current column
-      data.forEach((row) => {
-        // Check if this row would pass all other active filters
-        let passesOtherFilters = true;
-
-        for (const filter of activeFilters) {
-          const filterValue = filter.value as string[];
-          const rowValue = row[filter.id] as string;
-
-          // If no filter is applied or all values are selected, it passes
-          if (
-            !filterValue ||
-            filterValue.length === 0 ||
-            filterValue.length === columnOptions[filter.id]?.length
-          ) {
-            continue;
-          }
-
-          // If the value is empty and no empty values are in the filter options, exclude it
-          if (!rowValue && filterValue.length > 0) {
-            passesOtherFilters = false;
-            break;
-          }
-
-          // Check if the row value is in the filter
-          if (!filterValue.includes(rowValue)) {
-            passesOtherFilters = false;
-            break;
-          }
-        }
-
-        // If this row passes all other filters, add its value for the current column
-        if (passesOtherFilters) {
-          const value = row[columnId] as string;
-          if (value && value !== "") {
-            availableOptions.add(value);
-          }
-        }
-      });
-
-      return Array.from(availableOptions).sort();
-    },
-    [table, data, columnOptions]
-  );
 
   const hasRows = table.getRowModel().rows.length > 0;
   const hasVisibleColumns = table.getVisibleLeafColumns().length > 0;
@@ -418,62 +336,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             <TableCell isHeader={true} />
                           </>
                         )}
-                        {headerGroup.headers.map((header) => (
-                          <TableCell
+                        {headerGroup.headers.map((header) => {
+                          return <HeaderCell
                             key={header.id}
-                            isHeader={true}
-                            style={{
-                              width: header.getSize(),
-                              minWidth: header.getSize(),
-                            }}
-                          >
-                            {header.isPlaceholder ? null : (
-                              <div className="flex flex-col gap-2">
-                                <div
-                                  className={`flex items-center gap-2 ${
-                                    header.column.getCanSort()
-                                      ? "cursor-pointer select-none "
-                                      : ""
-                                  }`}
-                                  onClick={header.column.getToggleSortingHandler()}
-                                  aria-label={
-                                    header.column.getCanSort()
-                                      ? `Sort by ${header.column.columnDef.header}`
-                                      : undefined
-                                  }
-                                >
-                                  {flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                  )}
-                                  {{
-                                    asc: (
-                                      <Icon className="material-symbols-outlined">
-                                        {"arrow_upward"}
-                                      </Icon>
-                                    ),
-                                    desc: (
-                                      <Icon className="material-symbols-outlined">
-                                        {"arrow_downward"}
-                                      </Icon>
-                                    ),
-                                  }[header.column.getIsSorted() as string] ??
-                                    null}
-                                </div>
-                                {header.column.getCanFilter() ? (
-                                  <ColumnFilterDropdown
-                                    column={header.column}
-                                    options={getCurrentColumnOptions(
-                                      header.column.id
-                                    )}
-                                  />
-                                ) : (
-                                  <div className="h-11" />
-                                )}
-                              </div>
-                            )}
-                          </TableCell>
-                        ))}
+                            header={header}
+                            options={Array.from(new Set(
+                              table.getFilteredRowModel().flatRows.flatMap(row => row.getValue(header.id))))}
+                          />
+                        }
+                        )}
                       </TableRow>
                     ))}
                   </thead>
