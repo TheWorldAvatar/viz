@@ -48,6 +48,21 @@ import TableRow from "./table-row";
 import TableCell from "./table-cell";
 import { Icon } from "@mui/material";
 
+// Constants
+const DEFAULT_PAGE_SIZE: number = 10;
+const MIN_COLUMN_WIDTH: number = 125;
+const CHARACTER_WIDTH: number = 15;
+
+interface RegistryTableProps {
+  recordType: string;
+  lifecycleStage: LifecycleStage;
+  instances: RegistryFieldValues[];
+  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  limit?: number;
+}
+
+// Maybe use React.memo for performance optimization?
+// so that it does not create new drag handles on every render?
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
     id,
@@ -68,6 +83,7 @@ function DragHandle({ id }: { id: string }) {
 }
 
 // Draggable Row Component
+// React.memo ?
 function DraggableRow({
   row,
   children,
@@ -93,19 +109,6 @@ function DraggableRow({
   );
 }
 
-interface RegistryTableProps {
-  recordType: string;
-  lifecycleStage: LifecycleStage;
-  instances: RegistryFieldValues[];
-  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  limit?: number;
-}
-
-// Constants
-const DEFAULT_PAGE_SIZE: number = 10;
-const MIN_COLUMN_WIDTH: number = 125;
-const CHARACTER_WIDTH: number = 15;
-
 /**
  * This component renders a registry of table based on the inputs using TanStack Table.
  *
@@ -125,7 +128,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   // Update data when props.instances changes
   // This is necessary to ensure the table reflects the latest instances.
-
   useEffect(() => {
     if (props.instances?.length === 0) {
       setData([]);
@@ -147,17 +149,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     setData(parsedData);
   }, [props.instances]);
 
+  // Get all unique fields from instances
+  const allFields = useMemo(() => {
+    if (!props.instances?.length) return new Set<string>();
+
+    const fields = new Set<string>();
+    props.instances.forEach((instance) => {
+      Object.keys(instance).forEach((field) => fields.add(field));
+    });
+    return fields;
+  }, [props.instances]);
+
   // Get unique values for each column for filtering
   const columnOptions = useMemo(() => {
     const options: Record<string, string[]> = {};
 
     if (props.instances?.length > 0) {
-      // Get all unique fields from instances (same as in columns generation)
-      const allFields = new Set<string>();
-      props.instances.forEach((instance) => {
-        Object.keys(instance).forEach((field) => allFields.add(field));
-      });
-
       // Generate options for each field
       Array.from(allFields).forEach((field) => {
         const uniqueValues = [
@@ -184,12 +191,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   // Generate columns
   const columns: ColumnDef<FieldValues>[] = useMemo(() => {
     if (props.instances?.length === 0) return [];
-
-    // Get all unique fields from instances
-    const allFields = new Set<string>();
-    props.instances.forEach((instance) => {
-      Object.keys(instance).forEach((field) => allFields.add(field));
-    });
 
     const fieldColumns: ColumnDef<FieldValues>[] = Array.from(allFields).map(
       (field) => {
@@ -384,6 +385,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           <div className="overflow-auto flex-1 min-h-[400px]">
             <div className="min-w-full">
               <DndContext
+                key={`dnd-${table
+                  .getVisibleLeafColumns()
+                  .map((c) => c.id)
+                  .join("-")}`}
                 collisionDetection={closestCenter}
                 modifiers={[restrictToVerticalAxis]}
                 onDragEnd={handleDragEnd}
