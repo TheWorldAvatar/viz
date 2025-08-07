@@ -43,39 +43,36 @@ export default function Modal(props: Readonly<ModalProps>) {
     <>
       {dialog.open && (
         <FloatingPortal>
-          <FloatingOverlay
-            className="flex justify-center items-center z-[999] bg-inverse-primary backdrop-blur-xs"
-            lockScroll
-          >
+          <FloatingOverlay className="z-[999] pointer-events-none">
             <FloatingFocusManager context={dialog.context}>
               <div
                 ref={dialog.refs.setFloating}
                 style={{
                   ...dialog.floatingStyles,
-                  zIndex: 999998, // Second highest z-index so it hides other content but is hidden before tooltips
+                  zIndex: 999998,
                 }}
-                className="relative flex items-center justify-center h-full w-full"
-                onClick={(event: React.MouseEvent) => {
-                  if (event.target === event.currentTarget) {
-                    props.setIsOpen(false);
-                    if (props.returnPrevPage) {
-                      router.back();
-                    }
-                  }
-                }}
+                className="fixed right-0 top-0 bottom-0 flex items-end md:items-center md:justify-end pointer-events-none"
                 {...dialog.getFloatingProps()}
               >
                 <div
                   style={{
                     ...transition.styles,
                   }}
-                  className={`relative flex flex-col w-full h-dvh md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark md:border-1 md:shadow-2xl md:border-border md:rounded-xl ${props.styles}`}
+                  className={`
+                    relative bg-muted shadow-xl pointer-events-auto
+                    w-full md:w-96 lg:w-4/9 xl:w-1/3 2xl:w-1/3
+                    h-dvh  md:h-full
+                    rounded-t-lg md:rounded-t-none
+                    md:border-l border-border
+                    transform transition-all duration-300 ease-out
+                    ${props.styles}
+                  `}
                 >
                   <Button
                     leftIcon="close"
                     size="icon"
                     variant="ghost"
-                    className="absolute top-2 right-1 !rounded-full"
+                    className="absolute top-0 right-4 !rounded-full"
                     tooltipText={dict.action.close}
                     tooltipPosition="top-end"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -86,7 +83,9 @@ export default function Modal(props: Readonly<ModalProps>) {
                       }
                     }}
                   />
-                  {props.children}
+
+                  {/* Modal content */}
+                  <div className="px-4 overflow-y-auto">{props.children}</div>
                 </div>
               </div>
             </FloatingFocusManager>
