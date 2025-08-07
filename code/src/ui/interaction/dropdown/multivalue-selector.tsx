@@ -9,6 +9,7 @@ import { Dictionary } from "types/dictionary";
 import { checkboxInputsSelectorStyles } from "ui/css/selector-style";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
 import { SelectCheckboxOption } from "ui/interaction/input/select-checkbox";
+import { parseWordsForLabels } from "utils/client-utils";
 
 interface MultivalueDropdownProps {
   title: string
@@ -36,9 +37,8 @@ export default function MultivalueSelector(
   props: Readonly<MultivalueDropdownProps>
 ) {
   const dict: Dictionary = useDictionary();
-
   const selectAllOption: SelectOption = {
-    label: "All Columns",
+    label: parseWordsForLabels(dict.title.allCol),
     value: "select-all",
   };
 
@@ -63,7 +63,7 @@ export default function MultivalueSelector(
     }
   };
 
-  // Custom styles that change based on filter state
+  // Custom styles that change based on active state
   const getCustomStyles = (): StylesConfig<SelectOption, true> => {
     const baseStyles = checkboxInputsSelectorStyles;
     return {

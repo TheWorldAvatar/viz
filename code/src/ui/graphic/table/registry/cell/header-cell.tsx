@@ -1,7 +1,9 @@
 import { Icon } from "@mui/material";
 import { flexRender, Header } from "@tanstack/react-table";
+import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
@@ -19,6 +21,7 @@ interface HeaderCellProps {
  */
 
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
+  const dict: Dictionary = useDictionary();
   const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(null);
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
           </div>
           <div className="w-full min-w-36">
             <MultivalueSelector
-              title="Filter"
+              title={dict.action.filter}
               options={props.options.map((col) => {
                 return {
                   label: col,

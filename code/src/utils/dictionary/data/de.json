@@ -169,6 +169,8 @@
   },
   "title": {
     "actions": "AKTIONEN",
+    "allCol": "alle Spalten",
+    "customiseCol": "Spalten anpassen",
     "description": "Beschreibung",
     "serviceSummary": "Auftragsübersicht",
     "serviceType": "Art der Dienstleistung",

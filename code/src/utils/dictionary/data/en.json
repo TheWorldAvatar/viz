@@ -168,6 +168,8 @@
   },
   "title": {
     "actions": "ACTIONS",
+    "allCol": "all columns",
+    "customiseCol": "Customise columns",
     "description": "Description",
     "serviceSummary": "Service summary",
     "serviceType": "Service Type",

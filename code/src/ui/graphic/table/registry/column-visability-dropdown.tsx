@@ -1,6 +1,8 @@
 import { Column, Table } from "@tanstack/react-table";
+import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form/dist/types/fields";
+import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
@@ -19,6 +21,7 @@ interface ColumnVisibilityDropdownProps {
 export default function ColumnVisibilityDropdown(
   props: Readonly<ColumnVisibilityDropdownProps>
 ) {
+  const dict: Dictionary = useDictionary();
   const columns: Column<FieldValues, unknown>[] = props.table.getAllLeafColumns();
   const options: SelectOption[] = columns.map((col) => ({
     label: parseWordsForLabels(col.id),
@@ -39,7 +42,7 @@ export default function ColumnVisibilityDropdown(
     <div className="flex justify-end">
       <div className="md:w-[300px]">
         <MultivalueSelector
-          title="Customise Columns"
+          title={dict.title.customiseCol}
           options={options}
           toggleAll={true}
           isClearable={false}
