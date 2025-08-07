@@ -10,6 +10,7 @@ import Select, {
   ActionMeta,
 } from "react-select";
 import { checkboxInputsSelectorStyles } from "ui/css/selector-style";
+import { useCallback, useMemo } from "react";
 
 interface ColumnVisibilityDropdownProps {
   table: Table<FieldValues>;
@@ -19,6 +20,11 @@ interface ColumnOption {
   label: string;
   value: string;
 }
+
+const selectAllOption = {
+  value: "select-all",
+  label: "All Columns",
+} as const;
 
 const Option = (props: OptionProps<ColumnOption, true>) => (
   <components.Option {...props}>
@@ -46,36 +52,40 @@ export default function ColumnVisibilityDropdown(
 ) {
   const dict: Dictionary = useDictionary();
 
-  const columns = props.table.getAllLeafColumns();
-  const options: ColumnOption[] = columns.map((col) => ({
-    label: parseWordsForLabels(col.id),
-    value: col.id,
-  }));
+  const columns = useMemo(() => props.table.getAllLeafColumns(), [props.table]);
+  const columnOptions: ColumnOption[] = useMemo(
+    () =>
+      columns.map((col) => ({
+        label: parseWordsForLabels(col.id),
+        value: col.id,
+      })),
+    [columns]
+  );
 
   // Get only the currently visible columns
-  const selectedOptions = options.filter((opt) =>
+  const visibleColumns = columnOptions.filter((opt) =>
     props.table.getColumn(opt.value)?.getIsVisible()
   );
 
-  const selectAllOption = {
-    value: "select-all",
-    label: "All Columns",
-  };
-
-  const isSelectAllSelected = () => selectedOptions.length === options.length;
+  // Check if all columns are selected
+  const isAllColumnsSelected = () =>
+    visibleColumns.length === columnOptions.length;
 
   // Check if an option is selected (including when Select All is active)
-  const isOptionSelected = (option: ColumnOption) => {
-    if (option.value === selectAllOption.value) {
-      return isSelectAllSelected();
-    }
-    return props.table.getColumn(option.value)?.getIsVisible() || false;
-  };
+  const isOptionSelected = useCallback(
+    (option: ColumnOption) => {
+      if (option.value === selectAllOption.value) {
+        return isAllColumnsSelected();
+      }
+      return props.table.getColumn(option.value)?.getIsVisible() || false;
+    },
+    [isAllColumnsSelected, props.table]
+  );
 
-  const getOptions = () => [selectAllOption, ...options];
+  const allOptions = () => [selectAllOption, ...columnOptions];
 
-  const getValue = () =>
-    isSelectAllSelected() ? [selectAllOption] : selectedOptions;
+  const selectedValue = () =>
+    isAllColumnsSelected() ? [selectAllOption] : visibleColumns;
 
   const handleChange = (
     newValue: MultiValue<ColumnOption>,
@@ -96,7 +106,7 @@ export default function ColumnVisibilityDropdown(
       columns.forEach((col) => col.toggleVisibility(false));
     } else if (
       actionMeta.action === "deselect-option" &&
-      isSelectAllSelected()
+      isAllColumnsSelected()
     ) {
       const deselectedColumn = props.table.getColumn(option?.value || "");
       if (deselectedColumn) {
@@ -120,8 +130,8 @@ export default function ColumnVisibilityDropdown(
     <div className="flex justify-end">
       <div className="md:w-[300px]">
         <Select
-          options={getOptions()}
-          value={getValue()}
+          options={allOptions()}
+          value={selectedValue()}
           onChange={handleChange}
           isOptionSelected={isOptionSelected}
           isMulti

@@ -30,7 +30,6 @@ const Option = (props: OptionProps<ColumnOption, true>) => (
         checked={props.isSelected}
         onChange={() => null}
         className="mr-2"
-        readOnly
       />
       <label>{props.label}</label>
     </div>
