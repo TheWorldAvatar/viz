@@ -21,7 +21,10 @@ import {
   type DragEndEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  restrictToVerticalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
@@ -271,12 +274,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   });
 
   // Data IDs for drag and drop
+  // This is used to maintain the order of rows during drag and drop
   const dataIds = useMemo<UniqueIdentifier[]>(
     () => data?.map((_, index) => `row-${index}`) || [],
     [data]
   );
 
-  // Handle drag end
+  // This function handles the drag end event
+  // It updates the data order (row order) based on the drag and drop interaction
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     const currentPageIndex = table.getState().pagination.pageIndex;
@@ -287,7 +292,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         setTimeout(() => {
           // Reset pagination to the current page after reordering
           table.setPageIndex(currentPageIndex);
-        }, 0); // Delay to ensure state updates correctly
+        }, 0);
         return arrayMove(data, oldIndex, newIndex);
       });
     }
@@ -395,7 +400,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   .map((c) => c.id)
                   .join("-")}`}
                 collisionDetection={closestCenter}
-                modifiers={[restrictToVerticalAxis]}
+                modifiers={[restrictToVerticalAxis, restrictToParentElement]}
                 onDragEnd={handleDragEnd}
                 sensors={sensors}
               >
