@@ -10,6 +10,7 @@ import Select, {
   StylesConfig,
 } from "react-select";
 import { checkboxInputsSelectorStyles } from "ui/css/selector-style";
+import { useCallback } from "react";
 
 interface ColumnFilterDropdownProps {
   column: Column<FieldValues, unknown>;
@@ -29,6 +30,7 @@ const Option = (props: OptionProps<ColumnOption, true>) => (
         checked={props.isSelected}
         onChange={() => null}
         className="mr-2"
+        readOnly
       />
       <label>{props.label}</label>
     </div>
@@ -52,47 +54,48 @@ export default function ColumnFilterDropdown(
     value: option,
   }));
 
+  // Get the current filter value for the column
+  const currentFilterValue = props.column.getFilterValue() as
+    | string[]
+    | undefined;
+
   // Check if filter is currently applied
   const hasActiveFilter = () => {
-    const filterValue = props.column.getFilterValue() as string[] | undefined;
-    return filterValue !== undefined && filterValue.length > 0;
+    return currentFilterValue !== undefined && currentFilterValue.length > 0;
   };
 
   // Check if an option is selected
-  const isOptionSelected = (option: ColumnOption) => {
-    const filterValue = props.column.getFilterValue() as string[] | undefined;
-    // If filter is undefined, no options are selected (show all by default)
-    if (filterValue === undefined) {
-      return false;
-    }
+  const isOptionSelected = useCallback(
+    (option: ColumnOption) => {
+      // If filter is undefined, no options are selected (show all by default)
+      if (currentFilterValue === undefined) {
+        return false;
+      }
 
-    return filterValue.includes(option.value);
-  };
+      return currentFilterValue.includes(option.value);
+    },
+    [props.column]
+  );
 
-  const getValue = () => {
-    const filterValue = props.column.getFilterValue() as string[] | undefined;
+  // Get the currently selected values (options) based on the filter
+  const selectedValues = () => {
     // If filter is undefined, return empty array (no options selected)
-    if (filterValue === undefined) {
+    if (currentFilterValue === undefined) {
       return [];
     }
-
-    return columnOptions.filter((opt) => filterValue.includes(opt.value));
+    // Otherwise, return options that match the current filter value
+    return columnOptions.filter((opt) =>
+      currentFilterValue.includes(opt.value)
+    );
   };
 
   const handleChange = (
     newValue: MultiValue<ColumnOption>,
     _actionMeta: ActionMeta<ColumnOption>
   ) => {
-    if (newValue) {
+    if (newValue && newValue.length > 0) {
       const selectedOptions = newValue.map((opt) => opt.value);
-
-      if (selectedOptions.length === 0) {
-        // No options selected - show all records (no filter)
-        props.column.setFilterValue(undefined);
-      } else {
-        // Some options selected - filter to show only those
-        props.column.setFilterValue(selectedOptions);
-      }
+      props.column.setFilterValue(selectedOptions);
     } else {
       // No value - show all records
       props.column.setFilterValue(undefined);
@@ -101,13 +104,12 @@ export default function ColumnFilterDropdown(
 
   // Custom styles that change based on filter state
   const getCustomStyles = (): StylesConfig<ColumnOption, true> => {
-    const baseStyles = checkboxInputsSelectorStyles;
     const isFiltered = hasActiveFilter();
 
     return {
-      ...baseStyles,
+      ...checkboxInputsSelectorStyles,
       control: (provided, state) => ({
-        ...baseStyles.control?.(provided, state),
+        ...checkboxInputsSelectorStyles.control?.(provided, state),
         backgroundColor: isFiltered ? "var(--ring)" : "var(--background)",
         ":hover": {
           backgroundColor: isFiltered ? "var(--ring-hover)" : "var(--muted)",
@@ -120,7 +122,7 @@ export default function ColumnFilterDropdown(
     <div className="w-full min-w-36">
       <Select
         options={columnOptions}
-        value={getValue()}
+        value={selectedValues()}
         onChange={handleChange}
         isOptionSelected={isOptionSelected}
         isMulti
