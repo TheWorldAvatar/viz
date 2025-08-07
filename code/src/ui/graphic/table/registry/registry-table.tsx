@@ -479,7 +479,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   </thead>
                   {/* Body rows */}
                   <tbody>
-                    {table.getRowModel().rows?.length ? (
+                    {table.getRowModel().rows?.length && (
                       <SortableContext
                         items={dataIds}
                         strategy={verticalListSortingStrategy}
@@ -518,14 +518,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           </DraggableRow>
                         ))}
                       </SortableContext>
-                    ) : (
-                      <TableRow>
-                        <TableCell>
-                          <div className="h-24 text-center">
-                            {dict.message.noData}
-                          </div>
-                        </TableCell>
-                      </TableRow>
                     )}
                   </tbody>
                 </table>
