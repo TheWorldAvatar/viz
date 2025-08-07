@@ -98,7 +98,7 @@ function DraggableRow({
   return (
     <TableRow
       ref={setNodeRef}
-      className={`relative z-0 ${isDragging ? "z-10 opacity-70" : ""}`}
+      className={`group relative z-0 ${isDragging ? "z-10 opacity-70" : ""}`}
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -244,30 +244,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return fieldColumns;
   }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
 
-  // Data IDs for drag and drop
-  const dataIds = useMemo<UniqueIdentifier[]>(
-    () => data?.map((_, index) => `row-${index}`) || [],
-    [data]
-  );
-
   // Drag and drop sensors
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
-
-  // Handle drag end
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
-    }
-  }
 
   const table = useReactTable({
     data,
@@ -287,6 +269,29 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       },
     },
   });
+
+  // Data IDs for drag and drop
+  const dataIds = useMemo<UniqueIdentifier[]>(
+    () => data?.map((_, index) => `row-${index}`) || [],
+    [data]
+  );
+
+  // Handle drag end
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    const currentPageIndex = table.getState().pagination.pageIndex;
+    if (active && over && active.id !== over.id) {
+      setData((data) => {
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        setTimeout(() => {
+          // Reset pagination to the current page after reordering
+          table.setPageIndex(currentPageIndex);
+        }, 0); // Delay to ensure state updates correctly
+        return arrayMove(data, oldIndex, newIndex);
+      });
+    }
+  }
 
   // Function to get current filtered options for a column
   const getCurrentColumnOptions = useCallback(
@@ -478,10 +483,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           <DraggableRow key={row.id} row={row}>
                             {hasVisibleColumns && (
                               <>
-                                <TableCell>
+                                <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted">
                                   <DragHandle id={row.id} />
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="sticky left-12 z-20 bg-background group-hover:bg-muted">
                                   <RegistryRowActions
                                     recordType={props.recordType}
                                     lifecycleStage={props.lifecycleStage}

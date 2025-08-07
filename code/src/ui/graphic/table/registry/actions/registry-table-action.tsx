@@ -104,7 +104,7 @@ export default function RegistryRowActions(
   const isSubmissionPage: boolean = props.lifecycleStage == "pending";
 
   return (
-    <div aria-label="Actions" className="sticky left-0 z-10">
+    <div aria-label="Actions">
       {!isSubmissionPage && !showsExpandedTask && (
         <Button
           variant="ghost"
