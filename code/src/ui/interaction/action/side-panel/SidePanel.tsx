@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from "react";
+import Button from "ui/interaction/button";
 
 interface SidePanelProps {
   isOpen: boolean;
@@ -55,13 +56,13 @@ export default function SidePanel({
 
   return (
     <div
-      aria-modal="true"
-      role="dialog"
       className={`fixed right-0 top-0 bottom-0 z-50 flex items-end md:items-center md:justify-end pointer-events-none`}
     >
       {/* Side panel container */}
       <div
         ref={sheetRef}
+        aria-modal="true"
+        role="dialog"
         className={`
           relative bg-muted shadow-lg pointer-events-auto
           w-full md:w-96 lg:w-3/8 xl:w-1/3 
@@ -79,25 +80,14 @@ export default function SidePanel({
         tabIndex={-1}
       >
         {/* Close button */}
-        <button
+        <Button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2 rounded-full p-2 cursor-pointer"
+          variant="ghost"
+          leftIcon="close"
+          size="icon"
+          className="absolute top-4 right-4 !rounded-full"
           aria-label="Close sheet"
-        >
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+        />
 
         {/* Side panel content */}
         <div className="py-4 overflow-y-auto max-h-[calc(100vh-64px)]">
