@@ -25,20 +25,6 @@ export default function SidePanel({
     [onClose]
   );
 
-  // Close side panel when clicking outside
-  const handleClickOutside = useCallback(
-    (event: MouseEvent) => {
-      if (
-        sheetRef.current &&
-        !sheetRef.current.contains(event.target as Node)
-      ) {
-        // Cast event.target to Node
-        onClose();
-      }
-    },
-    [onClose]
-  );
-
   useEffect(() => {
     let openTimer: NodeJS.Timeout;
     let closeTimer: NodeJS.Timeout;
@@ -50,7 +36,6 @@ export default function SidePanel({
         setIsAnimating(true);
       }, 10);
       document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("mousedown", handleClickOutside);
     } else {
       setIsAnimating(false);
       // Delay hiding the component to allow animation to complete
@@ -63,9 +48,8 @@ export default function SidePanel({
       clearTimeout(openTimer);
       clearTimeout(closeTimer);
       document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, handleKeyDown, handleClickOutside]);
+  }, [isOpen, handleKeyDown]);
 
   if (!isVisible) return null;
 
@@ -73,20 +57,19 @@ export default function SidePanel({
     <div
       aria-modal="true"
       role="dialog"
-      className={`fixed inset-0 z-50 flex items-end md:items-center md:justify-end bg-black/50 transition-opacity duration-300 ease-in-out ${
-        isAnimating ? "opacity-100" : "opacity-0"
-      }`}
+      className={`fixed right-0 top-0 bottom-0 z-50 flex items-end md:items-center md:justify-end pointer-events-none`}
     >
       {/* Side panel container */}
       <div
         ref={sheetRef}
         className={`
-          relative bg-gray-100 shadow-xl
-          w-full md:w-96 lg:w-1/3 xl:w-1/4
-          h-auto max-h-screen md:h-full
-          rounded-t-lg md:rounded-t-none
-          md:border-l border-gray-200
-          transform transition-all duration-300 ease-out
+          relative bg-muted shadow-lg pointer-events-auto
+          w-full md:w-96 lg:w-3/8 xl:w-1/3 
+          h-3/5 max-h-screen md:h-full
+          rounded-t-2xl  md:rounded-t-none
+          border-t md:border-t-0
+          md:border-l border-border
+          transform transition-transform duration-300 ease-out
           ${
             isAnimating
               ? "translate-y-0  translate-x-0"
@@ -98,7 +81,7 @@ export default function SidePanel({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2 rounded-full p-2"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2 rounded-full p-2 cursor-pointer"
           aria-label="Close sheet"
         >
           <svg
