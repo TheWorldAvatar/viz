@@ -19,16 +19,17 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Table,
   useReactTable
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import {
@@ -37,8 +38,6 @@ import {
   RegistryTaskOption,
 } from "types/form";
 import Button from "ui/interaction/button";
-import StatusComponent from "ui/text/status/status";
-import { parseWordsForLabels } from "utils/client-utils";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
@@ -46,18 +45,13 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import ColumnVisabilityDropdown from "./column-visability-dropdown";
-
-// Constants
-const DEFAULT_PAGE_SIZE: number = 10;
-const MIN_COLUMN_WIDTH: number = 125;
-const CHARACTER_WIDTH: number = 15;
+import { parseDataForTable, TableData } from "./registry-table-utils";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  limit?: number;
 }
 
 /**
@@ -67,130 +61,56 @@ interface RegistryTableProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
- * @param {number} limit Optional limit to the number of columns shown.
  */
-
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
 
-  // State for drag and drop functionality
-  const [data, setData] = useState<FieldValues[]>([]);
+  const tableData: TableData = useMemo(() => parseDataForTable(props.instances), [props.instances])
+  const [data, setData] = useState<FieldValues[]>(tableData.data);
+  const table: Table<FieldValues> = useReactTable({
+    data,
+    columns: tableData.columns,
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getRowId: row => row.id,
+  });
 
-  // Update data when props.instances changes
-  // This is necessary to ensure the table reflects the latest instances.
-  useEffect(() => {
-    if (props.instances?.length === 0) {
-      setData([]);
-      return;
-    }
-    // Parse row values
-    const parsedData = props.instances.map((instance, index) => {
-      const flattenInstance: Record<string, string> = { id: `row-${index}` };
-      Object.keys(instance).forEach((field) => {
-        const fieldValue = instance[field];
-        if (Array.isArray(fieldValue)) {
-          flattenInstance[field] = fieldValue[0]?.value;
-        } else {
-          flattenInstance[field] = fieldValue?.value;
-        }
-      });
-      return flattenInstance;
-    });
-    setData(parsedData);
-  }, [props.instances]);
+  // Data IDs to maintain the order of rows during drag and drop
+  const dataIds: UniqueIdentifier[] = useMemo<UniqueIdentifier[]>(
+    () => data?.map(row => row.id) ?? [],
+    [data]
+  );
 
-  // Get all unique fields from instances
-  const allFields = useMemo(() => {
-    if (!props.instances?.length) return new Set<string>();
-
-    const fields = new Set<string>();
-    props.instances.forEach((instance) => {
-      Object.keys(instance).forEach((field) => fields.add(field));
-    });
-    return fields;
-  }, [props.instances]);
-
-  // Generate columns
-  const columns: ColumnDef<FieldValues>[] = useMemo(() => {
-    if (props.instances?.length === 0) return [];
-
-    const fieldColumns: ColumnDef<FieldValues>[] = Array.from(allFields).map(
-      (field) => {
-        const title = parseWordsForLabels(field);
-        const minWidth = Math.max(
-          title.length * CHARACTER_WIDTH,
-          MIN_COLUMN_WIDTH
-        );
-
-        return {
-          accessorKey: field,
-          header: title,
-          cell: ({ getValue }) => {
-            const value = getValue();
-            if (!value) return "";
-
-            if (field.toLowerCase() === "status") {
-              return <StatusComponent status={`${value}`} />;
-            }
-
-            return (
-              <div className="text-foreground">
-                {parseWordsForLabels(`${value}`)}
-              </div>
-            );
-          },
-          size: minWidth,
-          enableSorting: true,
-        };
-      }
-    );
-
-    return fieldColumns;
-  }, [props.instances, props.recordType, props.lifecycleStage, props.setTask]);
-
-  // Drag and drop sensors
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getRowId: (_row, index) => `row-${index}`,
-    initialState: {
-      pagination: {
-        pageSize: DEFAULT_PAGE_SIZE,
-      },
-    },
-  });
-
-  // Data IDs for drag and drop
-  // This is used to maintain the order of rows during drag and drop
-  const dataIds = useMemo<UniqueIdentifier[]>(
-    () => data?.map((_, index) => `row-${index}`) || [],
-    [data]
-  );
-
-  // This function handles the drag end event
-  // It updates the data order (row order) based on the drag and drop interaction
+  // This function updates the data order (row order) based on the drag and drop interaction
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    const currentPageIndex = table.getState().pagination.pageIndex;
+    const currentPageIndex: number = table.getState().pagination.pageIndex;
     if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
+      setData((prev) => {
+        const oldIndex: number = dataIds.findIndex(record => record == active.id);
+        const newIndex: number = dataIds.findIndex(record => record == over.id);
+        // Hacky solution to reset pagination after reordering
+        // A better solution is that pagination is stored in a state outside of this component and 
+        // we need to change the default pagination functionality in Tanstack as it is the source of this issue
         setTimeout(() => {
-          // Reset pagination to the current page after reordering
           table.setPageIndex(currentPageIndex);
         }, 0);
-        return arrayMove(data, oldIndex, newIndex);
+        return arrayMove(prev, oldIndex, newIndex);
       });
     }
   }
@@ -251,8 +171,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         items={dataIds}
                         strategy={verticalListSortingStrategy}
                       >
-                        {table.getRowModel().rows.map((row) => (
-                          <TableRow key={row.id} id={row.id} isHeader={false} >
+                        {table.getRowModel().rows.map((row, index) => (
+                          <TableRow key={row.id + index} id={row.id} isHeader={false} >
                             <TableCell width={100} className="flex sticky left-0 z-20 bg-background group-hover:bg-muted">
                               <DragActionHandle id={row.id} />
                               <RegistryRowAction

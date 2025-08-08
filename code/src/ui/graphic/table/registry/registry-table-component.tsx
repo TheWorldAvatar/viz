@@ -225,9 +225,8 @@ export default function RegistryTableComponent(
           <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
             instances={currentInstances}
-            limit={3}
+            setTask={setTask}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
