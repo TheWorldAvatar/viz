@@ -220,15 +220,15 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   return (
     <>
-      <div className="text-xl font-bold">
-        <span>{`${translateFormType(
+      <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
+        <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
         ).toUpperCase()} ${parseWordsForLabels(props.entityType)
           .toUpperCase()
-          .replace("_", " ")}`}</span>
-      </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6 p-1 ">
+          .replace("_", " ")}`}</h1>
+      </section>
+      <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -250,7 +250,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-1 sm:p-2  items-center">
+
+      <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
@@ -262,7 +263,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
-        <div className="flex flex-wrap gap-2 justify-end items-center  ">
+        <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
@@ -357,13 +358,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             <ReturnButton
               label={dict.action.return}
               leftIcon={"first_page"}
-              className="ml-2"
               variant="secondary"
               tooltipText={dict.action.return}
             />
           )}
         </div>
-      </div>
+      </section>
     </>
   );
 }

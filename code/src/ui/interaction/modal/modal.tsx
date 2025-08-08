@@ -61,10 +61,11 @@ export default function Modal(props: Readonly<ModalProps>) {
                   className={`
                     relative bg-muted shadow-xl pointer-events-auto
                     w-full md:w-96 lg:w-4/9 xl:w-1/3 2xl:w-1/3
-                    h-dvh  md:h-full
+                    h-dvh md:h-full
                     rounded-t-lg md:rounded-t-none
                     md:border-l border-border
                     transform transition-all duration-300 ease-out
+                    flex flex-col min-h-0
                     ${props.styles}
                   `}
                 >
@@ -72,7 +73,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                     leftIcon="close"
                     size="icon"
                     variant="ghost"
-                    className="absolute top-0 right-4 !rounded-full"
+                    className="absolute top-2 right-4 !rounded-full"
                     tooltipText={dict.action.close}
                     tooltipPosition="top-end"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,9 +84,9 @@ export default function Modal(props: Readonly<ModalProps>) {
                       }
                     }}
                   />
-
-                  {/* Modal content */}
-                  <div className="px-4 overflow-y-auto">{props.children}</div>
+                  <div className="px-4 h-full flex flex-col min-h-0">
+                    {props.children}
+                  </div>
                 </div>
               </div>
             </FloatingFocusManager>
