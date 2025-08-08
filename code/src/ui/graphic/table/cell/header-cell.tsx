@@ -7,6 +7,7 @@ import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import TableCell from "./table-cell";
 
 interface HeaderCellProps {
   options: string[];
@@ -31,10 +32,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   }, [selectedOptions])
 
   return (
-    <th style={{
-      width: props.header.getSize(),
-      minWidth: props.header.getSize(),
-    }} className={"bg-muted font-semibold text-foreground text-left border-r border-border p-2 md:p-3 whitespace-nowrap text-lg font-normal"}>
+    <TableCell width={props.header.getSize()}
+      className={"bg-muted font-semibold text-foreground text-left"}>
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div
@@ -79,6 +78,6 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
           </div>
         </div>
       )}
-    </th>
+    </TableCell>
   );
 }

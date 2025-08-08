@@ -16,10 +16,8 @@ import {
 import {
   arrayMove,
   SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
+  verticalListSortingStrategy
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -28,7 +26,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
   useReactTable
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
@@ -43,12 +40,13 @@ import {
 import Button from "ui/interaction/button";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+import DragActionHandle from "../action/drag-action-handle";
+import RegistryRowAction from "../action/registry-row-action";
+import HeaderCell from "../cell/header-cell";
+import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
-import RegistryRowActions from "./actions/registry-table-action";
-import HeaderCell from "./cell/header-cell";
+import TableRow from "../row/table-row";
 import ColumnVisabilityDropdown from "./column-visability-dropdown";
-import TableCell from "./table-cell";
-import TableRow from "./table-row";
 
 // Constants
 const DEFAULT_PAGE_SIZE: number = 10;
@@ -61,54 +59,6 @@ interface RegistryTableProps {
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   limit?: number;
-}
-
-// Maybe use React.memo for performance optimization?
-// so that it does not create new drag handles on every render?
-function DragHandle({ id }: { id: string }) {
-  const { attributes, listeners } = useSortable({
-    id,
-  });
-
-  return (
-    <Button
-      leftIcon="drag_indicator"
-      size="icon"
-      variant="ghost"
-      {...attributes}
-      {...listeners}
-      className="cursor-grab hover:cursor-grabbing hover:bg-transparent"
-    >
-      <span className="sr-only">Drag to reorder</span>
-    </Button>
-  );
-}
-
-// Draggable Row Component
-// React.memo ?
-function DraggableRow({
-  row,
-  children,
-}: {
-  row: Row<FieldValues>;
-  children: React.ReactNode;
-}) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.id,
-  });
-
-  return (
-    <TableRow
-      ref={setNodeRef}
-      className={`group relative z-0 ${isDragging ? "z-10 opacity-70" : ""}`}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition: transition,
-      }}
-    >
-      {children}
-    </TableRow>
-  );
 }
 
 /**
@@ -162,34 +112,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return fields;
   }, [props.instances]);
 
-  // Get unique values for each column for filtering
-  const columnOptions = useMemo(() => {
-    const options: Record<string, string[]> = {};
-
-    if (props.instances?.length > 0) {
-      // Generate options for each field
-      Array.from(allFields).forEach((field) => {
-        const uniqueValues = [
-          ...new Set(
-            props.instances
-              .map((instance) => {
-                const fieldValue = instance[field];
-                if (Array.isArray(fieldValue)) {
-                  return fieldValue[0]?.value || "";
-                } else {
-                  return fieldValue?.value || "";
-                }
-              })
-              .filter((val) => val !== "") // Filter out empty values
-          ),
-        ];
-        options[field] = uniqueValues.sort();
-      });
-    }
-
-    return options;
-  }, [props.instances]);
-
   // Generate columns
   const columns: ColumnDef<FieldValues>[] = useMemo(() => {
     if (props.instances?.length === 0) return [];
@@ -201,7 +123,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           title.length * CHARACTER_WIDTH,
           MIN_COLUMN_WIDTH
         );
-        const isIdField = field.toLowerCase().includes("id");
 
         return {
           accessorKey: field,
@@ -327,14 +248,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   className="w-full border-collapse"
                 >
                   <thead className="bg-muted sticky top-0 z-10">
-                    {/* Combined Header and Filter row */}
                     {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow isHeader={true} key={headerGroup.id}>
+                      <TableRow key={headerGroup.id} id={headerGroup.id} isHeader={true} >
                         {hasVisibleColumns && (
-                          <>
-                            <TableCell isHeader={true} />
-                            <TableCell isHeader={true} />
-                          </>
+                          <TableCell width={100} />
                         )}
                         {headerGroup.headers.map((header) => {
                           return <HeaderCell
@@ -348,7 +265,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                       </TableRow>
                     ))}
                   </thead>
-                  {/* Body rows */}
+
                   <tbody>
                     {table.getRowModel().rows?.length && (
                       <SortableContext
@@ -356,29 +273,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         strategy={verticalListSortingStrategy}
                       >
                         {table.getRowModel().rows.map((row) => (
-                          <DraggableRow key={row.id} row={row}>
+                          <TableRow key={row.id} id={row.id} isHeader={false} >
                             {hasVisibleColumns && (
-                              <>
-                                <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted">
-                                  <DragHandle id={row.id} />
-                                </TableCell>
-                                <TableCell className="sticky left-12 z-20 bg-background group-hover:bg-muted">
-                                  <RegistryRowActions
-                                    recordType={props.recordType}
-                                    lifecycleStage={props.lifecycleStage}
-                                    row={row.original}
-                                    setTask={props.setTask}
-                                  />
-                                </TableCell>
-                              </>
+                              <TableCell width={100} className="flex sticky left-0 z-20 bg-background group-hover:bg-muted">
+                                <DragActionHandle id={row.id} />
+                                <RegistryRowAction
+                                  recordType={props.recordType}
+                                  lifecycleStage={props.lifecycleStage}
+                                  row={row.original}
+                                  setTask={props.setTask}
+                                />
+                              </TableCell>
                             )}
                             {row.getVisibleCells().map((cell) => (
                               <TableCell
                                 key={cell.id}
-                                style={{
-                                  width: cell.column.getSize(),
-                                  minWidth: cell.column.getSize(),
-                                }}
+                                width={cell.column.getSize()}
                               >
                                 {flexRender(
                                   cell.column.columnDef.cell,
@@ -386,7 +296,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 )}
                               </TableCell>
                             ))}
-                          </DraggableRow>
+                          </TableRow>
                         ))}
                       </SortableContext>
                     )}
