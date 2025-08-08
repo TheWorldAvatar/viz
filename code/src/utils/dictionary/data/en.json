@@ -126,6 +126,7 @@
     "noFileChosenError": "No file is chosen. Please choose a file.",
     "fileUploadError": "File upload failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
+    "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
     "noDateSelected": "Pick a date range.",
     "noVisibleColumns": "No columns are visible. Please select at least one column to display from the dropdown menu.",
@@ -167,7 +168,7 @@
     }
   },
   "title": {
-    "actions": "ACTIONS",
+    "actions": "Actions",
     "allCol": "all columns",
     "customiseCol": "Customise columns",
     "description": "Description",

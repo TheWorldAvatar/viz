@@ -3,6 +3,8 @@
 import Button from "ui/interaction/button";
 
 import { useSortable } from "@dnd-kit/sortable";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 interface DragActionHandleProps {
   id: string;
@@ -16,6 +18,7 @@ interface DragActionHandleProps {
 export default function DragActionHandle(
   props: Readonly<DragActionHandleProps>
 ) {
+  const dict: Dictionary = useDictionary();
   const { attributes, listeners } = useSortable({ id: props.id, });
 
   return (
@@ -25,9 +28,8 @@ export default function DragActionHandle(
       variant="ghost"
       {...attributes}
       {...listeners}
+      tooltipText={dict.message.dragToReorder}
       className="cursor-grab hover:cursor-grabbing hover:bg-transparent"
-    >
-      <span className="sr-only">Drag to reorder</span>
-    </Button>
+    />
   );
 }
