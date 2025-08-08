@@ -191,11 +191,9 @@ export default function RegistryTableComponent(
       }
     };
 
-    // Trigger fetchData when isTaskModalOpen, refreshFlag, or selectedDate (range) changes
-    if (!isTaskModalOpen || refreshFlag) {
-      fetchData();
-    }
-  }, [isTaskModalOpen, selectedDate, refreshFlag]);
+    // Trigger fetchData when refreshFlag, or selectedDate (range) changes
+    fetchData();
+  }, [selectedDate, refreshFlag]);
 
   useEffect(() => {
     if (task) {
@@ -261,6 +259,7 @@ export default function RegistryTableComponent(
           task={task}
           setIsOpen={setIsTaskModalOpen}
           setTask={setTask}
+          onSuccess={triggerRefresh}
         />
       )}
     </div>

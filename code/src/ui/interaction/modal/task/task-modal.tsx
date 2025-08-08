@@ -37,6 +37,7 @@ interface TaskModalProps {
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  onSuccess?: () => void;
 }
 
 /**
@@ -153,6 +154,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     );
     if (response && !response?.error) {
       setTimeout(() => {
+        // Inform parent to refresh data on successful action
+        props.onSuccess?.();
         props.setIsOpen(false);
         // Reset states on successful submission
         props.setTask(null);
