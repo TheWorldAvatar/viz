@@ -55,7 +55,7 @@ export default function FormContainerComponent(
   }
 
   return (
-    <div className=" flex flex-col w-full h-dvh mt-0   xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
+    <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -220,7 +220,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   return (
     <>
-      <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
+      <section
+        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${
+          !props.isModal ? "mt-0" : "mt-10"
+        }  mb-0.5  shrink-0`}
+      >
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
