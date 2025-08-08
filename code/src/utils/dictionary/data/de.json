@@ -162,7 +162,6 @@
       "map": "Geografische Ansicht",
       "dashboard": "Analyseansicht",
       "registry": "Register öffnen",
-      "submission": "Einreichung des Registers",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
       "fileUpload": "Klicken Sie zum Hochladen einer Datei"
@@ -173,7 +172,6 @@
     "allCol": "alle Spalten",
     "customiseCol": "Spalten anpassen",
     "description": "Beschreibung",
-    "serviceSummary": "Auftragsübersicht",
     "serviceType": "Art der Dienstleistung",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
