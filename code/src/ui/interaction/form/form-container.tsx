@@ -19,7 +19,6 @@ import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
-import ReturnButton from "../action/redirect/return-button";
 import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
@@ -48,7 +47,7 @@ export default function FormContainerComponent(
 
   if (props.isModal) {
     return (
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} returnPrevPage={true}>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <FormContents {...props} />
       </Modal>
     );
@@ -331,10 +330,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 leftIcon="delete"
+                iconSize="medium"
                 label={dict.action.delete}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
-                variant="destructive"
+                variant="secondary"
               />
             )}
           {props.formType != "view" && (
@@ -358,14 +358,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 }}
               />
             ))}
-          {!(isRescindAction || isTerminateAction) && (
-            <ReturnButton
-              label={dict.action.return}
-              leftIcon={"first_page"}
-              variant="secondary"
-              tooltipText={dict.action.return}
-            />
-          )}
         </div>
       </section>
     </>

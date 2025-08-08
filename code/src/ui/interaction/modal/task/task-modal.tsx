@@ -199,7 +199,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else if (taskType === "cancel") {
       getFormTemplate("service", "cancel");
     }
-  }, [taskType]);
+  }, [taskType, props.task?.id, props.task?.status]);
+
+  // When a different record is selected while modal stays open,
+  // reset the view state so new content is fetched and shown.
+  useEffect(() => {
+    if (!props.task) return;
+    setTaskType(props.task.type);
+    setFormFields([]);
+  }, [props.task?.id, props.task?.type]);
 
   return (
     <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
@@ -213,7 +221,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         </h2>
       </section>
       {/* Scrollable Content */}
-      <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
+      <section
+        key={`${props.task?.id}-${taskType}`}
+        className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0"
+      >
         {taskType !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
             {taskType === "complete" && dict.message.completeInstruction}
@@ -231,6 +242,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
         {taskType === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
+            key={getAfterDelimiter(props.task.contract, "/")}
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
@@ -239,6 +251,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         )}
         {formFields?.length > 0 && !refreshFlag && (
           <FormTemplate
+            key={`${taskType}-${props.task?.id ?? "noid"}`}
             entityType={
               taskType === "report"
                 ? "report"
@@ -354,18 +367,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={onSubmit}
               />
             )}
-          <Button
-            leftIcon="first_page"
-            variant="secondary"
-            label={dict.action.return}
-            tooltipText={dict.action.return}
-            onClick={() => {
-              props.setIsOpen(false);
-              // Reset states on return
-              props.setTask(null);
-              setFormFields([]);
-            }}
-          />
         </div>
       </section>
     </Modal>

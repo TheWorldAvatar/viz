@@ -4,12 +4,12 @@ import {
   FloatingPortal,
   useTransitionStyles,
 } from "@floating-ui/react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useDialog } from "hooks/float/useDialog";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Button from "../button";
 
 interface ModalProps {
@@ -30,15 +30,26 @@ interface ModalProps {
  */
 export default function Modal(props: Readonly<ModalProps>) {
   const dict: Dictionary = useDictionary();
-  const router = useRouter();
+  const pathname = usePathname();
   const dialog = useDialog(props.isOpen, props.setIsOpen);
   const transition = useTransitionStyles(dialog.context, {
     duration: 400,
     initial: {
       opacity: 0,
       transform: "translateY(10vh)",
+      transition: "transform 400ms ease-out, opacity 400ms ease-out",
     },
   });
+
+  // Close modal when navigating to a new page (pathname change)
+  // The ref saves the current pathname to prevent closing the modal on internal navigation
+  const prevPathRef = useRef(pathname);
+  useEffect(() => {
+    if (prevPathRef.current !== pathname) {
+      prevPathRef.current = pathname;
+      if (props.isOpen) props.setIsOpen(false);
+    }
+  }, [pathname, props.isOpen, props.setIsOpen]);
   return (
     <>
       {dialog.open && (
@@ -73,15 +84,12 @@ export default function Modal(props: Readonly<ModalProps>) {
                     leftIcon="close"
                     size="icon"
                     variant="ghost"
+                    type="button"
                     className="absolute top-2 right-4 !rounded-full"
                     tooltipText={dict.action.close}
                     tooltipPosition="top-end"
-                    onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                      event.preventDefault();
+                    onClick={() => {
                       props.setIsOpen(false);
-                      if (props.returnPrevPage) {
-                        router.back();
-                      }
                     }}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">
