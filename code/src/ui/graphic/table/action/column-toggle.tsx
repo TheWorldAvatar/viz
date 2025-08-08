@@ -1,4 +1,4 @@
-import { Column, Table } from "@tanstack/react-table";
+import { Column } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form/dist/types/fields";
@@ -8,22 +8,21 @@ import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
 import { parseWordsForLabels } from "utils/client-utils";
 
-interface ColumnVisibilityDropdownProps {
-  table: Table<FieldValues>;
+interface ColumnToggleProps {
+  columns: Column<FieldValues, unknown>[];
 }
 
 /**
- * A dropdown component for toggling column visibility in a table.
+ * A selector component to show/hide the columns in a table.
  *
- * @param {Table<FieldValues>} props.table - The table instance containing columns.
+ * @param {Column<FieldValues, unknown>[]} columns - The list of all columns in the table.
  *
  */
-export default function ColumnVisibilityDropdown(
-  props: Readonly<ColumnVisibilityDropdownProps>
+export default function ColumnToggle(
+  props: Readonly<ColumnToggleProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const columns: Column<FieldValues, unknown>[] = props.table.getAllLeafColumns();
-  const options: SelectOption[] = columns.map((col) => ({
+  const options: SelectOption[] = props.columns.map((col) => ({
     label: parseWordsForLabels(col.id),
     value: col.id,
   }));
@@ -32,7 +31,7 @@ export default function ColumnVisibilityDropdown(
 
   useEffect(() => {
     if (selectedOptions) {
-      columns.forEach((col) => {
+      props.columns.forEach((col) => {
         col.toggleVisibility(selectedOptions.some((opt) => opt.value == col.id));
       });
     }

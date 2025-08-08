@@ -38,13 +38,13 @@ import {
   RegistryTaskOption,
 } from "types/form";
 import Button from "ui/interaction/button";
+import ColumnToggle from "../action/column-toggle";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import ColumnVisabilityDropdown from "./column-visability-dropdown";
 import { parseDataForTable, TableData } from "./registry-table-utils";
 
 interface RegistryTableProps {
@@ -126,7 +126,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
           />)}
-        <ColumnVisabilityDropdown table={table} />
+        <ColumnToggle columns={table.getAllLeafColumns()} />
       </div>
 
       {table.getVisibleLeafColumns().length > 0 ? <>
