@@ -135,10 +135,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           <div className="overflow-auto flex-1 min-h-[400px]">
             <div className="min-w-full">
               <DndContext
-                key={`dnd-${table
-                  .getVisibleLeafColumns()
-                  .map((c) => c.id)
-                  .join("-")}`}
                 collisionDetection={closestCenter}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
                 onDragEnd={handleDragEnd}
