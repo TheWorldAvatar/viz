@@ -88,7 +88,7 @@ export default function MultivalueSelector(
       hideSelectedOptions={false}
       components={{ Option: SelectCheckboxOption }}
       placeholder={props.title}
-      noOptionsMessage={() => dict.message.noColumns}
+      noOptionsMessage={() => dict.message.noOptions}
       controlShouldRenderValue={false}
       isSearchable
       className="text-base"
