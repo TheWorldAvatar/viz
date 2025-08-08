@@ -20,7 +20,6 @@ import {
 } from "@dnd-kit/sortable";
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -29,7 +28,7 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import {
@@ -73,7 +72,6 @@ interface RegistryTableProps {
 
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   // State for drag and drop functionality
   const [data, setData] = useState<FieldValues[]>([]);
@@ -164,11 +162,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getRowId: (_row, index) => `row-${index}`,
-    state: {
-      columnFilters,
-    },
     initialState: {
       pagination: {
         pageSize: DEFAULT_PAGE_SIZE,
@@ -201,36 +195,23 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   }
 
-  const hasRows = table.getRowModel().rows.length > 0;
-  const hasVisibleColumns = table.getVisibleLeafColumns().length > 0;
-  const hasActiveFilters = () => {
-    return table.getState().columnFilters.some((filter) => {
-      const value = filter.value as string[];
-      return value?.length > 0;
-    });
-  };
-
-  const handleClearAllFilters = useCallback(() => {
-    table.resetColumnFilters();
-    setColumnFilters([]);
-  }, [table]);
-
-  if (!hasRows && columnFilters.length === 0) {
-    return (
-      <div className="text-center py-6 text-foreground text-lg">
-        {dict.message.noData}
-      </div>
-    );
-  }
-
   return (
     <>
-      {/* Column Visibility Dropdown */}
-      {hasRows && <ColumnVisabilityDropdown table={table} />}
+      <div className="flex justify-end gap-4">
+        {table.getState().columnFilters.some((filter) => (filter?.value as string[])?.length > 0) && (
+          <Button
+            leftIcon="filter_list_off"
+            iconSize="small"
+            onClick={() => table.resetColumnFilters()}
+            tooltipText={dict.action.clearAllFilters}
+            variant="destructive"
+          />)}
+        <ColumnVisabilityDropdown table={table} />
+      </div>
 
-      <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
-        {/* Table container */}
-        {hasRows && (
+      {table.getVisibleLeafColumns().length > 0 ? <>
+        <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
+          {/* Table container */}
           <div className="overflow-auto flex-1 min-h-[400px]">
             <div className="min-w-full">
               <DndContext
@@ -250,9 +231,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                   <thead className="bg-muted sticky top-0 z-10">
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id} id={headerGroup.id} isHeader={true} >
-                        {hasVisibleColumns && (
-                          <TableCell width={100} />
-                        )}
+                        <TableCell width={100} />
                         {headerGroup.headers.map((header) => {
                           return <HeaderCell
                             key={header.id}
@@ -274,17 +253,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                       >
                         {table.getRowModel().rows.map((row) => (
                           <TableRow key={row.id} id={row.id} isHeader={false} >
-                            {hasVisibleColumns && (
-                              <TableCell width={100} className="flex sticky left-0 z-20 bg-background group-hover:bg-muted">
-                                <DragActionHandle id={row.id} />
-                                <RegistryRowAction
-                                  recordType={props.recordType}
-                                  lifecycleStage={props.lifecycleStage}
-                                  row={row.original}
-                                  setTask={props.setTask}
-                                />
-                              </TableCell>
-                            )}
+                            <TableCell width={100} className="flex sticky left-0 z-20 bg-background group-hover:bg-muted">
+                              <DragActionHandle id={row.id} />
+                              <RegistryRowAction
+                                recordType={props.recordType}
+                                lifecycleStage={props.lifecycleStage}
+                                row={row.original}
+                                setTask={props.setTask}
+                              />
+                            </TableCell>
                             {row.getVisibleCells().map((cell) => (
                               <TableCell
                                 key={cell.id}
@@ -305,37 +282,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </DndContext>
             </div>
           </div>
-        )}
-
-        {/* Clear all filters button */}
-        {hasRows && hasActiveFilters() && (
-          <div className="bg-muted border-t border-border p-2 flex justify-center">
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="small"
-              onClick={handleClearAllFilters}
-              variant="destructive"
-            >
-              {dict.action.clearAllFilters}
-            </Button>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {hasRows && <TablePagination table={table} />}
-
-        {/* Empty states */}
-        {!hasRows && columnFilters.length > 0 && (
-          <div className="text-center py-8 text-foreground text-lg">
-            {dict.message.noFilterResults}
-          </div>
-        )}
-        {!hasVisibleColumns && (
-          <div className="text-center text-md md:text-lg py-8 text-foreground">
-            {dict.message.noVisibleColumns}
-          </div>
-        )}
-      </div>
+        </div>
+        <TablePagination table={table} />
+      </> : (
+        <div className="text-center text-md md:text-lg py-8 text-foreground">
+          {dict.message.noVisibleColumns}
+        </div>
+      )}
     </>
   );
 }
