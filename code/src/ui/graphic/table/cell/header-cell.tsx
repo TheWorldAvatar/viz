@@ -65,7 +65,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
           <div className="w-full min-w-36">
             <MultivalueSelector
               title={dict.action.filter}
-              options={props.options.map((col) => {
+              options={props.options.sort().map((col) => {
                 return {
                   label: col,
                   value: col,
