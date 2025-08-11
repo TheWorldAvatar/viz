@@ -1,6 +1,5 @@
 "use client";
 
-import { Icon } from "@mui/material";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -24,7 +23,6 @@ import {
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
-import SummarySection from "./ribbon/summary";
 import TableRibbon from "./ribbon/table-ribbon";
 
 interface RegistryTableComponentProps {
@@ -218,38 +216,18 @@ export default function RegistryTableComponent(
           triggerRefresh={triggerRefresh}
         />
       </div>
-      <div className="flex items-center ml-6">
-        {(props.lifecycleStage == "scheduled" ||
-          props.lifecycleStage == "outstanding" ||
-          props.lifecycleStage == "closed") && (
-          <div className="flex items-center gap-2 mt-2  text-lg text-foreground ">
-            <Icon className={`material-symbols-outlined`}>info</Icon>
-            {dict.message.registryInstruction}
-          </div>
-        )}
-        {props.lifecycleStage == "report" && (
-          <h2 className="text-lg flex-wrap">
-            {dict.title.serviceSummary}
-            <hr />
-          </h2>
-        )}
-      </div>
-      <div className="flex flex-col overflow-auto gap-y-2 p-4">
-        {props.lifecycleStage == "report" && (
-          <SummarySection id={pathNameEnd} entityType={props.entityType} />
-        )}
+      <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {refreshFlag || isLoading ? (
           <LoadingSpinner isSmall={false} />
         ) : currentInstances.length > 0 ? (
           <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
-            setTask={setTask}
             instances={currentInstances}
-            limit={3}
+            setTask={setTask}
           />
         ) : (
-          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
+          <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
       {isTaskModalOpen && task && (

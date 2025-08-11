@@ -23,7 +23,7 @@ import { JsonObject } from "types/json";
 import { toast } from "ui/interaction/action/toast/toast";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
-interface RegistryRowActionsProps {
+interface RegistryRowActionProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   row: FieldValues;
@@ -38,15 +38,15 @@ interface RegistryRowActionsProps {
  * @param {FieldValues} row Row values.
  * @param setTask A dispatch method to set the task option when required.
  */
-export default function RegistryRowActions(
-  props: Readonly<RegistryRowActionsProps>
+export default function RegistryRowAction(
+  props: Readonly<RegistryRowActionProps>
 ) {
   const router = useRouter();
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -104,7 +104,7 @@ export default function RegistryRowActions(
   const isSubmissionPage: boolean = props.lifecycleStage == "pending";
 
   return (
-    <div className="flex items-center justify-center  ">
+    <div aria-label="Actions">
       {!isSubmissionPage && !showsExpandedTask && (
         <Button
           variant="ghost"
@@ -236,7 +236,7 @@ export default function RegistryRowActions(
                   (props.row?.status?.toLowerCase() ===
                     dict.title.assigned?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
-                      dict.title.completed?.toLowerCase()) && (
+                    dict.title.completed?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       leftIcon="done_outline"
@@ -256,9 +256,9 @@ export default function RegistryRowActions(
                   !permissionScheme ||
                   permissionScheme.hasPermissions.operation) &&
                   props.row?.status?.toLowerCase() !==
-                    dict.title.issue?.toLowerCase() &&
+                  dict.title.issue?.toLowerCase() &&
                   props.row?.status?.toLowerCase() !==
-                    dict.title.cancelled?.toLowerCase() && (
+                  dict.title.cancelled?.toLowerCase() && (
                     <Button
                       variant="ghost"
                       leftIcon="assignment"
@@ -280,7 +280,7 @@ export default function RegistryRowActions(
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
-                      dict.title.assigned?.toLowerCase()) && (
+                    dict.title.assigned?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       leftIcon="cancel"
@@ -302,7 +302,7 @@ export default function RegistryRowActions(
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
-                      dict.title.assigned?.toLowerCase()) && (
+                    dict.title.assigned?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       leftIcon="report"

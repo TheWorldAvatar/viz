@@ -37,7 +37,8 @@
     "findAddress": "Adresse finden",
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
-    "clickDecrease": "Zum Verringern anklicken"
+    "clickDecrease": "Zum Verringern anklicken",
+    "clearAllFilters": "Alle Filter löschen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -100,6 +101,9 @@
     }
   },
   "message": {
+    "page": "Seite {replace} von {replacecount}",
+    "numberOfRecords": "{replace} von insgesamt {replacetotal}",
+    "rowsPerPage": "Zeilen pro Seite: ",
     "arrayInstruction": "Dieser Bereich ist leer. Klicken Sie auf „+“, um ein Element hinzuzufügen.",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
@@ -122,8 +126,11 @@
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
+    "dragToReorder": "Zum Neuanordnen ziehen",
     "na": "Nicht anwendbar",
-    "noDateSelected": "Wählen Sie einen Zeitraum aus."
+    "noDateSelected": "Wählen Sie einen Zeitraum aus.",
+    "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte aus, die angezeigt werden soll.",
+    "noOptions": "Keine Optionen gefunden"
   },
   "nav": {
     "caption": {
@@ -153,16 +160,16 @@
       "map": "Geografische Ansicht",
       "dashboard": "Analyseansicht",
       "registry": "Register öffnen",
-      "submission": "Einreichung des Registers",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
       "fileUpload": "Klicken Sie zum Hochladen einer Datei"
     }
   },
   "title": {
-    "actions": "AKTIONEN",
+    "actions": "Aktionen",
+    "allCol": "alle Spalten",
+    "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
-    "serviceSummary": "Auftragsübersicht",
     "serviceType": "Art der Dienstleistung",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
