@@ -7,8 +7,6 @@ import {
 import React, { useEffect, useRef } from "react";
 
 import { useDialog } from "hooks/float/useDialog";
-import { useDictionary } from "hooks/useDictionary";
-import { Dictionary } from "types/dictionary";
 import { usePathname } from "next/navigation";
 import Button from "../button";
 
@@ -29,7 +27,6 @@ interface ModalProps {
  * @param {string[]} styles Optional styling for the modal.
  */
 export default function Modal(props: Readonly<ModalProps>) {
-  const dict: Dictionary = useDictionary();
   const pathname = usePathname();
   const dialog = useDialog(props.isOpen, props.setIsOpen);
   const transition = useTransitionStyles(dialog.context, {
@@ -75,7 +72,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                     h-dvh md:h-full
                     rounded-t-lg md:rounded-t-none
                     md:border-l border-border
-                    transform transition-all duration-300 ease-out
+                    transform transition-transform duration-300 ease-out
                     flex flex-col min-h-0
                     ${props.styles}
                   `}
@@ -86,8 +83,6 @@ export default function Modal(props: Readonly<ModalProps>) {
                     variant="ghost"
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
-                    tooltipText={dict.action.close}
-                    tooltipPosition="top-end"
                     onClick={() => {
                       props.setIsOpen(false);
                     }}
