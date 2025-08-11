@@ -27,20 +27,25 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
 
   useEffect(() => {
     if (selectedOptions) {
-      props.header.column.setFilterValue(selectedOptions.map((opt) => opt.value));
+      props.header.column.setFilterValue(
+        selectedOptions.map((opt) => opt.value)
+      );
     }
-  }, [selectedOptions])
+  }, [selectedOptions]);
 
   return (
-    <TableCell width={props.header.getSize()}
-      className={"bg-muted font-semibold text-foreground text-left"}>
+    <TableCell
+      width={props.header.getSize()}
+      className={"bg-muted font-semibold text-foreground text-left"}
+    >
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div
-            className={`flex items-center gap-2 ${props.header.column.getCanSort()
-              ? "cursor-pointer select-none "
-              : ""
-              }`}
+            className={`flex items-center gap-2 ${
+              props.header.column.getCanSort()
+                ? "cursor-pointer select-none "
+                : ""
+            }`}
             onClick={props.header.column.getToggleSortingHandler()}
             aria-label={
               props.header.column.getCanSort()
@@ -57,22 +62,26 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 <Icon className="material-symbols-outlined">arrow_upward</Icon>
               ),
               desc: (
-                <Icon className="material-symbols-outlined">arrow_downward</Icon>
+                <Icon className="material-symbols-outlined">
+                  arrow_downward
+                </Icon>
               ),
-            }[props.header.column.getIsSorted() as string] ??
-              null}
+            }[props.header.column.getIsSorted() as string] ?? null}
           </div>
-          <div className="w-full min-w-36">
+          <div className="w-full min-w-36 h-full">
             <MultivalueSelector
               title={dict.action.filter}
               options={props.options.sort().map((col) => {
                 return {
                   label: col,
                   value: col,
-                }
+                };
               })}
               toggleAll={false}
-              isActive={props.header.column.getFilterValue() !== undefined && (props.header.column.getFilterValue() as string[])?.length > 0}
+              isActive={
+                props.header.column.getFilterValue() !== undefined &&
+                (props.header.column.getFilterValue() as string[])?.length > 0
+              }
               setControlledSelectedOptions={setSelectedOptions}
             />
           </div>

@@ -18,9 +18,7 @@ interface ColumnToggleProps {
  * @param {Column<FieldValues, unknown>[]} columns - The list of all columns in the table.
  *
  */
-export default function ColumnToggle(
-  props: Readonly<ColumnToggleProps>
-) {
+export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
   const dict: Dictionary = useDictionary();
   const options: SelectOption[] = props.columns.map((col) => ({
     label: parseWordsForLabels(col.id),
@@ -32,14 +30,16 @@ export default function ColumnToggle(
   useEffect(() => {
     if (selectedOptions) {
       props.columns.forEach((col) => {
-        col.toggleVisibility(selectedOptions.some((opt) => opt.value == col.id));
+        col.toggleVisibility(
+          selectedOptions.some((opt) => opt.value == col.id)
+        );
       });
     }
-  }, [selectedOptions])
+  }, [selectedOptions]);
 
   return (
     <div className="flex justify-end">
-      <div className="md:w-[300px]">
+      <div className="md:w-[300px] ">
         <MultivalueSelector
           title={dict.title.customiseCol}
           options={options}
