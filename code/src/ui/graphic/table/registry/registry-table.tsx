@@ -125,7 +125,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <>
       <div
-        className={`${table.getVisibleLeafColumns().length > 0 ? "" : "h-60"} `}
+        className={`${
+          table.getVisibleLeafColumns().length > 0 ? "" : "h-60"
+        } flex justify-end items-end  gap-4`}
       >
         {table
           .getState()
@@ -134,7 +136,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           ) && (
           <Button
             leftIcon="filter_list_off"
-            iconSize="small"
+            iconSize="medium"
+            size="icon"
             onClick={() => table.resetColumnFilters()}
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
