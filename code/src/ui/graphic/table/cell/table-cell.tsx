@@ -20,7 +20,9 @@ export default function TableCell(props: Readonly<TableCellProps>) {
         width: props.width,
         minWidth: props.width,
       }}
-      className={`border-r border-border p-2 md:p-3 whitespace-nowrap text-lg font-normal last:border-none ${props.className ?? ""}`}
+      className={`border-r border-border p-2 md:p-3 whitespace-nowrap text-lg text-left  font-normal last:border-none ${
+        props.className ?? ""
+      }`}
     >
       {props.children}
     </th>

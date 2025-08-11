@@ -27,8 +27,13 @@ export default function TableRow(props: Readonly<TableRowProps>) {
         transform: CSS.Transform.toString(transform),
         transition: transition,
       }}
-      className={`border-b border-border ${props.isHeader ? "" : `bg-background hover:bg-muted/50 group relative z-0 ${isDragging ? "z-10 opacity-70" : ""}`
-        } `}
+      className={`border-b border-border text-left ${
+        props.isHeader
+          ? ""
+          : `bg-background hover:bg-muted/50 group relative z-0 ${
+              isDragging ? "z-10 opacity-70" : ""
+            }`
+      } `}
     >
       {props.children}
     </tr>
