@@ -71,7 +71,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                   }}
                   className={`
                     relative bg-muted shadow-xl pointer-events-auto
-                    w-full md:w-96 lg:w-4/9 xl:w-1/3 2xl:w-1/3
+                    w-full md:w-96 lg:w-4/9 xl:w-1/3 2xl:w-1/4
                     h-dvh md:h-full
                     rounded-t-lg md:rounded-t-none
                     md:border-l border-border
