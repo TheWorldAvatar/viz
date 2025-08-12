@@ -91,9 +91,9 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   }
 
   return (
-    <span className="flex justify-center items-center ">
+    <span className="flex justify-center items-center">
       <p
-        className="text-lg px-8 py-1 rounded-full"
+        className="text-lg px-8 py-1 rounded-4xl"
         style={{ color: statusColor, backgroundColor: statusBackgroundColor }}
       >
         {props.status}
