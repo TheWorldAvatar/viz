@@ -161,10 +161,11 @@ function NavMenuContents(
     >
       {!props.isMobile && (
         <button
-          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
+          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
+            isMenuExpanded
               ? "mr-2 self-end rounded-md -mb-8 "
               : " justify-center items-center rounded-full -mb-4"
-            }`}
+          }`}
           onClick={handleMenuToggle}
         >
           <Icon className="material-symbols-outlined">
@@ -243,28 +244,6 @@ function NavMenuContents(
           isMenuExpanded={isMenuExpanded}
         />
       )}
-
-      {props.settings.modules.registry &&
-        props.settings.resources?.registry?.data &&
-        (!keycloakEnabled ||
-          permissionScheme?.hasPermissions.registrySubmission) && (
-          <NavBarItem
-            title={
-              registrySubmissionLinkProps?.title ?? dict.nav.title.submission
-            }
-            icon={registrySubmissionLinkProps?.icon ?? "work"}
-            url={`${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}`}
-            isMobile={props.isMobile}
-            caption={
-              isMenuExpanded
-                ? registrySubmissionLinkProps?.caption ??
-                  dict.nav.caption.submission
-                : undefined
-            }
-            setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={isMenuExpanded}
-          />
-        )}
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&

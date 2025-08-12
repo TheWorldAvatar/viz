@@ -50,12 +50,24 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" &&
-        props.lifecycleStage !== "pending" &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.allTasks) && (
           <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5">
             <div className="flex  sm:items-center sm:justify-between sm:gap-4 gap-1">
+              <div className="w-full sm:w-auto">
+                <RedirectButton
+                  label="Jobs"
+                  leftIcon="work"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+                  variant={
+                    props.lifecycleStage == "pending" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+
               <div className="w-full sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.outstanding}
