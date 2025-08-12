@@ -57,8 +57,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <div className="flex  sm:items-center sm:justify-between sm:gap-4 gap-1">
               <div className="w-full sm:w-auto">
                 <RedirectButton
-                  label="Jobs"
-                  leftIcon="work"
+                  label={dict.nav.title.pending}
+                  leftIcon="free_cancellation"
                   hasMobileIcon={false}
                   url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
                   variant={
@@ -97,7 +97,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               <div className="w-full sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.closed}
-                  leftIcon="archive"
+                  leftIcon="event_busy"
                   hasMobileIcon={false}
                   url={`${Routes.REGISTRY_TASK_CLOSED}`}
                   variant={

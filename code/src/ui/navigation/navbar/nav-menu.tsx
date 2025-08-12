@@ -120,10 +120,6 @@ function NavMenuContents(
   const registryLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.REGISTRY
   );
-  const registrySubmissionLinkProps: NavBarItemSettings =
-    props.settings.links?.find(
-      (link) => link.url === `${Modules.REGISTRY}-submission`
-    );
 
   function createHandleFileUploadClick(
     url: string
