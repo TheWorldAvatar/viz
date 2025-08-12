@@ -39,7 +39,6 @@ import {
 } from "types/form";
 import Button from "ui/interaction/button";
 import ColumnToggle from "../action/column-toggle";
-import ColumnSort from "../action/column-sort";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
@@ -144,7 +143,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             variant="destructive"
           />
         )}
-        <ColumnSort columns={table.getAllLeafColumns()} />
         <ColumnToggle columns={table.getAllLeafColumns()} />
       </div>
 
