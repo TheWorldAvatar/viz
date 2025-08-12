@@ -11,7 +11,7 @@ export const selectorStyles: StylesConfig<
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
     border: isFocused ? "1px solid var(--border)" : "1px solid var(--border)",
-    height: "fit",
+    height: "2.72rem",
     width: "100%",
     maxWidth: "none",
     padding: "0.2rem",
