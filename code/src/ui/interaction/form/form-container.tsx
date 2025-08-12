@@ -14,7 +14,7 @@ import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
-import Modal from "ui/interaction/modal/modal";
+import SidePanel from "../modal/side-panel";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
@@ -47,9 +47,9 @@ export default function FormContainerComponent(
 
   if (props.isModal) {
     return (
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <SidePanel isOpen={isOpen} setIsOpen={setIsOpen}>
         <FormContents {...props} />
-      </Modal>
+      </SidePanel>
     );
   }
 

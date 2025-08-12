@@ -20,7 +20,7 @@ import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
-import Modal from "ui/interaction/modal/modal";
+import SidePanel from "../side-panel";
 
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
@@ -213,7 +213,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.task?.id, props.task?.type]);
 
   return (
-    <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+    <SidePanel isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
       {/* Header */}
       <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
@@ -372,6 +372,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
         </div>
       </section>
-    </Modal>
+    </SidePanel>
   );
 }

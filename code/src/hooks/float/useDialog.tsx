@@ -12,7 +12,8 @@ import React from "react";
 
 export function useDialog(
   isOpen: boolean,
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  dismissOutsidePress: boolean = true
 ) {
   const floatingProps = useFloating({
     open: isOpen,
@@ -24,7 +25,7 @@ export function useDialog(
   const hover: ElementProps = useClick(context);
   const dismiss: ElementProps = useDismiss(context, {
     escapeKey: true,
-    outsidePress: false,
+    outsidePress: dismissOutsidePress,
   });
   const role: ElementProps = useRole(context);
 
