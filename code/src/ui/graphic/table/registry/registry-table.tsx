@@ -84,12 +84,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getRowId: (row) => row.id,
+    getRowId: (row, index) => row.id + index,
   });
 
   // Data IDs to maintain the order of rows during drag and drop
   const dataIds: UniqueIdentifier[] = useMemo<UniqueIdentifier[]>(
-    () => data?.map((row) => row.id) ?? [],
+    () => data?.map((row, index) => row.id + index) ?? [],
     [data]
   );
 
