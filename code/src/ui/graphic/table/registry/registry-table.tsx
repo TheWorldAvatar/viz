@@ -167,10 +167,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           isHeader={true}
                         >
                           <TableCell className="w-[calc(100%/20)]" />
-                          {headerGroup.headers.map((header) => {
+                          {headerGroup.headers.map((header, index) => {
                             return (
                               <HeaderCell
-                                key={header.id}
+                                key={header.id + index}
                                 header={header}
                                 options={Array.from(
                                   new Set(
@@ -209,9 +209,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   setTask={props.setTask}
                                 />
                               </TableCell>
-                              {row.getVisibleCells().map((cell) => (
+                              {row.getVisibleCells().map((cell, index) => (
                                 <TableCell
-                                  key={cell.id}
+                                  key={cell.id + index}
                                   width={cell.column.getSize()}
                                 >
                                   {flexRender(
