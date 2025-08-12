@@ -25,6 +25,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   Table,
   useReactTable,
 } from "@tanstack/react-table";
@@ -52,6 +53,8 @@ interface RegistryTableProps {
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  sorting: SortingState;
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
 }
 
 /**
@@ -61,6 +64,8 @@ interface RegistryTableProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
+ * @param {SortingState} sorting The current sorting state of the table.
+ * @param setSorting A dispatch method to set the sorting state.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -79,6 +84,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         pageSize: 10,
       },
     },
+    state: {
+      sorting: props.sorting,
+    },
+    onSortingChange: props.setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
