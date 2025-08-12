@@ -56,7 +56,7 @@ export function getTranslatedStatusLabel(
  * @param {string} status The status to display.
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
-  let statusColor: string;
+  let statusTextColor: string;
   let statusBackgroundColor: string;
   const dict: Dictionary = useDictionary();
 
@@ -64,37 +64,40 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
-      statusColor = "hsl(159, 75%, 16%)";
-      statusBackgroundColor = "hsl(156, 40%, 86%)";
+      statusTextColor = "var(--status-open-text)";
+      statusBackgroundColor = "var(--status-open-bg)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
-      statusColor = "hsl(1, 75%, 20%)";
-      statusBackgroundColor = "hsl(2, 100%, 96%)";
+      statusTextColor = "var(--status-cancelled-text)";
+      statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     case dict.title.issue.toLowerCase():
-      statusColor = "hsl(18, 74%, 24%)";
-      statusBackgroundColor = "hsl(52, 82%, 93%)";
+      statusTextColor = "var(--status-issue-text)";
+      statusBackgroundColor = "var(--status-issue-bg)";
       break;
     case dict.title.completed.toLowerCase():
-      statusColor = "hsl(159, 75%, 16%)";
-      statusBackgroundColor = "hsl(156, 40%, 86%)";
+      statusTextColor = "var(--status-open-text)";
+      statusBackgroundColor = "var(--status-open-bg)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
-      statusColor = "hsl(1, 75%, 20%)";
-      statusBackgroundColor = "hsl(2, 100%, 96%)";
+      statusTextColor = "var(--status-cancelled-text)";
+      statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     default:
-      statusColor = "hsl(0, 0%, 20%)";
-      statusBackgroundColor = "hsl(0, 0%, 90%)";
+      statusTextColor = "var(--status-assigned-text)";
+      statusBackgroundColor = "var(--status-assigned-bg)";
   }
 
   return (
     <span className="flex justify-center items-center">
       <p
         className="text-lg px-8 py-1 rounded-4xl"
-        style={{ color: statusColor, backgroundColor: statusBackgroundColor }}
+        style={{
+          color: statusTextColor,
+          backgroundColor: statusBackgroundColor,
+        }}
       >
         {props.status}
       </p>
