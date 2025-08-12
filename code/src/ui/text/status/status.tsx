@@ -57,39 +57,45 @@ export function getTranslatedStatusLabel(
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusColor: string;
+  let statusBackgroundColor: string;
   const dict: Dictionary = useDictionary();
 
   switch (props.status.toLowerCase()) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
-      statusColor = "#52B7A5";
+      statusColor = "hsl(159, 75%, 16%)";
+      statusBackgroundColor = "hsl(156, 40%, 86%)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
-      statusColor = "#D96E6E";
+      statusColor = "hsl(1, 75%, 20%)";
+      statusBackgroundColor = "hsl(2, 100%, 96%)";
       break;
     case dict.title.issue.toLowerCase():
-      statusColor = "#ffbe0b";
+      statusColor = "hsl(18, 74%, 24%)";
+      statusBackgroundColor = "hsl(52, 82%, 93%)";
       break;
     case dict.title.completed.toLowerCase():
-      statusColor = "#52B7A5";
+      statusColor = "hsl(159, 75%, 16%)";
+      statusBackgroundColor = "hsl(156, 40%, 86%)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
-      statusColor = "#D7653D";
+      statusColor = "hsl(1, 75%, 20%)";
+      statusBackgroundColor = "hsl(2, 100%, 96%)";
       break;
     default:
-      statusColor = "#666";
+      statusColor = "hsl(0, 0%, 20%)";
+      statusBackgroundColor = "hsl(0, 0%, 90%)";
   }
 
   return (
-    <span className="inline-flex items-center ">
-      <span
-        className="h-2 w-2 mx-1 rounded-full bg-background border-1 border-solid"
-        style={{ borderColor: statusColor }}
-      ></span>
-      <p className="text-lg" style={{ color: statusColor }}>
+    <span className="flex justify-center items-center ">
+      <p
+        className="text-lg px-8 py-1 rounded-full"
+        style={{ color: statusColor, backgroundColor: statusBackgroundColor }}
+      >
         {props.status}
       </p>
     </span>
