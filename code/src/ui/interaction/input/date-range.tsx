@@ -74,7 +74,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
         readOnly
         className={`h-10 ${
           props.selectedDate?.to ? "w-60" : "w-32"
-        } rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
+        } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
       />
       {popover.isOpen && (
         <FloatingPortal>

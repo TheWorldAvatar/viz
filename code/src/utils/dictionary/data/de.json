@@ -126,10 +126,10 @@
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
-    "dragToReorder": "Zum Neuanordnen ziehen",
+    "dragToReorder": "Zum Neusortieren ziehen",
     "na": "Nicht anwendbar",
     "noDateSelected": "Wählen Sie einen Zeitraum aus.",
-    "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte aus, die angezeigt werden soll.",
+    "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden"
   },
   "nav": {
@@ -167,7 +167,7 @@
   },
   "title": {
     "actions": "Aktionen",
-    "allCol": "alle Spalten",
+    "allCol": "Alle anzeigen",
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
     "serviceType": "Art der Dienstleistung",

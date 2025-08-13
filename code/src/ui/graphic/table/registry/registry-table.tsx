@@ -93,12 +93,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getRowId: (row) => row.id,
+    getRowId: (row, index) => row.id + index,
   });
 
   // Data IDs to maintain the order of rows during drag and drop
   const dataIds: UniqueIdentifier[] = useMemo<UniqueIdentifier[]>(
-    () => data?.map((row) => row.id) ?? [],
+    () => data?.map((row, index) => row.id + index) ?? [],
     [data]
   );
 
@@ -180,10 +180,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           isHeader={true}
                         >
                           <TableCell className="w-[calc(100%/20)]" />
-                          {headerGroup.headers.map((header) => {
+                          {headerGroup.headers.map((header, index) => {
                             return (
                               <HeaderCell
-                                key={header.id}
+                                key={header.id + index}
                                 header={header}
                                 options={Array.from(
                                   new Set(
@@ -222,9 +222,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   setTask={props.setTask}
                                 />
                               </TableCell>
-                              {row.getVisibleCells().map((cell) => (
+                              {row.getVisibleCells().map((cell, index) => (
                                 <TableCell
-                                  key={cell.id}
+                                  key={cell.id + index}
                                   width={cell.column.getSize()}
                                 >
                                   {flexRender(
