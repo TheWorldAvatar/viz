@@ -20,6 +20,7 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { getAfterDelimiter } from "utils/client-utils";
+import { Routes } from "io/config/routes";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -304,15 +305,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
-    toast(pendingResponse?.data?.message || pendingResponse?.error?.message,
-      pendingResponse?.error ? "error" : "success");
+    toast(
+      pendingResponse?.data?.message || pendingResponse?.error?.message,
+      pendingResponse?.error ? "error" : "success"
+    );
     // For successful responses, either close the modal or go back to previous page
     if (!pendingResponse?.error) {
       setTimeout(() => {
         if (props.formType === "search") {
-          props.setShowSearchModalState(false)
+          props.setShowSearchModalState(false);
         } else {
-          router.back();
+          // Navigate explicitly to pending registry route so it does not go back to a previous page.
+          // This prevents from going back to a page that the user has not interacted with. For Example View -> Edit -> Submit -> View.
+          // After Submiting the edit form, it should navigate to the pending registry route
+          router.push(`${Routes.REGISTRY_PENDING}/${props.entityType}`);
         }
       }, 2000);
     }
@@ -429,7 +435,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod
