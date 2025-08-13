@@ -72,9 +72,9 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
         type="button"
         value={displayedDateRange}
         readOnly
-        className={`h-8 ${
+        className={`h-10 ${
           props.selectedDate?.to ? "w-60" : "w-32"
-        } rounded-lg border-1 border-border bg-muted text-foreground shadow-md cursor-pointer`}
+        } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
       />
       {popover.isOpen && (
         <FloatingPortal>
@@ -90,7 +90,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               style={{
                 ...transition.styles,
               }}
-              className="z-10 bg-muted p-5 sm:p-2 rounded-lg shadow-lg mt-2 border border-border"
+              className="z-10 bg-muted p-5 sm:p-2 rounded-lg shadow-lg mt-2  border border-border"
             >
               <DayPicker
                 locale={dict.lang === "de" ? de : enGB}

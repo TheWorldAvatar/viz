@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.36.0
+
+### Changes
+
+- Implemented Tanstack Table
+- Implemented Drag and drop functionality
+- Implemented sorting and filtering functions in the table
+- Implemented the functionality to show and hide columns in the table
+
 ## 5.35.0
 
 ### Chores

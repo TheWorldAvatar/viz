@@ -37,7 +37,8 @@
     "findAddress": "Find address",
     "selectLocation": "Select location",
     "clickIncrease": "Click to increase",
-    "clickDecrease": "Click to decrease"
+    "clickDecrease": "Click to decrease",
+    "clearAllFilters": "Clear all filters"
   },
   "form": {
     "singleService": "Single Service",
@@ -100,6 +101,9 @@
     }
   },
   "message": {
+    "page": "Page {replace} of {replacecount}",
+    "numberOfRecords": "{replace} of {replacetotal} total",
+    "rowsPerPage": "Rows per page: ",
     "arrayInstruction": "This section is empty. Click '+' to add an item.",
     "branchInstruction": "Select the best category for your request",
     "registryInstruction": "Click on any record in the table to view its summary",
@@ -122,8 +126,11 @@
     "noFileChosenError": "No file is chosen. Please choose a file.",
     "fileUploadError": "File upload failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
+    "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
-    "noDateSelected": "Pick a date range."
+    "noDateSelected": "Pick a date range.",
+    "noVisibleColumns": "Please select at least one column to display.",
+    "noOptions": "No options found"
   },
   "nav": {
     "caption": {
@@ -159,9 +166,10 @@
     }
   },
   "title": {
-    "actions": "ACTIONS",
+    "actions": "Actions",
+    "allCol": "Show All",
+    "customiseCol": "Show/Hide Columns",
     "description": "Description",
-    "serviceSummary": "Service summary",
     "serviceType": "Service Type",
     "available": "available",
     "unavailable": "unavailable",
