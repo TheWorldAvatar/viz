@@ -4,6 +4,7 @@ interface TableCellProps {
   width?: number;
   className?: string;
   children?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLTableCellElement>;
 }
 
 /**
@@ -20,6 +21,7 @@ export default function TableCell(props: Readonly<TableCellProps>) {
         width: props.width,
         minWidth: props.width,
       }}
+      onClick={props.onClick}
       className={`border-r border-border p-2 md:p-3 whitespace-nowrap text-lg text-left  font-normal last:border-none ${
         props.className ?? ""
       }`}
