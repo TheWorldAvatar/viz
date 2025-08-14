@@ -84,7 +84,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
               isMobile={false}
             />
           )}
-          <div className={`flex grow flex-col ${contentWidthClass}`}>
+          <div className={`flex grow flex-col bg-muted ${contentWidthClass}`}>
             {props.children}
             <Footer />
           </div>
