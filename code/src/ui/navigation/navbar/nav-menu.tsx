@@ -147,21 +147,19 @@ function NavMenuContents(
   return (
     <div
       ref={navMenuRef}
-      className={`${
-        props.isMobile
-          ? "flex gap-4 p-2 w-full"
-          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
-      }
+      className={`${props.isMobile
+        ? "flex gap-4 p-2 w-full"
+        : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+        }
       ${navMenuWidthClass}
       xl:flex flex-col justify-start transition-all duration-200 ease-in-out `}
     >
       {!props.isMobile && (
         <button
-          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
-            isMenuExpanded
-              ? "mr-2 self-end rounded-md -mb-8 "
-              : " justify-center items-center rounded-full -mb-4"
-          }`}
+          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
+            ? "mr-2 self-end rounded-md -mb-8 "
+            : " justify-center items-center rounded-full -mb-4"
+            }`}
           onClick={handleMenuToggle}
         >
           <Icon className="material-symbols-outlined">
@@ -243,11 +241,12 @@ function NavMenuContents(
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
-        (!keycloakEnabled || permissionScheme?.hasPermissions.registry) && (
+        (!keycloakEnabled || permissionScheme?.hasPermissions.registry || permissionScheme?.hasPermissions.pendingRegistry) && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}
-            url={Routes.REGISTRY_TASK_OUTSTANDING}
+            url={!keycloakEnabled || permissionScheme?.hasPermissions.pendingRegistry ?
+              `${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}` : Routes.REGISTRY_TASK_OUTSTANDING}
             isMobile={props.isMobile}
             caption={
               isMenuExpanded
@@ -270,9 +269,9 @@ function NavMenuContents(
             caption={
               isMenuExpanded
                 ? dict.nav.caption.generalReg.replace(
-                    "{replace}",
-                    parseWordsForLabels(path.type).toLowerCase()
-                  )
+                  "{replace}",
+                  parseWordsForLabels(path.type).toLowerCase()
+                )
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}

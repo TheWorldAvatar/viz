@@ -7,7 +7,7 @@ import { HasPermissions, PermissionScheme } from "types/auth";
 
 const hasPermitionsInitial: HasPermissions = {
   registry: false,
-  registrySubmission: false,
+  pendingRegistry: false,
   allTasks: false,
   invoice: false,
   sales: false,
@@ -28,10 +28,6 @@ export function parsePermissions(roles: string[]): PermissionScheme {
   }
 
   // Access to different registry depends on roles
-  if (roles.includes("registry-navigation-pending")) {
-    // Given access to registry submission
-    permissionScheme.hasPermissions.registrySubmission = true;
-  }
   if (roles.includes("registry-navigation")) {
     // Given access to all records in the registry
     permissionScheme.hasPermissions.registry = true;
@@ -39,6 +35,10 @@ export function parsePermissions(roles: string[]): PermissionScheme {
   } else if (roles.includes("registry-navigation-restricted")) {
     // Given access to only view outstanding tasks
     permissionScheme.hasPermissions.registry = true;
+  }
+  // Given access to pending registry
+  if (roles.includes("registry-navigation-pending")) {
+    permissionScheme.hasPermissions.pendingRegistry = true;
   }
 
   // Roles with access to only specific routes

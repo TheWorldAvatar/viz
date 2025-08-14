@@ -21,7 +21,7 @@ export type PermissionScheme = {
  */
 export type HasPermissions = {
     registry: boolean;
-    registrySubmission: boolean;
+    pendingRegistry: boolean;
     allTasks: boolean;
     invoice: boolean;
     sales: boolean;

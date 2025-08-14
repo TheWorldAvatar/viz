@@ -52,21 +52,22 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       {props.lifecycleStage !== "general" &&
         (!keycloakEnabled ||
           !permissionScheme ||
-          permissionScheme.hasPermissions.allTasks) && (
+          permissionScheme.hasPermissions.registry) && (
           <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 ">
             <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
-              <div className="sm:w-auto">
-                <RedirectButton
-                  label={dict.nav.title.pending}
-                  leftIcon="free_cancellation"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
-                  variant={
-                    props.lifecycleStage == "pending" ? "active" : "ghost"
-                  }
-                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                />
-              </div>
+              {(!keycloakEnabled || permissionScheme?.hasPermissions.pendingRegistry) && (
+                <div className="sm:w-auto">
+                  <RedirectButton
+                    label={dict.nav.title.pending}
+                    leftIcon="free_cancellation"
+                    hasMobileIcon={false}
+                    url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+                    variant={
+                      props.lifecycleStage == "pending" ? "active" : "ghost"
+                    }
+                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                  />
+                </div>)}
 
               <div className="sm:w-auto">
                 <RedirectButton
@@ -157,19 +158,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-            <DownloadButton instances={props.instances} />
-          )}
+              <DownloadButton instances={props.instances} />
+            )}
         </div>
       </div>
       <div className="flex ml-2 mt-4 sm:mt-0">
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed") && (
-          <DateRangeInput
-            selectedDate={props.selectedDate}
-            setSelectedDate={props.setSelectedDate}
-            lifecycleStage={props.lifecycleStage}
-          />
-        )}
+            <DateRangeInput
+              selectedDate={props.selectedDate}
+              setSelectedDate={props.setSelectedDate}
+              lifecycleStage={props.lifecycleStage}
+            />
+          )}
       </div>
     </div>
   );
