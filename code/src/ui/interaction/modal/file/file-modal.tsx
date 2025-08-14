@@ -71,11 +71,11 @@ export default function FileModal(props: Readonly<FileModalProps>) {
 
   return (
     <Modal
-      className="!w-xs md:!w-lg !h-56 flex items-center justify-center !rounded-2xl !shadow-2xl"
+      className="!w-xs md:!w-sm !h-44 flex  !rounded-2xl !shadow-2xl"
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
     >
-      <form className="" ref={formRef} onSubmit={onFormSubmit}>
+      <form ref={formRef} onSubmit={onFormSubmit}>
         <section className="flex items-center flex-wrap gap-2">
           <FileInputButton form={form} />
         </section>

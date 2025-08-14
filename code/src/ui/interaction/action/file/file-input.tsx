@@ -24,7 +24,7 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
   });
 
   return (
-    <>
+    <div className="w-full flex flex-col  gap-2">
       <label
         htmlFor="file-upload"
         className={` cursor-pointer flex items-center justify-center w-fit py-2 px-4 rounded-lg   hover:bg-primary/90 bg-primary`}
@@ -44,6 +44,6 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
       <p className="text-foreground text-sm md:text-base ml-2">
         {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
       </p>
-    </>
+    </div>
   );
 }
