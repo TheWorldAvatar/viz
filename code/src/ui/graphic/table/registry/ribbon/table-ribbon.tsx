@@ -54,7 +54,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           !permissionScheme ||
           permissionScheme.hasPermissions.allTasks) && (
           <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 ">
-            <div className="flex flex-wrap  sm:items-center sm:justify-between sm:gap-4 gap-1">
+            <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.pending}
