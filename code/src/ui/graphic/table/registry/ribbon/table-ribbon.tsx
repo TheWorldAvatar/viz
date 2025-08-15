@@ -50,13 +50,26 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" &&
-        props.lifecycleStage !== "pending" &&
         (!keycloakEnabled ||
           !permissionScheme ||
-          permissionScheme.hasPermissions.allTasks) && (
-          <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5">
-            <div className="flex  sm:items-center sm:justify-between sm:gap-4 gap-1">
-              <div className="w-full sm:w-auto">
+          permissionScheme.hasPermissions.registry) && (
+          <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 ">
+            <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
+              {(!keycloakEnabled || permissionScheme?.hasPermissions.pendingRegistry) && (
+                <div className="sm:w-auto">
+                  <RedirectButton
+                    label={dict.nav.title.pending}
+                    leftIcon="free_cancellation"
+                    hasMobileIcon={false}
+                    url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+                    variant={
+                      props.lifecycleStage == "pending" ? "active" : "ghost"
+                    }
+                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                  />
+                </div>)}
+
+              <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.outstanding}
                   leftIcon="pending"
@@ -69,7 +82,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </div>
 
-              <div className="w-full sm:w-auto">
+              <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.scheduled}
                   leftIcon="schedule"
@@ -85,7 +98,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               <div className="w-full sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.closed}
-                  leftIcon="archive"
+                  leftIcon="event_busy"
                   hasMobileIcon={false}
                   url={`${Routes.REGISTRY_TASK_CLOSED}`}
                   variant={
@@ -145,19 +158,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-            <DownloadButton instances={props.instances} />
-          )}
+              <DownloadButton instances={props.instances} />
+            )}
         </div>
       </div>
       <div className="flex ml-2 mt-4 sm:mt-0">
         {(props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed") && (
-          <DateRangeInput
-            selectedDate={props.selectedDate}
-            setSelectedDate={props.setSelectedDate}
-            lifecycleStage={props.lifecycleStage}
-          />
-        )}
+            <DateRangeInput
+              selectedDate={props.selectedDate}
+              setSelectedDate={props.setSelectedDate}
+              lifecycleStage={props.lifecycleStage}
+            />
+          )}
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   return (
     <TableCell
       width={props.header.getSize()}
-      className={"bg-muted font-semibold text-foreground text-left"}
+      className={"bg-muted font-semibold text-foreground text-left border-b border-border"}
     >
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">

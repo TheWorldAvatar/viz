@@ -126,7 +126,7 @@ export default function NumericInputField(
         id={props.field.fieldId}
         type="text"
         inputMode={inputMode}
-        className={inputClassNames}
+        className={`${inputClassNames ?? ""} pr-20`}
         placeholder={`${dict.action.edit} ${props.field.name[VALUE_KEY]}`}
         onKeyDown={handleKeyDown}
         aria-label={props.field.name[VALUE_KEY]}
@@ -138,16 +138,18 @@ export default function NumericInputField(
           )
         )}
       />
-      <div className="flex absolute -right-2 top-0  mr-2">
+      <div className="flex absolute right-1 top-1/2 -translate-y-1/2 gap-px">
         <Button
           leftIcon="add"
-          className="rounded-l-lg rounded-r-none "
+          size="icon"
+          className="rounded-l-lg rounded-r-none"
           tooltipText={dict.action.clickIncrease}
           onClick={handleIncrement}
         />
         <Button
           leftIcon="remove"
           variant="secondary"
+          size="icon"
           className="rounded-l-none rounded-r-lg"
           tooltipText={dict.action.clickDecrease}
           onClick={handleDecrement}

@@ -50,15 +50,19 @@ function Toast(props: Readonly<ToastProps>) {
 
   return (
     <div
-      className={`flex rounded-lg  shadow-xl gap-3  w-full md:w-[500px] items-center justify-center p-4 ${type === "error"
-        ? " bg-red-50 border-red-200"
-        : "bg-green-50 border-green-200"
-        }  border`}
+      className={`flex rounded-lg  shadow-xl gap-3  w-full md:w-[500px] items-center justify-center p-4 ${
+        type === "error"
+          ? " bg-status-error-bg border-red-200"
+          : "bg-status-success-bg border-green-200"
+      }  border`}
     >
       <div className="flex-shrink-0 mr-3">
         <Icon
-          className={`material-symbols-outlined text-gray-900 flex-shrink-0 mt-0.5  ${type === "success" ? " text-green-800" : "text-red-800"
-            }`}
+          className={`material-symbols-outlined text-gray-900 flex-shrink-0 mt-0.5  ${
+            type === "success"
+              ? " text-status-success-text"
+              : "text-status-error-text"
+          }`}
         >
           {getIcon()}
         </Icon>
@@ -66,14 +70,20 @@ function Toast(props: Readonly<ToastProps>) {
       <div className="flex flex-1 items-center">
         <div className="w-full">
           <p
-            className={`text-sm font-medium text-gray-900 ${type === "success" ? " text-green-800" : "text-red-800"
-              }`}
+            className={`text-sm font-medium text-gray-900 ${
+              type === "success"
+                ? " text-status-success-text"
+                : "text-status-error-text"
+            }`}
           >
             {type === "success" ? dict.title.success : dict.title.error}
           </p>
           <p
-            className={`mt-1 text-sm text-gray-500 ${type === "success" ? " text-green-800" : "text-red-800"
-              }`}
+            className={`mt-1 text-sm text-gray-500 ${
+              type === "success"
+                ? " text-status-success-text"
+                : "text-status-error-text"
+            }`}
           >
             {message}
           </p>
@@ -82,7 +92,7 @@ function Toast(props: Readonly<ToastProps>) {
       <div className="ml-5 shrink-0">
         <Button
           variant="ghost"
-          className="dark:!text-black dark:hover:!text-white"
+          className="dark:!text-gray-300 dark:hover:!text-white transition-colors ease-linear duration-200 "
           onClick={() => {
             sonnerToast.dismiss(id);
           }}

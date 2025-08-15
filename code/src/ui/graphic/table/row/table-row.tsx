@@ -6,6 +6,7 @@ interface TableRowProps {
   id: string;
   isHeader: boolean;
   children: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLTableRowElement>;
 }
 
 /**
@@ -27,10 +28,11 @@ export default function TableRow(props: Readonly<TableRowProps>) {
         transform: CSS.Transform.toString(transform),
         transition: transition,
       }}
+      onClick={!props.isHeader ? props.onClick : undefined}
       className={`border-b border-border text-left ${
         props.isHeader
           ? ""
-          : `bg-background hover:bg-muted/50 group relative z-0 ${
+          : `bg-background hover:bg-muted/50 group relative z-0 cursor-pointer ${
               isDragging ? "z-10 opacity-70" : ""
             }`
       } `}

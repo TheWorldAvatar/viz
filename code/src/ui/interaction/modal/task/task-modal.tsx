@@ -20,7 +20,7 @@ import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
-import Modal from "ui/interaction/modal/modal";
+import SidePanel from "../side-panel";
 
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
@@ -37,6 +37,7 @@ interface TaskModalProps {
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  onSuccess?: () => void;
 }
 
 /**
@@ -153,6 +154,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     );
     if (response && !response?.error) {
       setTimeout(() => {
+        // Inform parent to refresh data on successful action
+        props.onSuccess?.();
         props.setIsOpen(false);
         // Reset states on successful submission
         props.setTask(null);
@@ -199,19 +202,32 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else if (taskType === "cancel") {
       getFormTemplate("service", "cancel");
     }
-  }, [taskType]);
+  }, [taskType, props.task?.id, props.task?.status]);
+
+  // When a different record is selected while modal stays open,
+  // reset the view state so new content is fetched and shown.
+  useEffect(() => {
+    if (!props.task) return;
+    setTaskType(props.task.type);
+    setFormFields([]);
+  }, [props.task?.id, props.task?.type]);
 
   return (
-    <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
-      <section className="flex justify-between items-center text-nowrap text-foreground p-2">
+    <SidePanel isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+      {/* Header */}
+      <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
           {parseWordsForLabels(dict.title.actions)}
         </h1>
-        <h2 className="text-md md:text-lg mr-4  md:mr-8">
+        <h2 className="text-base md:text-lg md:mr-8">
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2 p-1 ">
+      {/* Scrollable Content */}
+      <section
+        key={`${props.task?.id}-${taskType}`}
+        className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0"
+      >
         {taskType !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
             {taskType === "complete" && dict.message.completeInstruction}
@@ -229,6 +245,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
         {taskType === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
+            key={getAfterDelimiter(props.task.contract, "/")}
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
@@ -237,6 +254,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         )}
         {formFields?.length > 0 && !refreshFlag && (
           <FormTemplate
+            key={`${taskType}-${props.task?.id ?? "noid"}`}
             entityType={
               taskType === "report"
                 ? "report"
@@ -250,7 +268,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           />
         )}
       </section>
-      <section className="flex justify-between p-2">
+      {/* Footer */}
+      <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
@@ -263,7 +282,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <LoadingSpinner isSmall={false} />
         )}
 
-        <div className="flex flex-wrap gap-2 justify-end items-center ">
+        <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
           {(!keycloakEnabled ||
             !permissionScheme ||
@@ -351,20 +370,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={onSubmit}
               />
             )}
-          <Button
-            leftIcon="first_page"
-            variant="secondary"
-            label={dict.action.return}
-            tooltipText={dict.action.return}
-            onClick={() => {
-              props.setIsOpen(false);
-              // Reset states on return
-              props.setTask(null);
-              setFormFields([]);
-            }}
-          />
         </div>
       </section>
-    </Modal>
+    </SidePanel>
   );
 }

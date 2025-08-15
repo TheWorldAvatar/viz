@@ -10,7 +10,7 @@ import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
-import Modal from "ui/interaction/modal/modal";
+import Modal from "../modal";
 
 interface SearchModalProps {
   id: string;
@@ -45,7 +45,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
     <Modal
       isOpen={props.show}
       setIsOpen={props.setShowState}
-      styles={[styles["modal"]]}
+      className="h-[90vh] w-[90vw]"
     >
       <h1>{dict.title.searchCriteria}</h1>
       <section className={styles["section-contents"]}>

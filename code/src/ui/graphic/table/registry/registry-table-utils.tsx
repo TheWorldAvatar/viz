@@ -28,6 +28,7 @@ export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
     instances.map(instance => {
       const flattenInstance: Record<string, string> = {};
       const fields: string[] = Object.keys(instance);
+      const tempColumns: ColumnDef<FieldValues>[] = [];
       fields.forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
@@ -43,7 +44,7 @@ export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
             title.length * 15,
             125
           );
-          results.columns.push({
+          tempColumns.push({
             accessorKey: field,
             header: title,
             cell: ({ getValue }) => {
@@ -67,6 +68,7 @@ export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
       });
       results.data.push(flattenInstance);
       if (fields.length > maxFieldLength) {
+        results.columns = tempColumns;
         maxFieldLength = fields.length;
       }
     });

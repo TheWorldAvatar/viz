@@ -25,10 +25,12 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   Table,
   useReactTable,
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
+import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
@@ -46,12 +48,17 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseDataForTable, TableData } from "./registry-table-utils";
+import { Routes } from "io/config/routes";
+import { getId } from "utils/client-utils";
+import { genTaskOption } from "../action/registry-row-action";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  sorting: SortingState;
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
 }
 
 /**
@@ -61,9 +68,12 @@ interface RegistryTableProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
+ * @param {SortingState} sorting The current sorting state of the table.
+ * @param setSorting A dispatch method to set the sorting state.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
 
   const tableData: TableData = useMemo(
     () => parseDataForTable(props.instances),
@@ -79,6 +89,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         pageSize: 10,
       },
     },
+    state: {
+      sorting: props.sorting,
+    },
+    onSortingChange: props.setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -98,6 +112,31 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
+
+  const handleRowClick = (row: FieldValues) => {
+    const recordId: string = row.event_id
+      ? row.event_id
+      : row.id
+      ? getId(row.id)
+      : row.iri;
+    if (
+      props.lifecycleStage === "tasks" ||
+      props.lifecycleStage === "report" ||
+      props.lifecycleStage === "outstanding" ||
+      props.lifecycleStage === "scheduled" ||
+      props.lifecycleStage === "closed"
+    ) {
+      if (row.status === "Open") {
+        props.setTask(genTaskOption(recordId, row, "dispatch", dict));
+      } else if (row.status === "Assigned") {
+        props.setTask(genTaskOption(recordId, row, "complete", dict));
+      } else {
+        props.setTask(genTaskOption(recordId, row, "default", dict));
+      }
+    } else {
+      router.push(`${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`);
+    }
+  };
 
   // This function updates the data order (row order) based on the drag and drop interaction
   function handleDragEnd(event: DragEndEvent) {
@@ -161,7 +200,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 >
                   <table
                     aria-label={`${props.recordType} registry table`}
-                    className="w-full border-collapse"
+                    className="w-full border-separate border-spacing-0"
                   >
                     <thead className="bg-muted sticky top-0 z-10">
                       {table.getHeaderGroups().map((headerGroup) => (
@@ -203,15 +242,27 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               key={row.id + index}
                               id={row.id}
                               isHeader={false}
+                              onClick={() =>
+                                handleRowClick(row.original as FieldValues)
+                              }
                             >
-                              <TableCell className="flex sticky left-0 z-20 bg-background group-hover:bg-muted">
-                                <DragActionHandle id={row.id} />
-                                <RegistryRowAction
-                                  recordType={props.recordType}
-                                  lifecycleStage={props.lifecycleStage}
-                                  row={row.original}
-                                  setTask={props.setTask}
-                                />
+                              <TableCell
+                                className="sticky left-0 z-20 bg-background group-hover:bg-muted"
+                                // Prevent clicks on the drag handle or action buttons from triggering the row click
+                                // Stop bubbling of click events
+                                onClick={(e: React.MouseEvent) =>
+                                  e.stopPropagation()
+                                }
+                              >
+                                <div className="flex gap-1  ">
+                                  <DragActionHandle id={row.id} />
+                                  <RegistryRowAction
+                                    recordType={props.recordType}
+                                    lifecycleStage={props.lifecycleStage}
+                                    row={row.original}
+                                    setTask={props.setTask}
+                                  />
+                                </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
                                 <TableCell
