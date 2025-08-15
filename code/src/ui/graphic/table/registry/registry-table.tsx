@@ -119,7 +119,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       : row.id
       ? getId(row.id)
       : row.iri;
-
     if (
       props.lifecycleStage === "tasks" ||
       props.lifecycleStage === "report" ||
@@ -127,7 +126,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
-      props.setTask(genTaskOption(recordId, row, "default", dict));
+      if (row.status === "Open") {
+        props.setTask(genTaskOption(recordId, row, "dispatch", dict));
+      } else if (row.status === "Assigned") {
+        props.setTask(genTaskOption(recordId, row, "complete", dict));
+      } else {
+        props.setTask(genTaskOption(recordId, row, "default", dict));
+      }
     } else {
       router.push(`${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`);
     }
@@ -249,7 +254,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   e.stopPropagation()
                                 }
                               >
-                                <div className="flex">
+                                <div className="flex gap-1  ">
                                   <DragActionHandle id={row.id} />
                                   <RegistryRowAction
                                     recordType={props.recordType}
