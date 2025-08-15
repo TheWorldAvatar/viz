@@ -56,7 +56,6 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               <Button
                 size="icon"
                 leftIcon="add"
-                className=""
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   append(emptyRow);
