@@ -39,6 +39,10 @@
   color: var(--foregroundy);
 }
 
+.form-input-value:focus-visible {
+  outline: 2px solid var(--border);
+}
+
 .input-disabled {
   border: 1px solid var(--border);
   background-color: var(--muted);
@@ -70,6 +74,10 @@
 
 .dtpicker::-webkit-calendar-picker-indicator {
   filter: invert(var(--invert));
+}
+
+.dtpicker:focus-visible {
+  outline: 2px solid var(--border);
 }
 
 .form-checkbox {
