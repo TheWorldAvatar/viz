@@ -36,8 +36,24 @@ export default function SidePanel(props: Readonly<ModalProps>) {
     duration: 400,
     initial: {
       opacity: 0,
-      transform: "translateY(10vh)",
-      transition: "transform 400ms ease-out, opacity 400ms ease-out",
+      transform: "translateX(5vh)",
+      transitionProperty: "transform, opacity",
+      transitionDuration: "400ms",
+      transitionTimingFunction: "ease-out",
+    },
+    open: {
+      opacity: 1,
+      transform: "translateX(0) translateY(0)",
+      transitionProperty: "transform, opacity",
+      transitionDuration: "400ms",
+      transitionTimingFunction: "ease-out",
+    },
+    close: {
+      opacity: 0,
+      transform: "translateX(5vh)",
+      transitionProperty: "transform, opacity",
+      transitionDuration: "400ms",
+      transitionTimingFunction: "ease-out",
     },
   });
 
@@ -93,7 +109,6 @@ export default function SidePanel(props: Readonly<ModalProps>) {
                     h-dvh md:h-full
                     rounded-t-lg md:rounded-t-none
                     md:border-l border-border
-                    transform transition-transform duration-300 ease-out
                     flex flex-col min-h-0
                     ${props.className}
                   `}
