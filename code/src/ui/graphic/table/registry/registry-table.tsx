@@ -129,7 +129,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     ) {
       props.setTask(genTaskOption(recordId, row, "default", dict));
     } else {
-      router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
+      router.push(`${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`);
     }
   };
 
