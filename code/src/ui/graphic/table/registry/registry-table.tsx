@@ -195,7 +195,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 >
                   <table
                     aria-label={`${props.recordType} registry table`}
-                    className="w-full border-collapse"
+                    className="w-full border-separate border-spacing-0"
                   >
                     <thead className="bg-muted sticky top-0 z-10">
                       {table.getHeaderGroups().map((headerGroup) => (
@@ -242,20 +242,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               }
                             >
                               <TableCell
-                                className="flex sticky left-0 z-20 bg-background group-hover:bg-muted"
+                                className="sticky left-0 z-20 bg-background group-hover:bg-muted"
                                 // Prevent clicks on the drag handle or action buttons from triggering the row click
                                 // Stop bubbling of click events
                                 onClick={(e: React.MouseEvent) =>
                                   e.stopPropagation()
                                 }
                               >
-                                <DragActionHandle id={row.id} />
-                                <RegistryRowAction
-                                  recordType={props.recordType}
-                                  lifecycleStage={props.lifecycleStage}
-                                  row={row.original}
-                                  setTask={props.setTask}
-                                />
+                                <div className="flex">
+                                  <DragActionHandle id={row.id} />
+                                  <RegistryRowAction
+                                    recordType={props.recordType}
+                                    lifecycleStage={props.lifecycleStage}
+                                    row={row.original}
+                                    setTask={props.setTask}
+                                  />
+                                </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
                                 <TableCell

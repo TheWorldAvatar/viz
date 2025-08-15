@@ -22,7 +22,7 @@ export default function TableCell(props: Readonly<TableCellProps>) {
         minWidth: props.width,
       }}
       onClick={props.onClick}
-      className={`border-r border-border p-2 md:p-3 whitespace-nowrap text-lg text-left  font-normal last:border-none ${
+      className={`border-r border-border border-b p-2 md:p-3 whitespace-nowrap text-lg text-left  font-normal last:border-r-0 ${
         props.className ?? ""
       }`}
     >
