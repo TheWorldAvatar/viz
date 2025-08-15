@@ -1,4 +1,5 @@
 import styles from "./field.module.css";
+import { useEffect } from "react";
 
 import { FieldError, UseFormReturn } from "react-hook-form";
 
@@ -53,12 +54,15 @@ export default function FormDateTimePicker(
     currentDateTime = splitFormat[0] + ":" + splitFormat[1];
   }
 
-  if (
-    !props.form.getValues(props.field.fieldId) ||
-    props.form.getValues(props.field.fieldId) === ""
-  ) {
-    props.form.setValue(props.field.fieldId, currentDateTime);
-  }
+  // useEffect to avoid calling setValue during render
+  useEffect(() => {
+    if (
+      !props.form.getValues(props.field.fieldId) ||
+      props.form.getValues(props.field.fieldId) === ""
+    ) {
+      props.form.setValue(props.field.fieldId, currentDateTime);
+    }
+  }, [props.form, props.field.fieldId, currentDateTime]);
 
   return (
     <FormInputContainer
