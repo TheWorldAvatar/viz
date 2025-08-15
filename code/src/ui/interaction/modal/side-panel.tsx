@@ -9,6 +9,8 @@ import React, { useEffect, useRef } from "react";
 import { useDialog } from "hooks/float/useDialog";
 import { usePathname } from "next/navigation";
 import Button from "../button";
+import { useRouter } from "next/navigation";
+import { Routes } from "io/config/routes";
 
 interface ModalProps {
   isOpen: boolean;
@@ -28,6 +30,7 @@ interface ModalProps {
  */
 export default function SidePanel(props: Readonly<ModalProps>) {
   const pathname = usePathname();
+  const router = useRouter();
   const dialog = useDialog(props.isOpen, props.setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 400,
@@ -47,6 +50,24 @@ export default function SidePanel(props: Readonly<ModalProps>) {
       if (props.isOpen) props.setIsOpen(false);
     }
   }, [pathname, props.isOpen, props.setIsOpen]);
+
+  // Handle closing the side panel
+  // If its a task (outstanding/scheduled/closed) it will only close the modal
+  // If its not a task, it will navigate to the appropriate page
+  const handleCloseSidePanel = () => {
+    if (
+      !prevPathRef.current.includes("outstanding") &&
+      !prevPathRef.current.includes("scheduled") &&
+      !prevPathRef.current.includes("closed")
+    ) {
+      if (!prevPathRef.current.includes("job_client")) {
+        router.push(`${Routes.REGISTRY_PENDING}/job`);
+      } else if (prevPathRef.current.includes("job_client")) {
+        router.push(`${Routes.REGISTRY_GENERAL}/job_client`);
+      }
+    }
+  };
+
   return (
     <>
       {dialog.open && (
@@ -85,6 +106,7 @@ export default function SidePanel(props: Readonly<ModalProps>) {
                     className="absolute top-2 right-4 !rounded-full"
                     onClick={() => {
                       props.setIsOpen(false);
+                      handleCloseSidePanel();
                     }}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">

@@ -1,6 +1,5 @@
 import { Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { FormFieldOptions } from "types/form";
-import Button from "ui/interaction/button";
 import FormErrorComponent from "ui/text/error/form-error";
 
 export interface InputFieldProps {
