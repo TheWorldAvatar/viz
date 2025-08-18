@@ -33,26 +33,26 @@ export default function SidePanel(props: Readonly<ModalProps>) {
   const router = useRouter();
   const dialog = useDialog(props.isOpen, props.setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
-    duration: 400,
+    duration: 300,
     initial: {
       opacity: 0,
-      transform: "translateX(5vh)",
+      transform: "translateX(3vh)",
       transitionProperty: "transform, opacity",
-      transitionDuration: "400ms",
+      transitionDuration: "300ms",
       transitionTimingFunction: "ease-out",
     },
     open: {
       opacity: 1,
       transform: "translateX(0) translateY(0)",
       transitionProperty: "transform, opacity",
-      transitionDuration: "400ms",
+      transitionDuration: "300ms",
       transitionTimingFunction: "ease-out",
     },
     close: {
       opacity: 0,
-      transform: "translateX(5vh)",
+      transform: "translateX(3vh)",
       transitionProperty: "transform, opacity",
-      transitionDuration: "400ms",
+      transitionDuration: "300ms",
       transitionTimingFunction: "ease-out",
     },
   });
