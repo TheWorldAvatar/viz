@@ -51,7 +51,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { parseDataForTable, TableData } from "./registry-table-utils";
+import { parseDataForTable, parseRowsForFilterOptions, TableData } from "./registry-table-utils";
 
 interface RegistryTableProps {
   recordType: string;
@@ -77,7 +77,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const router = useRouter();
 
   const tableData: TableData = useMemo(
-    () => parseDataForTable(props.instances),
+    () => parseDataForTable(props.instances, dict.title.blank),
     [props.instances]
   );
   const [data, setData] = useState<FieldValues[]>(tableData.data);
@@ -219,16 +219,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 header={header}
                                 options={Array.from(
                                   new Set(!firstActiveFilter || firstActiveFilter === header.id ?
-                                    table
-                                      .getCoreRowModel()
-                                      .flatRows.flatMap((row) =>
-                                        row.getValue(header.id)
-                                      ) :
-                                    table
-                                      .getFilteredRowModel()
-                                      .flatRows.flatMap((row) =>
-                                        row.getValue(header.id)
-                                      )
+                                    parseRowsForFilterOptions(table.getCoreRowModel().flatRows, header.id, dict.title.blank) :
+                                    parseRowsForFilterOptions(table.getFilteredRowModel().flatRows, header.id, dict.title.blank)
                                   )
                                 )}
                               />

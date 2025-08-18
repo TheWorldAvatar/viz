@@ -168,6 +168,7 @@
   "title": {
     "actions": "Aktionen",
     "allCol": "Alle anzeigen",
+    "blank": "(leer)",
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
     "serviceType": "Art der Dienstleistung",

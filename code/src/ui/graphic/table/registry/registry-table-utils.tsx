@@ -1,6 +1,7 @@
 import {
   ColumnDef,
-  FilterFnOption
+  FilterFnOption,
+  Row
 } from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 import {
@@ -18,13 +19,15 @@ export type TableData = {
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
+ * @param {string} translatedBlankText The translated blank text.
  */
-export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
+export function parseDataForTable(instances: RegistryFieldValues[], translatedBlankText: string): TableData {
   const results: TableData = {
     data: [],
     columns: [],
   };
   if (instances?.length > 0) {
+    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(translatedBlankText);
     let maxFieldLength: number = 0;
     instances.map(instance => {
       const flattenInstance: Record<string, string> = {};
@@ -79,14 +82,32 @@ export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
 }
 
 /**
- * A custom filter function to filter for multiple values when selected.
+ * Builds a custom filter function to filter for multiple values when selected.
+ * 
+ * @param {string} translatedBlankText The translated blank text.
  */
-const multiSelectFilter: FilterFnOption<FieldValues> = (
-  row,
-  columnId,
-  filterValue: string[],
-) => {
-  if (!filterValue.length) return true;
-  const rowValue = row.getValue(columnId);
-  return !!filterValue.find((option) => option === rowValue);
-};
+export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<FieldValues> {
+  return (
+    row,
+    columnId,
+    filterValue: string[],
+  ) => {
+    if (!filterValue.length) return true;
+    const rowValue: string = row.getValue(columnId);
+    if (rowValue === undefined) {
+      return filterValue.includes(translatedBlankText);
+    }
+    return !!filterValue.find((option) => option === rowValue);
+  };
+}
+
+/**
+ * Parses the rows obtained from TanStack into filtering options.
+ *
+ * @param {Row<FieldValues>[]} instances Raw instances queried from knowledge graph.
+ * @param {string} header Column header of interest.
+ * @param {string} translatedBlankText The translated blank text.
+ */
+export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, translatedBlankText: string): string[] {
+  return rows.flatMap((row) => row.getValue(header) ?? translatedBlankText);
+}

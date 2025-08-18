@@ -168,6 +168,7 @@
   "title": {
     "actions": "Actions",
     "allCol": "Show All",
+    "blank": "(blank)",
     "customiseCol": "Show/Hide Columns",
     "description": "Description",
     "serviceType": "Service Type",
