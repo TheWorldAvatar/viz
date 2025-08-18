@@ -1,5 +1,6 @@
 import {
-  ColumnDef
+  ColumnDef,
+  FilterFnOption
 } from "@tanstack/react-table";
 import { FieldValues } from "react-hook-form";
 import {
@@ -61,6 +62,7 @@ export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
                 </div>
               );
             },
+            filterFn: multiSelectFilter,
             size: minWidth,
             enableSorting: true,
           })
@@ -75,3 +77,16 @@ export function parseDataForTable(instances: RegistryFieldValues[]): TableData {
   }
   return results;
 }
+
+/**
+ * A custom filter function to filter for multiple values when selected.
+ */
+const multiSelectFilter: FilterFnOption<FieldValues> = (
+  row,
+  columnId,
+  filterValue: string[],
+) => {
+  if (!filterValue.length) return true;
+  const rowValue = row.getValue(columnId);
+  return !!filterValue.find((option) => option === rowValue);
+};
