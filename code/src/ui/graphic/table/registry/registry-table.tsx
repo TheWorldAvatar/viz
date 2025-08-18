@@ -19,6 +19,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import {
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedUniqueValues,
@@ -27,9 +28,11 @@ import {
   getSortedRowModel,
   SortingState,
   Table,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
+import { useFirstActiveFilter } from "hooks/table/useFirstActiveFilter";
 import { useDictionary } from "hooks/useDictionary";
+import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
@@ -40,17 +43,15 @@ import {
   RegistryTaskOption,
 } from "types/form";
 import Button from "ui/interaction/button";
+import { getId } from "utils/client-utils";
 import ColumnToggle from "../action/column-toggle";
 import DragActionHandle from "../action/drag-action-handle";
-import RegistryRowAction from "../action/registry-row-action";
+import RegistryRowAction, { genTaskOption } from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseDataForTable, TableData } from "./registry-table-utils";
-import { Routes } from "io/config/routes";
-import { getId } from "utils/client-utils";
-import { genTaskOption } from "../action/registry-row-action";
 
 interface RegistryTableProps {
   recordType: string;
@@ -80,6 +81,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     [props.instances]
   );
   const [data, setData] = useState<FieldValues[]>(tableData.data);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { firstActiveFilter } = useFirstActiveFilter(columnFilters);
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData.columns,
@@ -90,8 +93,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       },
     },
     state: {
+      columnFilters,
       sorting: props.sorting,
     },
+    onColumnFiltersChange: setColumnFilters,
     onSortingChange: props.setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -117,8 +122,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     const recordId: string = row.event_id
       ? row.event_id
       : row.id
-      ? getId(row.id)
-      : row.iri;
+        ? getId(row.id)
+        : row.iri;
     if (
       props.lifecycleStage === "tasks" ||
       props.lifecycleStage === "report" ||
@@ -164,25 +169,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <>
       <div
-        className={`${
-          table.getVisibleLeafColumns().length > 0 ? "" : "h-60"
-        } flex justify-end gap-4`}
+        className={`${table.getVisibleLeafColumns().length > 0 ? "" : "h-60"
+          } flex justify-end gap-4`}
       >
-        {table
-          .getState()
-          .columnFilters.some(
-            (filter) => (filter?.value as string[])?.length > 0
-          ) && (
-          <Button
-            leftIcon="filter_list_off"
-            iconSize="medium"
-            className="mt-1"
-            size="icon"
-            onClick={() => table.resetColumnFilters()}
-            tooltipText={dict.action.clearAllFilters}
-            variant="destructive"
-          />
-        )}
+        {columnFilters.some(
+          (filter) => (filter?.value as string[])?.length > 0
+        ) && (
+            <Button
+              leftIcon="filter_list_off"
+              iconSize="medium"
+              className="mt-1"
+              size="icon"
+              onClick={() => table.resetColumnFilters()}
+              tooltipText={dict.action.clearAllFilters}
+              variant="destructive"
+            />
+          )}
         <ColumnToggle columns={table.getAllLeafColumns()} />
       </div>
 
@@ -216,9 +218,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 key={header.id + index}
                                 header={header}
                                 options={Array.from(
-                                  new Set(
+                                  new Set(!firstActiveFilter || firstActiveFilter === header.id ?
                                     table
                                       .getCoreRowModel()
+                                      .flatRows.flatMap((row) =>
+                                        row.getValue(header.id)
+                                      ) :
+                                    table
+                                      .getFilteredRowModel()
                                       .flatRows.flatMap((row) =>
                                         row.getValue(header.id)
                                       )
