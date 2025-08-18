@@ -218,7 +218,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 options={Array.from(
                                   new Set(
                                     table
-                                      .getFilteredRowModel()
+                                      .getCoreRowModel()
                                       .flatRows.flatMap((row) =>
                                         row.getValue(header.id)
                                       )
