@@ -46,7 +46,8 @@ export default function MultivalueSelector(
   const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.isAllInitiallySelected ? defaultOptions : []);
 
   useEffect(() => {
-    if (!props.isActive) {
+    // Explicitly reset only for false value, as it is an optional prop that can return true
+    if (props.isActive === false) {
       setSelectedOptions([]);
       props.setControlledSelectedOptions([]);
     }
