@@ -23,7 +23,7 @@ export const Paths: {
   MAP: "map",
   DASHBOARD: "analytics",
   REGISTRY: "view",
-  REGISTRY_GENERAL: "registry/",
+  REGISTRY_GENERAL: "registry",
   REGISTRY_TASK_OUTSTANDING: "registry/task/outstanding",
   REGISTRY_TASK_SCHEDULED: "registry/task/scheduled",
   REGISTRY_TASK_CLOSED: "registry/task/closed",
