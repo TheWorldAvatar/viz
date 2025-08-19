@@ -17,6 +17,8 @@ import { Status } from "ui/text/status/status";
 import { getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
+import { useDispatch } from "react-redux";
+import { setCurrentEntityType } from "state/registry-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { JsonObject } from "types/json";
@@ -42,6 +44,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
@@ -84,9 +87,11 @@ export default function RegistryRowAction(
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
     ) {
+      dispatch(setCurrentEntityType(props.lifecycleStage));
       props.setTask(genTaskOption(recordId, props.row, "default", dict));
     } else {
       // Move to the view modal page for the specific record
+      dispatch(setCurrentEntityType(props.recordType));
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
     }
   };
@@ -101,11 +106,11 @@ export default function RegistryRowAction(
       props.row?.status?.toLowerCase() === dict.title.issue?.toLowerCase() ||
       props.row?.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
     );
-  const isSubmissionPage: boolean = props.lifecycleStage == "pending";
+  const isSubmissionOrGeneralPage: boolean = props.lifecycleStage == "pending" || props.lifecycleStage == "general";
 
   return (
     <div aria-label="Actions">
-      {!isSubmissionPage && !showsExpandedTask && (
+      {!isSubmissionOrGeneralPage && !showsExpandedTask && (
         <Button
           variant="ghost"
           leftIcon="open_in_new"
@@ -116,7 +121,7 @@ export default function RegistryRowAction(
           onClick={handleClickView}
         />
       )}
-      {(isSubmissionPage || showsExpandedTask) && (
+      {(isSubmissionOrGeneralPage || showsExpandedTask) && (
         <PopoverActionButton
           placement="bottom-start"
           leftIcon="more_vert"
@@ -137,7 +142,7 @@ export default function RegistryRowAction(
               label={parseWordsForLabels(dict.action.view)}
               onClick={() => {
                 setIsActionMenuOpen(false);
-                if (isSubmissionPage) {
+                if (isSubmissionOrGeneralPage) {
                   handleClickView();
                 } else {
                   props.setTask(
@@ -147,7 +152,7 @@ export default function RegistryRowAction(
               }}
             />
 
-            {isSubmissionPage && (
+            {isSubmissionOrGeneralPage && (
               <>
                 {(!keycloakEnabled ||
                   !permissionScheme ||
@@ -187,8 +192,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.sales) &&
-                  (props.lifecycleStage === "pending" ||
-                    props.lifecycleStage === "general") && (
+                  isSubmissionOrGeneralPage && (
                     <Button
                       variant="ghost"
                       leftIcon="edit"
@@ -198,6 +202,7 @@ export default function RegistryRowAction(
                       label={dict.action.edit}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.recordType));
                         router.push(
                           `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
                         );
@@ -208,8 +213,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.sales) &&
-                  (props.lifecycleStage === "pending" ||
-                    props.lifecycleStage === "general") && (
+                  isSubmissionOrGeneralPage && (
                     <Button
                       variant="ghost"
                       leftIcon="delete"
@@ -219,6 +223,7 @@ export default function RegistryRowAction(
                       label={dict.action.delete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.recordType));
                         router.push(
                           `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
                         );
@@ -228,7 +233,7 @@ export default function RegistryRowAction(
               </>
             )}
 
-            {!isSubmissionPage && (
+            {!isSubmissionOrGeneralPage && (
               <>
                 {(!keycloakEnabled ||
                   !permissionScheme ||
@@ -246,6 +251,7 @@ export default function RegistryRowAction(
                       label={dict.action.complete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "complete", dict)
                         );
@@ -268,6 +274,7 @@ export default function RegistryRowAction(
                       label={dict.action.dispatch}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "dispatch", dict)
                         );
@@ -290,6 +297,7 @@ export default function RegistryRowAction(
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "cancel", dict)
                         );
@@ -312,6 +320,7 @@ export default function RegistryRowAction(
                       label={dict.action.report}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "report", dict)
                         );
@@ -328,7 +337,7 @@ export default function RegistryRowAction(
 }
 
 // Generates a task option based on the input parameters
-function genTaskOption(
+export function genTaskOption(
   recordId: string,
   row: FieldValues,
   taskType: RegistryTaskType,

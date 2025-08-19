@@ -44,8 +44,10 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           body: fileData,
         });
         const jsonResp: AgentResponseBody = await response.json();
-        toast(jsonResp?.data?.message || jsonResp?.error?.message,
-          jsonResp?.error ? "error" : "success");
+        toast(
+          jsonResp?.data?.message || jsonResp?.error?.message,
+          jsonResp?.error ? "error" : "success"
+        );
         // Closes the modal only if response is successfull
         setTimeout(() => {
           props.setIsOpen(false);
@@ -69,12 +71,12 @@ export default function FileModal(props: Readonly<FileModalProps>) {
 
   return (
     <Modal
-      styles={["!w-md !h-38"]}
+      className="!w-xs md:!w-sm !h-44 flex  !rounded-2xl !shadow-2xl"
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
     >
       <form ref={formRef} onSubmit={onFormSubmit}>
-        <section className="flex items-center">
+        <section className="flex items-center flex-wrap gap-2">
           <FileInputButton form={form} />
         </section>
 
@@ -83,10 +85,11 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           <Button
             leftIcon="keyboard_tab"
             size="icon"
+            iconSize="small"
             className="mt-2"
             onClick={onSubmit}
             tooltipText={dict.action.submit}
-            tooltipPosition="bottom-start"
+            tooltipPosition="bottom"
           />
         </section>
       </form>

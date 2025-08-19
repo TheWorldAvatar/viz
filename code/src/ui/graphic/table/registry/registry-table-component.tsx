@@ -24,6 +24,7 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import { SortingState } from "@tanstack/react-table";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -55,6 +56,7 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -189,11 +191,9 @@ export default function RegistryTableComponent(
       }
     };
 
-    // Trigger fetchData when isTaskModalOpen, refreshFlag, or selectedDate (range) changes
-    if (!isTaskModalOpen || refreshFlag) {
-      fetchData();
-    }
-  }, [isTaskModalOpen, selectedDate, refreshFlag]);
+    // Trigger fetchData when refreshFlag, or selectedDate (range) changes
+    fetchData();
+  }, [selectedDate, refreshFlag]);
 
   useEffect(() => {
     if (task) {
@@ -227,6 +227,8 @@ export default function RegistryTableComponent(
             lifecycleStage={props.lifecycleStage}
             instances={currentInstances}
             setTask={setTask}
+            sorting={sorting}
+            setSorting={setSorting}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
@@ -239,6 +241,7 @@ export default function RegistryTableComponent(
           task={task}
           setIsOpen={setIsTaskModalOpen}
           setTask={setTask}
+          onSuccess={triggerRefresh}
         />
       )}
     </div>

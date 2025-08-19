@@ -1,5 +1,5 @@
 import { useDictionary } from "hooks/useDictionary";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select, {
   ActionMeta,
   MultiValue,
@@ -44,6 +44,14 @@ export default function MultivalueSelector(
 
   const defaultOptions: SelectOption[] = (props.toggleAll ? [selectAllOption, ...props.options] : props.options);
   const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.isAllInitiallySelected ? defaultOptions : []);
+
+  useEffect(() => {
+    // Explicitly reset only for false value, as it is an optional prop that can return true
+    if (props.isActive === false) {
+      setSelectedOptions([]);
+      props.setControlledSelectedOptions([]);
+    }
+  }, [props.isActive]);
 
   const handleChange = (
     newValue: SelectOption | MultiValue<SelectOption>,

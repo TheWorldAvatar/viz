@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { Modules, PageTitles, Paths } from 'io/config/routes';
+import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
@@ -33,7 +33,7 @@ export default async function ActiveRegistryPage(props : ActiveRegistryPageProps
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const resolvedParams = await props.params;
   if (!uiSettings.modules.registry || !uiSettings.resources?.registry?.data) {
-    redirect(Paths.HOME);
+    redirect(Routes.HOME);
   }
 
   return (

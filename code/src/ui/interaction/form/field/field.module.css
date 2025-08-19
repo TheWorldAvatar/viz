@@ -39,6 +39,10 @@
   color: var(--foregroundy);
 }
 
+.form-input-value:focus-visible {
+  outline: 2px solid var(--border);
+}
+
 .input-disabled {
   border: 1px solid var(--border);
   background-color: var(--muted);
@@ -57,7 +61,10 @@
   height: 1.8rem;
   width: 100%;
   max-width: none;
-  padding: 1.3rem;
+  padding-top: 1.3rem;
+  padding-bottom: 1.3rem;
+  padding-left: 0.5rem;
+  padding-right: 0.7rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border);
   background-color: var(--muted);
@@ -67,6 +74,10 @@
 
 .dtpicker::-webkit-calendar-picker-indicator {
   filter: invert(var(--invert));
+}
+
+.dtpicker:focus-visible {
+  outline: 2px solid var(--border);
 }
 
 .form-checkbox {

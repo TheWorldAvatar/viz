@@ -53,20 +53,20 @@ export default function FormInputContainer(
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between  ">
+      <div className="flex flex-wrap items-center justify-between">
         <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
-          <span className="text-lg font-semibold flex gap-4">
+          <span className="text-lg  font-semibold flex items gap-1.5">
             {parseWordsForLabels(label)}
             {props.error && "*"}
             <Tooltip text={description} placement="right">
-              <Icon className="material-symbols-outlined">{"info"}</Icon>
+              <Icon className="material-symbols-outlined ">{"info"}</Icon>
             </Tooltip>
           </span>
           {props.formatLabel && (
             <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
           )}
         </label>
-        <div className="flex items-center  gap-2">
+        <div className="flex items-center gap-2">
           {props.redirectOptions?.addUrl && (
             <RedirectButton
               label={dict.action.add}

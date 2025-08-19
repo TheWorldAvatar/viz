@@ -67,7 +67,10 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
               <Link key={logo} href={Routes.HOME}>
-                <IconComponent icon={logo} classes="h-12 w-auto ml-2 md:ml-8" />
+                <IconComponent
+                  icon={logo}
+                  classes="h-10 md:h-12 w-auto ml-2 md:ml-8"
+                />
               </Link>
             ))
           ) : (
@@ -75,7 +78,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
-                classes="h-12 ml-4 w-auto"
+                classes="h-10 md:h-12 ml-4 w-auto"
               />
             </Link>
           )}

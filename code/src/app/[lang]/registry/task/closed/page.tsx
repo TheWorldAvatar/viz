@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { Modules, PageTitles, Paths } from 'io/config/routes';
+import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
@@ -34,6 +34,6 @@ export default function RegistryTaskByDatePage() {
       />
     );
   } else {
-    redirect(Paths.HOME);
+    redirect(Routes.HOME);
   }
 }

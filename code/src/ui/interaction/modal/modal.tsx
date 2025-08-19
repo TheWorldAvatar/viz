@@ -7,8 +7,7 @@ import {
 import React from "react";
 
 import { useDialog } from "hooks/float/useDialog";
-import { useDictionary } from "hooks/useDictionary";
-import { Dictionary } from "types/dictionary";
+
 import { useRouter } from "next/navigation";
 import Button from "../button";
 
@@ -16,7 +15,7 @@ interface ModalProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   returnPrevPage?: boolean;
-  styles?: string[];
+  className?: string;
   children: React.ReactNode;
 }
 
@@ -26,12 +25,11 @@ interface ModalProps {
  * @param {boolean} isOpen Indicates if modal should be initially open.
  * @param  setIsOpen Sets the isOpen parameter.
  * @param {boolean} returnPrevPage Indicates if the modal should return to the previous page upon closing.
- * @param {string[]} styles Optional styling for the modal.
+ * @param {string} className Optional styling for the modal.
  */
 export default function Modal(props: Readonly<ModalProps>) {
-  const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const dialog = useDialog(props.isOpen, props.setIsOpen);
+  const dialog = useDialog(props.isOpen, props.setIsOpen, true);
   const transition = useTransitionStyles(dialog.context, {
     duration: 400,
     initial: {
@@ -54,7 +52,7 @@ export default function Modal(props: Readonly<ModalProps>) {
                   ...dialog.floatingStyles,
                   zIndex: 999998, // Second highest z-index so it hides other content but is hidden before tooltips
                 }}
-                className="relative flex items-center justify-center h-full w-full"
+                className="relative flex items-center justify-center h-full w-full  "
                 onClick={(event: React.MouseEvent) => {
                   if (event.target === event.currentTarget) {
                     props.setIsOpen(false);
@@ -69,15 +67,13 @@ export default function Modal(props: Readonly<ModalProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className={`relative flex flex-col w-full h-dvh md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark md:border-1 md:shadow-2xl md:border-border md:rounded-xl ${props.styles}`}
+                  className={`relative flex flex-col w-full h-dvh md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-muted md:border-1 md:shadow-2xl md:border-border md:rounded-xl ${props.className}`}
                 >
                   <Button
                     leftIcon="close"
                     size="icon"
                     variant="ghost"
-                    className="absolute top-2 right-1 !rounded-full"
-                    tooltipText={dict.action.close}
-                    tooltipPosition="top-end"
+                    className="absolute top-2 right-4 !rounded-full"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                       event.preventDefault();
                       props.setIsOpen(false);

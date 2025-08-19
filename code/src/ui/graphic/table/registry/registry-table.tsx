@@ -19,18 +19,25 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import {
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   Table,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
+import { useFirstActiveFilter } from "hooks/table/useFirstActiveFilter";
 import { useDictionary } from "hooks/useDictionary";
+import { Routes } from "io/config/routes";
+import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { setCurrentEntityType } from "state/registry-slice";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
@@ -38,20 +45,25 @@ import {
   RegistryTaskOption,
 } from "types/form";
 import Button from "ui/interaction/button";
+import { getId } from "utils/client-utils";
 import ColumnToggle from "../action/column-toggle";
 import DragActionHandle from "../action/drag-action-handle";
-import RegistryRowAction from "../action/registry-row-action";
+import RegistryRowAction, { genTaskOption } from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { parseDataForTable, TableData } from "./registry-table-utils";
+import { parseDataForTable, parseRowsForFilterOptions, TableData } from "./registry-table-utils";
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  sorting: SortingState;
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
 }
 
 /**
@@ -61,15 +73,23 @@ interface RegistryTableProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
+ * @param {SortingState} sorting The current sorting state of the table.
+ * @param setSorting A dispatch method to set the sorting state.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
+  const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const tableData: TableData = useMemo(
-    () => parseDataForTable(props.instances),
+    () => parseDataForTable(props.instances, dict.title.blank),
     [props.instances]
   );
   const [data, setData] = useState<FieldValues[]>(tableData.data);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { firstActiveFilter } = useFirstActiveFilter(columnFilters);
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData.columns,
@@ -79,6 +99,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         pageSize: 10,
       },
     },
+    state: {
+      columnFilters,
+      sorting: props.sorting,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    onSortingChange: props.setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -98,6 +124,38 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
+
+  const onRowClick = (row: FieldValues) => {
+    const recordId: string = row.event_id
+      ? row.event_id
+      : row.id
+        ? getId(row.id)
+        : row.iri;
+    if (
+      props.lifecycleStage === "tasks" ||
+      props.lifecycleStage === "report" ||
+      props.lifecycleStage === "outstanding" ||
+      props.lifecycleStage === "scheduled" ||
+      props.lifecycleStage === "closed"
+    ) {
+      // Update entity type to lifecycle stage for these stages
+      dispatch(setCurrentEntityType(props.lifecycleStage));
+      if ((!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation)
+        && (row.status as string).toLowerCase() === dict.title.new) {
+        props.setTask(genTaskOption(recordId, row, "dispatch", dict));
+      } else if ((!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask)
+        && (row.status as string).toLowerCase() === dict.title.assigned) {
+        props.setTask(genTaskOption(recordId, row, "complete", dict));
+      } else {
+        props.setTask(genTaskOption(recordId, row, "default", dict));
+      }
+    } else {
+      dispatch(setCurrentEntityType(props.recordType));
+      const registryRoute: string = !keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation
+        || permissionScheme.hasPermissions.sales ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
+      router.push(`${registryRoute}/${props.recordType}/${recordId}`);
+    }
+  };
 
   // This function updates the data order (row order) based on the drag and drop interaction
   function handleDragEnd(event: DragEndEvent) {
@@ -125,25 +183,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   return (
     <>
       <div
-        className={`${
-          table.getVisibleLeafColumns().length > 0 ? "" : "h-60"
-        } flex justify-end gap-4`}
+        className={`${table.getVisibleLeafColumns().length > 0 ? "" : "h-60"
+          } flex justify-end gap-4`}
       >
-        {table
-          .getState()
-          .columnFilters.some(
-            (filter) => (filter?.value as string[])?.length > 0
-          ) && (
-          <Button
-            leftIcon="filter_list_off"
-            iconSize="medium"
-            className="mt-1"
-            size="icon"
-            onClick={() => table.resetColumnFilters()}
-            tooltipText={dict.action.clearAllFilters}
-            variant="destructive"
-          />
-        )}
+        {columnFilters.some(
+          (filter) => (filter?.value as string[])?.length > 0
+        ) && (
+            <Button
+              leftIcon="filter_list_off"
+              iconSize="medium"
+              className="mt-1"
+              size="icon"
+              onClick={() => table.resetColumnFilters()}
+              tooltipText={dict.action.clearAllFilters}
+              variant="destructive"
+            />
+          )}
         <ColumnToggle columns={table.getAllLeafColumns()} />
       </div>
 
@@ -161,7 +216,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 >
                   <table
                     aria-label={`${props.recordType} registry table`}
-                    className="w-full border-collapse"
+                    className="w-full border-separate border-spacing-0"
                   >
                     <thead className="bg-muted sticky top-0 z-10">
                       {table.getHeaderGroups().map((headerGroup) => (
@@ -177,12 +232,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 key={header.id + index}
                                 header={header}
                                 options={Array.from(
-                                  new Set(
-                                    table
-                                      .getFilteredRowModel()
-                                      .flatRows.flatMap((row) =>
-                                        row.getValue(header.id)
-                                      )
+                                  new Set(!firstActiveFilter || firstActiveFilter === header.id ?
+                                    parseRowsForFilterOptions(table.getCoreRowModel().flatRows, header.id, dict.title.blank) :
+                                    parseRowsForFilterOptions(table.getFilteredRowModel().flatRows, header.id, dict.title.blank)
                                   )
                                 )}
                               />
@@ -204,19 +256,24 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               id={row.id}
                               isHeader={false}
                             >
-                              <TableCell className="flex sticky left-0 z-20 bg-background group-hover:bg-muted">
-                                <DragActionHandle id={row.id} />
-                                <RegistryRowAction
-                                  recordType={props.recordType}
-                                  lifecycleStage={props.lifecycleStage}
-                                  row={row.original}
-                                  setTask={props.setTask}
-                                />
+                              <TableCell
+                                className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default"
+                              >
+                                <div className="flex gap-1  ">
+                                  <DragActionHandle id={row.id} />
+                                  <RegistryRowAction
+                                    recordType={props.recordType}
+                                    lifecycleStage={props.lifecycleStage}
+                                    row={row.original}
+                                    setTask={props.setTask}
+                                  />
+                                </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
                                 <TableCell
                                   key={cell.id + index}
                                   width={cell.column.getSize()}
+                                  onClick={() => onRowClick(row.original as FieldValues)}
                                 >
                                   {flexRender(
                                     cell.column.columnDef.cell,
