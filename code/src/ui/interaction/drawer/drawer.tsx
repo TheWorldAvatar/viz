@@ -12,7 +12,7 @@ import Button from "../button";
 import { useRouter } from "next/navigation";
 import { Routes } from "io/config/routes";
 
-interface ModalProps {
+interface DrawerProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   returnPrevPage?: boolean;
@@ -21,14 +21,14 @@ interface ModalProps {
 }
 
 /**
- * A reusable component for defining modals.
+ * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
  *
  * @param {boolean} isOpen Indicates if modal should be initially open.
  * @param  setIsOpen Sets the isOpen parameter.
  * @param {boolean} returnPrevPage Indicates if the modal should return to the previous page upon closing.
  * @param {string} className Optional styling for the modal.
  */
-export default function SidePanel(props: Readonly<ModalProps>) {
+export default function Drawer(props: Readonly<DrawerProps>) {
   const pathname = usePathname();
   const router = useRouter();
   const dialog = useDialog(props.isOpen, props.setIsOpen, false);
