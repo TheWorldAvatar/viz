@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
-import { Routes } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
   NodeShape,
@@ -152,8 +151,8 @@ export default function BranchFormSection(
           }}
           isDisabled={
             props.form.getValues(FORM_STATES.FORM_TYPE) ==
-              Routes.REGISTRY_DELETE ||
-            props.form.getValues(FORM_STATES.FORM_TYPE) == Routes.REGISTRY
+              "delete" ||
+            props.form.getValues(FORM_STATES.FORM_TYPE) == "view"
           }
         />
         <p className="text-md md:text-lg">
