@@ -69,6 +69,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   };
 
+  const onSave: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (formRef.current) {
+      console.log("Saving form...", formRef.current);
+    }
+  };
+
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
     (currentStatus: string): number => {
@@ -352,6 +358,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 className="w-full justify-start"
                 label={dict.action.report}
                 onClick={() => setTaskType("report")}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.completeTask) &&
+            taskType === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={onSave}
               />
             )}
           {(!keycloakEnabled ||
