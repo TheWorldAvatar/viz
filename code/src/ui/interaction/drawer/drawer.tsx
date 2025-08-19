@@ -4,13 +4,16 @@ import {
   FloatingPortal,
   useTransitionStyles,
 } from "@floating-ui/react";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 import { useDialog } from "hooks/float/useDialog";
-import { usePathname } from "next/navigation";
+import { Paths, Routes } from "io/config/routes";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { usePathname, useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "redux";
+import { getCurrentEntityType, setCurrentEntityType } from "state/registry-slice";
 import Button from "../button";
-import { useRouter } from "next/navigation";
-import { Routes } from "io/config/routes";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -29,8 +32,10 @@ interface DrawerProps {
  * @param {string} className Optional styling for the modal.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const pathname = usePathname();
-  const router = useRouter();
+  const url: string = usePathname();
+  const router: AppRouterInstance = useRouter();
+  const dispatch: Dispatch = useDispatch();
+  const currentEntityType: string = useSelector(getCurrentEntityType);
   const dialog = useDialog(props.isOpen, props.setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
@@ -57,32 +62,6 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     },
   });
 
-  // Close modal when navigating to a new page (pathname change)
-  // The ref saves the current pathname to prevent closing the modal on internal navigation
-  const prevPathRef = useRef(pathname);
-  useEffect(() => {
-    if (prevPathRef.current !== pathname) {
-      prevPathRef.current = pathname;
-      if (props.isOpen) props.setIsOpen(false);
-    }
-  }, [pathname, props.isOpen, props.setIsOpen]);
-
-  // Handle closing the side panel
-  // If its a task (outstanding/scheduled/closed) it will only close the modal
-  // If its not a task, it will navigate to the appropriate page
-  const handleCloseSidePanel = () => {
-    if (
-      !prevPathRef.current.includes("outstanding") &&
-      !prevPathRef.current.includes("scheduled") &&
-      !prevPathRef.current.includes("closed")
-    ) {
-      if (!prevPathRef.current.includes("job_client")) {
-        router.push(`${Routes.REGISTRY_PENDING}/job`);
-      } else if (prevPathRef.current.includes("job_client")) {
-        router.push(`${Routes.REGISTRY_GENERAL}/job_client`);
-      }
-    }
-  };
 
   return (
     <>
@@ -119,10 +98,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     variant="ghost"
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
-                    onClick={() => {
-                      props.setIsOpen(false);
-                      handleCloseSidePanel();
-                    }}
+                    onClick={() => handleClose(url, currentEntityType, props.setIsOpen, router, dispatch)}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">
                     {props.children}
@@ -136,3 +112,25 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     </>
   );
 }
+
+/**
+ * Handles the events when closing the drawer.
+ * 
+ * @param {string} url The target url to check.
+ * @param  setIsOpen Sets the open state.
+ * @param  router NextJS App router object.
+ * @param {Dispatch<any>} dispatch The dispatch function from Redux for dispatching actions.
+ */
+function handleClose(url: string, currentEntityType: string, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>, router: AppRouterInstance, dispatch: Dispatch) {
+  // Checks if the current page is a static active page where opening a modal does not redirect the user to a new path
+  if ([Paths.REGISTRY_TASK_OUTSTANDING, Paths.REGISTRY_TASK_SCHEDULED, Paths.REGISTRY_TASK_CLOSED].some(path => url.includes(path))) {
+    setIsOpen(false);
+  } else {
+    if (currentEntityType != "") {
+      setIsOpen(false);
+      dispatch(setCurrentEntityType(""));
+      router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
+    }
+  }
+}
+

@@ -17,6 +17,8 @@ import { Status } from "ui/text/status/status";
 import { getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
+import { useDispatch } from "react-redux";
+import { setCurrentEntityType } from "state/registry-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { JsonObject } from "types/json";
@@ -42,11 +44,12 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -87,6 +90,7 @@ export default function RegistryRowAction(
       props.setTask(genTaskOption(recordId, props.row, "default", dict));
     } else {
       // Move to the view modal page for the specific record
+      dispatch(setCurrentEntityType(props.recordType));
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
     }
   };
@@ -198,6 +202,7 @@ export default function RegistryRowAction(
                       label={dict.action.edit}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.recordType));
                         router.push(
                           `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
                         );
@@ -219,6 +224,7 @@ export default function RegistryRowAction(
                       label={dict.action.delete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.recordType));
                         router.push(
                           `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
                         );
@@ -236,7 +242,7 @@ export default function RegistryRowAction(
                   (props.row?.status?.toLowerCase() ===
                     dict.title.assigned?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
-                      dict.title.completed?.toLowerCase()) && (
+                    dict.title.completed?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       leftIcon="done_outline"
@@ -256,9 +262,9 @@ export default function RegistryRowAction(
                   !permissionScheme ||
                   permissionScheme.hasPermissions.operation) &&
                   props.row?.status?.toLowerCase() !==
-                    dict.title.issue?.toLowerCase() &&
+                  dict.title.issue?.toLowerCase() &&
                   props.row?.status?.toLowerCase() !==
-                    dict.title.cancelled?.toLowerCase() && (
+                  dict.title.cancelled?.toLowerCase() && (
                     <Button
                       variant="ghost"
                       leftIcon="assignment"
@@ -280,7 +286,7 @@ export default function RegistryRowAction(
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
-                      dict.title.assigned?.toLowerCase()) && (
+                    dict.title.assigned?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       leftIcon="cancel"
@@ -302,7 +308,7 @@ export default function RegistryRowAction(
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
-                      dict.title.assigned?.toLowerCase()) && (
+                    dict.title.assigned?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       leftIcon="report"
