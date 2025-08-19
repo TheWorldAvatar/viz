@@ -24,8 +24,8 @@ import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
 import { Routes } from "io/config/routes";
-import { useDispatch, useSelector } from "react-redux";
-import { getCurrentEntityType, setCurrentEntityType } from "state/registry-slice";
+import { useSelector } from "react-redux";
+import { getCurrentEntityType } from "state/registry-slice";
 import { toast } from "../action/toast/toast";
 
 interface FormContainerComponentProps {
@@ -48,14 +48,20 @@ export default function FormContainerComponent(
 ) {
   if (props.isModal) {
     const router = useRouter();
-    const dispatch = useDispatch();
     const currentEntityType: string = useSelector(getCurrentEntityType);
     return (
       <Drawer
         onClose={() => {
           if (currentEntityType != "") {
-            dispatch(setCurrentEntityType(""));
-            router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
+            let redirectUrl: string = `${Routes.REGISTRY_GENERAL}/${currentEntityType}`;
+            if (currentEntityType === "outstanding") {
+              redirectUrl = Routes.REGISTRY_TASK_OUTSTANDING
+            } else if (currentEntityType === "scheduled") {
+              redirectUrl = Routes.REGISTRY_TASK_SCHEDULED
+            } else if (currentEntityType === "closed") {
+              redirectUrl = Routes.REGISTRY_TASK_CLOSED
+            }
+            router.push(redirectUrl)
           }
         }}>
         <FormContents {...props} />

@@ -36,6 +36,8 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { setCurrentEntityType } from "state/registry-slice";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
@@ -75,6 +77,7 @@ interface RegistryTableProps {
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const tableData: TableData = useMemo(
     () => parseDataForTable(props.instances, dict.title.blank),
@@ -131,6 +134,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
+      // Update entity type to lifecycle stage for these stages
+      dispatch(setCurrentEntityType(props.lifecycleStage));
       if ((row.status as string).toLowerCase() === dict.title.new) {
         props.setTask(genTaskOption(recordId, row, "dispatch", dict));
       } else if ((row.status as string).toLowerCase() === dict.title.assigned) {
@@ -139,6 +144,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         props.setTask(genTaskOption(recordId, row, "default", dict));
       }
     } else {
+      dispatch(setCurrentEntityType(props.recordType));
       router.push(`${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`);
     }
   };

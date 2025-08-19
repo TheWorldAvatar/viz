@@ -87,6 +87,7 @@ export default function RegistryRowAction(
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
     ) {
+      dispatch(setCurrentEntityType(props.lifecycleStage));
       props.setTask(genTaskOption(recordId, props.row, "default", dict));
     } else {
       // Move to the view modal page for the specific record
@@ -250,6 +251,7 @@ export default function RegistryRowAction(
                       label={dict.action.complete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "complete", dict)
                         );
@@ -272,6 +274,7 @@ export default function RegistryRowAction(
                       label={dict.action.dispatch}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "dispatch", dict)
                         );
@@ -294,6 +297,7 @@ export default function RegistryRowAction(
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "cancel", dict)
                         );
@@ -316,6 +320,7 @@ export default function RegistryRowAction(
                       label={dict.action.report}
                       onClick={() => {
                         setIsActionMenuOpen(false);
+                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "report", dict)
                         );
