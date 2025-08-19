@@ -118,7 +118,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     useSensor(KeyboardSensor, {})
   );
 
-  const handleRowClick = (row: FieldValues) => {
+  const onRowClick = (row: FieldValues) => {
     const recordId: string = row.event_id
       ? row.event_id
       : row.id
@@ -131,9 +131,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
-      if (row.status === "Open") {
+      if ((row.status as string).toLowerCase() === dict.title.new) {
         props.setTask(genTaskOption(recordId, row, "dispatch", dict));
-      } else if (row.status === "Assigned") {
+      } else if ((row.status as string).toLowerCase() === dict.title.assigned) {
         props.setTask(genTaskOption(recordId, row, "complete", dict));
       } else {
         props.setTask(genTaskOption(recordId, row, "default", dict));
@@ -241,17 +241,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               key={row.id + index}
                               id={row.id}
                               isHeader={false}
-                              onClick={() =>
-                                handleRowClick(row.original as FieldValues)
-                              }
                             >
                               <TableCell
-                                className="sticky left-0 z-20 bg-background group-hover:bg-muted"
-                                // Prevent clicks on the drag handle or action buttons from triggering the row click
-                                // Stop bubbling of click events
-                                onClick={(e: React.MouseEvent) =>
-                                  e.stopPropagation()
-                                }
+                                className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default"
                               >
                                 <div className="flex gap-1  ">
                                   <DragActionHandle id={row.id} />
@@ -267,6 +259,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <TableCell
                                   key={cell.id + index}
                                   width={cell.column.getSize()}
+                                  onClick={() => onRowClick(row.original as FieldValues)}
                                 >
                                   {flexRender(
                                     cell.column.columnDef.cell,
