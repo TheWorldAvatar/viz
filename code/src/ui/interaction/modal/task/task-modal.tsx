@@ -213,7 +213,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.task?.id, props.task?.type]);
 
   return (
-    <Drawer isOpen={props.isOpen} setIsOpen={props.setIsOpen} onClose={() => props.setIsOpen(false)}>
+    <Drawer isControlledOpen={props.isOpen} setIsControlledOpen={props.setIsOpen}>
       {/* Header */}
       <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">

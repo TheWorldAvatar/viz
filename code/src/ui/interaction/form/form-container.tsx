@@ -14,19 +14,19 @@ import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
-import Drawer from "../drawer/drawer";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
+import Drawer from "../drawer/drawer";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
-import { toast } from "../action/toast/toast";
-import { getCurrentEntityType, setCurrentEntityType } from "state/registry-slice";
-import { useDispatch, useSelector } from "react-redux";
 import { Routes } from "io/config/routes";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrentEntityType, setCurrentEntityType } from "state/registry-slice";
+import { toast } from "../action/toast/toast";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -46,17 +46,14 @@ interface FormContainerComponentProps {
 export default function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
-  const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
-
   if (props.isModal) {
     const router = useRouter();
     const dispatch = useDispatch();
     const currentEntityType: string = useSelector(getCurrentEntityType);
     return (
-      <Drawer isOpen={isOpen} setIsOpen={setIsOpen}
+      <Drawer
         onClose={() => {
           if (currentEntityType != "") {
-            setIsOpen(false);
             dispatch(setCurrentEntityType(""));
             router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
           }

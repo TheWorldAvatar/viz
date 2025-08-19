@@ -10,21 +10,22 @@ import { useDialog } from "hooks/float/useDialog";
 import Button from "../button";
 
 interface DrawerProps {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onClose: React.MouseEventHandler<HTMLButtonElement>;
+  isControlledOpen?: boolean;
+  setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose?: () => void;
   children: React.ReactNode;
 }
 
 /**
  * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
  *
- * @param {boolean} isOpen Indicates if modal should be initially open.
- * @param  setIsOpen Sets the isOpen parameter.
- * @param  onClose An event handler when the drawer is closed.
+ * @param {boolean} isControlledOpen Optional controlled state for showing/hiding the drawer.
+ * @param  setIsControlledOpen Optional controlled dispatch state to show/hide drawer.
+ * @param  onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const dialog = useDialog(props.isOpen, props.setIsOpen, false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(true);
+  const dialog = useDialog(props.isControlledOpen ?? isOpen, props.setIsControlledOpen ?? setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -85,7 +86,19 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     variant="ghost"
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
-                    onClick={props.onClose}
+                    onClick={() => {
+                      // Close the drawer on click
+                      // Propagate to controlled state or default state
+                      if (props.setIsControlledOpen) {
+                        props.setIsControlledOpen(false);
+                      } else {
+                        setIsOpen(false);
+                      }
+                      // If there are additional close functions to execute
+                      if (props.onClose) {
+                        props.onClose()
+                      }
+                    }}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">
                     {props.children}
