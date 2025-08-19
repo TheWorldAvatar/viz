@@ -24,6 +24,9 @@ import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
 import { toast } from "../action/toast/toast";
+import { getCurrentEntityType, setCurrentEntityType } from "state/registry-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { Routes } from "io/config/routes";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -46,8 +49,18 @@ export default function FormContainerComponent(
   const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
 
   if (props.isModal) {
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const currentEntityType: string = useSelector(getCurrentEntityType);
     return (
-      <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Drawer isOpen={isOpen} setIsOpen={setIsOpen}
+        onClose={() => {
+          if (currentEntityType != "") {
+            setIsOpen(false);
+            dispatch(setCurrentEntityType(""));
+            router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
+          }
+        }}>
         <FormContents {...props} />
       </Drawer>
     );
@@ -220,9 +233,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   return (
     <>
       <section
-        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${
-          !props.isModal ? "mt-0" : "mt-10"
-        }  mb-0.5  shrink-0`}
+        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${!props.isModal ? "mt-0" : "mt-10"
+          }  mb-0.5  shrink-0`}
       >
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,

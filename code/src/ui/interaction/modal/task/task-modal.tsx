@@ -213,7 +213,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.task?.id, props.task?.type]);
 
   return (
-    <Drawer isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+    <Drawer isOpen={props.isOpen} setIsOpen={props.setIsOpen} onClose={() => props.setIsOpen(false)}>
       {/* Header */}
       <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
@@ -259,8 +259,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               taskType === "report"
                 ? "report"
                 : taskType === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -290,7 +290,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ==
               dict.title.assigned?.toLowerCase() ||
               props.task?.status?.toLowerCase() ==
-                dict.title.completed?.toLowerCase()) &&
+              dict.title.completed?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -305,9 +305,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.task?.status?.toLowerCase() !==
-              dict.title.issue?.toLowerCase() &&
+            dict.title.issue?.toLowerCase() &&
             props.task?.status?.toLowerCase() !==
-              dict.title.cancelled?.toLowerCase() &&
+            dict.title.cancelled?.toLowerCase() &&
             taskType === "default" && (
               <Button
                 leftIcon="assignment"
@@ -324,7 +324,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-                dict.title.assigned?.toLowerCase()) &&
+              dict.title.assigned?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 variant="secondary"
@@ -342,7 +342,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-                dict.title.assigned?.toLowerCase()) &&
+              dict.title.assigned?.toLowerCase()) &&
             taskType === "default" && (
               <Button
                 variant="secondary"

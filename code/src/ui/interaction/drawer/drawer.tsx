@@ -7,19 +7,12 @@ import {
 import React from "react";
 
 import { useDialog } from "hooks/float/useDialog";
-import { Paths, Routes } from "io/config/routes";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { usePathname, useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
-import { getCurrentEntityType, setCurrentEntityType } from "state/registry-slice";
 import Button from "../button";
 
 interface DrawerProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  returnPrevPage?: boolean;
-  className?: string;
+  onClose: React.MouseEventHandler<HTMLButtonElement>;
   children: React.ReactNode;
 }
 
@@ -28,14 +21,9 @@ interface DrawerProps {
  *
  * @param {boolean} isOpen Indicates if modal should be initially open.
  * @param  setIsOpen Sets the isOpen parameter.
- * @param {boolean} returnPrevPage Indicates if the modal should return to the previous page upon closing.
- * @param {string} className Optional styling for the modal.
+ * @param  onClose An event handler when the drawer is closed.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const url: string = usePathname();
-  const router: AppRouterInstance = useRouter();
-  const dispatch: Dispatch = useDispatch();
-  const currentEntityType: string = useSelector(getCurrentEntityType);
   const dialog = useDialog(props.isOpen, props.setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
@@ -82,15 +70,14 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className={`
+                  className="
                     relative bg-muted shadow-xl pointer-events-auto
                     w-full md:w-96 lg:w-4/9 xl:w-1/3 2xl:w-1/4
                     h-dvh md:h-full
                     rounded-t-lg md:rounded-t-none
                     md:border-l border-border
                     flex flex-col min-h-0
-                    ${props.className}
-                  `}
+                  "
                 >
                   <Button
                     leftIcon="close"
@@ -98,7 +85,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     variant="ghost"
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
-                    onClick={() => handleClose(url, currentEntityType, props.setIsOpen, router, dispatch)}
+                    onClick={props.onClose}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">
                     {props.children}
@@ -111,26 +98,5 @@ export default function Drawer(props: Readonly<DrawerProps>) {
       )}
     </>
   );
-}
-
-/**
- * Handles the events when closing the drawer.
- * 
- * @param {string} url The target url to check.
- * @param  setIsOpen Sets the open state.
- * @param  router NextJS App router object.
- * @param {Dispatch<any>} dispatch The dispatch function from Redux for dispatching actions.
- */
-function handleClose(url: string, currentEntityType: string, setIsOpen: React.Dispatch<React.SetStateAction<boolean>>, router: AppRouterInstance, dispatch: Dispatch) {
-  // Checks if the current page is a static active page where opening a modal does not redirect the user to a new path
-  if ([Paths.REGISTRY_TASK_OUTSTANDING, Paths.REGISTRY_TASK_SCHEDULED, Paths.REGISTRY_TASK_CLOSED].some(path => url.includes(path))) {
-    setIsOpen(false);
-  } else {
-    if (currentEntityType != "") {
-      setIsOpen(false);
-      dispatch(setCurrentEntityType(""));
-      router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
-    }
-  }
 }
 
