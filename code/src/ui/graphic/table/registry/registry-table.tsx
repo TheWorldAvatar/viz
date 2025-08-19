@@ -54,6 +54,8 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseDataForTable, parseRowsForFilterOptions, TableData } from "./registry-table-utils";
+import { PermissionScheme } from "types/auth";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
 interface RegistryTableProps {
   recordType: string;
@@ -78,6 +80,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const dispatch = useDispatch();
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
+  const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const tableData: TableData = useMemo(
     () => parseDataForTable(props.instances, dict.title.blank),
@@ -136,16 +140,20 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     ) {
       // Update entity type to lifecycle stage for these stages
       dispatch(setCurrentEntityType(props.lifecycleStage));
-      if ((row.status as string).toLowerCase() === dict.title.new) {
+      if ((!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation)
+        && (row.status as string).toLowerCase() === dict.title.new) {
         props.setTask(genTaskOption(recordId, row, "dispatch", dict));
-      } else if ((row.status as string).toLowerCase() === dict.title.assigned) {
+      } else if ((!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask)
+        && (row.status as string).toLowerCase() === dict.title.assigned) {
         props.setTask(genTaskOption(recordId, row, "complete", dict));
       } else {
         props.setTask(genTaskOption(recordId, row, "default", dict));
       }
     } else {
       dispatch(setCurrentEntityType(props.recordType));
-      router.push(`${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`);
+      const registryRoute: string = !keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation
+        || permissionScheme.hasPermissions.sales ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
+      router.push(`${registryRoute}/${props.recordType}/${recordId}`);
     }
   };
 
