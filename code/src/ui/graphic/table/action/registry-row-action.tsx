@@ -105,11 +105,11 @@ export default function RegistryRowAction(
       props.row?.status?.toLowerCase() === dict.title.issue?.toLowerCase() ||
       props.row?.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
     );
-  const isSubmissionPage: boolean = props.lifecycleStage == "pending";
+  const isSubmissionOrGeneralPage: boolean = props.lifecycleStage == "pending" || props.lifecycleStage == "general";
 
   return (
     <div aria-label="Actions">
-      {!isSubmissionPage && !showsExpandedTask && (
+      {!isSubmissionOrGeneralPage && !showsExpandedTask && (
         <Button
           variant="ghost"
           leftIcon="open_in_new"
@@ -120,7 +120,7 @@ export default function RegistryRowAction(
           onClick={handleClickView}
         />
       )}
-      {(isSubmissionPage || showsExpandedTask) && (
+      {(isSubmissionOrGeneralPage || showsExpandedTask) && (
         <PopoverActionButton
           placement="bottom-start"
           leftIcon="more_vert"
@@ -141,7 +141,7 @@ export default function RegistryRowAction(
               label={parseWordsForLabels(dict.action.view)}
               onClick={() => {
                 setIsActionMenuOpen(false);
-                if (isSubmissionPage) {
+                if (isSubmissionOrGeneralPage) {
                   handleClickView();
                 } else {
                   props.setTask(
@@ -151,7 +151,7 @@ export default function RegistryRowAction(
               }}
             />
 
-            {isSubmissionPage && (
+            {isSubmissionOrGeneralPage && (
               <>
                 {(!keycloakEnabled ||
                   !permissionScheme ||
@@ -191,8 +191,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.sales) &&
-                  (props.lifecycleStage === "pending" ||
-                    props.lifecycleStage === "general") && (
+                  isSubmissionOrGeneralPage && (
                     <Button
                       variant="ghost"
                       leftIcon="edit"
@@ -213,8 +212,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.sales) &&
-                  (props.lifecycleStage === "pending" ||
-                    props.lifecycleStage === "general") && (
+                  isSubmissionOrGeneralPage && (
                     <Button
                       variant="ghost"
                       leftIcon="delete"
@@ -234,7 +232,7 @@ export default function RegistryRowAction(
               </>
             )}
 
-            {!isSubmissionPage && (
+            {!isSubmissionOrGeneralPage && (
               <>
                 {(!keycloakEnabled ||
                   !permissionScheme ||
