@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
@@ -20,7 +20,6 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { getAfterDelimiter } from "utils/client-utils";
-import { Routes } from "io/config/routes";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -32,6 +31,8 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import { Routes } from "io/config/routes";
+import { getCurrentEntityType } from "state/registry-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 
 interface FormComponentProps {
@@ -63,6 +64,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
+  const currentEntityType: string = useSelector(getCurrentEntityType);
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -309,16 +311,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.data?.message || pendingResponse?.error?.message,
       pendingResponse?.error ? "error" : "success"
     );
-    // For successful responses, either close the modal or go back to previous page
     if (!pendingResponse?.error) {
       setTimeout(() => {
+        // Close search modal on success
         if (props.formType === "search") {
           props.setShowSearchModalState(false);
+          // Redirect back to base page upon deleting the entity
+        } else if (props.formType === "delete") {
+          router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
         } else {
-          // Navigate explicitly to pending registry route so it does not go back to a previous page.
-          // This prevents from going back to a page that the user has not interacted with. For Example View -> Edit -> Submit -> View.
-          // After Submiting the edit form, it should navigate to the pending registry route
-          router.push(`${Routes.REGISTRY_PENDING}/${props.entityType}`);
+          // Redirect back for other types (add and edit) as users will want to see their changes
+          router.back();
         }
       }, 2000);
     }
@@ -435,7 +438,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod

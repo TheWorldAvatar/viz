@@ -2,6 +2,23 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.37.0
+
+### Changes
+
+- Redesigned the form to show as a drawer on the right side for tablets and desktop
+- Improved design for form on mobile
+- Improved styling for various statuses, colors, modals
+- Moved the registry submission to be a nested navigation tab in registry records
+- Enable previous user sorting state to be saved temporarily
+- Enable users to click on rows and open the drawer
+
+### Bug Fixes
+
+- Table filtering is now fully functional
+- Fixed duplicate columns appearing
+- Fixed missing actions in general registry
+
 ## 5.36.0
 
 ### Changes

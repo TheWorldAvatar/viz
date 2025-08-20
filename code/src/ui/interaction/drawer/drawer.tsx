@@ -4,34 +4,28 @@ import {
   FloatingPortal,
   useTransitionStyles,
 } from "@floating-ui/react";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 import { useDialog } from "hooks/float/useDialog";
-import { usePathname } from "next/navigation";
 import Button from "../button";
-import { useRouter } from "next/navigation";
-import { Routes } from "io/config/routes";
 
 interface DrawerProps {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  returnPrevPage?: boolean;
-  className?: string;
+  isControlledOpen?: boolean;
+  setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose?: () => void;
   children: React.ReactNode;
 }
 
 /**
  * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
  *
- * @param {boolean} isOpen Indicates if modal should be initially open.
- * @param  setIsOpen Sets the isOpen parameter.
- * @param {boolean} returnPrevPage Indicates if the modal should return to the previous page upon closing.
- * @param {string} className Optional styling for the modal.
+ * @param {boolean} isControlledOpen Optional controlled state for showing/hiding the drawer.
+ * @param  setIsControlledOpen Optional controlled dispatch state to show/hide drawer.
+ * @param  onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const dialog = useDialog(props.isOpen, props.setIsOpen, false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(true);
+  const dialog = useDialog(props.isControlledOpen ?? isOpen, props.setIsControlledOpen ?? setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -57,32 +51,6 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     },
   });
 
-  // Close modal when navigating to a new page (pathname change)
-  // The ref saves the current pathname to prevent closing the modal on internal navigation
-  const prevPathRef = useRef(pathname);
-  useEffect(() => {
-    if (prevPathRef.current !== pathname) {
-      prevPathRef.current = pathname;
-      if (props.isOpen) props.setIsOpen(false);
-    }
-  }, [pathname, props.isOpen, props.setIsOpen]);
-
-  // Handle closing the side panel
-  // If its a task (outstanding/scheduled/closed) it will only close the modal
-  // If its not a task, it will navigate to the appropriate page
-  const handleCloseSidePanel = () => {
-    if (
-      !prevPathRef.current.includes("outstanding") &&
-      !prevPathRef.current.includes("scheduled") &&
-      !prevPathRef.current.includes("closed")
-    ) {
-      if (!prevPathRef.current.includes("job_client")) {
-        router.push(`${Routes.REGISTRY_PENDING}/job`);
-      } else if (prevPathRef.current.includes("job_client")) {
-        router.push(`${Routes.REGISTRY_GENERAL}/job_client`);
-      }
-    }
-  };
 
   return (
     <>
@@ -103,15 +71,14 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                   style={{
                     ...transition.styles,
                   }}
-                  className={`
+                  className="
                     relative bg-muted shadow-xl pointer-events-auto
                     w-full md:w-96 lg:w-4/9 xl:w-1/3 2xl:w-1/4
                     h-dvh md:h-full
                     rounded-t-lg md:rounded-t-none
                     md:border-l border-border
                     flex flex-col min-h-0
-                    ${props.className}
-                  `}
+                  "
                 >
                   <Button
                     leftIcon="close"
@@ -120,8 +87,17 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
                     onClick={() => {
-                      props.setIsOpen(false);
-                      handleCloseSidePanel();
+                      // Close the drawer on click
+                      // Propagate to controlled state or default state
+                      if (props.setIsControlledOpen) {
+                        props.setIsControlledOpen(false);
+                      } else {
+                        setIsOpen(false);
+                      }
+                      // If there are additional close functions to execute
+                      if (props.onClose) {
+                        props.onClose()
+                      }
                     }}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">
@@ -136,3 +112,4 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     </>
   );
 }
+

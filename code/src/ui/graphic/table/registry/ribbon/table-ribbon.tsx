@@ -4,6 +4,9 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import React from "react";
+import { DateRange } from "react-day-picker";
+import { useDispatch } from "react-redux";
+import { setCurrentEntityType } from "state/registry-slice";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
@@ -12,7 +15,6 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import DateRangeInput from "ui/interaction/input/date-range";
-import { DateRange } from "react-day-picker";
 
 interface TableRibbonProps {
   path: string;
@@ -41,6 +43,7 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
+  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -61,7 +64,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     label={dict.nav.title.pending}
                     leftIcon="free_cancellation"
                     hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_PENDING}/${props.entityType}`}
+                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
                     variant={
                       props.lifecycleStage == "pending" ? "active" : "ghost"
                     }
@@ -134,6 +137,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
+                additionalHandleClickFunction={() => { dispatch(setCurrentEntityType(props.entityType)) }}
               />
             )}
           {props.lifecycleStage == "report" && (

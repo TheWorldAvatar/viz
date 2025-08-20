@@ -246,7 +246,7 @@ function NavMenuContents(
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}
             url={!keycloakEnabled || permissionScheme?.hasPermissions.pendingRegistry ?
-              `${Routes.REGISTRY_PENDING}/${props.settings.resources?.registry?.data}` : Routes.REGISTRY_TASK_OUTSTANDING}
+              `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}` : Routes.REGISTRY_TASK_OUTSTANDING}
             isMobile={props.isMobile}
             caption={
               isMenuExpanded
