@@ -216,7 +216,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
             onClick={triggerRefresh}
           />
         </div>
-        <div className="flex items-end  gap-4">
+        <div className="flex items-end gap-2">
           {columnFilters.some(
             (filter) => (filter?.value as string[])?.length > 0
           ) && (
@@ -336,7 +336,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           <TablePagination table={table} />
         </>
       ) : (
-        <div className="text-center text-md md:text-lg py-8 text-foreground">
+        <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
           {dict.message.noVisibleColumns}
         </div>
       )}
