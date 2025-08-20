@@ -112,7 +112,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         }
       );
       const resBody: AgentResponseBody = await res.json();
-      const template: FormTemplateType = resBody?.data?.items?.[0] as FormTemplateType;
+      const template: FormTemplateType = resBody?.data
+        ?.items?.[0] as FormTemplateType;
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;
@@ -154,7 +155,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         }
       );
       const resBody: AgentResponseBody = await res.json();
-      const coordinates: number[] = (resBody.data?.items as Record<string, unknown>[])?.[0]?.coordinates as number[];
+      const coordinates: number[] = (
+        resBody.data?.items as Record<string, unknown>[]
+      )?.[0]?.coordinates as number[];
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
         setHasGeolocation(true);
@@ -200,19 +203,19 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         credentials: "same-origin",
       }
     ).then((response) => response.json());
-    if (
-      results.data?.message
-    ) {
+    if (results.data?.message) {
       setIsEmptyAddress(true);
     } else {
-      setAddresses((results.data?.items as Record<string, unknown>[]).map(address => {
-        return {
-          block: address.block as string ?? null,
-          street: address.street as string,
-          city: address.city as string,
-          country: address.country as string,
-        };
-      }));
+      setAddresses(
+        (results.data?.items as Record<string, unknown>[]).map((address) => {
+          return {
+            block: (address.block as string) ?? null,
+            street: address.street as string,
+            city: address.city as string,
+            country: address.country as string,
+          };
+        })
+      );
     }
   };
 
@@ -249,7 +252,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       });
 
       const resBody: AgentResponseBody = await res.json();
-      const coordinates: number[] = (resBody.data?.items as Record<string, unknown>[])?.[0]?.coordinates as number[];
+      const coordinates: number[] = (
+        resBody.data?.items as Record<string, unknown>[]
+      )?.[0]?.coordinates as number[];
       if (coordinates.length === 2) {
         // Geolocation is in longitude(x), latitude(y) format
         setHasGeolocation(true);
@@ -284,7 +289,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   };
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 bg-red-300">
       <h2 className="text-2xl font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
       </h2>
@@ -327,7 +332,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           {addresses.map((address, index) => (
             <button
               key={address.street + index}
-              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
               onClick={() => handleAddressClick(address)}
             >
               {String.fromCharCode(62)} {address.block}{" "}
