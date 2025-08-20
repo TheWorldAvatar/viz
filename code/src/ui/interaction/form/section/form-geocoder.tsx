@@ -97,6 +97,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const [postalCodeShape, setPostalCodeShape] = useState<PropertyShape>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>(null);
+  const [directMapSelection, setDirectMapSelection] = useState<boolean>(false);
 
   useEffect(() => {
     // Declare an async function to get all address related shapes
@@ -195,6 +196,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     setAddresses([]);
     setSelectedAddress(null);
     setIsEmptyAddress(false);
+    setDirectMapSelection(false);
+    setHasGeolocation(false);
     // Start search
     const results: AgentResponseBody = await fetch(
       makeInternalRegistryAPIwithParams("address", data[postalCode]),
@@ -225,8 +228,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
    * @param {FieldValues} data Values inputed into the form fields.
    */
   const onGeocoding: SubmitHandler<FieldValues> = async (data: FieldValues) => {
-    // Reset location
+    // Reset location and direct map selection state
     setHasGeolocation(false);
+    setDirectMapSelection(false);
     // Searches for geolocation in the following steps
     const internalApiPaths: string[] = [
       // First by postal code
@@ -278,6 +282,11 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     event.preventDefault();
     event.stopPropagation();
 
+    // Reset address-related states to allow switching modes
+    setAddresses([]);
+    setSelectedAddress(null);
+    setIsEmptyAddress(false);
+
     // Set default coordinates if none exist
     const defaultLat = props.form.getValues(FORM_STATES.LATITUDE) ?? "1.3521"; // Singapore as default
     const defaultLng =
@@ -292,12 +301,13 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     }
 
     // Set a default postal code to satisfy validation if it's empty
-    // if (postalCodeShape && !props.form.getValues(postalCode)) {
-    //   props.form.setValue(postalCode, "000000"); // Default postal code
-    // }
+    if (postalCodeShape && !props.form.getValues(postalCode)) {
+      props.form.setValue(postalCode, "000000");
+    }
 
     // Enable the map interface
     setHasGeolocation(true);
+    setDirectMapSelection(true);
   };
 
   // A click action to set the selected address
@@ -349,6 +359,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   size="sm"
                   tooltipText={dict.action.selectLocation}
                   onClick={props.form.handleSubmit(onGeocoding)}
+                  type="button"
                 />
               )}
             <Button
