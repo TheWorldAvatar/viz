@@ -215,7 +215,6 @@ export default function RegistryTableComponent(
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
-          triggerRefresh={triggerRefresh}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
@@ -229,6 +228,7 @@ export default function RegistryTableComponent(
             setTask={setTask}
             sorting={sorting}
             setSorting={setSorting}
+            triggerRefresh={triggerRefresh}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
