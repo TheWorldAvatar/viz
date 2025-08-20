@@ -56,22 +56,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
-
-  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit();
-    }
-  };
-
-  const onSave: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (formRef.current) {
-      submitLifecycleAction(formRef.current.getValues(), "saved", false);
-    }
-  };
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -95,7 +85,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
     } else if (props.task?.type === "complete") {
-      action = "complete";
+      if (isSaving) {
+        action = "saved";
+        setIsSaving(false);
+      } else {
+        action = "complete";
+      }
       formData[FORM_STATES.ORDER] = 1;
     } else if (props.task?.type === "cancel") {
       action = "cancel";
@@ -167,6 +162,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       }, 2000);
     }
   };
+
+  // A hook that submits the form when buttons are clicked
+  // This approach ensures that the isSaving state is changed before the form is submitted, so that the saved state is acknowledged
+  useEffect(() => {
+    if ((isSubmitting || isSaving) && formRef.current) {
+      formRef.current.requestSubmit();
+      setIsSubmitting(false);
+    }
+  }, [isSubmitting, isSaving]);
 
   // A hook that fetches the form template for executing an action
   useEffect(() => {
@@ -258,8 +262,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -289,7 +293,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ==
               dict.title.assigned?.toLowerCase() ||
               props.task?.status?.toLowerCase() ==
-                dict.title.completed?.toLowerCase()) &&
+              dict.title.completed?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -309,9 +313,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.task?.status?.toLowerCase() !==
-              dict.title.issue?.toLowerCase() &&
+            dict.title.issue?.toLowerCase() &&
             props.task?.status?.toLowerCase() !==
-              dict.title.cancelled?.toLowerCase() &&
+            dict.title.cancelled?.toLowerCase() &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="assignment"
@@ -333,7 +337,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-                dict.title.assigned?.toLowerCase()) &&
+              dict.title.assigned?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
@@ -356,7 +360,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-                dict.title.assigned?.toLowerCase()) &&
+              dict.title.assigned?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
@@ -382,7 +386,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 variant="secondary"
                 label={dict.action.save}
                 tooltipText={dict.action.save}
-                onClick={onSave}
+                onClick={() => setIsSaving(true)}
               />
             )}
           {(!keycloakEnabled ||
@@ -399,7 +403,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                onClick={onSubmit}
+                onClick={() => setIsSubmitting(true)}
               />
             )}
         </div>
