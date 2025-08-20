@@ -69,7 +69,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
 
   const onSave: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
-      console.log("Saving form...", formRef.current);
+      submitLifecycleAction(formRef.current.getValues(), "saved", false);
     }
   };
 
@@ -198,7 +198,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     };
 
     // Reset forms when they are changed
-    triggerRefresh()
+    triggerRefresh();
     setFormFields([]);
 
     if (props.task?.type === "dispatch") {
@@ -213,7 +213,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.task?.id, props.task?.status, props.task?.type]);
 
   return (
-    <Drawer isControlledOpen={props.isOpen} setIsControlledOpen={props.setIsOpen}>
+    <Drawer
+      isControlledOpen={props.isOpen}
+      setIsControlledOpen={props.setIsOpen}
+    >
       {/* Header */}
       <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
@@ -224,12 +227,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         </h2>
       </section>
       {/* Scrollable Content */}
-      <section
-        className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0"
-      >
+      <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {props.task?.type !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {props.task?.type === "complete" && dict.message.completeInstruction}
+            {props.task?.type === "complete" &&
+              dict.message.completeInstruction}
             {props.task?.type === "dispatch" &&
               `${dict.message.dispatchInstruction} ${props.task.date}:`}
             {props.task?.type === "cancel" &&
@@ -256,8 +258,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -287,7 +289,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ==
               dict.title.assigned?.toLowerCase() ||
               props.task?.status?.toLowerCase() ==
-              dict.title.completed?.toLowerCase()) &&
+                dict.title.completed?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -295,19 +297,21 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.complete}
-                onClick={() => props.setTask({
-                  ...props.task,
-                  type: "complete",
-                })}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "complete",
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.task?.status?.toLowerCase() !==
-            dict.title.issue?.toLowerCase() &&
+              dict.title.issue?.toLowerCase() &&
             props.task?.status?.toLowerCase() !==
-            dict.title.cancelled?.toLowerCase() &&
+              dict.title.cancelled?.toLowerCase() &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="assignment"
@@ -315,10 +319,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.dispatch}
-                onClick={() => props.setTask({
-                  ...props.task,
-                  type: "dispatch",
-                })}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "dispatch",
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
@@ -327,7 +333,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-              dict.title.assigned?.toLowerCase()) &&
+                dict.title.assigned?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
@@ -336,10 +342,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.cancel}
-                onClick={() => props.setTask({
-                  ...props.task,
-                  type: "cancel",
-                })}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "cancel",
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
@@ -348,7 +356,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-              dict.title.assigned?.toLowerCase()) &&
+                dict.title.assigned?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
@@ -361,13 +369,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                   props.setTask({
                     ...props.task,
                     type: "report",
-                  })}
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
-            taskType === "complete" && (
+            props.task?.type === "complete" && (
               <Button
                 leftIcon="save"
                 variant="secondary"
@@ -383,7 +392,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (permissionScheme.hasPermissions.reportTask &&
               props.task?.type === "report") ||
             (permissionScheme.hasPermissions.operation &&
-              (props.task?.type === "dispatch" || props.task?.type === "cancel"))) &&
+              (props.task?.type === "dispatch" ||
+                props.task?.type === "cancel"))) &&
             props.task?.type !== "default" && (
               <Button
                 leftIcon="send"

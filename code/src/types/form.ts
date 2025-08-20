@@ -149,4 +149,5 @@ export type RegistryTaskType =
   | "complete"
   | "cancel"
   | "report"
+  | "saved"
   | "default";
