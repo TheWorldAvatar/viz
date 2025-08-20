@@ -269,6 +269,37 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     }
   };
 
+  /**
+   * Enable direct map selection without requiring postal code or address data.
+   * This shows the map interface for users to click and select a location.
+   */
+  const onSelectFromMap = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevent form submission
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Set default coordinates if none exist
+    const defaultLat = props.form.getValues(FORM_STATES.LATITUDE) ?? "1.3521"; // Singapore as default
+    const defaultLng =
+      props.form.getValues(FORM_STATES.LONGITUDE) ?? "103.8198";
+
+    // Set initial values if they don't exist
+    if (!props.form.getValues(FORM_STATES.LATITUDE)) {
+      props.form.setValue(FORM_STATES.LATITUDE, defaultLat);
+    }
+    if (!props.form.getValues(FORM_STATES.LONGITUDE)) {
+      props.form.setValue(FORM_STATES.LONGITUDE, defaultLng);
+    }
+
+    // Set a default postal code to satisfy validation if it's empty
+    // if (postalCodeShape && !props.form.getValues(postalCode)) {
+    //   props.form.setValue(postalCode, "000000"); // Default postal code
+    // }
+
+    // Enable the map interface
+    setHasGeolocation(true);
+  };
+
   // A click action to set the selected address
   const handleAddressClick = (address: Address) => {
     // Set default values based on the clicked address
@@ -289,7 +320,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   };
 
   return (
-    <div className="mt-6 bg-red-300">
+    <div className="mt-6">
       <h2 className="text-2xl font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
       </h2>
@@ -320,6 +351,14 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   onClick={props.form.handleSubmit(onGeocoding)}
                 />
               )}
+            <Button
+              leftIcon="place"
+              label="Select on Map"
+              size="sm"
+              tooltipText="Select location directly on the map"
+              onClick={onSelectFromMap}
+              type="button"
+            />
           </div>
         )}
       {isEmptyAddress && (
