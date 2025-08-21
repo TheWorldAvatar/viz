@@ -378,11 +378,11 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
       {addresses.length > 0 && !selectedAddress && (
-        <div className="grid grid-col-1 lg:grid-cols-2  w-fit my-2 gap-2 ">
+        <div className="flex flex-wrap w-fit gap-2">
           {addresses.map((address, index) => (
             <button
               key={address.street + index}
-              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-sm md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
               onClick={() => handleAddressClick(address)}
             >
               {String.fromCharCode(62)} {address.block}{" "}
