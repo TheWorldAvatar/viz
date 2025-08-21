@@ -15,6 +15,9 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import DateRangeInput from "ui/interaction/input/date-range";
+import ColumnToggle from "../../action/column-toggle";
+import { ColumnFiltersState, Table } from "@tanstack/react-table";
+import { FieldValues } from "react-hook-form";
 
 interface TableRibbonProps {
   path: string;
@@ -23,10 +26,9 @@ interface TableRibbonProps {
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
-  setCurrentInstances: React.Dispatch<
-    React.SetStateAction<RegistryFieldValues[]>
-  >;
   triggerRefresh: () => void;
+  columnFilters: ColumnFiltersState;
+  table: Table<FieldValues>;
 }
 
 /**
@@ -38,8 +40,9 @@ interface TableRibbonProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate A dispatch method to update selected date range.
- * @param setCurrentInstances A dispatch method to set the current instances after parsing the initial instances.
  * @param triggerRefresh Method to trigger refresh.
+ * @param {ColumnFiltersState} columnFilters The current column filters state.
+ * @param {Table<FieldValues>} table The TanStack Table instance.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
@@ -137,6 +140,24 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
 
         <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
+          <div className="flex justify-end gap-4">
+            {props.columnFilters?.some(
+              (filter) => (filter?.value as string[])?.length > 0
+            ) && (
+              <Button
+                leftIcon="filter_list_off"
+                iconSize="medium"
+                className="mt-1"
+                size="icon"
+                onClick={() => props.table.resetColumnFilters()}
+                tooltipText={dict.action.clearAllFilters}
+                variant="destructive"
+              />
+            )}
+            {props.table.getCoreRowModel().rows.length > 0 && (
+              <ColumnToggle columns={props.table.getAllLeafColumns()} />
+            )}
+          </div>
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&

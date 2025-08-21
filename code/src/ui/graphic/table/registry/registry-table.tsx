@@ -18,23 +18,12 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  Table,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnFiltersState, flexRender, Table } from "@tanstack/react-table";
 import { useFirstActiveFilter } from "hooks/table/useFirstActiveFilter";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { FieldValues } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { setCurrentEntityType } from "state/registry-slice";
@@ -44,9 +33,7 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
-import Button from "ui/interaction/button";
 import { getId } from "utils/client-utils";
-import ColumnToggle from "../action/column-toggle";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction, {
   genTaskOption,
@@ -55,11 +42,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import {
-  parseDataForTable,
-  parseRowsForFilterOptions,
-  TableData,
-} from "./registry-table-utils";
+import { parseRowsForFilterOptions } from "./registry-table-utils";
 import { PermissionScheme } from "types/auth";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
@@ -68,8 +51,10 @@ interface RegistryTableProps {
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  sorting: SortingState;
-  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+  data: FieldValues[];
+  setData: React.Dispatch<React.SetStateAction<FieldValues[]>>;
+  columnFilters: ColumnFiltersState;
+  table: Table<FieldValues>;
 }
 
 /**
@@ -79,8 +64,10 @@ interface RegistryTableProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
- * @param {SortingState} sorting The current sorting state of the table.
- * @param setSorting A dispatch method to set the sorting state.
+ * @param {FieldValues[]} data The data to be displayed in the table.
+ * @param setData A dispatch method to set the data for the table.
+ * @param {ColumnFiltersState} columnFilters The current column filters state.
+ * @param {Table<FieldValues>} table The TanStack Table instance.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -88,41 +75,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-
-  const tableData: TableData = useMemo(
-    () => parseDataForTable(props.instances, dict.title.blank),
-    [props.instances]
-  );
-  const [data, setData] = useState<FieldValues[]>(tableData.data);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const { firstActiveFilter } = useFirstActiveFilter(columnFilters);
-  const table: Table<FieldValues> = useReactTable({
-    data,
-    columns: tableData.columns,
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 10,
-      },
-    },
-    state: {
-      columnFilters,
-      sorting: props.sorting,
-    },
-    onColumnFiltersChange: setColumnFilters,
-    onSortingChange: props.setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getRowId: (row, index) => row.id + index,
-  });
+  const { firstActiveFilter } = useFirstActiveFilter(props.columnFilters);
 
   // Data IDs to maintain the order of rows during drag and drop
   const dataIds: UniqueIdentifier[] = useMemo<UniqueIdentifier[]>(
-    () => data?.map((row, index) => row.id + index) ?? [],
-    [data]
+    () => props.data?.map((row, index) => row.id + index) ?? [],
+    [props.data]
   );
 
   const sensors = useSensors(
@@ -179,9 +137,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   // This function updates the data order (row order) based on the drag and drop interaction
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    const currentPageIndex: number = table.getState().pagination.pageIndex;
+    const currentPageIndex: number =
+      props.table.getState().pagination.pageIndex;
     if (active && over && active.id !== over.id) {
-      setData((prev) => {
+      props.setData((prev) => {
         const oldIndex: number = dataIds.findIndex(
           (record) => record == active.id
         );
@@ -192,7 +151,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         // A better solution is that pagination is stored in a state outside of this component and
         // we need to change the default pagination functionality in Tanstack as it is the source of this issue
         setTimeout(() => {
-          table.setPageIndex(currentPageIndex);
+          props.table.setPageIndex(currentPageIndex);
         }, 0);
         return arrayMove(prev, oldIndex, newIndex);
       });
@@ -201,24 +160,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <>
-      <div className="flex justify-end gap-4">
-        {columnFilters.some(
-          (filter) => (filter?.value as string[])?.length > 0
-        ) && (
-          <Button
-            leftIcon="filter_list_off"
-            iconSize="medium"
-            className="mt-1"
-            size="icon"
-            onClick={() => table.resetColumnFilters()}
-            tooltipText={dict.action.clearAllFilters}
-            variant="destructive"
-          />
-        )}
-        <ColumnToggle columns={table.getAllLeafColumns()} />
-      </div>
-
-      {table.getVisibleLeafColumns().length > 0 ? (
+      {props.table.getVisibleLeafColumns().length > 0 ? (
         <>
           <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden ">
             {/* Table container */}
@@ -235,7 +177,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     className="w-full border-separate border-spacing-0"
                   >
                     <thead className="bg-muted sticky top-0 z-10">
-                      {table.getHeaderGroups().map((headerGroup) => (
+                      {props.table.getHeaderGroups().map((headerGroup) => (
                         <TableRow
                           key={headerGroup.id}
                           id={headerGroup.id}
@@ -252,12 +194,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     !firstActiveFilter ||
                                     firstActiveFilter === header.id
                                       ? parseRowsForFilterOptions(
-                                          table.getCoreRowModel().flatRows,
+                                          props.table.getCoreRowModel()
+                                            .flatRows,
                                           header.id,
                                           dict.title.blank
                                         )
                                       : parseRowsForFilterOptions(
-                                          table.getFilteredRowModel().flatRows,
+                                          props.table.getFilteredRowModel()
+                                            .flatRows,
                                           header.id,
                                           dict.title.blank
                                         )
@@ -271,12 +215,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     </thead>
 
                     <tbody>
-                      {table.getRowModel().rows?.length && (
+                      {props.table.getRowModel().rows?.length > 0 && (
                         <SortableContext
                           items={dataIds}
                           strategy={verticalListSortingStrategy}
                         >
-                          {table.getRowModel().rows.map((row, index) => (
+                          {props.table.getRowModel().rows.map((row, index) => (
                             <TableRow
                               key={row.id + index}
                               id={row.id}
@@ -317,7 +261,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination table={table} />
+          <TablePagination table={props.table} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
