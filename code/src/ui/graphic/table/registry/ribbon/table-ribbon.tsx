@@ -58,7 +58,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           permissionScheme.hasPermissions.registry) && (
           <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 ">
             <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
-              {(!keycloakEnabled || permissionScheme?.hasPermissions.pendingRegistry) && (
+              {(!keycloakEnabled ||
+                permissionScheme?.hasPermissions.pendingRegistry) && (
                 <div className="sm:w-auto">
                   <RedirectButton
                     label={dict.nav.title.pending}
@@ -70,7 +71,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     }
                     className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                   />
-                </div>)}
+                </div>
+              )}
 
               <div className="sm:w-auto">
                 <RedirectButton
@@ -115,7 +117,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         )}
       <div className="w-full border-[0.5px] border-border" />
       <div className="flex justify-between items-end    md:gap-2 lg:gap-0 flex-wrap ">
-        <div className="flex items-center  !-ml-2 ">
+        <div className="flex items-end   !-ml-2 gap-3 md:gap-4">
           <Button
             className="ml-2"
             size="icon"
@@ -123,7 +125,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
+
+          {(props.lifecycleStage == "scheduled" ||
+            props.lifecycleStage == "closed") && (
+            <DateRangeInput
+              selectedDate={props.selectedDate}
+              setSelectedDate={props.setSelectedDate}
+              lifecycleStage={props.lifecycleStage}
+            />
+          )}
         </div>
+
         <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
           {(!keycloakEnabled ||
             !permissionScheme ||
@@ -132,12 +144,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               props.lifecycleStage == "general") && (
               <RedirectButton
                 leftIcon="add"
-                label={dict.action.addItem.replace(
-                  "{replace}",
-                  props.entityType.replace("_", " ")
-                )}
+                size="icon"
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
-                additionalHandleClickFunction={() => { dispatch(setCurrentEntityType(props.entityType)) }}
+                additionalHandleClickFunction={() => {
+                  dispatch(setCurrentEntityType(props.entityType));
+                }}
               />
             )}
           {props.lifecycleStage == "report" && (
@@ -162,19 +173,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-              <DownloadButton instances={props.instances} />
-            )}
-        </div>
-      </div>
-      <div className="flex ml-2 mt-4 sm:mt-0">
-        {(props.lifecycleStage == "scheduled" ||
-          props.lifecycleStage == "closed") && (
-            <DateRangeInput
-              selectedDate={props.selectedDate}
-              setSelectedDate={props.setSelectedDate}
-              lifecycleStage={props.lifecycleStage}
-            />
+            <DownloadButton instances={props.instances} />
           )}
+        </div>
       </div>
     </div>
   );
