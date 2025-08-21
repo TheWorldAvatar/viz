@@ -139,8 +139,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         </div>
 
-        <div className="flex  flex-wrap gap-2 mt-2 md:mt-0  ">
-          <div className="flex justify-end gap-4">
+        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
+          <div className="flex items-end gap-4">
             {props.columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
             ) && (
