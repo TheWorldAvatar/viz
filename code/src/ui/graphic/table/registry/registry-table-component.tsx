@@ -210,13 +210,12 @@ export default function RegistryTableComponent(
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           setCurrentInstances={setCurrentInstances}
         />
       </div>
+
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {refreshFlag || isLoading ? (
           <LoadingSpinner isSmall={false} />
@@ -229,6 +228,8 @@ export default function RegistryTableComponent(
             sorting={sorting}
             setSorting={setSorting}
             triggerRefresh={triggerRefresh}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>

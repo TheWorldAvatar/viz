@@ -60,7 +60,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   return (
     <div className="flex items-center gap-4 relative">
       <label
-        className="my-1 text-sm md:text-lg text-left whitespace-nowrap"
+        className="my-1 text-base md:text-lg text-left whitespace-nowrap"
         htmlFor={id}
       >
         {dict.action.date}:

@@ -62,6 +62,8 @@ import {
 } from "./registry-table-utils";
 import { PermissionScheme } from "types/auth";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import DateRangeInput from "ui/interaction/input/date-range";
+import { DateRange } from "react-day-picker";
 
 interface RegistryTableProps {
   recordType: string;
@@ -71,6 +73,8 @@ interface RegistryTableProps {
   sorting: SortingState;
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   triggerRefresh: () => void;
+  selectedDate: DateRange;
+  setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
 }
 
 /**
@@ -83,6 +87,8 @@ interface RegistryTableProps {
  * @param {SortingState} sorting The current sorting state of the table.
  * @param setSorting A dispatch method to set the sorting state.
  * @param triggerRefresh Method to trigger refresh.
+ * @param {DateRange} selectedDate The selected date range object with 'from' and 'to' date strings.
+ * @param setSelectedDate A dispatch method to update selected date range.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -207,14 +213,23 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <>
-      <div className="flex justify-between items-end">
-        <div>
+      <div className="flex justify-between items-end flex-wrap gap-4">
+        <div className="flex  items-center gap-3 md:gap-6">
           <Button
             size="icon"
             leftIcon="cached"
             variant="outline"
             onClick={triggerRefresh}
           />
+
+          {(props.lifecycleStage == "scheduled" ||
+            props.lifecycleStage == "closed") && (
+            <DateRangeInput
+              selectedDate={props.selectedDate}
+              setSelectedDate={props.setSelectedDate}
+              lifecycleStage={props.lifecycleStage}
+            />
+          )}
         </div>
         <div className="flex items-end gap-2">
           {columnFilters.some(
