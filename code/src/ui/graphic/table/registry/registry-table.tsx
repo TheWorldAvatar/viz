@@ -28,7 +28,7 @@ import {
   getSortedRowModel,
   SortingState,
   Table,
-  useReactTable
+  useReactTable,
 } from "@tanstack/react-table";
 import { useFirstActiveFilter } from "hooks/table/useFirstActiveFilter";
 import { useDictionary } from "hooks/useDictionary";
@@ -48,12 +48,18 @@ import Button from "ui/interaction/button";
 import { getId } from "utils/client-utils";
 import ColumnToggle from "../action/column-toggle";
 import DragActionHandle from "../action/drag-action-handle";
-import RegistryRowAction, { genTaskOption } from "../action/registry-row-action";
+import RegistryRowAction, {
+  genTaskOption,
+} from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { parseDataForTable, parseRowsForFilterOptions, TableData } from "./registry-table-utils";
+import {
+  parseDataForTable,
+  parseRowsForFilterOptions,
+  TableData,
+} from "./registry-table-utils";
 import { PermissionScheme } from "types/auth";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
@@ -129,8 +135,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     const recordId: string = row.event_id
       ? row.event_id
       : row.id
-        ? getId(row.id)
-        : row.iri;
+      ? getId(row.id)
+      : row.iri;
     if (
       props.lifecycleStage === "tasks" ||
       props.lifecycleStage === "report" ||
@@ -140,19 +146,32 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     ) {
       // Update entity type to lifecycle stage for these stages
       dispatch(setCurrentEntityType(props.lifecycleStage));
-      if ((!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation)
-        && (row.status as string).toLowerCase() === dict.title.new) {
+      if (
+        (!keycloakEnabled ||
+          !permissionScheme ||
+          permissionScheme.hasPermissions.operation) &&
+        (row.status as string).toLowerCase() === dict.title.new
+      ) {
         props.setTask(genTaskOption(recordId, row, "dispatch", dict));
-      } else if ((!keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.completeTask)
-        && (row.status as string).toLowerCase() === dict.title.assigned) {
+      } else if (
+        (!keycloakEnabled ||
+          !permissionScheme ||
+          permissionScheme.hasPermissions.completeTask) &&
+        (row.status as string).toLowerCase() === dict.title.assigned
+      ) {
         props.setTask(genTaskOption(recordId, row, "complete", dict));
       } else {
         props.setTask(genTaskOption(recordId, row, "default", dict));
       }
     } else {
       dispatch(setCurrentEntityType(props.recordType));
-      const registryRoute: string = !keycloakEnabled || !permissionScheme || permissionScheme.hasPermissions.operation
-        || permissionScheme.hasPermissions.sales ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
+      const registryRoute: string =
+        !keycloakEnabled ||
+        !permissionScheme ||
+        permissionScheme.hasPermissions.operation ||
+        permissionScheme.hasPermissions.sales
+          ? Routes.REGISTRY_EDIT
+          : Routes.REGISTRY;
       router.push(`${registryRoute}/${props.recordType}/${recordId}`);
     }
   };
@@ -182,23 +201,20 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   return (
     <>
-      <div
-        className={`${table.getVisibleLeafColumns().length > 0 ? "" : "h-60"
-          } flex justify-end gap-4`}
-      >
+      <div className="flex justify-end gap-4">
         {columnFilters.some(
           (filter) => (filter?.value as string[])?.length > 0
         ) && (
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="medium"
-              className="mt-1"
-              size="icon"
-              onClick={() => table.resetColumnFilters()}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          )}
+          <Button
+            leftIcon="filter_list_off"
+            iconSize="medium"
+            className="mt-1"
+            size="icon"
+            onClick={() => table.resetColumnFilters()}
+            tooltipText={dict.action.clearAllFilters}
+            variant="destructive"
+          />
+        )}
         <ColumnToggle columns={table.getAllLeafColumns()} />
       </div>
 
@@ -232,9 +248,19 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 key={header.id + index}
                                 header={header}
                                 options={Array.from(
-                                  new Set(!firstActiveFilter || firstActiveFilter === header.id ?
-                                    parseRowsForFilterOptions(table.getCoreRowModel().flatRows, header.id, dict.title.blank) :
-                                    parseRowsForFilterOptions(table.getFilteredRowModel().flatRows, header.id, dict.title.blank)
+                                  new Set(
+                                    !firstActiveFilter ||
+                                    firstActiveFilter === header.id
+                                      ? parseRowsForFilterOptions(
+                                          table.getCoreRowModel().flatRows,
+                                          header.id,
+                                          dict.title.blank
+                                        )
+                                      : parseRowsForFilterOptions(
+                                          table.getFilteredRowModel().flatRows,
+                                          header.id,
+                                          dict.title.blank
+                                        )
                                   )
                                 )}
                               />
@@ -256,9 +282,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               id={row.id}
                               isHeader={false}
                             >
-                              <TableCell
-                                className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default"
-                              >
+                              <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
                                 <div className="flex gap-1  ">
                                   <DragActionHandle id={row.id} />
                                   <RegistryRowAction
@@ -273,7 +297,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <TableCell
                                   key={cell.id + index}
                                   width={cell.column.getSize()}
-                                  onClick={() => onRowClick(row.original as FieldValues)}
+                                  onClick={() =>
+                                    onRowClick(row.original as FieldValues)
+                                  }
                                 >
                                   {flexRender(
                                     cell.column.columnDef.cell,
@@ -294,7 +320,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           <TablePagination table={table} />
         </>
       ) : (
-        <div className="text-center text-md md:text-lg py-8 text-foreground">
+        <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
           {dict.message.noVisibleColumns}
         </div>
       )}
