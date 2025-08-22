@@ -141,21 +141,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 key={header.id + index}
                                 header={header}
                                 options={Array.from(
-                                  new Set(
-                                    !props.tableDescriptor.firstActiveFilter ||
-                                      props.tableDescriptor.firstActiveFilter === header.id
-                                      ? parseRowsForFilterOptions(
-                                        props.tableDescriptor.table.getCoreRowModel()
-                                          .flatRows,
-                                        header.id,
-                                        dict.title.blank
-                                      )
-                                      : parseRowsForFilterOptions(
-                                        props.tableDescriptor.table.getFilteredRowModel()
-                                          .flatRows,
-                                        header.id,
-                                        dict.title.blank
-                                      )
+                                  new Set(parseRowsForFilterOptions(
+                                    (!props.tableDescriptor.firstActiveFilter ||
+                                      props.tableDescriptor.firstActiveFilter === header.id) ?
+                                      props.tableDescriptor.table.getCoreRowModel().flatRows :
+                                      props.tableDescriptor.table.getFilteredRowModel().flatRows,
+                                    header.id,
+                                    dict.title.blank
+                                  )
                                   )
                                 )}
                               />
