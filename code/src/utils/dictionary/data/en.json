@@ -36,6 +36,7 @@
     "terminate": "Terminate",
     "findAddress": "Find address",
     "selectLocation": "Select location",
+    "searchByPostCode": "Search by postal code",
     "clickIncrease": "Click to increase",
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters"
@@ -115,7 +116,7 @@
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
     "loading": "Loading, please wait...",
-    "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually.",
+    "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually or select a location from the map.",
     "noData": "No data available",
     "noInstances": "No instances available. Please create a new instance.",
     "noResultFound": "No results found",
