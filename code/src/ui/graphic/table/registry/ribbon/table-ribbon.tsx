@@ -140,24 +140,23 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
 
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-          <div className="flex items-end gap-4">
-            {props.columnFilters?.some(
-              (filter) => (filter?.value as string[])?.length > 0
-            ) && (
-              <Button
-                leftIcon="filter_list_off"
-                iconSize="medium"
-                className="mt-1"
-                size="icon"
-                onClick={() => props.table.resetColumnFilters()}
-                tooltipText={dict.action.clearAllFilters}
-                variant="destructive"
-              />
-            )}
-            {props.table.getCoreRowModel().rows.length > 0 && (
-              <ColumnToggle columns={props.table.getAllLeafColumns()} />
-            )}
-          </div>
+          {props.columnFilters?.some(
+            (filter) => (filter?.value as string[])?.length > 0
+          ) && (
+            <Button
+              leftIcon="filter_list_off"
+              iconSize="medium"
+              className="mt-1"
+              size="icon"
+              onClick={() => props.table.resetColumnFilters()}
+              tooltipText={dict.action.clearAllFilters}
+              variant="destructive"
+            />
+          )}
+          {props.table.getCoreRowModel().rows.length > 0 && (
+            <ColumnToggle columns={props.table.getAllLeafColumns()} />
+          )}
+
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
@@ -166,6 +165,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               <RedirectButton
                 leftIcon="add"
                 size="icon"
+                tooltipText={dict.action.addItem.replace(
+                  "{replace}",
+                  props.entityType.replace("_", " ")
+                )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
                 additionalHandleClickFunction={() => {
                   dispatch(setCurrentEntityType(props.entityType));
