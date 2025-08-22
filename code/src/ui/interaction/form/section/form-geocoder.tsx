@@ -253,18 +253,24 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       props.form.setValue(postalCode, "");
     }
 
-    // Set default values for latitude and longitude
-    // TODO: Update SHACL config so that there is always a default location
-    const defaultLat = props.form.getValues(FORM_STATES.LATITUDE) ?? "1.3521";
-    const defaultLng =
-      props.form.getValues(FORM_STATES.LONGITUDE) ?? "103.8198";
+    // Check if we already have coordinates from postal code selection
+    const existingLat = props.form.getValues(FORM_STATES.LATITUDE);
+    const existingLng = props.form.getValues(FORM_STATES.LONGITUDE);
 
-    // Set initial values if they don't exist
-    if (!props.form.getValues(FORM_STATES.LATITUDE)) {
+    // Only set default values if no coordinates exist or they are empty
+    if (
+      !existingLat ||
+      !existingLng ||
+      existingLat === "" ||
+      existingLng === ""
+    ) {
+      const defaultLat = "1.3521";
+      const defaultLng = "103.8198";
       props.form.setValue(FORM_STATES.LATITUDE, defaultLat);
-    }
-    if (!props.form.getValues(FORM_STATES.LONGITUDE)) {
       props.form.setValue(FORM_STATES.LONGITUDE, defaultLng);
+    } else {
+      props.form.setValue(FORM_STATES.LATITUDE, existingLat);
+      props.form.setValue(FORM_STATES.LONGITUDE, existingLng);
     }
 
     // Enable the map interface
@@ -392,7 +398,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
         )}
 
-      {/* Address Search Results - Only in Postal Code Mode */}
       {selectionMode === "postcode" && isEmptyAddress && (
         <div className="m-2">
           <ErrorComponent message={dict.message.noAddressFound} />
