@@ -358,11 +358,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       )}
       {!isInitialFetching.current &&
         (formType == "add" || formType == "edit") && (
-          <div className="flex my-4 gap-2 flex-wrap">
+          <div className="flex my-4 gap-1.5 flex-wrap">
             <Button
               leftIcon="search"
               label={dict.action.searchByPostCode}
-              size="sm"
               variant={selectionMode === "postcode" ? "primary" : "secondary"}
               tooltipText={dict.action.searchByPostCode}
               onClick={onSelectPostCode}
@@ -371,7 +370,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             <Button
               leftIcon="place"
               label={dict.action.selectLocation}
-              size="sm"
               variant={selectionMode === "map" ? "primary" : "secondary"}
               tooltipText={dict.action.selectLocation}
               onClick={onSelectFromMap}
