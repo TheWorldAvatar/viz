@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.37.1
+
+### Changes
+
+- Changed the location of the column drop-down menu and Clean filters button to the table ribbon
+- Fixed layout issues in the table ribbon
+- Made the date-range input icon only on mobile
+- Moved all the table logic into custom hooks: useTable, useTableDnd, useFirstActiveFilter
+
 ## 5.37.0
 
 ### Changes
