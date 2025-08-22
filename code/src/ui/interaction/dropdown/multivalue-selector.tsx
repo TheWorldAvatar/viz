@@ -66,8 +66,14 @@ export default function MultivalueSelector(
       setSelectedOptions([]);
       props.setControlledSelectedOptions([]);
     } else {
-      setSelectedOptions(newValue as SelectOption[]);
-      props.setControlledSelectedOptions(newValue as SelectOption[]);
+      const newSelectedOptions: SelectOption[] = newValue as SelectOption[];
+      if (props.toggleAll && action === "select-option" && newSelectedOptions.length == defaultOptions.length - 1) {
+        newSelectedOptions.unshift(selectAllOption);
+      } else if (action === "deselect-option" && newSelectedOptions[0].value == selectAllOption.value) {
+        newSelectedOptions.shift();
+      }
+      setSelectedOptions(newSelectedOptions);
+      props.setControlledSelectedOptions(newSelectedOptions);
     }
   };
 
