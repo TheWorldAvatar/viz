@@ -59,7 +59,11 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   }`;
 
   return (
-    <div className="flex items-center gap-2 relative">
+    <div
+      className="flex items-center gap-2 relative"
+      ref={popover.refs.setReference}
+      {...popover.getReferenceProps()}
+    >
       {/* Desktop: Show label and full input, Hidden on mobile/tablet */}
       <div className="hidden lg:flex items-center gap-2">
         <label
@@ -69,8 +73,6 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
           {dict.action.date}:
         </label>
         <input
-          ref={popover.refs.setReference}
-          {...popover.getReferenceProps()}
           id={id}
           type="button"
           value={displayedDateRange}
@@ -82,11 +84,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
       </div>
 
       {/* Mobile/Tablet: Show only icon button */}
-      <div
-        className="lg:hidden"
-        ref={popover.refs.setReference}
-        {...popover.getReferenceProps()}
-      >
+      <div className="lg:hidden">
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -110,7 +108,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               style={{
                 ...transition.styles,
               }}
-              className="z-10 bg-muted p-5 sm:p-2 rounded-lg shadow-lg mt-2  border border-border"
+              className="z-10 bg-muted p-5 sm:p-2 md:ml-4 lg:ml-12 rounded-lg shadow-lg mt-2  border border-border"
             >
               <DayPicker
                 locale={dict.lang === "de" ? de : enGB}
