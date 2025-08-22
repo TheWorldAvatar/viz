@@ -60,6 +60,7 @@ export function DownloadButton({
     <Button
       leftIcon="download"
       size="icon"
+      tooltipText={dict.action.export}
       className={`${rest.className}`}
       onClick={exportToCSV}
     />
