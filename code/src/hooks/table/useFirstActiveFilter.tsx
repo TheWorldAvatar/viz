@@ -1,9 +1,14 @@
 import { ColumnFilter, ColumnFiltersState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
+/**
+* A custom hook to track the first active filter of the columns.
+*
+* @param {ColumnFiltersState} columnFilters - The column filter state of the table.
+*/
 export function useFirstActiveFilter(
   columnFilters: ColumnFiltersState,
-) {
+): string {
   const [firstActiveFilter, setFirstActiveFilter] = useState<string>(null);
 
   useEffect(() => {
@@ -18,7 +23,5 @@ export function useFirstActiveFilter(
     }
   }, [columnFilters]);
 
-  return {
-    firstActiveFilter,
-  };
+  return firstActiveFilter
 }

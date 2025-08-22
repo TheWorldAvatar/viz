@@ -1,32 +1,27 @@
 import {
   closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type UniqueIdentifier,
+  DndContext
 } from "@dnd-kit/core";
 import {
   restrictToParentElement,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 import {
-  arrayMove,
   SortableContext,
-  verticalListSortingStrategy,
+  verticalListSortingStrategy
 } from "@dnd-kit/sortable";
-import { ColumnFiltersState, flexRender, Table } from "@tanstack/react-table";
-import { useFirstActiveFilter } from "hooks/table/useFirstActiveFilter";
+import { flexRender } from "@tanstack/react-table";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { TableDescriptor } from "hooks/table/useTable";
+import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import React, { useMemo } from "react";
+import React from "react";
 import { FieldValues } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { setCurrentEntityType } from "state/registry-slice";
+import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
@@ -43,18 +38,13 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
-import { PermissionScheme } from "types/auth";
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  data: FieldValues[];
-  setData: React.Dispatch<React.SetStateAction<FieldValues[]>>;
-  columnFilters: ColumnFiltersState;
-  table: Table<FieldValues>;
+  tableDescriptor: TableDescriptor;
 }
 
 /**
@@ -64,10 +54,7 @@ interface RegistryTableProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
- * @param {FieldValues[]} data The data to be displayed in the table.
- * @param setData A dispatch method to set the data for the table.
- * @param {ColumnFiltersState} columnFilters The current column filters state.
- * @param {Table<FieldValues>} table The TanStack Table instance.
+ * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -75,26 +62,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { firstActiveFilter } = useFirstActiveFilter(props.columnFilters);
-
-  // Data IDs to maintain the order of rows during drag and drop
-  const dataIds: UniqueIdentifier[] = useMemo<UniqueIdentifier[]>(
-    () => props.data?.map((row, index) => row.id + index) ?? [],
-    [props.data]
-  );
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
+  const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(props.tableDescriptor.table, props.tableDescriptor.data, props.tableDescriptor.setData);
 
   const onRowClick = (row: FieldValues) => {
     const recordId: string = row.event_id
       ? row.event_id
       : row.id
-      ? getId(row.id)
-      : row.iri;
+        ? getId(row.id)
+        : row.iri;
     if (
       props.lifecycleStage === "tasks" ||
       props.lifecycleStage === "report" ||
@@ -125,42 +100,18 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       dispatch(setCurrentEntityType(props.recordType));
       const registryRoute: string =
         !keycloakEnabled ||
-        !permissionScheme ||
-        permissionScheme.hasPermissions.operation ||
-        permissionScheme.hasPermissions.sales
+          !permissionScheme ||
+          permissionScheme.hasPermissions.operation ||
+          permissionScheme.hasPermissions.sales
           ? Routes.REGISTRY_EDIT
           : Routes.REGISTRY;
       router.push(`${registryRoute}/${props.recordType}/${recordId}`);
     }
   };
 
-  // This function updates the data order (row order) based on the drag and drop interaction
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    const currentPageIndex: number =
-      props.table.getState().pagination.pageIndex;
-    if (active && over && active.id !== over.id) {
-      props.setData((prev) => {
-        const oldIndex: number = dataIds.findIndex(
-          (record) => record == active.id
-        );
-        const newIndex: number = dataIds.findIndex(
-          (record) => record == over.id
-        );
-        // Hacky solution to reset pagination after reordering
-        // A better solution is that pagination is stored in a state outside of this component and
-        // we need to change the default pagination functionality in Tanstack as it is the source of this issue
-        setTimeout(() => {
-          props.table.setPageIndex(currentPageIndex);
-        }, 0);
-        return arrayMove(prev, oldIndex, newIndex);
-      });
-    }
-  }
-
   return (
     <>
-      {props.table.getVisibleLeafColumns().length > 0 ? (
+      {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
         <>
           <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden ">
             {/* Table container */}
@@ -169,15 +120,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 <DndContext
                   collisionDetection={closestCenter}
                   modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-                  onDragEnd={handleDragEnd}
-                  sensors={sensors}
+                  onDragEnd={dragAndDropDescriptor.handleDragEnd}
+                  sensors={dragAndDropDescriptor.sensors}
                 >
                   <table
                     aria-label={`${props.recordType} registry table`}
                     className="w-full border-separate border-spacing-0"
                   >
                     <thead className="bg-muted sticky top-0 z-10">
-                      {props.table.getHeaderGroups().map((headerGroup) => (
+                      {props.tableDescriptor.table.getHeaderGroups().map((headerGroup) => (
                         <TableRow
                           key={headerGroup.id}
                           id={headerGroup.id}
@@ -191,20 +142,20 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 header={header}
                                 options={Array.from(
                                   new Set(
-                                    !firstActiveFilter ||
-                                    firstActiveFilter === header.id
+                                    !props.tableDescriptor.firstActiveFilter ||
+                                      props.tableDescriptor.firstActiveFilter === header.id
                                       ? parseRowsForFilterOptions(
-                                          props.table.getCoreRowModel()
-                                            .flatRows,
-                                          header.id,
-                                          dict.title.blank
-                                        )
+                                        props.tableDescriptor.table.getCoreRowModel()
+                                          .flatRows,
+                                        header.id,
+                                        dict.title.blank
+                                      )
                                       : parseRowsForFilterOptions(
-                                          props.table.getFilteredRowModel()
-                                            .flatRows,
-                                          header.id,
-                                          dict.title.blank
-                                        )
+                                        props.tableDescriptor.table.getFilteredRowModel()
+                                          .flatRows,
+                                        header.id,
+                                        dict.title.blank
+                                      )
                                   )
                                 )}
                               />
@@ -215,12 +166,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     </thead>
 
                     <tbody>
-                      {props.table.getRowModel().rows?.length > 0 && (
+                      {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
                         <SortableContext
-                          items={dataIds}
+                          items={dragAndDropDescriptor.dataIds}
                           strategy={verticalListSortingStrategy}
                         >
-                          {props.table.getRowModel().rows.map((row, index) => (
+                          {props.tableDescriptor.table.getRowModel().rows.map((row, index) => (
                             <TableRow
                               key={row.id + index}
                               id={row.id}
@@ -261,7 +212,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination table={props.table} />
+          <TablePagination table={props.tableDescriptor.table} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
