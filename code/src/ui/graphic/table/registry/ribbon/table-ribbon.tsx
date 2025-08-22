@@ -128,7 +128,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
-
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
             <DateRangeInput
