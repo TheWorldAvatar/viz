@@ -25,7 +25,6 @@ export interface TableDescriptor {
   data: FieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   firstActiveFilter: string;
-  hasActiveFilter: boolean;
 }
 
 /**
@@ -77,8 +76,5 @@ export function useTable(instances: RegistryFieldValues[]): TableDescriptor {
     data,
     setData,
     firstActiveFilter,
-    hasActiveFilter: columnFilters?.some(
-      (filter) => (filter?.value as string[])?.length > 0
-    ),
   };
 }

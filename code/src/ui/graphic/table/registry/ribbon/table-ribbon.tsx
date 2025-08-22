@@ -136,7 +136,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
 
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-          {props.tableDescriptor.hasActiveFilter && (
+          {props.tableDescriptor.table.getState().columnFilters?.some(filter => (filter?.value as string[])?.length > 0) && (
             <Button
               leftIcon="filter_list_off"
               iconSize="medium"
@@ -147,7 +147,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant="destructive"
             />
           )}
-          {props.tableDescriptor.table.getCoreRowModel().rows.length > 0 && (
+          {props.instances.length > 0 && (
             <ColumnToggle columns={props.tableDescriptor.table.getAllLeafColumns()} />
           )}
 
