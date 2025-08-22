@@ -27,6 +27,8 @@ interface FormGeocoderProps {
   form: UseFormReturn;
 }
 
+type SelectionMode = "postcode" | "map";
+
 /**
  * This component renders a geocoding section for the form.
  *
@@ -97,7 +99,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const [postalCodeShape, setPostalCodeShape] = useState<PropertyShape>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>(null);
-  const [directMapSelection, setDirectMapSelection] = useState<boolean>(false);
+  const [selectionMode, setSelectionMode] = useState<SelectionMode>("postcode");
 
   useEffect(() => {
     // Declare an async function to get all address related shapes
@@ -192,11 +194,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const onSearchForAddress: SubmitHandler<FieldValues> = async (
     data: FieldValues
   ) => {
+    // Switch to postal code mode
+    setSelectionMode("postcode");
     // Reset states
     setAddresses([]);
     setSelectedAddress(null);
     setIsEmptyAddress(false);
-    setDirectMapSelection(false);
     setHasGeolocation(false);
     // Start search
     const results: AgentResponseBody = await fetch(
@@ -228,9 +231,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
    * @param {FieldValues} data Values inputed into the form fields.
    */
   const onGeocoding: SubmitHandler<FieldValues> = async (data: FieldValues) => {
-    // Reset location and direct map selection state
+    // Reset location state
     setHasGeolocation(false);
-    setDirectMapSelection(false);
     // Searches for geolocation in the following steps
     const internalApiPaths: string[] = [
       // First by postal code
@@ -282,13 +284,21 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     event.preventDefault();
     event.stopPropagation();
 
+    // Switch to map selection mode
+    setSelectionMode("map");
     // Reset address-related states to allow switching modes
     setAddresses([]);
     setSelectedAddress(null);
     setIsEmptyAddress(false);
 
-    // Set default coordinates if none exist
-    const defaultLat = props.form.getValues(FORM_STATES.LATITUDE) ?? "1.3521"; // Singapore as default
+    // Clear postal code if switching from postal code mode
+    if (postalCodeShape) {
+      props.form.setValue(postalCode, "");
+    }
+
+    // Set default values for latitude and longitude
+    // TODO: Update SHACL config so that there is always a default location
+    const defaultLat = props.form.getValues(FORM_STATES.LATITUDE) ?? "1.3521";
     const defaultLng =
       props.form.getValues(FORM_STATES.LONGITUDE) ?? "103.8198";
 
@@ -299,15 +309,17 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     if (!props.form.getValues(FORM_STATES.LONGITUDE)) {
       props.form.setValue(FORM_STATES.LONGITUDE, defaultLng);
     }
-
-    // Set a default postal code to satisfy validation if it's empty
-    if (postalCodeShape && !props.form.getValues(postalCode)) {
-      props.form.setValue(postalCode, "000000");
-    }
-
     // Enable the map interface
     setHasGeolocation(true);
-    setDirectMapSelection(true);
+  };
+
+  /**
+   * Switch back to postal code selection mode
+   */
+  const onSelectPostCode = () => {
+    setSelectionMode("postcode");
+    // Just hide the map interface, don't clear coordinates
+    setHasGeolocation(false);
   };
 
   // A click action to set the selected address
@@ -339,17 +351,44 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           <LoadingSpinner isSmall={true} />
         </div>
       )}
-      {postalCodeShape && (
-        <FormFieldComponent field={postalCodeShape} form={props.form} />
-      )}
       {!isInitialFetching.current &&
         (formType == "add" || formType == "edit") && (
-          <div className="flex my-4 gap-1 ">
+          <div className="flex my-4 gap-2 flex-wrap">
+            <Button
+              leftIcon="search"
+              label="Search by Postal Code"
+              size="sm"
+              variant={selectionMode === "postcode" ? "primary" : "secondary"}
+              tooltipText="Search for address using postal code"
+              onClick={onSelectPostCode}
+              type="button"
+            />
+            <Button
+              leftIcon="place"
+              label="Select on Map"
+              size="sm"
+              variant={selectionMode === "map" ? "primary" : "secondary"}
+              tooltipText="Select location directly on the map"
+              onClick={onSelectFromMap}
+              type="button"
+            />
+          </div>
+        )}
+
+      {selectionMode === "postcode" && postalCodeShape && (
+        <FormFieldComponent field={postalCodeShape} form={props.form} />
+      )}
+
+      {selectionMode === "postcode" &&
+        !isInitialFetching.current &&
+        (formType == "add" || formType == "edit") && (
+          <div className="flex my-4 gap-2">
             <Button
               leftIcon="search"
               size="icon"
               tooltipText={dict.action.findAddress}
               onClick={props.form.handleSubmit(onSearchForAddress)}
+              type="button"
             />
             {addressShapes.length > 0 &&
               (selectedAddress || isEmptyAddress) && (
@@ -362,46 +401,44 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   type="button"
                 />
               )}
-            <Button
-              leftIcon="place"
-              label="Select on Map"
-              size="sm"
-              tooltipText="Select location directly on the map"
-              onClick={onSelectFromMap}
-              type="button"
-            />
           </div>
         )}
-      {isEmptyAddress && (
+
+      {/* Address Search Results - Only in Postal Code Mode */}
+      {selectionMode === "postcode" && isEmptyAddress && (
         <div className="m-2">
           <ErrorComponent message={dict.message.noAddressFound} />
         </div>
       )}
-      {addresses.length > 0 && !selectedAddress && (
-        <div className="flex flex-wrap w-fit gap-2">
-          {addresses.map((address, index) => (
-            <button
-              key={address.street + index}
-              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
-              onClick={() => handleAddressClick(address)}
-            >
-              {String.fromCharCode(62)} {address.block}{" "}
-              {parseWordsForLabels(address.street)}, {address.city}
-            </button>
-          ))}
-        </div>
-      )}
-      {addressShapes.length > 0 && (selectedAddress || isEmptyAddress) && (
-        <div className="flex flex-wrap w-full p-0 m-0">
-          {addressShapes.map((shape, index) => (
-            <FormFieldComponent
-              key={shape.fieldId + index}
-              field={shape}
-              form={props.form}
-            />
-          ))}
-        </div>
-      )}
+      {selectionMode === "postcode" &&
+        addresses.length > 0 &&
+        !selectedAddress && (
+          <div className="flex flex-wrap w-fit gap-2">
+            {addresses.map((address, index) => (
+              <button
+                key={address.street + index}
+                className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+                onClick={() => handleAddressClick(address)}
+              >
+                {String.fromCharCode(62)} {address.block}{" "}
+                {parseWordsForLabels(address.street)}, {address.city}
+              </button>
+            ))}
+          </div>
+        )}
+      {selectionMode === "postcode" &&
+        addressShapes.length > 0 &&
+        (selectedAddress || isEmptyAddress) && (
+          <div className="flex flex-wrap w-full p-0 m-0">
+            {addressShapes.map((shape, index) => (
+              <FormFieldComponent
+                key={shape.fieldId + index}
+                field={shape}
+                form={props.form}
+              />
+            ))}
+          </div>
+        )}
       {hasGeolocation && (
         <div className="flex flex-wrap w-full">
           <GeocodeMapContainer
