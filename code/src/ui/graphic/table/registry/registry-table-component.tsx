@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
-import { useTable } from "hooks/table/useTable";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -57,9 +57,7 @@ export default function RegistryTableComponent(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
 
-  const { table, data, setData, columnFilters } = useTable({
-    currentInstances,
-  });
+  const tableDescriptor: TableDescriptor = useTable(currentInstances);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -218,8 +216,7 @@ export default function RegistryTableComponent(
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
           triggerRefresh={triggerRefresh}
-          columnFilters={columnFilters}
-          table={table}
+          tableDescriptor={tableDescriptor}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
@@ -231,10 +228,7 @@ export default function RegistryTableComponent(
             lifecycleStage={props.lifecycleStage}
             instances={currentInstances}
             setTask={setTask}
-            data={data}
-            setData={setData}
-            columnFilters={columnFilters}
-            table={table}
+            tableDescriptor={tableDescriptor}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>

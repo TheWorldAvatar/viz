@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   ColumnFiltersState,
   getCoreRowModel,
@@ -10,47 +9,44 @@ import {
   Table,
   useReactTable,
 } from "@tanstack/react-table";
+import { useDictionary } from "hooks/useDictionary";
+import { useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { Dictionary } from "types/dictionary";
+import { RegistryFieldValues } from "types/form";
 import {
   parseDataForTable,
   TableData,
 } from "ui/graphic/table/registry/registry-table-utils";
-import { RegistryFieldValues } from "types/form";
-import { Dictionary } from "types/dictionary";
-import { useDictionary } from "hooks/useDictionary";
+import { useFirstActiveFilter } from "./useFirstActiveFilter";
 
-interface UseTableProps {
-  currentInstances: RegistryFieldValues[];
-}
-
-interface UseTableReturn {
+export interface TableDescriptor {
   table: Table<FieldValues>;
-  tableData: TableData;
   data: FieldValues[];
-  setData: React.Dispatch<React.SetStateAction<FieldValues[]>>;
-  columnFilters: ColumnFiltersState;
-  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
-  sorting: SortingState;
-  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+  setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
+  firstActiveFilter: string;
+  hasActiveFilter: boolean;
 }
 
-export function useTable({ currentInstances }: UseTableProps): UseTableReturn {
+/**
+* A custom hook to parse the instances into functionalities for the registry table to function.
+*
+* @param {RegistryFieldValues[]} instances - The target instances.
+*/
+export function useTable(instances: RegistryFieldValues[]): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [data, setData] = useState<FieldValues[]>([]);
 
   const tableData: TableData = useMemo(
-    () => parseDataForTable(currentInstances, dict.title.blank),
-    [currentInstances]
+    () => {
+      const output: TableData = parseDataForTable(instances, dict.title.blank);
+      setData(output.data);
+      return output;
+    },
+    [instances]
   );
-
-  const [data, setData] = useState<FieldValues[]>(tableData.data);
-
-  // Update data when tableData changes
-  useEffect(() => {
-    setData(tableData.data);
-  }, [tableData]);
-
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData.columns,
@@ -74,14 +70,15 @@ export function useTable({ currentInstances }: UseTableProps): UseTableReturn {
     getRowId: (row, index) => row.id + index,
   });
 
+  const firstActiveFilter: string = useFirstActiveFilter(columnFilters);
+
   return {
     table,
-    tableData,
     data,
     setData,
-    columnFilters,
-    setColumnFilters,
-    sorting,
-    setSorting,
+    firstActiveFilter,
+    hasActiveFilter: columnFilters?.some(
+      (filter) => (filter?.value as string[])?.length > 0
+    ),
   };
 }
