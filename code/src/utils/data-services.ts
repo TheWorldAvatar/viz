@@ -28,8 +28,8 @@ const stackKey: string = "stack";
 export function generateFIAEndpoint(iri: string, stack: string, scenario: string, properties: object, dimensionSliderValue?: number[] | number): string {
   let url = `${stack}/feature-info-agent/get`;
 
-  let params = { iri, ...properties };
-  let queryString = new URLSearchParams(params).toString();
+  const params = { iri, ...properties };
+  const queryString = new URLSearchParams(params).toString();
   url = `${url}?${queryString}`;
 
   if (scenario && stack && iri) {

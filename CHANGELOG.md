@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.37.2
+
+### Changes
+
+- Append all parameters from GeoServer layer to the feature info agent request
+- filterTimes are no longer added to the feature info agent request due to revisions to exposure calculations related to trajectories
+
 ## 5.37.1
 
 ### Changes
