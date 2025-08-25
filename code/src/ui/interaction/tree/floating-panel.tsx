@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DataStore } from 'io/data/data-store';
 import { selectDimensionSliderValue } from 'state/dimension-slider-slice';
 import { getIndex, setIndex } from 'state/floating-panel-slice';
-import { getFeatures, getFilterTimes, getIri, getProperties, getScenarioID, getStack, MapFeaturePayload } from 'state/map-feature-slice';
+import { getFeatures, getIri, getProperties, getScenarioID, getStack, MapFeaturePayload } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
 import { MapLayerGroup } from 'types/map-layer';
 import { IconSettings, LegendSettings } from 'types/settings';
@@ -52,7 +52,6 @@ export default function FloatingPanelContainer(
   const selectedStack = useSelector(getStack);
   const selectedScenario = useSelector(getScenarioID);
   const availableFeatures: MapFeaturePayload[] = useSelector(getFeatures);
-  const filterTimes: number[] = useSelector(getFilterTimes);
   //TODO fetch from api
   const buttonClass = styles.headButton;
   const buttonClassActive = [styles.headButton, styles.active].join(" ");
@@ -60,7 +59,7 @@ export default function FloatingPanelContainer(
   const hasMultipleDimensions = Object.values(props.scenarioDimensions).some(array => array.length > 1);
   // Execute API call
   const { attributes, timeSeries, isFetching, isUpdating } = useFeatureInfoAgentService(
-    generateFIAEndpoint(selectedIri, selectedStack, selectedScenario, filterTimes, ...(hasMultipleDimensions ? [dimensionSliderValue] : [])),
+    generateFIAEndpoint(selectedIri, selectedStack, selectedScenario, selectedProperties, ...(hasMultipleDimensions ? [dimensionSliderValue] : [])),
     selectedIri,
     selectedProperties
   );
