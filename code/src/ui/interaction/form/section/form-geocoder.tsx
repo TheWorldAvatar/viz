@@ -7,6 +7,7 @@ import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
   PROPERTY_GROUP_TYPE,
+  PROPERTY_SHAPE_TYPE,
   PropertyGroup,
   PropertyShape,
   TYPE_KEY,
@@ -21,6 +22,7 @@ import { FORM_STATES } from "../form-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import Button from "ui/interaction/button";
 import { AgentResponseBody } from "types/backend-agent";
+import { V } from "framer-motion/dist/types.d-Bq-Qm38R";
 
 interface FormGeocoderProps {
   field: PropertyShape;
@@ -100,6 +102,8 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>(null);
   const [selectionMode, setSelectionMode] = useState<SelectionMode>("postcode");
+  const [defaultCoordinates, setDefaultCoordinates] = useState<number[]>(null);
+
 
   useEffect(() => {
     // Declare an async function to get all address related shapes
@@ -116,7 +120,52 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       );
       const resBody: AgentResponseBody = await res.json();
       const template: FormTemplateType = resBody?.data
-        ?.items?.[0] as FormTemplateType;
+      ?.items?.[0] as FormTemplateType;
+    
+      // Find the property shape called geopoint
+      // Check if property shape has defaultvalue
+      // Parse the default value into long and latitude
+      //  props.form.setValue(FORM_STATES.LATITUDE, coordinates[1].toString());
+      //   props.form.setValue(FORM_STATES.LONGITUDE, coordinates[0].toString());
+      //   props.form.setValue(
+      //     props.field.fieldId,
+      //     `POINT(${coordinates[0]}, ${coordinates[1]})`
+      //   );
+
+
+     const geopointShape: PropertyShape = template.property.find((field) => {
+       if (field[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE)) {
+         const shape: PropertyShape = field as PropertyShape;
+        if(shape.name[VALUE_KEY] === "geopoint") {
+          return true;
+        }
+      }
+      return false;
+    }) as PropertyShape;
+
+        const wktPoint: string = Array.isArray(geopointShape.defaultValue)
+          ? geopointShape.defaultValue?.[0].value
+          : geopointShape.defaultValue?.value
+
+        const latLongRegex = /POINT\(\s*(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s*\)/;
+        const match = wktPoint.match(latLongRegex);
+        
+        if (match) {
+          const longitude = match[1];
+          const latitude = match[3];
+          props.form.setValue(FORM_STATES.LATITUDE, latitude);
+          props.form.setValue(FORM_STATES.LONGITUDE, longitude);
+        }
+        props.form.setValue(
+          props.field.fieldId,
+          wktPoint
+        );
+
+        console.log(props.form.getValues())
+
+
+
+
       const addressField: PropertyGroup = template.property.find((field) => {
         if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
           const fieldset: PropertyGroup = field as PropertyGroup;
@@ -126,6 +175,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         }
         return false;
       }) as PropertyGroup;
+      
       const addressProperties: PropertyShape[] = addressField.property.map(
         (field) => {
           return {
@@ -258,20 +308,10 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     const existingLng = props.form.getValues(FORM_STATES.LONGITUDE);
 
     // Only set default values if no coordinates exist or they are empty
-    if (
-      !existingLat ||
-      !existingLng ||
-      existingLat === "" ||
-      existingLng === ""
-    ) {
-      const defaultLat = "1.3521";
-      const defaultLng = "103.8198";
-      props.form.setValue(FORM_STATES.LATITUDE, defaultLat);
-      props.form.setValue(FORM_STATES.LONGITUDE, defaultLng);
-    } else {
+ 
       props.form.setValue(FORM_STATES.LATITUDE, existingLat);
       props.form.setValue(FORM_STATES.LONGITUDE, existingLng);
-    }
+    
 
     // Enable the map interface
     setHasGeolocation(true);
