@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { DateRange } from "react-day-picker";
@@ -24,7 +25,6 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import { SortingState } from "@tanstack/react-table";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -56,7 +56,8 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
-  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const tableDescriptor: TableDescriptor = useTable(currentInstances);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -214,8 +215,8 @@ export default function RegistryTableComponent(
           setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
-          setCurrentInstances={setCurrentInstances}
           triggerRefresh={triggerRefresh}
+          tableDescriptor={tableDescriptor}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
@@ -227,8 +228,7 @@ export default function RegistryTableComponent(
             lifecycleStage={props.lifecycleStage}
             instances={currentInstances}
             setTask={setTask}
-            sorting={sorting}
-            setSorting={setSorting}
+            tableDescriptor={tableDescriptor}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>

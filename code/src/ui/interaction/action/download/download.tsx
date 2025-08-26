@@ -59,8 +59,10 @@ export function DownloadButton({
   return (
     <Button
       leftIcon="download"
+      size="icon"
+      variant="outline"
+      tooltipText={dict.action.export}
       className={`${rest.className}`}
-      label={dict.action.export}
       onClick={exportToCSV}
     />
   );
