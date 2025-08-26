@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.38.0
+
+### Changes
+
+- Added a functionality to save the completed form state before submission
+- Bump min version of `VisBackend Agent` from `v1.9.2` to `v1.10.0`
+
 ## 5.37.1
 
 ### Changes
@@ -10,7 +17,6 @@
 - Fixed layout issues in the table ribbon
 - Made the date-range input icon only on mobile
 - Moved all the table logic into custom hooks: useTable, useTableDnd, useFirstActiveFilter
-- Bump min version of `VisBackend Agent` from `v1.9.2` to `v1.10.0`
 
 ## 5.37.0
 
