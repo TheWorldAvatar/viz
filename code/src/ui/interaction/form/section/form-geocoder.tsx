@@ -378,23 +378,25 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
         )}
 
-      {selectionMode === "postcode" && postalCodeShape && (
-        <FormFieldComponent field={postalCodeShape} form={props.form} />
-      )}
-
-      {selectionMode === "postcode" &&
-        !isInitialFetching.current &&
-        (formType == "add" || formType == "edit") && (
-          <div className="flex my-4 gap-2">
-            <Button
-              leftIcon="search"
-              size="icon"
-              tooltipText={dict.action.findAddress}
-              onClick={props.form.handleSubmit(onSearchForAddress)}
-              type="button"
-            />
-          </div>
+      <div className="flex items-center gap-2 mb-2">
+        {selectionMode === "postcode" && postalCodeShape && (
+          <FormFieldComponent field={postalCodeShape} form={props.form} />
         )}
+
+        {selectionMode === "postcode" &&
+          !isInitialFetching.current &&
+          (formType == "add" || formType == "edit") && (
+            <div className="flex mt-12">
+              <Button
+                leftIcon="search"
+                size="icon"
+                tooltipText={dict.action.findAddress}
+                onClick={props.form.handleSubmit(onSearchForAddress)}
+                type="button"
+              />
+            </div>
+          )}
+      </div>
 
       {selectionMode === "postcode" && isEmptyAddress && (
         <div className="m-2">
