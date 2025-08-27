@@ -25,6 +25,7 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
+import Accordion from "ui/interaction/accordion/accordion";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -85,7 +86,7 @@ export function DependentFormSection(
             { cache: "no-store", credentials: "same-origin" }
           ).then(async (res) => {
             const responseEntity: AgentResponseBody = await res.json();
-            return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+            return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
           });
         }
         // If there is no valid parent option, there should be no entity
@@ -110,7 +111,7 @@ export function DependentFormSection(
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (response) => {
           const responseEntity: AgentResponseBody = await response.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
         });
       } else {
         entities = await fetch(
@@ -118,7 +119,7 @@ export function DependentFormSection(
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (res) => {
           const responseEntity: AgentResponseBody = await res.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
         });
       }
 
@@ -136,17 +137,29 @@ export function DependentFormSection(
         // Existing value must take precedence
         if (fieldValue && fieldValue.length > 0) {
           const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
-          const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+          const result: string = findMatchingDropdownOptionValue(
+            defaultValueId,
+            entities
+          );
           if (result != null) {
             defaultId = result;
           }
         } else if (props.dependentProp?.defaultValue) {
-          const defaults: SparqlResponseField | SparqlResponseField[] = props.dependentProp?.defaultValue
+          const defaults: SparqlResponseField | SparqlResponseField[] =
+            props.dependentProp?.defaultValue;
           // If this is not an array or the array's first item is not null
           if (!(Array.isArray(defaults) && defaults[0] == null)) {
-            const defaultField: SparqlResponseField = Array.isArray(defaults) ? defaults[0] : defaults;
-            const defaultValueId: string = getAfterDelimiter(defaultField.value, "/");
-            const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+            const defaultField: SparqlResponseField = Array.isArray(defaults)
+              ? defaults[0]
+              : defaults;
+            const defaultValueId: string = getAfterDelimiter(
+              defaultField.value,
+              "/"
+            );
+            const result: string = findMatchingDropdownOptionValue(
+              defaultValueId,
+              entities
+            );
             if (result != null) {
               defaultId = result;
             }
@@ -237,7 +250,7 @@ export function DependentFormSection(
     (currentParentOption && parentField != "")
   ) {
     return (
-      <div className="rounded-lg  my-4">
+      <div className="rounded-lg my-4">
         {isFetching && (
           <div className="mr-2">
             <LoadingSpinner isSmall={true} />
@@ -252,14 +265,14 @@ export function DependentFormSection(
               redirectOptions={{
                 addUrl:
                   formType != "view" &&
-                    formType != "delete" &&
-                    formType != "search"
+                  formType != "delete" &&
+                  formType != "search"
                     ? genAddSubEntityUrl(queryEntityType)
                     : undefined,
                 view:
                   !isFetching &&
-                    formType != "search" &&
-                    selectElements.length > 0
+                  formType != "search" &&
+                  selectElements.length > 0
                     ? openViewSubEntityModal
                     : undefined,
               }}
@@ -272,6 +285,9 @@ export function DependentFormSection(
                 ],
               }}
             />
+            <Accordion>
+              <h2>Hello</h2>
+            </Accordion>
           </div>
         )}
       </div>
