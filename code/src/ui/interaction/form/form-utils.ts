@@ -268,11 +268,8 @@ export function getDefaultVal(
     return !!defaultValue;
   }
 
-  // WIP: Set default value Singapore for any City Field temporarily
-  // Default values should not be hardcoded here but retrieved in a config instead
-
   // Returns the default value if passed, or else, nothing
-  return defaultValue;
+  return defaultValue ?? "";
 }
 
 /**
