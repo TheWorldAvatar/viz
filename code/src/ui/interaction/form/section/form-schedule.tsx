@@ -151,7 +151,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       setIsLoading(false);
     };
     if (formType == "add" || formType == "search") {
-      props.form.setValue(FORM_STATES.RECURRENCE, 1);
+      props.form.setValue(FORM_STATES.RECURRENCE, 0);
+      setSelectedServiceOption(singleService);
       setIsLoading(false);
     } else {
       getAndSetScheduleDefaults();
