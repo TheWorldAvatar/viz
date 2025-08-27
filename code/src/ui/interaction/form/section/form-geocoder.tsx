@@ -33,8 +33,6 @@ interface FormGeocoderProps {
   form: UseFormReturn;
 }
 
-type SelectionMode = "postcode" | "map";
-
 /**
  * This component renders a geocoding section for the form.
  *
@@ -105,7 +103,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const [postalCodeShape, setPostalCodeShape] = useState<PropertyShape>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address>(null);
-  const [selectionMode, setSelectionMode] = useState<SelectionMode>("postcode");
+  const [isMapSelected, setIsMapSelected] = useState<boolean>(false);
   const [defaultCoordinates, setDefaultCoordinates] = useState<string[]>(null);
 
   useEffect(() => {
@@ -125,41 +123,35 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       const template: FormTemplateType = resBody?.data
         ?.items?.[0] as FormTemplateType;
 
-      const geopointShape: PropertyShape = template.property.find((field) => {
-        if (field[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE)) {
-          const shape: PropertyShape = field as PropertyShape;
-          if (shape.name[VALUE_KEY] === "geopoint") {
-            return true;
-          }
+      const geopointShape: PropertyShape = template.property.find(
+        (field) =>
+          field[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
+          (field as PropertyShape).name[VALUE_KEY] === "geopoint"
+      ) as PropertyShape;
+
+      if (geopointShape.defaultValue) {
+        const wktPoint: string = Array.isArray(geopointShape.defaultValue)
+          ? geopointShape.defaultValue?.[0].value
+          : geopointShape.defaultValue?.value;
+
+        const latLongRegex = /POINT\(\s*(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s*\)/;
+        const match = wktPoint.match(latLongRegex);
+
+        if (match) {
+          const longitude = match[1];
+          const latitude = match[3];
+          setDefaultCoordinates([latitude, longitude]);
+          props.form.setValue(FORM_STATES.LATITUDE, latitude);
+          props.form.setValue(FORM_STATES.LONGITUDE, longitude);
+          props.form.setValue(props.field.fieldId, wktPoint);
         }
-        return false;
-      }) as PropertyShape;
-
-      const wktPoint: string = Array.isArray(geopointShape.defaultValue)
-        ? geopointShape.defaultValue?.[0].value
-        : geopointShape.defaultValue?.value;
-
-      const latLongRegex = /POINT\(\s*(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s*\)/;
-      const match = wktPoint.match(latLongRegex);
-
-      if (match) {
-        const longitude = match[1];
-        const latitude = match[3];
-        setDefaultCoordinates([latitude, longitude]);
-        props.form.setValue(FORM_STATES.LATITUDE, latitude);
-        props.form.setValue(FORM_STATES.LONGITUDE, longitude);
       }
-      props.form.setValue(props.field.fieldId, wktPoint);
 
-      const addressField: PropertyGroup = template.property.find((field) => {
-        if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-          const fieldset: PropertyGroup = field as PropertyGroup;
-          if (fieldset.label[VALUE_KEY] === "address") {
-            return true;
-          }
-        }
-        return false;
-      }) as PropertyGroup;
+      const addressField: PropertyGroup = template.property.find(
+        (field) =>
+          field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) &&
+          (field as PropertyGroup).label[VALUE_KEY] === "address"
+      ) as PropertyGroup;
 
       const addressProperties: PropertyShape[] = addressField.property.map(
         (field) => {
@@ -230,7 +222,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     data: FieldValues
   ) => {
     // Switch to postal code mode
-    setSelectionMode("postcode");
+    setIsMapSelected(false);
     // Reset states
     setAddresses([]);
     setSelectedAddress(null);
@@ -278,7 +270,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     event.stopPropagation();
 
     // Switch to map selection mode
-    setSelectionMode("map");
+    setIsMapSelected(true);
     // Reset address search states but keep selected address to show fields
     setAddresses([]);
     setIsEmptyAddress(false);
@@ -315,7 +307,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
    * Switch back to postal code selection mode
    */
   const onSelectPostCode = () => {
-    setSelectionMode("postcode");
+    setIsMapSelected(false);
     // Just hide the map interface, don't clear coordinates
     setHasGeolocation(false);
   };
@@ -396,7 +388,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             <Button
               leftIcon="search"
               label={dict.action.searchByPostCode}
-              variant={selectionMode === "postcode" ? "primary" : "secondary"}
+              variant={isMapSelected ? "secondary" : "primary"}
               tooltipText={dict.action.searchByPostCode}
               onClick={onSelectPostCode}
               type="button"
@@ -404,7 +396,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             <Button
               leftIcon="place"
               label={dict.action.selectLocation}
-              variant={selectionMode === "map" ? "primary" : "secondary"}
+              variant={isMapSelected ? "primary" : "secondary"}
               tooltipText={dict.action.selectLocation}
               onClick={onSelectFromMap}
               type="button"
@@ -412,51 +404,49 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
         )}
 
-      <div className="flex items-center gap-2 mb-2">
-        {selectionMode === "postcode" && postalCodeShape && (
-          <FormFieldComponent field={postalCodeShape} form={props.form} />
-        )}
-
-        {selectionMode === "postcode" &&
-          !isInitialFetching.current &&
-          (formType == "add" || formType == "edit") && (
-            <div className="flex mt-12">
-              <Button
-                leftIcon="search"
-                size="icon"
-                tooltipText={dict.action.findAddress}
-                onClick={props.form.handleSubmit(onSearchForAddress)}
-                type="button"
-              />
-            </div>
+      {!isMapSelected && (
+        <div className="flex items-center gap-2 mb-2">
+          {postalCodeShape && (
+            <FormFieldComponent field={postalCodeShape} form={props.form} />
           )}
-      </div>
 
-      {selectionMode === "postcode" && isEmptyAddress && (
+          {!isInitialFetching.current &&
+            (formType == "add" || formType == "edit") && (
+              <div className="flex mt-12">
+                <Button
+                  leftIcon="search"
+                  size="icon"
+                  tooltipText={dict.action.findAddress}
+                  onClick={props.form.handleSubmit(onSearchForAddress)}
+                  type="button"
+                />
+              </div>
+            )}
+        </div>
+      )}
+
+      {!isMapSelected && isEmptyAddress && (
         <div className="m-2">
           <ErrorComponent message={dict.message.noAddressFound} />
         </div>
       )}
-      {selectionMode === "postcode" &&
-        addresses.length > 0 &&
-        !selectedAddress && (
-          <div className="flex flex-wrap w-fit gap-2">
-            {addresses.map((address, index) => (
-              <button
-                key={address.street + index}
-                className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
-                onClick={() => handleAddressClick(address)}
-              >
-                {String.fromCharCode(62)} {address.block}{" "}
-                {parseWordsForLabels(address.street)}, {address.city}
-              </button>
-            ))}
-          </div>
-        )}
+      {!isMapSelected && addresses.length > 0 && !selectedAddress && (
+        <div className="flex flex-wrap w-fit gap-2">
+          {addresses.map((address, index) => (
+            <button
+              key={address.street + index}
+              className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+              onClick={() => handleAddressClick(address)}
+            >
+              {String.fromCharCode(62)} {address.block}{" "}
+              {parseWordsForLabels(address.street)}, {address.city}
+            </button>
+          ))}
+        </div>
+      )}
       {addressShapes.length > 0 &&
-        ((selectionMode === "postcode" &&
-          (selectedAddress || isEmptyAddress)) ||
-          (selectionMode === "map" && selectedAddress)) && (
+        ((!isMapSelected && (selectedAddress || isEmptyAddress)) ||
+          (isMapSelected && selectedAddress)) && (
           <div className="flex flex-wrap w-full p-0 m-0">
             {addressShapes.map((shape, index) => (
               <FormFieldComponent
