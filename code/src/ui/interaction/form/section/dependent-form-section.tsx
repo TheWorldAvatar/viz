@@ -1,7 +1,7 @@
 import fieldStyles from "../field/field.module.css";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -26,6 +26,8 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 import Accordion from "ui/interaction/accordion/accordion";
+import RedirectButton from "ui/interaction/action/redirect/redirect-button";
+import { FormComponent } from "../form";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -50,6 +52,7 @@ export function DependentFormSection(
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
+  const [isViewOpen, setIsViewOpen] = useState<boolean>(false);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -60,6 +63,7 @@ export function DependentFormSection(
     control,
     name: props.dependentProp.fieldId,
   });
+  const detailsFormRef = useRef<HTMLFormElement>(null);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -218,9 +222,28 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
+  // Close inline view when the selection changes
+  useEffect(() => {
+    setIsViewOpen(false);
+  }, [currentOption]);
+
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
+    if (formType != "add" || pathName.includes("registry")) {
+      url = `../${url}`;
+    }
+    return url;
+  };
+
+  // Generate edit/delete URL for selected sub-entity
+  const genSubEntityActionUrl = (
+    action: "edit" | "delete",
+    entityType: string,
+    iri: string
+  ): string => {
+    const id = getAfterDelimiter(iri, "/");
+    let url: string = `../${action}/${entityType}/${id}`;
     if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
@@ -232,15 +255,8 @@ export function DependentFormSection(
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    let url: string = `../view/${queryEntityType}/${getAfterDelimiter(
-      currentOption,
-      "/"
-    )}`;
-    // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != "add" || pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    window.open(url, "_blank");
+    // Toggle inline accordion instead of opening a new page
+    setIsViewOpen((prev) => !prev);
   };
 
   // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
@@ -285,9 +301,41 @@ export function DependentFormSection(
                 ],
               }}
             />
-            <Accordion>
-              <h2>Hello</h2>
-            </Accordion>
+            {currentOption && currentOption.length > 0 && (
+              <Accordion
+                isOpen={isViewOpen}
+                onToggle={(next) => setIsViewOpen(next)}
+              >
+                <FormComponent
+                  formRef={detailsFormRef}
+                  formType={"view"}
+                  entityType={queryEntityType}
+                  id={getAfterDelimiter(currentOption, "/")}
+                />
+                <div className="flex justify-end gap-2">
+                  <RedirectButton
+                    leftIcon="edit"
+                    label={dict.action.edit}
+                    url={genSubEntityActionUrl(
+                      "edit",
+                      queryEntityType,
+                      currentOption
+                    )}
+                    variant="primary"
+                  />
+                  <RedirectButton
+                    leftIcon="delete"
+                    label={dict.action.delete}
+                    url={genSubEntityActionUrl(
+                      "delete",
+                      queryEntityType,
+                      currentOption
+                    )}
+                    variant="secondary"
+                  />
+                </div>
+              </Accordion>
+            )}
           </div>
         )}
       </div>
