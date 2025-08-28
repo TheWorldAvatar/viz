@@ -128,12 +128,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           ? geopointShape.defaultValue?.[0].value
           : geopointShape.defaultValue?.value;
 
-        const latLongRegex = /POINT\(\s*(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s*\)/;
+        const latLongRegex = /^POINT\(\s*-?([0-9]{1,2}|1[0-7][0-9]|180)(\.[0-9]{1,10})?\s-?([0-8]?[0-9]|90)(\.[0-9]{1,10})?\)$/;
         const match = wktPoint.match(latLongRegex);
 
         if (match) {
-          const longitude = match[1];
-          const latitude = match[3];
+          const longitude: string = match[1] + match[2];
+          const latitude: string = match[3] + match[4];
           setDefaultCoordinates([latitude, longitude]);
           props.form.setValue(FORM_STATES.LATITUDE, latitude);
           props.form.setValue(FORM_STATES.LONGITUDE, longitude);
