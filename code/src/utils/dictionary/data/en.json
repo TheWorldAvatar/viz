@@ -36,8 +36,8 @@
     "rescind": "Rescind",
     "terminate": "Terminate",
     "findAddress": "Find address",
+    "searchLocation": "Search location",
     "selectLocation": "Select location",
-    "searchByPostCode": "Search by postal code",
     "clickIncrease": "Click to increase",
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters"
@@ -128,6 +128,8 @@
     "noFileChosenError": "No file is chosen. Please choose a file.",
     "fileUploadError": "File upload failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
+    "searchLocationInstruction": "Search for a location by address. Use the \"select location\" option to manually select the location.",
+    "selectLocationInstruction": "Select the location on the map.",
     "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
     "noDateSelected": "Pick a date range.",

@@ -381,9 +381,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           <div className="flex my-4 gap-1.5 flex-wrap">
             <Button
               leftIcon="search"
-              label={dict.action.searchByPostCode}
+              label={dict.action.searchLocation}
               variant={isMapSelected ? "secondary" : "primary"}
-              tooltipText={dict.action.searchByPostCode}
+              tooltipText={dict.message.searchLocationInstruction}
               onClick={onSelectPostCode}
               type="button"
             />
@@ -391,7 +391,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               leftIcon="place"
               label={dict.action.selectLocation}
               variant={isMapSelected ? "primary" : "secondary"}
-              tooltipText={dict.action.selectLocation}
+              tooltipText={dict.message.selectLocationInstruction}
               onClick={onSelectFromMap}
               type="button"
             />

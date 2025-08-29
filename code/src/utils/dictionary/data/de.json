@@ -36,8 +36,8 @@
     "rescind": "Rückgängig machen",
     "terminate": "Beenden",
     "findAddress": "Adresse finden",
+    "searchLocation": "Suchort",
     "selectLocation": "Ort auswählen",
-    "searchByPostCode": "Suche nach Postleitzahl",
     "clickIncrease": "Zum Erhöhen anklicken",
     "clickDecrease": "Zum Verringern anklicken",
     "clearAllFilters": "Alle Filter löschen"
@@ -128,6 +128,8 @@
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
+    "searchLocationInstruction": "Suchen Sie einen Standort anhand der Adresse. Verwenden Sie die Option „Ort auswählen“, um den Standort manuell auszuwählen.",
+    "selectLocationInstruction": "Wählen Sie den Standort auf der Karte aus.",
     "dragToReorder": "Zum Neusortieren ziehen",
     "na": "Nicht anwendbar",
     "noDateSelected": "Wählen Sie einen Zeitraum aus.",
