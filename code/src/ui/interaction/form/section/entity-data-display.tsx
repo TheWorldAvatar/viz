@@ -112,7 +112,7 @@ export function EntityDataDisplay({ entityType, id }: EntityDataDisplayProps) {
   }
 
   return (
-    <div className="bg-white  overflow-hidden">
+    <div className=" overflow-hidden">
       <div className="p-4 space-y-2">
         {entityData.map((field, index) => (
           <div
@@ -124,7 +124,7 @@ export function EntityDataDisplay({ entityType, id }: EntityDataDisplayProps) {
             </div>
             <div className="flex-1 text-xs text-foreground break-all">
               {field.value ? (
-                <span className="text-xs bg-muted px-3 py-1.5 rounded-md border border-border text-foreground">
+                <span className="text-xs bg-background px-3 py-1.5 rounded-md border border-border text-foreground">
                   {field.value}
                 </span>
               ) : (
