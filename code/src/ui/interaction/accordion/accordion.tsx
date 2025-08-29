@@ -25,7 +25,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
   return (
     <div
       className={`${
-        props.isOpen && "border-1 border-border rounded-lg bg-background"
+        props.isOpen && "border border-border rounded-lg bg-background"
       }`}
     >
       {props.title && (

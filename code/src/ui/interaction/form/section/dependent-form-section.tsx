@@ -1,7 +1,7 @@
 import fieldStyles from "../field/field.module.css";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -27,7 +27,8 @@ import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 import Accordion from "ui/interaction/accordion/accordion";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
-import { EntityView } from "./entity-view";
+
+import { EntityDataDisplay } from "./entity-data-display";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -305,13 +306,16 @@ export function DependentFormSection(
                 isOpen={isViewOpen}
                 onToggle={(next) => setIsViewOpen(next)}
               >
-                <EntityView
+                <EntityDataDisplay
                   entityType={queryEntityType}
                   id={getAfterDelimiter(currentOption, "/")}
                 />
                 <div className="flex justify-end gap-2">
                   <RedirectButton
                     leftIcon="edit"
+                    size="sm"
+                    iconSize="small"
+                    className="!text-xs"
                     label={dict.action.edit}
                     url={genSubEntityActionUrl(
                       "edit",
@@ -322,6 +326,9 @@ export function DependentFormSection(
                   />
                   <RedirectButton
                     leftIcon="delete"
+                    size="sm"
+                    iconSize="small"
+                    className="!text-xs"
                     label={dict.action.delete}
                     url={genSubEntityActionUrl(
                       "delete",
