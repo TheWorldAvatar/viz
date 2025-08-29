@@ -1,4 +1,4 @@
-import { FieldValues, RegisterOptions } from "react-hook-form";
+import { FieldValues, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
 import { Dictionary } from "types/dictionary";
@@ -613,4 +613,21 @@ export function genEmptyArrayRow(fieldConfigs: PropertyShape[]): FieldValues {
     emptyField[config.fieldId] = "";
   });
   return emptyField;
+}
+
+/**
+ * Updates the latitude and longitude fields.
+ *
+ * @param {string} field The location field ID.
+ * @param {string} latitude The latitude value.
+ * @param {string} longitude The longitude value.
+  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ */
+export function updateLatLong(field: string, latitude: string, longitude: string, form: UseFormReturn): void {
+  form.setValue(FORM_STATES.LATITUDE, latitude);
+  form.setValue(FORM_STATES.LONGITUDE, longitude);
+  form.setValue(
+    field,
+    `POINT(${longitude}, ${latitude})`
+  );
 }
