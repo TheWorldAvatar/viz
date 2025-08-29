@@ -27,7 +27,7 @@ import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 import Accordion from "ui/interaction/accordion/accordion";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
-import { FormComponent } from "../form";
+import { EntityView } from "./entity-view";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -306,7 +306,7 @@ export function DependentFormSection(
                 isOpen={isViewOpen}
                 onToggle={(next) => setIsViewOpen(next)}
               >
-                <FormComponent
+                <EntityView
                   formRef={detailsFormRef}
                   formType={"view"}
                   entityType={queryEntityType}
