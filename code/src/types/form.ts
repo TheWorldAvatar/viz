@@ -3,6 +3,7 @@ export const ID_KEY = "@id";
 export const TYPE_KEY = "@type";
 export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
+export const PROPERTY_SHAPE_TYPE = "PropertyShape";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
