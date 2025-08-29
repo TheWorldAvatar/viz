@@ -103,6 +103,9 @@ export default function MapContainer(props: MapContainerProps) {
           .then((data) => {
             // Default dimension value is set to 1 unless dimension slider value exists
             let dimensionValue: string = "1";
+            if (Object.keys(scenarioDimensions).length == 1) {
+              dimensionValue = Object.values(scenarioDimensions)[0][0]['value'].toString();
+            }
             if (dimensionSliderValue) {
               dimensionValue = dimensionSliderValue.toString();
             }
