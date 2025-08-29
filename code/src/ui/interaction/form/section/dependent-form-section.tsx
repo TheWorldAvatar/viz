@@ -25,6 +25,10 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
+import Accordion from "ui/interaction/accordion/accordion";
+import RedirectButton from "ui/interaction/action/redirect/redirect-button";
+
+import { EntityDataDisplay } from "./entity-data-display";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -49,6 +53,7 @@ export function DependentFormSection(
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
+  const [isViewOpen, setIsViewOpen] = useState<boolean>(false);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -85,7 +90,7 @@ export function DependentFormSection(
             { cache: "no-store", credentials: "same-origin" }
           ).then(async (res) => {
             const responseEntity: AgentResponseBody = await res.json();
-            return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+            return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
           });
         }
         // If there is no valid parent option, there should be no entity
@@ -110,7 +115,7 @@ export function DependentFormSection(
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (response) => {
           const responseEntity: AgentResponseBody = await response.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
         });
       } else {
         entities = await fetch(
@@ -118,7 +123,7 @@ export function DependentFormSection(
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (res) => {
           const responseEntity: AgentResponseBody = await res.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
         });
       }
 
@@ -136,17 +141,29 @@ export function DependentFormSection(
         // Existing value must take precedence
         if (fieldValue && fieldValue.length > 0) {
           const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
-          const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+          const result: string = findMatchingDropdownOptionValue(
+            defaultValueId,
+            entities
+          );
           if (result != null) {
             defaultId = result;
           }
         } else if (props.dependentProp?.defaultValue) {
-          const defaults: SparqlResponseField | SparqlResponseField[] = props.dependentProp?.defaultValue
+          const defaults: SparqlResponseField | SparqlResponseField[] =
+            props.dependentProp?.defaultValue;
           // If this is not an array or the array's first item is not null
           if (!(Array.isArray(defaults) && defaults[0] == null)) {
-            const defaultField: SparqlResponseField = Array.isArray(defaults) ? defaults[0] : defaults;
-            const defaultValueId: string = getAfterDelimiter(defaultField.value, "/");
-            const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+            const defaultField: SparqlResponseField = Array.isArray(defaults)
+              ? defaults[0]
+              : defaults;
+            const defaultValueId: string = getAfterDelimiter(
+              defaultField.value,
+              "/"
+            );
+            const result: string = findMatchingDropdownOptionValue(
+              defaultValueId,
+              entities
+            );
             if (result != null) {
               defaultId = result;
             }
@@ -205,9 +222,28 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
+  // Close inline view when the selection changes
+  useEffect(() => {
+    setIsViewOpen(false);
+  }, [currentOption]);
+
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
+    if (formType != "add" || pathName.includes("registry")) {
+      url = `../${url}`;
+    }
+    return url;
+  };
+
+  // Generate edit/delete URL for selected sub-entity
+  const genSubEntityActionUrl = (
+    action: "edit" | "delete",
+    entityType: string,
+    iri: string
+  ): string => {
+    const id = getAfterDelimiter(iri, "/");
+    let url: string = `../${action}/${entityType}/${id}`;
     if (formType != "add" || pathName.includes("registry")) {
       url = `../${url}`;
     }
@@ -219,15 +255,8 @@ export function DependentFormSection(
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    let url: string = `../view/${queryEntityType}/${getAfterDelimiter(
-      currentOption,
-      "/"
-    )}`;
-    // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != "add" || pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    window.open(url, "_blank");
+    // Toggle inline accordion instead of opening a new page
+    setIsViewOpen((prev) => !prev);
   };
 
   // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
@@ -237,7 +266,7 @@ export function DependentFormSection(
     (currentParentOption && parentField != "")
   ) {
     return (
-      <div className="rounded-lg  my-4">
+      <div className="rounded-lg my-4">
         {isFetching && (
           <div className="mr-2">
             <LoadingSpinner isSmall={true} />
@@ -252,14 +281,14 @@ export function DependentFormSection(
               redirectOptions={{
                 addUrl:
                   formType != "view" &&
-                    formType != "delete" &&
-                    formType != "search"
+                  formType != "delete" &&
+                  formType != "search"
                     ? genAddSubEntityUrl(queryEntityType)
                     : undefined,
                 view:
                   !isFetching &&
-                    formType != "search" &&
-                    selectElements.length > 0
+                  formType != "search" &&
+                  selectElements.length > 0
                     ? openViewSubEntityModal
                     : undefined,
               }}
@@ -272,6 +301,45 @@ export function DependentFormSection(
                 ],
               }}
             />
+            {currentOption && currentOption.length > 0 && (
+              <Accordion
+                isOpen={isViewOpen}
+                onToggle={(next) => setIsViewOpen(next)}
+              >
+                <EntityDataDisplay
+                  entityType={queryEntityType}
+                  id={getAfterDelimiter(currentOption, "/")}
+                />
+                <div className="flex justify-end gap-2">
+                  <RedirectButton
+                    leftIcon="edit"
+                    size="sm"
+                    iconSize="small"
+                    className="!text-xs"
+                    label={dict.action.edit}
+                    url={genSubEntityActionUrl(
+                      "edit",
+                      queryEntityType,
+                      currentOption
+                    )}
+                    variant="primary"
+                  />
+                  <RedirectButton
+                    leftIcon="delete"
+                    size="sm"
+                    iconSize="small"
+                    className="!text-xs"
+                    label={dict.action.delete}
+                    url={genSubEntityActionUrl(
+                      "delete",
+                      queryEntityType,
+                      currentOption
+                    )}
+                    variant="secondary"
+                  />
+                </div>
+              </Accordion>
+            )}
           </div>
         )}
       </div>
