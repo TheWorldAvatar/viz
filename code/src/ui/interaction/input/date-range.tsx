@@ -19,6 +19,7 @@ interface DateRangeInputProps {
   selectedDate: DateRange;
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   lifecycleStage: LifecycleStage;
+  iconOnly?: boolean;
 }
 
 /** A component to display a date range input
@@ -26,6 +27,7 @@ interface DateRangeInputProps {
  * @param {DateRange} selectedDate The selected date range.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {boolean} iconOnly Whether to display only the icon button (for mobile) or the full input with label (for desktop).
  */
 export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   const id: string = useId();
@@ -59,41 +61,39 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   }`;
 
   return (
-    <div
-      className="flex items-center gap-2 relative"
-      ref={popover.refs.setReference}
-      {...popover.getReferenceProps()}
-    >
-      {/* Desktop: Show label and full input, Hidden on mobile/tablet */}
-      <div className="hidden lg:flex items-center gap-2">
-        <label
-          className="my-1 text-base md:text-lg text-left whitespace-nowrap"
-          htmlFor={id}
-        >
-          {dict.action.date}:
-        </label>
-        <input
-          id={id}
-          type="button"
-          value={displayedDateRange}
-          readOnly
-          className={`h-10 ${
-            props.selectedDate?.to ? "w-60" : "w-32"
-          } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
-        />
-      </div>
-
-      {/* Mobile/Tablet: Show only icon button */}
-      <div className="lg:hidden">
-        <Button
-          id={`${id}-mobile`}
-          type="button"
-          size="icon"
-          variant="outline"
-          leftIcon="date_range"
-          tooltipText={dict.action.date}
-        />
-      </div>
+    <div className="flex items-center gap-2 relative">
+      {props.iconOnly ? (
+        <div ref={popover.refs.setReference} {...popover.getReferenceProps()}>
+          <Button
+            id={`${id}-mobile`}
+            type="button"
+            size="icon"
+            variant="outline"
+            leftIcon="date_range"
+            tooltipText={dict.action.date}
+          />
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <label
+            className="my-1 text-base md:text-lg text-left whitespace-nowrap"
+            htmlFor={id}
+          >
+            {dict.action.date}:
+          </label>
+          <input
+            ref={popover.refs.setReference}
+            {...popover.getReferenceProps()}
+            id={id}
+            type="button"
+            value={displayedDateRange}
+            readOnly
+            className={`h-10 ${
+              props.selectedDate?.to ? "w-60" : "w-32"
+            } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
+          />
+        </div>
+      )}
       {popover.isOpen && (
         <FloatingPortal>
           <div
