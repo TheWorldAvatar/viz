@@ -13,8 +13,10 @@ export type MapLayerGroup = {
 export type MapLayer = {
   name: string;
   address: string;
-  ids: string;
+  ids: string[];
   icon?: string;
   grouping?: string; // Map layer grouping if available
   isVisible: boolean; // track visibility
+  isAHighlightLayer: boolean; // indicates whether this is a highlight layer, will not be rendered on the layer tree
+  highlightLayerIds: string[]; // the accompanying highlight layer
 };
