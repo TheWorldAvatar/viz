@@ -151,7 +151,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       setIsLoading(false);
     };
     if (formType == "add" || formType == "search") {
-      props.form.setValue(FORM_STATES.RECURRENCE, 1);
+      props.form.setValue(FORM_STATES.RECURRENCE, 0);
+      setSelectedServiceOption(singleService);
+      props.form.setValue(FORM_STATES.TIME_SLOT_START, "00:00");
+      props.form.setValue(FORM_STATES.TIME_SLOT_END, "23:59");
       setIsLoading(false);
     } else {
       getAndSetScheduleDefaults();
@@ -275,7 +278,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             </div>
           )}
-          <div className="w-full mt-8 ">
+          <div className="w-full mt-8">
             <h1 className="text-xl font-bold mb-2">{dict.form.timeSlot}</h1>
             <FormFieldComponent
               field={{
