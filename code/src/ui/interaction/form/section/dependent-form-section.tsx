@@ -63,7 +63,6 @@ export function DependentFormSection(
     control,
     name: props.dependentProp.fieldId,
   });
-  const detailsFormRef = useRef<HTMLFormElement>(null);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -307,8 +306,6 @@ export function DependentFormSection(
                 onToggle={(next) => setIsViewOpen(next)}
               >
                 <EntityView
-                  formRef={detailsFormRef}
-                  formType={"view"}
                   entityType={queryEntityType}
                   id={getAfterDelimiter(currentOption, "/")}
                 />
