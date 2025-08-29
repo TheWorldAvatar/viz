@@ -21,6 +21,7 @@ interface DateRangeInputProps {
   selectedDate: DateRange;
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   lifecycleStage: LifecycleStage;
+  iconOnly?: boolean;
 }
 
 /** A component to display a date range input
@@ -28,6 +29,7 @@ interface DateRangeInputProps {
  * @param {DateRange} selectedDate The selected date range.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {boolean} iconOnly Whether to display only the icon button (for mobile) or the full input with label (for desktop).
  */
 export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   const id: string = useId();
