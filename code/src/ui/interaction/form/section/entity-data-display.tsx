@@ -1,99 +1,73 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AgentResponseBody } from "types/backend-agent";
-import { RegistryFieldValues } from "types/form";
+import {
+  FormTemplateType,
+  PropertyShapeOrGroup,
+  PropertyShape,
+  TYPE_KEY,
+  PROPERTY_GROUP_TYPE,
+  VALUE_KEY,
+} from "types/form";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
+import { parsePropertyShapeOrGroupList } from "../form-utils";
 
 interface EntityDataDisplayProps {
   entityType: string;
-  id: string;
+  id?: string;
+  additionalFields?: PropertyShapeOrGroup[];
 }
 
-interface DataField {
-  label: string;
-  value: string;
-}
+export function EntityDataDisplay({
+  entityType,
+  id,
+  additionalFields,
+}: EntityDataDisplayProps) {
+  const [formTemplate, setFormTemplate] = useState<FormTemplateType | null>(
+    null
+  );
 
-export function EntityDataDisplay({ entityType, id }: EntityDataDisplayProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [entityData, setEntityData] = useState<DataField[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const form: UseFormReturn = useForm({
+    defaultValues: async (): Promise<FieldValues> => {
+      // All forms will require an ID to be assigned
+      const initialState: FieldValues = {
+        formType: "view", // Always view mode
+        id: id,
+      };
 
-  useEffect(() => {
-    const fetchEntityData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const response = await fetch(
-          makeInternalRegistryAPIwithParams("instances", entityType, id),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch entity data: ${response.statusText}`
-          );
+      // Get template with values for view mode
+      const template = await fetch(
+        makeInternalRegistryAPIwithParams("form", entityType, id),
+        {
+          cache: "no-store",
+          credentials: "same-origin",
         }
+      ).then(async (res) => {
+        const body: AgentResponseBody = await res.json();
+        return body.data?.items?.[0] as FormTemplateType;
+      });
 
-        const responseBody: AgentResponseBody = await response.json();
-
-        if (!responseBody.data?.items || responseBody.data.items.length === 0) {
-          throw new Error("No entity data found");
-        }
-
-        const data = responseBody.data.items[0] as RegistryFieldValues;
-
-        // Convert the entity data to label/value pairs
-        const fields: DataField[] = Object.entries(data)
-          .map(([key, field]) => {
-            let value = "";
-
-            if (Array.isArray(field)) {
-              // Handle array fields
-              value = field.map((f) => f.value || "").join(", ");
-            } else if (typeof field === "object" && field !== null) {
-              // Handle object fields (like SparqlResponseField)
-              if ("value" in field) {
-                value = (field as { value: string }).value || "";
-              } else {
-                value = "";
-              }
-            } else {
-              // Handle primitive values
-              value = String(field || "");
-            }
-
-            // Clean up the key to make it more readable
-            const label = key
-              .replace(/^@/, "") // Remove @ prefix
-              .replace(/([A-Z])/g, " $1") // Add space before capital letters
-              .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
-              .trim();
-
-            return { label, value };
-          })
-          .filter((field) => field.value && field.value.trim() !== ""); // Only show fields with values
-
-        setEntityData(fields);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch entity data"
+      if (additionalFields) {
+        additionalFields.forEach((field: PropertyShapeOrGroup) =>
+          template.property.push(field)
         );
-      } finally {
-        setIsLoading(false);
       }
-    };
 
-    if (entityType && id) {
-      fetchEntityData();
-    }
-  }, [entityType, id]);
+      const updatedProperties: PropertyShapeOrGroup[] =
+        parsePropertyShapeOrGroupList(initialState, template.property);
 
-  if (isLoading) {
+      setFormTemplate({
+        ...template,
+        property: updatedProperties,
+      });
+      return initialState;
+    },
+  });
+
+  const isLoading = form.formState.isLoading;
+
+  if (isLoading || !formTemplate) {
     return (
       <div className="flex justify-center p-4">
         <LoadingSpinner isSmall={true} />
@@ -101,40 +75,52 @@ export function EntityDataDisplay({ entityType, id }: EntityDataDisplayProps) {
     );
   }
 
-  if (error) {
-    return <div className="text-red-500 p-4 text-center">Error: {error}</div>;
-  }
-
-  if (entityData.length === 0) {
-    return (
-      <div className="text-gray-500 p-4 text-center">No data available</div>
-    );
-  }
-
   return (
     <div className=" overflow-hidden">
       <div className="p-4 space-y-2">
-        {entityData.map((field, index) => (
-          <div
-            key={index}
-            className="flex flex-col sm:flex-row sm:items-start gap-4 py-2"
-          >
-            <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground">
-              {field.label}
+        {formTemplate?.property.map((field, index) => {
+          if (field[TYPE_KEY] === PROPERTY_GROUP_TYPE) {
+            return null;
+          }
+
+          const propertyField = field as PropertyShape;
+
+          const label = propertyField.name?.[VALUE_KEY] || "Unknown Field";
+          const fieldId = propertyField.fieldId || propertyField["@id"] || "";
+          const fieldValue = form.getValues(fieldId);
+
+          // Extract value from the field value, handling different value types
+          let displayValue = "";
+          if (fieldValue !== undefined && fieldValue !== null) {
+            if (typeof fieldValue === "object" && "value" in fieldValue) {
+              displayValue = String(fieldValue.value || "");
+            } else {
+              displayValue = String(fieldValue);
+            }
+          }
+
+          return (
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row sm:items-start gap-4 py-2"
+            >
+              <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground">
+                {label}
+              </div>
+              <div className="flex-1 text-xs text-foreground break-all">
+                {displayValue ? (
+                  <span className="text-xs bg-background px-3 py-1.5 rounded-md border border-border text-foreground">
+                    {displayValue}
+                  </span>
+                ) : (
+                  <span className="text-gray-400 italic text-sm">
+                    Not specified
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="flex-1 text-xs text-foreground break-all">
-              {field.value ? (
-                <span className="text-xs bg-background px-3 py-1.5 rounded-md border border-border text-foreground">
-                  {field.value}
-                </span>
-              ) : (
-                <span className="text-gray-400 italic text-sm">
-                  Not specified
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
