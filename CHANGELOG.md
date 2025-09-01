@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.38.4
+
+### Changes
+
+- Modified all geocoding property shapes retrieved from backend as optional shapes for form geocoding purposes
+
 ## 5.38.3
 
 ### Changes
