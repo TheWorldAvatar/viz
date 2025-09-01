@@ -83,14 +83,17 @@ export function useGeocodeTemplate(
         }
       );
       // Search for postal code shape
-      setPostalCodeShape(
-        addressProperties.find((field) => field.fieldId === postalCode)
-      );
+      const postalCodeShape: PropertyShape = addressProperties.find((field) => field.fieldId === postalCode);
+      delete postalCodeShape.minCount;
+      setPostalCodeShape(postalCodeShape);
       // Get all address related shape that isnt the id or postal code
       setAddressShapes(
         addressProperties.filter(
           (field) => field.fieldId != "id" && field.fieldId != postalCode
-        )
+        ).map(field => {
+          delete field.minCount;
+          return field;
+        })
       );
     };
 
