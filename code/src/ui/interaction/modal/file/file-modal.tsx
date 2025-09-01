@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
-import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import Modal from "ui/interaction/modal/modal";
 
 interface FileModalProps {
   url: string;
@@ -31,7 +31,6 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let response;
@@ -44,28 +43,25 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           method: "POST",
           body: fileData,
         });
-        const jsonResp: CustomAgentResponseBody = await response.json();
-        setResponse(jsonResp);
+        const jsonResp: AgentResponseBody = await response.json();
+        toast(
+          jsonResp?.data?.message || jsonResp?.error?.message,
+          jsonResp?.error ? "error" : "success"
+        );
+        // Closes the modal only if response is successfull
+        setTimeout(() => {
+          props.setIsOpen(false);
+        }, 2000);
       } catch (error) {
         console.error("There was an error uploading the file:", error);
-        setResponse({ success: false, message: dict.message.fileUploadError });
+        toast(dict.message.fileUploadError, "error");
       } finally {
         setIsUploading(false);
       }
     } else {
-      setResponse({ success: false, message: dict.message.noFileChosenError });
+      toast(dict.message.noFileChosenError, "error");
     }
   });
-
-  // Closes the modal only if response is successfull
-  useEffect(() => {
-    if (response?.success) {
-      setTimeout(() => {
-        setResponse(null);
-        props.setIsOpen(false);
-      }, 2000);
-    }
-  }, [response]);
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
@@ -75,30 +71,26 @@ export default function FileModal(props: Readonly<FileModalProps>) {
 
   return (
     <Modal
-      styles={["!w-md  !h-38"]}
+      className="!w-xs md:!w-sm !h-44 flex  !rounded-2xl !shadow-2xl"
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
     >
       <form ref={formRef} onSubmit={onFormSubmit}>
-        <section className="flex items-center">
+        <section className="flex items-center flex-wrap gap-2">
           <FileInputButton form={form} />
         </section>
 
         <section className="flex justify-between mt-2 border-t-1 border-border">
-          {!formRef.current?.formState?.isSubmitting &&
-            !isUploading &&
-            response && <ResponseComponent response={response} />}
           {isUploading && <LoadingSpinner isSmall={false} />}
-          {!response?.success && (
-            <Button
-              leftIcon="keyboard_tab"
-              size="icon"
-              className="mt-2"
-              onClick={onSubmit}
-              tooltipText={dict.action.submit}
-              tooltipPosition="bottom-start"
-            />
-          )}
+          <Button
+            leftIcon="keyboard_tab"
+            size="icon"
+            iconSize="small"
+            className="mt-2"
+            onClick={onSubmit}
+            tooltipText={dict.action.submit}
+            tooltipPosition="bottom"
+          />
         </section>
       </form>
     </Modal>

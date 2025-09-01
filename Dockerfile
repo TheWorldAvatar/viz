@@ -11,21 +11,12 @@
 #
 
 # ---- Base Image ----
-FROM node:24.2-slim AS base
+FROM node:24.4-slim AS base
 RUN corepack enable
 WORKDIR /twa
 RUN mkdir .public_hash
 ENV NEXT_TELEMETRY_DISABLED 1
 COPY ./code/package.json  ./
-
-# ---- Development Image ----
-FROM base AS develop
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
-COPY ./code ./
-# Script should not be at twa directory as volume mount will override any copied contents
-COPY ./dev-start.sh /dev-start.sh
-RUN chmod +x /dev-start.sh
-CMD [ "/dev-start.sh" ]
 
 # ---- Production Image ----
 FROM base AS production

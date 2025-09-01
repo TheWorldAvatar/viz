@@ -8,22 +8,25 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { PermissionScheme } from "types/auth";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
-import { ApiResponse, JsonObject } from "types/json";
+import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
-import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
-import ReturnButton from "../action/redirect/return-button";
+import Button from "../button";
+import Drawer from "../drawer/drawer";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import Button from "../button";
+
+import { Routes } from "io/config/routes";
+import { useSelector } from "react-redux";
+import { getCurrentEntityType } from "state/registry-slice";
+import { toast } from "../action/toast/toast";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -43,18 +46,31 @@ interface FormContainerComponentProps {
 export default function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
-  const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
-
   if (props.isModal) {
+    const router = useRouter();
+    const currentEntityType: string = useSelector(getCurrentEntityType);
     return (
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} returnPrevPage={true}>
+      <Drawer
+        onClose={() => {
+          if (currentEntityType != "") {
+            let redirectUrl: string = `${Routes.REGISTRY_GENERAL}/${currentEntityType}`;
+            if (currentEntityType === "outstanding") {
+              redirectUrl = Routes.REGISTRY_TASK_OUTSTANDING
+            } else if (currentEntityType === "scheduled") {
+              redirectUrl = Routes.REGISTRY_TASK_SCHEDULED
+            } else if (currentEntityType === "closed") {
+              redirectUrl = Routes.REGISTRY_TASK_CLOSED
+            }
+            router.push(redirectUrl)
+          }
+        }}>
         <FormContents {...props} />
-      </Modal>
+      </Drawer>
     );
   }
 
   return (
-    <div className="relative flex flex-col w-[95vw] h-[80vh] sm:w-[95vw] sm:h-[85vh] md:h-[80vh] md:w-[95vw] lg:h-[85vh] xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark border-1 shadow-2xl border-border rounded-xl mt-4  ">
+    <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -70,8 +86,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
-  const [status, setStatus] = useState<ApiResponse>(null);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
+  const [status, setStatus] = useState<AgentResponseBody>(null);
   const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -100,7 +115,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     // Add contract and date field
     const payload = {
       ...formData,
-      [FORM_STATES.CONTRACT]: status.iri,
+      [FORM_STATES.CONTRACT]: status?.data?.id,
       [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
     };
     const res = await fetch(
@@ -113,8 +128,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         body: JSON.stringify({ formData: payload }),
       }
     );
-    const agentResponseBody: CustomAgentResponseBody = await res.json();
-    setResponse(agentResponseBody);
+    const agentResponseBody: AgentResponseBody = await res.json();
+    toast(
+      agentResponseBody?.data?.message || agentResponseBody?.error?.message,
+      agentResponseBody?.error ? "error" : "success"
+    );
   };
 
   // A hook that fetches the form template for executing an action
@@ -137,8 +155,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           credentials: "same-origin",
         }
       );
-      const template: PropertyShape[] = await res.json();
+      const responseBody: AgentResponseBody = await res.json();
+      const template: PropertyShape[] = (
+        responseBody.data?.items as Record<string, unknown>[]
+      )?.[0]?.property as PropertyShape[];
       setFormFields(template);
+
       setIsLoading(false);
     };
 
@@ -153,7 +175,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
     const reqBody: JsonObject = {
-      contract: status.iri,
+      contract: status?.data?.id,
       remarks: "Contract has been approved successfully!",
     };
     const res = await fetch(
@@ -166,12 +188,18 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         body: JSON.stringify({ ...reqBody }),
       }
     );
-    const customAgentResponse: CustomAgentResponseBody = await res.json();
-    setResponse(customAgentResponse);
+    const customAgentResponse: AgentResponseBody = await res.json();
+    toast(
+      customAgentResponse?.data?.message || customAgentResponse?.error?.message,
+      customAgentResponse?.error ? "error" : "success"
+    );
     setIsLoading(false);
-    setTimeout(() => {
-      router.back();
-    }, 2000);
+
+    if (!customAgentResponse?.error) {
+      setTimeout(() => {
+        router.back();
+      }, 2000);
+    }
   };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -190,8 +218,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           credentials: "same-origin",
         }
       );
-      const responseString = await res.text();
-      setStatus(JSON.parse(responseString));
+      const resBody: AgentResponseBody = await res.json();
+      setStatus(resBody);
     };
 
     if (
@@ -207,15 +235,18 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   return (
     <>
-      <div className="text-xl font-bold">
-        <span>{`${translateFormType(
+      <section
+        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${!props.isModal ? "mt-0" : "mt-10"
+          }  mb-0.5  shrink-0`}
+      >
+        <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
         ).toUpperCase()} ${parseWordsForLabels(props.entityType)
           .toUpperCase()
-          .replace("_", " ")}`}</span>
-      </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6  ">
+          .replace("_", " ")}`}</h1>
+      </section>
+      <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
             <LoadingSpinner isSmall={false} />
@@ -224,8 +255,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formRef={formRef}
               entityType={props.entityType}
               formType={props.formType}
-              setResponse={setResponse}
-              primaryInstance={status?.iri}
+              primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
             />
           ))}
@@ -238,8 +268,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-2 ">
-        {!formRef.current?.formState?.isSubmitting && !response && (
+
+      <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
+        {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
             variant="outline"
@@ -250,16 +281,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         )}
         {formRef.current?.formState?.isSubmitting ||
           (isLoading && <LoadingSpinner isSmall={false} />)}
-        {!formRef.current?.formState?.isSubmitting && response && (
-          <ResponseComponent response={response} />
-        )}
-        <div className="flex flex-wrap gap-2 justify-end items-center ">
+        <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
-            !response &&
-            status?.message === ENTITY_STATUS.ACTIVE &&
+            status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
                 leftIcon="error"
@@ -274,8 +301,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.formType === "view" &&
-            !response &&
-            status?.message === ENTITY_STATUS.ACTIVE &&
+            status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
                 leftIcon="cancel"
@@ -289,8 +315,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
-            status?.message === ENTITY_STATUS.PENDING && (
+            status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
                 label={dict.action.approve}
@@ -302,8 +327,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
-            (status?.message === ENTITY_STATUS.PENDING ||
+            (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
                 leftIcon="edit"
@@ -317,18 +341,18 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             props.formType === "view" &&
-            !response &&
-            (status?.message === ENTITY_STATUS.PENDING ||
+            (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 leftIcon="delete"
+                iconSize="medium"
                 label={dict.action.delete}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
-                variant="destructive"
+                variant="secondary"
               />
             )}
-          {props.formType != "view" && !response && (
+          {props.formType != "view" && (
             <Button
               leftIcon="send"
               label={dict.action.submit}
@@ -336,29 +360,21 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               onClick={onSubmit}
             />
           )}
-          {!response && (isRescindAction || isTerminateAction) && (
-            <Button
-              // Remove the rescind and terminate action view back to original view if no response
-              leftIcon="first_page"
-              variant="secondary"
-              tooltipText={dict.action.cancel}
-              onClick={() => {
-                setIsRescindAction(false);
-                setIsTerminateAction(false);
-              }}
-            />
-          )}
-          {!response && !(isRescindAction || isTerminateAction) && (
-            <ReturnButton
-              label={dict.action.return}
-              leftIcon={"first_page"}
-              className="ml-2"
-              variant="secondary"
-              tooltipText={dict.action.return}
-            />
-          )}
+          {isRescindAction ||
+            (isTerminateAction && (
+              <Button
+                // Remove the rescind and terminate action view back to original view if no response
+                leftIcon="first_page"
+                variant="secondary"
+                tooltipText={dict.action.cancel}
+                onClick={() => {
+                  setIsRescindAction(false);
+                  setIsTerminateAction(false);
+                }}
+              />
+            ))}
         </div>
-      </div>
+      </section>
     </>
   );
 }

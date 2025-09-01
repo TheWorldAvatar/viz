@@ -1,4 +1,10 @@
+![GitHub Tag](https://img.shields.io/github/v/tag/TheWorldAvatar/viz?logo=git&logoColor=%20%23F05032&label=Version&labelColor=0B4452&color=0d5226)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed/TheWorldAvatar/viz?logo=refinedgithub&logoColor=%239E95B7&labelColor=d9877c&color=51b7a6)
+![GitHub contributors](https://img.shields.io/github/contributors/TheWorldAvatar/viz?logo=github&logoColor=181717&color=18677a&labelColor=157b3e)
 [![Docker Image CI](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml)
+
+
+
 
 # The World Avatar (TWA) Visualisation Platform
 
@@ -22,7 +28,8 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
 As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
 
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
-2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.6.1`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.10.0`
+
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
@@ -32,18 +39,20 @@ Additionally, there is a tutorial in the [example](./example/) directory, includ
 
 ## 2. Development
 
-Information on the source code and its architecture can be found in the [code](./code/) directory. Briefly, the TWA Visualisation Platform takes the form of a [Next.js](https://nextjs.org/) project written using [TypeScript](https://www.typescriptlang.org/), utilising both client and server-side codes.
+Information on the source code and its architecture can be found in the [code](./code/) directory. Briefly, the TWA Visualisation Platform takes the form of a [Next.js](https://nextjs.org/) application written using [TypeScript](https://www.typescriptlang.org/), utilising both client and server-side code.
 
-The development process can occur locally or in a Docker container. Please do note that it is faster to develop the platform locally, and instructions are available in the [code](./code#3-local-development-workflow) directory.
+The recommended way to develop viz is to work in the `devcontainer` configured in this repo. This requires Docker installed on your machine as well as the `Dev Containers VScode` extension.
 
-On the other hand, Docker deployment is simplified and requires minimal setup. In order to start a Docker container, please ensure the following:
+1) Simply clone this repository, then run `VSCode`'s Command Palette (`ctrl / cmd + shift + P`) and run `Dev Containers: Reopen in Container`.
+2) Within the running container, create an `.env.local` file in the `./code` directory to configure app environment variables such as keycloak and mapbox integration
 
-1. Docker is installed
-2. Create files within this directory (containing the docker configurations) for `mapbox_username` and `mapbox_api_key` according to your [Mapbox](https://www.mapbox.com/) credentials. This will be passed as Docker secrets when the container is started.
-3. Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./example/) directory.
-4. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables at `docker-compose.dev.yml` if required.
+- `MAPBOX_USERNAME` environment variable
+- `MAPBOX_API_KEY` environment variable
+- `KEYCLOAK` optional environment variable to set up an authorisation server if required; See [authorisation server](#4-authorisation) for more details
 
-Once the above steps have been completed, run the command `docker compose -f 'docker-compose.dev.yml' up -d` in this directory. The development server will be set up at `port 3000` on your local machine at `localhost:3000`. Any code changes will be propagated, but may require a browser refresh from time to time.
+3) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
+4) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
+5) Once installed, run `pnpm dev` from the `code` directory to set up the app server. Alternatively, go to the debug tab on VSCode to run in debug mode.
 
 ## 3. Production
 

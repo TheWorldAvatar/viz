@@ -3,7 +3,7 @@ import styles from './analytics.module.css';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { Modules, PageTitles, Paths } from 'io/config/routes';
+import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 
@@ -35,6 +35,6 @@ export default function DashContainer() {
       </div>
     )
   } else {
-    redirect(Paths.HOME);
+    redirect(Routes.HOME);
   }
 }

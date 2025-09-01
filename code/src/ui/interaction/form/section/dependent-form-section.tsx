@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   defaultSearchOption,
   ID_KEY,
   PropertyShape,
   RegistryFieldValues,
+  SparqlResponseField,
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -20,9 +22,9 @@ import {
   getAfterDelimiter,
   parseStringsForUrls,
 } from "utils/client-utils";
-import FormSelector from "../field/input/form-selector";
-import { FORM_STATES } from "../form-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import FormSelector from "../field/input/form-selector";
+import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -81,7 +83,10 @@ export function DependentFormSection(
               entityType
             ),
             { cache: "no-store", credentials: "same-origin" }
-          ).then((res) => res.json());
+          ).then(async (res) => {
+            const responseEntity: AgentResponseBody = await res.json();
+            return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          });
         }
         // If there is no valid parent option, there should be no entity
       } else if (
@@ -104,44 +109,47 @@ export function DependentFormSection(
           ),
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (response) => {
-          const responseEntity = await response.json();
-          if (Array.isArray(responseEntity)) {
-            return responseEntity;
-          } else {
-            return [responseEntity];
-          }
+          const responseEntity: AgentResponseBody = await response.json();
+          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
         });
       } else {
         entities = await fetch(
           makeInternalRegistryAPIwithParams("instances", entityType),
           { cache: "no-store", credentials: "same-origin" }
-        ).then((res) => res.json());
+        ).then(async (res) => {
+          const responseEntity: AgentResponseBody = await res.json();
+          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+        });
       }
 
       // By default, id is empty
       let defaultId: string = "";
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        // Set the id to the first possible option
-        defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
-        // If there is a default value set either in the form or the field, search and use the option matching the default instance's local name
-        if (props.form.getValues(field.fieldId).length > 0) {
-          const defaultValueId: string = getAfterDelimiter(
-            props.form.getValues(field.fieldId),
-            "/"
-          );
-          const matchingEntity: RegistryFieldValues = entities.find(
-            (entity) =>
-              getAfterDelimiter(
-                extractResponseField(entity, FORM_STATES.ID)?.value,
-                "/"
-              ) === defaultValueId
-          );
-          if (matchingEntity) {
-            defaultId = extractResponseField(
-              matchingEntity,
-              FORM_STATES.IRI
-            )?.value;
+        if (props.dependentProp?.minCount?.[VALUE_KEY] != "0") {
+          // Set the id to the first possible option when this is not optional
+          // Optional fields should default to empty string
+          defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
+        }
+        const fieldValue = props.form.getValues(field.fieldId);
+        // Find best matching value if there is an existing or default value;
+        // Existing value must take precedence
+        if (fieldValue && fieldValue.length > 0) {
+          const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
+          const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+          if (result != null) {
+            defaultId = result;
+          }
+        } else if (props.dependentProp?.defaultValue) {
+          const defaults: SparqlResponseField | SparqlResponseField[] = props.dependentProp?.defaultValue
+          // If this is not an array or the array's first item is not null
+          if (!(Array.isArray(defaults) && defaults[0] == null)) {
+            const defaultField: SparqlResponseField = Array.isArray(defaults) ? defaults[0] : defaults;
+            const defaultValueId: string = getAfterDelimiter(defaultField.value, "/");
+            const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+            if (result != null) {
+              defaultId = result;
+            }
           }
         }
       }

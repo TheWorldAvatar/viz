@@ -1,0 +1,35 @@
+{
+	"name": "Viz Dev Container",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"nodeGypDependencies": true,
+			"version": "latest",
+			"pnpmVersion": "latest",
+			"nvmVersion": "latest"
+		},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+		"ghcr.io/devcontainers-extra/features/jest:2": {}
+	},
+	"forwardPorts": [
+		3000
+	],
+	"postAttachCommand": "cd code; pnpm install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Orta.vscode-jest",
+				"IronGeek.vscode-env",
+				"johnpapa.vscode-peacock",
+				"ms-vscode-remote.vscode-remote-extensionpack",
+				"ms-azuretools.vscode-containers",
+				"github.vscode-github-actions",
+				"GitHub.vscode-pull-request-github",
+				"ms-vscode.js-debug-nightly",
+				"DavidAnson.vscode-markdownlint",
+				"bradlc.vscode-tailwindcss",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
+}

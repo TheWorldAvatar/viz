@@ -6,7 +6,7 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FORM_IDENTIFIER,
@@ -19,14 +19,16 @@ import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
-import Modal from "ui/interaction/modal/modal";
-import ResponseComponent from "ui/text/response/response";
+import Drawer from "../../drawer/drawer";
+
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { PermissionScheme } from "types/auth";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { PermissionScheme } from "types/auth";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+
+import { toast } from "ui/interaction/action/toast/toast";
 
 interface TaskModalProps {
   entityType: string;
@@ -34,6 +36,7 @@ interface TaskModalProps {
   task: RegistryTaskOption;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  onSuccess?: () => void;
 }
 
 /**
@@ -53,24 +56,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // Form actions
-
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [response, setResponse] = useState<CustomAgentResponseBody>(null);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
-
-  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit();
-    }
-  };
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
     (currentStatus: string): number => {
       // Enum should be 0 for order received at pending dispatch state
-      if (currentStatus === Status.PENDING_DISPATCH) {
+      if (currentStatus === Status.NEW) {
         return 0;
       } else {
         // Enum will be 1 as there is already a dispatch event instantiated
@@ -84,21 +81,26 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     formData: FieldValues
   ) => {
     let action = "";
-    if (props.task.type === "dispatch") {
+    if (props.task?.type === "dispatch") {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
-    } else if (props.task.type === "complete") {
-      action = "complete";
+    } else if (props.task?.type === "complete") {
+      if (isSaving) {
+        action = "saved";
+        setIsSaving(false);
+      } else {
+        action = "complete";
+      }
       formData[FORM_STATES.ORDER] = 1;
-    } else if (props.task.type === "cancel") {
+    } else if (props.task?.type === "cancel") {
       action = "cancel";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
-        props.task.status
+        props.task?.status
       );
-    } else if (props.task.type === "report") {
+    } else if (props.task?.type === "report") {
       action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(
-        props.task.status
+        props.task?.status
       );
     } else {
       return;
@@ -106,7 +108,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     submitLifecycleAction(
       formData,
       action,
-      props.task.type !== "dispatch" && props.task.type !== "complete"
+      props.task?.type !== "dispatch" && props.task?.type !== "complete"
     );
   };
 
@@ -119,7 +121,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     // Add contract and date field
     formData[FORM_STATES.CONTRACT] = props.task.contract;
     formData[FORM_STATES.DATE] = props.task.date;
-    let response: CustomAgentResponseBody;
+    let response: AgentResponseBody;
     if (isPost) {
       const res = await fetch(
         makeInternalRegistryAPIwithParams("event", "service", action),
@@ -145,9 +147,30 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       );
       response = await res.json();
     }
-    setResponse(response);
-    setFormFields([]);
+    toast(
+      response?.data?.message || response?.error?.message,
+      response?.error ? "error" : "success"
+    );
+    if (response && !response?.error) {
+      setTimeout(() => {
+        // Inform parent to refresh data on successful action
+        props.onSuccess?.();
+        props.setIsOpen(false);
+        // Reset states on successful submission
+        props.setTask(null);
+        setFormFields([]);
+      }, 2000);
+    }
   };
+
+  // A hook that submits the form when buttons are clicked
+  // This approach ensures that the isSaving state is changed before the form is submitted, so that the saved state is acknowledged
+  useEffect(() => {
+    if ((isSubmitting || isSaving) && formRef.current) {
+      formRef.current.requestSubmit();
+      setIsSubmitting(false);
+    }
+  }, [isSubmitting, isSaving]);
 
   // A hook that fetches the form template for executing an action
   useEffect(() => {
@@ -170,59 +193,54 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           cache: "no-store",
           credentials: "same-origin",
         }
-      ).then((res) => res.json());
+      ).then(async (res) => {
+        const resBody: AgentResponseBody = await res.json();
+        return resBody.data?.items?.[0] as FormTemplateType;
+      });
       setFormFields(template.property);
       setIsFetching(false);
     };
 
-    if (props.task.type === "dispatch") {
+    // Reset forms when they are changed
+    triggerRefresh();
+    setFormFields([]);
+
+    if (props.task?.type === "dispatch") {
       getFormTemplate("service", "dispatch", props.task.id);
-    } else if (props.task.type === "complete") {
+    } else if (props.task?.type === "complete") {
       getFormTemplate("service", "complete", props.task.id);
-    } else if (props.task.type === "report") {
+    } else if (props.task?.type === "report") {
       getFormTemplate("service", "report");
-    } else if (props.task.type === "cancel") {
+    } else if (props.task?.type === "cancel") {
       getFormTemplate("service", "cancel");
     }
-  }, [props.task.type]);
-
-  // Closes the modal only if response is successfull
-  useEffect(() => {
-    if (response?.success) {
-      setTimeout(() => {
-        setResponse(null);
-        props.setIsOpen(false);
-      }, 2000);
-    }
-  }, [response]);
-
-  // Reset the states when the modal is closed
-  useEffect(() => {
-    if (!props.isOpen) {
-      setResponse(null);
-      setFormFields([]);
-    }
-  }, [props.isOpen]);
+  }, [props.task?.id, props.task?.status, props.task?.type]);
 
   return (
-    <Modal isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
-      <section className="flex justify-between items-center text-nowrap text-foreground p-2">
+    <Drawer
+      isControlledOpen={props.isOpen}
+      setIsControlledOpen={props.setIsOpen}
+    >
+      {/* Header */}
+      <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
           {parseWordsForLabels(dict.title.actions)}
         </h1>
-        <h2 className="text-sm md:text-lg mr-4  md:mr-8">
+        <h2 className="text-base md:text-lg md:mr-8">
           {props.task.date}: {getTranslatedStatusLabel(props.task.status, dict)}
         </h2>
       </section>
-      <section className="overflow-y-auto overflow-x-hidden h-[75vh] md:p-2">
-        {props.task.type !== "default" && (
+      {/* Scrollable Content */}
+      <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
+        {props.task?.type !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {props.task.type === "complete" && dict.message.completeInstruction}
-            {props.task.type === "dispatch" &&
+            {props.task?.type === "complete" &&
+              dict.message.completeInstruction}
+            {props.task?.type === "dispatch" &&
               `${dict.message.dispatchInstruction} ${props.task.date}:`}
-            {props.task.type === "cancel" &&
+            {props.task?.type === "cancel" &&
               `${dict.message.cancelInstruction} ${props.task.date}:`}
-            {props.task.type === "report" &&
+            {props.task?.type === "report" &&
               `${dict.message.reportInstruction.replace(
                 "{date}",
                 props.task.date
@@ -230,23 +248,22 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           </p>
         )}
         {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
-        {props.task.type === "default" && !(refreshFlag || isFetching) && (
+        {props.task?.type === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
-            setResponse={setResponse}
             id={getAfterDelimiter(props.task.contract, "/")}
           />
         )}
-        {formFields.length > 0 && !refreshFlag && (
+        {formFields?.length > 0 && !refreshFlag && (
           <FormTemplate
             entityType={
-              props.task.type === "report"
+              props.task?.type === "report"
                 ? "report"
-                : props.task.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                : props.task?.type === "cancel"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -254,8 +271,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           />
         )}
       </section>
-      <section className="flex justify-between p-2">
-        {!formRef.current?.formState?.isSubmitting && !response && (
+      {/* Footer */}
+      <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
+        {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
             variant="outline"
@@ -267,31 +285,129 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           <LoadingSpinner isSmall={false} />
         )}
 
-        {!formRef.current?.formState?.isSubmitting && (
-          <ResponseComponent response={response} />
-        )}
-        <div className="flex flex-wrap gap-2 justify-end items-center">
+        <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
           {(!keycloakEnabled ||
             !permissionScheme ||
+            permissionScheme.hasPermissions.completeTask) &&
+            (props.task?.status?.toLowerCase() ==
+              dict.title.assigned?.toLowerCase() ||
+              props.task?.status?.toLowerCase() ==
+              dict.title.completed?.toLowerCase()) &&
+            props.task?.type === "default" && (
+              <Button
+                leftIcon="done_outline"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.complete}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "complete",
+                  })
+                }
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
+            props.task?.status?.toLowerCase() !==
+            dict.title.issue?.toLowerCase() &&
+            props.task?.status?.toLowerCase() !==
+            dict.title.cancelled?.toLowerCase() &&
+            props.task?.type === "default" && (
+              <Button
+                leftIcon="assignment"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.dispatch}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "dispatch",
+                  })
+                }
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.operation) &&
+            (props.task?.status?.toLowerCase() ===
+              dict.title.new?.toLowerCase() ||
+              props.task?.status?.toLowerCase() ===
+              dict.title.assigned?.toLowerCase()) &&
+            props.task?.type === "default" && (
+              <Button
+                variant="secondary"
+                leftIcon="cancel"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.cancel}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "cancel",
+                  })
+                }
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.reportTask) &&
+            (props.task?.status?.toLowerCase() ===
+              dict.title.new?.toLowerCase() ||
+              props.task?.status?.toLowerCase() ===
+              dict.title.assigned?.toLowerCase()) &&
+            props.task?.type === "default" && (
+              <Button
+                variant="secondary"
+                leftIcon="report"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.report}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "report",
+                  })
+                }
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.completeTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={() => setIsSaving(true)}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
             (permissionScheme.hasPermissions.completeTask &&
-              props.task.type === "complete") ||
+              props.task?.type === "complete") ||
             (permissionScheme.hasPermissions.reportTask &&
-              props.task.type === "report") ||
+              props.task?.type === "report") ||
             (permissionScheme.hasPermissions.operation &&
-              (props.task.type === "dispatch" ||
-                props.task.type === "cancel"))) &&
-            !response &&
-            props.task.type !== "default" && (
+              (props.task?.type === "dispatch" ||
+                props.task?.type === "cancel"))) &&
+            props.task?.type !== "default" && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                onClick={onSubmit}
+                onClick={() => setIsSubmitting(true)}
               />
             )}
         </div>
       </section>
-    </Modal>
+    </Drawer>
   );
 }

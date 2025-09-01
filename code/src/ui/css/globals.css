@@ -53,12 +53,19 @@
     --button-color-primary-active: #6fa085;
     --button-color-secondary: #18677a;
     --button-color-secondary-hover: #0b4452;
-    --destructive: oklch(58.305% 0.23863 28.392 / 0.76);
-    --ring: oklch(0.708 0 0);
+    --destructive: oklch(63.472% 0.17115 20.398 / 0.76);
+    --ring: oklch(92.8% 0.006 264.531);
+    --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
 
-    /* Table */
-    --table-header-bg: #e5e7eb;
-    --table-hover-bg: #d1d5dc;
+    /* Status Colours */
+    --status-open-bg: hsl(156, 40%, 86%);
+    --status-open-text: hsl(159, 75%, 16%);
+    --status-assigned-bg: hsl(0, 0%, 90%);
+    --status-assigned-text: hsl(0, 0%, 20%);
+    --status-issue-bg: hsl(52, 82%, 93%);
+    --status-issue-text: hsl(18, 74%, 24%);
+    --status-cancelled-bg: hsl(2, 100%, 96%);
+    --status-cancelled-text: hsl(1, 75%, 20%);
   }
 }
 
@@ -111,11 +118,18 @@
     --button-color-secondary: #7acadb;
     --button-color-secondary-hover: #35a7c0;
     --destructive: oklch(0.704 0.191 22.216);
-    --ring: oklch(0.556 0 0);
+    --ring: oklch(27.4% 0.006 286.033);
+    --ring-hover: oklch(27.4% 0.006 286.033 / 0.5);
 
-    /* Table */
-    --table-header-bg: #27272a;
-    --table-hover-bg: #3f3f46;
+    /* Status Colours */
+    --status-open-bg: hsl(156, 40%, 20%);
+    --status-open-text: hsl(156, 40%, 86%);
+    --status-assigned-bg: hsl(0, 0%, 25%);
+    --status-assigned-text: hsl(0, 0%, 85%);
+    --status-issue-bg: hsl(52, 82%, 20%);
+    --status-issue-text: hsl(52, 82%, 93%);
+    --status-cancelled-bg: hsl(2, 100%, 20%);
+    --status-cancelled-text: hsl(2, 100%, 96%);
   }
 }
 
@@ -159,15 +173,24 @@
   --color-background-secondary: var(--background-secondary);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
+  --color-ring-hover: var(--ring-hover);
   --input: var(--input);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
   --color-selected: var(--text-color-selected);
-  --color-table-header-bg: var(--table-header);
-  --color-table-hover-bg: var(--table-hover-bg);
-  --breakpoint-xs-mobile: 355px;
-  --breakpoint-sm-mobile: 400px;
+  --color-status-open-bg: var(--status-open-bg);
+  --color-status-open-text: var(--status-open-text);
+  --color-status-assigned-bg: var(--status-assigned-bg);
+  --color-status-assigned-text: var(--status-assigned-text);
+  --color-status-issue-bg: var(--status-issue-bg);
+  --color-status-issue-text: var(--status-issue-text);
+  --color-status-cancelled-bg: var(--status-cancelled-bg);
+  --color-status-cancelled-text: var(--status-cancelled-text);
+  --color-status-success-bg: var(--status-open-bg);
+  --color-status-success-text: var(--status-open-text);
+  --color-status-error-bg: var(--status-cancelled-bg);
+  --color-status-error-text: var(--status-cancelled-text);
 }
 
 * {
@@ -181,8 +204,8 @@ body {
 }
 
 body {
-  background-color: var(--background-primary);
-  color: var(--text-color-primary);
+  background-color: var(--background);
+  color: var(--foreground);
   overflow: hidden;
   touch-action: manipulation; /* Prevents double-tap zoom on mobile */
 }

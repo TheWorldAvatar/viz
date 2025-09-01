@@ -1,10 +1,8 @@
 "use client";
 
-import styles from "../action.module.css";
-
 import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
-import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
+import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
 interface FileInputButtonProps {
@@ -13,7 +11,7 @@ interface FileInputButtonProps {
 
 /**
  * A clickable button to upload a file input.
- * 
+ *
  * @param {UseFormReturn<FieldValues>} form React hook form's use form hook.
  */
 export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
@@ -26,15 +24,26 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
   });
 
   return (
-    <>
-      <label htmlFor="file-upload" className={`${styles["button-container"]} ${styles["hover-button-container"]} ${styles["background"]}`}>
-        <Icon
-          className={`material-symbols-outlined ${styles["icon"]} ${styles["background-text-color"]}`}
-        >file_upload</Icon>
-        <p className={`${styles["text"]} ${styles["background-text-color"]}`}>{dict.action.file}</p>
-        <input id="file-upload" type="file" {...props.form.register(filesKey)} />
+    <div className="w-full flex flex-col  gap-2">
+      <label
+        htmlFor="file-upload"
+        className={` cursor-pointer flex items-center justify-center w-fit py-2 px-4 rounded-lg   hover:bg-primary/90 bg-primary`}
+      >
+        <Icon className="material-symbols-outlined text-primary-foreground">
+          file_upload
+        </Icon>
+        <p className="ml-2 text-primary-foreground text-base">
+          {dict.action.file}
+        </p>
+        <input
+          id="file-upload"
+          type="file"
+          {...props.form.register(filesKey)}
+        />
       </label>
-      <p className={`${styles["text"]}`}>{currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}</p>
-    </>
+      <p className="text-foreground text-sm md:text-base ml-2">
+        {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
+      </p>
+    </div>
   );
 }

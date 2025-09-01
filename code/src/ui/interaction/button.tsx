@@ -24,6 +24,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tooltipText?: string;
   tooltipPosition?: Placement;
   disabled?: boolean;
+  hasMobileIcon?: boolean;
 }
 
 /**
@@ -39,7 +40,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {Placement} tooltipPosition Optional tooltip position.
  * @param {boolean} disabled Optional disabled state for the button.
- *
+ * @param {boolean} hasMobileIcon if set to false, the button will not show icons on mobile devices.
  */
 
 export default function Button({
@@ -56,11 +57,12 @@ export default function Button({
   label,
   tooltipText,
   tooltipPosition = "top", // Default tooltip position
+  hasMobileIcon = true,
   ...props
 }: Readonly<ButtonProps>) {
   // Base styles for the button, applied to all variants and sizes
   const baseStyles =
-    "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive";
+    "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md  font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none  focus-visible:ring-zinc-400 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive";
 
   // Define styles for each variant
   const variantStyles = {
@@ -76,7 +78,7 @@ export default function Button({
     outline:
       "bg-transparent border border-border text-foreground hover:bg-gray-200 dark:hover:text-background",
     ghost:
-      "bg-transparent text-foreground hover:bg-gray-300 dark:hover:bg-zinc-700",
+      "bg-transparent text-foreground hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors ease-linear duration-200",
     active:
       "bg-background border-1 border-border text-gray-800 hover:bg-gray-200 dark:bg-muted dark:text-foreground dark:hover:bg-zinc-900",
   };
@@ -124,7 +126,11 @@ export default function Button({
         <div className={`flex items-center ${iconSpacing[size]}`}>
           {loading && <LoadingSpinner isSmall={true} />}
           {!loading && leftIcon && (
-            <span className="flex items-center">
+            <span
+              className={`${
+                hasMobileIcon ? "flex" : "hidden md:flex"
+              } items-center`}
+            >
               {
                 <Icon fontSize={iconSize} className="material-symbols-outlined">
                   {leftIcon}
@@ -134,7 +140,11 @@ export default function Button({
           )}
           <span>{children || label}</span>
           {!loading && rightIcon && (
-            <span className="flex items-center">
+            <span
+              className={`${
+                hasMobileIcon ? "flex" : "hidden md:flex"
+              } items-center`}
+            >
               {
                 <Icon fontSize={iconSize} className="material-symbols-outlined">
                   {rightIcon}

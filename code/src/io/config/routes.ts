@@ -15,43 +15,42 @@ export const Apis: {
   MAP_SETTINGS: `${ASSET_PREFIX}/api/map/settings`,
 };
 
+// Default available path names
 export const Paths: {
   [key: string]: string;
 } = {
-  HOME: `${ASSET_PREFIX}/`,
-  MAP: `${ASSET_PREFIX}/map`,
-  DASHBOARD: `${ASSET_PREFIX}/analytics`,
-  REGISTRY: `${ASSET_PREFIX}/view`,
-  REGISTRY_GENERAL: `${ASSET_PREFIX}/registry/`,
-  REGISTRY_PENDING: `${ASSET_PREFIX}/registry/pending`,
-  REGISTRY_ACTIVE: `${ASSET_PREFIX}/registry/active`,
-  REGISTRY_ARCHIVE: `${ASSET_PREFIX}/registry/archive`,
-  REGISTRY_REPORT: `${ASSET_PREFIX}/registry/report`,
-  REGISTRY_TASK_DATE: `${ASSET_PREFIX}/registry/task/date`,
-  REGISTRY_ADD: `${ASSET_PREFIX}/add`,
-  REGISTRY_EDIT: `${ASSET_PREFIX}/edit`,
-  REGISTRY_DELETE: `${ASSET_PREFIX}/delete`,
-  HELP: `${ASSET_PREFIX}/help`,
+  HOME: "",
+  MAP: "map",
+  DASHBOARD: "analytics",
+  REGISTRY: "view",
+  REGISTRY_GENERAL: "registry",
+  REGISTRY_TASK_OUTSTANDING: "registry/task/outstanding",
+  REGISTRY_TASK_SCHEDULED: "registry/task/scheduled",
+  REGISTRY_TASK_CLOSED: "registry/task/closed",
+  REGISTRY_REPORT: "registry/report",
+  REGISTRY_ADD: "add",
+  REGISTRY_EDIT: "edit",
+  REGISTRY_DELETE: "delete",
+  HELP: "help",
 };
 
-// Default routes
+// Routes with ASSET_PREFIX appended to the path names
 export const Routes: {
   [key: string]: string;
 } = {
-  HOME: Paths.HOME,
-  MAP: Paths.MAP,
-  DASHBOARD: Paths.DASHBOARD,
-  REGISTRY: Paths.REGISTRY,
-  REGISTRY_GENERAL: Paths.REGISTRY_GENERAL,
-  REGISTRY_PENDING: Paths.REGISTRY_PENDING,
-  REGISTRY_ACTIVE: Paths.REGISTRY_ACTIVE,
-  REGISTRY_ARCHIVE: Paths.REGISTRY_ARCHIVE,
-  REGISTRY_REPORT: Paths.REGISTRY_REPORT,
-  REGISTRY_TASK_DATE: Paths.REGISTRY_TASK_DATE,
-  REGISTRY_ADD: Paths.REGISTRY_ADD,
-  REGISTRY_EDIT: Paths.REGISTRY_EDIT,
-  REGISTRY_DELETE: Paths.REGISTRY_DELETE,
-  HELP: Paths.HELP,
+  HOME: `${ASSET_PREFIX}/${Paths.HOME}`,
+  MAP: `${ASSET_PREFIX}/${Paths.MAP}`,
+  DASHBOARD: `${ASSET_PREFIX}/${Paths.DASHBOARD}`,
+  REGISTRY: `${ASSET_PREFIX}/${Paths.REGISTRY}`,
+  REGISTRY_GENERAL: `${ASSET_PREFIX}/${Paths.REGISTRY_GENERAL}`,
+  REGISTRY_TASK_OUTSTANDING: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_OUTSTANDING}`,
+  REGISTRY_TASK_SCHEDULED: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_SCHEDULED}`,
+  REGISTRY_TASK_CLOSED: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_CLOSED}`,
+  REGISTRY_REPORT: `${ASSET_PREFIX}/${Paths.REGISTRY_REPORT}`,
+  REGISTRY_ADD: `${ASSET_PREFIX}/${Paths.REGISTRY_ADD}`,
+  REGISTRY_EDIT: `${ASSET_PREFIX}/${Paths.REGISTRY_EDIT}`,
+  REGISTRY_DELETE: `${ASSET_PREFIX}/${Paths.REGISTRY_DELETE}`,
+  HELP: `${ASSET_PREFIX}/${Paths.HELP}`,
 };
 
 export const PageTitles: {

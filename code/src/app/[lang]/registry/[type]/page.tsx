@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { Modules, PageTitles, Paths } from 'io/config/routes';
+import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
+import { LifecycleStage } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from 'utils/client-utils';
@@ -34,14 +35,24 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const resolvedParams = await props.params;
-  if (uiSettings.modules.registry && uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == resolvedParams.type)) {
+  const decodedType: string = decodeURIComponent(resolvedParams.type);
+  if (uiSettings.modules.registry) {
+    // Stage should be pending for the main data
+    let lifecycleStage: LifecycleStage;
+    if (uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == decodedType)) {
+      lifecycleStage = 'general';
+    } else if (uiSettings.resources?.registry?.data) {
+      lifecycleStage = 'pending';
+    } else {
+      redirect(Routes.HOME);
+    }
     return (
       <RegistryTableComponent
-        entityType={resolvedParams.type}
-        lifecycleStage={'general'}
+        entityType={decodedType}
+        lifecycleStage={lifecycleStage}
       />
     );
   } else {
-    redirect(Paths.HOME);
+    redirect(Routes.HOME);
   }
 }

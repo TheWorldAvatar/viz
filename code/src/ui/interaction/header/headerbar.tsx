@@ -58,7 +58,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <div
       id="headerbar"
-      className="bg-muted border-b-border z-[999] flex h-[6vh] min-h-[6vh] items-center justify-between overflow-hidden border-b "
+      className="bg-muted border-b-border z-[999] flex h-[8dvh]  items-center justify-between overflow-hidden border-b "
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
@@ -69,7 +69,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
               <Link key={logo} href={Routes.HOME}>
                 <IconComponent
                   icon={logo}
-                  classes="h-8 md:h-10 lg:h-10 2xl:h-12 w-auto ml-2 md:ml-8"
+                  classes="h-10 md:h-12 w-auto ml-2 md:ml-8"
                 />
               </Link>
             ))
@@ -78,7 +78,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
-                classes="h-8 md:h-10 lg:h-10 2xl:h-12 ml-4 w-auto"
+                classes="h-10 md:h-12 ml-4 w-auto"
               />
             </Link>
           )}

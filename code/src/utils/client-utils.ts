@@ -12,8 +12,13 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
-import { RegistryFieldValues, SparqlResponseField } from "types/form";
+import {
+  LifecycleStage,
+  RegistryFieldValues,
+  SparqlResponseField,
+} from "types/form";
 import { JsonObject } from "types/json";
+import { DateRange } from "react-day-picker";
 
 /**
  * Open full screen mode.
@@ -82,13 +87,10 @@ export function setSelectedFeature(
  * @param {string} str input string.
  */
 export function parseWordsForLabels(str: string): string {
-  // Decode the string first to handle URL-encoded characters, like ä and ß
-  const decodedStr: string = decodeURIComponent(str);
-
-  if (isValidIRI(decodedStr)) {
-    return getAfterDelimiter(decodedStr, "/");
+  if (isValidIRI(str)) {
+    return getAfterDelimiter(str, "/");
   }
-  return decodedStr
+  return str
     .toLowerCase()
     .replaceAll("_", " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2")
@@ -169,4 +171,22 @@ export function extractResponseField(
   } else {
     return response[field];
   }
+}
+
+
+/**
+ * Extract the inital date based on the current lifecycle stage.
+ *
+ * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
+ */
+export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage): DateRange {
+  // For closed and other stages: start with today
+  const initialDate: Date = new Date();
+
+  if (lifecycleStage === "scheduled") {
+    // For scheduled: start with tomorrow since today and past are disabled
+    initialDate.setDate(initialDate.getDate() + 1);
+  }
+
+  return { from: initialDate, to: initialDate };
 }

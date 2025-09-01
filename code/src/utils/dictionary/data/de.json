@@ -1,9 +1,11 @@
 {
+  "lang": "de",
   "action": {
     "add": "Hinzufügen",
     "addItem": "{replace} hinzufügen",
     "edit": "Bearbeiten",
     "delete": "Löschen",
+    "dismiss": "Schließen",
     "view": "Anzeigen",
     "close": "Schließen",
     "refresh": "Aktualisieren",
@@ -28,6 +30,7 @@
     "cancel": "Stornieren",
     "report": "Bericht",
     "submit": "Einreichen",
+    "save": "Speichern",
     "return": "Zurück",
     "approve": "Genehmigen",
     "rescind": "Rückgängig machen",
@@ -35,7 +38,8 @@
     "findAddress": "Adresse finden",
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
-    "clickDecrease": "Zum Verringern anklicken"
+    "clickDecrease": "Zum Verringern anklicken",
+    "clearAllFilters": "Alle Filter löschen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -52,9 +56,9 @@
     "endDateDesc": "Effektives Enddatum des Dienstes oder Gültig bis.",
     "timeSlot": "Zeitfenster",
     "from": "Von",
-    "fromTimeSlotDesc": "Start time of the service window",
+    "fromTimeSlotDesc": "Startzeit des Dienstfensters",
     "to": "Bis",
-    "toTimeSlotDesc": "End time of the service window",
+    "toTimeSlotDesc": "Endzeitpunkt des Servicefensters",
     "sun": "Sonntag",
     "mon": "Montag",
     "tue": "Dienstag",
@@ -98,6 +102,9 @@
     }
   },
   "message": {
+    "page": "Seite {replace} von {replacecount}",
+    "numberOfRecords": "{replace} von insgesamt {replacetotal}",
+    "rowsPerPage": "Zeilen pro Seite: ",
     "arrayInstruction": "Dieser Bereich ist leer. Klicken Sie auf „+“, um ein Element hinzuzufügen.",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
@@ -120,13 +127,18 @@
     "noFileChosenError": "Es ist keine Datei ausgewählt. Bitte wählen Sie eine Datei.",
     "fileUploadError": "Dateiupload fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
-    "na": "Nicht anwendbar"
+    "dragToReorder": "Zum Neusortieren ziehen",
+    "na": "Nicht anwendbar",
+    "noDateSelected": "Wählen Sie einen Zeitraum aus.",
+    "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
+    "noOptions": "Keine Optionen gefunden"
   },
   "nav": {
     "caption": {
       "map": "Visualisierung von Geodaten",
       "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
       "registry": "Verwalten Sie Ihre Datensätze",
+      "submission": "Verwalten Sie Ihre Einreichungen",
       "generalReg": "{replace} verwalten",
       "help": "Hilfe für diese Webplattform"
     },
@@ -135,10 +147,14 @@
       "map": "Karte",
       "dashboard": "Analyse",
       "registry": "Register",
+      "submission": "Einreichung des Registers",
       "help": "Hilfe-Center",
       "pending": "Ausstehend",
       "active": "Aktiv",
-      "archive": "Archiv"
+      "archive": "Archiv",
+      "outstanding": "Offen",
+      "scheduled": "Eingeplant",
+      "closed": "Abgeschlossen"
     },
     "tooltip": {
       "home": "Zurück zur Startseite",
@@ -151,20 +167,27 @@
     }
   },
   "title": {
-    "actions": "AKTIONEN",
+    "actions": "Aktionen",
+    "allCol": "Alle anzeigen",
+    "blank": "(leer)",
+    "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
-    "serviceSummary": "Auftragsübersicht",
+    "serviceType": "Art der Dienstleistung",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "active": "Aktiv",
+    "new": "Offen",
+    "assigned": "Zugewiesen",
+    "cancelled": "Abgebrochen",
     "completed": "Abgeschlossen",
-    "cancelled": "Storniert",
-    "incomplete": "Unvollständig",
+    "issue": "Problem",
     "rescinded": "Aufgehoben",
     "terminated": "Beendet",
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "searchPeriod": "Suchzeitraum",
-    "searchCriteria": "SUCHKRITERIEN"
+    "searchCriteria": "SUCHKRITERIEN",
+    "success": "Erfolgreich (Übermittlung war erfolgreich)",
+    "error": "Fehlerhaft (Übermittlung war fehlerhaft)"
   }
 }

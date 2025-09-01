@@ -12,7 +12,10 @@ export type LifecycleStage =
   | "active"
   | "archive"
   | "report"
-  | "tasks";
+  | "tasks"
+  | "outstanding"
+  | "scheduled"
+  | "closed";
 
 export type FormType = "add" | "delete" | "edit" | "view" | "search";
 

@@ -32,10 +32,10 @@ export default function StaticContentPage({
   if (childNodes != null) {
     return (
       <div
-        className=" mx-auto mt-4   flex h-[85vh]  p-2 sm:w-[95vw] md:h-[80vh] md:w-[95vw] lg:h-[85vh] lg:w-[95vw]   xl:h-10/12 xl:w-[70vw] 2xl:h-[85vh] "
+        className=" mx-auto  overflow-auto  flex  h-dvh w-full"
         key="static-content-page"
       >
-        <div className="grow h-full w-full overflow-y-hidden  bg-muted border-border rounded-xl border-1 p-5 shadow-2xl ">
+        <div className="h-full w-full overflow-y-hidden  bg-muted  p-5  ">
           <div className={classNames}>{childNodes}</div>
         </div>
       </div>
@@ -43,10 +43,10 @@ export default function StaticContentPage({
   } else if (childString != null) {
     return (
       <div
-        className="mx-auto mt-4   flex h-[85vh]  p-2 sm:w-[95vw] md:h-[80vh] md:w-[95vw] lg:h-[85vh] lg:w-[95vw]   xl:h-10/12 xl:w-[70vw] 2xl:h-[85vh]"
+        className="mx-auto  overflow-auto  flex  h-dvh w-full"
         key="static-content-page"
       >
-        <div className="grow h-full w-full overflow-y-hidden  bg-muted border-border rounded-xl border-1 p-5 shadow-2xl">
+        <div className="h-full w-full overflow-y-hidden  bg-muted   p-5 ">
           <div
             className={classNames}
             dangerouslySetInnerHTML={{ __html: childString }}

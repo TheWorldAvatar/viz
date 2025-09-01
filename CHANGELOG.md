@@ -2,11 +2,163 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.38.1
+
+- Fix map layout on screen to fits
+
+## 5.38.0
+
+### Changes
+
+- Added a functionality to save the completed form state before submission
+- Bump min version of `VisBackend Agent` from `v1.9.2` to `v1.10.0`
+
+## 5.37.1
+
+### Changes
+
+- Changed the location of the column drop-down menu and Clean filters button to the table ribbon
+- Fixed layout issues in the table ribbon
+- Made the date-range input icon only on mobile
+- Moved all the table logic into custom hooks: useTable, useTableDnd, useFirstActiveFilter
+
+## 5.37.0
+
+### Changes
+
+- Redesigned the form to show as a drawer on the right side for tablets and desktop
+- Improved design for form on mobile
+- Improved styling for various statuses, colors, modals
+- Moved the registry submission to be a nested navigation tab in registry records
+- Enable previous user sorting state to be saved temporarily
+- Enable users to click on rows and open the drawer
+
+### Bug Fixes
+
+- Table filtering is now fully functional
+- Fixed duplicate columns appearing
+- Fixed missing actions in general registry
+
+## 5.36.0
+
+### Changes
+
+- Implemented Tanstack Table
+- Implemented Drag and drop functionality
+- Implemented sorting and filtering functions in the table
+- Implemented the functionality to show and hide columns in the table
+
+## 5.35.0
+
+### Chores
+
+- Dependabot updates #286
+
+## 5.34.8
+
+### Chores
+
+- Bump node version to 22.4
+
+## 5.34.7
+
+- Increased the font size of the registry pages
+- Improved the layout of all pages. Now they take the full width of the container
+- Improved the mobile view for all pages
+
+## 5.34.6
+
+- Changelog should now be present on the releases page automatically configured by GitHub
+- Dockerfile no longer builds a development stage, workflow has migrated ot a devcontainer. See main README
+
+## 5.34.5
+
+### Bug Fixes
+
+- Fixed caching of table action(s) for task modal
+
+## 5.34.4
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.9.0` to `v1.9.2`
+- Rework viz to be compatible with `v1.9.2` of the `VisBackend Agent`
+- Update German translations
+
+### Bug Fixes
+
+- Fixed date-time issue for registry date range submissions
+
+## 5.34.3
+
+### Bug Fixes
+
+- Fixed issue with date formatting in registry table component
+
+## 5.34.2
+
+### Chores
+
+- Dependabot update #260
+
+## 5.34.1
+
+### Changes
+
+- Improved API route logs for fetch failures
+
+## 5.34.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.8.2` to `v1.9.0`
+- Rework viz to be compatible with `v1.9.0` of the `VisBackend Agent`
+- Implemented the new outstanding, scheduled and closed tasks functionality in the registry
+- Added Date range filter for the scheduled and closed tasks , using react-day-picker library
+
+## 5.33.2
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.8.1` to `v1.8.2`
+
+### Bug Fixes
+
+- Fixed the issue with default values being ignored when sent from the API, especially for partial solutions
+- Fixed form field arrays
+
+## 5.33.1
+
+### Changes
+
+- Changed the styles of the landing page
+
+## 5.33.0
+
+### Changes
+
+- Split Registry into two pages: `Registry Submissions` for previously Pending contracts and `Registry Records` for tasks
+- Added toast notifications
+- Fix view sizes for tablets
+
+## 5.32.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.6.1` to `v1.8.1`
+- Rework viz to be compatible with `v1.8.1` of the `VisBackend Agent`
+- Update decoding of settings and items in registry
+- Translatable statuses are now displayed in registry
+
+## 5.31.0
+
+- Viz now requires no external dependency at docker container spinup / next app build time
+
 ## 5.30.5
 
 ### Changes
 
-- Fixed issues with the UTF-8 encoding which was causing issues with some characters when translating from German to English. 
+- Fixed issues with the UTF-8 encoding which was causing issues with some characters when translating from German to English.
 
 ## 5.30.4
 

@@ -1,3 +1,4 @@
+import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
 export const Status: {
@@ -6,13 +7,13 @@ export const Status: {
   AVAILABLE: "available",
   UNAVAILABLE: "unavailable",
   ACTIVE: "active",
+  NEW: "open",
+  ASSIGNED: "assigned",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
-  INCOMPLETE: "incomplete",
+  ISSUE: "issue",
   RESCINDED: "rescinded",
   TERMINATED: "terminated",
-  PENDING_DISPATCH: "pending dispatch",
-  PENDING_EXECUTION: "pending execution",
 };
 
 interface StatusComponentProps<> {
@@ -30,20 +31,20 @@ export function getTranslatedStatusLabel(
       return dict.title.unavailable;
     case Status.ACTIVE:
       return dict.title.active;
+    case Status.ASSIGNED:
+      return dict.title.assigned;
     case Status.COMPLETED:
       return dict.title.completed;
     case Status.CANCELLED:
       return dict.title.cancelled;
-    case Status.INCOMPLETE:
-      return dict.title.incomplete;
+    case Status.NEW:
+      return dict.title.new;
+    case Status.ISSUE:
+      return dict.title.issue;
     case Status.RESCINDED:
       return dict.title.rescinded;
     case Status.TERMINATED:
       return dict.title.terminated;
-    case Status.PENDING_DISPATCH:
-      return dict.title.pendingDispatch;
-    case Status.PENDING_EXECUTION:
-      return dict.title.pendingExecution;
     default:
       return null;
   }
@@ -55,31 +56,49 @@ export function getTranslatedStatusLabel(
  * @param {string} status The status to display.
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
-  let statusColor: string;
+  let statusTextColor: string;
+  let statusBackgroundColor: string;
+  const dict: Dictionary = useDictionary();
 
   switch (props.status.toLowerCase()) {
-    case Status.AVAILABLE:
-    case Status.ACTIVE:
-      statusColor = "#52B7A5";
+    case dict.title.available.toLowerCase():
+    case dict.title.active.toLowerCase():
+    case dict.title.new.toLowerCase():
+      statusTextColor = "var(--status-open-text)";
+      statusBackgroundColor = "var(--status-open-bg)";
       break;
-    case Status.UNAVAILABLE:
-    case Status.CANCELLED:
-    case Status.INCOMPLETE:
-    case Status.RESCINDED:
-    case Status.TERMINATED:
-      statusColor = "#D7653D";
+    case dict.title.unavailable.toLowerCase():
+    case dict.title.cancelled.toLowerCase():
+      statusTextColor = "var(--status-cancelled-text)";
+      statusBackgroundColor = "var(--status-cancelled-bg)";
+      break;
+    case dict.title.issue.toLowerCase():
+      statusTextColor = "var(--status-issue-text)";
+      statusBackgroundColor = "var(--status-issue-bg)";
+      break;
+    case dict.title.completed.toLowerCase():
+      statusTextColor = "var(--status-open-text)";
+      statusBackgroundColor = "var(--status-open-bg)";
+      break;
+    case dict.title.rescinded.toLowerCase():
+    case dict.title.terminated.toLowerCase():
+      statusTextColor = "var(--status-cancelled-text)";
+      statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     default:
-      statusColor = "#666";
+      statusTextColor = "var(--status-assigned-text)";
+      statusBackgroundColor = "var(--status-assigned-bg)";
   }
 
   return (
-    <span className="inline-flex items-center">
-      <span
-        className="h-2 w-2 mx-1 rounded-full bg-background border-1 border-solid"
-        style={{ borderColor: statusColor }}
-      ></span>
-      <p className="text-xs" style={{ color: statusColor }}>
+    <span className="flex justify-center items-center">
+      <p
+        className="text-lg px-8 py-1 rounded-4xl"
+        style={{
+          color: statusTextColor,
+          backgroundColor: statusBackgroundColor,
+        }}
+      >
         {props.status}
       </p>
     </span>

@@ -1,11 +1,11 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
-import { CustomAgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
@@ -31,15 +31,19 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import { Routes } from "io/config/routes";
+import { getCurrentEntityType } from "state/registry-slice";
+import { toast } from "ui/interaction/action/toast/toast";
+
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   formType: FormType;
   entityType: string;
-  setResponse: React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>;
   id?: string;
   primaryInstance?: string;
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
+  setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -48,17 +52,19 @@ interface FormComponentProps {
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
- * @param {React.Dispatch<React.SetStateAction<CustomAgentResponseBody>>} setResponse A dispatch function for setting the response after submission.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
+ * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
+  const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
+  const currentEntityType: string = useSelector(getCurrentEntityType);
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -78,7 +84,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             cache: "no-store",
             credentials: "same-origin",
           }
-        ).then((res) => res.json());
+        ).then(async (res) => {
+          const body: AgentResponseBody = await res.json();
+          return body.data?.items?.[0] as FormTemplateType;
+        });
       } else {
         // For edit and view, get template with values
         template = await fetch(
@@ -87,7 +96,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             cache: "no-store",
             credentials: "same-origin",
           }
-        ).then((res) => res.json());
+        ).then(async (res) => {
+          const body: AgentResponseBody = await res.json();
+          return body.data?.items?.[0] as FormTemplateType;
+        });
       }
       if (props.additionalFields) {
         props.additionalFields.forEach((field) =>
@@ -108,7 +120,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
-    let pendingResponse: CustomAgentResponseBody;
+    let pendingResponse: AgentResponseBody;
     // For single service
     if (formData[FORM_STATES.RECURRENCE] == 0) {
       const startDate: string = formData[FORM_STATES.START_DATE];
@@ -154,7 +166,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
 
         // For registry's primary entity, a draft lifecycle must also be generated
-        if (props.isPrimaryEntity && pendingResponse.success) {
+        if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
             makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
             {
@@ -163,7 +175,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               cache: "no-store",
               credentials: "same-origin",
               body: JSON.stringify({
-                contract: pendingResponse.iri,
+                contract: pendingResponse.data?.id,
                 ...formData,
               }),
             }
@@ -210,7 +222,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
         pendingResponse = await res.json();
 
-        if (props.isPrimaryEntity && pendingResponse.success) {
+        if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
             makeInternalRegistryAPIwithParams("instances", "/contracts/draft"),
             {
@@ -262,22 +274,23 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
         pendingResponse = await res.json();
 
-        if (pendingResponse.success) {
-          if (pendingResponse.message === "[]") {
-            pendingResponse.success = false;
-            pendingResponse.message = dict.message.noMatchFeature;
+        if (res.ok) {
+          if (pendingResponse.data?.items?.length === 0) {
+            pendingResponse.data.message = dict.message.noMatchFeature;
           } else {
-            dispatch(setFilterFeatureIris(JSON.parse(pendingResponse.message)));
-            pendingResponse.message = dict.message.matchedFeatures;
+            dispatch(
+              setFilterFeatureIris(pendingResponse.data?.items as string[])
+            );
+            pendingResponse.data.message = dict.message.matchedFeatures;
           }
+
           if (
             formData[FORM_STATES.START_TIME_PERIOD] &&
             formData[FORM_STATES.END_TIME_PERIOD]
           ) {
             // Only display this message if there is no features based on static meta data but the search period is required
-            if (!pendingResponse.success) {
-              pendingResponse.success = true;
-              pendingResponse.message = dict.message.noMatchMetaWithTime;
+            if (pendingResponse.data?.items?.length === 0) {
+              pendingResponse.data.message = dict.message.noMatchMetaWithTime;
             }
             // Convert date to UNIX Epoch Timestamp
             const startTime: number = Math.floor(
@@ -294,7 +307,24 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
-    props.setResponse(pendingResponse);
+    toast(
+      pendingResponse?.data?.message || pendingResponse?.error?.message,
+      pendingResponse?.error ? "error" : "success"
+    );
+    if (!pendingResponse?.error) {
+      setTimeout(() => {
+        // Close search modal on success
+        if (props.formType === "search") {
+          props.setShowSearchModalState(false);
+          // Redirect back to base page upon deleting the entity
+        } else if (props.formType === "delete") {
+          router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
+        } else {
+          // Redirect back for other types (add and edit) as users will want to see their changes
+          router.back();
+        }
+      }, 2000);
+    }
   });
 
   return (
@@ -359,18 +389,23 @@ export function renderFormField(
         ? true
         : disableAllInputs;
     // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
-    if (!fieldProp.maxCount || (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)) {
-      return <FormArray
-        key={fieldProp.name[VALUE_KEY] + currentIndex}
-        fieldId={fieldProp.name[VALUE_KEY]}
-        minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
-        maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
-        fieldConfigs={[fieldProp]}
-        form={form}
-        options={{
-          disabled: disableAllInputs,
-        }}
-      />
+    if (
+      !fieldProp.maxCount ||
+      (fieldProp.maxCount && parseInt(fieldProp.maxCount?.[VALUE_KEY]) > 1)
+    ) {
+      return (
+        <FormArray
+          key={fieldProp.name[VALUE_KEY] + currentIndex}
+          fieldId={fieldProp.name[VALUE_KEY]}
+          minSize={parseInt(fieldProp.minCount?.[VALUE_KEY])}
+          maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
+          fieldConfigs={[fieldProp]}
+          form={form}
+          options={{
+            disabled: disableAllInputs,
+          }}
+        />
+      );
     }
     if (fieldProp.class) {
       if (
@@ -403,7 +438,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod

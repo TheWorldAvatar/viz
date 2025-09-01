@@ -1,156 +1,217 @@
-import { Table, TableColumnsType, Typography } from "antd";
-
+import {
+  closestCenter,
+  DndContext
+} from "@dnd-kit/core";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import {
+  SortableContext,
+  verticalListSortingStrategy
+} from "@dnd-kit/sortable";
+import { flexRender } from "@tanstack/react-table";
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { TableDescriptor } from "hooks/table/useTable";
+import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
+import { useDictionary } from "hooks/useDictionary";
+import { Routes } from "io/config/routes";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-
-import { useDictionary } from "hooks/useDictionary";
+import { useDispatch } from "react-redux";
+import { setCurrentEntityType } from "state/registry-slice";
+import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
-import AntDesignConfig from "ui/css/ant-design-style";
-import StatusComponent from "ui/text/status/status";
-import { parseWordsForLabels } from "utils/client-utils";
-import RegistryRowActions from "./actions/registry-table-action";
+import { getId } from "utils/client-utils";
+import DragActionHandle from "../action/drag-action-handle";
+import RegistryRowAction, {
+  genTaskOption,
+} from "../action/registry-row-action";
+import HeaderCell from "../cell/header-cell";
+import TableCell from "../cell/table-cell";
+import TablePagination from "../pagination/table-pagination";
+import TableRow from "../row/table-row";
+import { parseRowsForFilterOptions } from "./registry-table-utils";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
-  limit?: number;
+  tableDescriptor: TableDescriptor;
 }
 
 /**
- * This component renders a registry of table based on the inputs.
+ * This component renders a registry of table based on the inputs using TanStack Table.
  *
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
- * @param {number} limit Optional limit to the number of columns shown.
+ * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const keycloakEnabled = process.env.KEYCLOAK === "true";
+  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(props.tableDescriptor.table, props.tableDescriptor.data, props.tableDescriptor.setData);
 
-  // Generate a list of column headings
-  const columns: TableColumnsType<FieldValues> = React.useMemo(() => {
-    if (props.instances?.length === 0) return [];
-    return [
-      {
-        key: "actions",
-        title: "",
-        className: "border-border border-r-[0.5px]  shadow-2xl ",
-        render: (_, record) => (
-          <RegistryRowActions
-            recordType={props.recordType}
-            lifecycleStage={props.lifecycleStage}
-            row={record}
-            setTask={props.setTask}
-          />
-        ),
-        fixed: "left",
-        width: 60,
-      },
-      // Get instances with the most number of fields
-      ...Object.keys(
-        props.instances.reduce((prev, current) => {
-          const prevKeys = Object.keys(prev).length;
-          const currentKeys = Object.keys(current).length;
-          return prevKeys >= currentKeys ? prev : current;
-        })
-      ).map((field) => {
-        // minimum width based on field name
-        const title = parseWordsForLabels(field);
-        // Set minimum width to require space for title and icons
-        const minWidth = Math.max(
-          title.length * 15, // Compute based on title length
-          125 // Minimum width
-        );
-
-        return {
-          key: field,
-          dataIndex: field,
-          className: "border-b-1 border-border bg-muted  ",
-          title: title,
-          ellipsis: true,
-          width: minWidth,
-          render: (value: FieldValues) => {
-            if (!value) return "";
-            if (field.toLowerCase() === "status") {
-              return <StatusComponent status={`${value}`} />;
-            }
-            return (
-              <Typography.Text
-                style={{ color: "var(--foreground)" }}
-                className=""
-              >
-                {parseWordsForLabels(`${value}`)}
-              </Typography.Text>
-            );
-          },
-          sorter: (a: FieldValues, b: FieldValues) => {
-            if (!a[field] || !b[field]) return 0;
-            return `${a[field]}`.localeCompare(`${b[field]}`);
-          },
-        };
-      }),
-    ];
-  }, [props.instances]);
-
-  // Parse row values
-  const data: FieldValues[] = React.useMemo(() => {
-    if (props.instances?.length === 0) return [];
-    // Extract only the value into the data to simplify
-    return props.instances.map((instance, index) => {
-      const flattenInstance: Record<string, string> = { key: `row-${index}` };
-      Object.keys(instance).forEach((field) => {
-        const fieldValue = instance[field];
-        if (Array.isArray(fieldValue)) {
-          flattenInstance[field] = fieldValue[0]?.value; // Handle array of SparqlResponseField
-        } else {
-          flattenInstance[field] = fieldValue?.value;
-        }
-      });
-      return flattenInstance;
-    });
-  }, [props.instances]);
+  const onRowClick = (row: FieldValues) => {
+    const recordId: string = row.event_id
+      ? row.event_id
+      : row.id
+        ? getId(row.id)
+        : row.iri;
+    if (
+      props.lifecycleStage === "tasks" ||
+      props.lifecycleStage === "report" ||
+      props.lifecycleStage === "outstanding" ||
+      props.lifecycleStage === "scheduled" ||
+      props.lifecycleStage === "closed"
+    ) {
+      // Update entity type to lifecycle stage for these stages
+      dispatch(setCurrentEntityType(props.lifecycleStage));
+      if (
+        (!keycloakEnabled ||
+          !permissionScheme ||
+          permissionScheme.hasPermissions.operation) &&
+        (row.status as string).toLowerCase() === dict.title.new
+      ) {
+        props.setTask(genTaskOption(recordId, row, "dispatch", dict));
+      } else if (
+        (!keycloakEnabled ||
+          !permissionScheme ||
+          permissionScheme.hasPermissions.completeTask) &&
+        (row.status as string).toLowerCase() === dict.title.assigned
+      ) {
+        props.setTask(genTaskOption(recordId, row, "complete", dict));
+      } else {
+        props.setTask(genTaskOption(recordId, row, "default", dict));
+      }
+    } else {
+      dispatch(setCurrentEntityType(props.recordType));
+      const registryRoute: string =
+        !keycloakEnabled ||
+          !permissionScheme ||
+          permissionScheme.hasPermissions.operation ||
+          permissionScheme.hasPermissions.sales
+          ? Routes.REGISTRY_EDIT
+          : Routes.REGISTRY;
+      router.push(`${registryRoute}/${props.recordType}/${recordId}`);
+    }
+  };
 
   return (
-    <AntDesignConfig>
-      <Table
-        className="w-full overflow-x-auto rounded-lg "
-        rowClassName="bg-background"
-        dataSource={data}
-        columns={columns}
-        pagination={{
-          defaultPageSize: 10,
-          pageSizeOptions: [5, 10, 20],
-          showSizeChanger: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
-          position: ["bottomRight"],
-        }}
-        rowKey={(record) =>
-          record.event_id ?? record.id ?? record.iri ?? record.key
-        }
-        scroll={{ x: "max-content" }}
-        size="middle"
-        sticky={{ offsetHeader: 0 }}
-        bordered={false}
-        showSorterTooltip={true}
-        locale={{
-          triggerAsc: dict.action.sortasc,
-          triggerDesc: dict.action.sortdesc,
-          cancelSort: dict.action.clearSort,
-          filterConfirm: dict.action.update.toUpperCase(),
-          filterReset: dict.action.clear.toUpperCase(),
-          filterEmptyText: dict.message.noData,
-          filterSearchPlaceholder: dict.action.search,
-          emptyText: <span>{dict.message.noData}</span>,
-        }}
-      />
-    </AntDesignConfig>
+    <>
+      {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
+        <>
+          <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden ">
+            {/* Table container */}
+            <div className="overflow-auto flex-1 min-h-[400px]">
+              <div className="min-w-full">
+                <DndContext
+                  collisionDetection={closestCenter}
+                  modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+                  onDragEnd={dragAndDropDescriptor.handleDragEnd}
+                  sensors={dragAndDropDescriptor.sensors}
+                >
+                  <table
+                    aria-label={`${props.recordType} registry table`}
+                    className="w-full border-separate border-spacing-0"
+                  >
+                    <thead className="bg-muted sticky top-0 z-10">
+                      {props.tableDescriptor.table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow
+                          key={headerGroup.id}
+                          id={headerGroup.id}
+                          isHeader={true}
+                        >
+                          <TableCell className="w-[calc(100%/20)]" />
+                          {headerGroup.headers.map((header, index) => {
+                            return (
+                              <HeaderCell
+                                key={header.id + index}
+                                header={header}
+                                options={Array.from(
+                                  new Set(parseRowsForFilterOptions(
+                                    (!props.tableDescriptor.firstActiveFilter ||
+                                      props.tableDescriptor.firstActiveFilter === header.id) ?
+                                      props.tableDescriptor.table.getCoreRowModel().flatRows :
+                                      props.tableDescriptor.table.getFilteredRowModel().flatRows,
+                                    header.id,
+                                    dict.title.blank
+                                  )
+                                  )
+                                )}
+                              />
+                            );
+                          })}
+                        </TableRow>
+                      ))}
+                    </thead>
+
+                    <tbody>
+                      {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
+                        <SortableContext
+                          items={dragAndDropDescriptor.dataIds}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {props.tableDescriptor.table.getRowModel().rows.map((row, index) => (
+                            <TableRow
+                              key={row.id + index}
+                              id={row.id}
+                              isHeader={false}
+                            >
+                              <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
+                                <div className="flex gap-1  ">
+                                  <DragActionHandle id={row.id} />
+                                  <RegistryRowAction
+                                    recordType={props.recordType}
+                                    lifecycleStage={props.lifecycleStage}
+                                    row={row.original}
+                                    setTask={props.setTask}
+                                  />
+                                </div>
+                              </TableCell>
+                              {row.getVisibleCells().map((cell, index) => (
+                                <TableCell
+                                  key={cell.id + index}
+                                  width={cell.column.getSize()}
+                                  onClick={() =>
+                                    onRowClick(row.original as FieldValues)
+                                  }
+                                >
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                  )}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </SortableContext>
+                      )}
+                    </tbody>
+                  </table>
+                </DndContext>
+              </div>
+            </div>
+          </div>
+          <TablePagination table={props.tableDescriptor.table} />
+        </>
+      ) : (
+        <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
+          {dict.message.noVisibleColumns}
+        </div>
+      )}
+    </>
   );
 }
