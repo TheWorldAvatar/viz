@@ -5,16 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Server Side",
             "type": "node-terminal",
-            "name": "Debug dev server",
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}/code"
         },
         {
+            "name": "Client Side",
             "type": "msedge",
             "request": "launch",
-            "name": "Launch Edge with React App",
             "url": "http://localhost:1997",
             "webRoot": "${workspaceFolder}/code",
             "sourceMaps": true
