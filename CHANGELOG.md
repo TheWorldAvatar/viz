@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.38.3
+
+### Changes
+
+- Changed the default service to be Single service rather than regular service
+- Changed the default service time to be 00:00H to 23:58H
+
 ## 5.38.2
 
 ### Changes
