@@ -267,8 +267,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -298,7 +298,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ==
               dict.title.assigned?.toLowerCase() ||
               props.task?.status?.toLowerCase() ==
-              dict.title.completed?.toLowerCase()) &&
+                dict.title.completed?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -318,9 +318,9 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
             props.task?.status?.toLowerCase() !==
-            dict.title.issue?.toLowerCase() &&
+              dict.title.issue?.toLowerCase() &&
             props.task?.status?.toLowerCase() !==
-            dict.title.cancelled?.toLowerCase() &&
+              dict.title.cancelled?.toLowerCase() &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="assignment"
@@ -342,7 +342,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-              dict.title.assigned?.toLowerCase()) &&
+                dict.title.assigned?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
@@ -365,7 +365,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (props.task?.status?.toLowerCase() ===
               dict.title.new?.toLowerCase() ||
               props.task?.status?.toLowerCase() ===
-              dict.title.assigned?.toLowerCase()) &&
+                dict.title.assigned?.toLowerCase()) &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
