@@ -20,6 +20,7 @@ interface GeocodeMapContainerProps {
  * Renders the geocoding map based on form inputs.
  */
 export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
+  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const [map, setMap] = useState<Map>(null);
   const [marker, setMarker] = useState<Marker>(null);
 
@@ -47,7 +48,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     if (map) {
       const marker = new Marker({
         color: "#146a7d",
-        draggable: true,
+        draggable: formType === "add" || formType === "edit",
       })
         .setLngLat([longitude, latitude])
         .addTo(map);

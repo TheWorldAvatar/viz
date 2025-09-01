@@ -2,6 +2,31 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.38.4
+
+### Changes
+
+- Modified all geocoding property shapes retrieved from backend as optional shapes for form geocoding purposes
+
+## 5.38.3
+
+### Changes
+
+- Changed the default service to be Single service rather than regular service
+- Changed the default service time to be 00:00H to 23:58H
+
+## 5.38.2
+
+### Changes
+
+- Redesigned the geocoding agent functionality
+- Added a functionality to select an address directly from the map
+- If a post code is selected, you can still manually select an address from the map
+
+## 5.38.1
+
+- Fix map layout on screen to fits
+
 ## 5.38.0
 
 ### Changes
