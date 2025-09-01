@@ -12,6 +12,8 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { parsePropertyShapeOrGroupList } from "../form-utils";
+import { usePathname } from "next/dist/client/components/navigation";
+import { getAfterDelimiter } from "utils/client-utils";
 
 interface EntityDataDisplayProps {
   entityType: string;
@@ -19,26 +21,21 @@ interface EntityDataDisplayProps {
   additionalFields?: PropertyShapeOrGroup[];
 }
 
-export function EntityDataDisplay({
-  entityType,
-  id,
-  additionalFields,
-}: EntityDataDisplayProps) {
+export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
+  const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const [formTemplate, setFormTemplate] = useState<FormTemplateType | null>(
     null
   );
 
   const form: UseFormReturn = useForm({
     defaultValues: async (): Promise<FieldValues> => {
-      // All forms will require an ID to be assigned
       const initialState: FieldValues = {
-        formType: "view", // Always view mode
+        formType: "view",
         id: id,
       };
 
-      // Get template with values for view mode
       const template = await fetch(
-        makeInternalRegistryAPIwithParams("form", entityType, id),
+        makeInternalRegistryAPIwithParams("form", props.entityType, id),
         {
           cache: "no-store",
           credentials: "same-origin",
@@ -48,14 +45,16 @@ export function EntityDataDisplay({
         return body.data?.items?.[0] as FormTemplateType;
       });
 
-      if (additionalFields) {
-        additionalFields.forEach((field: PropertyShapeOrGroup) =>
+      if (props.additionalFields) {
+        props.additionalFields.forEach((field: PropertyShapeOrGroup) =>
           template.property.push(field)
         );
       }
 
       const updatedProperties: PropertyShapeOrGroup[] =
         parsePropertyShapeOrGroupList(initialState, template.property);
+
+      console.log(updatedProperties);
 
       setFormTemplate({
         ...template,
@@ -83,9 +82,12 @@ export function EntityDataDisplay({
             return null;
           }
 
-          const propertyField = field as PropertyShape;
+          const propertyField: PropertyShape = field as PropertyShape;
 
-          const label = propertyField.name?.[VALUE_KEY] || "Unknown Field";
+          const label =
+            propertyField.name?.[VALUE_KEY] ||
+            propertyField.label?.[VALUE_KEY] ||
+            "Unknown Field";
           const fieldId = propertyField.fieldId || propertyField["@id"] || "";
           const fieldValue = form.getValues(fieldId);
 
