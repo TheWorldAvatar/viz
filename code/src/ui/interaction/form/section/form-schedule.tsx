@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, FormType, RegistryFieldValues } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
+import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   extractResponseField,
   parseStringsForUrls,
@@ -15,8 +17,6 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
-import Tooltip from "ui/interaction/tooltip/tooltip";
-import { Icon } from "@mui/material";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -62,103 +62,110 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
-    props.form.getValues(FORM_STATES.RECURRENCE) == 0
-      ? singleService
+    props.form.getValues(FORM_STATES.RECURRENCE) > 0
+      ? regularService
       : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-      ? alternateService
-      : regularService
+        ? alternateService
+        : singleService
   );
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      const response: string = await fetch(
-        makeInternalRegistryAPIwithParams(
-          "schedule",
-          props.form.getValues("id")
-        ),
-        {
-          cache: "no-store",
-          credentials: "same-origin",
-        }
-      ).then((res) => res.text());
-      const jsonResponse: RegistryFieldValues = JSON.parse(response);
+      // Set defaults
+      let recurrence: number = 0;
+      let defaultTimeSlotStart: string = "00:00";
+      let defaultTimeSlotEnd: string = "23:59";
 
-      // Retrieve recurrence and selected service option
-      const recurrence: number = getDefaultVal(
-        FORM_STATES.RECURRENCE,
-        extractResponseField(jsonResponse, FORM_STATES.RECURRENCE, true).value,
-        formType
-      ) as number;
-      setSelectedServiceOption(
-        recurrence == 0
-          ? singleService
-          : recurrence == -1
-          ? alternateService
-          : regularService
-      );
-      props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
+      // Fetch existing values and update them according
+      if (formType != "add" && formType != "search") {
+        const fields: RegistryFieldValues = await fetch(
+          makeInternalRegistryAPIwithParams(
+            "schedule",
+            props.form.getValues("id")
+          ),
+          {
+            cache: "no-store",
+            credentials: "same-origin",
+          }
+        ).then((res) => res.json());
 
-      props.form.setValue(
-        FORM_STATES.START_DATE,
-        getDefaultVal(
-          FORM_STATES.START_DATE,
-          extractResponseField(
-            jsonResponse,
-            parseStringsForUrls(FORM_STATES.START_DATE),
-            true
-          ).value,
+        // Retrieve recurrence and selected service option
+        recurrence = getDefaultVal(
+          FORM_STATES.RECURRENCE,
+          extractResponseField(fields, FORM_STATES.RECURRENCE, true)?.value,
           formType
-        )
-      );
-      props.form.setValue(
-        FORM_STATES.END_DATE,
-        getDefaultVal(
-          FORM_STATES.END_DATE,
-          extractResponseField(
-            jsonResponse,
-            parseStringsForUrls(FORM_STATES.END_DATE),
-            true
-          ).value,
-          formType
-        )
-      );
-      props.form.setValue(
-        FORM_STATES.TIME_SLOT_START,
-        getDefaultVal(
+        ) as number;
+        setSelectedServiceOption(
+          recurrence == 0
+            ? singleService
+            : recurrence == -1
+              ? alternateService
+              : regularService
+        );
+
+        defaultTimeSlotStart = getDefaultVal(
           FORM_STATES.TIME_SLOT_START,
-          extractResponseField(jsonResponse, "start_time", true).value,
+          extractResponseField(fields, "start_time", true).value,
           formType
-        )
-      );
-      props.form.setValue(
-        FORM_STATES.TIME_SLOT_END,
-        getDefaultVal(
+        ).toString();
+
+        defaultTimeSlotEnd = getDefaultVal(
           FORM_STATES.TIME_SLOT_END,
-          extractResponseField(jsonResponse, "end_time", true).value,
+          extractResponseField(fields, "end_time", true).value,
           formType
-        )
-      );
-      daysOfWeek.forEach((dayOfWeek) => {
+        ).toString();
+
         props.form.setValue(
-          dayOfWeek,
+          FORM_STATES.START_DATE,
           getDefaultVal(
-            dayOfWeek,
-            extractResponseField(jsonResponse, dayOfWeek, true).value,
+            FORM_STATES.START_DATE,
+            extractResponseField(
+              fields,
+              parseStringsForUrls(FORM_STATES.START_DATE),
+              true
+            ).value,
             formType
           )
         );
-      });
+        props.form.setValue(
+          FORM_STATES.END_DATE,
+          getDefaultVal(
+            FORM_STATES.END_DATE,
+            extractResponseField(
+              fields,
+              parseStringsForUrls(FORM_STATES.END_DATE),
+              true
+            ).value,
+            formType
+          )
+        );
+
+        daysOfWeek.forEach((dayOfWeek) => {
+          props.form.setValue(
+            dayOfWeek,
+            getDefaultVal(
+              dayOfWeek,
+              extractResponseField(fields, dayOfWeek, true).value,
+              formType
+            )
+          );
+        });
+      }
+
+      props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
+      props.form.setValue(
+        FORM_STATES.TIME_SLOT_START,
+        defaultTimeSlotStart
+      );
+      props.form.setValue(
+        FORM_STATES.TIME_SLOT_END,
+        defaultTimeSlotEnd
+      );
+
       setIsLoading(false);
     };
-    if (formType == "add" || formType == "search") {
-      props.form.setValue(FORM_STATES.RECURRENCE, 0);
-      setSelectedServiceOption(singleService);
-      props.form.setValue(FORM_STATES.TIME_SLOT_START, "00:00");
-      props.form.setValue(FORM_STATES.TIME_SLOT_END, "23:59");
-      setIsLoading(false);
-    } else {
-      getAndSetScheduleDefaults();
-    }
+
+    getAndSetScheduleDefaults();
   }, []);
 
   // Updates the service description whenever the service option changes

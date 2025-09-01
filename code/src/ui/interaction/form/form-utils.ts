@@ -167,10 +167,6 @@ export function getDefaultVal(field: string, defaultValue: string, formType: For
   }
 
   if (field == FORM_STATES.RECURRENCE) {
-    // Recurrence property should have a value of 1 for the add form type, else, use the default value
-    if (formType == "add" || formType == "search") {
-      return 1;
-    }
     if (defaultValue === "P1D") {
       return 0;
     }
