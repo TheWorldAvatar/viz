@@ -238,6 +238,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.completeTask) &&
+                  props.lifecycleStage === "outstanding" &&
                   (props.row?.status?.toLowerCase() ===
                     dict.title.assigned?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
@@ -284,6 +285,8 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.operation) &&
+                  (props.lifecycleStage === "outstanding" ||
+                    props.lifecycleStage === "scheduled") &&
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
@@ -307,6 +310,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.reportTask) &&
+                  props.lifecycleStage === "outstanding" &&
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===

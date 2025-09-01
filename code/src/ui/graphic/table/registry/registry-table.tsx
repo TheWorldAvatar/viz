@@ -83,8 +83,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.operation) &&
-        (row.status as string).toLowerCase() === dict.title.new
-      ) {
+        ((row.status as string).toLowerCase() === dict.title.new ||
+          ((row.status as string).toLowerCase() === dict.title.assigned && props.lifecycleStage === "scheduled")
+        )) {
         props.setTask(genTaskOption(recordId, row, "dispatch", dict));
       } else if (
         (!keycloakEnabled ||
