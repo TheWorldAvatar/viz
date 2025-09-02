@@ -14,7 +14,7 @@ import {
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import Button from "ui/interaction/button";
 import { Status } from "ui/text/status/status";
-import { getId, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
 import { useDispatch } from "react-redux";
@@ -287,6 +287,7 @@ export default function RegistryRowAction(
                   permissionScheme.hasPermissions.operation) &&
                   (props.lifecycleStage === "outstanding" ||
                     props.lifecycleStage === "scheduled") &&
+                  compareDates(props.row?.date, true) &&
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
@@ -311,6 +312,7 @@ export default function RegistryRowAction(
                   !permissionScheme ||
                   permissionScheme.hasPermissions.reportTask) &&
                   props.lifecycleStage === "outstanding" &&
+                  compareDates(props.row?.date, false) &&
                   (props.row?.status?.toLowerCase() ===
                     dict.title.new?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
