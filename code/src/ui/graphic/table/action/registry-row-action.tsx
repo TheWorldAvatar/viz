@@ -238,7 +238,7 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.completeTask) &&
-                  props.lifecycleStage === "outstanding" &&
+                  (props.lifecycleStage === "outstanding" || props.lifecycleStage === "closed") &&
                   (props.row?.status?.toLowerCase() ===
                     dict.title.assigned?.toLowerCase() ||
                     props.row?.status?.toLowerCase() ===
