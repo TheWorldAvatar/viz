@@ -384,7 +384,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) &&
+            permissionScheme.hasPermissions.saveTask) &&
             props.task?.type === "complete" && (
               <Button
                 leftIcon="save"
@@ -413,7 +413,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) &&
+            permissionScheme.hasPermissions.completeAndDuplicateTask) &&
             props.task?.type === "complete" && (
               <Button
                 leftIcon="schedule_send"
