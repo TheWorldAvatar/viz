@@ -84,10 +84,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
 
           const propertyField: PropertyShape = field as PropertyShape;
 
-          const label =
-            propertyField.name?.[VALUE_KEY] ||
-            propertyField.label?.[VALUE_KEY] ||
-            "Unknown Field";
+          const label = propertyField.name?.[VALUE_KEY] || "Unknown Field";
           const fieldId = propertyField.fieldId || propertyField["@id"] || "";
           const fieldValue = form.getValues(fieldId);
 
