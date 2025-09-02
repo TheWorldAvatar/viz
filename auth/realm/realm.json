@@ -320,9 +320,27 @@
           "attributes": {}
         },
         {
+          "id": "2dbb44b8-c129-461c-ad54-a9a273dca7bb",
+          "name": "duplicate-complete",
+          "description": "Permission to complete and duplicate the task for the next working day",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
           "id": "f5c36eb1-878f-4f70-82a2-ea8f1e56b4f5",
           "name": "export",
           "description": "Permission to export data",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
+          "attributes": {}
+        },
+        {
+          "id": "3d8c605c-cbb6-4315-b6c5-ee75b280aa4e",
+          "name": "save",
+          "description": "Permission to save completed data but does not closed the task",
           "composite": false,
           "clientRole": true,
           "containerId": "5bc0b854-feb7-4fb2-bd5d-c6bce84e7fe3",
