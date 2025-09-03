@@ -60,19 +60,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
               {(!keycloakEnabled ||
                 permissionScheme?.hasPermissions.pendingRegistry) && (
-                  <div className="sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.pending}
-                      leftIcon="free_cancellation"
-                      hasMobileIcon={false}
-                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                      variant={
-                        props.lifecycleStage == "pending" ? "active" : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                )}
+                <div className="sm:w-auto">
+                  <RedirectButton
+                    label={dict.nav.title.pending}
+                    leftIcon="free_cancellation"
+                    hasMobileIcon={false}
+                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                    variant={
+                      props.lifecycleStage == "pending" ? "active" : "ghost"
+                    }
+                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                  />
+                </div>
+              )}
 
               <div className="sm:w-auto">
                 <RedirectButton
@@ -127,16 +127,20 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
-              <DateRangeInput
-                selectedDate={props.selectedDate}
-                setSelectedDate={props.setSelectedDate}
-                lifecycleStage={props.lifecycleStage}
-              />
-            )}
+            <DateRangeInput
+              selectedDate={props.selectedDate}
+              setSelectedDate={props.setSelectedDate}
+              lifecycleStage={props.lifecycleStage}
+            />
+          )}
         </div>
 
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-          {props.tableDescriptor.table.getState().columnFilters?.some(filter => (filter?.value as string[])?.length > 0) && (
+          {props.tableDescriptor.table
+            .getState()
+            .columnFilters?.some(
+              (filter) => (filter?.value as string[])?.length > 0
+            ) && (
             <Button
               leftIcon="filter_list_off"
               iconSize="medium"
@@ -148,7 +152,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             />
           )}
           {props.instances.length > 0 && (
-            <ColumnToggle columns={props.tableDescriptor.table.getAllLeafColumns()} />
+            <ColumnToggle
+              columns={props.tableDescriptor.table.getAllLeafColumns()}
+            />
           )}
 
           {(!keycloakEnabled ||
@@ -191,8 +197,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-              <DownloadButton instances={props.instances} />
-            )}
+            <DownloadButton instances={props.instances} />
+          )}
         </div>
       </div>
     </div>

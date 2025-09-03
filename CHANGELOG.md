@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.39.1
+
+### Bug Fixes
+
+- Fixed the inability to change months in the date input menu
+
 ## 5.39.0
 
 ### Changes
@@ -10,7 +16,6 @@
 - Added role permissions for saving and submit and duplicate tasks.
 - Redesigned the permitted registry row actions in each registry.
 - Bump min version of `VisBackend Agent` from `v1.10.0` to `v1.12.0`
-
 
 ## 5.38.4
 

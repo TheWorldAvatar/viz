@@ -3,6 +3,7 @@ import "react-day-picker/style.css";
 import { FloatingPortal, useTransitionStyles } from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
+import { useScreenType } from "hooks/useScreenType";
 import { useCallback, useId } from "react";
 import {
   DateBefore,
@@ -13,6 +14,7 @@ import {
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
+import { ScreenType } from "types/settings";
 import Button from "ui/interaction/button";
 
 interface DateRangeInputProps {
@@ -42,6 +44,9 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     },
   });
 
+  const screenType: ScreenType = useScreenType();
+
+
   const handleDateSelect = useCallback(
     (range: DateRange | undefined) => {
       props.setSelectedDate({
@@ -52,39 +57,14 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     [props.setSelectedDate]
   );
 
-  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${
-    props.selectedDate.from != props.selectedDate.to
-      ? " - " + props.selectedDate.to.toLocaleDateString()
-      : ""
-  }`;
+  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.from != props.selectedDate.to
+    ? " - " + props.selectedDate.to.toLocaleDateString()
+    : ""
+    }`;
 
   return (
-    <div
-      className="flex items-center gap-2 relative"
-      ref={popover.refs.setReference}
-      {...popover.getReferenceProps()}
-    >
-      {/* Desktop: Show label and full input, Hidden on mobile/tablet */}
-      <div className="hidden lg:flex items-center gap-2">
-        <label
-          className="my-1 text-base md:text-lg text-left whitespace-nowrap"
-          htmlFor={id}
-        >
-          {dict.action.date}:
-        </label>
-        <input
-          id={id}
-          type="button"
-          value={displayedDateRange}
-          readOnly
-          className={`h-10 ${
-            props.selectedDate?.to ? "w-60" : "w-32"
-          } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
-        />
-      </div>
-
-      {/* Mobile/Tablet: Show only icon button */}
-      <div className="lg:hidden">
+    <div ref={popover.refs.setReference} className="flex items-center gap-2 relative">
+      {screenType === "mobile" ?
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -92,8 +72,27 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
           variant="outline"
           leftIcon="date_range"
           tooltipText={dict.action.date}
-        />
-      </div>
+          {...popover.getReferenceProps()}
+        /> :
+        <div className="flex items-center gap-2">
+          <label
+            className="my-1 text-base md:text-lg text-left whitespace-nowrap"
+            htmlFor={id}
+          >
+            {dict.action.date}:
+          </label>
+          <input
+            id={id}
+            type="button"
+            value={displayedDateRange}
+            readOnly
+            className={`h-10 ${props.selectedDate?.to ? "w-60" : "w-32"
+              } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
+            {...popover.getReferenceProps()}
+          />
+        </div>
+      }
+
       {popover.isOpen && (
         <FloatingPortal>
           <div
