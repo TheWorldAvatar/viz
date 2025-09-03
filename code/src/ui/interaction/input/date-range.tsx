@@ -1,6 +1,6 @@
 import "react-day-picker/style.css";
 
-import { FloatingPortal, useTransitionStyles } from "@floating-ui/react";
+import { FloatingPortal, Placement, useTransitionStyles } from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
 import { useScreenType } from "hooks/useScreenType";
@@ -20,6 +20,7 @@ import { getInitialDate } from "utils/client-utils";
 interface DateRangeInputProps {
   selectedDate?: DateRange;
   setSelectedDate?: React.Dispatch<React.SetStateAction<DateRange>>;
+  placement?: Placement;
   disabled?: DateBefore;
 }
 
@@ -27,6 +28,7 @@ interface DateRangeInputProps {
  *
  * @param {DateRange} selectedDate An optional controlled selected date range.
  * @param setSelectedDate An optional controlled dispatch method to update selected date range.
+ * @param {Placement} placement Optional placement position for the calendar view.
  * @param {DateBefore} disabled Optional dates to be disabled.
  */
 export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
@@ -35,7 +37,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
 
   const defaultDayPickerClassNames = getDefaultClassNames();
 
-  const popover = usePopover();
+  const popover = usePopover(props.placement);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
     initial: {
