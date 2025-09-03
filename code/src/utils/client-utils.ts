@@ -215,3 +215,14 @@ export function compareDates(
   }
   return targetDateObject <= refDateObject;
 }
+
+/**
+  * Get initial date ie today.
+*/
+export function getInitialDate(): DateRange {
+  const currentDate: Date = new Date();
+  return {
+    from: currentDate,
+    to: currentDate,
+  }
+}
