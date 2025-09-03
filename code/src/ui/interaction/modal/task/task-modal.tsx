@@ -56,16 +56,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
   const [refreshFlag, triggerRefresh] = useRefresh();
-
-  const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit();
-    }
-  };
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -89,7 +86,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
     } else if (props.task?.type === "complete") {
-      action = "complete";
+      if (isSaving) {
+        action = "saved";
+        setIsSaving(false);
+      } else {
+        action = "complete";
+      }
       formData[FORM_STATES.ORDER] = 1;
     } else if (props.task?.type === "cancel") {
       action = "cancel";
@@ -104,11 +106,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(
+    await submitLifecycleAction(
       formData,
       action,
       props.task?.type !== "dispatch" && props.task?.type !== "complete"
     );
+    if (isDuplicate) {
+      await submitLifecycleAction(formData, "continue", true);
+      setIsDuplicate(false);
+    }
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -162,6 +168,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     }
   };
 
+  // A hook that submits the form when buttons are clicked
+  // This approach ensures that the isSaving state is changed before the form is submitted, so that the saved state is acknowledged
+  useEffect(() => {
+    if ((isSubmitting || isSaving) && formRef.current) {
+      formRef.current.requestSubmit();
+      setIsSubmitting(false);
+    }
+  }, [isSubmitting, isSaving]);
+
   // A hook that fetches the form template for executing an action
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
@@ -192,7 +207,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     };
 
     // Reset forms when they are changed
-    triggerRefresh()
+    triggerRefresh();
     setFormFields([]);
 
     if (props.task?.type === "dispatch") {
@@ -207,7 +222,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.task?.id, props.task?.status, props.task?.type]);
 
   return (
-    <Drawer isControlledOpen={props.isOpen} setIsControlledOpen={props.setIsOpen}>
+    <Drawer
+      isControlledOpen={props.isOpen}
+      setIsControlledOpen={props.setIsOpen}
+    >
       {/* Header */}
       <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
@@ -218,12 +236,11 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         </h2>
       </section>
       {/* Scrollable Content */}
-      <section
-        className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0"
-      >
+      <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {props.task?.type !== "default" && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {props.task?.type === "complete" && dict.message.completeInstruction}
+            {props.task?.type === "complete" &&
+              dict.message.completeInstruction}
             {props.task?.type === "dispatch" &&
               `${dict.message.dispatchInstruction} ${props.task.date}:`}
             {props.task?.type === "cancel" &&
@@ -289,10 +306,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.complete}
-                onClick={() => props.setTask({
-                  ...props.task,
-                  type: "complete",
-                })}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "complete",
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
@@ -309,10 +328,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.dispatch}
-                onClick={() => props.setTask({
-                  ...props.task,
-                  type: "dispatch",
-                })}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "dispatch",
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
@@ -330,10 +351,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.cancel}
-                onClick={() => props.setTask({
-                  ...props.task,
-                  type: "cancel",
-                })}
+                onClick={() =>
+                  props.setTask({
+                    ...props.task,
+                    type: "cancel",
+                  })
+                }
               />
             )}
           {(!keycloakEnabled ||
@@ -355,7 +378,20 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                   props.setTask({
                     ...props.task,
                     type: "report",
-                  })}
+                  })
+                }
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.saveTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={() => setIsSaving(true)}
               />
             )}
           {(!keycloakEnabled ||
@@ -365,13 +401,29 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             (permissionScheme.hasPermissions.reportTask &&
               props.task?.type === "report") ||
             (permissionScheme.hasPermissions.operation &&
-              (props.task?.type === "dispatch" || props.task?.type === "cancel"))) &&
+              (props.task?.type === "dispatch" ||
+                props.task?.type === "cancel"))) &&
             props.task?.type !== "default" && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                onClick={onSubmit}
+                onClick={() => setIsSubmitting(true)}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.completeAndDuplicateTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="schedule_send"
+                variant="secondary"
+                label={dict.action.submitAndDuplicate}
+                tooltipText={dict.action.submitAndDuplicate}
+                onClick={() => {
+                  setIsDuplicate(true);
+                  setIsSubmitting(true);
+                }}
               />
             )}
         </div>
