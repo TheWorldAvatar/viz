@@ -51,8 +51,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.triggerRefresh();
   };
 
-  const isMobile = useIsMobile();
-
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" &&
