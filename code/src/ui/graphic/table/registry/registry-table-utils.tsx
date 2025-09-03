@@ -3,8 +3,10 @@ import {
   FilterFnOption,
   Row
 } from "@tanstack/react-table";
+import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
+  LifecycleStage,
   RegistryFieldValues
 } from "types/form";
 import StatusComponent from "ui/text/status/status";
@@ -110,4 +112,21 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
  */
 export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, translatedBlankText: string): string[] {
   return rows.flatMap((row) => row.getValue(header) ?? translatedBlankText);
+}
+
+/**
+ * Function to get disabled date range based on lifecycle stage.
+ *
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ */
+export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  // For scheduled stage, only dates from tomorrow onwards should be available
+  // and previous days should be disabled
+  if (lifecycleStage === "scheduled") {
+    return { before: tomorrow };
+  }
+  return undefined;
 }

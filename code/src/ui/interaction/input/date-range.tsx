@@ -4,7 +4,7 @@ import { FloatingPortal, useTransitionStyles } from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
 import { useScreenType } from "hooks/useScreenType";
-import { useCallback, useId } from "react";
+import { useCallback, useId, useState } from "react";
 import {
   DateBefore,
   DateRange,
@@ -13,21 +13,21 @@ import {
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
 import { ScreenType } from "types/settings";
 import Button from "ui/interaction/button";
+import { getInitialDate } from "utils/client-utils";
 
 interface DateRangeInputProps {
-  selectedDate: DateRange;
-  setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
-  lifecycleStage: LifecycleStage;
+  selectedDate?: DateRange;
+  setSelectedDate?: React.Dispatch<React.SetStateAction<DateRange>>;
+  disabled?: DateBefore;
 }
 
 /** A component to display a date range input
  *
- * @param {DateRange} selectedDate The selected date range.
- * @param setSelectedDate A dispatch method to update selected date range.
- * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {DateRange} selectedDate An optional controlled selected date range.
+ * @param setSelectedDate An optional controlled dispatch method to update selected date range.
+ * @param {DateBefore} disabled Optional dates to be disabled.
  */
 export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   const id: string = useId();
@@ -45,20 +45,24 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   });
 
   const screenType: ScreenType = useScreenType();
-
+  const [selectedDate, setSelectedDate] = useState<DateRange>(props.selectedDate ?? getInitialDate());
 
   const handleDateSelect = useCallback(
     (range: DateRange | undefined) => {
-      props.setSelectedDate({
+      const dateRange: DateRange = {
         from: range?.from ?? undefined,
         to: range?.to ?? undefined,
-      });
+      };
+      setSelectedDate(dateRange);
+      if (props.setSelectedDate) {
+        props.setSelectedDate(dateRange);
+      }
     },
-    [props.setSelectedDate]
+    [setSelectedDate, props.setSelectedDate]
   );
 
-  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.from != props.selectedDate.to
-    ? " - " + props.selectedDate.to.toLocaleDateString()
+  const displayedDateRange = `${selectedDate.from.toLocaleDateString()}${selectedDate.from != selectedDate.to
+    ? " - " + selectedDate.to.toLocaleDateString()
     : ""
     }`;
 
@@ -86,7 +90,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
             type="button"
             value={displayedDateRange}
             readOnly
-            className={`h-10 ${props.selectedDate?.to ? "w-60" : "w-32"
+            className={`h-10 ${selectedDate?.to ? "w-60" : "w-32"
               } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
             {...popover.getReferenceProps()}
           />
@@ -112,9 +116,9 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               <DayPicker
                 locale={dict.lang === "de" ? de : enGB}
                 mode="range"
-                selected={props.selectedDate}
+                selected={selectedDate}
                 onSelect={handleDateSelect}
-                disabled={getDisabledDates(props.lifecycleStage)}
+                disabled={props.disabled}
                 classNames={{
                   today: `text-blue-700 `,
                   selected: `bg-gray-200 dark:bg-zinc-800`,
@@ -134,21 +138,4 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
       )}
     </div>
   );
-}
-
-/**
- * Function to get disabled date range based on lifecycle stage.
- *
- * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- */
-function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-  // For scheduled stage, only dates from tomorrow onwards should be available
-  // and previous days should be disabled
-  if (lifecycleStage === "scheduled") {
-    return { before: tomorrow };
-  }
-  return undefined;
 }
