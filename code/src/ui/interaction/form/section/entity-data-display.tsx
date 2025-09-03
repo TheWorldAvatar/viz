@@ -16,7 +16,6 @@ import { parsePropertyShapeOrGroupList } from "../form-utils";
 import { usePathname } from "next/dist/client/components/navigation";
 import { getAfterDelimiter } from "utils/client-utils";
 import Button from "ui/interaction/button";
-import { is } from "react-day-picker/locale";
 
 interface EntityDataDisplayProps {
   entityType: string;
@@ -183,8 +182,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     try {
       // Extract entity type and ID from the label and URI
       const entityType = label.toLowerCase().replace(/\s+/g, "_");
-
-      // Extract ID from URI using the same function as the main component
       const entityId = getAfterDelimiter(uriValue, "/");
 
       const response = await fetch(
@@ -256,14 +253,12 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
             </div>
           </div>
 
-          {/* Expanded URI data */}
           {isExpanded && expandedData && (
             <div className="mt-4 pl-4 border-l-1 border-border">
               <div className="space-y-2">
                 {Object.entries(expandedData).map(([key, value]) => {
-                  // Skip displaying id and URI fields
                   if (key === "id") {
-                    return null; // Skip id field
+                    return null;
                   }
 
                   // Skip displaying the full URI values for nested objects
@@ -311,6 +306,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
       );
     }
 
+    // Single properties
     return (
       <div key={key} className="flex flex-col sm:flex-row sm:items-start py-2">
         <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground">
@@ -337,6 +333,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     );
   }
 
+  // Group Properties
   return (
     <div className="overflow-hidden">
       <div className="p-4 space-y-2 text-sm font-medium text-foreground">
