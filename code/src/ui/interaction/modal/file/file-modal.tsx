@@ -105,6 +105,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           {props.type === "date" && <DateRangeInput
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
+            placement="bottom"
           />}
         </section>
 
