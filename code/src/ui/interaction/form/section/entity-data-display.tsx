@@ -242,14 +242,14 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
             <div className="flex-1 text-xs text-foreground">
               <Button
                 type="button"
-                size="sm"
+                size="icon"
                 iconSize="small"
-                leftIcon={isExpanded ? "visibility_off" : "visibility"}
+                leftIcon={
+                  isExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"
+                }
                 onClick={() => handleShowUri(fieldValue, label)}
-                variant={isExpanded ? "secondary" : "primary"}
-              >
-                {isExpanded ? "Hide" : "Show"}
-              </Button>
+                variant={isExpanded ? "secondary" : "outline"}
+              />
             </div>
           </div>
 
