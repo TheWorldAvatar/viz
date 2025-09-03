@@ -15,6 +15,8 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import { parsePropertyShapeOrGroupList } from "../form-utils";
 import { usePathname } from "next/dist/client/components/navigation";
 import { getAfterDelimiter } from "utils/client-utils";
+import Button from "ui/interaction/button";
+import { is } from "react-day-picker/locale";
 
 interface EntityDataDisplayProps {
   entityType: string;
@@ -223,6 +225,10 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     const fieldValue = getFieldValue(propertyField);
     const displayValue = getDisplayValue(fieldValue);
 
+    if (label.toLowerCase().includes("id")) {
+      return null;
+    }
+
     // Check if this is a URI type field
     if (isUriType(fieldValue)) {
       const uriValue = (fieldValue as { value: string }).value;
@@ -232,30 +238,34 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
 
       return (
         <div key={key} className="flex flex-col py-2">
-          <div className="flex flex-col sm:flex-row sm:items-start">
+          <div className="flex flex-col sm:flex-row items-baseline">
             <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground">
               {label}
             </div>
             <div className="flex-1 text-xs text-foreground">
-              <button
+              <Button
                 type="button"
+                size="sm"
+                iconSize="small"
+                leftIcon={isExpanded ? "visibility_off" : "visibility"}
                 onClick={() => handleShowUri(fieldValue, label)}
-                className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
-                  isExpanded
-                    ? "bg-gray-500 hover:bg-gray-600 text-white"
-                    : "bg-blue-500 hover:bg-blue-600 text-white"
-                }`}
+                variant={isExpanded ? "secondary" : "primary"}
               >
                 {isExpanded ? "Hide" : "Show"}
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Expanded URI data */}
           {isExpanded && expandedData && (
-            <div className="mt-2 ml-0 sm:ml-40 pl-4 border-l-2 border-gray-200">
-              <div className="space-y-1">
+            <div className="mt-4 pl-4 border-l-1 border-border">
+              <div className="space-y-2">
                 {Object.entries(expandedData).map(([key, value]) => {
+                  // Skip displaying id and URI fields
+                  if (key === "id") {
+                    return null; // Skip id field
+                  }
+
                   // Skip displaying the full URI values for nested objects
                   if (
                     typeof value === "object" &&
@@ -269,12 +279,12 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                     return (
                       <div
                         key={key}
-                        className="flex flex-col sm:flex-row text-xs"
+                        className="flex flex-col sm:flex-row text-xs "
                       >
                         <div className="w-32 font-medium text-gray-600 capitalize">
                           {key.replace(/_/g, " ")}:
                         </div>
-                        <div className="flex-1 text-gray-800">
+                        <div className="flex-1 ml-2 text-foreground">
                           {String(objValue.value || "")}
                         </div>
                       </div>
@@ -285,10 +295,10 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                       key={key}
                       className="flex flex-col sm:flex-row text-xs"
                     >
-                      <div className="w-32 font-medium text-gray-600 capitalize">
+                      <div className="w-32 font-medium text-gray-600  capitalize">
                         {key.replace(/_/g, " ")}:
                       </div>
-                      <div className="flex-1 text-gray-800">
+                      <div className="flex-1 ml-2 text-foreground">
                         {String(value || "")}
                       </div>
                     </div>
