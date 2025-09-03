@@ -48,7 +48,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
         return body.data?.items?.[0] as FormTemplateType;
       });
 
-      // Fetch the actual instance data
       const instanceData = await fetch(
         makeInternalRegistryAPIwithParams(
           "instances",
@@ -97,21 +96,21 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   }
 
   return (
-    <div className=" overflow-hidden">
+    <div className="overflow-hidden">
       <div className="p-4 space-y-2 text-sm font-medium text-foreground">
         {formTemplate?.property.map((field, index) => {
           if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-            // Property group - render nested properties
+            // Property group
             const group = field as PropertyGroup;
             const groupLabel = group.label?.[VALUE_KEY] || "Group";
             const groupProperties = group.property || [];
-            console.info(
-              "PropertyGroup:",
-              groupLabel,
-              "Instance data:",
-              instance
-            );
-            console.info("Group properties:", groupProperties);
+            // console.info(
+            //   "PropertyGroup:",
+            //   groupLabel,
+            //   "Instance data:",
+            //   instance
+            // );
+            // console.info("Group properties:", groupProperties);
 
             return (
               <div key={index} className="mb-4">
@@ -134,8 +133,8 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                         if (directField !== undefined) {
                           fieldValue = directField;
                         } else {
-                          // Try to find by matching the property name
                           const propertyName = propertyField.name?.[VALUE_KEY];
+
                           if (
                             propertyName &&
                             instance[propertyName] !== undefined
@@ -145,23 +144,14 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                         }
                       }
 
-                      // If no instance data found, try to use defaultValue from the form template
                       if (fieldValue === null && propertyField.defaultValue) {
                         fieldValue = propertyField.defaultValue;
                       }
 
-                      console.info(
-                        `Field: ${label}, fieldId: ${fieldId}, fieldValue:`,
-                        fieldValue,
-                        "propertyField:",
-                        propertyField
-                      );
-
-                      // Extract value from the field value, handling different value types
                       let displayValue = "";
-
                       if (fieldValue !== undefined && fieldValue !== null) {
-                        // Check for defaultValue first
+                        // Check for the default value first
+                        // Some of the values are under defaultValue others are directly under value
                         if (
                           typeof fieldValue === "object" &&
                           "defaultValue" in fieldValue &&
@@ -178,7 +168,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                             displayValue = String(fieldValue.defaultValue);
                           }
                         }
-                        // Then check for direct value
+                        // Check for direct value
                         else if (
                           typeof fieldValue === "object" &&
                           "value" in fieldValue
@@ -224,8 +214,8 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
           const label = propertyField.name?.[VALUE_KEY] || "Unknown Field";
           const fieldId = propertyField.fieldId || propertyField["@id"] || "";
 
-          // Use instance data instead of form values
           let fieldValue = null;
+
           if (instance && fieldId) {
             // Try to find the field in the instance data
             // Handle both direct field names and group-prefixed field names
@@ -235,25 +225,17 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
             } else {
               // Try to find by matching the property name
               const propertyName = propertyField.name?.[VALUE_KEY];
+
               if (propertyName && instance[propertyName] !== undefined) {
                 fieldValue = instance[propertyName];
               }
             }
           }
-
           // If no instance data found, try to use defaultValue from the form template
           if (fieldValue === null && propertyField.defaultValue) {
             fieldValue = propertyField.defaultValue;
           }
 
-          console.info(
-            `Non-grouped Field: ${label}, fieldId: ${fieldId}, fieldValue:`,
-            fieldValue,
-            "propertyField:",
-            propertyField
-          );
-
-          // Extract value from the field value, handling different value types
           let displayValue = "";
           if (fieldValue !== undefined && fieldValue !== null) {
             // Check for defaultValue first
@@ -270,13 +252,12 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
               } else {
                 displayValue = String(fieldValue.defaultValue);
               }
-            }
-            // Then check for direct value
-            else if (typeof fieldValue === "object" && "value" in fieldValue) {
+            } else if (
+              typeof fieldValue === "object" &&
+              "value" in fieldValue
+            ) {
               displayValue = String(fieldValue.value || "");
-            }
-            // Finally, use the field value directly
-            else {
+            } else {
               displayValue = String(fieldValue);
             }
           }
