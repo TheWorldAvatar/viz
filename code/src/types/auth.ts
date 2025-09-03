@@ -28,6 +28,8 @@ export type HasPermissions = {
     operation: boolean;
     viewTask: boolean;
     completeTask: boolean;
+    completeAndDuplicateTask: boolean;
     reportTask: boolean;
+    saveTask: boolean;
     export: boolean;
 };

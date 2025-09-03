@@ -86,7 +86,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
           )}
           <div className={`flex grow flex-col bg-muted ${contentWidthClass}`}>
             {props.children}
-            <Footer />
+            {!pathname.endsWith("map") && <Footer />}
           </div>
         </main>
 

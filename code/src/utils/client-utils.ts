@@ -211,3 +211,28 @@ export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage)
 
   return { from: initialDate, to: initialDate };
 }
+
+/**
+  * Compares the target and reference date to verify if they are before or after each other. Note that this function returns true if they are equivalent.
+  *
+  * @param {string} targetDate The target date for comparison.
+  * @param {boolean} isAfter Verifies if the target date occurs after the reference date.
+  * @param {string} refDate An optional reference date for the comparison. If empty, it will default to today.
+*/
+export function compareDates(
+  targetDate: string,
+  isAfter: boolean,
+  refDate?: string,
+): boolean {
+  const targetDateObject = new Date(targetDate);
+  // Defaults to today if reference date is not provided
+  const refDateObject = refDate ? new Date(refDate) : new Date();
+  // Equivalent dates will return true
+  if (targetDateObject.toDateString() === refDateObject.toDateString()) {
+    return true;
+  }
+  if (isAfter) {
+    return targetDateObject >= refDateObject;
+  }
+  return targetDateObject <= refDateObject;
+}

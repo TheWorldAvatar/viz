@@ -57,6 +57,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     useRef<HTMLFormElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
@@ -105,11 +106,15 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    submitLifecycleAction(
+    await submitLifecycleAction(
       formData,
       action,
       props.task?.type !== "dispatch" && props.task?.type !== "complete"
     );
+    if (isDuplicate) {
+      await submitLifecycleAction(formData, "continue", true);
+      setIsDuplicate(false);
+    }
   };
 
   // Reusable action method to report, cancel, dispatch, or complete the service task
@@ -379,7 +384,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) &&
+            permissionScheme.hasPermissions.saveTask) &&
             props.task?.type === "complete" && (
               <Button
                 leftIcon="save"
@@ -404,6 +409,21 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
                 onClick={() => setIsSubmitting(true)}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.completeAndDuplicateTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="schedule_send"
+                variant="secondary"
+                label={dict.action.submitAndDuplicate}
+                tooltipText={dict.action.submitAndDuplicate}
+                onClick={() => {
+                  setIsDuplicate(true);
+                  setIsSubmitting(true);
+                }}
               />
             )}
         </div>

@@ -14,7 +14,9 @@ const hasPermitionsInitial: HasPermissions = {
   operation: false,
   viewTask: false,
   completeTask: false,
+  completeAndDuplicateTask: false,
   reportTask: false,
+  saveTask: false,
   export: false,
 };
 
@@ -62,6 +64,12 @@ export function parsePermissions(roles: string[]): PermissionScheme {
     permissionScheme.hasPermissions.viewTask = true;
     permissionScheme.hasPermissions.completeTask = true;
     permissionScheme.hasPermissions.reportTask = true;
+  }
+  if (roles.includes("duplicate-complete")) {
+    permissionScheme.hasPermissions.completeAndDuplicateTask = true;
+  }
+  if (roles.includes("save")) {
+    permissionScheme.hasPermissions.saveTask = true;
   }
   if (roles.includes("export")) {
     permissionScheme.hasPermissions.export = true;
