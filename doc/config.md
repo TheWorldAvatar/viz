@@ -51,7 +51,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Optional for only internal links, which defaults to the default if not set.
   - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
-  - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL.
+  - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario
     - `url`: REQUIRED. url of the resource
