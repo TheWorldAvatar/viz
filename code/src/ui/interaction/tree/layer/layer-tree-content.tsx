@@ -170,7 +170,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
   /** A method to open the search modal on click.
    */
   const openSearchModal = () => {
-    const layerIds: string[] = group.layers.map((layer) => layer.ids);
+    const layerIds: string[] = group.layers.map((layer) => layer.ids).flat();
     // Add filter layer IDs
     dispatch(setFilterLayerIds(layerIds));
     // Reset filtered features state when opened
