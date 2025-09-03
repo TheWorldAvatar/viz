@@ -3,6 +3,7 @@ import "react-day-picker/style.css";
 import { FloatingPortal, useTransitionStyles } from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
+import { useScreenType } from "hooks/useScreenType";
 import { useCallback, useId } from "react";
 import {
   DateBefore,
@@ -13,13 +14,13 @@ import {
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
+import { ScreenType } from "types/settings";
 import Button from "ui/interaction/button";
 
 interface DateRangeInputProps {
   selectedDate: DateRange;
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   lifecycleStage: LifecycleStage;
-  iconOnly?: boolean;
 }
 
 /** A component to display a date range input
@@ -27,7 +28,6 @@ interface DateRangeInputProps {
  * @param {DateRange} selectedDate The selected date range.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {boolean} iconOnly Whether to display only the icon button (for mobile) or the full input with label (for desktop).
  */
 export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   const id: string = useId();
@@ -44,6 +44,9 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     },
   });
 
+  const screenType: ScreenType = useScreenType();
+
+
   const handleDateSelect = useCallback(
     (range: DateRange | undefined) => {
       props.setSelectedDate({
@@ -54,26 +57,23 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     [props.setSelectedDate]
   );
 
-  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${
-    props.selectedDate.from != props.selectedDate.to
-      ? " - " + props.selectedDate.to.toLocaleDateString()
-      : ""
-  }`;
+  const displayedDateRange = `${props.selectedDate.from.toLocaleDateString()}${props.selectedDate.from != props.selectedDate.to
+    ? " - " + props.selectedDate.to.toLocaleDateString()
+    : ""
+    }`;
 
   return (
-    <div className="flex items-center gap-2 relative">
-      {props.iconOnly ? (
-        <div ref={popover.refs.setReference} {...popover.getReferenceProps()}>
-          <Button
-            id={`${id}-mobile`}
-            type="button"
-            size="icon"
-            variant="outline"
-            leftIcon="date_range"
-            tooltipText={dict.action.date}
-          />
-        </div>
-      ) : (
+    <div ref={popover.refs.setReference} className="flex items-center gap-2 relative">
+      {screenType === "mobile" ?
+        <Button
+          id={`${id}-mobile`}
+          type="button"
+          size="icon"
+          variant="outline"
+          leftIcon="date_range"
+          tooltipText={dict.action.date}
+          {...popover.getReferenceProps()}
+        /> :
         <div className="flex items-center gap-2">
           <label
             className="my-1 text-base md:text-lg text-left whitespace-nowrap"
@@ -82,18 +82,17 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
             {dict.action.date}:
           </label>
           <input
-            ref={popover.refs.setReference}
-            {...popover.getReferenceProps()}
             id={id}
             type="button"
             value={displayedDateRange}
             readOnly
-            className={`h-10 ${
-              props.selectedDate?.to ? "w-60" : "w-32"
-            } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
+            className={`h-10 ${props.selectedDate?.to ? "w-60" : "w-32"
+              } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
+            {...popover.getReferenceProps()}
           />
         </div>
-      )}
+      }
+
       {popover.isOpen && (
         <FloatingPortal>
           <div
