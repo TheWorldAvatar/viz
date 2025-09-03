@@ -276,7 +276,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                         key={key}
                         className="flex flex-row flex-wrap text-xs "
                       >
-                        <div className="w-32 font-medium text-gray-600 capitalize">
+                        <div className="w-32 font-medium text-gray-600 dark:text-gray-400 capitalize">
                           {key.replace(/_/g, " ")}:
                         </div>
                         <div className="flex-1 ml-2 text-foreground">
@@ -287,7 +287,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                   }
                   return (
                     <div key={key} className="flex flex-row flex-wrap text-xs">
-                      <div className="w-32 font-medium text-gray-600  capitalize">
+                      <div className="w-32 font-medium text-gray-600 dark:text-gray-400 capitalize">
                         {key.replace(/_/g, " ")}:
                       </div>
                       <div className="flex-1 ml-2 text-foreground">
@@ -306,10 +306,10 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     // Single properties
     return (
       <div key={key} className="flex flex-row sm:items-start py-2">
-        <div className="flex-shrink-0 w-26 sm:w-40 text-sm font-medium text-foreground capitalize">
+        <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
           {label}
         </div>
-        <div className="flex-1 text-sm text-foreground   ">
+        <div className="flex-1 text-sm text-foreground">
           {displayValue ? (
             <span className="text-sm text-foreground">{displayValue}</span>
           ) : (
