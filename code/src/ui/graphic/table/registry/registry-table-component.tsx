@@ -20,6 +20,7 @@ import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
+  getUTCDate,
   parseWordsForLabels,
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
@@ -132,27 +133,12 @@ export default function RegistryTableComponent(
           props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed"
         ) {
-          const startDate = new Date(
-            Date.UTC(
-              selectedDate.from.getFullYear(),
-              selectedDate.from.getMonth(),
-              selectedDate.from.getDate()
-            )
-          );
-          const endDate = new Date(
-            Date.UTC(
-              selectedDate.to.getFullYear(),
-              selectedDate.to.getMonth(),
-              selectedDate.to.getDate()
-            )
-          );
-
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
               props.lifecycleStage == "scheduled" ? "scheduled" : "closed",
               props.entityType,
-              startDate.getTime().toString(),
-              endDate.getTime().toString()
+              getUTCDate(selectedDate.from).getTime().toString(),
+              getUTCDate(selectedDate.to).getTime().toString()
             ),
             {
               cache: "no-store",
