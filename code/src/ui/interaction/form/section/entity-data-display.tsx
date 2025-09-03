@@ -29,6 +29,9 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   );
   const [instance, setInstance] = useState<RegistryFieldValues | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedUris, setExpandedUris] = useState<
+    Record<string, RegistryFieldValues>
+  >({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,6 +150,70 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     }
   };
 
+  const isUriType = (fieldValue: unknown): boolean => {
+    return (
+      typeof fieldValue === "object" &&
+      fieldValue !== null &&
+      "type" in fieldValue &&
+      (fieldValue as { type: string }).type === "uri"
+    );
+  };
+
+  // Handle showing URI details
+  const handleShowUri = async (fieldValue: unknown, label: string) => {
+    if (!isUriType(fieldValue)) return;
+
+    const uriValue = (fieldValue as { value: string }).value;
+
+    // The uriKey is used as a unique identifier to track which URI fields are expanded (queried)
+    const uriKey = getAfterDelimiter(uriValue, "/");
+
+    // If already expanded, collapse it
+    if (expandedUris[uriKey]) {
+      setExpandedUris((prev) => {
+        const newState = { ...prev };
+        delete newState[uriKey];
+        return newState;
+      });
+      return;
+    }
+
+    try {
+      // Extract entity type and ID from the label and URI
+      const entityType = label.toLowerCase().replace(/\s+/g, "_");
+
+      // Extract ID from URI using the same function as the main component
+      const entityId = getAfterDelimiter(uriValue, "/");
+
+      const response = await fetch(
+        makeInternalRegistryAPIwithParams(
+          "instances",
+          entityType,
+          "false",
+          entityId
+        ),
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      );
+
+      const body: AgentResponseBody = await response.json();
+      const data = body.data?.items?.[0] || null;
+
+      if (data) {
+        setExpandedUris((prev) => ({
+          ...prev,
+          [uriKey]: data as RegistryFieldValues,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching URI data:", error);
+    }
+  };
+
   // Render a single property field
   const renderPropertyField = (
     propertyField: PropertyShape,
@@ -155,6 +222,84 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     const label = propertyField.name?.[VALUE_KEY] || "Unknown Field";
     const fieldValue = getFieldValue(propertyField);
     const displayValue = getDisplayValue(fieldValue);
+
+    // Check if this is a URI type field
+    if (isUriType(fieldValue)) {
+      const uriValue = (fieldValue as { value: string }).value;
+      const uriKey = getAfterDelimiter(uriValue, "/");
+      const expandedData = expandedUris[uriKey];
+      const isExpanded = !!expandedData;
+
+      return (
+        <div key={key} className="flex flex-col py-2">
+          <div className="flex flex-col sm:flex-row sm:items-start">
+            <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground">
+              {label}
+            </div>
+            <div className="flex-1 text-xs text-foreground">
+              <button
+                type="button"
+                onClick={() => handleShowUri(fieldValue, label)}
+                className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
+                  isExpanded
+                    ? "bg-gray-500 hover:bg-gray-600 text-white"
+                    : "bg-blue-500 hover:bg-blue-600 text-white"
+                }`}
+              >
+                {isExpanded ? "Hide" : "Show"}
+              </button>
+            </div>
+          </div>
+
+          {/* Expanded URI data */}
+          {isExpanded && expandedData && (
+            <div className="mt-2 ml-0 sm:ml-40 pl-4 border-l-2 border-gray-200">
+              <div className="space-y-1">
+                {Object.entries(expandedData).map(([key, value]) => {
+                  // Skip displaying the full URI values for nested objects
+                  if (
+                    typeof value === "object" &&
+                    value !== null &&
+                    "type" in value
+                  ) {
+                    const objValue = value as { type: string; value: unknown };
+                    if (objValue.type === "uri") {
+                      return null; // Skip URI fields in expanded view
+                    }
+                    return (
+                      <div
+                        key={key}
+                        className="flex flex-col sm:flex-row text-xs"
+                      >
+                        <div className="w-32 font-medium text-gray-600 capitalize">
+                          {key.replace(/_/g, " ")}:
+                        </div>
+                        <div className="flex-1 text-gray-800">
+                          {String(objValue.value || "")}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div
+                      key={key}
+                      className="flex flex-col sm:flex-row text-xs"
+                    >
+                      <div className="w-32 font-medium text-gray-600 capitalize">
+                        {key.replace(/_/g, " ")}:
+                      </div>
+                      <div className="flex-1 text-gray-800">
+                        {String(value || "")}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
 
     return (
       <div key={key} className="flex flex-col sm:flex-row sm:items-start py-2">
