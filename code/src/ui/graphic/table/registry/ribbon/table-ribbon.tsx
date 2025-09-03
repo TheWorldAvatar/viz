@@ -17,7 +17,6 @@ import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import DateRangeInput from "ui/interaction/input/date-range";
 import ColumnToggle from "../../action/column-toggle";
-import useIsMobile from "hooks/useIsMobile";
 
 interface TableRibbonProps {
   path: string;
@@ -50,8 +49,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
-
-  const isMobile = useIsMobile();
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
