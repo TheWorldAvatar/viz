@@ -13,7 +13,7 @@ import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { NavBarItem } from "./navbar-item";
+import { NavBarItem, NavBarItemType } from "./navbar-item";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -24,6 +24,7 @@ export interface NavMenuProps {
 
 interface NavMenuContentsProps extends NavMenuProps {
   setFileUploadEndpoint: React.Dispatch<React.SetStateAction<string>>;
+  setFileModalType: React.Dispatch<React.SetStateAction<NavBarItemType>>;
   setIsFileUploadModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -36,8 +37,9 @@ interface NavMenuContentsProps extends NavMenuProps {
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
-  const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
+  const [fileModalType, setFileModalType] = React.useState<NavBarItemType>("default");
   const [isFileModalOpen, setIsFileModalOpen] = React.useState<boolean>(false);
 
   if (props.isMobile) {
@@ -55,6 +57,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           <NavMenuContents
             {...props}
             setFileUploadEndpoint={setFileUploadEndpoint}
+            setFileModalType={setFileModalType}
             setIsFileUploadModalOpen={setIsFileModalOpen}
             setIsMenuOpen={setIsMenuOpen}
           />
@@ -62,6 +65,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         {isFileModalOpen && (
           <FileModal
             url={fileUploadEndpoint}
+            type={fileModalType}
             isOpen={isFileModalOpen}
             setIsOpen={setIsFileModalOpen}
           />
@@ -75,11 +79,13 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
       <NavMenuContents
         {...props}
         setFileUploadEndpoint={setFileUploadEndpoint}
+        setFileModalType={setFileModalType}
         setIsFileUploadModalOpen={setIsFileModalOpen}
       />
       {isFileModalOpen && (
         <FileModal
           url={fileUploadEndpoint}
+          type={fileModalType}
           isOpen={isFileModalOpen}
           setIsOpen={setIsFileModalOpen}
         />
@@ -121,13 +127,15 @@ function NavMenuContents(
     (link) => link.url === Modules.REGISTRY
   );
 
-  function createHandleFileUploadClick(
-    url: string
+  function createHandleFileClick(
+    url: string,
+    type: NavBarItemType
   ): React.MouseEventHandler<HTMLDivElement> {
     return (event: React.MouseEvent<HTMLDivElement>): void => {
       event.preventDefault();
       props.setFileUploadEndpoint(url);
       props.setIsFileUploadModalOpen(true);
+      props.setFileModalType(type);
       props.setIsMenuOpen?.(false);
     };
   }
@@ -308,9 +316,9 @@ function NavMenuContents(
               caption={isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
-                externalLink.type === "file"
-                  ? createHandleFileUploadClick(externalLink.url)
-                  : undefined
+                externalLink.type === "default"
+                  ? undefined
+                  : createHandleFileClick(externalLink.url, externalLink.type)
               }
               isMenuExpanded={isMenuExpanded}
             />
