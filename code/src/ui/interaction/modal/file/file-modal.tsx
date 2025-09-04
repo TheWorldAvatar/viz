@@ -52,13 +52,20 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           getUTCDate(selectedDate.to).getTime() / 1000
         ).toString(),
       });
-
-      const response = await fetch(`${props.url}?${searchParams.toString()}`);
-      if (response.ok) {
-        router.push(`${props.url}?${searchParams.toString()}`);
-      } else {
-        const jsonBody: AgentResponseBody = await response.json();
-        toast(jsonBody.error?.message, "error");
+      try {
+        setIsUploading(true);
+        const response = await fetch(`${props.url}?${searchParams.toString()}`);
+        if (response.ok) {
+          router.push(`${props.url}?${searchParams.toString()}`);
+        } else {
+          const jsonBody: AgentResponseBody = await response.json();
+          toast(jsonBody.error?.message, "error");
+        }
+      } catch (error) {
+        console.error("There was an error uploading the file:", error);
+        toast(dict.message.exportError, "error");
+      } finally {
+        setIsUploading(false);
       }
     } else if (props.type === "file") {
       let response;
