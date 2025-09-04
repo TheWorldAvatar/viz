@@ -255,7 +255,6 @@ export function DependentFormSection(
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    // Toggle inline accordion instead of opening a new page
     setIsViewOpen((prev) => !prev);
   };
 
@@ -322,7 +321,7 @@ export function DependentFormSection(
                       queryEntityType,
                       currentOption
                     )}
-                    variant="primary"
+                    variant="outline"
                   />
                   <RedirectButton
                     leftIcon="delete"
@@ -335,7 +334,7 @@ export function DependentFormSection(
                       queryEntityType,
                       currentOption
                     )}
-                    variant="secondary"
+                    variant="outline"
                   />
                 </div>
               </Accordion>
