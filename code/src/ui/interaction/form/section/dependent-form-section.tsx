@@ -302,8 +302,9 @@ export function DependentFormSection(
             />
             {currentOption && currentOption.length > 0 && (
               <Accordion
+                title="Entity Details"
                 isOpen={isViewOpen}
-                onToggle={(next) => setIsViewOpen(next)}
+                setIsOpen={setIsViewOpen}
               >
                 <EntityDataDisplay
                   entityType={queryEntityType}
