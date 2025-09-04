@@ -8,7 +8,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 
-export type NavBarItemType = "default" | "file";
+export type NavBarItemType = "default" | "file" | "date";
 
 export interface NavBarItemProps {
   title: string;

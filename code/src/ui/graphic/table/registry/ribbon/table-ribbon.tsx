@@ -17,6 +17,7 @@ import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import DateRangeInput from "ui/interaction/input/date-range";
 import ColumnToggle from "../../action/column-toggle";
+import { getDisabledDates } from "../registry-table-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -130,7 +131,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <DateRangeInput
               selectedDate={props.selectedDate}
               setSelectedDate={props.setSelectedDate}
-              lifecycleStage={props.lifecycleStage}
+              disabled={getDisabledDates(props.lifecycleStage)}
             />
           )}
         </div>

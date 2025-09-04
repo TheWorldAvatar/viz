@@ -215,3 +215,28 @@ export function compareDates(
   }
   return targetDateObject <= refDateObject;
 }
+
+/**
+  * Get initial date ie today.
+  */
+export function getInitialDate(): DateRange {
+  const currentDate: Date = new Date();
+  return {
+    from: currentDate,
+    to: currentDate,
+  }
+}
+/**
+  * Get the UTC date from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
+export function getUTCDate(date: Date): Date {
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
+  );
+}
