@@ -16,6 +16,7 @@ import DateRangeInput from "ui/interaction/input/date-range";
 import { DateRange } from "react-day-picker";
 import { getInitialDate, getUTCDate } from "utils/client-utils";
 import { useRouter } from "next/navigation";
+import { Icon } from "@mui/material";
 
 interface FileModalProps {
   url: string;
@@ -44,11 +45,15 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     if (props.type === "date") {
       const searchParams: URLSearchParams = new URLSearchParams({
-        start: Math.floor(getUTCDate(selectedDate.from).getTime() / 1000).toString(),
-        end: Math.floor(getUTCDate(selectedDate.to).getTime() / 1000).toString(),
+        start: Math.floor(
+          getUTCDate(selectedDate.from).getTime() / 1000
+        ).toString(),
+        end: Math.floor(
+          getUTCDate(selectedDate.to).getTime() / 1000
+        ).toString(),
       });
 
-      const response = await fetch(`${props.url}?${searchParams.toString()}`)
+      const response = await fetch(`${props.url}?${searchParams.toString()}`);
       if (response.ok) {
         router.push(`${props.url}?${searchParams.toString()}`);
       } else {
@@ -95,33 +100,88 @@ export default function FileModal(props: Readonly<FileModalProps>) {
 
   return (
     <Modal
-      className="!w-xs md:!w-sm !h-44 flex  !rounded-2xl !shadow-2xl"
+      className="!w-full !max-w-md !h-auto !min-h-0 !rounded-xl !shadow-xl !border !border-border"
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
     >
-      <form ref={formRef} onSubmit={onFormSubmit}>
-        <section className="flex items-center flex-wrap gap-2">
-          {props.type === "file" && <FileInputButton form={form} />}
-          {props.type === "date" && <DateRangeInput
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            placement="bottom"
-          />}
-        </section>
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            {props.type === "date" ? (
+              <div className="flex justify-center items-center p-2 bg-transparent border border-border text-foreground rounded-lg">
+                <Icon className="material-symbols-outlined">download</Icon>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center p-2 bg-transparent border border-border  rounded-lg text-foreground">
+                <Icon className="material-symbols-outlined">file_upload</Icon>
+              </div>
+            )}
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                {props.type === "date"
+                  ? dict.message.exportReport
+                  : dict.action.upload}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {props.type === "date" && dict.message.noDateSelected}
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <section className="flex justify-between mt-2 border-t-1 border-border">
-          {isUploading && <LoadingSpinner isSmall={false} />}
-          <Button
-            leftIcon="keyboard_tab"
-            size="icon"
-            iconSize="small"
-            className="mt-2"
-            onClick={onSubmit}
-            tooltipText={dict.action.submit}
-            tooltipPosition="bottom"
-          />
-        </section>
-      </form>
+        <form ref={formRef} onSubmit={onFormSubmit} className="space-y-6">
+          <div className="space-y-4">
+            {props.type === "date" && (
+              <div className="relative">
+                <DateRangeInput
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
+                  placement="bottom"
+                />
+              </div>
+            )}
+
+            {props.type === "file" && <FileInputButton form={form} />}
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+            <div className="flex items-center gap-2">
+              {isUploading && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <LoadingSpinner isSmall={true} />
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                onClick={() => props.setIsOpen(false)}
+                disabled={isUploading}
+                variant="outline"
+              >
+                {dict.action.cancel}
+              </Button>
+
+              <Button
+                variant="success"
+                leftIcon={props.type === "date" ? "download" : "file_upload"}
+                type="button"
+                onClick={onSubmit}
+                disabled={
+                  isUploading ||
+                  (props.type === "date" &&
+                    (!selectedDate.from || !selectedDate.to))
+                }
+              >
+                {props.type === "date"
+                  ? dict.action.export
+                  : dict.action.upload}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
 }
