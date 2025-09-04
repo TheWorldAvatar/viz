@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.39.2
+
+### Changes
+
+- Added a date range selection for exporting data
+- Updated design of file upload
+
 ## 5.39.1
 
 ### Bug Fixes
