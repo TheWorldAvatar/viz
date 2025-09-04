@@ -130,6 +130,7 @@
     "noFileChosen": "No file chosen",
     "noFileChosenError": "No file is chosen. Please choose a file.",
     "fileUploadError": "File upload failed! Please try again.",
+    "exportError": "Export failed! Please try again.",
     "contactTechTeam": "Contact your technical team if assistance is required.",
     "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
