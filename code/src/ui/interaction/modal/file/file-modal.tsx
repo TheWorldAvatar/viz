@@ -139,6 +139,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
                   selectedDate={selectedDate}
                   setSelectedDate={setSelectedDate}
                   placement="bottom"
+                  disableMobileView={true}
                 />
               </div>
             )}

@@ -27,6 +27,7 @@ interface DateRangeInputProps {
   setSelectedDate?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
   disabled?: DateBefore;
+  disableMobileView?: boolean;
 }
 
 /** A component to display a date range input
@@ -35,6 +36,7 @@ interface DateRangeInputProps {
  * @param setSelectedDate An optional controlled dispatch method to update selected date range.
  * @param {Placement} placement Optional placement position for the calendar view.
  * @param {DateBefore} disabled Optional dates to be disabled.
+ * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
  */
 export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   const id: string = useId();
@@ -81,7 +83,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
       ref={popover.refs.setReference}
       className="flex items-center gap-2 relative"
     >
-      {screenType === "mobile" ? (
+      {!(props.disableMobileView) && screenType === "mobile" && (
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -91,7 +93,8 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
           tooltipText={dict.action.date}
           {...popover.getReferenceProps()}
         />
-      ) : (
+      )}
+      {(props.disableMobileView || screenType != "mobile") && (
         <div className="flex items-center">
           <div className="relative">
             <input
@@ -99,9 +102,8 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               type="button"
               value={displayedDateRange}
               readOnly
-              className={`h-10 ${
-                selectedDate?.to ? "w-62 pl-10 pr-4" : "w-24 "
-              }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
+              className={`h-10 ${selectedDate?.to ? "w-62 pl-10 pr-4" : "w-24 "
+                }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
               {...popover.getReferenceProps()}
             />
             <Icon className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400  pointer-events-none">
