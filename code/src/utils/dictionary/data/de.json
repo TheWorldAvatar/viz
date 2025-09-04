@@ -16,6 +16,8 @@
     "filter": "Filter",
     "search": "Suchen",
     "showAll": "Alles anzeigen",
+    "show": "Zeigen",
+    "hide": "Verstecken",
     "viewMore": "Mehr anzeigen",
     "viewTasks": "Aufträge anzeigen",
     "generateReport": "Bericht generieren",

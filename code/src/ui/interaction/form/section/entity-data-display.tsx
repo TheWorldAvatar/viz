@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useDictionary } from "hooks/useDictionary";
+import { FieldValues, useForm } from "react-hook-form";
 import { AgentResponseBody } from "types/backend-agent";
 import {
   FormTemplateType,
@@ -12,10 +14,13 @@ import {
 } from "types/form";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { parsePropertyShapeOrGroupList } from "../form-utils";
+import { parsePropertyShapeOrGroupList, FORM_STATES } from "../form-utils";
 import { usePathname } from "next/dist/client/components/navigation";
 import { getAfterDelimiter } from "utils/client-utils";
 import Button from "ui/interaction/button";
+import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
+import Modal from "ui/interaction/modal/modal";
+import { Dictionary } from "types/dictionary";
 
 interface EntityDataDisplayProps {
   entityType: string;
@@ -24,6 +29,7 @@ interface EntityDataDisplayProps {
 }
 
 export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
+  const dict: Dictionary = useDictionary();
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const [formTemplate, setFormTemplate] = useState<FormTemplateType | null>(
     null
@@ -34,6 +40,16 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     Record<string, RegistryFieldValues>
   >({});
   const [loadingUris, setLoadingUris] = useState<Record<string, boolean>>({});
+  const [isMapOpen, setIsMapOpen] = useState(false);
+
+  // Form for map component (required by GeocodeMapContainer)
+  const mapForm = useForm<FieldValues>({
+    defaultValues: {
+      formType: "view",
+      latitude: 0,
+      longitude: 0,
+    },
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -161,6 +177,55 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     );
   };
 
+  // Check if this is a service location field
+  const isServiceLocation = (label: string): boolean => {
+    const lowerLabel = label.toLowerCase();
+    return (
+      lowerLabel.includes("service_location") ||
+      lowerLabel.includes("service location") ||
+      lowerLabel.includes("location")
+    );
+  };
+
+  // Handle map modal for service location
+  const handleShowLocationMap = async (fieldValue: unknown, label: string) => {
+    if (!isUriType(fieldValue)) return;
+    if (!isServiceLocation(label)) return;
+
+    const uriValue = (fieldValue as { value: string }).value;
+    try {
+      const response = await fetch(
+        makeInternalRegistryAPIwithParams("geodecode", uriValue),
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      );
+      const body: AgentResponseBody = await response.json();
+      const locationData = body.data?.items?.[0] as RegistryFieldValues;
+
+      if (locationData) {
+        if (
+          locationData.coordinates &&
+          Array.isArray(locationData.coordinates)
+        ) {
+          const coordinatesArray = locationData.coordinates;
+          const lngValue = coordinatesArray[0];
+          const latValue = coordinatesArray[1];
+
+          // Update map form with coordinates
+          mapForm.setValue(FORM_STATES.LATITUDE, latValue);
+          mapForm.setValue(FORM_STATES.LONGITUDE, lngValue);
+          setIsMapOpen(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching location data:", error);
+    }
+  };
+
   // Handle showing URI details
   const handleShowUri = async (fieldValue: unknown, label: string) => {
     if (!isUriType(fieldValue)) return;
@@ -222,6 +287,16 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     }
   };
 
+  const handleMapOrUri = async (fieldValue: unknown, label: string) => {
+    if (isUriType(fieldValue)) {
+      if (isServiceLocation(label)) {
+        await handleShowLocationMap(fieldValue, label);
+      } else {
+        await handleShowUri(fieldValue, label);
+      }
+    }
+  };
+
   // Render a single property field
   const renderPropertyField = (
     propertyField: PropertyShape,
@@ -248,15 +323,20 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
             <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
               {label}
             </div>
-            <div className="flex-1 text-xs text-foreground">
+            <div className="flex-1 text-xs text-foreground flex gap-2">
               <Button
                 type="button"
                 size="icon"
+                tooltipText={isExpanded ? dict.action.hide : dict.action.show}
                 iconSize="small"
                 leftIcon={
-                  isExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down"
+                  isServiceLocation(label)
+                    ? "location_on"
+                    : isExpanded
+                    ? "keyboard_arrow_up"
+                    : "keyboard_arrow_down"
                 }
-                onClick={() => handleShowUri(fieldValue, label)}
+                onClick={() => handleMapOrUri(fieldValue, label)}
                 variant={isExpanded ? "secondary" : "outline"}
                 disabled={!!loadingUris[uriKey]}
                 loading={!!loadingUris[uriKey]}
@@ -341,33 +421,44 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
 
   // Group Properties
   return (
-    <div className="overflow-hidden">
-      <div className="p-4 space-y-2 text-sm font-medium text-foreground">
-        {formTemplate?.property.map((field, index) => {
-          if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-            // Group Property
-            const group = field as PropertyGroup;
-            const groupLabel = group.label?.[VALUE_KEY] || "Group";
-            const groupProperties = group.property || [];
+    <>
+      <div className="overflow-hidden">
+        <div className="p-4 space-y-2 text-sm font-medium text-foreground">
+          {formTemplate?.property.map((field, index) => {
+            if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+              // Group Property
+              const group = field as PropertyGroup;
+              const groupLabel = group.label?.[VALUE_KEY] || "Group";
+              const groupProperties = group.property || [];
 
-            return (
-              <div key={index} className="mb-4">
-                <h4 className="mb-2 capitalize">{groupLabel}</h4>
-                <div className="pl-4 space-y-2">
-                  {groupProperties.map(
-                    (nestedField: PropertyShape, nestedIndex: number) =>
-                      renderPropertyField(nestedField, nestedIndex)
-                  )}
+              return (
+                <div key={index} className="mb-4">
+                  <h4 className="mb-2 capitalize">{groupLabel}</h4>
+                  <div className="pl-4 space-y-2">
+                    {groupProperties.map(
+                      (nestedField: PropertyShape, nestedIndex: number) =>
+                        renderPropertyField(nestedField, nestedIndex)
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          }
+              );
+            }
 
-          // Individual property
-          const propertyField = field as PropertyShape;
-          return renderPropertyField(propertyField, index);
-        })}
+            // Individual property
+            const propertyField = field as PropertyShape;
+            return renderPropertyField(propertyField, index);
+          })}
+        </div>
       </div>
-    </div>
+
+      {/* Map Modal */}
+      <Modal isOpen={isMapOpen} setIsOpen={setIsMapOpen} className="max-w-5xl">
+        <div className="flex flex-col h-full">
+          <div className="flex-1 h-96">
+            <GeocodeMapContainer form={mapForm} fieldId="mapDisplay" />
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }

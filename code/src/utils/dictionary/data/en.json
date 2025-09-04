@@ -16,6 +16,8 @@
     "filter": "Filter",
     "search": "SEARCH",
     "showAll": "SHOW ALL",
+    "show": "Show",
+    "hide": "Hide",
     "viewMore": "view more",
     "viewTasks": "view tasks",
     "generateReport": "generate report",
