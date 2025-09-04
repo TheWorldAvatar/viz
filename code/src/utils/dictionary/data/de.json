@@ -10,7 +10,8 @@
     "close": "Schließen",
     "refresh": "Aktualisieren",
     "backTo": "Zurück zur {replace}",
-    "export": "Daten exportieren",
+    "export": "Exportieren",
+    "upload": "Datei hochladen",
     "overview": "Auftragsübersicht",
     "file": "Datei auswählen",
     "filter": "Filter",
@@ -131,7 +132,8 @@
     "na": "Nicht anwendbar",
     "noDateSelected": "Wählen Sie einen Zeitraum aus.",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
-    "noOptions": "Keine Optionen gefunden"
+    "noOptions": "Keine Optionen gefunden",
+    "exportReport": "Exportbericht"
   },
   "nav": {
     "caption": {

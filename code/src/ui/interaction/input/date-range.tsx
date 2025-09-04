@@ -1,6 +1,10 @@
 import "react-day-picker/style.css";
 
-import { FloatingPortal, Placement, useTransitionStyles } from "@floating-ui/react";
+import {
+  FloatingPortal,
+  Placement,
+  useTransitionStyles,
+} from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
 import { useScreenType } from "hooks/useScreenType";
@@ -16,6 +20,7 @@ import { Dictionary } from "types/dictionary";
 import { ScreenType } from "types/settings";
 import Button from "ui/interaction/button";
 import { getInitialDate } from "utils/client-utils";
+import { Icon } from "@mui/material";
 
 interface DateRangeInputProps {
   selectedDate?: DateRange;
@@ -47,7 +52,9 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
   });
 
   const screenType: ScreenType = useScreenType();
-  const [selectedDate, setSelectedDate] = useState<DateRange>(props.selectedDate ?? getInitialDate());
+  const [selectedDate, setSelectedDate] = useState<DateRange>(
+    props.selectedDate ?? getInitialDate()
+  );
 
   const handleDateSelect = useCallback(
     (range: DateRange | undefined) => {
@@ -63,14 +70,18 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     [setSelectedDate, props.setSelectedDate]
   );
 
-  const displayedDateRange = `${selectedDate.from.toLocaleDateString()}${selectedDate.from != selectedDate.to
-    ? " - " + selectedDate.to.toLocaleDateString()
-    : ""
-    }`;
+  const displayedDateRange = `${selectedDate.from.toLocaleDateString()}${
+    selectedDate.from != selectedDate.to
+      ? " - " + selectedDate.to.toLocaleDateString()
+      : ""
+  }`;
 
   return (
-    <div ref={popover.refs.setReference} className="flex items-center gap-2 relative">
-      {screenType === "mobile" ?
+    <div
+      ref={popover.refs.setReference}
+      className="flex items-center gap-2 relative"
+    >
+      {screenType === "mobile" ? (
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -79,25 +90,26 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
           leftIcon="date_range"
           tooltipText={dict.action.date}
           {...popover.getReferenceProps()}
-        /> :
-        <div className="flex items-center gap-2">
-          <label
-            className="my-1 text-base md:text-lg text-left whitespace-nowrap"
-            htmlFor={id}
-          >
-            {dict.action.date}:
-          </label>
-          <input
-            id={id}
-            type="button"
-            value={displayedDateRange}
-            readOnly
-            className={`h-10 ${selectedDate?.to ? "w-60" : "w-32"
-              } rounded-lg border-1 border-border bg-muted text-foreground shadow-xs cursor-pointer`}
-            {...popover.getReferenceProps()}
-          />
+        />
+      ) : (
+        <div className="flex items-center">
+          <div className="relative">
+            <input
+              id={id}
+              type="button"
+              value={displayedDateRange}
+              readOnly
+              className={`h-10 ${
+                selectedDate?.to ? "w-62 pl-10 pr-4" : "w-24 "
+              }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
+              {...popover.getReferenceProps()}
+            />
+            <Icon className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400  pointer-events-none">
+              calendar_month
+            </Icon>
+          </div>
         </div>
-      }
+      )}
 
       {popover.isOpen && (
         <FloatingPortal>
@@ -122,14 +134,14 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
                 onSelect={handleDateSelect}
                 disabled={props.disabled}
                 classNames={{
-                  today: `text-blue-700 `,
+                  today: `text-yellow-500`,
                   selected: `bg-gray-200 dark:bg-zinc-800`,
                   root: `${defaultDayPickerClassNames.root}  p-4`,
                   chevron: ` fill-foreground`,
                   footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
                   range_middle: ` `,
-                  range_start: `!bg-primary text-foreground rounded-full`,
-                  range_end: `!bg-primary text-foreground rounded-full`,
+                  range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                  range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
                 }}
                 footer={displayedDateRange}
                 required={true}
