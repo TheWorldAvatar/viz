@@ -133,7 +133,7 @@
     "contactTechTeam": "Wenden Sie sich an Ihr technisches Team, wenn Sie Hilfe benötigen.",
     "dragToReorder": "Zum Neusortieren ziehen",
     "na": "Nicht anwendbar",
-    "noDateSelected": "Wählen Sie einen Zeitraum aus.",
+    "pickDateRange": "Wählen Sie einen Zeitraum aus.",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
     "exportReport": "Exportbericht"

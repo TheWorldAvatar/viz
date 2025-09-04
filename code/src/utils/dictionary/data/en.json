@@ -133,7 +133,7 @@
     "contactTechTeam": "Contact your technical team if assistance is required.",
     "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
-    "noDateSelected": "Pick a date range.",
+    "pickDateRange": "Pick a date range.",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
     "exportReport": "Export report"
