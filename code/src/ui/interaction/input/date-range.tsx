@@ -102,9 +102,8 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               type="button"
               value={displayedDateRange}
               readOnly
-              className={`h-10 ${
-                selectedDate?.to ? "w-62 pl-10 pr-4" : "w-24 "
-              }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
+              className={`h-10 ${selectedDate?.to ? "w-62 pl-10 pr-4" : "w-24 "
+                }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
               {...popover.getReferenceProps()}
             />
             <Icon className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400  pointer-events-none">
