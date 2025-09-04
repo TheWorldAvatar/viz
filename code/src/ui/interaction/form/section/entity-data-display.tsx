@@ -452,7 +452,11 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
       </div>
 
       {/* Map Modal */}
-      <Modal isOpen={isMapOpen} setIsOpen={setIsMapOpen} className="max-w-5xl">
+      <Modal
+        isOpen={isMapOpen}
+        setIsOpen={setIsMapOpen}
+        className=" !h-fit !w-sm  md:!w-2xl lg:!w-4xl  !rounded-2xl "
+      >
         <div className="flex flex-col h-full">
           <div className="flex-1 h-96">
             <GeocodeMapContainer form={mapForm} fieldId="mapDisplay" />
