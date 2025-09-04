@@ -33,6 +33,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   const [expandedUris, setExpandedUris] = useState<
     Record<string, RegistryFieldValues>
   >({});
+  const [loadingUris, setLoadingUris] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,10 +177,16 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
         delete newState[uriKey];
         return newState;
       });
+      setLoadingUris((prev) => {
+        const next = { ...prev };
+        delete next[uriKey];
+        return next;
+      });
       return;
     }
 
     try {
+      setLoadingUris((prev) => ({ ...prev, [uriKey]: true }));
       // Extract entity type and ID from the label and URI
       const entityType = label.toLowerCase().replace(/\s+/g, "_");
       const entityId = getAfterDelimiter(uriValue, "/");
@@ -210,6 +217,8 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
       }
     } catch (error) {
       console.error("Error fetching URI data:", error);
+    } finally {
+      setLoadingUris((prev) => ({ ...prev, [uriKey]: false }));
     }
   };
 
@@ -249,6 +258,8 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                 }
                 onClick={() => handleShowUri(fieldValue, label)}
                 variant={isExpanded ? "secondary" : "outline"}
+                disabled={!!loadingUris[uriKey]}
+                loading={!!loadingUris[uriKey]}
               />
             </div>
           </div>
