@@ -71,6 +71,7 @@ export default function FormInputContainer(
             <RedirectButton
               label={dict.action.add}
               leftIcon="add"
+              variant="secondary"
               url={props.redirectOptions.addUrl}
             />
           )}
@@ -78,6 +79,7 @@ export default function FormInputContainer(
             <Button
               label={dict.action.view}
               leftIcon="arrow_forward"
+              variant="secondary"
               onClick={props.redirectOptions.view}
             />
           )}

@@ -124,7 +124,7 @@ export default function Button({
         {...props}
       >
         <div className={`flex items-center ${iconSpacing[size]}`}>
-          {loading && <LoadingSpinner isSmall={true} />}
+          {loading &&  <LoadingSpinner isSmall={true} />}
           {!loading && leftIcon && (
             <span
               className={`${
