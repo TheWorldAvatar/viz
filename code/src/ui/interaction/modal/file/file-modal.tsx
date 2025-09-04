@@ -124,7 +124,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
               </h2>
               <p className="text-sm text-muted-foreground">
                 {props.type === "date"
-                  ? dict.message.noDateSelected
+                  ? dict.message.pickDateRange
                   : dict.action.file}
               </p>
             </div>
