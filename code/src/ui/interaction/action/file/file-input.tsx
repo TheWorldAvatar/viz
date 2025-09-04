@@ -24,16 +24,16 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
   });
 
   return (
-    <div className="w-full flex flex-col  gap-2">
+    <div>
       <label
         htmlFor="file-upload"
-        className={` cursor-pointer flex items-center justify-center w-fit py-2 px-4 rounded-lg bg-blue-50 dark:bg-background   dark:border-blue-400 border border-blue-200  shadow-xs   `}
+        className={`cursor-pointer flex items-center w-full max-w-md py-2 px-4 rounded-lg bg-blue-50 dark:bg-background dark:border-blue-400 border border-blue-200 shadow-xs`}
       >
-        <Icon className="material-symbols-outlined text-blue-600 dark:text-blue-400">
+        <Icon className="material-symbols-outlined text-blue-600 dark:text-blue-400 ">
           attach_file
         </Icon>
-        <p className="ml-2 text-blue-700 dark:text-blue-400 text-base">
-          {dict.action.file}
+        <p className="ml-2 text-blue-700 dark:text-blue-400 text-base truncate">
+          {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
         </p>
         <input
           id="file-upload"
@@ -41,9 +41,6 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
           {...props.form.register(filesKey)}
         />
       </label>
-      <p className="text-foreground text-sm md:text-base ml-2">
-        {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
-      </p>
     </div>
   );
 }

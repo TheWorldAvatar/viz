@@ -123,7 +123,9 @@ export default function FileModal(props: Readonly<FileModalProps>) {
                   : dict.action.upload}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {props.type === "date" && dict.message.noDateSelected}
+                {props.type === "date"
+                  ? dict.message.noDateSelected
+                  : dict.action.file}
               </p>
             </div>
           </div>
