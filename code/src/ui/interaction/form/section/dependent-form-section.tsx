@@ -284,12 +284,12 @@ export function DependentFormSection(
                   formType != "search"
                     ? genAddSubEntityUrl(queryEntityType)
                     : undefined,
-                view:
-                  !isFetching &&
-                  formType != "search" &&
-                  selectElements.length > 0
-                    ? openViewSubEntityModal
-                    : undefined,
+                // view:
+                //   !isFetching &&
+                //   formType != "search" &&
+                //   selectElements.length > 0
+                //     ? openViewSubEntityModal
+                //     : undefined,
               }}
               noOptionMessage={dict.message.noInstances}
               options={{
@@ -301,11 +301,7 @@ export function DependentFormSection(
               }}
             />
             {currentOption && currentOption.length > 0 && (
-              <Accordion
-                title="Entity Details"
-                isOpen={isViewOpen}
-                setIsOpen={setIsViewOpen}
-              >
+              <Accordion isOpen={isViewOpen} setIsOpen={setIsViewOpen}>
                 <EntityDataDisplay
                   entityType={queryEntityType}
                   id={getAfterDelimiter(currentOption, "/")}
