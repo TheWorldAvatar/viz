@@ -53,7 +53,6 @@ export function DependentFormSection(
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
-  const [isViewOpen, setIsViewOpen] = useState<boolean>(false);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -222,11 +221,6 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // Close inline view when the selection changes
-  useEffect(() => {
-    setIsViewOpen(false);
-  }, [currentOption]);
-
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
@@ -328,8 +322,6 @@ export function DependentFormSection(
                     />
                   </>
                 }
-                isOpen={isViewOpen}
-                setIsOpen={setIsViewOpen}
               >
                 <EntityDataDisplay
                   entityType={queryEntityType}

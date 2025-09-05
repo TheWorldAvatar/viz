@@ -25,10 +25,12 @@ interface AccordionProps {
  */
 
 export default function Accordion(props: Readonly<AccordionProps>) {
+  const [isOpen, setIsOpen] = useState<boolean>(props.isOpen ?? false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
   const uniqueId = useId();
   const handleToggle = useCallback(() => {
+    setIsOpen((prev) => !prev);
     if (props.setIsOpen) props.setIsOpen((prev) => !prev);
   }, [props.setIsOpen]);
 
@@ -65,7 +67,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
           size="sm"
           variant="outline"
           onClick={handleToggle}
-          aria-expanded={props.isOpen}
+          aria-expanded={props.isOpen ?? isOpen}
           aria-controls={`accordion-content-${uniqueId}`}
           className="text-xs"
         >
@@ -79,10 +81,10 @@ export default function Accordion(props: Readonly<AccordionProps>) {
         role="region"
         aria-labelledby={`accordion-button-${uniqueId}`}
         className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          props.isOpen ? "opacity-100" : "opacity-0"
+          props.isOpen ?? isOpen ? "opacity-100" : "opacity-0"
         }`}
         style={{
-          maxHeight: props.isOpen ? `${contentHeight}px` : "0px",
+          maxHeight: props.isOpen ?? isOpen ? `${contentHeight}px` : "0px",
         }}
       >
         <div ref={contentRef} className="p-4 pt-0 border-t border-border">
