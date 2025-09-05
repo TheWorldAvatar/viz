@@ -292,7 +292,6 @@ export function DependentFormSection(
                       leftIcon="add"
                       size="icon"
                       iconSize="small"
-                      className="!text-xs"
                       tooltipText={dict.action.add}
                       url={
                         formType != "view" &&
@@ -307,7 +306,6 @@ export function DependentFormSection(
                       leftIcon="edit"
                       size="icon"
                       iconSize="small"
-                      className="!text-xs"
                       tooltipText={dict.action.edit}
                       url={genSubEntityActionUrl(
                         "edit",
@@ -320,7 +318,6 @@ export function DependentFormSection(
                       leftIcon="delete"
                       size="icon"
                       iconSize="small"
-                      className="!text-xs"
                       tooltipText={dict.action.delete}
                       url={genSubEntityActionUrl(
                         "delete",

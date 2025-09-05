@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState, useEffect, useId } from "react";
 import Button from "../button";
 
 interface AccordionProps {
@@ -13,9 +13,21 @@ interface AccordionProps {
   accordionActions?: React.ReactNode;
 }
 
+/**
+ * A collapsible accordion component with smooth animations.
+ *
+ * @param title - The title displayed in the accordion header
+ * @param children - Content to display when expanded
+ * @param isOpen - Controlled open state
+ * @param setIsOpen - State setter for controlled behavior
+ * @param className - Additional CSS classes
+ * @param accordionActions - Additional actions to display in the header
+ */
+
 export default function Accordion(props: Readonly<AccordionProps>) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
+  const uniqueId = useId();
   const handleToggle = useCallback(() => {
     if (props.setIsOpen) props.setIsOpen((prev) => !prev);
   }, [props.setIsOpen]);
@@ -54,7 +66,8 @@ export default function Accordion(props: Readonly<AccordionProps>) {
           variant="outline"
           onClick={handleToggle}
           aria-expanded={props.isOpen}
-          className="!text-xs"
+          aria-controls={`accordion-content-${uniqueId}`}
+          className="text-xs"
         >
           {props.title ? props.title : ""}
         </Button>
@@ -62,6 +75,9 @@ export default function Accordion(props: Readonly<AccordionProps>) {
       </div>
 
       <div
+        id={`accordion-content-${uniqueId}`}
+        role="region"
+        aria-labelledby={`accordion-button-${uniqueId}`}
         className={`transition-all duration-300 ease-in-out overflow-hidden ${
           props.isOpen ? "opacity-100" : "opacity-0"
         }`}
