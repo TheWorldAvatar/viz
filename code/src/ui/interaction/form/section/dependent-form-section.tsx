@@ -250,14 +250,6 @@ export function DependentFormSection(
     return url;
   };
 
-  // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    setIsViewOpen((prev) => !prev);
-  };
-
   // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
   // the parent element has been queried and selected
   if (
@@ -277,20 +269,6 @@ export function DependentFormSection(
               selectOptions={selectElements}
               field={props.dependentProp}
               form={props.form}
-              redirectOptions={{
-                addUrl:
-                  formType != "view" &&
-                  formType != "delete" &&
-                  formType != "search"
-                    ? genAddSubEntityUrl(queryEntityType)
-                    : undefined,
-                // view:
-                //   !isFetching &&
-                //   formType != "search" &&
-                //   selectElements.length > 0
-                //     ? openViewSubEntityModal
-                //     : undefined,
-              }}
               noOptionMessage={dict.message.noInstances}
               options={{
                 disabled: formType == "view" || formType == "delete",
@@ -301,39 +279,60 @@ export function DependentFormSection(
               }}
             />
             {currentOption && currentOption.length > 0 && (
-              <Accordion isOpen={isViewOpen} setIsOpen={setIsViewOpen}>
+              <Accordion
+                title={dict.action.details}
+                accordionActions={
+                  <>
+                    <RedirectButton
+                      leftIcon="add"
+                      size="icon"
+                      iconSize="small"
+                      className="!text-xs"
+                      tooltipText={dict.action.add}
+                      url={
+                        formType != "view" &&
+                        formType != "delete" &&
+                        formType != "search"
+                          ? genAddSubEntityUrl(queryEntityType)
+                          : undefined
+                      }
+                      variant="outline"
+                    />
+                    <RedirectButton
+                      leftIcon="edit"
+                      size="icon"
+                      iconSize="small"
+                      className="!text-xs"
+                      tooltipText={dict.action.edit}
+                      url={genSubEntityActionUrl(
+                        "edit",
+                        queryEntityType,
+                        currentOption
+                      )}
+                      variant="outline"
+                    />
+                    <RedirectButton
+                      leftIcon="delete"
+                      size="icon"
+                      iconSize="small"
+                      className="!text-xs"
+                      tooltipText={dict.action.delete}
+                      url={genSubEntityActionUrl(
+                        "delete",
+                        queryEntityType,
+                        currentOption
+                      )}
+                      variant="outline"
+                    />
+                  </>
+                }
+                isOpen={isViewOpen}
+                setIsOpen={setIsViewOpen}
+              >
                 <EntityDataDisplay
                   entityType={queryEntityType}
                   id={getAfterDelimiter(currentOption, "/")}
                 />
-                <div className="flex justify-end gap-2">
-                  <RedirectButton
-                    leftIcon="edit"
-                    size="sm"
-                    iconSize="small"
-                    className="!text-xs"
-                    label={dict.action.edit}
-                    url={genSubEntityActionUrl(
-                      "edit",
-                      queryEntityType,
-                      currentOption
-                    )}
-                    variant="outline"
-                  />
-                  <RedirectButton
-                    leftIcon="delete"
-                    size="sm"
-                    iconSize="small"
-                    className="!text-xs"
-                    label={dict.action.delete}
-                    url={genSubEntityActionUrl(
-                      "delete",
-                      queryEntityType,
-                      currentOption
-                    )}
-                    variant="outline"
-                  />
-                </div>
               </Accordion>
             )}
           </div>
