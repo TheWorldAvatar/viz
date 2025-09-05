@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useCallback, useRef, useState, useEffect } from "react";
-import { Icon } from "@mui/material";
+import Button from "../button";
 
 interface AccordionProps {
   title?: React.ReactNode;
@@ -10,6 +10,7 @@ interface AccordionProps {
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
+  accordionActions?: React.ReactNode;
 }
 
 export default function Accordion(props: Readonly<AccordionProps>) {
@@ -41,31 +42,24 @@ export default function Accordion(props: Readonly<AccordionProps>) {
         resizeObserver.disconnect();
       };
     }
-  }, [props.children, props.isOpen]);
+  }, [props.children]);
 
   return (
-    <div
-      className={`border border-border rounded-lg overflow-hidden bg-background  ${
-        props.className || ""
-      }`}
-    >
-      <button
-        type="button"
-        onClick={handleToggle}
-        aria-expanded={props.isOpen}
-        className="w-full flex items-center outline-none justify-between p-3 text-left bg-background hover:bg-background transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400  focus-visible:ring-inset"
-      >
-        <span className="font-medium text-foreground text-sm">
-          {props.title ? props.title : ""}
-        </span>
-        <Icon
-          className={` material-symbols-outlined  text-foreground transition-transform duration-200 ${
-            props.isOpen ? "rotate-180" : ""
-          }`}
+    <div className={`overflow-hidden ${props.className || ""}`}>
+      <div className="flex justify-between items-center mb-2">
+        <Button
+          type="button"
+          leftIcon="menu_open"
+          size="sm"
+          variant="outline"
+          onClick={handleToggle}
+          aria-expanded={props.isOpen}
+          className="!text-xs"
         >
-          keyboard_arrow_down
-        </Icon>
-      </button>
+          {props.title ? props.title : ""}
+        </Button>
+        <div className="flex gap-2">{props.accordionActions}</div>
+      </div>
 
       <div
         className={`transition-all duration-300 ease-in-out overflow-hidden ${

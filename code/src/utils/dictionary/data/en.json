@@ -1,10 +1,11 @@
 {
   "lang": "en",
   "action": {
-    "add": "add",
+    "add": "Add",
     "addItem": "add {replace}",
     "delete": "Delete",
     "dismiss": "Dismiss",
+    "details": "Details",
     "edit": "Edit",
     "view": "view",
     "close": "Close",
