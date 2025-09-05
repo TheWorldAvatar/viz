@@ -45,7 +45,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
   }, [props.children]);
 
   return (
-    <div className={`overflow-hidden ${props.className || ""}`}>
+    <div className={`${props.className || ""}`}>
       <div className="flex justify-between items-center mb-2">
         <Button
           type="button"

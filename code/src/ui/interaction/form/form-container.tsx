@@ -55,22 +55,23 @@ export default function FormContainerComponent(
           if (currentEntityType != "") {
             let redirectUrl: string = `${Routes.REGISTRY_GENERAL}/${currentEntityType}`;
             if (currentEntityType === "outstanding") {
-              redirectUrl = Routes.REGISTRY_TASK_OUTSTANDING
+              redirectUrl = Routes.REGISTRY_TASK_OUTSTANDING;
             } else if (currentEntityType === "scheduled") {
-              redirectUrl = Routes.REGISTRY_TASK_SCHEDULED
+              redirectUrl = Routes.REGISTRY_TASK_SCHEDULED;
             } else if (currentEntityType === "closed") {
-              redirectUrl = Routes.REGISTRY_TASK_CLOSED
+              redirectUrl = Routes.REGISTRY_TASK_CLOSED;
             }
-            router.push(redirectUrl)
+            router.push(redirectUrl);
           }
-        }}>
+        }}
+      >
         <FormContents {...props} />
       </Drawer>
     );
   }
 
   return (
-    <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
+    <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -236,8 +237,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   return (
     <>
       <section
-        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${!props.isModal ? "mt-0" : "mt-10"
-          }  mb-0.5  shrink-0`}
+        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${
+          !props.isModal ? "mt-0" : "mt-10"
+        }  mb-0.5  shrink-0`}
       >
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
