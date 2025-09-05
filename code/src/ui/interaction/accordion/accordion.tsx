@@ -18,8 +18,8 @@ interface AccordionProps {
  *
  * @param title - The title displayed in the accordion header
  * @param children - Content to display when expanded
- * @param isOpen - Controlled open state
- * @param setIsOpen - State setter for controlled behavior
+ * @param isOpen - Controlled open state, you can optionally manage the open state externally
+ * @param setIsOpen - State setter for controlled behavior, if you want to manage the open state externally
  * @param className - Additional CSS classes
  * @param accordionActions - Additional actions to display in the header
  */
