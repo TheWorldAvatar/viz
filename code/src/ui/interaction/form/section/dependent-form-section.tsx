@@ -230,7 +230,9 @@ export function DependentFormSection(
   // An event handler to generate the url to reach the required add form
   const genAddSubEntityUrl = (entityType: string): string => {
     let url: string = `../add/${entityType}`;
-    if (formType != "add" || pathName.includes("registry")) {
+    if (formType === "add" && !pathName.includes("registry")) {
+      url = `../${url}`;
+    } else if (pathName.includes("registry")) {
       url = `../${url}`;
     }
     return url;
@@ -244,9 +246,12 @@ export function DependentFormSection(
   ): string => {
     const id = getAfterDelimiter(iri, "/");
     let url: string = `../${action}/${entityType}/${id}`;
-    if (formType != "add" || pathName.includes("registry")) {
+    if (formType === "add" && !pathName.includes("registry")) {
+      url = `../${url}`;
+    } else if (pathName.includes("registry")) {
       url = `../${url}`;
     }
+
     return url;
   };
 
