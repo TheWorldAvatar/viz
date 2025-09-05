@@ -28,6 +28,14 @@ interface EntityDataDisplayProps {
   additionalFields?: PropertyShapeOrGroup[];
 }
 
+/**
+ * This component renders a component that displays entity data.
+ *
+ * @param {string} entityType The type of entity.
+ * @param {string} id An optional identifier input.
+ * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
+ */
+
 export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   const dict: Dictionary = useDictionary();
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
@@ -87,7 +95,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
 
         setInstance(instanceData as RegistryFieldValues);
 
-        // Add additional fields if provided
         if (props.additionalFields) {
           props.additionalFields.forEach((field: PropertyShapeOrGroup) =>
             template.property.push(field)
@@ -118,25 +125,18 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   // Extract field value from instance data or defaultValue
   const getFieldValue = (propertyField: PropertyShape) => {
     const fieldId = propertyField.fieldId || propertyField["@id"] || "";
-    let fieldValue = null;
 
     if (instance && fieldId) {
       const directField = instance[fieldId];
       if (directField !== undefined) {
-        fieldValue = directField;
-      } else {
-        const propertyName = propertyField.name?.[VALUE_KEY];
-        if (propertyName && instance[propertyName] !== undefined) {
-          fieldValue = instance[propertyName];
-        }
+        return directField;
+      }
+      const propertyName = propertyField.name?.[VALUE_KEY];
+      if (propertyName && instance[propertyName] !== undefined) {
+        return instance[propertyName];
       }
     }
-
-    if (fieldValue === null && propertyField.defaultValue) {
-      fieldValue = propertyField.defaultValue;
-    }
-
-    return fieldValue;
+    return propertyField.defaultValue || null;
   };
 
   // Extract display value from field value
@@ -145,29 +145,25 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
       return "";
     }
 
-    // Here we check for defaultValue first
-    if (
-      typeof fieldValue === "object" &&
-      "defaultValue" in fieldValue &&
-      fieldValue.defaultValue
-    ) {
-      if (
-        typeof fieldValue.defaultValue === "object" &&
-        "value" in fieldValue.defaultValue
-      ) {
-        return String(fieldValue.defaultValue.value || "");
-      } else {
-        return String(fieldValue.defaultValue);
+    if (typeof fieldValue === "object" && fieldValue !== null) {
+      // Check for defaultValue first
+      if ("defaultValue" in fieldValue && fieldValue.defaultValue) {
+        const defaultValue = fieldValue.defaultValue;
+        if (typeof defaultValue === "object" && "value" in defaultValue) {
+          return String(defaultValue.value || "");
+        }
+        return String(defaultValue);
+      }
+      // Check for direct value
+      if ("value" in fieldValue) {
+        return String((fieldValue as { value: unknown }).value || "");
       }
     }
-    // Else we check for direct value
-    else if (typeof fieldValue === "object" && "value" in fieldValue) {
-      return String((fieldValue as { value: unknown }).value || "");
-    } else {
-      return String(fieldValue);
-    }
+
+    return String(fieldValue);
   };
 
+  // Check if the field value is of URI type
   const isUriType = (fieldValue: unknown): boolean => {
     return (
       typeof fieldValue === "object" &&
@@ -180,11 +176,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   // Check if this is a service location field
   const isServiceLocation = (label: string): boolean => {
     const lowerLabel = label.toLowerCase();
-    return (
-      lowerLabel.includes("service_location") ||
-      lowerLabel.includes("service location") ||
-      lowerLabel.includes("location")
-    );
+    return lowerLabel.includes("location");
   };
 
   // Handle map modal for service location
@@ -238,14 +230,12 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     // If already expanded, collapse it
     if (expandedUris[uriKey]) {
       setExpandedUris((prev) => {
-        const newState = { ...prev };
-        delete newState[uriKey];
-        return newState;
+        const { [uriKey]: _removed, ...rest } = prev;
+        return rest;
       });
       setLoadingUris((prev) => {
-        const next = { ...prev };
-        delete next[uriKey];
-        return next;
+        const { [uriKey]: _removed, ...rest } = prev;
+        return rest;
       });
       return;
     }
@@ -401,9 +391,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
           {label}
         </div>
         <div className="flex-1 text-sm text-foreground">
-          {displayValue ? (
-            <span className="text-sm text-foreground">{displayValue}</span>
-          ) : (
+          {displayValue || (
             <span className="text-gray-400 italic text-sm">Not specified</span>
           )}
         </div>
