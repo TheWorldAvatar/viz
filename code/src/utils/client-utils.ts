@@ -194,16 +194,19 @@ export function getInitialDateFromLifecycleStage(
 }
 
 /**
- * Compares the target and reference date to verify if they are before or after each other. Note that this function returns true if they are equivalent.
- *
- * @param {string} targetDate The target date for comparison.
- * @param {boolean} isAfter Verifies if the target date occurs after the reference date.
- * @param {string} refDate An optional reference date for the comparison. If empty, it will default to today.
- */
+
+=======
+  * Compares the target and reference date to verify if they are before or after each other. Note that this function returns true if they are equivalent.
+  *
+  * @param {string} targetDate The target date for comparison.
+  * @param {boolean} isAfter Verifies if the target date occurs after the reference date.
+  * @param {string} refDate An optional reference date for the comparison. If empty, it will default to today.
+*/
 export function compareDates(
   targetDate: string,
   isAfter: boolean,
-  refDate?: string
+  refDate?: string,
+
 ): boolean {
   const targetDateObject = new Date(targetDate);
   // Defaults to today if reference date is not provided
@@ -226,15 +229,20 @@ export function getInitialDate(): DateRange {
   return {
     from: currentDate,
     to: currentDate,
-  };
+  }
 }
+
 /**
- * Get the UTC date from the date input.
- *
- * @param {Date} date The target date.
- */
+  * Get the UTC date from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
 export function getUTCDate(date: Date): Date {
   return new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
   );
 }
