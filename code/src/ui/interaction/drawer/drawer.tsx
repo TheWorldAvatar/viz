@@ -5,8 +5,9 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import React from "react";
-
+import { usePathname } from "next/navigation";
 import { useDialog } from "hooks/float/useDialog";
+import { useEffect, useRef } from "react";
 import Button from "../button";
 
 interface DrawerProps {
@@ -25,7 +26,11 @@ interface DrawerProps {
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
   const [isOpen, setIsOpen] = React.useState<boolean>(true);
-  const dialog = useDialog(props.isControlledOpen ?? isOpen, props.setIsControlledOpen ?? setIsOpen, false);
+  const dialog = useDialog(
+    props.isControlledOpen ?? isOpen,
+    props.setIsControlledOpen ?? setIsOpen,
+    false
+  );
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -51,6 +56,16 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     },
   });
 
+  const currentPath = usePathname();
+  const prevPathRef = useRef<string | null>(currentPath);
+
+  useEffect(() => {
+    if (prevPathRef.current !== currentPath) {
+      setIsOpen(false);
+      props.setIsControlledOpen?.(false);
+    }
+    prevPathRef.current = currentPath;
+  }, [currentPath]);
 
   return (
     <>
@@ -96,7 +111,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                       }
                       // If there are additional close functions to execute
                       if (props.onClose) {
-                        props.onClose()
+                        props.onClose();
                       }
                     }}
                   />
@@ -112,4 +127,3 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     </>
   );
 }
-
