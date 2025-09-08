@@ -42,7 +42,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
   const [formTemplate, setFormTemplate] = useState<FormTemplateType | null>(
     null
   );
-  const [instance, setInstance] = useState<RegistryFieldValues | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedUris, setExpandedUris] = useState<
     Record<string, RegistryFieldValues>
@@ -75,26 +74,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
           return body.data?.items?.[0] as FormTemplateType;
         });
 
-        const instanceData = await fetch(
-          makeInternalRegistryAPIwithParams(
-            "instances",
-            props.entityType,
-            "false",
-            id
-          ),
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        ).then(async (res) => {
-          const body: AgentResponseBody = await res.json();
-          return body.data?.items?.[0] || null;
-        });
-
-        setInstance(instanceData as RegistryFieldValues);
-
         if (props.additionalFields) {
           props.additionalFields.forEach((field: PropertyShapeOrGroup) =>
             template.property.push(field)
@@ -122,20 +101,8 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     fetchData();
   }, [props.entityType, props.additionalFields, id]);
 
-  // Extract field value from instance data or defaultValue
+  // Extract field value from property shape
   const getFieldValue = (propertyField: PropertyShape) => {
-    const fieldId = propertyField.fieldId || propertyField["@id"] || "";
-
-    if (instance && fieldId) {
-      const directField = instance[fieldId];
-      if (directField !== undefined) {
-        return directField;
-      }
-      const propertyName = propertyField.name?.[VALUE_KEY];
-      if (propertyName && instance[propertyName] !== undefined) {
-        return instance[propertyName];
-      }
-    }
     return propertyField.defaultValue || null;
   };
 
@@ -146,14 +113,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     }
 
     if (typeof fieldValue === "object" && fieldValue !== null) {
-      // Check for defaultValue first
-      if ("defaultValue" in fieldValue && fieldValue.defaultValue) {
-        const defaultValue = fieldValue.defaultValue;
-        if (typeof defaultValue === "object" && "value" in defaultValue) {
-          return String(defaultValue.value || "");
-        }
-        return String(defaultValue);
-      }
       // Check for direct value
       if ("value" in fieldValue) {
         return String((fieldValue as { value: unknown }).value || "");
@@ -341,7 +300,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                   if (key === "id") {
                     return null;
                   }
-
                   // Skip displaying the full URI values for nested objects
                   if (
                     typeof value === "object" &&
@@ -366,16 +324,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                       </div>
                     );
                   }
-                  return (
-                    <div key={key} className="flex flex-row flex-wrap text-xs">
-                      <div className="w-32 font-medium text-gray-600 dark:text-gray-400 capitalize">
-                        {key.replace(/_/g, " ")}:
-                      </div>
-                      <div className="flex-1 ml-2 text-foreground">
-                        {String(value || "")}
-                      </div>
-                    </div>
-                  );
                 })}
               </div>
             </div>
@@ -407,7 +355,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     );
   }
 
-  // Group Properties
   return (
     <>
       <div className="overflow-hidden">
@@ -443,7 +390,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
       <Modal
         isOpen={isMapOpen}
         setIsOpen={setIsMapOpen}
-        className=" !h-fit !w-sm md:!w-2xl lg:!w-4xl !rounded-xl"
+        className="!h-fit !w-sm md:!w-2xl lg:!w-4xl !rounded-xl"
       >
         <div className="flex flex-col h-full ">
           <div className="flex-1 h-96 p-2.5">
