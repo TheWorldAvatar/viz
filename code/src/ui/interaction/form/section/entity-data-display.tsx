@@ -311,10 +311,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                       return null; // Skip URI fields in expanded view
                     }
                     return (
-                      <div
-                        key={key}
-                        className="flex flex-row flex-wrap text-xs "
-                      >
+                      <div key={key} className="flex flex-row flex-wrap py-1">
                         <div className="w-32 font-medium text-gray-600 dark:text-gray-400 capitalize">
                           {key.replace(/_/g, " ")}:
                         </div>
