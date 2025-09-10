@@ -225,7 +225,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "/contracts/draft"),
+            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
             {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
