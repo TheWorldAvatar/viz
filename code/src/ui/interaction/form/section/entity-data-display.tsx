@@ -25,7 +25,6 @@ import { Dictionary } from "types/dictionary";
 interface EntityDataDisplayProps {
   entityType: string;
   id?: string;
-  additionalFields?: PropertyShapeOrGroup[];
 }
 
 /**
@@ -33,7 +32,6 @@ interface EntityDataDisplayProps {
  *
  * @param {string} entityType The type of entity.
  * @param {string} id An optional identifier input.
- * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  */
 
 export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
@@ -74,12 +72,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
           return body.data?.items?.[0] as FormTemplateType;
         });
 
-        if (props.additionalFields) {
-          props.additionalFields.forEach((field: PropertyShapeOrGroup) =>
-            template.property.push(field)
-          );
-        }
-
         const initialState = {
           formType: "view",
           id: id,
@@ -99,7 +91,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     };
 
     fetchData();
-  }, [props.entityType, props.additionalFields, id]);
+  }, [props.entityType, id]);
 
   // Extract field value from property shape
   const getFieldValue = (propertyField: PropertyShape) => {
@@ -344,7 +336,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
     );
   };
 
-  if (isLoading || !formTemplate) {
+  if (isLoading) {
     return (
       <div className="flex justify-center p-4">
         <LoadingSpinner isSmall={true} />
