@@ -224,7 +224,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "/contracts/draft"),
+            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
             {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -318,7 +318,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           props.setShowSearchModalState(false);
           // Redirect back to base page upon deleting the entity
         } else if (props.formType === "delete") {
-          router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`)
+          router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
@@ -438,7 +438,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod
