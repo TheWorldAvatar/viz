@@ -55,15 +55,16 @@ export default function FormContainerComponent(
           if (currentEntityType != "") {
             let redirectUrl: string = `${Routes.REGISTRY_GENERAL}/${currentEntityType}`;
             if (currentEntityType === "outstanding") {
-              redirectUrl = Routes.REGISTRY_TASK_OUTSTANDING
+              redirectUrl = Routes.REGISTRY_TASK_OUTSTANDING;
             } else if (currentEntityType === "scheduled") {
-              redirectUrl = Routes.REGISTRY_TASK_SCHEDULED
+              redirectUrl = Routes.REGISTRY_TASK_SCHEDULED;
             } else if (currentEntityType === "closed") {
-              redirectUrl = Routes.REGISTRY_TASK_CLOSED
+              redirectUrl = Routes.REGISTRY_TASK_CLOSED;
             }
-            router.push(redirectUrl)
+            router.push(redirectUrl);
           }
-        }}>
+        }}
+      >
         <FormContents {...props} />
       </Drawer>
     );
@@ -175,7 +176,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
     const reqBody: JsonObject = {
-      contract: status?.data?.id,
+      contract: id,
       remarks: "Contract has been approved successfully!",
     };
     const res = await fetch(
@@ -236,8 +237,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   return (
     <>
       <section
-        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${!props.isModal ? "mt-0" : "mt-10"
-          }  mb-0.5  shrink-0`}
+        className={`flex justify-between items-center text-nowrap text-foreground p-1 ${
+          !props.isModal ? "mt-0" : "mt-10"
+        }  mb-0.5  shrink-0`}
       >
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
