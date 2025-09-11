@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.39.3
+
+### Bug Fixes
+
+- Fixed false error message when changing service type of job
+- Fixed approve button not working when pressed from the view form
+- Fixed single service end date issue
+
 ## 5.39.2
 
 ### Changes
