@@ -97,7 +97,7 @@ export default function RegistryRowAction(
       props.lifecycleStage == "closed"
     ) {
       dispatch(setCurrentEntityType(props.lifecycleStage));
-      props.setTask(genTaskOption(recordId, props.row, "default", dict));
+      props.setTask(genTaskOption(recordId, props.row, "default"));
     } else {
       // Move to the view modal page for the specific record
       dispatch(setCurrentEntityType(props.recordType));
@@ -112,8 +112,8 @@ export default function RegistryRowAction(
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed") &&
     !(
-      props.row?.status?.toLowerCase() === dict.title.issue?.toLowerCase() ||
-      props.row?.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
+      props.row?.status?.toLowerCase() === "issue" ||
+      props.row?.status?.toLowerCase() === "cancelled"
     );
   const isSubmissionOrGeneralPage: boolean = props.lifecycleStage == "pending" || props.lifecycleStage == "general";
 
@@ -155,7 +155,7 @@ export default function RegistryRowAction(
                   handleClickView();
                 } else {
                   props.setTask(
-                    genTaskOption(recordId, props.row, "default", dict)
+                    genTaskOption(recordId, props.row, "default")
                   );
                 }
               }}
@@ -177,7 +177,7 @@ export default function RegistryRowAction(
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel", dict)
+                          genTaskOption(recordId, props.row, "cancel")
                         );
                       }}
                     />
@@ -202,7 +202,7 @@ export default function RegistryRowAction(
                   !permissionScheme ||
                   permissionScheme.hasPermissions.sales) &&
                   props.lifecycleStage === "pending" &&
-                  props.row?.status?.toLowerCase() === dict.title.amended?.toLowerCase() && (
+                  props.row?.status?.toLowerCase() === "amended" && (
                     <Button
                       variant="ghost"
                       leftIcon="chevron_right"
@@ -264,10 +264,8 @@ export default function RegistryRowAction(
                   !permissionScheme ||
                   permissionScheme.hasPermissions.completeTask) &&
                   (props.lifecycleStage === "outstanding" || props.lifecycleStage === "closed") &&
-                  (props.row?.status?.toLowerCase() ===
-                    dict.title.assigned?.toLowerCase() ||
-                    props.row?.status?.toLowerCase() ===
-                    dict.title.completed?.toLowerCase()) && (
+                  (props.row?.status?.toLowerCase() === "assigned" ||
+                    props.row?.status?.toLowerCase() === "completed") && (
                     <Button
                       variant="ghost"
                       leftIcon="done_outline"
@@ -279,7 +277,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "complete", dict)
+                          genTaskOption(recordId, props.row, "complete")
                         );
                       }}
                     />
@@ -287,10 +285,8 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.operation) &&
-                  props.row?.status?.toLowerCase() !==
-                  dict.title.issue?.toLowerCase() &&
-                  props.row?.status?.toLowerCase() !==
-                  dict.title.cancelled?.toLowerCase() && (
+                  props.row?.status?.toLowerCase() !== "issue" &&
+                  props.row?.status?.toLowerCase() !== "cancelled" && (
                     <Button
                       variant="ghost"
                       leftIcon="assignment"
@@ -302,7 +298,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "dispatch", dict)
+                          genTaskOption(recordId, props.row, "dispatch")
                         );
                       }}
                     />
@@ -313,10 +309,8 @@ export default function RegistryRowAction(
                   (props.lifecycleStage === "outstanding" ||
                     props.lifecycleStage === "scheduled") &&
                   compareDates(props.row?.date, true) &&
-                  (props.row?.status?.toLowerCase() ===
-                    dict.title.new?.toLowerCase() ||
-                    props.row?.status?.toLowerCase() ===
-                    dict.title.assigned?.toLowerCase()) && (
+                  (props.row?.status?.toLowerCase() === "new" ||
+                    props.row?.status?.toLowerCase() === "assigned") && (
                     <Button
                       variant="ghost"
                       leftIcon="cancel"
@@ -328,7 +322,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel", dict)
+                          genTaskOption(recordId, props.row, "cancel")
                         );
                       }}
                     />
@@ -338,10 +332,8 @@ export default function RegistryRowAction(
                   permissionScheme.hasPermissions.reportTask) &&
                   props.lifecycleStage === "outstanding" &&
                   compareDates(props.row?.date, false) &&
-                  (props.row?.status?.toLowerCase() ===
-                    dict.title.new?.toLowerCase() ||
-                    props.row?.status?.toLowerCase() ===
-                    dict.title.assigned?.toLowerCase()) && (
+                  (props.row?.status?.toLowerCase() === "new" ||
+                    props.row?.status?.toLowerCase() === "assigned") && (
                     <Button
                       variant="ghost"
                       leftIcon="report"
@@ -353,7 +345,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "report", dict)
+                          genTaskOption(recordId, props.row, "report")
                         );
                       }}
                     />
@@ -372,32 +364,31 @@ export function genTaskOption(
   recordId: string,
   row: FieldValues,
   taskType: RegistryTaskType,
-  dict: Dictionary
 ): RegistryTaskOption {
   let status: string;
   if (
     row.order === "0" ||
-    row.status?.toLowerCase() === dict.title.new?.toLowerCase()
+    row.status?.toLowerCase() === "new"
   ) {
     status = Status.NEW;
   } else if (
     row.order === "1" ||
-    row.status?.toLowerCase() === dict.title.assigned?.toLowerCase()
+    row.status?.toLowerCase() === "assigned"
   ) {
     status = Status.ASSIGNED;
   } else if (
     row.order === "2" ||
-    row.status?.toLowerCase() === dict.title.completed?.toLowerCase()
+    row.status?.toLowerCase() === "completed"
   ) {
     status = Status.COMPLETED;
   } else if (
     row.order === "3" ||
-    row.status?.toLowerCase() === dict.title.cancelled?.toLowerCase()
+    row.status?.toLowerCase() === "cancelled"
   ) {
     status = Status.CANCELLED;
   } else if (
     row.order === "4" ||
-    row.status?.toLowerCase() === dict.title.issue?.toLowerCase()
+    row.status?.toLowerCase() === "issue"
   ) {
     status = Status.ISSUE;
   } else {
