@@ -1,14 +1,9 @@
 import { FieldError } from "react-hook-form";
-import { Dictionary } from "types/dictionary";
-
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
-import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "hooks/useDictionary";
 import { Icon } from "@mui/material";
 import Tooltip from "ui/interaction/tooltip/tooltip";
-import Button from "ui/interaction/button";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -17,7 +12,6 @@ export interface FormInputContainerProps {
   formatLabel?: string;
   labelStyles?: string[];
   selectedOption?: OntologyConcept;
-  redirectOptions?: FormInputContainerRedirectOptions;
 }
 
 export interface FormInputContainerRedirectOptions {
@@ -40,7 +34,6 @@ export default function FormInputContainer(
 ) {
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
-  const dict: Dictionary = useDictionary();
 
   const description =
     props.field.description[VALUE_KEY] != ""
@@ -66,24 +59,6 @@ export default function FormInputContainer(
             <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
           )}
         </label>
-        <div className="flex items-center gap-2">
-          {props.redirectOptions?.addUrl && (
-            <RedirectButton
-              label={dict.action.add}
-              leftIcon="add"
-              variant="secondary"
-              url={props.redirectOptions.addUrl}
-            />
-          )}
-          {props.redirectOptions?.view && (
-            <Button
-              label={dict.action.view}
-              leftIcon="arrow_forward"
-              variant="secondary"
-              onClick={props.redirectOptions.view}
-            />
-          )}
-        </div>
       </div>
       <div>{props.children}</div>
 

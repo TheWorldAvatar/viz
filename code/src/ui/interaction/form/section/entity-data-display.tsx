@@ -292,7 +292,26 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                   if (key === "id") {
                     return null;
                   }
-                  // Skip displaying the full URI values for nested objects
+
+                  // Handle arrays directly (like phone_no)
+                  if (Array.isArray(value)) {
+                    return value.map((item, index) => (
+                      <div
+                        key={`${key}-${index}`}
+                        className="flex flex-row flex-wrap py-1"
+                      >
+                        <div className="w-32 font-medium text-gray-600 dark:text-gray-400 capitalize">
+                          {key.replace(/_/g, " ")}{" "}
+                          {index > 0 ? `(${index + 1})` : ""}
+                        </div>
+                        <div className="flex-1 ml-2 text-foreground">
+                          {String(item.value || item)}
+                        </div>
+                      </div>
+                    ));
+                  }
+
+                  // Handle objects with type property
                   if (
                     typeof value === "object" &&
                     value !== null &&
@@ -302,6 +321,7 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
                     if (objValue.type === "uri") {
                       return null; // Skip URI fields in expanded view
                     }
+
                     return (
                       <div key={key} className="flex flex-row flex-wrap py-1">
                         <div className="w-32 font-medium text-gray-600 dark:text-gray-400 capitalize">
