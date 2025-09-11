@@ -109,7 +109,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
 
       if (props.formType == "add") {
-        const hasScheduleField = template.property.some(
+        const hasScheduleField: boolean = template.property.some(
           (field) =>
             (field as PropertyShape)?.class?.[ID_KEY] ===
             "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
