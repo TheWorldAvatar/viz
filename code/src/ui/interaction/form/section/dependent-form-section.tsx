@@ -230,12 +230,11 @@ export function DependentFormSection(
     const id = iri ? getAfterDelimiter(iri, "/") : "";
     let url: string = `../${action}/${entityType}${id ? `/${id}` : ""}`;
 
-    if (formType === "add" && !pathName.includes("registry")) {
+    if (formType === "add") {
       url = `../${url}`;
     } else if (pathName.includes("registry")) {
       url = `../${url}`;
     }
-
     return url;
   };
 
