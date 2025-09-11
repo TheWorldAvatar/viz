@@ -107,6 +107,22 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
       }
 
+      if (props.formType == "add" || props.formType == "search") {
+        const hasScheduleField = template.property.some((field) => {
+          const propertyField = field as PropertyShape;
+
+          return (
+            propertyField.class &&
+            propertyField.class[ID_KEY] ===
+              "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
+          );
+        });
+
+        if (hasScheduleField) {
+          initialState.recurrence = 0;
+        }
+      }
+
       const updatedProperties: PropertyShapeOrGroup[] =
         parsePropertyShapeOrGroupList(initialState, template.property);
 
