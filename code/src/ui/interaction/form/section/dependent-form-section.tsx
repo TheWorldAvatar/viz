@@ -221,25 +221,15 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // An event handler to generate the url to reach the required add form
-  const genAddSubEntityUrl = (entityType: string): string => {
-    let url: string = `../add/${entityType}`;
-    if (formType === "add" && !pathName.includes("registry")) {
-      url = `../${url}`;
-    } else if (pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    return url;
-  };
-
-  // Generate edit/delete URL for selected sub-entity
-  const genSubEntityActionUrl = (
-    action: "edit" | "delete",
+  // Generate URL for sub-entity actions (add, edit, delete)
+  const genSubEntityUrl = (
+    action: "add" | "edit" | "delete",
     entityType: string,
-    iri: string
+    iri?: string
   ): string => {
-    const id = getAfterDelimiter(iri, "/");
-    let url: string = `../${action}/${entityType}/${id}`;
+    const id = iri ? getAfterDelimiter(iri, "/") : "";
+    let url: string = `../${action}/${entityType}${id ? `/${id}` : ""}`;
+
     if (formType === "add" && !pathName.includes("registry")) {
       url = `../${url}`;
     } else if (pathName.includes("registry")) {
@@ -291,7 +281,7 @@ export function DependentFormSection(
                         formType != "view" &&
                         formType != "delete" &&
                         formType != "search"
-                          ? genAddSubEntityUrl(queryEntityType)
+                          ? genSubEntityUrl("add", queryEntityType)
                           : undefined
                       }
                       variant="outline"
@@ -301,7 +291,7 @@ export function DependentFormSection(
                       size="icon"
                       iconSize="small"
                       tooltipText={dict.action.edit}
-                      url={genSubEntityActionUrl(
+                      url={genSubEntityUrl(
                         "edit",
                         queryEntityType,
                         currentOption
@@ -313,7 +303,7 @@ export function DependentFormSection(
                       size="icon"
                       iconSize="small"
                       tooltipText={dict.action.delete}
-                      url={genSubEntityActionUrl(
+                      url={genSubEntityUrl(
                         "delete",
                         queryEntityType,
                         currentOption
