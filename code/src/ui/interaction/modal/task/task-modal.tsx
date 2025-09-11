@@ -295,10 +295,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
-            (props.task?.status?.toLowerCase() ==
-              dict.title.assigned?.toLowerCase() ||
-              props.task?.status?.toLowerCase() ==
-              dict.title.completed?.toLowerCase()) &&
+            (props.task?.status?.toLowerCase() === "assigned" ||
+              props.task?.status?.toLowerCase() === "completed") &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="done_outline"
@@ -317,10 +315,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.task?.status?.toLowerCase() !==
-            dict.title.issue?.toLowerCase() &&
-            props.task?.status?.toLowerCase() !==
-            dict.title.cancelled?.toLowerCase() &&
+            props.task?.status?.toLowerCase() !== "issue" &&
+            props.task?.status?.toLowerCase() !== "cancelled" &&
             props.task?.type === "default" && (
               <Button
                 leftIcon="assignment"
@@ -339,10 +335,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            (props.task?.status?.toLowerCase() ===
-              dict.title.new?.toLowerCase() ||
-              props.task?.status?.toLowerCase() ===
-              dict.title.assigned?.toLowerCase()) &&
+            (props.task?.status?.toLowerCase() === "new" ||
+              props.task?.status?.toLowerCase() === "assigned") &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"
@@ -362,10 +356,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.reportTask) &&
-            (props.task?.status?.toLowerCase() ===
-              dict.title.new?.toLowerCase() ||
-              props.task?.status?.toLowerCase() ===
-              dict.title.assigned?.toLowerCase()) &&
+            (props.task?.status?.toLowerCase() === "new" ||
+              props.task?.status?.toLowerCase() === "assigned") &&
             props.task?.type === "default" && (
               <Button
                 variant="secondary"

@@ -181,6 +181,7 @@
     "unavailable": "unavailable",
     "active": "active",
     "amended": "amended",
+    "pending": "pending",
     "new": "open",
     "assigned": "assigned",
     "cancelled": "cancelled",
