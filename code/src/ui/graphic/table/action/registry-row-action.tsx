@@ -61,14 +61,23 @@ export default function RegistryRowAction(
       contract: recordId,
       remarks: "Contract has been approved successfully!",
     };
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+    const url: string = makeInternalRegistryAPIwithParams("event", "service", "commence");
+    submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
+  };
+
+  const onResubmissionForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const url: string = makeInternalRegistryAPIwithParams("event", "draft", props.row?.id);
+    submitPendingActions(url, "PUT", "{}");
+  };
+
+  const submitPendingActions = async (url: string, method: string, body: string): Promise<void> => {
+    const res = await fetch(url,
       {
-        method: "POST",
+        method,
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
         credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
+        body,
       }
     );
     setIsActionMenuOpen(false);
@@ -77,7 +86,7 @@ export default function RegistryRowAction(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
-  };
+  }
 
   const handleClickView = (): void => {
     if (
@@ -176,7 +185,7 @@ export default function RegistryRowAction(
 
                 {(!keycloakEnabled ||
                   !permissionScheme ||
-                  permissionScheme.hasPermissions.sales) &&
+                  permissionScheme.hasPermissions.operation) &&
                   props.lifecycleStage === "pending" && (
                     <Button
                       variant="ghost"
@@ -186,6 +195,22 @@ export default function RegistryRowAction(
                       className="w-full justify-start"
                       label={dict.action.approve}
                       onClick={onApproval}
+                    />
+                  )}
+
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.sales) &&
+                  props.lifecycleStage === "pending" &&
+                  props.row?.status?.toLowerCase() === dict.title.amended?.toLowerCase() && (
+                    <Button
+                      variant="ghost"
+                      leftIcon="chevron_right"
+                      size="md"
+                      iconSize="medium"
+                      className="w-full justify-start"
+                      label={dict.action.resubmit}
+                      onClick={onResubmissionForApproval}
                     />
                   )}
 
