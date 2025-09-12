@@ -259,49 +259,47 @@ export function DependentFormSection(
               }}
             />
             {currentOption && currentOption.length > 0 && (
-              <Accordion
-                title={dict.action.details}
-                accordionActions={
-                  <>
-                    <RedirectButton
-                      leftIcon="add"
-                      size="icon"
-                      iconSize="small"
-                      tooltipText={dict.action.add}
-                      url={genSubEntityUrl("add", queryEntityType)}
-                      variant="outline"
-                    />
-                    <RedirectButton
-                      leftIcon="edit"
-                      size="icon"
-                      iconSize="small"
-                      tooltipText={dict.action.edit}
-                      url={genSubEntityUrl(
-                        "edit",
-                        queryEntityType,
-                        currentOption
-                      )}
-                      variant="outline"
-                    />
-                    <RedirectButton
-                      leftIcon="delete"
-                      size="icon"
-                      iconSize="small"
-                      tooltipText={dict.action.delete}
-                      url={genSubEntityUrl(
-                        "delete",
-                        queryEntityType,
-                        currentOption
-                      )}
-                      variant="outline"
-                    />
-                  </>
-                }
-              >
-                <EntityDataDisplay
-                  entityType={queryEntityType}
-                  id={getAfterDelimiter(currentOption, "/")}
-                />
+              <Accordion>
+                <Accordion.Trigger title={dict.action.details}>
+                  <RedirectButton
+                    leftIcon="add"
+                    size="icon"
+                    iconSize="small"
+                    tooltipText={dict.action.add}
+                    url={genSubEntityUrl("add", queryEntityType)}
+                    variant="outline"
+                  />
+                  <RedirectButton
+                    leftIcon="edit"
+                    size="icon"
+                    iconSize="small"
+                    tooltipText={dict.action.edit}
+                    url={genSubEntityUrl(
+                      "edit",
+                      queryEntityType,
+                      currentOption
+                    )}
+                    variant="outline"
+                  />
+                  <RedirectButton
+                    leftIcon="delete"
+                    size="icon"
+                    iconSize="small"
+                    tooltipText={dict.action.delete}
+                    url={genSubEntityUrl(
+                      "delete",
+                      queryEntityType,
+                      currentOption
+                    )}
+                    variant="outline"
+                  />
+                </Accordion.Trigger>
+                <Accordion.Content>
+                  <EntityDataDisplay
+                    entityType={queryEntityType}
+                    id={getAfterDelimiter(currentOption, "/")}
+                  />
+                </Accordion.Content>
               </Accordion>
             )}
           </div>
