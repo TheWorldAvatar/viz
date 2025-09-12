@@ -9,7 +9,7 @@ interface AccordionProps {
   children: React.ReactNode;
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  className?: string;
+
   accordionActions?: React.ReactNode;
 }
 
@@ -20,7 +20,6 @@ interface AccordionProps {
  * @param children - Content to display when expanded
  * @param isOpen - Controlled open state, you can optionally manage the open state externally
  * @param setIsOpen - State setter for controlled behavior, if you want to manage the open state externally
- * @param className - Additional CSS classes
  * @param accordionActions - Additional actions to display in the header
  */
 
@@ -59,7 +58,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
   }, [props.children]);
 
   return (
-    <div className={`${props.className || ""}`}>
+    <div>
       <div className="flex justify-between items-center mb-2">
         <Button
           type="button"
@@ -67,7 +66,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
           size="sm"
           variant="outline"
           onClick={handleToggle}
-          aria-expanded={props.isOpen ?? isOpen}
+          aria-expanded={isOpen}
           aria-controls={`accordion-content-${uniqueId}`}
           className="text-xs"
         >
@@ -81,10 +80,10 @@ export default function Accordion(props: Readonly<AccordionProps>) {
         role="region"
         aria-labelledby={`accordion-button-${uniqueId}`}
         className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          props.isOpen ?? isOpen ? "opacity-100" : "opacity-0"
+          isOpen ? "opacity-100" : "opacity-0"
         }`}
         style={{
-          maxHeight: props.isOpen ?? isOpen ? `${contentHeight}px` : "0px",
+          maxHeight: isOpen ? `${contentHeight}px` : "0px",
         }}
       >
         <div ref={contentRef} className="p-4 pt-0 border-t border-border">

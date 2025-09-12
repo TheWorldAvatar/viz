@@ -278,13 +278,7 @@ export function DependentFormSection(
                       size="icon"
                       iconSize="small"
                       tooltipText={dict.action.add}
-                      url={
-                        formType != "view" &&
-                        formType != "delete" &&
-                        formType != "search"
-                          ? genSubEntityUrl("add", queryEntityType)
-                          : undefined
-                      }
+                      url={genSubEntityUrl("add", queryEntityType)}
                       variant="outline"
                     />
                     <RedirectButton
