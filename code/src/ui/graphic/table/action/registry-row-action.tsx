@@ -48,8 +48,8 @@ export default function RegistryRowAction(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-      ? getId(props.row.id)
-      : props.row.iri;
+    ? getId(props.row.id)
+    : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -61,32 +61,44 @@ export default function RegistryRowAction(
       contract: recordId,
       remarks: "Contract has been approved successfully!",
     };
-    const url: string = makeInternalRegistryAPIwithParams("event", "service", "commence");
+    const url: string = makeInternalRegistryAPIwithParams(
+      "event",
+      "service",
+      "commence"
+    );
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
-  const onResubmissionForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const url: string = makeInternalRegistryAPIwithParams("event", "draft", props.row?.id);
+  const onResubmissionForApproval: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async () => {
+    const url: string = makeInternalRegistryAPIwithParams(
+      "event",
+      "draft",
+      props.row?.id
+    );
     submitPendingActions(url, "PUT", "{}");
   };
 
-  const submitPendingActions = async (url: string, method: string, body: string): Promise<void> => {
-    const res = await fetch(url,
-      {
-        method,
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body,
-      }
-    );
+  const submitPendingActions = async (
+    url: string,
+    method: string,
+    body: string
+  ): Promise<void> => {
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+      credentials: "same-origin",
+      body,
+    });
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
-  }
+  };
 
   const handleClickView = (): void => {
     if (
@@ -115,7 +127,8 @@ export default function RegistryRowAction(
       props.row?.status?.toLowerCase() === "issue" ||
       props.row?.status?.toLowerCase() === "cancelled"
     );
-  const isSubmissionOrGeneralPage: boolean = props.lifecycleStage == "pending" || props.lifecycleStage == "general";
+  const isSubmissionOrGeneralPage: boolean =
+    props.lifecycleStage == "pending" || props.lifecycleStage == "general";
 
   return (
     <div aria-label="Actions">
@@ -154,9 +167,7 @@ export default function RegistryRowAction(
                 if (isSubmissionOrGeneralPage) {
                   handleClickView();
                 } else {
-                  props.setTask(
-                    genTaskOption(recordId, props.row, "default")
-                  );
+                  props.setTask(genTaskOption(recordId, props.row, "default"));
                 }
               }}
             />
@@ -205,7 +216,7 @@ export default function RegistryRowAction(
                   props.row?.status?.toLowerCase() === "amended" && (
                     <Button
                       variant="ghost"
-                      leftIcon="chevron_right"
+                      leftIcon="published_with_changes"
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
@@ -263,7 +274,8 @@ export default function RegistryRowAction(
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.completeTask) &&
-                  (props.lifecycleStage === "outstanding" || props.lifecycleStage === "closed") &&
+                  (props.lifecycleStage === "outstanding" ||
+                    props.lifecycleStage === "closed") &&
                   (props.row?.status?.toLowerCase() === "assigned" ||
                     props.row?.status?.toLowerCase() === "completed") && (
                     <Button
@@ -363,33 +375,18 @@ export default function RegistryRowAction(
 export function genTaskOption(
   recordId: string,
   row: FieldValues,
-  taskType: RegistryTaskType,
+  taskType: RegistryTaskType
 ): RegistryTaskOption {
   let status: string;
-  if (
-    row.order === "0" ||
-    row.status?.toLowerCase() === "new"
-  ) {
+  if (row.order === "0" || row.status?.toLowerCase() === "new") {
     status = Status.NEW;
-  } else if (
-    row.order === "1" ||
-    row.status?.toLowerCase() === "assigned"
-  ) {
+  } else if (row.order === "1" || row.status?.toLowerCase() === "assigned") {
     status = Status.ASSIGNED;
-  } else if (
-    row.order === "2" ||
-    row.status?.toLowerCase() === "completed"
-  ) {
+  } else if (row.order === "2" || row.status?.toLowerCase() === "completed") {
     status = Status.COMPLETED;
-  } else if (
-    row.order === "3" ||
-    row.status?.toLowerCase() === "cancelled"
-  ) {
+  } else if (row.order === "3" || row.status?.toLowerCase() === "cancelled") {
     status = Status.CANCELLED;
-  } else if (
-    row.order === "4" ||
-    row.status?.toLowerCase() === "issue"
-  ) {
+  } else if (row.order === "4" || row.status?.toLowerCase() === "issue") {
     status = Status.ISSUE;
   } else {
     status = "";
