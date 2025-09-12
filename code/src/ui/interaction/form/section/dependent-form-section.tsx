@@ -1,6 +1,5 @@
 import fieldStyles from "../field/field.module.css";
 
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
@@ -44,7 +43,6 @@ interface DependentFormSectionProps {
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
-  const pathName: string = usePathname();
   const dict: Dictionary = useDictionary();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
@@ -229,7 +227,6 @@ export function DependentFormSection(
   ): string => {
     const id = iri ? getAfterDelimiter(iri, "/") : "";
     const url: string = `../../${action}/${entityType}${id ? `/${id}` : ""}`;
-
     return url;
   };
 
