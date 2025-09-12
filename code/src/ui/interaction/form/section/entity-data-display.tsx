@@ -368,37 +368,55 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
 
   return (
     <>
-      <div className="overflow-hidden">
-        <div className="p-4 space-y-2 text-sm font-medium text-foreground">
-          {formTemplate?.property.map((field, index) => {
-            if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-              // Group Property
-              const group = field as PropertyGroup;
-              const groupLabel = group.label?.[VALUE_KEY] || "Group";
-              const groupProperties = group.property || [];
-
-              return (
-                <div key={index} className="mb-4">
-                  <h4 className="mb-2 capitalize">{groupLabel}</h4>
-                  <div className="pl-4 space-y-2">
-                    {groupProperties.map(
-                      (nestedField: PropertyShape, nestedIndex: number) =>
-                        renderPropertyField(nestedField, nestedIndex)
-                    )}
-                  </div>
-                </div>
-              );
-            }
-
-            // Individual property
-            const propertyField = field as PropertyShape;
-            return renderPropertyField(propertyField, index);
-          })}
-        </div>
-      </div>
-
+      <IndividualOrGroupProperty
+        formTemplate={formTemplate}
+        renderPropertyField={renderPropertyField}
+      />
       <MapModal isOpen={isMapOpen} setIsOpen={setIsMapOpen} mapForm={mapForm} />
     </>
+  );
+}
+
+interface IndividualOrGroupPropertyProps {
+  formTemplate: FormTemplateType | null;
+  renderPropertyField: (
+    _propertyField: PropertyShape,
+    _key: string | number
+  ) => React.ReactNode;
+}
+
+function IndividualOrGroupProperty(
+  props: Readonly<IndividualOrGroupPropertyProps>
+) {
+  return (
+    <div className="overflow-hidden">
+      <div className="p-4 space-y-2 text-sm font-medium text-foreground">
+        {props.formTemplate?.property.map((field, index) => {
+          if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+            // Group Property
+            const group = field as PropertyGroup;
+            const groupLabel = group.label?.[VALUE_KEY] || "Group";
+            const groupProperties = group.property || [];
+
+            return (
+              <div key={index} className="mb-4">
+                <h4 className="mb-2 capitalize">{groupLabel}</h4>
+                <div className="pl-4 space-y-2">
+                  {groupProperties.map(
+                    (nestedField: PropertyShape, nestedIndex: number) =>
+                      props.renderPropertyField(nestedField, nestedIndex)
+                  )}
+                </div>
+              </div>
+            );
+          }
+
+          // Individual property
+          const propertyField = field as PropertyShape;
+          return props.renderPropertyField(propertyField, index);
+        })}
+      </div>
+    </div>
   );
 }
 
