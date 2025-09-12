@@ -340,20 +340,6 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
         </div>
       );
     }
-
-    // Single properties
-    return (
-      <div key={key} className="flex flex-row sm:items-start py-2">
-        <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
-          {label}
-        </div>
-        <div className="flex-1 text-sm text-foreground">
-          {displayValue || (
-            <span className="text-gray-400 italic text-sm">Not specified</span>
-          )}
-        </div>
-      </div>
-    );
   };
 
   if (isLoading) {
