@@ -3,17 +3,17 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 
-interface FormAccordionBodyProps {
+interface FormQuickViewBodyProps {
   id: string;
   children: React.ReactNode;
 }
 
 /** 
- * A component that renders the body content for a form accordion. 
+ * A component that renders the body content for a form quick view panel. 
  * 
  * @param {string} id - The unique ID for the form accordion.
  **/
-export default function FormAccordionBody(props: Readonly<FormAccordionBodyProps>) {
+export default function FormQuickViewBody(props: Readonly<FormQuickViewBodyProps>) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
 

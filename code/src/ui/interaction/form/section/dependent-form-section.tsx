@@ -1,6 +1,6 @@
 import fieldStyles from "../field/field.module.css";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -25,8 +25,9 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 
-import FormAccordionBody from "ui/interaction/accordion/form-accordion-body";
-import FormAccordionHeader from "ui/interaction/accordion/form-accordion-header";
+import { useFormQuickView } from "hooks/form/useFormQuickView";
+import FormAccordionBody from "ui/interaction/accordion/form-quick-view-body";
+import FormAccordionHeader from "ui/interaction/accordion/form-quick-view-header";
 import { EntityDataDisplay } from "./entity-data-display";
 
 interface DependentFormSectionProps {
@@ -44,8 +45,8 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const id: string = useId();
-  const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(true);
+
+  const { id, isQuickViewOpen, setIsQuickViewOpen } = useFormQuickView();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -256,10 +257,10 @@ export function DependentFormSection(
               title={dict.action.details}
               selectedEntity={currentOption}
               entityType={queryEntityType}
-              isOpen={isAccordionOpen}
-              setIsOpen={setIsAccordionOpen}
+              isOpen={isQuickViewOpen}
+              setIsOpen={setIsQuickViewOpen}
             />
-            {currentOption && isAccordionOpen && (
+            {currentOption && isQuickViewOpen && (
               <FormAccordionBody
                 id={id}
               >

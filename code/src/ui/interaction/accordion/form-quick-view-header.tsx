@@ -7,7 +7,7 @@ import { getAfterDelimiter } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
 
-interface FormAccordionHeaderProps {
+interface FormQuickViewHeaderProps {
   id: string;
   title: string;
   selectedEntity: string;
@@ -17,7 +17,7 @@ interface FormAccordionHeaderProps {
 }
 
 /** 
- * A component that renders the header for a form accordion. The header contains a trigger to open the accordion, 
+ * A component that renders the header for a form quick view panel. The header contains a trigger to open the panel, 
  * as well as several other buttons for registry actions.
  * 
  * @param {string} id - The unique ID for the form accordion.
@@ -27,7 +27,7 @@ interface FormAccordionHeaderProps {
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
  **/
-export default function FormAccordionHeader(props: Readonly<FormAccordionHeaderProps>) {
+export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
