@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDictionary } from "hooks/useDictionary";
 import { FieldValues, useForm } from "react-hook-form";
 import { AgentResponseBody } from "types/backend-agent";
@@ -340,6 +340,22 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
         </div>
       );
     }
+
+    // If no display value, skip rendering
+    // This is for optional fields that are not set
+    if (!displayValue) {
+      return null;
+    }
+
+    // Single properties
+    return (
+      <div key={key} className="flex flex-row sm:items-start py-2">
+        <div className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
+          {label}
+        </div>
+        <div className="flex-1 text-sm text-foreground">{displayValue}</div>
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -381,18 +397,29 @@ export function EntityDataDisplay(props: Readonly<EntityDataDisplayProps>) {
         </div>
       </div>
 
-      {/* Map Modal */}
-      <Modal
-        isOpen={isMapOpen}
-        setIsOpen={setIsMapOpen}
-        className="!h-fit !w-sm md:!w-2xl lg:!w-4xl !rounded-xl"
-      >
-        <div className="flex flex-col h-full ">
-          <div className="flex-1 h-96 p-2.5">
-            <GeocodeMapContainer form={mapForm} fieldId="mapDisplay" />
-          </div>
-        </div>
-      </Modal>
+      <MapModal isOpen={isMapOpen} setIsOpen={setIsMapOpen} mapForm={mapForm} />
     </>
+  );
+}
+
+interface MapModalProps {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  mapForm: ReturnType<typeof useForm<FieldValues>>;
+}
+
+function MapModal(props: Readonly<MapModalProps>) {
+  return (
+    <Modal
+      isOpen={props.isOpen}
+      setIsOpen={props.setIsOpen}
+      className="!h-fit !w-sm md:!w-2xl lg:!w-4xl !rounded-xl"
+    >
+      <div className="flex flex-col h-full ">
+        <div className="flex-1 h-96 p-2.5">
+          <GeocodeMapContainer form={props.mapForm} fieldId="mapDisplay" />
+        </div>
+      </div>
+    </Modal>
   );
 }
