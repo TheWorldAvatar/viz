@@ -225,8 +225,8 @@ export function DependentFormSection(
     entityType: string,
     iri?: string
   ): string => {
-    const id = iri ? getAfterDelimiter(iri, "/") : "";
-    const url: string = `../../${action}/${entityType}${id ? `/${id}` : ""}`;
+    const id: string = iri ? getAfterDelimiter(iri, "/") : "";
+    const url: string = `../../${action}/${entityType}${iri ? `/${id}` : ""}`;
     return url;
   };
 
