@@ -1,6 +1,6 @@
 import fieldStyles from "../field/field.module.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -24,9 +24,9 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
-import Accordion from "ui/interaction/accordion/accordion";
-import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 
+import FormAccordionBody from "ui/interaction/accordion/form-accordion-body";
+import FormAccordionHeader from "ui/interaction/accordion/form-accordion-header";
 import { EntityDataDisplay } from "./entity-data-display";
 
 interface DependentFormSectionProps {
@@ -44,6 +44,8 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
+  const id: string = useId();
+  const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(true);
 
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -219,16 +221,7 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // Generate URL for sub-entity actions (add, edit, delete)
-  const genSubEntityUrl = (
-    action: "add" | "edit" | "delete",
-    entityType: string,
-    iri?: string
-  ): string => {
-    const id: string = iri ? getAfterDelimiter(iri, "/") : "";
-    const url: string = `../../${action}/${entityType}${iri ? `/${id}` : ""}`;
-    return url;
-  };
+
 
   // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
   // the parent element has been queried and selected
@@ -258,49 +251,23 @@ export function DependentFormSection(
                 ],
               }}
             />
-            {currentOption && currentOption.length > 0 && (
-              <Accordion>
-                <Accordion.Trigger title={dict.action.details}>
-                  <RedirectButton
-                    leftIcon="add"
-                    size="icon"
-                    iconSize="small"
-                    tooltipText={dict.action.add}
-                    url={genSubEntityUrl("add", queryEntityType)}
-                    variant="outline"
-                  />
-                  <RedirectButton
-                    leftIcon="edit"
-                    size="icon"
-                    iconSize="small"
-                    tooltipText={dict.action.edit}
-                    url={genSubEntityUrl(
-                      "edit",
-                      queryEntityType,
-                      currentOption
-                    )}
-                    variant="outline"
-                  />
-                  <RedirectButton
-                    leftIcon="delete"
-                    size="icon"
-                    iconSize="small"
-                    tooltipText={dict.action.delete}
-                    url={genSubEntityUrl(
-                      "delete",
-                      queryEntityType,
-                      currentOption
-                    )}
-                    variant="outline"
-                  />
-                </Accordion.Trigger>
-                <Accordion.Content>
-                  <EntityDataDisplay
-                    entityType={queryEntityType}
-                    id={getAfterDelimiter(currentOption, "/")}
-                  />
-                </Accordion.Content>
-              </Accordion>
+            <FormAccordionHeader
+              id={id}
+              title={dict.action.details}
+              selectedEntity={currentOption}
+              entityType={queryEntityType}
+              isOpen={isAccordionOpen}
+              setIsOpen={setIsAccordionOpen}
+            />
+            {currentOption && isAccordionOpen && (
+              <FormAccordionBody
+                id={id}
+              >
+                <EntityDataDisplay
+                  entityType={queryEntityType}
+                  id={getAfterDelimiter(currentOption, "/")}
+                />
+              </FormAccordionBody>
             )}
           </div>
         )}
