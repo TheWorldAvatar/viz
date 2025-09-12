@@ -234,6 +234,8 @@ export function DependentFormSection(
       url = `../${url}`;
     } else if (pathName.includes("registry")) {
       url = `../${url}`;
+    } else {
+      url = `../${url}`;
     }
     return url;
   };
