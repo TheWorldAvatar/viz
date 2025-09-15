@@ -129,7 +129,7 @@ function NavMenuContents(
 
   function createHandleFileClick(
     url: string,
-    type: NavBarItemType = "default"
+    type: NavBarItemType
   ): React.MouseEventHandler<HTMLDivElement> {
     return (event: React.MouseEvent<HTMLDivElement>): void => {
       event.preventDefault();
