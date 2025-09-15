@@ -2,6 +2,27 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.39.5
+
+### Changes
+
+- Changed the default type of the external links type to be "default" if not specified
+
+## 5.39.4
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.12.0` to `v1.13.0`
+- Extended to allow users to resubmit for approval with changes to backend
+
+## 5.39.3
+
+### Bug Fixes
+
+- Fixed false error message when changing service type of job
+- Fixed approve button not working when pressed from the view form
+- Fixed single service end date issue
+
 ## 5.39.2
 
 ### Changes

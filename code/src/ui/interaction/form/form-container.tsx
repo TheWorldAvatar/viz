@@ -176,7 +176,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
     const reqBody: JsonObject = {
-      contract: status?.data?.id,
+      contract: id,
       remarks: "Contract has been approved successfully!",
     };
     const res = await fetch(
