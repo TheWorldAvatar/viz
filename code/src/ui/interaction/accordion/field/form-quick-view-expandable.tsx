@@ -11,20 +11,26 @@ interface FormQuickViewExpandableProps {
   entityType: string;
 }
 
-/** 
- * A component that renders the expandable field for a form quick view panel. 
- * 
+/**
+ * A component that renders the expandable field for a form quick view panel.
+ *
  * @param {string} entity - The target entity instance.
  * @param {string} entityType - The type of the entity.
  **/
-export default function FormQuickViewExpandable(props: Readonly<FormQuickViewExpandableProps>) {
+export default function FormQuickViewExpandable(
+  props: Readonly<FormQuickViewExpandableProps>
+) {
   const dict: Dictionary = useDictionary();
 
-  const { quickViewGroups, isQuickViewLoading, isQuickViewOpen, setIsQuickViewOpen } =
-    useFormQuickView(props.entity, props.entityType);
+  const {
+    quickViewGroups,
+    isQuickViewLoading,
+    isQuickViewOpen,
+    setIsQuickViewOpen,
+  } = useFormQuickView(props.entity, props.entityType);
 
   return (
-    <div className="flex flex-col items-baseline">
+    <div className="flex flex-col items-baseline my-4">
       <div className="flex flex-row items-baseline">
         <h4 className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
           {props.entityType}
@@ -36,9 +42,7 @@ export default function FormQuickViewExpandable(props: Readonly<FormQuickViewExp
             tooltipText={isQuickViewOpen ? dict.action.hide : dict.action.show}
             iconSize="small"
             leftIcon={
-              isQuickViewOpen
-                ? "keyboard_arrow_up"
-                : "keyboard_arrow_down"
+              isQuickViewOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"
             }
             onClick={() => setIsQuickViewOpen(!isQuickViewOpen)}
             variant={isQuickViewOpen ? "secondary" : "outline"}
@@ -46,11 +50,9 @@ export default function FormQuickViewExpandable(props: Readonly<FormQuickViewExp
           />
         </div>
       </div>
-      {isQuickViewOpen && !isQuickViewLoading &&
-        <FormQuickViewFields
-          quickViewGroups={quickViewGroups}
-        />
-      }
+      {isQuickViewOpen && !isQuickViewLoading && (
+        <FormQuickViewFields quickViewGroups={quickViewGroups} />
+      )}
     </div>
   );
 }
