@@ -39,8 +39,8 @@ interface NavMenuContentsProps extends NavMenuProps {
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
-  const [fileModalType, setFileModalType] = React.useState<NavBarItemType>("default");
-  const [isFileModalOpen, setIsFileModalOpen] = React.useState<boolean>(false);
+  const [fileModalType, setFileModalType] = useState<NavBarItemType>("default");
+  const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
 
   if (props.isMobile) {
     return (
@@ -129,7 +129,7 @@ function NavMenuContents(
 
   function createHandleFileClick(
     url: string,
-    type: NavBarItemType
+    type: NavBarItemType = "default"
   ): React.MouseEventHandler<HTMLDivElement> {
     return (event: React.MouseEvent<HTMLDivElement>): void => {
       event.preventDefault();
@@ -155,19 +155,21 @@ function NavMenuContents(
   return (
     <div
       ref={navMenuRef}
-      className={`${props.isMobile
-        ? "flex gap-4 p-2 w-full"
-        : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
-        }
+      className={`${
+        props.isMobile
+          ? "flex gap-4 p-2 w-full"
+          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+      }
       ${navMenuWidthClass}
       xl:flex flex-col justify-start transition-all duration-200 ease-in-out `}
     >
       {!props.isMobile && (
         <button
-          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
-            ? "mr-2 self-end rounded-md -mb-8 "
-            : " justify-center items-center rounded-full -mb-4"
-            }`}
+          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
+            isMenuExpanded
+              ? "mr-2 self-end rounded-md -mb-8 "
+              : " justify-center items-center rounded-full -mb-4"
+          }`}
           onClick={handleMenuToggle}
         >
           <Icon className="material-symbols-outlined">
@@ -249,12 +251,18 @@ function NavMenuContents(
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
-        (!keycloakEnabled || permissionScheme?.hasPermissions.registry || permissionScheme?.hasPermissions.pendingRegistry) && (
+        (!keycloakEnabled ||
+          permissionScheme?.hasPermissions.registry ||
+          permissionScheme?.hasPermissions.pendingRegistry) && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}
-            url={!keycloakEnabled || permissionScheme?.hasPermissions.pendingRegistry ?
-              `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}` : Routes.REGISTRY_TASK_OUTSTANDING}
+            url={
+              !keycloakEnabled ||
+              permissionScheme?.hasPermissions.pendingRegistry
+                ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
+                : Routes.REGISTRY_TASK_OUTSTANDING
+            }
             isMobile={props.isMobile}
             caption={
               isMenuExpanded
@@ -277,9 +285,9 @@ function NavMenuContents(
             caption={
               isMenuExpanded
                 ? dict.nav.caption.generalReg.replace(
-                  "{replace}",
-                  parseWordsForLabels(path.type).toLowerCase()
-                )
+                    "{replace}",
+                    parseWordsForLabels(path.type).toLowerCase()
+                  )
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}
@@ -316,7 +324,7 @@ function NavMenuContents(
               caption={isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
-                externalLink.type === "default"
+                (externalLink.type || "default") === "default"
                   ? undefined
                   : createHandleFileClick(externalLink.url, externalLink.type)
               }
