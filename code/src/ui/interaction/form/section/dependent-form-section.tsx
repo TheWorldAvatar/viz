@@ -254,7 +254,7 @@ export function DependentFormSection(
             />
             <FormQuickViewHeader
               id={id}
-              title={dict.action.details}
+              title={dict.title.quickView}
               selectedEntityId={selectedEntityId}
               entityType={queryEntityType}
               isOpen={isQuickViewOpen}
