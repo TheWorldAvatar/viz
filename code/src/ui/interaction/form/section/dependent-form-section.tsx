@@ -26,9 +26,8 @@ import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
-import FormAccordionBody from "ui/interaction/accordion/form-quick-view-body";
-import FormAccordionHeader from "ui/interaction/accordion/form-quick-view-header";
-import { EntityDataDisplay } from "./entity-data-display";
+import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
+import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -46,7 +45,6 @@ export function DependentFormSection(
 ) {
   const dict: Dictionary = useDictionary();
 
-  const { id, isQuickViewOpen, setIsQuickViewOpen } = useFormQuickView();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -64,6 +62,8 @@ export function DependentFormSection(
     control,
     name: props.dependentProp.fieldId,
   });
+
+  const { id, selectedEntityId, quickViewGroups, isQuickViewLoading, isQuickViewOpen, setIsQuickViewOpen } = useFormQuickView(currentOption, queryEntityType);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -252,23 +252,22 @@ export function DependentFormSection(
                 ],
               }}
             />
-            <FormAccordionHeader
+            <FormQuickViewHeader
               id={id}
               title={dict.action.details}
-              selectedEntity={currentOption}
+              selectedEntityId={selectedEntityId}
               entityType={queryEntityType}
               isOpen={isQuickViewOpen}
               setIsOpen={setIsQuickViewOpen}
             />
-            {currentOption && isQuickViewOpen && (
-              <FormAccordionBody
+            {currentOption && isQuickViewOpen && (isQuickViewLoading ?
+              <div className="flex justify-center p-4">
+                <LoadingSpinner isSmall={true} />
+              </div>
+              : <FormQuickViewBody
                 id={id}
-              >
-                <EntityDataDisplay
-                  entityType={queryEntityType}
-                  id={getAfterDelimiter(currentOption, "/")}
-                />
-              </FormAccordionBody>
+                quickViewGroups={quickViewGroups}
+              />
             )}
           </div>
         )}

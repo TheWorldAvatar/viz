@@ -3,14 +3,13 @@
 import { useDictionary } from "hooks/useDictionary";
 import type React from "react";
 import { Dictionary } from "types/dictionary";
-import { getAfterDelimiter } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
 
 interface FormQuickViewHeaderProps {
   id: string;
   title: string;
-  selectedEntity: string;
+  selectedEntityId: string;
   entityType: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,7 +21,7 @@ interface FormQuickViewHeaderProps {
  * 
  * @param {string} id - The unique ID for the form accordion.
  * @param {string} title - The label for the trigger button.
- * @param {string} selectedEntity - The currently selected entity.
+ * @param {string} selectedEntityId - The currently selected entity's id.
  * @param {string} entityType - The type of entities.
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
@@ -32,7 +31,6 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
   };
-  const selectedEntityId: string = props.selectedEntity ? getAfterDelimiter(props.selectedEntity, "/") : undefined;
 
   // Generate URL for sub-entity actions (add, edit, delete)
   const genSubEntityUrl = (
@@ -46,7 +44,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
 
   return (
     <div className="flex justify-between items-center mb-2">
-      {props.selectedEntity && <Button
+      {props.selectedEntityId && <Button
         type="button"
         leftIcon="menu_open"
         size="sm"
@@ -68,7 +66,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           url={genSubEntityUrl("add", props.entityType)}
           variant="outline"
         />
-        {props.selectedEntity && <RedirectButton
+        {props.selectedEntityId && <RedirectButton
           leftIcon="edit"
           size="icon"
           iconSize="small"
@@ -76,11 +74,11 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           url={genSubEntityUrl(
             "edit",
             props.entityType,
-            selectedEntityId
+            props.selectedEntityId
           )}
           variant="outline"
         />}
-        {props.selectedEntity && <RedirectButton
+        {props.selectedEntityId && <RedirectButton
           leftIcon="delete"
           size="icon"
           iconSize="small"
@@ -88,7 +86,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           url={genSubEntityUrl(
             "delete",
             props.entityType,
-            selectedEntityId
+            props.selectedEntityId
           )}
           variant="outline"
         />}

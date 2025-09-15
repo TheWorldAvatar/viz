@@ -1,17 +1,19 @@
 "use client";
 
-import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { QuickViewGroupings } from "types/form";
+import FormQuickViewFields from "./field/form-quick-view-fields";
 
 interface FormQuickViewBodyProps {
   id: string;
-  children: React.ReactNode;
+  quickViewGroups: QuickViewGroupings;
 }
 
 /** 
  * A component that renders the body content for a form quick view panel. 
  * 
  * @param {string} id - The unique ID for the form accordion.
+ * @param {QuickViewGroupings} quickViewGroups - Input for display.
  **/
 export default function FormQuickViewBody(props: Readonly<FormQuickViewBodyProps>) {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -39,7 +41,7 @@ export default function FormQuickViewBody(props: Readonly<FormQuickViewBodyProps
         resizeObserver.disconnect();
       };
     }
-  }, [props.children]);
+  }, []);
 
   return (
     <div
@@ -51,9 +53,9 @@ export default function FormQuickViewBody(props: Readonly<FormQuickViewBodyProps
         maxHeight: `${contentHeight}px`,
       }}
     >
-      <div ref={contentRef} className="p-4 pt-0 border-t border-border">
-        {props.children}
+      <div ref={contentRef} className="p-4 pt-0 border-t border-border overflow-hidden">
+        <FormQuickViewFields quickViewGroups={props.quickViewGroups} />
       </div>
-    </div>
+    </div >
   );
 }
