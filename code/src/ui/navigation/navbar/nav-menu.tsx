@@ -324,7 +324,7 @@ function NavMenuContents(
               caption={isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
-                (externalLink.type || "default") === "default"
+                !externalLink.type || externalLink.type === "default"
                   ? undefined
                   : createHandleFileClick(externalLink.url, externalLink.type)
               }
