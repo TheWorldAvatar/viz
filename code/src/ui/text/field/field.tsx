@@ -12,10 +12,10 @@ interface TextFieldProps {
 export default function TextField(props: Readonly<TextFieldProps>) {
   return (
     <div className="flex flex-row sm:items-start py-2">
-      <h4 className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
+      <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize">
         {props.label}
       </h4>
-      <p className="flex-1 text-sm text-foreground">{props.content}</p>
+      <p className="flex-1 text-base text-foreground">{props.content}</p>
     </div>
   );
 }

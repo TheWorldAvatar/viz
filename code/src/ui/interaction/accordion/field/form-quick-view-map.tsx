@@ -15,17 +15,22 @@ interface FormQuickViewMapProps {
   locationUri: string;
 }
 
-/** 
- * A component that renders the map modal for a form quick view panel. 
- * 
+/**
+ * A component that renders the map modal for a form quick view panel.
+ *
  * @param {string} label - The field name.
  * @param {string} locationUri - The URI of the location.
  **/
-export default function FormQuickViewMap(props: Readonly<FormQuickViewMapProps>) {
+export default function FormQuickViewMap(
+  props: Readonly<FormQuickViewMapProps>
+) {
   const dict: Dictionary = useDictionary();
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
 
-  const { isFetching, coordinates } = useExistingLocationCoordinates(props.locationUri, "view");
+  const { isFetching, coordinates } = useExistingLocationCoordinates(
+    props.locationUri,
+    "view"
+  );
   const mapForm = useForm<FieldValues>({
     defaultValues: {
       formType: "view",
@@ -44,10 +49,10 @@ export default function FormQuickViewMap(props: Readonly<FormQuickViewMapProps>)
   return (
     <div className="flex flex-col items-baseline">
       <div className="flex flex-row items-baseline">
-        <h4 className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
+        <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize">
           {props.label}
         </h4>
-        <div className="flex-1 text-xs text-foreground flex gap-2">
+        <div className="flex-1 text-base text-foreground flex gap-2">
           <Button
             type="button"
             size="icon"

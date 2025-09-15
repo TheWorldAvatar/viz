@@ -9,13 +9,15 @@ interface FormQuickViewBodyProps {
   quickViewGroups: QuickViewGroupings;
 }
 
-/** 
- * A component that renders the body content for a form quick view panel. 
- * 
+/**
+ * A component that renders the body content for a form quick view panel.
+ *
  * @param {string} id - The unique ID for the form accordion.
  * @param {QuickViewGroupings} quickViewGroups - Input for display.
  **/
-export default function FormQuickViewBody(props: Readonly<FormQuickViewBodyProps>) {
+export default function FormQuickViewBody(
+  props: Readonly<FormQuickViewBodyProps>
+) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
 
@@ -53,9 +55,12 @@ export default function FormQuickViewBody(props: Readonly<FormQuickViewBodyProps
         maxHeight: `${contentHeight}px`,
       }}
     >
-      <div ref={contentRef} className="p-4 pt-0 border-t border-border overflow-hidden">
+      <div
+        ref={contentRef}
+        className="p-4 pt-0 border-t border-border overflow-hidden"
+      >
         <FormQuickViewFields quickViewGroups={props.quickViewGroups} />
       </div>
-    </div >
+    </div>
   );
 }

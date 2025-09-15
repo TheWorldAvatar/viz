@@ -32,10 +32,10 @@ export default function FormQuickViewExpandable(
   return (
     <div className="flex flex-col items-baseline my-4">
       <div className="flex flex-row items-baseline">
-        <h4 className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
+        <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize">
           {props.entityType}
         </h4>
-        <div className="flex-1 text-xs text-foreground flex gap-2">
+        <div className="flex-1 text-base text-foreground flex gap-2">
           <Button
             type="button"
             size="icon"
