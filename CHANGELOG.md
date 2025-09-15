@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.39.5
+
+### Changes
+
+- Changed the default type of the external links type to be "default" if not specified
+
 ## 5.39.4
 
 ### Changes
