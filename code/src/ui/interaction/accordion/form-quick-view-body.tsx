@@ -59,7 +59,10 @@ export default function FormQuickViewBody(
         ref={contentRef}
         className="p-2 pt-0 border-t border-border overflow-hidden"
       >
-        <FormQuickViewFields quickViewGroups={props.quickViewGroups} />
+        <FormQuickViewFields
+          nestedLevel={0}
+          quickViewGroups={props.quickViewGroups}
+        />
       </div>
     </div>
   );

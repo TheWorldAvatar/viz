@@ -7,7 +7,7 @@ import FormQuickViewMap from "./form-quick-view-map";
 
 interface FormQuickViewFieldsProps {
   quickViewGroups: QuickViewGroupings;
-  nestedLevel?: number;
+  nestedLevel: number;
 }
 
 /**
@@ -47,7 +47,7 @@ export default function FormQuickViewFields(
                       key={groupIndex + fieldIndex + arrayIndex}
                       entity={value.value}
                       entityType={field}
-                      nestedLevel={props.nestedLevel || 0}
+                      nestedLevel={props.nestedLevel + 1}
                     />
                   ));
                 }
