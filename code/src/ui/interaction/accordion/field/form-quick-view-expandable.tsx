@@ -10,7 +10,7 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 interface FormQuickViewExpandableProps {
   entity: string;
   entityType: string;
-  nestedLevel?: number;
+  nestedLevel: number;
 }
 
 /**
@@ -18,7 +18,7 @@ interface FormQuickViewExpandableProps {
  *
  * @param {string} entity - The target entity instance.
  * @param {string} entityType - The type of the entity.
- * @param {number} nestedLevel - The level of nesting of the expandable fields.
+ * @param {number} nestedLevel - The current level of nesting/recursion.
  **/
 export default function FormQuickViewExpandable(
   props: Readonly<FormQuickViewExpandableProps>

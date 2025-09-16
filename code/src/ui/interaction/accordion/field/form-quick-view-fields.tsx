@@ -14,7 +14,7 @@ interface FormQuickViewFieldsProps {
  * A component that renders the fields for a form quick view panel.
  *
  * @param {QuickViewGroupings} quickViewGroups - Input for display.
- * @param {number} nestedLevel - The level of nesting of the expandable fields.
+ * @param {number} nestedLevel - The current level of nesting/recursion.
  **/
 export default function FormQuickViewFields(
   props: Readonly<FormQuickViewFieldsProps>
