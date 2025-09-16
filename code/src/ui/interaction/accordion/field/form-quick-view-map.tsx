@@ -47,12 +47,12 @@ export default function FormQuickViewMap(
   }, [coordinates]);
 
   return (
-    <div className="flex flex-col items-baseline">
+    <div className="flex flex-col items-baseline py-4">
       <div className="flex flex-row items-baseline">
-        <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize font-semibold">
+        <h4 className="flex-shrink-0 w-40 text-sm sm:text-base text-foreground capitalize font-semibold">
           {props.label}
         </h4>
-        <div className="flex-1 text-base text-foreground flex gap-2">
+        <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
           <Button
             type="button"
             size="icon"
@@ -71,7 +71,7 @@ export default function FormQuickViewMap(
         className="!h-fit !w-sm md:!w-2xl lg:!w-4xl !rounded-xl"
       >
         <div className="flex flex-col h-full p-2.5">
-          <h1 className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
+          <h1 className="flex-shrink-0 w-40 text-sm sm:text-base font-medium text-foreground capitalize">
             {props.label}
           </h1>
           <div className="flex-1 h-96">

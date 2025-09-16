@@ -30,12 +30,12 @@ export default function FormQuickViewExpandable(
   } = useFormQuickView(props.entity, props.entityType);
 
   return (
-    <div className="flex flex-col items-baseline my-4">
+    <div className="flex flex-col  py-4 border-b border-border border-dashed">
       <div className="flex flex-row items-baseline">
-        <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize font-semibold">
+        <h4 className="flex-shrink-0 w-40 text-sm sm:text-base text-foreground capitalize font-semibold">
           {props.entityType}
         </h4>
-        <div className="flex-1 text-base text-foreground flex gap-2">
+        <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
           <Button
             type="button"
             size="icon"
@@ -51,7 +51,9 @@ export default function FormQuickViewExpandable(
         </div>
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
-        <FormQuickViewFields quickViewGroups={quickViewGroups} />
+        <div className="pl-3 ">
+          <FormQuickViewFields quickViewGroups={quickViewGroups} />
+        </div>
       )}
     </div>
   );
