@@ -34,7 +34,7 @@ export default function FormQuickViewExpandable(
   } = useFormQuickView(props.entity, props.entityType);
 
   return (
-    <div className="flex flex-col py-4 border-b border-border border-dashed w-full">
+    <div className="flex flex-col py-2 w-full">
       <div className="flex flex-row items-baseline">
         <h4 className="flex-shrink-0 w-40 text-sm sm:text-base text-foreground capitalize font-semibold">
           {props.entityType}
@@ -73,7 +73,7 @@ export default function FormQuickViewExpandable(
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
         <div
-          className={`pl-2 pr-2  mt-2 border border-border rounded-lg ${
+          className={`pl-2 pr-2 mt-2 border border-border rounded-lg ${
             props.nestedLevel % 2 === 0
               ? "bg-background shadow-md"
               : "bg-muted inset-shadow-sm"
