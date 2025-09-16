@@ -30,6 +30,7 @@ export default function FormQuickViewExpandable(
     isQuickViewLoading,
     isQuickViewOpen,
     setIsQuickViewOpen,
+    selectedEntityId,
   } = useFormQuickView(props.entity, props.entityType);
 
   return (
@@ -39,7 +40,7 @@ export default function FormQuickViewExpandable(
           {props.entityType}
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
-          {props.nestedLevel === 2 ? (
+          {props.nestedLevel === 3 ? (
             <RedirectButton
               type="button"
               size="icon"
@@ -48,8 +49,8 @@ export default function FormQuickViewExpandable(
               }
               iconSize="small"
               leftIcon="open_in_new"
-              url={`../../view/${props.entityType}/${props.entity}`}
-              variant={isQuickViewOpen ? "secondary" : "outline"}
+              url={`../../view/${props.entityType}/${selectedEntityId}`}
+              variant="outline"
               loading={isQuickViewLoading}
             />
           ) : (
@@ -72,10 +73,10 @@ export default function FormQuickViewExpandable(
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
         <div
-          className={`pl-2 pr-2 mt-2 border border-border rounded-lg ${
+          className={`pl-2 pr-2  mt-2 border border-border rounded-lg ${
             props.nestedLevel % 2 === 0
-              ? "bg-background shadow-mdb "
-              : "bg-muted  inset-shadow-sm"
+              ? "bg-background shadow-md"
+              : "bg-muted inset-shadow-sm"
           }`}
         >
           <FormQuickViewFields
