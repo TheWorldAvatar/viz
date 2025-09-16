@@ -11,6 +11,7 @@ interface FormQuickViewHeaderProps {
   title: string;
   selectedEntityId: string;
   entityType: string;
+  isFormView: boolean;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -23,6 +24,7 @@ interface FormQuickViewHeaderProps {
  * @param {string} title - The label for the trigger button.
  * @param {string} selectedEntityId - The currently selected entity's id.
  * @param {string} entityType - The type of entities.
+ * @param {boolean} isFormView - Indicates if the form type is view.
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
  **/
@@ -57,7 +59,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       >
         {props.title}
       </Button>}
-      <div className="flex gap-2">
+      {!props.isFormView && <div className="flex gap-2">
         <RedirectButton
           leftIcon="add"
           size="icon"
@@ -90,7 +92,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           )}
           variant="outline"
         />}
-      </div>
+      </div>}
     </div>
   );
 }
