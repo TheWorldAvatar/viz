@@ -24,7 +24,7 @@ export default function FormQuickViewFields(
           return (
             <div key={group + groupIndex}>
               {group != "default" && (
-                <h4 className="mb-2 capitalize text-foreground text-base">
+                <h4 className="mb-2 capitalize text-foreground font-semibold text-base underline underline-offset-2">
                   {group}
                 </h4>
               )}

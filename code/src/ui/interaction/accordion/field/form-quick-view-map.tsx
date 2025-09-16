@@ -49,7 +49,7 @@ export default function FormQuickViewMap(
   return (
     <div className="flex flex-col items-baseline">
       <div className="flex flex-row items-baseline">
-        <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize">
+        <h4 className="flex-shrink-0 w-40 text-base  text-foreground capitalize font-semibold">
           {props.label}
         </h4>
         <div className="flex-1 text-base text-foreground flex gap-2">
@@ -74,7 +74,7 @@ export default function FormQuickViewMap(
           <h1 className="flex-shrink-0 w-40 text-sm font-medium text-foreground capitalize">
             {props.label}
           </h1>
-          <div className="flex-1 h-96 ">
+          <div className="flex-1 h-96">
             <GeocodeMapContainer form={mapForm} fieldId="mapDisplay" />
           </div>
         </div>
