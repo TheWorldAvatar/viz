@@ -34,9 +34,9 @@ export default function FormQuickViewExpandable(
   } = useFormQuickView(props.entity, props.entityType);
 
   return (
-    <div className="flex flex-col py-2 w-full">
-      <div className="flex flex-row items-baseline">
-        <h4 className="flex-shrink-0 w-40 text-sm sm:text-base text-foreground capitalize font-semibold">
+    <div className="flex flex-col py-2 w-full ">
+      <div className="flex flex-row items-baseline ">
+        <h4 className="flex-shrink-0 w-28 lg:w-36 text-sm sm:text-base text-foreground capitalize font-semibold flex-wrap">
           {props.entityType}
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
