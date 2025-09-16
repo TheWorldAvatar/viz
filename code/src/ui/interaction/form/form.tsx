@@ -12,6 +12,7 @@ import {
   FormType,
   ID_KEY,
   PROPERTY_GROUP_TYPE,
+  PROPERTY_SHAPE_TYPE,
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
@@ -343,9 +344,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     <form ref={props.formRef} onSubmit={onSubmit}>
       {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
       {!form.formState.isLoading &&
-        formTemplate.property.map((field, index) => {
-          return renderFormField(props.entityType, field, form, index);
-        })}
+        renderFormField(
+          props.entityType,
+          formTemplate.property.find(
+            (node) =>
+              node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
+              (node as PropertyShape).name[VALUE_KEY] === "id"
+          ),
+          form,
+          -1
+        )}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
@@ -353,6 +361,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           form={form}
         />
       )}
+      {!form.formState.isLoading &&
+        formTemplate.property
+          .filter(
+            (node) =>
+              !(
+                node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
+                (node as PropertyShape).name[VALUE_KEY] === "id"
+              )
+          )
+          .map((field, index) =>
+            renderFormField(props.entityType, field, form, index)
+          )}
     </form>
   );
 }
@@ -377,8 +397,10 @@ export function renderFormField(
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
     formType === "view" || formType === "delete";
+
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
+
     return (
       <FormSection
         key={fieldset[ID_KEY] + currentIndex}
