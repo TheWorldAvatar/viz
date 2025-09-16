@@ -9,6 +9,7 @@ import FormQuickViewFields from "./form-quick-view-fields";
 interface FormQuickViewExpandableProps {
   entity: string;
   entityType: string;
+  nestedLevel?: number;
 }
 
 /**
@@ -16,6 +17,7 @@ interface FormQuickViewExpandableProps {
  *
  * @param {string} entity - The target entity instance.
  * @param {string} entityType - The type of the entity.
+ * @param {number} nestedLevel - The level of nesting of the expandable fields.
  **/
 export default function FormQuickViewExpandable(
   props: Readonly<FormQuickViewExpandableProps>
@@ -30,7 +32,7 @@ export default function FormQuickViewExpandable(
   } = useFormQuickView(props.entity, props.entityType);
 
   return (
-    <div className="flex flex-col  py-4 border-b border-border border-dashed">
+    <div className="flex flex-col py-4 border-b border-border border-dashed w-full">
       <div className="flex flex-row items-baseline">
         <h4 className="flex-shrink-0 w-40 text-sm sm:text-base text-foreground capitalize font-semibold">
           {props.entityType}
@@ -51,8 +53,17 @@ export default function FormQuickViewExpandable(
         </div>
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
-        <div className="pl-3 ">
-          <FormQuickViewFields quickViewGroups={quickViewGroups} />
+        <div
+          className={`pl-2 pr-2 mt-2 border border-border rounded-lg ${
+            props.nestedLevel % 2 === 0
+              ? "bg-muted  inset-shadow-sm "
+              : "bg-background shadow-md"
+          }`}
+        >
+          <FormQuickViewFields
+            quickViewGroups={quickViewGroups}
+            nestedLevel={props.nestedLevel + 1}
+          />
         </div>
       )}
     </div>

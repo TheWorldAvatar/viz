@@ -57,7 +57,7 @@ export default function FormQuickViewBody(
     >
       <div
         ref={contentRef}
-        className="p-4 pt-0 border-t border-border overflow-hidden"
+        className="p-2 pt-0 border-t border-border overflow-hidden"
       >
         <FormQuickViewFields quickViewGroups={props.quickViewGroups} />
       </div>

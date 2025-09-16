@@ -7,12 +7,14 @@ import FormQuickViewMap from "./form-quick-view-map";
 
 interface FormQuickViewFieldsProps {
   quickViewGroups: QuickViewGroupings;
+  nestedLevel?: number;
 }
 
 /**
  * A component that renders the fields for a form quick view panel.
  *
  * @param {QuickViewGroupings} quickViewGroups - Input for display.
+ * @param {number} nestedLevel - The level of nesting of the expandable fields.
  **/
 export default function FormQuickViewFields(
   props: Readonly<FormQuickViewFieldsProps>
@@ -45,6 +47,7 @@ export default function FormQuickViewFields(
                       key={groupIndex + fieldIndex + arrayIndex}
                       entity={value.value}
                       entityType={field}
+                      nestedLevel={props.nestedLevel || 0}
                     />
                   ));
                 }
