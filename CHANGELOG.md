@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.39.6
+
+### Changes
+
+- Adjusted the form component to comply with Service type form branching logic, conditionally rendering form components based on a selected service type.
+
 ## 5.39.5
 
 ### Changes
