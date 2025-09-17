@@ -46,7 +46,7 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
           toggleAll={true}
           isClearable={false}
           setControlledSelectedOptions={setSelectedOptions}
-          isAllInitiallySelected={true}
+          excludeFromInitial={["id"]}
         />
       </div>
     </div>
