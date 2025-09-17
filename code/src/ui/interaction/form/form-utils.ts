@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { Dictionary } from "types/dictionary";
 import {
+  FormTemplateType,
   FormType,
   ID_KEY,
   ONTOLOGY_CONCEPT_ROOT,
@@ -12,6 +13,8 @@ import {
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
+  QuickViewFields,
+  QuickViewGroupings,
   RegistryFieldValues,
   SparqlResponseField,
   TYPE_KEY,
@@ -596,6 +599,66 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
     default:
       break;
   }
+}
+
+/**
+ * Parses the form template into quick view groupings for easy access.
+ * 
+ * @param {FormTemplateType} template The form template input.
+ */
+export function parseFormTemplateForQuickViewGroupings(template: FormTemplateType): QuickViewGroupings {
+  let quickViewGroups: QuickViewGroupings = { default: {} };
+  template.property.map((field) => {
+    // Properties as part of a group
+    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+      const fieldset: PropertyGroup = field as PropertyGroup;
+      const groupName: string = fieldset.label[VALUE_KEY];
+      fieldset.property.map((fieldProp) => {
+        quickViewGroups = parseQuickViewFields(fieldProp.name[VALUE_KEY], fieldProp.class?.[ID_KEY], groupName, fieldProp.defaultValue, quickViewGroups);
+      });
+    } else {
+      const fieldShape: PropertyShape = field as PropertyShape;
+      const fieldName: string = fieldShape.name[VALUE_KEY];
+      if (fieldName != "id") {
+        quickViewGroups = parseQuickViewFields(fieldName, fieldShape.class?.[ID_KEY], "default", fieldShape.defaultValue, quickViewGroups);
+      }
+    }
+  });
+  return quickViewGroups;
+}
+
+/**
+ * Parses quick view fields based on the input parameters.
+ * 
+ * @param {string} fieldName Name of the field.
+ * @param {string} fieldClass The class of the field if available.
+ * @param {string} groupName Name of the associated group. Default is default
+ * @param {SparqlResponseField | SparqlResponseField[]} fieldValue Value for the field.
+ * @param {QuickViewGroupings} output Stores the parsing results.
+ */
+function parseQuickViewFields(fieldName: string, fieldClass: string, groupName: string, fieldValue: SparqlResponseField | SparqlResponseField[], output: QuickViewGroupings): QuickViewGroupings {
+  if (fieldValue) {
+    // Always return array of fields
+    let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
+    if (fieldClass === "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation") {
+      parsedFieldValues = parsedFieldValues.map(fieldVal => {
+        return {
+          ...fieldVal,
+          type: "mapUri",
+        }
+      });
+    }
+    const fields: QuickViewFields = {
+      // Append previous fields in the same group
+      ...output[groupName],
+      [fieldName]: parsedFieldValues,
+    };
+    output = {
+      ...output,
+      [groupName]: fields,
+    }
+  }
+  return output;
 }
 
 /**

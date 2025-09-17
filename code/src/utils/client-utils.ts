@@ -173,13 +173,14 @@ export function extractResponseField(
   }
 }
 
-
 /**
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
  */
-export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage): DateRange {
+export function getInitialDateFromLifecycleStage(
+  lifecycleStage: LifecycleStage
+): DateRange {
   // For closed and other stages: start with today
   const initialDate: Date = new Date();
 
@@ -192,6 +193,8 @@ export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage)
 }
 
 /**
+
+=======
   * Compares the target and reference date to verify if they are before or after each other. Note that this function returns true if they are equivalent.
   *
   * @param {string} targetDate The target date for comparison.
@@ -202,6 +205,7 @@ export function compareDates(
   targetDate: string,
   isAfter: boolean,
   refDate?: string,
+
 ): boolean {
   const targetDateObject = new Date(targetDate);
   // Defaults to today if reference date is not provided
@@ -217,8 +221,8 @@ export function compareDates(
 }
 
 /**
-  * Get initial date ie today.
-  */
+ * Get initial date ie today.
+ */
 export function getInitialDate(): DateRange {
   const currentDate: Date = new Date();
   return {
@@ -226,6 +230,7 @@ export function getInitialDate(): DateRange {
     to: currentDate,
   }
 }
+
 /**
   * Get the UTC date from the date input.
   * 

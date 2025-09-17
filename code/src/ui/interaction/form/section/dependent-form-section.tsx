@@ -1,6 +1,5 @@
 import fieldStyles from "../field/field.module.css";
 
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
@@ -26,6 +25,10 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
 
+import { useFormQuickView } from "hooks/form/useFormQuickView";
+import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
+import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
+
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
   form: UseFormReturn;
@@ -40,8 +43,8 @@ interface DependentFormSectionProps {
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
-  const pathName: string = usePathname();
   const dict: Dictionary = useDictionary();
+
 
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -59,6 +62,8 @@ export function DependentFormSection(
     control,
     name: props.dependentProp.fieldId,
   });
+
+  const { id, selectedEntityId, quickViewGroups, isQuickViewLoading, isQuickViewOpen, setIsQuickViewOpen } = useFormQuickView(currentOption, queryEntityType);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -85,7 +90,7 @@ export function DependentFormSection(
             { cache: "no-store", credentials: "same-origin" }
           ).then(async (res) => {
             const responseEntity: AgentResponseBody = await res.json();
-            return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+            return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
           });
         }
         // If there is no valid parent option, there should be no entity
@@ -110,7 +115,7 @@ export function DependentFormSection(
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (response) => {
           const responseEntity: AgentResponseBody = await response.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
         });
       } else {
         entities = await fetch(
@@ -118,7 +123,7 @@ export function DependentFormSection(
           { cache: "no-store", credentials: "same-origin" }
         ).then(async (res) => {
           const responseEntity: AgentResponseBody = await res.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          return (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
         });
       }
 
@@ -136,17 +141,29 @@ export function DependentFormSection(
         // Existing value must take precedence
         if (fieldValue && fieldValue.length > 0) {
           const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
-          const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+          const result: string = findMatchingDropdownOptionValue(
+            defaultValueId,
+            entities
+          );
           if (result != null) {
             defaultId = result;
           }
         } else if (props.dependentProp?.defaultValue) {
-          const defaults: SparqlResponseField | SparqlResponseField[] = props.dependentProp?.defaultValue
+          const defaults: SparqlResponseField | SparqlResponseField[] =
+            props.dependentProp?.defaultValue;
           // If this is not an array or the array's first item is not null
           if (!(Array.isArray(defaults) && defaults[0] == null)) {
-            const defaultField: SparqlResponseField = Array.isArray(defaults) ? defaults[0] : defaults;
-            const defaultValueId: string = getAfterDelimiter(defaultField.value, "/");
-            const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+            const defaultField: SparqlResponseField = Array.isArray(defaults)
+              ? defaults[0]
+              : defaults;
+            const defaultValueId: string = getAfterDelimiter(
+              defaultField.value,
+              "/"
+            );
+            const result: string = findMatchingDropdownOptionValue(
+              defaultValueId,
+              entities
+            );
             if (result != null) {
               defaultId = result;
             }
@@ -205,30 +222,7 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // An event handler to generate the url to reach the required add form
-  const genAddSubEntityUrl = (entityType: string): string => {
-    let url: string = `../add/${entityType}`;
-    if (formType != "add" || pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    return url;
-  };
 
-  // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    let url: string = `../view/${queryEntityType}/${getAfterDelimiter(
-      currentOption,
-      "/"
-    )}`;
-    // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != "add" || pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    window.open(url, "_blank");
-  };
 
   // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
   // the parent element has been queried and selected
@@ -237,7 +231,7 @@ export function DependentFormSection(
     (currentParentOption && parentField != "")
   ) {
     return (
-      <div className="rounded-lg  my-4">
+      <div className="rounded-lg my-4">
         {isFetching && (
           <div className="mr-2">
             <LoadingSpinner isSmall={true} />
@@ -249,20 +243,6 @@ export function DependentFormSection(
               selectOptions={selectElements}
               field={props.dependentProp}
               form={props.form}
-              redirectOptions={{
-                addUrl:
-                  formType != "view" &&
-                    formType != "delete" &&
-                    formType != "search"
-                    ? genAddSubEntityUrl(queryEntityType)
-                    : undefined,
-                view:
-                  !isFetching &&
-                    formType != "search" &&
-                    selectElements.length > 0
-                    ? openViewSubEntityModal
-                    : undefined,
-              }}
               noOptionMessage={dict.message.noInstances}
               options={{
                 disabled: formType == "view" || formType == "delete",
@@ -272,6 +252,24 @@ export function DependentFormSection(
                 ],
               }}
             />
+            <FormQuickViewHeader
+              id={id}
+              title={dict.title.quickView}
+              selectedEntityId={selectedEntityId}
+              entityType={queryEntityType}
+              isFormView={formType == "view"}
+              isOpen={isQuickViewOpen}
+              setIsOpen={setIsQuickViewOpen}
+            />
+            {currentOption && isQuickViewOpen && (isQuickViewLoading ?
+              <div className="flex justify-center p-4">
+                <LoadingSpinner isSmall={true} />
+              </div>
+              : <FormQuickViewBody
+                id={id}
+                quickViewGroups={quickViewGroups}
+              />
+            )}
           </div>
         )}
       </div>

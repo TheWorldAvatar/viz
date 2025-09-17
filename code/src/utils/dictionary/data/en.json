@@ -1,7 +1,7 @@
 {
   "lang": "en",
   "action": {
-    "add": "add",
+    "add": "Add",
     "addItem": "add {replace}",
     "delete": "Delete",
     "dismiss": "Dismiss",
@@ -17,6 +17,8 @@
     "filter": "Filter",
     "search": "SEARCH",
     "showAll": "SHOW ALL",
+    "show": "Show",
+    "hide": "Hide",
     "viewMore": "view more",
     "viewTasks": "view tasks",
     "generateReport": "generate report",
@@ -191,6 +193,7 @@
     "terminated": "terminated",
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
+    "quickView": "Quick view",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
     "success": "Success",

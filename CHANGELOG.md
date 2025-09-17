@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.40.0
+
+### Changes
+
+- Implemented a new quick view component that enables users to have a quick view of the dependent fields, without having to open a new tab or window.
+
 ## 5.39.6
 
 ### Changes

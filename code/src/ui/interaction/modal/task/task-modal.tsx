@@ -267,8 +267,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}

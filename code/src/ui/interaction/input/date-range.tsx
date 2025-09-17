@@ -83,7 +83,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
       ref={popover.refs.setReference}
       className="flex items-center gap-2 relative"
     >
-      {!(props.disableMobileView) && screenType === "mobile" && (
+      {!props.disableMobileView && screenType === "mobile" && (
         <Button
           id={`${id}-mobile`}
           type="button"
