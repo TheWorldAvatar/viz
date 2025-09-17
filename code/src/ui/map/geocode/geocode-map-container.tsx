@@ -60,7 +60,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
         props.form.setValue(FORM_STATES.LONGITUDE, lngLat.lng.toString());
         props.form.setValue(
           props.fieldId,
-          `POINT(${lngLat.lng}, ${lngLat.lat})`
+          `POINT(${lngLat.lng} ${lngLat.lat})`
         );
       });
       setMarker(marker);
@@ -71,7 +71,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
   useEffect(() => {
     if (map && marker) {
       marker.setLngLat([longitude, latitude]);
-      props.form.setValue(props.fieldId, `POINT(${longitude}, ${latitude})`);
+      props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
     }
   }, [longitude, latitude, marker, map]);
