@@ -603,10 +603,12 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
 
 /**
  * Parses the form template into quick view groupings for easy access.
- * 
+ *
  * @param {FormTemplateType} template The form template input.
  */
-export function parseFormTemplateForQuickViewGroupings(template: FormTemplateType): QuickViewGroupings {
+export function parseFormTemplateForQuickViewGroupings(
+  template: FormTemplateType
+): QuickViewGroupings {
   let quickViewGroups: QuickViewGroupings = { default: {} };
   template.property.map((field) => {
     // Properties as part of a group
@@ -614,13 +616,25 @@ export function parseFormTemplateForQuickViewGroupings(template: FormTemplateTyp
       const fieldset: PropertyGroup = field as PropertyGroup;
       const groupName: string = fieldset.label[VALUE_KEY];
       fieldset.property.map((fieldProp) => {
-        quickViewGroups = parseQuickViewFields(fieldProp.name[VALUE_KEY], fieldProp.class?.[ID_KEY], groupName, fieldProp.defaultValue, quickViewGroups);
+        quickViewGroups = parseQuickViewFields(
+          fieldProp.name[VALUE_KEY],
+          fieldProp.class?.[ID_KEY],
+          groupName,
+          fieldProp.defaultValue,
+          quickViewGroups
+        );
       });
     } else {
       const fieldShape: PropertyShape = field as PropertyShape;
       const fieldName: string = fieldShape.name[VALUE_KEY];
       if (fieldName != "id") {
-        quickViewGroups = parseQuickViewFields(fieldName, fieldShape.class?.[ID_KEY], "default", fieldShape.defaultValue, quickViewGroups);
+        quickViewGroups = parseQuickViewFields(
+          fieldName,
+          fieldShape.class?.[ID_KEY],
+          "default",
+          fieldShape.defaultValue,
+          quickViewGroups
+        );
       }
     }
   });
@@ -629,23 +643,34 @@ export function parseFormTemplateForQuickViewGroupings(template: FormTemplateTyp
 
 /**
  * Parses quick view fields based on the input parameters.
- * 
+ *
  * @param {string} fieldName Name of the field.
  * @param {string} fieldClass The class of the field if available.
  * @param {string} groupName Name of the associated group. Default is default
  * @param {SparqlResponseField | SparqlResponseField[]} fieldValue Value for the field.
  * @param {QuickViewGroupings} output Stores the parsing results.
  */
-function parseQuickViewFields(fieldName: string, fieldClass: string, groupName: string, fieldValue: SparqlResponseField | SparqlResponseField[], output: QuickViewGroupings): QuickViewGroupings {
+function parseQuickViewFields(
+  fieldName: string,
+  fieldClass: string,
+  groupName: string,
+  fieldValue: SparqlResponseField | SparqlResponseField[],
+  output: QuickViewGroupings
+): QuickViewGroupings {
   if (fieldValue) {
     // Always return array of fields
-    let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
-    if (fieldClass === "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation") {
-      parsedFieldValues = parsedFieldValues.map(fieldVal => {
+    let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue)
+      ? fieldValue
+      : [fieldValue];
+    if (
+      fieldClass ===
+      "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
+    ) {
+      parsedFieldValues = parsedFieldValues.map((fieldVal) => {
         return {
           ...fieldVal,
           type: "mapUri",
-        }
+        };
       });
     }
     const fields: QuickViewFields = {
@@ -656,7 +681,7 @@ function parseQuickViewFields(fieldName: string, fieldClass: string, groupName: 
     output = {
       ...output,
       [groupName]: fields,
-    }
+    };
   }
   return output;
 }
@@ -680,13 +705,15 @@ export function genEmptyArrayRow(fieldConfigs: PropertyShape[]): FieldValues {
  * @param {string} field The location field ID.
  * @param {string} latitude The latitude value.
  * @param {string} longitude The longitude value.
-  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
-export function updateLatLong(field: string, latitude: string, longitude: string, form: UseFormReturn): void {
+export function updateLatLong(
+  field: string,
+  latitude: string,
+  longitude: string,
+  form: UseFormReturn
+): void {
   form.setValue(FORM_STATES.LATITUDE, latitude);
   form.setValue(FORM_STATES.LONGITUDE, longitude);
-  form.setValue(
-    field,
-    `POINT(${longitude}, ${latitude})`
-  );
+  form.setValue(field, `POINT(${longitude} ${latitude})`);
 }

@@ -16,7 +16,6 @@ interface MultivalueDropdownProps {
   options: SelectOption[];
   toggleAll?: boolean;
   isActive?: boolean;
-  isAllInitiallySelected?: boolean;
   isClearable?: boolean;
   setControlledSelectedOptions?: React.Dispatch<React.SetStateAction<SelectOption[]>>;
 }
@@ -28,10 +27,8 @@ interface MultivalueDropdownProps {
  * @param {SelectOption[]} options - Select options.
  * @param {boolean} toggleAll - Provides an additional option to select all options. Defaults to false.
  * @param {boolean} isActive - Renders different style to indicate the input is currently active. Defaults to false.
- * @param {boolean} isAllInitiallySelected - Ensures all options are selected if set to true on first render. Defaults to false.
  * @param {boolean} isClearable - All values in the dropdown can be cleared with an additional input. Defaults to true.
  * @param setControlledSelectedOptions - Optional dispatch method to update selected options for further processing.
- *
  */
 export default function MultivalueSelector(
   props: Readonly<MultivalueDropdownProps>
@@ -43,14 +40,17 @@ export default function MultivalueSelector(
   };
 
   const defaultOptions: SelectOption[] = (props.toggleAll ? [selectAllOption, ...props.options] : props.options);
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.isAllInitiallySelected ? defaultOptions : []);
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.toggleAll ? defaultOptions.filter(
+        (option) => option.value != "id" && option.value != "event_id"  && option.value != "select-all"
+      ) : []);
 
   useEffect(() => {
     // Explicitly reset only for false value, as it is an optional prop that can return true
     if (props.isActive === false) {
       setSelectedOptions([]);
-      props.setControlledSelectedOptions([]);
     }
+    // Update this on first render
+    props.setControlledSelectedOptions(selectedOptions);
   }, [props.isActive]);
 
   const handleChange = (
@@ -69,7 +69,7 @@ export default function MultivalueSelector(
       const newSelectedOptions: SelectOption[] = newValue as SelectOption[];
       if (props.toggleAll && action === "select-option" && newSelectedOptions.length == defaultOptions.length - 1) {
         newSelectedOptions.unshift(selectAllOption);
-      } else if (action === "deselect-option" && newSelectedOptions[0].value == selectAllOption.value) {
+      } else if (action === "deselect-option" && newSelectedOptions?.[0]?.value == selectAllOption.value) {
         newSelectedOptions.shift();
       }
       setSelectedOptions(newSelectedOptions);
