@@ -39,17 +39,19 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<DateRange>(getInitialDate());
+  const [selectedDate, setSelectedDate] = useState<DateRange | Date>(
+    getInitialDate()
+  );
   const router = useRouter();
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     if (props.type === "date") {
       const searchParams: URLSearchParams = new URLSearchParams({
         start: Math.floor(
-          getUTCDate(selectedDate.from).getTime() / 1000
+          getUTCDate((selectedDate as DateRange).from).getTime() / 1000
         ).toString(),
         end: Math.floor(
-          getUTCDate(selectedDate.to).getTime() / 1000
+          getUTCDate((selectedDate as DateRange).to).getTime() / 1000
         ).toString(),
       });
       try {
@@ -181,7 +183,8 @@ export default function FileModal(props: Readonly<FileModalProps>) {
                 disabled={
                   isUploading ||
                   (props.type === "date" &&
-                    (!selectedDate.from || !selectedDate.to))
+                    (!(selectedDate as DateRange).from ||
+                      !(selectedDate as DateRange).to))
                 }
               >
                 {props.type === "date"
