@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.40.1
+
+### Changes
+
+- Removed the comma from the WKT point
+- Removed the id column from the default column display in the registry table
+
 ## 5.40.0
 
 ### Changes
