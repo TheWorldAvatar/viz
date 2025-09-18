@@ -69,7 +69,7 @@ export default function MultivalueSelector(
       const newSelectedOptions: SelectOption[] = newValue as SelectOption[];
       if (props.toggleAll && action === "select-option" && newSelectedOptions.length == defaultOptions.length - 1) {
         newSelectedOptions.unshift(selectAllOption);
-      } else if (action === "deselect-option" && newSelectedOptions[0].value == selectAllOption.value) {
+      } else if (action === "deselect-option" && newSelectedOptions?.[0]?.value == selectAllOption.value) {
         newSelectedOptions.shift();
       }
       setSelectedOptions(newSelectedOptions);
