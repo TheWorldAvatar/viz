@@ -9,6 +9,8 @@ import {
   getRegisterOptions,
 } from "ui/interaction/form/form-utils";
 import FormInputContainer from "./form-input-container";
+import DateRangeInput from "ui/interaction/input/date-range";
+import { getUTCDate } from "utils/client-utils";
 
 interface FormDateTimePickerProps {
   field: PropertyShape;
@@ -64,6 +66,15 @@ export default function FormDateTimePicker(
     }
   }, [props.form, props.field.fieldId, currentDateTime]);
 
+  const selectedDate: Date | undefined = (() => {
+    if (props.field.datatype !== dateType) return undefined;
+    const formValue = props.form.getValues(props.field.fieldId) as
+      | string
+      | undefined;
+    if (!formValue) return undefined;
+    return new Date(formValue);
+  })();
+
   return (
     <FormInputContainer
       field={props.field}
@@ -71,23 +82,45 @@ export default function FormDateTimePicker(
       labelStyles={props.options?.labelStyle}
       formatLabel={formatLabel}
     >
-      <input
-        id={props.field.fieldId}
-        className={`${styles["dtpicker"]} ${
-          props.options?.disabled &&
-          styles["input-disabled"] + " " + styles["field-disabled"]
-        }`}
-        type={inputType}
-        readOnly={props.options?.disabled}
-        aria-label={props.field.name[VALUE_KEY]}
-        {...props.form.register(
-          props.field.fieldId,
-          getRegisterOptions(
-            props.field,
-            props.form.getValues(FORM_STATES.FORM_TYPE)
-          )
-        )}
-      />
+      {inputType === dateType ? (
+        <div
+          {...props.form.register(
+            props.field.fieldId,
+            getRegisterOptions(
+              props.field,
+              props.form.getValues(FORM_STATES.FORM_TYPE)
+            )
+          )}
+        >
+          <DateRangeInput
+            selectedDate={selectedDate as Date}
+            placement="bottom-start"
+            isDateRange={false}
+            setSelectedDate={(date) => {
+              const UTCDate = getUTCDate(date as Date);
+              props.form.setValue(props.field.fieldId, UTCDate);
+            }}
+          ></DateRangeInput>
+        </div>
+      ) : (
+        <input
+          id={props.field.fieldId}
+          className={`${styles["dtpicker"]} ${
+            props.options?.disabled &&
+            styles["input-disabled"] + " " + styles["field-disabled"]
+          }`}
+          type={inputType}
+          readOnly={props.options?.disabled}
+          aria-label={props.field.name[VALUE_KEY]}
+          {...props.form.register(
+            props.field.fieldId,
+            getRegisterOptions(
+              props.field,
+              props.form.getValues(FORM_STATES.FORM_TYPE)
+            )
+          )}
+        />
+      )}
     </FormInputContainer>
   );
 }

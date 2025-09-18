@@ -25,7 +25,7 @@ interface TableRibbonProps {
   selectedDate: DateRange;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
-  setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
+  setSelectedDate: React.Dispatch<React.SetStateAction<DateRange | Date>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
 }
@@ -132,6 +132,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               selectedDate={props.selectedDate}
               setSelectedDate={props.setSelectedDate}
               disabled={getDisabledDates(props.lifecycleStage)}
+              isDateRange={true}
             />
           )}
         </div>
