@@ -94,8 +94,9 @@ export default function FormDateTimePicker(
         >
           <DateRangeInput
             selectedDate={selectedDate as Date}
-            placement="bottom-start"
+            placement="bottom"
             isDateRange={false}
+            disableMobileView={true}
             setSelectedDate={(date) => {
               const UTCDate = getUTCDate(date as Date);
               props.form.setValue(props.field.fieldId, UTCDate);

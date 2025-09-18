@@ -57,11 +57,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
 
   const screenType: ScreenType = useScreenType();
   const [selectedDate, setSelectedDate] = useState<DateRange | Date>(
-    props.selectedDate
-      ? props.isDateRange
-        ? getInitialDate()
-        : props.selectedDate
-      : currentDate
+    props.selectedDate ?? (props.isDateRange ? getInitialDate() : currentDate)
   );
 
   const handleDateSelect = (date: DateRange | Date) => {
@@ -154,7 +150,7 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               style={{
                 ...transition.styles,
               }}
-              className="z-10 bg-muted p-5 sm:p-2 md:ml-4 lg:ml-12 rounded-lg shadow-lg mt-2  border border-border"
+              className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
             >
               {props.isDateRange ? (
                 <DayPicker

@@ -54,7 +54,7 @@ export default function RegistryTableComponent(
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [selectedDate, setSelectedDate] = useState<DateRange>(
+  const [selectedDate, setSelectedDate] = useState<DateRange | Date>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
 
@@ -137,8 +137,12 @@ export default function RegistryTableComponent(
             makeInternalRegistryAPIwithParams(
               props.lifecycleStage == "scheduled" ? "scheduled" : "closed",
               props.entityType,
-              getUTCDate(selectedDate.from).getTime().toString(),
-              getUTCDate(selectedDate.to).getTime().toString()
+              getUTCDate((selectedDate as DateRange).from)
+                .getTime()
+                .toString(),
+              getUTCDate((selectedDate as DateRange).to)
+                .getTime()
+                .toString()
             ),
             {
               cache: "no-store",
@@ -197,7 +201,7 @@ export default function RegistryTableComponent(
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
-          selectedDate={selectedDate}
+          selectedDate={selectedDate as DateRange}
           setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
