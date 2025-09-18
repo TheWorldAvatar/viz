@@ -41,7 +41,7 @@ export default function MultivalueSelector(
 
   const defaultOptions: SelectOption[] = (props.toggleAll ? [selectAllOption, ...props.options] : props.options);
   const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.toggleAll ? defaultOptions.filter(
-        (option) => option.value != "id" && option.value != "select-all"
+        (option) => option.value != "id" && option.value != "event_id"  && option.value != "select-all"
       ) : []);
 
   useEffect(() => {
