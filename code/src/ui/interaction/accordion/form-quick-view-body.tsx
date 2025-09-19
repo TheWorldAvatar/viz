@@ -50,15 +50,12 @@ export default function FormQuickViewBody(
       id={`accordion-content-${props.id}`}
       role="region"
       aria-labelledby={`accordion-button-${props.id}`}
-      className={`transition-all duration-300 ease-in-out overflow-hidden`}
+      className={`transition-all duration-300 ease-in-out overflow-hidden bg-muted rounded-lg inset-shadow-sm`}
       style={{
         maxHeight: `${contentHeight}px`,
       }}
     >
-      <div
-        ref={contentRef}
-        className="p-2 pt-0 border-t border-border overflow-hidden"
-      >
+      <div ref={contentRef} className="py-2 px-4  overflow-hidden">
         <FormQuickViewFields
           nestedLevel={0}
           quickViewGroups={props.quickViewGroups}
