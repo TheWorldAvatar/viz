@@ -35,7 +35,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const [contentWidthClass, setContentWidthClass] =
-    useState<string>("w-[84vw]");
+    useState<string>("w-[80vw]");
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -75,7 +75,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
         <HeaderBar pages={props.pages} settings={props.settings} />
 
-        <main className="flex h-[92dvh] w-full ">
+        <main className="flex h-[92dvh] w-full">
           {!pathname.endsWith("map") && (
             <NavMenu
               setContentWidthClass={setContentWidthClass}
