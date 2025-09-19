@@ -3,20 +3,20 @@
 import React, { useRef, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
+import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
+import { useRouter } from "next/navigation";
+import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import DateInput from "ui/interaction/input/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
-import DateRangeInput from "ui/interaction/input/date-range";
-import { DateRange } from "react-day-picker";
 import { getInitialDate, getUTCDate } from "utils/client-utils";
-import { useRouter } from "next/navigation";
-import { Icon } from "@mui/material";
 
 interface FileModalProps {
   url: string;
@@ -39,7 +39,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<DateRange | Date>(
+  const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDate()
   );
   const router = useRouter();
@@ -48,10 +48,10 @@ export default function FileModal(props: Readonly<FileModalProps>) {
     if (props.type === "date") {
       const searchParams: URLSearchParams = new URLSearchParams({
         start: Math.floor(
-          getUTCDate((selectedDate as DateRange).from).getTime() / 1000
+          getUTCDate(selectedDate.from).getTime() / 1000
         ).toString(),
         end: Math.floor(
-          getUTCDate((selectedDate as DateRange).to).getTime() / 1000
+          getUTCDate(selectedDate.to).getTime() / 1000
         ).toString(),
       });
       try {
@@ -144,9 +144,9 @@ export default function FileModal(props: Readonly<FileModalProps>) {
           <div className="space-y-4">
             {props.type === "date" && (
               <div className="relative">
-                <DateRangeInput
+                <DateInput
                   selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
+                  setSelectedDateRange={setSelectedDate}
                   placement="bottom"
                   disableMobileView={true}
                 />

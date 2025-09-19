@@ -54,7 +54,7 @@ export default function RegistryTableComponent(
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [selectedDate, setSelectedDate] = useState<DateRange | Date>(
+  const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
 
