@@ -5,10 +5,11 @@ import {
   Placement,
   useTransitionStyles,
 } from "@floating-ui/react";
+import { Icon } from "@mui/material";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
 import { useScreenType } from "hooks/useScreenType";
-import { useCallback, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import {
   DateBefore,
   DateRange,
@@ -19,12 +20,12 @@ import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
 import { ScreenType } from "types/settings";
 import Button from "ui/interaction/button";
-import { getInitialDate } from "utils/client-utils";
-import { Icon } from "@mui/material";
+import { getNormalizedDate } from "utils/client-utils";
 
-interface DateRangeInputProps {
-  selectedDate?: DateRange;
-  setSelectedDate?: React.Dispatch<React.SetStateAction<DateRange>>;
+interface DateInputProps {
+  selectedDate: Date | DateRange;
+  setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
+  setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
   disabled?: DateBefore;
   disableMobileView?: boolean;
@@ -32,17 +33,31 @@ interface DateRangeInputProps {
 
 /** A component to display a date range input
  *
- * @param {DateRange} selectedDate An optional controlled selected date range.
- * @param setSelectedDate An optional controlled dispatch method to update selected date range.
+ * @param {Date | DateRange} selectedDate A controlled selected date range.
+ * @param setSelectedDate An optional controlled dispatch method to update selected date.
+ * @param setSelectedDateRange An optional controlled dispatch method to update selected date range.
  * @param {Placement} placement Optional placement position for the calendar view.
  * @param {DateBefore} disabled Optional dates to be disabled.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
  */
-export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
+export default function DateInput(props: Readonly<DateInputProps>) {
   const id: string = useId();
   const dict: Dictionary = useDictionary();
-
+  const screenType: ScreenType = useScreenType();
+  const isDateType: boolean = props.selectedDate instanceof Date;
   const defaultDayPickerClassNames = getDefaultClassNames();
+
+  const extractDateDisplay = (targetDate: Date | DateRange) => {
+    if (isDateType) {
+      return getNormalizedDate(targetDate as Date);
+    }
+    const targetDateRange: DateRange = targetDate as DateRange;
+    const fromDate: string = targetDateRange?.from?.toLocaleDateString();
+    const toDate: string = targetDateRange?.to?.toLocaleDateString();
+    return `${fromDate}${fromDate != toDate
+      ? " - " + toDate : ""}`;
+  };
+  const [displayedDateValues, setDisplayedDateValues] = useState<string>(extractDateDisplay(props.selectedDate));
 
   const popover = usePopover(props.placement);
   const transition = useTransitionStyles(popover.context, {
@@ -53,30 +68,20 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
     },
   });
 
-  const screenType: ScreenType = useScreenType();
-  const [selectedDate, setSelectedDate] = useState<DateRange>(
-    props.selectedDate ?? getInitialDate()
-  );
+  const handleDateSelect = (date: DateRange | Date) => {
+    if (isDateType) {
+      props.setSelectedDate(date as Date);
+    } else {
+      props.setSelectedDateRange({
+        from: (date as DateRange)?.from ?? undefined,
+        to: (date as DateRange)?.to ?? undefined,
+      });
+    }
+  };
 
-  const handleDateSelect = useCallback(
-    (range: DateRange | undefined) => {
-      const dateRange: DateRange = {
-        from: range?.from ?? undefined,
-        to: range?.to ?? undefined,
-      };
-      setSelectedDate(dateRange);
-      if (props.setSelectedDate) {
-        props.setSelectedDate(dateRange);
-      }
-    },
-    [setSelectedDate, props.setSelectedDate]
-  );
-
-  const displayedDateRange = `${selectedDate.from.toLocaleDateString()}${
-    selectedDate.from != selectedDate.to
-      ? " - " + selectedDate.to.toLocaleDateString()
-      : ""
-  }`;
+  useEffect(() => {
+    setDisplayedDateValues(extractDateDisplay(props.selectedDate));
+  }, [props.selectedDate]);
 
   return (
     <div
@@ -95,20 +100,28 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
         />
       )}
       {(props.disableMobileView || screenType != "mobile") && (
-        <div className="flex items-center">
-          <div className="relative">
+        <div className="flex items-center w-full">
+          <div className="relative w-full">
+            <Icon
+              fontSize={isDateType ? "small" : "medium"}
+              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${isDateType
+                ? "text-foreground"
+                : "text-blue-600 dark:text-blue-400"
+                }  pointer-events-none`}
+            >
+              calendar_month
+            </Icon>
             <input
               id={id}
               type="button"
-              value={displayedDateRange}
+              value={displayedDateValues}
               readOnly
-              className={`h-10 ${selectedDate?.to ? "w-62 pl-10 pr-4" : "w-24 "
+              className={isDateType
+                ? "h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left"
+                : `h-10  ${(props.selectedDate as DateRange)?.to ? "w-62 pr-10 pl-4" : "w-24 "
                 }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
               {...popover.getReferenceProps()}
             />
-            <Icon className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400  pointer-events-none">
-              calendar_month
-            </Icon>
           </div>
         </div>
       )}
@@ -127,12 +140,12 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
               style={{
                 ...transition.styles,
               }}
-              className="z-10 bg-muted p-5 sm:p-2 md:ml-4 lg:ml-12 rounded-lg shadow-lg mt-2  border border-border"
+              className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
             >
-              <DayPicker
+              {!isDateType && <DayPicker
                 locale={dict.lang === "de" ? de : enGB}
                 mode="range"
-                selected={selectedDate}
+                selected={props.selectedDate as DateRange}
                 onSelect={handleDateSelect}
                 disabled={props.disabled}
                 classNames={{
@@ -145,9 +158,23 @@ export default function DateRangeInput(props: Readonly<DateRangeInputProps>) {
                   range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
                   range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
                 }}
-                footer={displayedDateRange}
                 required={true}
-              />
+              />}
+              {isDateType && <DayPicker
+                locale={dict.lang === "de" ? de : enGB}
+                mode="single"
+                selected={props.selectedDate as Date}
+                onSelect={handleDateSelect}
+                disabled={props.disabled}
+                classNames={{
+                  today: `text-yellow-500`,
+                  selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                  root: `${defaultDayPickerClassNames.root}  p-4`,
+                  chevron: ` fill-foreground`,
+                  footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
+                }}
+                required={true}
+              />}
             </div>
           </div>
         </FloatingPortal>

@@ -15,7 +15,7 @@ import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
-import DateRangeInput from "ui/interaction/input/date-range";
+import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 
@@ -128,9 +128,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
-            <DateRangeInput
+            <DateInput
               selectedDate={props.selectedDate}
-              setSelectedDate={props.setSelectedDate}
+              setSelectedDateRange={props.setSelectedDate}
               disabled={getDisabledDates(props.lifecycleStage)}
             />
           )}
