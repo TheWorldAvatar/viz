@@ -48,7 +48,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   }, [props.fieldConfigs]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col ">
       <div className="flex flex-col justify-start items-start gap-4 my-4">
         <div className="flex flex-row items-center justify-start gap-2">
           {!props.options?.disabled &&
@@ -97,7 +97,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         </div>
       </div>
 
-      <div className="bg-background flex flex-col w-full p-4 rounded-lg border-1 border-border">
+      <div className="bg-background flex flex-col w-full p-2 rounded-lg">
         {fields.length == 0 && <p>{dict.message.arrayInstruction}</p>}
         {fields.length > 0 &&
           props.fieldConfigs.map((config, index) => {

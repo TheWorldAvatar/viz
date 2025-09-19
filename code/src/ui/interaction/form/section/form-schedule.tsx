@@ -65,8 +65,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     props.form.getValues(FORM_STATES.RECURRENCE) > 0
       ? regularService
       : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-        ? alternateService
-        : singleService
+      ? alternateService
+      : singleService
   );
 
   useEffect(() => {
@@ -99,8 +99,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           recurrence == 0
             ? singleService
             : recurrence == -1
-              ? alternateService
-              : regularService
+            ? alternateService
+            : regularService
         );
 
         defaultTimeSlotStart = getDefaultVal(
@@ -153,14 +153,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       }
 
       props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
-      props.form.setValue(
-        FORM_STATES.TIME_SLOT_START,
-        defaultTimeSlotStart
-      );
-      props.form.setValue(
-        FORM_STATES.TIME_SLOT_END,
-        defaultTimeSlotEnd
-      );
+      props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
+      props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
 
       setIsLoading(false);
     };
@@ -192,7 +186,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <div className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 mx-auto space-y-4">
+    <div className="p-3 md:p-8 bg-background border-1 border-border rounded-lg my-4 mx-auto space-y-4">
       <h2 className="text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
