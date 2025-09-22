@@ -109,8 +109,9 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [navMenuWidthClass, setNavMenuWidthClass] =
-    useState<string>("w-[20vw]");
+  const [navMenuWidthClass, setNavMenuWidthClass] = useState<string>(
+    "w-[16vw] xl:w-[18vw] 2xl:w-[16vw]"
+  );
   const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
@@ -143,10 +144,12 @@ function NavMenuContents(
   const handleMenuToggle = () => {
     if (isMenuExpanded) {
       setNavMenuWidthClass("w-[6vw]");
-      props.setContentWidthClass("w-[94vw]");
+      props.setContentWidthClass("w-[calc(100vw-6vw)]");
     } else {
-      setNavMenuWidthClass("w-[20vw]");
-      props.setContentWidthClass("w-[80vw]");
+      setNavMenuWidthClass("w-[16vw] xl:w-[18vw] 2xl:w-[16vw]");
+      props.setContentWidthClass(
+        "w-[calc(100vw-16vw)] xl:w-[calc(100vw-18vw)] 2xl:w-[calc(100vw-16vw)]"
+      );
     }
 
     setIsMenuExpanded(!isMenuExpanded);
@@ -158,10 +161,12 @@ function NavMenuContents(
       className={`${
         props.isMobile
           ? "flex gap-4 p-2 w-full"
-          : "bg-muted border-r-border hidden  items-center gap-6 overflow-x-scroll overflow-y-auto border-r pb-20"
+          : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20"
       }
       ${navMenuWidthClass}
-      xl:flex flex-col justify-start transition-all duration-200 ease-in-out `}
+      xl:flex flex-col ${
+        isMenuExpanded ? "items-start" : "items-center"
+      }  transition-all duration-200 ease-in-out`}
     >
       {!props.isMobile && (
         <button
