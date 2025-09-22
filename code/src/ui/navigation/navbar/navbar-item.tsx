@@ -62,7 +62,7 @@ export function NavBarItem(
             ? "gap-4"
             : props.isMenuExpanded
             ? "mt-4 w-full max-w-full gap-2"
-            : "mt-4 w-16 "
+            : "mt-4 w-16 rounded-md"
         } flex h-fit cursor-pointer items-center  p-1.5  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
         onClick={props.handleClick ?? handleClick}
       >

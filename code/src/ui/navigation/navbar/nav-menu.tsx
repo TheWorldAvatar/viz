@@ -165,8 +165,8 @@ function NavMenuContents(
       }
       ${navMenuWidthClass}
       xl:flex flex-col ${
-        isMenuExpanded ? "items-start" : "items-center"
-      }  transition-all duration-200 ease-in-out items-stretch`}
+        isMenuExpanded ? "items-stretch" : "items-center"
+      }  transition-all duration-200 ease-in-out `}
     >
       {!props.isMobile && (
         <button
