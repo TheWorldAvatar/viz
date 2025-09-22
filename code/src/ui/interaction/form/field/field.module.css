@@ -46,6 +46,7 @@
 .input-disabled {
   border: 1px solid var(--border);
   background-color: var(--muted);
+  cursor: not-allowed !important;
   opacity: 0.75;
 }
 

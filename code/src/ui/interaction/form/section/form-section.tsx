@@ -21,7 +21,7 @@ interface FormSectionProps {
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
-    <div className="p-2 md:p-6 flex flex-col justify-center mx-auto border-1 border-border bg-background rounded-lg m-4  ">
+    <div className="p-2 md:p-6 flex flex-col justify-center mx-auto border-1 border-border bg-background rounded-lg my-8">
       <h2 className=" text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
       </h2>
