@@ -27,7 +27,7 @@ interface DateInputProps {
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
-  disabled?: DateBefore;
+  disabled?: DateBefore | boolean;
   disableMobileView?: boolean;
 }
 
@@ -120,12 +120,14 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               readOnly
               className={
                 isDateType
-                  ? "h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left"
+                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${
+                      props.disabled ? "cursor-not-allowed opacity-75" : ""
+                    }`
                   : `h-10  ${
                       (props.selectedDate as DateRange)?.to
                         ? "w-62 pr-10 pl-4"
-                        : "w-24 "
-                    }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
+                        : "w-24"
+                    }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs`
               }
               {...popover.getReferenceProps()}
             />
@@ -133,7 +135,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
         </div>
       )}
 
-      {popover.isOpen && (
+      {popover.isOpen && !props.disabled && (
         <FloatingPortal>
           <div
             ref={popover.refs.setFloating}
