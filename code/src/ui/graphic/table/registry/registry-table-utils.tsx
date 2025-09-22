@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues
@@ -108,10 +109,13 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
  *
  * @param {Row<FieldValues>[]} instances Raw instances queried from knowledge graph.
  * @param {string} header Column header of interest.
- * @param {string} translatedBlankText The translated blank text.
+ * @param {Dictionary} dict Dictionary translations.
  */
-export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, translatedBlankText: string): string[] {
-  return rows.flatMap((row) => row.getValue(header) ?? translatedBlankText);
+export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
+  // Return translated status label if header is status. 
+  return rows.flatMap((row) => header == "status" ? dict.title[row.getValue(header) as string]
+    // Else return the value or default to blank value
+    : row.getValue(header) ?? dict.title.blank);
 }
 
 /**
