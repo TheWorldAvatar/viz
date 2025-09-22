@@ -100,7 +100,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
           backgroundColor: statusBackgroundColor,
         }}
       >
-        {parseWordsForLabels(dict.title[props.status.toLowerCase()] ?? props.status)}
+        {parseWordsForLabels(dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status)}
       </p>
     </span>
   );
