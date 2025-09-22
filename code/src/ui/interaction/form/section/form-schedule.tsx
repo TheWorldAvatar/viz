@@ -56,17 +56,20 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const singleService: string = dict.form.singleService;
   const regularService: string = dict.form.regularService;
   const alternateService: string = dict.form.alternateService;
+  const perpetualService: string = dict.form.perpetualService;
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == "view" || formType == "delete",
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
-    props.form.getValues(FORM_STATES.RECURRENCE) > 0
-      ? regularService
-      : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-        ? alternateService
-        : singleService
+    props.form.getValues(FORM_STATES.RECURRENCE) == null
+      ? perpetualService :
+      props.form.getValues(FORM_STATES.RECURRENCE) > 0
+        ? regularService
+        : props.form.getValues(FORM_STATES.RECURRENCE) == -1
+          ? alternateService
+          : singleService
   );
 
   useEffect(() => {
@@ -96,11 +99,13 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           formType
         ) as number;
         setSelectedServiceOption(
-          recurrence == 0
-            ? singleService
-            : recurrence == -1
-              ? alternateService
-              : regularService
+          recurrence == null
+            ? perpetualService :
+            recurrence == 0
+              ? singleService
+              : recurrence == -1
+                ? alternateService
+                : regularService
         );
 
         defaultTimeSlotStart = getDefaultVal(
@@ -135,7 +140,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               fields,
               parseStringsForUrls(FORM_STATES.END_DATE),
               true
-            ).value,
+            )?.value,
             formType
           )
         );
@@ -170,7 +175,9 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   // Updates the service description whenever the service option changes
   const serviceDescription = useMemo((): string => {
-    if (selectedServiceOption === singleService) {
+    if (selectedServiceOption === perpetualService) {
+      return dict.form.perpetualServiceDesc;
+    } else if (selectedServiceOption === singleService) {
       return dict.form.singleServiceDesc;
     } else if (selectedServiceOption === alternateService) {
       return dict.form.alternateServiceDesc;
@@ -181,7 +188,9 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
-    if (value === singleService) {
+    if (value === perpetualService) {
+      props.form.setValue(FORM_STATES.RECURRENCE, null);
+    } else if (value === singleService) {
       props.form.setValue(FORM_STATES.RECURRENCE, 0);
     } else if (value === alternateService) {
       props.form.setValue(FORM_STATES.RECURRENCE, -1);
@@ -214,6 +223,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 { label: singleService, value: singleService },
                 { label: regularService, value: regularService },
                 { label: alternateService, value: alternateService },
+                { label: perpetualService, value: perpetualService },
               ]}
               defaultVal={selectedServiceOption}
               onChange={(selectedOption) => {
@@ -237,7 +247,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             form={props.form}
             options={isDisabledOption}
           />
-          {selectedServiceOption != singleService && (
+          {selectedServiceOption != singleService || selectedServiceOption != perpetualService && (
             <FormFieldComponent
               field={{
                 "@id": "string",
@@ -260,9 +270,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
-                    props.options?.disabled && "cursor-not-allowed"
-                  }`}
+                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
+                    }`}
                   step={"1"}
                   readOnly={formType == "view" || formType == "delete"}
                   aria-label={FORM_STATES.RECURRENCE}
