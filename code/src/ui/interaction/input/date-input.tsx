@@ -54,10 +54,11 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     const targetDateRange: DateRange = targetDate as DateRange;
     const fromDate: string = targetDateRange?.from?.toLocaleDateString();
     const toDate: string = targetDateRange?.to?.toLocaleDateString();
-    return `${fromDate}${fromDate != toDate
-      ? " - " + toDate : ""}`;
+    return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
   };
-  const [displayedDateValues, setDisplayedDateValues] = useState<string>(extractDateDisplay(props.selectedDate));
+  const [displayedDateValues, setDisplayedDateValues] = useState<string>(
+    extractDateDisplay(props.selectedDate)
+  );
 
   const popover = usePopover(props.placement);
   const transition = useTransitionStyles(popover.context, {
@@ -104,10 +105,11 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           <div className="relative w-full">
             <Icon
               fontSize={isDateType ? "small" : "medium"}
-              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${isDateType
-                ? "text-foreground"
-                : "text-blue-600 dark:text-blue-400"
-                }  pointer-events-none`}
+              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${
+                isDateType
+                  ? "text-foreground"
+                  : "text-blue-600 dark:text-blue-400"
+              }  pointer-events-none`}
             >
               calendar_month
             </Icon>
@@ -116,10 +118,15 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               type="button"
               value={displayedDateValues}
               readOnly
-              className={isDateType
-                ? "h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left"
-                : `h-10  ${(props.selectedDate as DateRange)?.to ? "w-62 pr-10 pl-4" : "w-24 "
-                }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`}
+              className={
+                isDateType
+                  ? "h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left"
+                  : `h-10  ${
+                      (props.selectedDate as DateRange)?.to
+                        ? "w-62 pr-10 pl-4"
+                        : "w-24 "
+                    }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
+              }
               {...popover.getReferenceProps()}
             />
           </div>
@@ -142,39 +149,42 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               }}
               className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
             >
-              {!isDateType && <DayPicker
-                locale={dict.lang === "de" ? de : enGB}
-                mode="range"
-                selected={props.selectedDate as DateRange}
-                onSelect={handleDateSelect}
-                disabled={props.disabled}
-                classNames={{
-                  today: `text-yellow-500`,
-                  selected: `bg-gray-200 dark:bg-zinc-800`,
-                  root: `${defaultDayPickerClassNames.root}  p-4`,
-                  chevron: ` fill-foreground`,
-                  footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
-                  range_middle: ` `,
-                  range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                  range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                }}
-                required={true}
-              />}
-              {isDateType && <DayPicker
-                locale={dict.lang === "de" ? de : enGB}
-                mode="single"
-                selected={props.selectedDate as Date}
-                onSelect={handleDateSelect}
-                disabled={props.disabled}
-                classNames={{
-                  today: `text-yellow-500`,
-                  selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                  root: `${defaultDayPickerClassNames.root}  p-4`,
-                  chevron: ` fill-foreground`,
-                  footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
-                }}
-                required={true}
-              />}
+              {!isDateType && (
+                <DayPicker
+                  locale={dict.lang === "de" ? de : enGB}
+                  mode="range"
+                  selected={props.selectedDate as DateRange}
+                  onSelect={handleDateSelect}
+                  disabled={props.disabled}
+                  classNames={{
+                    today: `text-yellow-500`,
+                    selected: `bg-gray-200 dark:bg-zinc-800`,
+                    root: `${defaultDayPickerClassNames.root}  p-4`,
+                    chevron: ` fill-foreground`,
+                    footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
+                    range_middle: ` `,
+                    range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                    range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                  }}
+                  required={true}
+                />
+              )}
+              {isDateType && (
+                <DayPicker
+                  locale={dict.lang === "de" ? de : enGB}
+                  mode="single"
+                  selected={props.selectedDate as Date}
+                  onSelect={handleDateSelect}
+                  disabled={props.disabled}
+                  classNames={{
+                    today: `text-yellow-500`,
+                    selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                    root: `${defaultDayPickerClassNames.root}  p-4`,
+                    chevron: ` fill-foreground`,
+                  }}
+                  required={true}
+                />
+              )}
             </div>
           </div>
         </FloatingPortal>
