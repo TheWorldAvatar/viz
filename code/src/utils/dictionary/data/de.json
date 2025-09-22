@@ -196,6 +196,7 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "quickView": "Schnellansicht",
+    "scheduleType": "Art des Zeitplans",
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",

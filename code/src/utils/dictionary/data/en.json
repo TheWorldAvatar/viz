@@ -196,6 +196,7 @@
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "quickView": "Quick view",
+    "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
     "success": "Success",
