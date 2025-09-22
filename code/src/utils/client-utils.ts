@@ -245,3 +245,12 @@ export function getUTCDate(date: Date): Date {
     )
   );
 }
+
+/**
+  * Get the normalized date format in yyyy-mm-dd from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
+export function getNormalizedDate(date: Date): string {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+}
