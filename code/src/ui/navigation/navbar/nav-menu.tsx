@@ -166,7 +166,7 @@ function NavMenuContents(
       ${navMenuWidthClass}
       xl:flex flex-col ${
         isMenuExpanded ? "items-start" : "items-center"
-      }  transition-all duration-200 ease-in-out`}
+      }  transition-all duration-200 ease-in-out items-stretch`}
     >
       {!props.isMobile && (
         <button
