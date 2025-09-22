@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.40.2
+
+### Changes
+
+- Redone the date range component to accept single date selection as well as range selection
+- Added a utility function to get the normalized date format in yyyy-mm-dd from a Date object
+
 ## 5.40.1
 
 ### Changes
