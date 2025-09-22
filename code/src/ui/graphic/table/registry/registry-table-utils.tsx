@@ -113,7 +113,7 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
  */
 export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
   // Return translated status label if header is status. 
-  return rows.flatMap((row) => header == "status" ? dict.title[row.getValue(header) as string]
+  return rows.flatMap((row) => header == "status" ? dict.title[(row.getValue(header) as string).toLowerCase()]
     // Else return the value or default to blank value
     : row.getValue(header) ?? dict.title.blank);
 }
