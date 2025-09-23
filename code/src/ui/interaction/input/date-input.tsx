@@ -27,7 +27,8 @@ interface DateInputProps {
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
-  disabled?: DateBefore;
+  disabledDates?: DateBefore;
+  disabled?: boolean;
   disableMobileView?: boolean;
 }
 
@@ -37,7 +38,8 @@ interface DateInputProps {
  * @param setSelectedDate An optional controlled dispatch method to update selected date.
  * @param setSelectedDateRange An optional controlled dispatch method to update selected date range.
  * @param {Placement} placement Optional placement position for the calendar view.
- * @param {DateBefore} disabled Optional dates to be disabled.
+ * @param {DateBefore} disabledDates Optional dates to be disabled.
+ * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
@@ -120,11 +122,13 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               readOnly
               className={
                 isDateType
-                  ? "h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left"
+                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${
+                      props.disabled ? "cursor-not-allowed opacity-75" : ""
+                    }`
                   : `h-10  ${
                       (props.selectedDate as DateRange)?.to
                         ? "w-62 pr-10 pl-4"
-                        : "w-24 "
+                        : "w-24"
                     }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
               }
               {...popover.getReferenceProps()}
@@ -155,7 +159,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   mode="range"
                   selected={props.selectedDate as DateRange}
                   onSelect={handleDateSelect}
-                  disabled={props.disabled}
+                  disabled={props.disabledDates}
                   classNames={{
                     today: `text-yellow-500`,
                     selected: `bg-gray-200 dark:bg-zinc-800`,
@@ -169,13 +173,13 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   required={true}
                 />
               )}
-              {isDateType && (
+              {isDateType && !props.disabled && (
                 <DayPicker
                   locale={dict.lang === "de" ? de : enGB}
                   mode="single"
                   selected={props.selectedDate as Date}
                   onSelect={handleDateSelect}
-                  disabled={props.disabled}
+                  disabled={props.disabledDates}
                   classNames={{
                     today: `text-yellow-500`,
                     selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
