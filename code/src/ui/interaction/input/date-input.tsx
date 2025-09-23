@@ -27,7 +27,7 @@ interface DateInputProps {
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
-  disabled?: DateBefore;
+  disabled?: DateBefore | boolean;
   disableMobileView?: boolean;
 }
 
