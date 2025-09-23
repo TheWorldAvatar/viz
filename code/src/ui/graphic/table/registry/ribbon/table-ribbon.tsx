@@ -131,7 +131,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <DateInput
               selectedDate={props.selectedDate}
               setSelectedDateRange={props.setSelectedDate}
-              disabled={getDisabledDates(props.lifecycleStage)}
+              disabledDates={getDisabledDates(props.lifecycleStage)}
             />
           )}
         </div>

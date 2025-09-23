@@ -27,7 +27,8 @@ interface DateInputProps {
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
-  disabled?: DateBefore | boolean;
+  disabledDates?: DateBefore;
+  disabled?: boolean;
   disableMobileView?: boolean;
 }
 
@@ -37,7 +38,8 @@ interface DateInputProps {
  * @param setSelectedDate An optional controlled dispatch method to update selected date.
  * @param setSelectedDateRange An optional controlled dispatch method to update selected date range.
  * @param {Placement} placement Optional placement position for the calendar view.
- * @param {DateBefore} disabled Optional dates to be disabled.
+ * @param {DateBefore} disabledDates Optional dates to be disabled.
+ * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
@@ -157,7 +159,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   mode="range"
                   selected={props.selectedDate as DateRange}
                   onSelect={handleDateSelect}
-                  disabled={props.disabled}
+                  disabled={props.disabledDates}
                   classNames={{
                     today: `text-yellow-500`,
                     selected: `bg-gray-200 dark:bg-zinc-800`,
@@ -177,7 +179,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   mode="single"
                   selected={props.selectedDate as Date}
                   onSelect={handleDateSelect}
-                  disabled={props.disabled}
+                  disabled={props.disabledDates}
                   classNames={{
                     today: `text-yellow-500`,
                     selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
