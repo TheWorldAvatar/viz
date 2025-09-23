@@ -27,7 +27,7 @@ interface DateInputProps {
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   placement?: Placement;
-  disabled?: DateBefore | boolean;
+  disabled?: DateBefore;
   disableMobileView?: boolean;
 }
 
@@ -127,7 +127,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                       (props.selectedDate as DateRange)?.to
                         ? "w-62 pr-10 pl-4"
                         : "w-24"
-                    }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs`
+                    }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
               }
               {...popover.getReferenceProps()}
             />
@@ -135,7 +135,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
         </div>
       )}
 
-      {popover.isOpen && !props.disabled && (
+      {popover.isOpen && (
         <FloatingPortal>
           <div
             ref={popover.refs.setFloating}
@@ -171,7 +171,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   required={true}
                 />
               )}
-              {isDateType && (
+              {isDateType && !props.disabled && (
                 <DayPicker
                   locale={dict.lang === "de" ? de : enGB}
                   mode="single"
