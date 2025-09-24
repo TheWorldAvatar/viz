@@ -12,6 +12,7 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector, {
   SelectOption,
 } from "ui/interaction/dropdown/simple-selector";
@@ -79,16 +80,13 @@ export default function BranchFormSection(
   }, []);
 
   const dict: Dictionary = useDictionary();
-  // Extract the initial node shape
-  const initialNodeShape: NodeShape = useMemo(() => {
-    return getBranchNode(props.node);
-  }, []);
 
+  const [isSwitching, setIsSwitching] = useState<boolean>(false);
   // Define the state to store the selected value
   const [selectedModel, setSelectedModel] =
-    useState<NodeShape>(initialNodeShape);
+    useState<NodeShape>(getBranchNode(props.node));
   const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(
-    parsePropertyShapeOrGroupList({}, initialNodeShape.property)
+    parsePropertyShapeOrGroupList({}, selectedModel.property)
   );
 
   // Declare a function to transform node shape to a form option
@@ -110,7 +108,8 @@ export default function BranchFormSection(
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOption) => {
-    const matchingNode: NodeShape = props.node.find(
+    setIsSwitching(true);
+    let matchingNode: NodeShape = props.node.find(
       (nodeShape) => nodeShape.label[VALUE_KEY] === formOption.value
     );
     // Before updating the current form branch, unregister all current fields
@@ -129,10 +128,11 @@ export default function BranchFormSection(
       }
     });
     // update branch node fields with existing values if present
-    getBranchNode([matchingNode]);
+    matchingNode = getBranchNode([matchingNode]);
     // Update form branch
-    setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
     setSelectedModel(matchingNode);
+    setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
+    setTimeout(() => setIsSwitching(false), 150);
   };
 
   return (
@@ -159,9 +159,10 @@ export default function BranchFormSection(
           {selectedModel?.comment[VALUE_KEY]}
         </p>
       </div>
-      {selectedFields.map((field, index) => {
-        return renderFormField(props.entityType, field, props.form, index);
-      })}
+      {isSwitching ? <LoadingSpinner isSmall={true} />
+        : selectedFields.map((field, index) => {
+          return renderFormField(props.entityType, field, props.form, index);
+        })}
     </>
   );
 }
