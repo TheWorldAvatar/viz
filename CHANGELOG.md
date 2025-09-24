@@ -2,6 +2,18 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.40.4
+
+### Bug Fixes
+
+- Fixed the wrong filter option display for the status column in the registry
+
+## 5.40.3
+
+### Bug Fixes
+
+- Fixed the issue with the disabled states of the single date input
+
 ## 5.40.2
 
 ### Changes

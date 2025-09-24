@@ -148,7 +148,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       props.tableDescriptor.table.getCoreRowModel().flatRows :
                                       props.tableDescriptor.table.getFilteredRowModel().flatRows,
                                     header.id,
-                                    dict.title.blank
+                                    dict
                                   )
                                   )
                                 )}

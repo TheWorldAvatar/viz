@@ -97,14 +97,16 @@ export default function FormDateTimePicker(
             setSelectedDate={setSelectedDate}
             placement="bottom"
             disableMobileView={true}
+            disabled={props.options.disabled}
           />
         </div>
       ) : (
         <input
           id={props.field.fieldId}
-          className={`${styles["dtpicker"]} ${props.options?.disabled &&
+          className={`${styles["dtpicker"]} ${
+            props.options?.disabled &&
             styles["input-disabled"] + " " + styles["field-disabled"]
-            }`}
+          }`}
           type={inputType}
           readOnly={props.options?.disabled}
           aria-label={props.field.name[VALUE_KEY]}
