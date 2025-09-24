@@ -135,7 +135,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let pendingResponse: AgentResponseBody;
     // For perpetual service
-    if (!formData[FORM_STATES.RECURRENCE]) {
+    if (formData[FORM_STATES.RECURRENCE] == null) {
       formData = {
         ...formData,
         recurrence: "",
