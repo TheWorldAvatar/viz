@@ -2,6 +2,8 @@ import { FieldValues, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
 import { Dictionary } from "types/dictionary";
+import { useDictionary } from "hooks/useDictionary";
+
 import {
   FormTemplateType,
   FormType,
@@ -333,6 +335,7 @@ export function getRegisterOptions(
   formType: string
 ): RegisterOptions {
   const options: RegisterOptions = {};
+  const dict: Dictionary = useDictionary();
 
   // The field is required if this is currently not the search form and SHACL defines them as optional
   // Also required for start and end search period
@@ -343,19 +346,25 @@ export function getRegisterOptions(
     field.fieldId == FORM_STATES.START_TIME_PERIOD ||
     field.fieldId == FORM_STATES.END_TIME_PERIOD
   ) {
-    options.required = "Required";
+    options.required = dict.message.required;
   }
 
   // For numerical values which must have least meet the min inclusive target
   if (field.minInclusive) {
     options.min = {
       value: Number(field.minInclusive[VALUE_KEY]),
-      message: `Please enter a number that is ${field.minInclusive[VALUE_KEY]} or greater!`,
+      message: dict.message.minInclusive.replace(
+        "{replace}",
+        field.minInclusive[VALUE_KEY]
+      ),
     };
   } else if (field.minExclusive) {
     options.min = {
       value: Number(field.minExclusive[VALUE_KEY]) + 0.1,
-      message: `Please enter a number greater than ${field.minExclusive[VALUE_KEY]}!`,
+      message: dict.message.minExclusive.replace(
+        "{replace}",
+        field.minExclusive[VALUE_KEY]
+      ),
     };
   }
 
@@ -363,25 +372,37 @@ export function getRegisterOptions(
   if (field.maxInclusive) {
     options.max = {
       value: Number(field.maxInclusive[VALUE_KEY]),
-      message: `Please enter a number that is ${field.maxInclusive[VALUE_KEY]} or smaller!`,
+      message: dict.message.maxInclusive.replace(
+        "{replace}",
+        field.maxInclusive[VALUE_KEY]
+      ),
     };
   } else if (field.maxExclusive) {
     options.max = {
       value: Number(field.maxExclusive[VALUE_KEY]) + 0.1,
-      message: `Please enter a number less than  ${field.maxExclusive[VALUE_KEY]}!`,
+      message: dict.message.maxExclusive.replace(
+        "{replace}",
+        field.maxExclusive[VALUE_KEY]
+      ),
     };
   }
 
   if (field.minLength) {
     options.minLength = {
       value: Number(field.minLength[VALUE_KEY]),
-      message: `Input requires at least ${field.minLength[VALUE_KEY]} letters!`,
+      message: dict.message.minLength.replace(
+        "{replace}",
+        field.minLength[VALUE_KEY]
+      ),
     };
   }
   if (field.maxLength) {
     options.maxLength = {
       value: Number(field.maxLength[VALUE_KEY]),
-      message: `Input has exceeded maximum length of ${field.maxLength[VALUE_KEY]} letters!`,
+      message: dict.message.maxLength.replace(
+        "{replace}",
+        field.maxLength[VALUE_KEY]
+      ),
     };
   }
 
@@ -390,8 +411,11 @@ export function getRegisterOptions(
     // Change message if only digits are allowed
     const msg: string =
       field.pattern[VALUE_KEY] === "^\\d+$"
-        ? `Only numerical inputs are allowed!`
-        : `This field must follow the pattern ${field.pattern[VALUE_KEY]}`;
+        ? `${dict.message.numericalValuesOnly}`
+        : `${dict.message.patternFollowed.replace(
+            "{replace}",
+            field.pattern[VALUE_KEY]
+          )}`;
     options.pattern = {
       value: new RegExp(field.pattern[VALUE_KEY]),
       message: msg,
