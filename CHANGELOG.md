@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.1
+
+### Changes
+
+- Added form validation for the drop down selectors for add form type
+- Changed the default values of the simple selectors (empty placeholder)
+
 ## 5.41.0
 
 ### Changes
