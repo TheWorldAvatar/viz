@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.13.0` to `v1.15.0`
+- Allow users to submit a perpetual service type
+- Users will continue and duplicate the perpetual service by default on submission
+
 ## 5.40.4
 
 ### Bug Fixes

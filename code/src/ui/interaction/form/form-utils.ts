@@ -237,6 +237,9 @@ export function getDefaultVal(
   }
 
   if (field == FORM_STATES.RECURRENCE) {
+    if (!defaultValue) {
+      return null;
+    }
     if (defaultValue === "P1D") {
       return 0;
     }

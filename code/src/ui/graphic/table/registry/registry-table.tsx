@@ -86,16 +86,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         ((row.status as string).toLowerCase() === "new" ||
           ((row.status as string).toLowerCase() === "assigned" && props.lifecycleStage === "scheduled")
         )) {
-        props.setTask(genTaskOption(recordId, row, "dispatch"));
+        props.setTask(genTaskOption(recordId, row, "dispatch", dict.title.scheduleType));
       } else if (
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.completeTask) &&
         (row.status as string).toLowerCase() === "assigned"
       ) {
-        props.setTask(genTaskOption(recordId, row, "complete",));
+        props.setTask(genTaskOption(recordId, row, "complete", dict.title.scheduleType));
       } else {
-        props.setTask(genTaskOption(recordId, row, "default"));
+        props.setTask(genTaskOption(recordId, row, "default", dict.title.scheduleType));
       }
     } else {
       dispatch(setCurrentEntityType(props.recordType));

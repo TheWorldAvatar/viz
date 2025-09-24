@@ -134,8 +134,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let pendingResponse: AgentResponseBody;
-    // For single service
-    if (formData[FORM_STATES.RECURRENCE] == 0) {
+    // For perpetual service
+    if (formData[FORM_STATES.RECURRENCE] == null) {
+      formData = {
+        ...formData,
+        recurrence: "",
+        "end date": "",
+      };
+      // For single service
+    } else if (formData[FORM_STATES.RECURRENCE] == 0) {
       const startDate: string = formData[FORM_STATES.START_DATE];
       const dateObject: Date = new Date(startDate);
       const dayOfWeek = daysOfWeek[dateObject.getUTCDay()];
@@ -472,7 +479,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod
