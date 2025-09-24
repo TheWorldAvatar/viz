@@ -47,7 +47,7 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
       <Controller
         name={props.field.fieldId}
         control={props.form.control}
-        defaultValue={undefined}
+        defaultValue={props.form.getValues(props.field.fieldId)}
         rules={registerOptions}
         render={({ field: { value, onChange } }) => {
           return (

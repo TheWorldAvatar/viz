@@ -134,7 +134,7 @@ export function DependentFormSection(
       }
 
       // By default, id is empty
-      let defaultId: string = "";
+      let defaultId: string = undefined;
       const currentFormType: string = form.getValues(FORM_STATES.FORM_TYPE);
       // Only update the id if there are any entities
       if (entities.length > 0) {

@@ -102,18 +102,18 @@ export default function OntologyConceptSelector(
           const currentFormType: string = props.form.getValues(
             FORM_STATES.FORM_TYPE
           );
-          if (currentFormType !== "add") {
-            // First option should be set if available, else the first parent value should be prioritised
-            const firstRootOption: OntologyConcept =
-              sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
-            props.form.setValue(
-              props.field.fieldId,
-              sortedConceptMappings[firstRootOption?.type.value]
-                ? sortedConceptMappings[firstRootOption.type.value][0]?.type
-                    ?.value
-                : firstRootOption?.type?.value
-            );
-          }
+          // First option should be set if available, else the first parent value should be prioritised
+          const firstRootOption: OntologyConcept =
+            sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
+          props.form.setValue(
+            props.field.fieldId,
+            currentFormType === "add"
+              ? undefined
+              : sortedConceptMappings[firstRootOption?.type.value]
+              ? sortedConceptMappings[firstRootOption.type.value][0]?.type
+                  ?.value
+              : firstRootOption?.type?.value
+          );
 
           // Parse the mappings to generate the format for select options
           const formOptions: SelectOption[] = [];
