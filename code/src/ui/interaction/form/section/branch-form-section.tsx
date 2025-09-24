@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -36,7 +36,13 @@ interface OptionBasedFormSectionProps {
 export default function BranchFormSection(
   props: Readonly<OptionBasedFormSectionProps>
 ) {
-  // Declare a function to get the most suitablebranch node and set default values if present
+  const dict: Dictionary = useDictionary();
+  const [isSwitching, setIsSwitching] = useState<boolean>(true);
+  // Define the state to store the selected value
+  const [selectedModel, setSelectedModel] = useState<NodeShape>(null);
+  const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>([]);
+
+  // Declare a function to get the most suitable branch node and set default values if present
   const getBranchNode = useCallback((nodeShapes: NodeShape[]): NodeShape => {
     // Iterate to find and store any default values in these node states
     const nodeStates: FieldValues[] = [];
@@ -79,21 +85,11 @@ export default function BranchFormSection(
     return nodeWithMostNonEmpty;
   }, []);
 
-  const dict: Dictionary = useDictionary();
-
-  const [isSwitching, setIsSwitching] = useState<boolean>(false);
-  // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] =
-    useState<NodeShape>(getBranchNode(props.node));
-  const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(
-    parsePropertyShapeOrGroupList({}, selectedModel.property)
-  );
-
   // Declare a function to transform node shape to a form option
   const convertNodeShapeToFormOption = useCallback(
     (nodeShape: NodeShape): SelectOption => {
       return {
-        label: parseWordsForLabels(nodeShape.label[VALUE_KEY]),
+        label: parseWordsForLabels(nodeShape?.label[VALUE_KEY]),
         value: nodeShape.label[VALUE_KEY],
       };
     },
@@ -105,6 +101,14 @@ export default function BranchFormSection(
       props.node.map((nodeShape) => convertNodeShapeToFormOption(nodeShape)),
     []
   );
+
+  useEffect(() => {
+    const initialNode: NodeShape = getBranchNode(props.node);
+    setSelectedModel(initialNode);
+    setSelectedFields(parsePropertyShapeOrGroupList({}, initialNode?.property));
+    setIsSwitching(false);
+  }, []);
+
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOption) => {
@@ -132,7 +136,7 @@ export default function BranchFormSection(
     // Update form branch
     setSelectedModel(matchingNode);
     setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
-    setTimeout(() => setIsSwitching(false), 150);
+    setTimeout(() => setIsSwitching(false), 250);
   };
 
   return (
@@ -141,7 +145,7 @@ export default function BranchFormSection(
         <label className="text-md md:text-lg" htmlFor="select-input">
           {dict.message.branchInstruction}:
         </label>
-        <SimpleSelector
+        {selectedModel && <SimpleSelector
           options={formOptions}
           defaultVal={convertNodeShapeToFormOption(selectedModel).value}
           onChange={(selectedOption) => {
@@ -153,14 +157,14 @@ export default function BranchFormSection(
             props.form.getValues(FORM_STATES.FORM_TYPE) == "delete" ||
             props.form.getValues(FORM_STATES.FORM_TYPE) == "view"
           }
-        />
+        />}
         <p className="text-md md:text-lg">
           <b className="text-md md:text-lg">{dict.title.description}: </b>
           {selectedModel?.comment[VALUE_KEY]}
         </p>
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
-        : selectedFields.map((field, index) => {
+        : selectedFields && selectedFields.map((field, index) => {
           return renderFormField(props.entityType, field, props.form, index);
         })}
     </>
