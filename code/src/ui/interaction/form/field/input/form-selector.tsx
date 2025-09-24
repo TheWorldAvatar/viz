@@ -1,5 +1,4 @@
 import { Controller, FieldError, UseFormReturn } from "react-hook-form";
-import { useEffect } from "react";
 import { GroupBase, OptionsOrGroups } from "react-select";
 
 import {
@@ -35,18 +34,8 @@ interface FormSelectorProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSelector(props: Readonly<FormSelectorProps>) {
-  const isAddForm: boolean = props.form.getValues("formType") === "add";
   const formType: string = props.form.getValues("formType");
   const registerOptions = getRegisterOptions(props.field, formType);
-
-  // On mount for add forms, clear any pre-populated value injected by template default
-  useEffect(() => {
-    if (isAddForm) {
-      // Clear any pre-populated value WITHOUT triggering validation.
-      // This ensures the required message only appears after the first submit attempt.
-      props.form.setValue(props.field.fieldId, undefined);
-    }
-  }, []);
 
   return (
     <FormInputContainer
@@ -64,9 +53,9 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
           return (
             <SimpleSelector
               options={props.selectOptions}
-              defaultVal={value as string | undefined}
+              defaultVal={value}
               onChange={(selectedOption) => {
-                onChange((selectedOption as SelectOption)?.value ?? undefined);
+                onChange((selectedOption as SelectOption).value);
               }}
               isDisabled={props.options?.disabled}
               noOptionMessage={props.noOptionMessage}
