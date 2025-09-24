@@ -137,7 +137,16 @@
     "pickDateRange": "Wählen Sie einen Zeitraum aus.",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
-    "exportReport": "Exportbericht"
+    "exportReport": "Exportbericht",
+    "required": "Erforderlich",
+    "minInclusive": "Bitte geben Sie eine Zahl ein, die {replace} oder größer ist!",
+    "minExclusive": "Bitte geben Sie eine Zahl größer als {replace} ein!",
+    "maxInclusive": "Bitte geben Sie eine Zahl ein, die {replace} oder kleiner ist!",
+    "maxExclusive": "Bitte geben Sie eine Zahl kleiner als {replace} ein!",
+    "minLength": "Die Eingabe muss mindestens {replace} Zeichen umfassen!",
+    "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
+    "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
+    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!"
   },
   "nav": {
     "caption": {
