@@ -11,7 +11,6 @@ import {
   OntologyConcept,
   OntologyConceptMappings,
   PropertyShape,
-  VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
@@ -87,14 +86,7 @@ export default function OntologyConceptSelector(
         const concepts: OntologyConcept[] = conceptsArrays.flat();
         if (concepts && concepts.length > 0) {
           let firstOption: string = props.form.getValues(props.field.fieldId);
-          // WIP: Set default value Singapore for any Country Field temporarily
-          // Default values should not be hardcoded here but retrieved in a config instead
-          if (
-            props.field.name[VALUE_KEY].toLowerCase() === "country" &&
-            !firstOption
-          ) {
-            firstOption = "Singapore";
-          }
+
           // Add the default search option only if this is the search form
           if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
             firstOption = defaultSearchOption.label.value;
