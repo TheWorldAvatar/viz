@@ -48,8 +48,8 @@ export default function RegistryRowAction(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -109,7 +109,7 @@ export default function RegistryRowAction(
       props.lifecycleStage == "closed"
     ) {
       dispatch(setCurrentEntityType(props.lifecycleStage));
-      props.setTask(genTaskOption(recordId, props.row, "default"));
+      props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
     } else {
       // Move to the view modal page for the specific record
       dispatch(setCurrentEntityType(props.recordType));
@@ -167,7 +167,7 @@ export default function RegistryRowAction(
                 if (isSubmissionOrGeneralPage) {
                   handleClickView();
                 } else {
-                  props.setTask(genTaskOption(recordId, props.row, "default"));
+                  props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
                 }
               }}
             />
@@ -188,7 +188,7 @@ export default function RegistryRowAction(
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel")
+                          genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
                         );
                       }}
                     />
@@ -289,7 +289,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "complete")
+                          genTaskOption(recordId, props.row, "complete", dict.title.scheduleType)
                         );
                       }}
                     />
@@ -310,7 +310,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "dispatch")
+                          genTaskOption(recordId, props.row, "dispatch", dict.title.scheduleType)
                         );
                       }}
                     />
@@ -334,7 +334,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel")
+                          genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
                         );
                       }}
                     />
@@ -357,7 +357,7 @@ export default function RegistryRowAction(
                         setIsActionMenuOpen(false);
                         dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
-                          genTaskOption(recordId, props.row, "report")
+                          genTaskOption(recordId, props.row, "report", dict.title.scheduleType)
                         );
                       }}
                     />
@@ -375,7 +375,8 @@ export default function RegistryRowAction(
 export function genTaskOption(
   recordId: string,
   row: FieldValues,
-  taskType: RegistryTaskType
+  taskType: RegistryTaskType,
+  scheduleTypeKey: string,
 ): RegistryTaskOption {
   let status: string;
   if (row.order === "0" || row.status?.toLowerCase() === "new") {
@@ -396,6 +397,7 @@ export function genTaskOption(
     status: status,
     contract: row.id,
     date: row.date,
+    scheduleType: row[scheduleTypeKey],
     type: taskType,
   };
 }
