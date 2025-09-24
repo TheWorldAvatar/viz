@@ -1,4 +1,5 @@
 import { Controller, FieldError, UseFormReturn } from "react-hook-form";
+import { useEffect } from "react";
 import { GroupBase, OptionsOrGroups } from "react-select";
 
 import {
@@ -11,6 +12,7 @@ import SimpleSelector, {
   SelectOption,
 } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../form-input-container";
+import { getRegisterOptions } from "../../form-utils";
 
 interface FormSelectorProps {
   selectOptions: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>;
@@ -33,6 +35,19 @@ interface FormSelectorProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSelector(props: Readonly<FormSelectorProps>) {
+  const isAddForm: boolean = props.form.getValues("formType") === "add";
+  const formType: string = props.form.getValues("formType");
+  const registerOptions = getRegisterOptions(props.field, formType);
+
+  // On mount for add forms, clear any pre-populated value injected by template default
+  useEffect(() => {
+    if (isAddForm) {
+      // Clear any pre-populated value WITHOUT triggering validation.
+      // This ensures the required message only appears after the first submit attempt.
+      props.form.setValue(props.field.fieldId, undefined);
+    }
+  }, []);
+
   return (
     <FormInputContainer
       field={props.field}
@@ -43,19 +58,22 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
       <Controller
         name={props.field.fieldId}
         control={props.form.control}
-        defaultValue={props.form.getValues(props.field.fieldId)}
-        render={({ field: { value, onChange } }) => (
-          <SimpleSelector
-            options={props.selectOptions}
-            defaultVal={value}
-            onChange={(selectedOption) =>
-              onChange((selectedOption as SelectOption).value)
-            }
-            isDisabled={props.options?.disabled}
-            noOptionMessage={props.noOptionMessage}
-            reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
-          />
-        )}
+        defaultValue={undefined}
+        rules={registerOptions}
+        render={({ field: { value, onChange } }) => {
+          return (
+            <SimpleSelector
+              options={props.selectOptions}
+              defaultVal={value as string | undefined}
+              onChange={(selectedOption) => {
+                onChange((selectedOption as SelectOption)?.value ?? undefined);
+              }}
+              isDisabled={props.options?.disabled}
+              noOptionMessage={props.noOptionMessage}
+              reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
+            />
+          );
+        }}
       />
     </FormInputContainer>
   );
