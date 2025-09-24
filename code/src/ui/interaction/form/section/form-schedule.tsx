@@ -247,7 +247,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             form={props.form}
             options={isDisabledOption}
           />
-          {selectedServiceOption != singleService || selectedServiceOption != perpetualService && (
+          {selectedServiceOption != singleService && selectedServiceOption != perpetualService && (
             <FormFieldComponent
               field={{
                 "@id": "string",
