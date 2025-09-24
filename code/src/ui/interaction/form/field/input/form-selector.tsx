@@ -11,6 +11,7 @@ import SimpleSelector, {
   SelectOption,
 } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../form-input-container";
+import { getRegisterOptions } from "../../form-utils";
 
 interface FormSelectorProps {
   selectOptions: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>;
@@ -33,6 +34,9 @@ interface FormSelectorProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSelector(props: Readonly<FormSelectorProps>) {
+  const formType: string = props.form.getValues("formType");
+  const registerOptions = getRegisterOptions(props.field, formType);
+
   return (
     <FormInputContainer
       field={props.field}
@@ -44,18 +48,21 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
         name={props.field.fieldId}
         control={props.form.control}
         defaultValue={props.form.getValues(props.field.fieldId)}
-        render={({ field: { value, onChange } }) => (
-          <SimpleSelector
-            options={props.selectOptions}
-            defaultVal={value}
-            onChange={(selectedOption) =>
-              onChange((selectedOption as SelectOption).value)
-            }
-            isDisabled={props.options?.disabled}
-            noOptionMessage={props.noOptionMessage}
-            reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
-          />
-        )}
+        rules={registerOptions}
+        render={({ field: { value, onChange } }) => {
+          return (
+            <SimpleSelector
+              options={props.selectOptions}
+              defaultVal={value}
+              onChange={(selectedOption) => {
+                onChange((selectedOption as SelectOption).value);
+              }}
+              isDisabled={props.options?.disabled}
+              noOptionMessage={props.noOptionMessage}
+              reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
+            />
+          );
+        }}
       />
     </FormInputContainer>
   );

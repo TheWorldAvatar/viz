@@ -45,7 +45,6 @@ export function DependentFormSection(
 ) {
   const dict: Dictionary = useDictionary();
 
-
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -63,7 +62,14 @@ export function DependentFormSection(
     name: props.dependentProp.fieldId,
   });
 
-  const { id, selectedEntityId, quickViewGroups, isQuickViewLoading, isQuickViewOpen, setIsQuickViewOpen } = useFormQuickView(currentOption, queryEntityType);
+  const {
+    id,
+    selectedEntityId,
+    quickViewGroups,
+    isQuickViewLoading,
+    isQuickViewOpen,
+    setIsQuickViewOpen,
+  } = useFormQuickView(currentOption, queryEntityType);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -128,10 +134,15 @@ export function DependentFormSection(
       }
 
       // By default, id is empty
-      let defaultId: string = "";
+      let defaultId: string = undefined;
+      const currentFormType: string = form.getValues(FORM_STATES.FORM_TYPE);
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        if (props.dependentProp?.minCount?.[VALUE_KEY] != "0") {
+        if (
+          // Only consider auto-selection for non-add forms (view/edit/search) so that add forms force explicit user action
+          currentFormType !== "add" &&
+          props.dependentProp?.minCount?.[VALUE_KEY] != "0"
+        ) {
           // Set the id to the first possible option when this is not optional
           // Optional fields should default to empty string
           defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
@@ -222,8 +233,6 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-
-
   // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
   // the parent element has been queried and selected
   if (
@@ -261,15 +270,15 @@ export function DependentFormSection(
               isOpen={isQuickViewOpen}
               setIsOpen={setIsQuickViewOpen}
             />
-            {currentOption && isQuickViewOpen && (isQuickViewLoading ?
-              <div className="flex justify-center p-4">
-                <LoadingSpinner isSmall={true} />
-              </div>
-              : <FormQuickViewBody
-                id={id}
-                quickViewGroups={quickViewGroups}
-              />
-            )}
+            {currentOption &&
+              isQuickViewOpen &&
+              (isQuickViewLoading ? (
+                <div className="flex justify-center p-4">
+                  <LoadingSpinner isSmall={true} />
+                </div>
+              ) : (
+                <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
+              ))}
           </div>
         )}
       </div>

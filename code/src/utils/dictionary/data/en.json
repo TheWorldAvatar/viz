@@ -139,7 +139,16 @@
     "pickDateRange": "Pick a date range.",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
-    "exportReport": "Export report"
+    "exportReport": "Export report",
+    "required": "Required",
+    "minInclusive": "Please enter a number that is {replace} or greater!",
+    "minExclusive": "Please enter a number greater than {replace}!",
+    "maxInclusive": "Please enter a number that is {replace} or smaller!",
+    "maxExclusive": "Please enter a number less than {replace}!",
+    "minLength": "Input requires at least {replace} letters!",
+    "maxLength": "Input has exceeded maximum length of {replace} letters!",
+    "numericalValuesOnly": "Only numerical inputs are allowed!",
+    "patternFollowed": "This field must follow the pattern {replace}!"
   },
   "nav": {
     "caption": {
