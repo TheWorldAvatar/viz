@@ -143,6 +143,10 @@ export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
 ): NodeShape[] {
+  // Early termination
+  if (nodeShapes.length === 0) {
+    return nodeShapes;
+  }
   // Iterate to find and store any default values in these node states
   const nodeStates: FieldValues[] = [];
   const results: NodeShape[] = [];
