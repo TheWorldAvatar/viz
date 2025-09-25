@@ -1,13 +1,14 @@
 import { FieldValues, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
-import { Dictionary } from "types/dictionary";
 import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 import {
   FormTemplateType,
   FormType,
   ID_KEY,
+  NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,
   OntologyConceptMappings,
@@ -131,6 +132,62 @@ export function parsePropertyShapeOrGroupList(
     }
   });
 }
+
+/**
+ * Parses the branches into a format compliant with the viz as well as initialise the initial state.
+ *
+ * @param {FieldValues} initialState The initial state to store any field configuration.
+ * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
+ */
+export function parseBranches(
+  initialState: FieldValues,
+  nodeShapes: NodeShape[],
+): NodeShape[] {
+  // Iterate to find and store any default values in these node states
+  const nodeStates: FieldValues[] = [];
+  const results: NodeShape[] = [];
+  nodeShapes.forEach((shape) => {
+    const nodeState: FieldValues = {};
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property);
+    nodeStates.push(nodeState);
+    results.push({
+      ...shape,
+      property: parsedShapeProperties,
+    });
+  });
+  // Find the best matched node states with non-empty values
+  let nodeWithMostNonEmpty: NodeShape = results[0];
+  let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
+  let maxNonEmptyCount: number = 0;
+  nodeStates.forEach((nodeState, index) => {
+    let currentNonEmptyCount: number = 0;
+    for (const nodeField in nodeState) {
+      if (Object.hasOwn(nodeState, nodeField)) {
+        const fieldVal = nodeState[nodeField];
+        // Increment the counter when it is non-empty
+        // Field arrays are stored as group.index.field in react-hook-form
+        if (
+          typeof fieldVal === "string" &&
+          fieldVal.length > 0 &&
+          fieldVal != "-0.01"
+        ) {
+          currentNonEmptyCount++;
+        }
+      }
+    }
+    // update the best match
+    if (currentNonEmptyCount > maxNonEmptyCount) {
+      nodeWithMostNonEmpty = results[index];
+      nodeStateWithMostNonEmpty = nodeState;
+      maxNonEmptyCount = currentNonEmptyCount;
+    }
+  });
+  for (const field in nodeStateWithMostNonEmpty) {
+    initialState[field] = nodeStateWithMostNonEmpty[field];
+  }
+  return [nodeWithMostNonEmpty, ...results.filter(node => node != nodeWithMostNonEmpty)];
+}
+
 
 /**
  * Initialises a form field based on the property shape. This function will retrieve the default value
@@ -413,9 +470,9 @@ export function getRegisterOptions(
       field.pattern[VALUE_KEY] === "^\\d+$"
         ? `${dict.message.numericalValuesOnly}`
         : `${dict.message.patternFollowed.replace(
-            "{replace}",
-            field.pattern[VALUE_KEY]
-          )}`;
+          "{replace}",
+          field.pattern[VALUE_KEY]
+        )}`;
     options.pattern = {
       value: new RegExp(field.pattern[VALUE_KEY]),
       message: msg,

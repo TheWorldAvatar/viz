@@ -8,9 +8,8 @@ import {
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
   PropertyShape,
-  PropertyShapeOrGroup,
   TYPE_KEY,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector, {
@@ -40,50 +39,6 @@ export default function BranchFormSection(
   const [isSwitching, setIsSwitching] = useState<boolean>(true);
   // Define the state to store the selected value
   const [selectedModel, setSelectedModel] = useState<NodeShape>(null);
-  const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>([]);
-
-  // Declare a function to get the most suitable branch node and set default values if present
-  const getBranchNode = useCallback((nodeShapes: NodeShape[]): NodeShape => {
-    // Iterate to find and store any default values in these node states
-    const nodeStates: FieldValues[] = [];
-    nodeShapes.forEach((shape) => {
-      const nodeState: FieldValues = {};
-      parsePropertyShapeOrGroupList(nodeState, shape.property);
-      nodeStates.push(nodeState);
-    });
-    // Find the best matched node states with non-empty values
-    let nodeWithMostNonEmpty: NodeShape = nodeShapes[0];
-    let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
-    let maxNonEmptyCount: number = 0;
-    nodeStates.forEach((nodeState, index) => {
-      let currentNonEmptyCount: number = 0;
-      for (const nodeField in nodeState) {
-        if (Object.hasOwn(nodeState, nodeField)) {
-          const fieldVal = nodeState[nodeField];
-          // Increment the counter when it is non-empty
-          // Field arrays are stored as group.index.field in react-hook-form
-          if (
-            typeof fieldVal === "string" &&
-            fieldVal.length > 0 &&
-            fieldVal != "-0.01"
-          ) {
-            currentNonEmptyCount++;
-          }
-        }
-      }
-      // update the best match
-      if (currentNonEmptyCount > maxNonEmptyCount) {
-        nodeWithMostNonEmpty = props.node[index];
-        nodeStateWithMostNonEmpty = nodeState;
-        maxNonEmptyCount = currentNonEmptyCount;
-      }
-    });
-    // For setting the branch value, attempt this
-    Object.keys(nodeStateWithMostNonEmpty).forEach((nodeField) => {
-      props.form.setValue(nodeField, nodeStateWithMostNonEmpty[nodeField]);
-    });
-    return nodeWithMostNonEmpty;
-  }, []);
 
   // Declare a function to transform node shape to a form option
   const convertNodeShapeToFormOption = useCallback(
@@ -103,17 +58,15 @@ export default function BranchFormSection(
   );
 
   useEffect(() => {
-    const initialNode: NodeShape = getBranchNode(props.node);
+    const initialNode: NodeShape = props.node[0];
     setSelectedModel(initialNode);
-    setSelectedFields(parsePropertyShapeOrGroupList({}, initialNode?.property));
     setIsSwitching(false);
   }, []);
-
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOption) => {
     setIsSwitching(true);
-    let matchingNode: NodeShape = props.node.find(
+    const matchingNode: NodeShape = props.node.find(
       (nodeShape) => nodeShape.label[VALUE_KEY] === formOption.value
     );
     // Before updating the current form branch, unregister all current fields
@@ -131,11 +84,13 @@ export default function BranchFormSection(
         props.form.unregister((field as PropertyShape).name[VALUE_KEY]);
       }
     });
-    // update branch node fields with existing values if present
-    matchingNode = getBranchNode([matchingNode]);
-    // Update form branch
+    // Update form branch fields and values
+    const nodeState: FieldValues = {};
+    parsePropertyShapeOrGroupList(nodeState, matchingNode.property);
+    Object.keys(nodeState).forEach((nodeField) => {
+      props.form.setValue(nodeField, nodeState[nodeField]);
+    });
     setSelectedModel(matchingNode);
-    setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
     setTimeout(() => setIsSwitching(false), 250);
   };
 
@@ -164,7 +119,7 @@ export default function BranchFormSection(
         </p>
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
-        : selectedFields && selectedFields.map((field, index) => {
+        : selectedModel && selectedModel?.property.map((field, index) => {
           return renderFormField(props.entityType, field, props.form, index);
         })}
     </>

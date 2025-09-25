@@ -24,7 +24,7 @@ import { getAfterDelimiter } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
-import { FORM_STATES, parsePropertyShapeOrGroupList } from "./form-utils";
+import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
 import { DependentFormSection } from "./section/dependent-form-section";
 import FormGeocoder from "./section/form-geocoder";
@@ -120,12 +120,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
       }
 
-      const updatedProperties: PropertyShapeOrGroup[] =
-        parsePropertyShapeOrGroupList(initialState, template.property);
-
       setFormTemplate({
         ...template,
-        property: updatedProperties,
+        node: parseBranches(initialState, template.node),
+        property: parsePropertyShapeOrGroupList(initialState, template.property),
       });
       return initialState;
     },
