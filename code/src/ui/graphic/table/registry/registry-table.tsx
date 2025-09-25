@@ -19,8 +19,6 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { setCurrentEntityType } from "state/registry-slice";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import {
@@ -59,7 +57,6 @@ interface RegistryTableProps {
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(props.tableDescriptor.table, props.tableDescriptor.data, props.tableDescriptor.setData);
@@ -77,8 +74,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
-      // Update entity type to lifecycle stage for these stages
-      dispatch(setCurrentEntityType(props.lifecycleStage));
       if (
         (!keycloakEnabled ||
           !permissionScheme ||
@@ -98,7 +93,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         props.setTask(genTaskOption(recordId, row, "default", dict.title.scheduleType));
       }
     } else {
-      dispatch(setCurrentEntityType(props.recordType));
       const registryRoute: string =
         !keycloakEnabled ||
           !permissionScheme ||

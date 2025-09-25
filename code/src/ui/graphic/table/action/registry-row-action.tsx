@@ -18,7 +18,6 @@ import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
 import { useDispatch } from "react-redux";
-import { setCurrentEntityType } from "state/registry-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { JsonObject } from "types/json";
@@ -108,11 +107,9 @@ export default function RegistryRowAction(
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
     ) {
-      dispatch(setCurrentEntityType(props.lifecycleStage));
       props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
     } else {
       // Move to the view modal page for the specific record
-      dispatch(setCurrentEntityType(props.recordType));
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
     }
   };
@@ -238,7 +235,6 @@ export default function RegistryRowAction(
                       label={dict.action.edit}
                       onClick={() => {
                         setIsActionMenuOpen(false);
-                        dispatch(setCurrentEntityType(props.recordType));
                         router.push(
                           `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
                         );
@@ -259,7 +255,6 @@ export default function RegistryRowAction(
                       label={dict.action.delete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
-                        dispatch(setCurrentEntityType(props.recordType));
                         router.push(
                           `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
                         );
@@ -287,7 +282,6 @@ export default function RegistryRowAction(
                       label={dict.action.complete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
-                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "complete", dict.title.scheduleType)
                         );
@@ -308,7 +302,6 @@ export default function RegistryRowAction(
                       label={dict.action.dispatch}
                       onClick={() => {
                         setIsActionMenuOpen(false);
-                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "dispatch", dict.title.scheduleType)
                         );
@@ -332,7 +325,6 @@ export default function RegistryRowAction(
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
-                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
                         );
@@ -355,7 +347,6 @@ export default function RegistryRowAction(
                       label={dict.action.report}
                       onClick={() => {
                         setIsActionMenuOpen(false);
-                        dispatch(setCurrentEntityType(props.lifecycleStage));
                         props.setTask(
                           genTaskOption(recordId, props.row, "report", dict.title.scheduleType)
                         );
