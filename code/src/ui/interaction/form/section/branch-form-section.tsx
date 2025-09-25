@@ -119,7 +119,7 @@ export default function BranchFormSection(
         </p>
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
-        : selectedModel && selectedModel?.property.map((field, index) => {
+        : selectedModel?.property.map((field, index) => {
           return renderFormField(props.entityType, field, props.form, index);
         })}
     </>
