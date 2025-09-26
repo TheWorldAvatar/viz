@@ -19,6 +19,8 @@ import {
 } from "types/form";
 import { JsonObject } from "types/json";
 import { DateRange } from "react-day-picker";
+import { Map } from "mapbox-gl";
+import { DataLayer } from 'io/data/data-layer';
 
 /**
  * Open full screen mode.
@@ -62,6 +64,7 @@ export function parseMapDataSettings(
  */
 export function setSelectedFeature(
   selectedFeature: MapFeaturePayload,
+  map: Map,
   dispatch: Dispatch
 ): void {
   if (selectedFeature) {
@@ -78,6 +81,24 @@ export function setSelectedFeature(
     dispatch(setProperties(selectedProperties));
     dispatch(setStack(stack));
     dispatch(clearFeatures());
+  }
+}
+
+/**
+ * Check if an accompanying highlight layer exists, if it exists, make it visible and only show the selected feature
+ * @param selectedFeature 
+ * @param map 
+ * @param dataStore 
+ */
+export function highlightFeature(selectedFeature: MapFeaturePayload, map: Map, dataStore: DataStore) {
+
+  const layerArray: DataLayer[] = dataStore?.getLayerList();
+  const layerContainingFeature = layerArray.find(layer => layer.id === selectedFeature.layerId);
+
+  if (layerContainingFeature.hasHighlight) {
+    const highlightLayer = layerArray.find(layer => layer.id === selectedFeature.layerId + '-highlight');
+    map.setFilter(highlightLayer.id, ['in', highlightLayer.highlightFeatureId, selectedFeature[highlightLayer.highlightFeatureId]]);
+    map.setLayoutProperty(highlightLayer.id, "visibility", "visible");
   }
 }
 
