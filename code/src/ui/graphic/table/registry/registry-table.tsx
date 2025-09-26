@@ -43,6 +43,7 @@ interface RegistryTableProps {
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   tableDescriptor: TableDescriptor;
+  triggerRefresh: () => void;
 }
 
 /**
@@ -53,6 +54,7 @@ interface RegistryTableProps {
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param triggerRefresh A function to refresh the table when required.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -173,6 +175,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     lifecycleStage={props.lifecycleStage}
                                     row={row.original}
                                     setTask={props.setTask}
+                                    triggerRefresh={props.triggerRefresh}
                                   />
                                 </div>
                               </TableCell>

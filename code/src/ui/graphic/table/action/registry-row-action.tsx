@@ -17,7 +17,6 @@ import { Status } from "ui/text/status/status";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 
 import { useDictionary } from "hooks/useDictionary";
-import { useDispatch } from "react-redux";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { JsonObject } from "types/json";
@@ -29,6 +28,7 @@ interface RegistryRowActionProps {
   lifecycleStage: LifecycleStage;
   row: FieldValues;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
+  triggerRefresh: () => void;
 }
 
 /**
@@ -38,12 +38,12 @@ interface RegistryRowActionProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {FieldValues} row Row values.
  * @param setTask A dispatch method to set the task option when required.
+ * @param triggerRefresh A function to refresh the table when required.
  */
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
@@ -97,6 +97,7 @@ export default function RegistryRowAction(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
+    props.triggerRefresh();
   };
 
   const handleClickView = (): void => {

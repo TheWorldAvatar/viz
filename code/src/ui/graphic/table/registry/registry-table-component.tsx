@@ -230,6 +230,7 @@ export default function RegistryTableComponent(
             instances={currentInstances}
             setTask={setTask}
             tableDescriptor={tableDescriptor}
+            triggerRefresh={triggerRefresh}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
