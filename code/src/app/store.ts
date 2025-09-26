@@ -5,7 +5,6 @@ import contextMenuReducer from 'state/context-menu-slice';
 import dimensionSliderSlice from 'state/dimension-slider-slice';
 import floatingPanelReducer from 'state/floating-panel-slice';
 import mapFeatureReducer from 'state/map-feature-slice';
-import registryReducer from 'state/registry-slice';
 import ribbonComponentReducer from 'state/ribbon-component-slice';
 
 // Initialise and export store
@@ -16,7 +15,6 @@ export const reduxStore = configureStore({
         floatingPanel: floatingPanelReducer,
         mapFeature: mapFeatureReducer,
         dimensionSlider: dimensionSliderSlice,
-        registry: registryReducer,
         [featureInfoAgentApi.reducerPath]: featureInfoAgentApi.reducer,
     },
     // Adding the api middleware enables caching, invalidation, polling, and other useful features of `rtk-query`.
