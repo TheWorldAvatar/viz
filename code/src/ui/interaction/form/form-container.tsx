@@ -41,8 +41,13 @@ interface FormContainerComponentProps {
 export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+
   return (
-    <NavigationDrawer      >
+    <NavigationDrawer
+      isControlledOpen={isDrawerOpen}
+      setIsControlledOpen={setIsDrawerOpen}
+    >
       <FormContents {...props} />
     </NavigationDrawer>
   );

@@ -1,7 +1,8 @@
 import React from "react";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Drawer from "./drawer";
+import { useRef, useEffect } from "react";
 
 interface NavigationDrawerProps {
   isControlledOpen?: boolean;
@@ -16,15 +17,30 @@ interface NavigationDrawerProps {
  * @param {boolean} isControlledOpen Optional controlled state for showing/hiding the drawer.
  * @param  setIsControlledOpen Optional controlled dispatch state to show/hide drawer.
  */
-export default function NavigationDrawer(props: Readonly<NavigationDrawerProps>) {
+export default function NavigationDrawer(
+  props: Readonly<NavigationDrawerProps>
+) {
   const router = useRouter();
+  const pathname = usePathname();
+  const currentPathRef = useRef(pathname);
 
-  return <Drawer
-    isControlledOpen={props.isControlledOpen}
-    setIsControlledOpen={props.setIsControlledOpen}
-    onClose={() => router.back()}
-  >
-    {props.children}
-  </Drawer >
+  useEffect(() => {
+    const newPath = pathname;
+    if (newPath !== currentPathRef.current) {
+      currentPathRef.current = newPath;
+      if (props.setIsControlledOpen) {
+        props.setIsControlledOpen(false);
+      }
+    }
+  }, [pathname, props.setIsControlledOpen]);
+
+  return (
+    <Drawer
+      isControlledOpen={props.isControlledOpen}
+      setIsControlledOpen={props.setIsControlledOpen}
+      onClose={() => router.back()}
+    >
+      {props.children}
+    </Drawer>
+  );
 }
-
