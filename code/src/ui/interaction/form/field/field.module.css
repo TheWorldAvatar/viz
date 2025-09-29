@@ -131,8 +131,18 @@
   color: var(--text-color-secondary);
 }
 
+.textarea {
+  min-height: 10rem;
+  max-height: 30rem;
+}
+
 @media only screen and (max-width: 480px) {
   .form-checkbox {
     width: 100%;
+  }
+
+  .textarea {
+    min-height: 6rem;
+    max-height: 20rem;
   }
 }
