@@ -42,29 +42,55 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
       labelStyles={props.options?.labelStyle}
     >
       {props.options?.disabled || props.field?.datatype === "string" ? (
-        <input
-          id={props.field.fieldId}
-          type="text"
-          inputMode={inputMode}
-          className={`${inputClassNames}  ${
-            props.options?.disabled &&
-            styles["input-disabled"] + " " + styles["field-disabled"]
-          }`}
-          placeholder={
-            props.options?.disabled
-              ? ""
-              : `Add ${props.field.name[VALUE_KEY]} here`
-          }
-          readOnly={props.options?.disabled}
-          aria-label={props.field.name[VALUE_KEY]}
-          {...props.form.register(
-            props.field.fieldId,
-            getRegisterOptions(
-              props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE)
-            )
-          )}
-        />
+        props.field.name[VALUE_KEY].includes("remarks") ? (
+          <textarea
+            cols={40}
+            rows={4}
+            id={props.field.fieldId}
+            className={`${inputClassNames} ${styles["textarea"]} ${
+              props.options?.disabled &&
+              styles["input-disabled"] + " " + styles["field-disabled"]
+            }`}
+            placeholder={
+              props.options?.disabled
+                ? ""
+                : `Add ${props.field.name[VALUE_KEY]} here`
+            }
+            readOnly={props.options?.disabled}
+            aria-label={props.field.name[VALUE_KEY]}
+            {...props.form.register(
+              props.field.fieldId,
+              getRegisterOptions(
+                props.field,
+                props.form.getValues(FORM_STATES.FORM_TYPE)
+              )
+            )}
+          ></textarea>
+        ) : (
+          <input
+            id={props.field.fieldId}
+            type="text"
+            inputMode={inputMode}
+            className={`${inputClassNames}  ${
+              props.options?.disabled &&
+              styles["input-disabled"] + " " + styles["field-disabled"]
+            }`}
+            placeholder={
+              props.options?.disabled
+                ? ""
+                : `Add ${props.field.name[VALUE_KEY]} here`
+            }
+            readOnly={props.options?.disabled}
+            aria-label={props.field.name[VALUE_KEY]}
+            {...props.form.register(
+              props.field.fieldId,
+              getRegisterOptions(
+                props.field,
+                props.form.getValues(FORM_STATES.FORM_TYPE)
+              )
+            )}
+          />
+        )
       ) : (
         <NumericInputField
           field={props.field}
