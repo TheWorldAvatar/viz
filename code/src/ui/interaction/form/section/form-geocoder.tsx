@@ -133,7 +133,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   leftIcon="place"
                   size="icon"
                   tooltipText={dict.action.selectLocation}
-                  onClick={props.form.handleSubmit(onGeocoding)}
+                  onClick={() => onGeocoding(props.form.getValues())}
                   type="button"
                 />
               </div>

@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
@@ -32,8 +32,6 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
-import { Routes } from "io/config/routes";
-import { getCurrentEntityType } from "state/registry-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 
 interface FormComponentProps {
@@ -65,7 +63,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
-  const currentEntityType: string = useSelector(getCurrentEntityType);
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -334,9 +331,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // Close search modal on success
         if (props.formType === "search") {
           props.setShowSearchModalState(false);
-          // Redirect back to base page upon deleting the entity
-        } else if (props.formType === "delete") {
-          router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();

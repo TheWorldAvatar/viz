@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.3
+
+### Changes
+
+- Created a wrapper function that gets the form values and passes them onto the onGeocoding function inside useGeocode hook
+- This allows to skip the form validation when the geocoding button is pressed
+
+## 5.41.2
+
+### Bug Fixes
+
+- Trigger automatic refresh of registry table on close for intercept form routes and actions
+
 ## 5.41.1
 
 ### Changes
