@@ -1,24 +1,26 @@
-
-import { configureStore } from '@reduxjs/toolkit';
-import { featureInfoAgentApi } from 'state/api/fia-api';
-import contextMenuReducer from 'state/context-menu-slice';
-import dimensionSliderSlice from 'state/dimension-slider-slice';
-import floatingPanelReducer from 'state/floating-panel-slice';
-import mapFeatureReducer from 'state/map-feature-slice';
-import ribbonComponentReducer from 'state/ribbon-component-slice';
+import { configureStore } from "@reduxjs/toolkit";
+import { featureInfoAgentApi } from "state/api/fia-api";
+import contextMenuReducer from "state/context-menu-slice";
+import dimensionSliderSlice from "state/dimension-slider-slice";
+import drawerReducer from "state/drawer-component-slice";
+import floatingPanelReducer from "state/floating-panel-slice";
+import mapFeatureReducer from "state/map-feature-slice";
+import ribbonComponentReducer from "state/ribbon-component-slice";
 
 // Initialise and export store
 export const reduxStore = configureStore({
-    reducer: {
-        contextMenu: contextMenuReducer,
-        ribbonComponents: ribbonComponentReducer,
-        floatingPanel: floatingPanelReducer,
-        mapFeature: mapFeatureReducer,
-        dimensionSlider: dimensionSliderSlice,
-        [featureInfoAgentApi.reducerPath]: featureInfoAgentApi.reducer,
-    },
-    // Adding the api middleware enables caching, invalidation, polling, and other useful features of `rtk-query`.
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(featureInfoAgentApi.middleware),
+  reducer: {
+    contextMenu: contextMenuReducer,
+    ribbonComponents: ribbonComponentReducer,
+    floatingPanel: floatingPanelReducer,
+    mapFeature: mapFeatureReducer,
+    dimensionSlider: dimensionSliderSlice,
+    drawer: drawerReducer,
+    [featureInfoAgentApi.reducerPath]: featureInfoAgentApi.reducer,
+  },
+  // Adding the api middleware enables caching, invalidation, polling, and other useful features of `rtk-query`.
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(featureInfoAgentApi.middleware),
 });
 
 // Export the type used for the store object.

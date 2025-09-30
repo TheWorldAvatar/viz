@@ -8,6 +8,8 @@ import React from "react";
 
 import { useDialog } from "hooks/float/useDialog";
 import Button from "../button";
+import { useSelector } from "react-redux";
+import { selectDrawerIsOpen } from "state/drawer-component-slice";
 
 interface DrawerProps {
   isControlledOpen?: boolean;
@@ -24,8 +26,12 @@ interface DrawerProps {
  * @param  onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const [isOpen, setIsOpen] = React.useState<boolean>(true);
-  const dialog = useDialog(props.isControlledOpen ?? isOpen, props.setIsControlledOpen ?? setIsOpen, false);
+  const isDrawerOpen = useSelector(selectDrawerIsOpen);
+  const dialog = useDialog(
+    props.isControlledOpen,
+    props.setIsControlledOpen,
+    false
+  );
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -50,7 +56,6 @@ export default function Drawer(props: Readonly<DrawerProps>) {
       transitionTimingFunction: "ease-out",
     },
   });
-
 
   return (
     <>
@@ -91,12 +96,10 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                       // Propagate to controlled state or default state
                       if (props.setIsControlledOpen) {
                         props.setIsControlledOpen(false);
-                      } else {
-                        setIsOpen(false);
                       }
                       // If there are additional close functions to execute
                       if (props.onClose) {
-                        props.onClose()
+                        props.onClose();
                       }
                     }}
                   />
@@ -112,4 +115,3 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     </>
   );
 }
-

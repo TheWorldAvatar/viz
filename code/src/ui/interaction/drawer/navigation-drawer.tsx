@@ -16,15 +16,18 @@ interface NavigationDrawerProps {
  * @param {boolean} isControlledOpen Optional controlled state for showing/hiding the drawer.
  * @param  setIsControlledOpen Optional controlled dispatch state to show/hide drawer.
  */
-export default function NavigationDrawer(props: Readonly<NavigationDrawerProps>) {
+export default function NavigationDrawer(
+  props: Readonly<NavigationDrawerProps>
+) {
   const router = useRouter();
 
-  return <Drawer
-    isControlledOpen={props.isControlledOpen}
-    setIsControlledOpen={props.setIsControlledOpen}
-    onClose={() => router.back()}
-  >
-    {props.children}
-  </Drawer >
+  return (
+    <Drawer
+      isControlledOpen={props.isControlledOpen}
+      setIsControlledOpen={props.setIsControlledOpen}
+      onClose={() => router.back()}
+    >
+      {props.children}
+    </Drawer>
+  );
 }
-
