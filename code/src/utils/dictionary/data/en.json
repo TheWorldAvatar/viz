@@ -49,9 +49,11 @@
     "singleService": "Single Service",
     "regularService": "Regular Service",
     "alternateService": "Alternate Day Service",
+    "perpetualService": "Perpetual Service",
     "singleServiceDesc": "A one-off service that will occur once on the specified date.",
     "regularServiceDesc": "A service that will occur regularly based on the schedule within the specified period.",
     "alternateServiceDesc": "A service that will occur on every alternate day within the specified period.",
+    "perpetualServiceDesc": "A service where the tasks will repeat forever but has no set schedule.",
     "repeatEvery": "Repeat once every",
     "week": "week",
     "startDate": "Start date",
@@ -137,7 +139,16 @@
     "pickDateRange": "Pick a date range.",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
-    "exportReport": "Export report"
+    "exportReport": "Export report",
+    "required": "Required",
+    "minInclusive": "Please enter a number that is {replace} or greater!",
+    "minExclusive": "Please enter a number greater than {replace}!",
+    "maxInclusive": "Please enter a number that is {replace} or smaller!",
+    "maxExclusive": "Please enter a number less than {replace}!",
+    "minLength": "Input requires at least {replace} letters!",
+    "maxLength": "Input has exceeded maximum length of {replace} letters!",
+    "numericalValuesOnly": "Only numerical inputs are allowed!",
+    "patternFollowed": "This field must follow the pattern {replace}!"
   },
   "nav": {
     "caption": {
@@ -194,6 +205,7 @@
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "quickView": "Quick view",
+    "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
     "success": "Success",

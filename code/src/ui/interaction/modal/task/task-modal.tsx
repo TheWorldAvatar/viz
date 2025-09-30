@@ -267,8 +267,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -388,7 +388,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                onClick={() => setIsSubmitting(true)}
+                onClick={() => {
+                  if (props.task?.type === "complete" && props.task.scheduleType === dict.form.perpetualService) {
+                    setIsDuplicate(true);
+                  }
+                  setIsSubmitting(true);
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -407,7 +412,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
-            props.task?.type === "complete" && (
+            props.task?.type === "complete" && props.task.scheduleType != dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"

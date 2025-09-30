@@ -187,6 +187,17 @@ export default function RegistryTableComponent(
   }, [selectedDate, refreshFlag]);
 
   useEffect(() => {
+    // Trigger refresh when back navigation occurs
+    const handleHistoryChange = () => {
+      triggerRefresh();
+    };
+    window.addEventListener('popstate', handleHistoryChange);
+    return () => {
+      window.removeEventListener('popstate', handleHistoryChange);
+    };
+  }, []);
+
+  useEffect(() => {
     if (task) {
       setIsTaskModalOpen(true);
     }
@@ -219,6 +230,7 @@ export default function RegistryTableComponent(
             instances={currentInstances}
             setTask={setTask}
             tableDescriptor={tableDescriptor}
+            triggerRefresh={triggerRefresh}
           />
         ) : (
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>

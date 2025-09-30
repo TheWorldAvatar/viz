@@ -2,6 +2,46 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.3
+
+### Changes
+
+- Created a wrapper function that gets the form values and passes them onto the onGeocoding function inside useGeocode hook
+- This allows to skip the form validation when the geocoding button is pressed
+
+## 5.41.2
+
+### Bug Fixes
+
+- Trigger automatic refresh of registry table on close for intercept form routes and actions
+
+## 5.41.1
+
+### Changes
+
+- Added form validation for the drop down selectors for add form type
+- Changed the default values of the simple selectors (empty placeholder)
+
+## 5.41.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.13.0` to `v1.15.0`
+- Allow users to submit a perpetual service type
+- Users will continue and duplicate the perpetual service by default on submission
+
+## 5.40.4
+
+### Bug Fixes
+
+- Fixed the wrong filter option display for the status column in the registry
+
+## 5.40.3
+
+### Bug Fixes
+
+- Fixed the issue with the disabled states of the single date input
+
 ## 5.40.2
 
 ### Changes

@@ -142,6 +142,7 @@ export interface RegistryTaskOption {
   contract: string;
   status: string;
   date: string;
+  scheduleType: string;
   type: RegistryTaskType;
 }
 

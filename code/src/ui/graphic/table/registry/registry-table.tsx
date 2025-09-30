@@ -19,8 +19,6 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { setCurrentEntityType } from "state/registry-slice";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import {
@@ -45,6 +43,7 @@ interface RegistryTableProps {
   instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   tableDescriptor: TableDescriptor;
+  triggerRefresh: () => void;
 }
 
 /**
@@ -55,11 +54,11 @@ interface RegistryTableProps {
  * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param triggerRefresh A function to refresh the table when required.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(props.tableDescriptor.table, props.tableDescriptor.data, props.tableDescriptor.setData);
@@ -77,8 +76,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
-      // Update entity type to lifecycle stage for these stages
-      dispatch(setCurrentEntityType(props.lifecycleStage));
       if (
         (!keycloakEnabled ||
           !permissionScheme ||
@@ -86,19 +83,18 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         ((row.status as string).toLowerCase() === "new" ||
           ((row.status as string).toLowerCase() === "assigned" && props.lifecycleStage === "scheduled")
         )) {
-        props.setTask(genTaskOption(recordId, row, "dispatch"));
+        props.setTask(genTaskOption(recordId, row, "dispatch", dict.title.scheduleType));
       } else if (
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.completeTask) &&
         (row.status as string).toLowerCase() === "assigned"
       ) {
-        props.setTask(genTaskOption(recordId, row, "complete",));
+        props.setTask(genTaskOption(recordId, row, "complete", dict.title.scheduleType));
       } else {
-        props.setTask(genTaskOption(recordId, row, "default"));
+        props.setTask(genTaskOption(recordId, row, "default", dict.title.scheduleType));
       }
     } else {
-      dispatch(setCurrentEntityType(props.recordType));
       const registryRoute: string =
         !keycloakEnabled ||
           !permissionScheme ||
@@ -148,7 +144,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       props.tableDescriptor.table.getCoreRowModel().flatRows :
                                       props.tableDescriptor.table.getFilteredRowModel().flatRows,
                                     header.id,
-                                    dict.title.blank
+                                    dict
                                   )
                                   )
                                 )}
@@ -179,6 +175,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     lifecycleStage={props.lifecycleStage}
                                     row={row.original}
                                     setTask={props.setTask}
+                                    triggerRefresh={props.triggerRefresh}
                                   />
                                 </div>
                               </TableCell>

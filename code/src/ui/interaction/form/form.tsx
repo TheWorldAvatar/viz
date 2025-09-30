@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
@@ -32,8 +32,6 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
-import { Routes } from "io/config/routes";
-import { getCurrentEntityType } from "state/registry-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 
 interface FormComponentProps {
@@ -65,7 +63,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
-  const currentEntityType: string = useSelector(getCurrentEntityType);
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -134,8 +131,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
     let pendingResponse: AgentResponseBody;
-    // For single service
-    if (formData[FORM_STATES.RECURRENCE] == 0) {
+    // For perpetual service
+    if (formData[FORM_STATES.RECURRENCE] == null) {
+      formData = {
+        ...formData,
+        recurrence: "",
+        "end date": "",
+      };
+      // For single service
+    } else if (formData[FORM_STATES.RECURRENCE] == 0) {
       const startDate: string = formData[FORM_STATES.START_DATE];
       const dateObject: Date = new Date(startDate);
       const dayOfWeek = daysOfWeek[dateObject.getUTCDay()];
@@ -329,9 +333,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // Close search modal on success
         if (props.formType === "search") {
           props.setShowSearchModalState(false);
-          // Redirect back to base page upon deleting the entity
-        } else if (props.formType === "delete") {
-          router.push(`${Routes.REGISTRY_GENERAL}/${currentEntityType}`);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
@@ -472,7 +473,7 @@ export function renderFormField(
       if (
         formType === "search" &&
         fieldProp.class[ID_KEY] ===
-          "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+        "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
         return (
           <FormSearchPeriod

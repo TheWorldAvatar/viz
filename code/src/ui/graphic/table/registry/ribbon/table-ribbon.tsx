@@ -6,8 +6,6 @@ import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { DateRange } from "react-day-picker";
-import { useDispatch } from "react-redux";
-import { setCurrentEntityType } from "state/registry-slice";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
@@ -44,7 +42,6 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
-  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -131,7 +128,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <DateInput
               selectedDate={props.selectedDate}
               setSelectedDateRange={props.setSelectedDate}
-              disabled={getDisabledDates(props.lifecycleStage)}
+              disabledDates={getDisabledDates(props.lifecycleStage)}
             />
           )}
         </div>
@@ -171,9 +168,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
-                additionalHandleClickFunction={() => {
-                  dispatch(setCurrentEntityType(props.entityType));
-                }}
               />
             )}
           {props.lifecycleStage == "report" && (

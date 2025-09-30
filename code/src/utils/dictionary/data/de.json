@@ -49,9 +49,11 @@
     "singleService": "Einzelner Dienst",
     "regularService": "Regelmäßiger Dienst",
     "alternateService": "Alternierender Dienst",
+    "perpetualService": "Dauer Dienst",
     "singleServiceDesc": "Ein einmaliger Dienst (oder Einzelauftrag), der zum angegebenen Datum stattfindet.",
     "regularServiceDesc": "Ein Dienst (oder Dauerauftrag), der regelmäßig nach dem Zeitplan innerhalb des angegebenen Zeitraums stattfindet.",
     "alternateServiceDesc": "Ein Dienst, der an jedem zweiten Tag innerhalb des angegebenen Zeitraums stattfindet.",
+    "perpetualServiceDesc": "Ein Dienst, bei dem die Aufgaben sich endlos wiederholen, aber keinen festen Zeitplan haben.",
     "repeatEvery": "Wiederholen alle",
     "week": "Woche",
     "startDate": "Startdatum",
@@ -137,7 +139,16 @@
     "pickDateRange": "Wählen Sie einen Zeitraum aus.",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
-    "exportReport": "Exportbericht"
+    "exportReport": "Exportbericht",
+    "required": "Erforderlich",
+    "minInclusive": "Bitte geben Sie eine Zahl ein, die {replace} oder größer ist!",
+    "minExclusive": "Bitte geben Sie eine Zahl größer als {replace} ein!",
+    "maxInclusive": "Bitte geben Sie eine Zahl ein, die {replace} oder kleiner ist!",
+    "maxExclusive": "Bitte geben Sie eine Zahl kleiner als {replace} ein!",
+    "minLength": "Die Eingabe muss mindestens {replace} Zeichen umfassen!",
+    "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
+    "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
+    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!"
   },
   "nav": {
     "caption": {
@@ -194,6 +205,7 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "quickView": "Schnellansicht",
+    "scheduleType": "Art des Zeitplans",
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
