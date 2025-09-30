@@ -195,7 +195,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <div className="p-3 md:p-8 bg-background border-1 border-border rounded-lg my-4 mx-auto space-y-4">
+    <div className="p-3 md:p-8 bg-background border-2 md:border-1 border-border rounded-lg my-4 mx-auto space-y-4">
       <h2 className="text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
