@@ -24,7 +24,7 @@ interface DrawerProps {
  * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
  * This component is entirely controlled by Redux state.
  *
- * @param  onClose Optional function to be executed on close.
+ * @param onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
   const dispatch = useDispatch();
