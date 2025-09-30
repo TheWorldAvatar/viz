@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.4
+
+### Changes
+
+- Improve form branching performance
+- Rerender form fields when switching branches to prevent fields from being stuck
+- Bump min version of `VisBackend Agent` from `v1.15.0` to `v1.15.1`
+
 ## 5.41.3
 
 ### Changes
