@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
@@ -16,6 +17,7 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
+import { openDrawer } from "state/drawer-component-slice";
 import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
@@ -43,6 +45,7 @@ export default function RegistryTableComponent(
 ) {
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
+  const dispatch = useDispatch();
   const [refreshFlag, triggerRefresh] = useRefresh();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
@@ -51,7 +54,6 @@ export default function RegistryTableComponent(
     RegistryFieldValues[]
   >([]);
   const [task, setTask] = useState<RegistryTaskOption>(null);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
@@ -191,17 +193,17 @@ export default function RegistryTableComponent(
     const handleHistoryChange = () => {
       triggerRefresh();
     };
-    window.addEventListener('popstate', handleHistoryChange);
+    window.addEventListener("popstate", handleHistoryChange);
     return () => {
-      window.removeEventListener('popstate', handleHistoryChange);
+      window.removeEventListener("popstate", handleHistoryChange);
     };
   }, []);
 
   useEffect(() => {
     if (task) {
-      setIsTaskModalOpen(true);
+      dispatch(openDrawer());
     }
-  }, [task]);
+  }, [task, dispatch]);
 
   return (
     <div className="bg-muted  mx-auto overflow-auto w-full p-4 h-dvh ">
@@ -236,12 +238,10 @@ export default function RegistryTableComponent(
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
-      {isTaskModalOpen && task && (
+      {task && (
         <TaskModal
           entityType={props.entityType}
-          isOpen={isTaskModalOpen}
           task={task}
-          setIsOpen={setIsTaskModalOpen}
           setTask={setTask}
           onSuccess={triggerRefresh}
         />

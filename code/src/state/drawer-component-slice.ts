@@ -24,9 +24,12 @@ const drawerSlice = createSlice({
   },
 });
 
+// Export the actions
 export const { openDrawer, closeDrawer, setDrawerOpen } = drawerSlice.actions;
-export default drawerSlice.reducer;
 
-// Selectors (for use with useSelector)
+// Export selectors
 export const selectDrawerIsOpen = (state: { drawer: DrawerState }) =>
   state.drawer.isOpen;
+
+// Export the reducer
+export default drawerSlice.reducer;
