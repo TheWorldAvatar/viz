@@ -45,7 +45,7 @@ export function InterceptFormContainerComponent(
 ) {
   const dispatch = useDispatch();
 
-  // Dispatch on every render to ensure the drawer is open when this component is active.
+  // Open the drawer when this component is mounted
   useEffect(() => {
     dispatch(setDrawerOpen(true));
   });

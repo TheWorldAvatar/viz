@@ -4,7 +4,7 @@ import {
   FloatingPortal,
   useTransitionStyles,
 } from "@floating-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useDialog } from "hooks/float/useDialog";
@@ -27,18 +27,31 @@ interface DrawerProps {
  * @param onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
+  const [isOpenInternal, setIsOpenInternal] = useState<boolean>(true);
   const dispatch = useDispatch();
   const isOpen = useSelector(selectDrawerIsOpen);
 
-  const setOpen = (open: boolean | ((_prev: boolean) => boolean)) => {
-    if (typeof open === "function") {
-      dispatch(setDrawerOpen(open(isOpen)));
+  // The typeof value === "function" check is needed because React.SetStateAction<boolean> can be either a boolean value
+  // or a function that takes the previous state and returns a new boolean.
+  const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
+    if (typeof value === "function") {
+      dispatch(setDrawerOpen(value(isOpen)));
     } else {
-      dispatch(setDrawerOpen(open));
+      dispatch(setDrawerOpen(value));
     }
   };
 
-  const dialog = useDialog(isOpen, setOpen, false);
+  //  If we never uses the updater function, we could simplify this.
+  //  This ensures that useDialog never passes a function to setOpen, but always a boolean.
+  //  const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
+  //   dispatch(setDrawerOpen(value as boolean));
+  // };
+
+  const dialog = useDialog(
+    isOpen ?? isOpenInternal,
+    setOpen ?? setIsOpenInternal,
+    false
+  );
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -101,6 +114,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     onClick={() => {
                       // Close the drawer using Redux
                       dispatch(closeDrawer());
+                      setIsOpenInternal(false);
                       // If there are additional close functions to execute
                       if (props.onClose) {
                         props.onClose();
