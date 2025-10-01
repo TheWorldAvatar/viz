@@ -1,6 +1,7 @@
 import "react-day-picker/style.css";
 
 import {
+  FloatingFocusManager,
   FloatingPortal,
   Placement,
   useTransitionStyles,
@@ -139,58 +140,60 @@ export default function DateInput(props: Readonly<DateInputProps>) {
 
       {popover.isOpen && (
         <FloatingPortal>
-          <div
-            ref={popover.refs.setFloating}
-            style={{
-              ...popover.floatingStyles,
-              zIndex: 99999,
-            }}
-            {...popover.getFloatingProps()}
-          >
+          <FloatingFocusManager context={popover.context} modal={false}>
             <div
+              ref={popover.refs.setFloating}
               style={{
-                ...transition.styles,
+                ...popover.floatingStyles,
+                zIndex: 99999,
               }}
-              className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
+              {...popover.getFloatingProps()}
             >
-              {!isDateType && (
-                <DayPicker
-                  locale={dict.lang === "de" ? de : enGB}
-                  mode="range"
-                  selected={props.selectedDate as DateRange}
-                  onSelect={handleDateSelect}
-                  disabled={props.disabledDates}
-                  classNames={{
-                    today: `text-yellow-500`,
-                    selected: `bg-gray-200 dark:bg-zinc-800`,
-                    root: `${defaultDayPickerClassNames.root}  p-4`,
-                    chevron: ` fill-foreground`,
-                    footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
-                    range_middle: ` `,
-                    range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                    range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                  }}
-                  required={true}
-                />
-              )}
-              {isDateType && !props.disabled && (
-                <DayPicker
-                  locale={dict.lang === "de" ? de : enGB}
-                  mode="single"
-                  selected={props.selectedDate as Date}
-                  onSelect={handleDateSelect}
-                  disabled={props.disabledDates}
-                  classNames={{
-                    today: `text-yellow-500`,
-                    selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                    root: `${defaultDayPickerClassNames.root}  p-4`,
-                    chevron: ` fill-foreground`,
-                  }}
-                  required={true}
-                />
-              )}
+              <div
+                style={{
+                  ...transition.styles,
+                }}
+                className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
+              >
+                {!isDateType && (
+                  <DayPicker
+                    locale={dict.lang === "de" ? de : enGB}
+                    mode="range"
+                    selected={props.selectedDate as DateRange}
+                    onSelect={handleDateSelect}
+                    disabled={props.disabledDates}
+                    classNames={{
+                      today: `text-yellow-500`,
+                      selected: `bg-gray-200 dark:bg-zinc-800`,
+                      root: `${defaultDayPickerClassNames.root}  p-4`,
+                      chevron: ` fill-foreground`,
+                      footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
+                      range_middle: ` `,
+                      range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                      range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                    }}
+                    required={true}
+                  />
+                )}
+                {isDateType && !props.disabled && (
+                  <DayPicker
+                    locale={dict.lang === "de" ? de : enGB}
+                    mode="single"
+                    selected={props.selectedDate as Date}
+                    onSelect={handleDateSelect}
+                    disabled={props.disabledDates}
+                    classNames={{
+                      today: `text-yellow-500`,
+                      selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                      root: `${defaultDayPickerClassNames.root}  p-4`,
+                      chevron: ` fill-foreground`,
+                    }}
+                    required={true}
+                  />
+                )}
+              </div>
             </div>
-          </div>
+          </FloatingFocusManager>
         </FloatingPortal>
       )}
     </div>
