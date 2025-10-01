@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
@@ -17,7 +17,7 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { openDrawer } from "state/drawer-component-slice";
+import { openDrawer, selectDrawerIsOpen } from "state/drawer-component-slice";
 import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
@@ -46,6 +46,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
+  const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
   const [refreshFlag, triggerRefresh] = useRefresh();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
@@ -238,7 +239,7 @@ export default function RegistryTableComponent(
           <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
-      {task && (
+      {isTaskModalOpen && task && (
         <TaskModal
           entityType={props.entityType}
           task={task}
