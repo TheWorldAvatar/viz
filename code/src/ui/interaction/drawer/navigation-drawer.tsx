@@ -7,8 +7,7 @@ interface NavigationDrawerProps {
 
 /**
  * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
- * This drawer component is a variant that will navigate back in the browser history on closed.
- * It automatically closes when the URL changes and is entirely controlled by Redux state.
+ * This drawer component is a variant that will navigate back in the browser history on close.
  */
 export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
