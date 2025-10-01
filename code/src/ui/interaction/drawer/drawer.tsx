@@ -4,16 +4,16 @@ import {
   FloatingPortal,
   useTransitionStyles,
 } from "@floating-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useDialog } from "hooks/float/useDialog";
-import Button from "../button";
 import {
   closeDrawer,
   selectDrawerIsOpen,
   setDrawerOpen,
 } from "state/drawer-component-slice";
+import Button from "../button";
 
 interface DrawerProps {
   onClose?: () => void;
@@ -27,29 +27,19 @@ interface DrawerProps {
  * @param onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const [isOpenInternal, setIsOpenInternal] = useState<boolean>(true);
   const dispatch = useDispatch();
-  const isOpen = useSelector(selectDrawerIsOpen);
+  const isOpen: boolean = useSelector(selectDrawerIsOpen);
 
-  // The typeof value === "function" check is needed because React.SetStateAction<boolean> can be either a boolean value
-  // or a function that takes the previous state and returns a new boolean.
+  // React.SetStateAction<> may either be a boolean value or a function that takes the 
+  // previous state and returns a new boolean. But this is used in Floating UI, which seems to 
+  // only use the first case, and thus, we can simplify this.
   const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
-    if (typeof value === "function") {
-      dispatch(setDrawerOpen(value(isOpen)));
-    } else {
-      dispatch(setDrawerOpen(value));
-    }
+    dispatch(setDrawerOpen(value as boolean));
   };
 
-  //  If we never uses the updater function, we could simplify this.
-  //  This ensures that useDialog never passes a function to setOpen, but always a boolean.
-  //  const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
-  //   dispatch(setDrawerOpen(value as boolean));
-  // };
-
   const dialog = useDialog(
-    isOpen ?? isOpenInternal,
-    setOpen ?? setIsOpenInternal,
+    isOpen,
+    setOpen,
     false
   );
   const transition = useTransitionStyles(dialog.context, {
@@ -112,9 +102,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
                     onClick={() => {
-                      // Close the drawer using Redux
                       dispatch(closeDrawer());
-                      setIsOpenInternal(false);
                       // If there are additional close functions to execute
                       if (props.onClose) {
                         props.onClose();
