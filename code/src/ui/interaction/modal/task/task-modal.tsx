@@ -159,10 +159,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setTimeout(() => {
         // Inform parent to refresh data on successful action
         props.onSuccess?.();
-        dispatch(closeDrawer());
         // Reset states on successful submission
         props.setTask(null);
         setFormFields([]);
+        dispatch(closeDrawer());
       }, 2000);
     }
   };

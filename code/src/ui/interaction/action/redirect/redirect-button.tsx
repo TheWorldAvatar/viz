@@ -26,8 +26,8 @@ export default function RedirectButton({
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
     event.preventDefault();
-    dispatch(closeDrawer());
     router.push(url);
+    dispatch(closeDrawer());
   };
   return <Button {...rest} onClick={handleClick} />;
 }
