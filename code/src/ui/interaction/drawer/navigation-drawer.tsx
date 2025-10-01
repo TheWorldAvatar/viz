@@ -1,4 +1,7 @@
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "state/drawer-component-slice";
 import Drawer from "./drawer";
 
 interface NavigationDrawerProps {
@@ -13,6 +16,11 @@ export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
 ) {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(openDrawer());
+  });
 
   return <Drawer onClose={() => router.back()}>{props.children}</Drawer>;
 }

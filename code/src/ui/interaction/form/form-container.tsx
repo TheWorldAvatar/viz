@@ -3,12 +3,10 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { useDispatch } from "react-redux";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
-import { setDrawerOpen } from "state/drawer-component-slice";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -43,13 +41,6 @@ interface FormContainerComponentProps {
 export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
-  const dispatch = useDispatch();
-
-  // Open the drawer when this component is mounted
-  useEffect(() => {
-    dispatch(setDrawerOpen(true));
-  });
-
   return (
     <NavigationDrawer>
       <FormContents {...props} />
