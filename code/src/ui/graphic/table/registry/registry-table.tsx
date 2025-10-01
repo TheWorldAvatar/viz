@@ -36,6 +36,8 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "state/drawer-component-slice";
 
 interface RegistryTableProps {
   recordType: string;
@@ -59,6 +61,7 @@ interface RegistryTableProps {
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
+  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(props.tableDescriptor.table, props.tableDescriptor.data, props.tableDescriptor.setData);
@@ -94,6 +97,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         props.setTask(genTaskOption(recordId, row, "default", dict.title.scheduleType));
       }
+      dispatch(openDrawer());
     } else {
       const registryRoute: string =
         !keycloakEnabled ||

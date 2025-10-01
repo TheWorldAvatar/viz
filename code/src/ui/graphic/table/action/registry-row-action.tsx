@@ -22,6 +22,8 @@ import { Dictionary } from "types/dictionary";
 import { JsonObject } from "types/json";
 import { toast } from "ui/interaction/action/toast/toast";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { openDrawer } from "state/drawer-component-slice";
+import { useDispatch } from "react-redux";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -44,6 +46,7 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
@@ -109,6 +112,7 @@ export default function RegistryRowAction(
       props.lifecycleStage == "closed"
     ) {
       props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
+      dispatch(openDrawer());
     } else {
       // Move to the view modal page for the specific record
       router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
@@ -166,6 +170,7 @@ export default function RegistryRowAction(
                   handleClickView();
                 } else {
                   props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
+                  dispatch(openDrawer());
                 }
               }}
             />
@@ -188,6 +193,7 @@ export default function RegistryRowAction(
                         props.setTask(
                           genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
                         );
+                        dispatch(openDrawer());
                       }}
                     />
                   )}
@@ -286,6 +292,7 @@ export default function RegistryRowAction(
                         props.setTask(
                           genTaskOption(recordId, props.row, "complete", dict.title.scheduleType)
                         );
+                        dispatch(openDrawer());
                       }}
                     />
                   )}
@@ -306,6 +313,7 @@ export default function RegistryRowAction(
                         props.setTask(
                           genTaskOption(recordId, props.row, "dispatch", dict.title.scheduleType)
                         );
+                        dispatch(openDrawer());
                       }}
                     />
                   )}
@@ -329,6 +337,7 @@ export default function RegistryRowAction(
                         props.setTask(
                           genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
                         );
+                        dispatch(openDrawer());
                       }}
                     />
                   )}
@@ -351,6 +360,7 @@ export default function RegistryRowAction(
                         props.setTask(
                           genTaskOption(recordId, props.row, "report", dict.title.scheduleType)
                         );
+                        dispatch(openDrawer());
                       }}
                     />
                   )}

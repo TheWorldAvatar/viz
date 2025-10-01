@@ -29,7 +29,7 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 import { toast } from "ui/interaction/action/toast/toast";
 import { useDispatch } from "react-redux";
-import { closeDrawer } from "state/drawer-component-slice";
+import { closeDrawer, openDrawer } from "state/drawer-component-slice";
 import Drawer from "ui/interaction/drawer/drawer";
 
 interface TaskModalProps {
@@ -263,8 +263,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -300,12 +300,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.complete}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "complete",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -320,12 +321,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.dispatch}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "dispatch",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -341,12 +343,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.cancel}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "cancel",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -362,12 +365,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.report}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "report",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||

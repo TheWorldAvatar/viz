@@ -45,7 +45,6 @@ export default function RegistryTableComponent(
 ) {
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
-  const dispatch = useDispatch();
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
   const [refreshFlag, triggerRefresh] = useRefresh();
   const [initialInstances, setInitialInstances] = useState<
@@ -199,12 +198,6 @@ export default function RegistryTableComponent(
       window.removeEventListener("popstate", handleHistoryChange);
     };
   }, []);
-
-  useEffect(() => {
-    if (task) {
-      dispatch(openDrawer());
-    }
-  }, [task, dispatch]);
 
   return (
     <div className="bg-muted  mx-auto overflow-auto w-full p-4 h-dvh ">
