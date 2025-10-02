@@ -57,12 +57,10 @@ function LegendTreeNode(props: Readonly<LegendTreeNodeProps>) {
                   {legendSettings.type === "symbol" &&
                     <IconComponent
                       icon={legendSettings.icon}
-                      classes={styles.legendIcon}
                     />}
                   {legendSettings.type === "fill" &&
                     <DecagonIconComponent
                       color={legendSettings.fill}
-                      classes={styles.legendIcon}
                     />}
                   {legendSettings.description ? (
                     <h4 className={styles.header}>{item}</h4>
