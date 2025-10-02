@@ -50,8 +50,7 @@ function LegendTreeNode(props: Readonly<LegendTreeNodeProps>) {
         toggleExpansion={toggleExpansion}
       />
       {Object.entries(props.group).map(([item, legendSettings]) => {
-        if (!isCollapsed) {
-          if (legendSettings.description) {
+          if (!isCollapsed) {
             return (
               <div key={props.groupName + item}>
                 <div className={styles.legendEntryHeader}>
@@ -65,32 +64,18 @@ function LegendTreeNode(props: Readonly<LegendTreeNodeProps>) {
                       color={legendSettings.fill}
                       classes={styles.legendIcon}
                     />}
-                  <h4 className={styles.header}>{item}</h4>
+                  {legendSettings.description ? (
+                    <h4 className={styles.header}>{item}</h4>
+                  ) : (
+                    <span className={styles.legendEntryDescription}>{item}</span>
+                  )}
                 </div>
-                <span className={styles.legendEntryDescription}>{legendSettings.description}</span>
+                {legendSettings.description && (
+                  <span className={styles.legendEntryDescription}>{legendSettings.description}</span>
+                )}
               </div>
-            )
+            );
           }
-          else {
-            return (
-              <div key={props.groupName + item}>
-                <div className={styles.legendEntryHeader}>
-                  {legendSettings.type === "symbol" &&
-                    <IconComponent
-                      icon={legendSettings.icon}
-                      classes={styles.legendIcon}
-                    />}
-                  {legendSettings.type === "fill" &&
-                    <DecagonIconComponent
-                      color={legendSettings.fill}
-                      classes={styles.legendIcon}
-                    />}
-                  <span className={styles.legendEntryDescription}>{item}</span>
-                </div>
-              </div>
-            )
-          }
-        }
       })}
     </div>
   );
