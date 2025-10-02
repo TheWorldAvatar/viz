@@ -50,13 +50,14 @@ export default function RegistryRowAction(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-      ? getId(props.row.id)
-      : props.row.iri;
+    ? getId(props.row.id)
+    : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -68,6 +69,7 @@ export default function RegistryRowAction(
       "service",
       "commence"
     );
+
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
@@ -87,20 +89,26 @@ export default function RegistryRowAction(
     method: string,
     body: string
   ): Promise<void> => {
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "same-origin",
-      body,
-    });
-    setIsActionMenuOpen(false);
-    const customAgentResponse: AgentResponseBody = await res.json();
-    toast(
-      customAgentResponse?.data?.message || customAgentResponse?.error?.message,
-      customAgentResponse?.error ? "error" : "success"
-    );
-    props.triggerRefresh();
+    try {
+      setIsLoading(true);
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body,
+      });
+      setIsActionMenuOpen(false);
+      const customAgentResponse: AgentResponseBody = await res.json();
+      toast(
+        customAgentResponse?.data?.message ||
+          customAgentResponse?.error?.message,
+        customAgentResponse?.error ? "error" : "success"
+      );
+      props.triggerRefresh();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleClickView = (): void => {
@@ -111,7 +119,9 @@ export default function RegistryRowAction(
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
     ) {
-      props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
+      props.setTask(
+        genTaskOption(recordId, props.row, "default", dict.title.scheduleType)
+      );
       dispatch(openDrawer());
     } else {
       // Move to the view modal page for the specific record
@@ -163,18 +173,25 @@ export default function RegistryRowAction(
               size="md"
               iconSize="medium"
               className="w-full justify-start"
+              disabled={isLoading}
               label={parseWordsForLabels(dict.action.view)}
               onClick={() => {
                 setIsActionMenuOpen(false);
                 if (isSubmissionOrGeneralPage) {
                   handleClickView();
                 } else {
-                  props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
+                  props.setTask(
+                    genTaskOption(
+                      recordId,
+                      props.row,
+                      "default",
+                      dict.title.scheduleType
+                    )
+                  );
                   dispatch(openDrawer());
                 }
               }}
             />
-
             {isSubmissionOrGeneralPage && (
               <>
                 {(!keycloakEnabled ||
@@ -187,11 +204,17 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "cancel",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -205,6 +228,7 @@ export default function RegistryRowAction(
                     <Button
                       variant="ghost"
                       leftIcon="done_outline"
+                      disabled={isLoading}
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
@@ -224,6 +248,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.resubmit}
                       onClick={onResubmissionForApproval}
                     />
@@ -239,6 +264,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.edit}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -259,6 +285,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.delete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -270,7 +297,6 @@ export default function RegistryRowAction(
                   )}
               </>
             )}
-
             {!isSubmissionOrGeneralPage && (
               <>
                 {(!keycloakEnabled ||
@@ -290,7 +316,12 @@ export default function RegistryRowAction(
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "complete", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "complete",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -311,7 +342,12 @@ export default function RegistryRowAction(
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "dispatch", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "dispatch",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -335,7 +371,12 @@ export default function RegistryRowAction(
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "cancel",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -358,7 +399,12 @@ export default function RegistryRowAction(
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "report", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "report",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -378,7 +424,7 @@ export function genTaskOption(
   recordId: string,
   row: FieldValues,
   taskType: RegistryTaskType,
-  scheduleTypeKey: string,
+  scheduleTypeKey: string
 ): RegistryTaskOption {
   let status: string;
   if (row.order === "0" || row.status?.toLowerCase() === "new") {
