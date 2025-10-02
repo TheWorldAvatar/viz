@@ -19,7 +19,6 @@ import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
-import Drawer from "../../drawer/drawer";
 
 import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
@@ -29,12 +28,13 @@ import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 import { toast } from "ui/interaction/action/toast/toast";
+import { useDispatch } from "react-redux";
+import { closeDrawer, openDrawer } from "state/drawer-component-slice";
+import Drawer from "ui/interaction/drawer/drawer";
 
 interface TaskModalProps {
   entityType: string;
-  isOpen: boolean;
   task: RegistryTaskOption;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   onSuccess?: () => void;
 }
@@ -43,15 +43,14 @@ interface TaskModalProps {
  * A modal component for users to interact with their tasks while on the registry.
  *
  * @param {string} entityType The type of entity for the task's contract.
- * @param {boolean} isOpen Indicator if the this modal should be opened.
  * @param {RegistryTaskOption} task The current task to display.
- * @param setIsOpen Method to close or open the modal.
  * @param setTask A dispatch method to set the task option when required.
  */
 export default function TaskModal(props: Readonly<TaskModalProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
+  const dispatch = useDispatch();
 
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
@@ -160,10 +159,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       setTimeout(() => {
         // Inform parent to refresh data on successful action
         props.onSuccess?.();
-        props.setIsOpen(false);
         // Reset states on successful submission
         props.setTask(null);
         setFormFields([]);
+        dispatch(closeDrawer());
       }, 2000);
     }
   };
@@ -222,10 +221,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   }, [props.task?.id, props.task?.status, props.task?.type]);
 
   return (
-    <Drawer
-      isControlledOpen={props.isOpen}
-      setIsControlledOpen={props.setIsOpen}
-    >
+    <Drawer>
       {/* Header */}
       <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5  shrink-0">
         <h1 className="text-xl font-bold">
@@ -304,12 +300,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.complete}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "complete",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -324,12 +321,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.dispatch}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "dispatch",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -345,12 +343,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.cancel}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "cancel",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -366,12 +365,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 iconSize="medium"
                 className="w-full justify-start"
                 label={dict.action.report}
-                onClick={() =>
+                onClick={() => {
                   props.setTask({
                     ...props.task,
                     type: "report",
-                  })
-                }
+                  });
+                  dispatch(openDrawer());
+                }}
               />
             )}
           {(!keycloakEnabled ||
@@ -401,7 +401,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
                 onClick={() => {
-                  if (props.task?.type === "complete" && props.task.scheduleType === dict.form.perpetualService) {
+                  if (
+                    props.task?.type === "complete" &&
+                    props.task.scheduleType === dict.form.perpetualService
+                  ) {
                     setIsDuplicate(true);
                   }
                   setIsSubmitting(true);
@@ -411,7 +414,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
-            props.task?.type === "complete" && props.task.scheduleType != dict.form.perpetualService && (
+            props.task?.type === "complete" &&
+            props.task.scheduleType != dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"

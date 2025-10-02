@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.6
+
+### Changes
+
+- Moved the drawer state to a global state
+
+### Bug Fixes
+
+- Fixed the issue with the drawer remains open when navigating on a different page
+- Fixed the issue with the drawer not always being responsive (opening on click)
+
 ## 5.41.5
 
 ### Changes
