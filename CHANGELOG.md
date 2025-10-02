@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.5
+
+### Changes
+
+- Fixed Issue with the layout of the icon in the export button date input and not closing when clicking outside when a date is selected
+
 ## 5.41.4
 
 ### Changes
