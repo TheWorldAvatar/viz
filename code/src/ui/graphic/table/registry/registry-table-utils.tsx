@@ -1,22 +1,15 @@
-import {
-  ColumnDef,
-  FilterFnOption,
-  Row
-} from "@tanstack/react-table";
+import { ColumnDef, FilterFnOption, Row } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import {
-  LifecycleStage,
-  RegistryFieldValues
-} from "types/form";
+import { LifecycleStage, RegistryFieldValues } from "types/form";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 
 export type TableData = {
   data: FieldValues[];
   columns: ColumnDef<FieldValues>[];
-}
+};
 
 /**
  * Parses raw data from API into table data format suitable for rendering.
@@ -24,22 +17,29 @@ export type TableData = {
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
  * @param {string} translatedBlankText The translated blank text.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], translatedBlankText: string): TableData {
+export function parseDataForTable(
+  instances: RegistryFieldValues[],
+  translatedBlankText: string
+): TableData {
   const results: TableData = {
     data: [],
     columns: [],
   };
   if (instances?.length > 0) {
-    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(translatedBlankText);
+    const multiSelectFilter: FilterFnOption<FieldValues> =
+      buildMultiFilterFnOption(translatedBlankText);
     let maxFieldLength: number = 0;
-    instances.map(instance => {
-      const flattenInstance: Record<string, string> = {};
+    instances.map((instance) => {
+      const flattenInstance: Record<string, string | string[]> = {};
       const fields: string[] = Object.keys(instance);
       const tempColumns: ColumnDef<FieldValues>[] = [];
+
       fields.forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
-          flattenInstance[field] = fieldValue[0]?.value;
+          flattenInstance[field] = fieldValue.map((item) =>
+            String(item?.value || item)
+          );
         } else {
           flattenInstance[field] = fieldValue?.value;
         }
@@ -47,16 +47,29 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
         // update column definitions to follow the new max
         if (fields.length > maxFieldLength) {
           const title: string = parseWordsForLabels(field);
-          const minWidth: number = Math.max(
-            title.length * 15,
-            125
-          );
+          const minWidth: number = Math.max(title.length * 15, 125);
           tempColumns.push({
             accessorKey: field,
             header: title,
             cell: ({ getValue }) => {
-              const value: string = getValue() as string;
+              const value: string | string[] = getValue() as string | string[];
               if (!value) return "";
+
+              // Handle array values
+              if (Array.isArray(value)) {
+                return (
+                  <div className="flex flex-col gap-1">
+                    {value.map((item, idx) => (
+                      <span
+                        key={idx}
+                        className="text-foreground text-base bg-amber-50 p-3 w-fit rounded-xl"
+                      >
+                        {parseWordsForLabels(item)}
+                      </span>
+                    ))}
+                  </div>
+                );
+              }
 
               if (field.toLowerCase() === "status") {
                 return <StatusComponent status={value} />;
@@ -71,7 +84,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
             filterFn: multiSelectFilter,
             size: minWidth,
             enableSorting: true,
-          })
+          });
         }
       });
       results.data.push(flattenInstance);
@@ -86,15 +99,13 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
 
 /**
  * Builds a custom filter function to filter for multiple values when selected.
- * 
+ *
  * @param {string} translatedBlankText The translated blank text.
  */
-export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<FieldValues> {
-  return (
-    row,
-    columnId,
-    filterValue: string[],
-  ) => {
+export function buildMultiFilterFnOption(
+  translatedBlankText: string
+): FilterFnOption<FieldValues> {
+  return (row, columnId, filterValue: string[]) => {
     if (!filterValue.length) return true;
     const rowValue: string = row.getValue(columnId);
     if (rowValue === undefined) {
@@ -111,11 +122,22 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
  * @param {string} header Column header of interest.
  * @param {Dictionary} dict Dictionary translations.
  */
-export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
-  // Return translated status label if header is status. 
-  return rows.flatMap((row) => header == "status" ? dict.title[(row.getValue(header) as string).replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())]
-    // Else return the value or default to blank value
-    : row.getValue(header) ?? dict.title.blank);
+export function parseRowsForFilterOptions(
+  rows: Row<FieldValues>[],
+  header: string,
+  dict: Dictionary
+): string[] {
+  // Return translated status label if header is status.
+  return rows.flatMap((row) =>
+    header == "status"
+      ? dict.title[
+          (row.getValue(header) as string).replace(/^[A-Z]/, (firstChar) =>
+            firstChar.toLowerCase()
+          )
+        ]
+      : // Else return the value or default to blank value
+        row.getValue(header) ?? dict.title.blank
+  );
 }
 
 /**
