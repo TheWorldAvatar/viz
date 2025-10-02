@@ -97,27 +97,23 @@ export default function RegistryRowAction(
     method: string,
     body: string
   ): Promise<void> => {
-    try {
-      dispatch(setApiLoading({ key: recordId, isLoading: true }));
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body,
-      });
-      setIsActionMenuOpen(false);
-      const customAgentResponse: AgentResponseBody = await res.json();
-      toast(
-        customAgentResponse?.data?.message ||
-          customAgentResponse?.error?.message,
-        customAgentResponse?.error ? "error" : "success"
-      );
+    dispatch(setApiLoading({ key: recordId, isLoading: true }));
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+      credentials: "same-origin",
+      body,
+    });
+    setIsActionMenuOpen(false);
+    const customAgentResponse: AgentResponseBody = await res.json();
+    toast(
+      customAgentResponse?.data?.message || customAgentResponse?.error?.message,
+      customAgentResponse?.error ? "error" : "success"
+    );
 
-      dispatch(setPendingRefresh(true));
-    } finally {
-      dispatch(setApiLoading({ key: recordId, isLoading: false }));
-    }
+    dispatch(setPendingRefresh(true));
+    dispatch(setApiLoading({ key: recordId, isLoading: false }));
   };
 
   const handleClickView = (): void => {
