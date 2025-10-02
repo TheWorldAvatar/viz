@@ -263,8 +263,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                  ? "cancellation"
-                  : "dispatch"
+                ? "cancellation"
+                : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -277,6 +277,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
+            disabled={isFetching || isSubmitting || isSaving || isDuplicate}
             variant="outline"
             size="icon"
             onClick={triggerRefresh}
@@ -381,6 +382,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="save"
                 variant="secondary"
+                disabled={isSubmitting || isSaving || isDuplicate}
                 label={dict.action.save}
                 tooltipText={dict.action.save}
                 onClick={() => setIsSaving(true)}
@@ -400,6 +402,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
+                disabled={isSubmitting || isSaving || isDuplicate}
                 onClick={() => {
                   if (
                     props.task?.type === "complete" &&
@@ -419,6 +422,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
+                disabled={isSubmitting || isSaving || isDuplicate}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
                 onClick={() => {
