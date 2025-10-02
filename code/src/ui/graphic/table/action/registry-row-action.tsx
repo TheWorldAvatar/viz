@@ -25,7 +25,11 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { openDrawer } from "state/drawer-component-slice";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { selectIsApiLoading, setApiLoading } from "state/api-loading-slice";
+import {
+  selectIsApiLoading,
+  setApiLoading,
+  setPendingRefresh,
+} from "state/api-loading-slice";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -109,7 +113,8 @@ export default function RegistryRowAction(
           customAgentResponse?.error?.message,
         customAgentResponse?.error ? "error" : "success"
       );
-      props.triggerRefresh();
+
+      dispatch(setPendingRefresh(true));
     } finally {
       dispatch(setApiLoading({ key: recordId, isLoading: false }));
     }

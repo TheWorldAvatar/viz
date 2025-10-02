@@ -3,10 +3,12 @@ import { ReduxState } from "app/store";
 
 interface ApiLoadingState {
   loadingRequests: Record<string, boolean>;
+  pendingRefresh: boolean; // Flag to trigger refresh when returning to the page
 }
 
 const initialState: ApiLoadingState = {
   loadingRequests: {},
+  pendingRefresh: false,
 };
 
 // The key is used to track which row in the table is clicked
@@ -28,25 +30,21 @@ const apiLoadingSlice = createSlice({
         delete state.loadingRequests[action.payload.key];
       }
     },
-    clearApiLoading: (state, action: PayloadAction<string>) => {
-      delete state.loadingRequests[action.payload];
-    },
-    clearAllApiLoading: (state) => {
-      state.loadingRequests = {};
+    setPendingRefresh: (state, action: PayloadAction<boolean>) => {
+      state.pendingRefresh = action.payload;
     },
   },
 });
 
 // Export the actions
-export const { setApiLoading, clearApiLoading, clearAllApiLoading } =
-  apiLoadingSlice.actions;
+export const { setApiLoading, setPendingRefresh } = apiLoadingSlice.actions;
 
 // Export selectors
 export const selectIsApiLoading = (key: string) => (state: ReduxState) =>
   state.apiLoading.loadingRequests[key] === true;
 
-export const selectHasAnyApiLoading = (state: ReduxState) =>
-  Object.keys(state.apiLoading.loadingRequests).length > 0;
+export const selectPendingRefresh = (state: ReduxState) =>
+  state.apiLoading.pendingRefresh;
 
 // Export the reducer
 export default apiLoadingSlice.reducer;
