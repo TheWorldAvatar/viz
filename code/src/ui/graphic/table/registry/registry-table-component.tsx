@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
@@ -17,7 +17,7 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { openDrawer, selectDrawerIsOpen } from "state/drawer-component-slice";
+import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,

@@ -30,18 +30,11 @@ export default function Drawer(props: Readonly<DrawerProps>) {
   const dispatch = useDispatch();
   const isOpen: boolean = useSelector(selectDrawerIsOpen);
 
-  // React.SetStateAction<> may either be a boolean value or a function that takes the 
-  // previous state and returns a new boolean. But this is used in Floating UI, which seems to 
-  // only use the first case, and thus, we can simplify this.
   const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
     dispatch(setDrawerOpen(value as boolean));
   };
 
-  const dialog = useDialog(
-    isOpen,
-    setOpen,
-    false
-  );
+  const dialog = useDialog(isOpen, setOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
