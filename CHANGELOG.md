@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.9
+
+### Bug Fixes
+
+- Enable full column selection per row
+
 ## 5.41.8
 
 ### Changes
