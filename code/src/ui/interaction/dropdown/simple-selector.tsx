@@ -45,18 +45,17 @@ interface SimpleSelectorProps {
  */
 export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
   const dict: Dictionary = useDictionary();
+  const naOption: SelectOption = { value: "", label: dict.message.na };
 
-  // A function that adds the not applicable option if required
+  // A function that adds the not applicable option at the start if required
   const addNAOption = (
     reqNotApplicableOption: boolean,
     options: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>
   ): OptionsOrGroups<SelectOption, GroupBase<SelectOption>> => {
-    if (!reqNotApplicableOption) {
-      return options;
+    if (reqNotApplicableOption) {
+      return [naOption, ...options];
     }
-    const naOption: SelectOption = { value: "", label: dict.message.na };
-    // Add na option at the beginning for visibility
-    return [naOption, ...options];
+    return options;
   };
 
   const parsedOptions: OptionsOrGroups<
@@ -85,16 +84,13 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     [parsedOptions]
   );
 
-  // Determine the default value:
-  // If reqNotApplicableOption is true and defaultVal is empty/undefined,
-  // default to the "Not Applicable" option
-  const getDefaultValue = (): SelectOption | undefined => {
+  const getDefaultValue = (): SelectOption => {
     // If defaultVal is explicitly empty and NA option is required, use NA option
     if (
       (props.defaultVal === "" || props.defaultVal === undefined) &&
       props.reqNotApplicableOption
     ) {
-      return flattenedOptions.find((option) => option.value === "");
+      return naOption;
     }
     // Otherwise, find the matching option
     return flattenedOptions.find((option) => option.value === props.defaultVal);
