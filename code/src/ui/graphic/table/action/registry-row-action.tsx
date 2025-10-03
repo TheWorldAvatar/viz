@@ -174,7 +174,7 @@ export default function RegistryRowAction(
           {isLoading && (
             <div className="flex flex-col gap-2 justify-center items-center m-auto p-1.5 cursor-auto ">
               <LoadingSpinner isSmall={true} />
-              Processing...
+              {dict.message.processing}
             </div>
           )}
           <div className="flex flex-col space-y-8 lg:space-y-4 ">

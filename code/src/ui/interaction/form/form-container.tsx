@@ -25,7 +25,11 @@ import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
 import { useSelector, useDispatch } from "react-redux";
-import { selectIsApiLoading, setApiLoading } from "state/api-loading-slice";
+import {
+  selectIsApiLoading,
+  setApiLoading,
+  setPendingRefresh,
+} from "state/api-loading-slice";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -188,6 +192,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       customAgentResponse?.error ? "error" : "success"
     );
     setIsLoading(false);
+    dispatch(setPendingRefresh(true));
     dispatch(setApiLoading({ key: id, isLoading: false }));
 
     if (!customAgentResponse?.error) {
