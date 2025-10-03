@@ -136,7 +136,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     padding: "0.2rem",
     margin: "0",
     borderRadius: "0.4rem",
-    cursor: isDisabled ? "not-allowed !important" : "default",
+    cursor: isDisabled ? "not-allowed" : "default",
     backgroundColor: "var(--background)",
     opacity: isDisabled ? "0.75" : "1",
     boxShadow: isFocused ? "0 0 0 2px var(--border)" : "none",

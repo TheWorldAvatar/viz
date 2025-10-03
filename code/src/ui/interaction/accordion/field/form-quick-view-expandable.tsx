@@ -73,10 +73,10 @@ export default function FormQuickViewExpandable(
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
         <div
-          className={`pl-2 pr-2 mt-2 border border-border rounded-lg ${
+          className={`mt-2 rounded-lg px-2 ${
             props.nestedLevel % 2 === 0
-              ? "bg-background shadow-md"
-              : "bg-muted inset-shadow-sm"
+              ? "bg-muted shadow-md "
+              : "bg-background shadow-md "
           }`}
         >
           <FormQuickViewFields

@@ -376,18 +376,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.saveTask) &&
-            props.task?.type === "complete" && (
-              <Button
-                leftIcon="save"
-                variant="secondary"
-                label={dict.action.save}
-                tooltipText={dict.action.save}
-                onClick={() => setIsSaving(true)}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
             (permissionScheme.hasPermissions.completeTask &&
               props.task?.type === "complete") ||
             (permissionScheme.hasPermissions.reportTask &&
@@ -411,6 +399,19 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 }}
               />
             )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.saveTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={() => setIsSaving(true)}
+              />
+            )}
+
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
