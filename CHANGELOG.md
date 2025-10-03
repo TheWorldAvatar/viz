@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.8
+
+### Changes
+
+- Made the Not Applicable option in the select dropdown to always be the default option if present
+
 ## 5.41.7
 
 ### Changes
