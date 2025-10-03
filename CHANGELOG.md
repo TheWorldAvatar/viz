@@ -2,6 +2,31 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.6
+
+### Changes
+
+- Moved the drawer state to a global state
+
+### Bug Fixes
+
+- Fixed the issue with the drawer remains open when navigating on a different page
+- Fixed the issue with the drawer not always being responsive (opening on click)
+
+## 5.41.5
+
+### Changes
+
+- Fixed Issue with the layout of the icon in the export button date input and not closing when clicking outside when a date is selected
+
+## 5.41.4
+
+### Changes
+
+- Improve form branching performance
+- Rerender form fields when switching branches to prevent fields from being stuck
+- Bump min version of `VisBackend Agent` from `v1.15.0` to `v1.15.1`
+
 ## 5.41.3
 
 ### Changes
