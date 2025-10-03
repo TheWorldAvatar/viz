@@ -148,7 +148,8 @@
     "minLength": "Input requires at least {replace} letters!",
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
-    "patternFollowed": "This field must follow the pattern {replace}!"
+    "patternFollowed": "This field must follow the pattern {replace}!",
+    "processing": "Processing..."
   },
   "nav": {
     "caption": {
