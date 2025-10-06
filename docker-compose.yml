@@ -1,6 +1,6 @@
 services:
   viz:
-    image: ghcr.io/theworldavatar/viz:5.41.6
+    image: ghcr.io/theworldavatar/viz:5.41.9
     container_name: "viz"
     restart: "no"
     environment:

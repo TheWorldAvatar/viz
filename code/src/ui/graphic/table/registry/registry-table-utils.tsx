@@ -31,11 +31,12 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
   };
   if (instances?.length > 0) {
     const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(translatedBlankText);
+    let columnNames: Set<string> = new Set<string>();
     let maxFieldLength: number = 0;
     instances.map(instance => {
       const flattenInstance: Record<string, string> = {};
       const fields: string[] = Object.keys(instance);
-      const tempColumns: ColumnDef<FieldValues>[] = [];
+      const tempColumns: Set<string> = new Set<string>();
       fields.forEach((field) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
@@ -44,42 +45,47 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
           flattenInstance[field] = fieldValue?.value;
         }
         // Whenever the number of fields in a row exceeds the current max number of fields,
-        // update column definitions to follow the new max
+        // add column field to a temporary set
         if (fields.length > maxFieldLength) {
-          const title: string = parseWordsForLabels(field);
-          const minWidth: number = Math.max(
-            title.length * 15,
-            125
-          );
-          tempColumns.push({
-            accessorKey: field,
-            header: title,
-            cell: ({ getValue }) => {
-              const value: string = getValue() as string;
-              if (!value) return "";
-
-              if (field.toLowerCase() === "status") {
-                return <StatusComponent status={value} />;
-              }
-
-              return (
-                <div className="text-foreground">
-                  {parseWordsForLabels(value)}
-                </div>
-              );
-            },
-            filterFn: multiSelectFilter,
-            size: minWidth,
-            enableSorting: true,
-          })
+          tempColumns.add(field);
         }
       });
       results.data.push(flattenInstance);
+      // Merge additional columns with existing main set
       if (fields.length > maxFieldLength) {
-        results.columns = tempColumns;
+        columnNames = new Set([...columnNames, ...tempColumns]);
         maxFieldLength = fields.length;
       }
     });
+    // Create column definitions based on available columns
+    for (const col of columnNames) {
+      const title: string = parseWordsForLabels(col);
+      const minWidth: number = Math.max(
+        title.length * 15,
+        125
+      );
+      results.columns.push({
+        accessorKey: col,
+        header: title,
+        cell: ({ getValue }) => {
+          const value: string = getValue() as string;
+          if (!value) return "";
+
+          if (col.toLowerCase() === "status") {
+            return <StatusComponent status={value} />;
+          }
+
+          return (
+            <div className="text-foreground">
+              {parseWordsForLabels(value)}
+            </div>
+          );
+        },
+        filterFn: multiSelectFilter,
+        size: minWidth,
+        enableSorting: true,
+      });
+    }
   }
   return results;
 }

@@ -2,6 +2,24 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.41.9
+
+### Bug Fixes
+
+- Enable full column selection per row
+
+## 5.41.8
+
+### Changes
+
+- Made the Not Applicable option in the select dropdown to always be the default option if present
+
+## 5.41.7
+
+### Changes
+
+- Improved mobile design for forms
+
 ## 5.41.6
 
 ### Changes

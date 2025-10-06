@@ -64,12 +64,12 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.RECURRENCE) == null
-      ? perpetualService :
-      props.form.getValues(FORM_STATES.RECURRENCE) > 0
-        ? regularService
-        : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-          ? alternateService
-          : singleService
+      ? perpetualService
+      : props.form.getValues(FORM_STATES.RECURRENCE) > 0
+      ? regularService
+      : props.form.getValues(FORM_STATES.RECURRENCE) == -1
+      ? alternateService
+      : singleService
   );
 
   useEffect(() => {
@@ -100,12 +100,12 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         ) as number;
         setSelectedServiceOption(
           recurrence == null
-            ? perpetualService :
-            recurrence == 0
-              ? singleService
-              : recurrence == -1
-                ? alternateService
-                : regularService
+            ? perpetualService
+            : recurrence == 0
+            ? singleService
+            : recurrence == -1
+            ? alternateService
+            : regularService
         );
 
         defaultTimeSlotStart = getDefaultVal(
@@ -158,14 +158,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       }
 
       props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
-      props.form.setValue(
-        FORM_STATES.TIME_SLOT_START,
-        defaultTimeSlotStart
-      );
-      props.form.setValue(
-        FORM_STATES.TIME_SLOT_END,
-        defaultTimeSlotEnd
-      );
+      props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
+      props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
 
       setIsLoading(false);
     };
@@ -201,7 +195,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   };
 
   return (
-    <div className="p-3 md:p-8 bg-background border-1 border-border rounded-lg m-4 mx-auto space-y-4">
+    <div className="p-3 md:p-8 bg-background border-2 md:border-1 border-border rounded-lg my-4 mx-auto space-y-4">
       <h2 className="text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
@@ -247,21 +241,22 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             form={props.form}
             options={isDisabledOption}
           />
-          {selectedServiceOption != singleService && selectedServiceOption != perpetualService && (
-            <FormFieldComponent
-              field={{
-                "@id": "string",
-                "@type": "http://www.w3.org/ns/shacl#PropertyShape",
-                name: { "@value": FORM_STATES.END_DATE },
-                fieldId: FORM_STATES.END_DATE,
-                datatype: "date",
-                description: { "@value": dict.form.endDateDesc },
-                order: 0,
-              }}
-              form={props.form}
-              options={isDisabledOption}
-            />
-          )}
+          {selectedServiceOption != singleService &&
+            selectedServiceOption != perpetualService && (
+              <FormFieldComponent
+                field={{
+                  "@id": "string",
+                  "@type": "http://www.w3.org/ns/shacl#PropertyShape",
+                  name: { "@value": FORM_STATES.END_DATE },
+                  fieldId: FORM_STATES.END_DATE,
+                  datatype: "date",
+                  description: { "@value": dict.form.endDateDesc },
+                  order: 0,
+                }}
+                form={props.form}
+                options={isDisabledOption}
+              />
+            )}
           {selectedServiceOption === regularService && (
             <div className="w-full mt-6 ">
               <div>
@@ -270,8 +265,9 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
-                    }`}
+                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
+                    props.options?.disabled && "cursor-not-allowed"
+                  }`}
                   step={"1"}
                   readOnly={formType == "view" || formType == "delete"}
                   aria-label={FORM_STATES.RECURRENCE}
