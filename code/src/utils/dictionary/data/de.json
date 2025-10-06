@@ -190,6 +190,7 @@
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
     "serviceType": "Art der Dienstleistung",
+    "lastModified": "Zuletzt Geändert",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "active": "Aktiv",

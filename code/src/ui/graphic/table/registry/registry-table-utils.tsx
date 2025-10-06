@@ -22,15 +22,15 @@ export type TableData = {
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
- * @param {string} translatedBlankText The translated blank text.
+ * @param { Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], translatedBlankText: string): TableData {
+export function parseDataForTable(instances: RegistryFieldValues[], titleDict: Record<string, string>): TableData {
   const results: TableData = {
     data: [],
     columns: [],
   };
   if (instances?.length > 0) {
-    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(translatedBlankText);
+    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
     let columnNames: Set<string> = new Set<string>();
     let maxFieldLength: number = 0;
     instances.map(instance => {
@@ -44,10 +44,15 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
         } else {
           flattenInstance[field] = fieldValue?.value;
         }
+        // Update last modified field to translated title format
+        if (field === "lastModified") {
+          flattenInstance[titleDict.lastModified] = new Date(flattenInstance[field]).toLocaleString();
+          delete flattenInstance[field]
+        }
         // Whenever the number of fields in a row exceeds the current max number of fields,
         // add column field to a temporary set
         if (fields.length > maxFieldLength) {
-          tempColumns.add(field);
+          tempColumns.add(field === "lastModified" ? titleDict.lastModified : field);
         }
       });
       results.data.push(flattenInstance);
