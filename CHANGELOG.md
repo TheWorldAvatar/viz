@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.0
+
+### Bug Fixes
+
+- Fixed 'fill' option for legend with a minor refactor
+
 ## 5.41.9
 
 ### Bug Fixes
