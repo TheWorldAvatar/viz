@@ -30,6 +30,7 @@ import {
   setApiLoading,
   setPendingRefresh,
 } from "state/api-loading-slice";
+import { closeDrawer } from "state/drawer-component-slice";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -192,6 +193,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       customAgentResponse?.error ? "error" : "success"
     );
     setIsLoading(false);
+    dispatch(closeDrawer());
     dispatch(setPendingRefresh(true));
     dispatch(setApiLoading({ key: id, isLoading: false }));
 
