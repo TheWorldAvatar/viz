@@ -105,14 +105,28 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
     } else {
       return;
     }
-    await submitLifecycleAction(
+    let response: AgentResponseBody = await submitLifecycleAction(
       formData,
       action,
       props.task?.type !== "dispatch" && props.task?.type !== "complete"
     );
-    if (isDuplicate) {
-      await submitLifecycleAction(formData, "continue", true);
+    if (!response?.error && isDuplicate) {
+      response = await submitLifecycleAction(formData, "continue", true);
       setIsDuplicate(false);
+    }
+    toast(
+      response?.data?.message || response?.error?.message,
+      response?.error ? "error" : "success"
+    );
+    if (response && !response?.error) {
+      setTimeout(() => {
+        // Inform parent to refresh data on successful action
+        props.onSuccess?.();
+        // Reset states on successful submission
+        props.setTask(null);
+        setFormFields([]);
+        dispatch(closeDrawer());
+      }, 2000);
     }
   };
 
@@ -151,20 +165,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       );
       response = await res.json();
     }
-    toast(
-      response?.data?.message || response?.error?.message,
-      response?.error ? "error" : "success"
-    );
-    if (response && !response?.error) {
-      setTimeout(() => {
-        // Inform parent to refresh data on successful action
-        props.onSuccess?.();
-        // Reset states on successful submission
-        props.setTask(null);
-        setFormFields([]);
-        dispatch(closeDrawer());
-      }, 2000);
-    }
+    return response;
   };
 
   // A hook that submits the form when buttons are clicked
