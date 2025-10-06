@@ -191,6 +191,7 @@
     "customiseCol": "Show/Hide Columns",
     "description": "Description",
     "serviceType": "Service Type",
+    "lastModified": "Last modified",
     "available": "available",
     "unavailable": "unavailable",
     "active": "active",
