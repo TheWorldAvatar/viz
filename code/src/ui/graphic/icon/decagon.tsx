@@ -1,22 +1,22 @@
-import styles from './decagon.module.css';
-
 
 interface DecagonIconComponentProps {
   readonly color: string;
-  readonly classes?: string;
 }
 
 /**
- * Reusable decagon icon component.
- * 
- * @param {string} color The color of the decagon.
- * @param {string} classes Additional CSS classes to apply to the icon element.
+ * Decagon icon with Tailwind layout, placed left of text.
  */
 export default function DecagonIconComponent(props: DecagonIconComponentProps) {
   return (
-    <div className={`${styles.container} ${props.classes}`}>
-      <div className={`${styles.decagon} ${styles.start}`} style={{ backgroundColor: props.color }}></div>
-      <div className={`${styles.decagon} ${styles.middle}`} style={{ backgroundColor: props.color }}></div>
-      <div className={`${styles.decagon} ${styles.end}`} style={{ backgroundColor: props.color }}></div>
-    </div>);
+    <div className={`flex items-center gap-2`}>
+      <div
+        className="w-6 h-6"
+        style={{
+          backgroundColor: props.color,
+          clipPath:
+            'polygon(34.54915% 2.44717%,65.45085% 2.44717%,90.45085% 20.61074%,100% 50%,90.45085% 79.38926%,65.45085% 97.55283%,34.54915% 97.55283%,9.54915% 79.38926%,0% 50%,9.54915% 20.61074%)',
+        }}
+      />
+    </div>
+  );
 }
