@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Select, {
   ActionMeta,
   GroupBase,
@@ -83,6 +83,16 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     () => flattenOptions(parsedOptions),
     [parsedOptions]
   );
+
+  // This sets the NA option if required on first render
+  useEffect(() => {
+    if (
+      props.reqNotApplicableOption &&
+      (props.defaultVal === "" || props.defaultVal === undefined)
+    ) {
+      props.onChange(naOption, { action: "select-option", option: naOption });
+    }
+  }, [props.reqNotApplicableOption, naOption]);
 
   const getDefaultValue = (): SelectOption => {
     // If defaultVal is explicitly empty and NA option is required, use NA option
