@@ -194,13 +194,14 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
     setIsLoading(false);
     dispatch(closeDrawer());
-    dispatch(setPendingRefresh(true));
+    // If we trigger only a refresh without router.back(), it will refresh the table but the url will be the same (i.e., /view/contract/:id).
+    // dispatch(setPendingRefresh(true));
     dispatch(setApiLoading({ key: id, isLoading: false }));
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();
-      }, 2000);
+      }, 1000);
     }
   };
 
