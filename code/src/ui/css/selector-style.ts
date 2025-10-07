@@ -37,10 +37,9 @@ export const selectorStyles: StylesConfig<
     borderRadius: "0.5rem !important",
     margin: "0.25rem 0",
     minWidth: "100%",
-    width: "fit-content",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "hidden",
+    overflow: "auto",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
