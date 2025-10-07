@@ -233,55 +233,51 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
-  // the parent element has been queried and selected
-  if (
-    !props.dependentProp.dependentOn ||
-    (currentParentOption && parentField != "")
-  ) {
-    return (
-      <div className="rounded-lg my-4">
-        {isFetching && (
-          <div className="mr-2">
-            <LoadingSpinner isSmall={true} />
-          </div>
-        )}
-        {!isFetching && (
-          <div className="flex flex-col w-full gap-2">
-            <FormSelector
-              selectOptions={selectElements}
-              field={props.dependentProp}
-              form={props.form}
-              noOptionMessage={dict.message.noInstances}
-              options={{
-                disabled: formType == "view" || formType == "delete",
-                labelStyle: [
-                  fieldStyles["form-input-label-add"],
-                  fieldStyles["form-input-label"],
-                ],
-              }}
-            />
-            <FormQuickViewHeader
-              id={id}
-              title={dict.title.quickView}
-              selectedEntityId={selectedEntityId}
-              entityType={queryEntityType}
-              isFormView={formType == "view"}
-              isOpen={isQuickViewOpen}
-              setIsOpen={setIsQuickViewOpen}
-            />
-            {currentOption &&
-              isQuickViewOpen &&
-              (isQuickViewLoading ? (
-                <div className="flex justify-center p-4">
-                  <LoadingSpinner isSmall={true} />
-                </div>
-              ) : (
-                <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
-              ))}
-          </div>
-        )}
-      </div>
-    );
-  }
+  return (
+    <div className="rounded-lg my-4">
+      {isFetching && (
+        <div className="mr-2">
+          <LoadingSpinner isSmall={true} />
+        </div>
+      )}
+      {!isFetching && (
+        <div className="flex flex-col w-full gap-2">
+          <FormSelector
+            selectOptions={selectElements}
+            field={props.dependentProp}
+            form={props.form}
+            noOptionMessage={dict.message.noInstances}
+            options={{
+              disabled:
+                formType == "view" ||
+                formType == "delete" ||
+                currentParentOption === "",
+              labelStyle: [
+                fieldStyles["form-input-label-add"],
+                fieldStyles["form-input-label"],
+              ],
+            }}
+          />
+          <FormQuickViewHeader
+            id={id}
+            title={dict.title.quickView}
+            selectedEntityId={selectedEntityId}
+            entityType={queryEntityType}
+            isFormView={formType == "view"}
+            isOpen={isQuickViewOpen}
+            setIsOpen={setIsQuickViewOpen}
+          />
+          {currentOption &&
+            isQuickViewOpen &&
+            (isQuickViewLoading ? (
+              <div className="flex justify-center p-4">
+                <LoadingSpinner isSmall={true} />
+              </div>
+            ) : (
+              <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
+            ))}
+        </div>
+      )}
+    </div>
+  );
 }
