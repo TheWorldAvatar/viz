@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.3
+
+### Bug Fixes
+
+- Fixed and issue with the filter unmounting when the column toggle input is changed 
+
 ## 5.42.2
 
 ### Changes
