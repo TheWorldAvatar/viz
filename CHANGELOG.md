@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.2
+
+### Changes
+
+- Update display for last modified column and cell
+- Bump min version of `VisBackend Agent` from `v1.15.1` to `v1.15.3`
+
 ## 5.42.1
 
 ### Bug Fixes
