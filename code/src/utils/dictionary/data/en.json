@@ -43,7 +43,9 @@
     "selectLocation": "Select location",
     "clickIncrease": "Click to increase",
     "clickDecrease": "Click to decrease",
-    "clearAllFilters": "Clear all filters"
+    "clearAllFilters": "Clear all filters",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "form": {
     "singleService": "Single Service",
