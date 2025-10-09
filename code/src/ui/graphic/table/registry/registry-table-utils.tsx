@@ -12,6 +12,7 @@ import {
 } from "types/form";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 
 export type TableData = {
   data: FieldValues[];
@@ -65,9 +66,10 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
     // Create column definitions based on available columns
     for (const col of columnNames) {
       const title: string = parseWordsForLabels(col);
+      const isRemarksField = col.toLowerCase().includes("remarks");
       const minWidth: number = Math.max(
         title.length * 15,
-        125
+        isRemarksField ? 400 : 125
       );
       results.columns.push({
         accessorKey: col,
@@ -80,6 +82,11 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
             return <StatusComponent status={value} />;
           }
 
+
+          if (isRemarksField) {
+            return <ExpandableTextCell text={value} maxLengthText={120} />;
+          }
+
           return (
             <div className="text-foreground">
               {parseWordsForLabels(value)}
@@ -88,6 +95,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         },
         filterFn: multiSelectFilter,
         size: minWidth,
+
         enableSorting: true,
       });
     }
