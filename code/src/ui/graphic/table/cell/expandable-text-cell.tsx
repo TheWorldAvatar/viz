@@ -13,7 +13,7 @@ interface ExpandableTextCellProps {
  * Text is truncated if it exceeds the maxLength.
  *
  * @param {string} text The full text content.
- * @param {number} maxLengthText The maximum text length before truncation. Defaults to 100.
+ * @param {number} maxLengthText The maximum text length before truncation.
  */
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -28,7 +28,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
 
     return (
         <div className="text-foreground">
-            <div className="whitespace-pre-wrap break-all">
+            <div className="text-foreground whitespace-pre-wrap break-all">
                 {isExpanded ? props.text : `${props.text.substring(0, maxLengthText)}...`}
             </div>
             <Button
