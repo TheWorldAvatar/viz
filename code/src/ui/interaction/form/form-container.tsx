@@ -24,6 +24,13 @@ import { FormTemplate } from "./template/form-template";
 
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectIsApiLoading,
+  setApiLoading,
+  setPendingRefresh,
+} from "state/api-loading-slice";
+import { closeDrawer } from "state/drawer-component-slice";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -81,6 +88,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
+  const dispatch = useDispatch();
+  const isApproving = useSelector(selectIsApiLoading(id));
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -163,6 +172,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
+    dispatch(setApiLoading({ key: id, isLoading: true }));
     const reqBody: JsonObject = {
       contract: id,
       remarks: "Contract has been approved successfully!",
@@ -183,16 +193,21 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       customAgentResponse?.error ? "error" : "success"
     );
     setIsLoading(false);
+    dispatch(closeDrawer());
+    // If we trigger only a refresh without router.back(), it will refresh the table but the url will be the same (i.e., /view/contract/:id).
+    // dispatch(setPendingRefresh(true));
+    dispatch(setApiLoading({ key: id, isLoading: false }));
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();
-      }, 2000);
+      }, 1000);
     }
   };
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
+      setIsLoading(true);
       formRef.current.requestSubmit();
     }
   };
@@ -262,13 +277,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           <Button
             leftIcon="cached"
             variant="outline"
+            disabled={isApproving || isLoading}
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
           />
         )}
-        {formRef.current?.formState?.isSubmitting ||
-          (isLoading && <LoadingSpinner isSmall={false} />)}
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
@@ -307,6 +321,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button // Approval button
                 leftIcon="done_outline"
                 label={dict.action.approve}
+                disabled={isApproving}
+                loading={isApproving}
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
@@ -320,6 +336,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <RedirectButton // Edit button
                 leftIcon="edit"
                 label={dict.action.edit}
+                disabled={isApproving}
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 variant="primary"
@@ -335,6 +352,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 leftIcon="delete"
                 iconSize="medium"
                 label={dict.action.delete}
+                disabled={isApproving}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 variant="secondary"
@@ -345,6 +363,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               leftIcon="send"
               label={dict.action.submit}
               tooltipText={dict.action.submit}
+              loading={isLoading}
+              disabled={isLoading}
               onClick={onSubmit}
             />
           )}

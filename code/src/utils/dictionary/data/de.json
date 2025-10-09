@@ -148,7 +148,8 @@
     "minLength": "Die Eingabe muss mindestens {replace} Zeichen umfassen!",
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
-    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!"
+    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
+    "processing": "Wird verarbeitet..."
   },
   "nav": {
     "caption": {
