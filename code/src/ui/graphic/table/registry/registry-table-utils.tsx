@@ -88,9 +88,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           }
 
           return (
-            <div className="text-foreground">
-              {parseWordsForLabels(value)}
-            </div>
+            <ExpandableTextCell text={parseWordsForLabels(value)} maxLengthText={80} />
           );
         },
         filterFn: multiSelectFilter,
