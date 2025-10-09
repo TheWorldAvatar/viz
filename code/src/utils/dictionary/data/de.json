@@ -43,7 +43,9 @@
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
     "clickDecrease": "Zum Verringern anklicken",
-    "clearAllFilters": "Alle Filter löschen"
+    "clearAllFilters": "Alle Filter löschen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
   },
   "form": {
     "singleService": "Einzelner Dienst",

@@ -131,8 +131,10 @@
   color: var(--text-color-secondary);
 }
 
+
 @media only screen and (max-width: 480px) {
   .form-checkbox {
     width: 100%;
   }
+
 }

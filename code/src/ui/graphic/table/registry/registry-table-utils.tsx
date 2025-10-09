@@ -12,6 +12,7 @@ import {
 } from "types/form";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 
 export type TableData = {
   data: FieldValues[];
@@ -81,13 +82,12 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           }
 
           return (
-            <div className="text-foreground">
-              {parseWordsForLabels(value)}
-            </div>
+            <ExpandableTextCell text={parseWordsForLabels(value)} maxLengthText={80} />
           );
         },
         filterFn: multiSelectFilter,
         size: minWidth,
+
         enableSorting: true,
       });
     }

@@ -30,10 +30,30 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
     ?.disabled
     ? "none"
     : props.field.datatype === "string"
-    ? "text"
-    : props.field.datatype === "integer"
-    ? "numeric"
-    : "decimal";
+      ? "text"
+      : props.field.datatype === "integer"
+        ? "numeric"
+        : "decimal";
+
+
+  const isStringOrDisabled = props.options?.disabled || props.field?.datatype === "string";
+  const isMultiline = props.field.singleLine?.[VALUE_KEY] === "false";
+  const isNumeric = !isStringOrDisabled;
+
+  const commonProps = {
+    id: props.field.fieldId,
+    placeholder: props.options?.disabled ? "" : `Add ${props.field.name[VALUE_KEY]} here`,
+    readOnly: props.options?.disabled,
+    "aria-label": props.field.name[VALUE_KEY],
+    ...props.form.register(
+      props.field.fieldId,
+      getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE))
+    ),
+  };
+
+  const disabledClassName = props.options?.disabled
+    ? `${styles["input-disabled"]} ${styles["field-disabled"]}`
+    : "";
 
   return (
     <FormInputContainer
@@ -41,37 +61,26 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.options?.labelStyle}
     >
-      {props.options?.disabled || props.field?.datatype === "string" ? (
-        <input
-          id={props.field.fieldId}
-          type="text"
-          inputMode={inputMode}
-          className={`${inputClassNames}  ${
-            props.options?.disabled &&
-            styles["input-disabled"] + " " + styles["field-disabled"]
-          }`}
-          placeholder={
-            props.options?.disabled
-              ? ""
-              : `Add ${props.field.name[VALUE_KEY]} here`
-          }
-          readOnly={props.options?.disabled}
-          aria-label={props.field.name[VALUE_KEY]}
-          {...props.form.register(
-            props.field.fieldId,
-            getRegisterOptions(
-              props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE)
-            )
-          )}
-        />
-      ) : (
+      {isNumeric ?
         <NumericInputField
           field={props.field}
           form={props.form}
           options={props.options}
         />
-      )}
+        : isMultiline ?
+          <textarea
+            {...commonProps}
+            cols={40}
+            rows={4}
+            className={`${inputClassNames} min-h-[6rem] max-h-[20rem] md:min-h-[10rem] md:max-h-[30rem] ${disabledClassName}`}
+          />
+          : <input
+            {...commonProps}
+            type="text"
+            inputMode={inputMode}
+            className={`${inputClassNames} ${disabledClassName}`}
+          />
+      }
     </FormInputContainer>
   );
 }
