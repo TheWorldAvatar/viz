@@ -66,10 +66,9 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
     // Create column definitions based on available columns
     for (const col of columnNames) {
       const title: string = parseWordsForLabels(col);
-      const isRemarksField = col.toLowerCase().includes("remarks");
       const minWidth: number = Math.max(
         title.length * 15,
-        isRemarksField ? 400 : 125
+        125
       );
       results.columns.push({
         accessorKey: col,
@@ -80,11 +79,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 
           if (col.toLowerCase() === "status") {
             return <StatusComponent status={value} />;
-          }
-
-
-          if (isRemarksField) {
-            return <ExpandableTextCell text={value} maxLengthText={120} />;
           }
 
           return (
