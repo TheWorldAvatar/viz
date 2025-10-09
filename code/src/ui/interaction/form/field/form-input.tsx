@@ -30,10 +30,12 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
     ?.disabled
     ? "none"
     : props.field.datatype === "string"
-    ? "text"
-    : props.field.datatype === "integer"
-    ? "numeric"
-    : "decimal";
+      ? "text"
+      : props.field.datatype === "integer"
+        ? "numeric"
+        : "decimal";
+
+
 
   return (
     <FormInputContainer
@@ -42,15 +44,14 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
       labelStyles={props.options?.labelStyle}
     >
       {props.options?.disabled || props.field?.datatype === "string" ? (
-        props.field.name[VALUE_KEY].includes("remarks") ? (
+        props.field.singleLine?.[VALUE_KEY] === "false" ? (
           <textarea
             cols={40}
             rows={4}
             id={props.field.fieldId}
-            className={`${inputClassNames} ${styles["textarea"]} ${
-              props.options?.disabled &&
+            className={`${inputClassNames} ${styles["textarea"]} ${props.options?.disabled &&
               styles["input-disabled"] + " " + styles["field-disabled"]
-            }`}
+              }`}
             placeholder={
               props.options?.disabled
                 ? ""
@@ -71,10 +72,9 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
             id={props.field.fieldId}
             type="text"
             inputMode={inputMode}
-            className={`${inputClassNames}  ${
-              props.options?.disabled &&
+            className={`${inputClassNames}  ${props.options?.disabled &&
               styles["input-disabled"] + " " + styles["field-disabled"]
-            }`}
+              }`}
             placeholder={
               props.options?.disabled
                 ? ""
