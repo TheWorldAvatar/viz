@@ -7,6 +7,8 @@ import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import { useDispatch } from "react-redux";
+import { closeDrawer } from "state/drawer-component-slice";
 
 export type NavBarItemType = "default" | "file" | "date";
 
@@ -39,6 +41,7 @@ export function NavBarItem(
 ): React.ReactElement {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
+  const dispatch = useDispatch();
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (
     event: React.MouseEvent<HTMLDivElement>
@@ -46,6 +49,7 @@ export function NavBarItem(
     event.preventDefault();
     props.setIsOpen?.(false);
     router.push(props.url);
+    dispatch(closeDrawer());
   };
 
   return (
@@ -61,9 +65,9 @@ export function NavBarItem(
           props.isMobile
             ? "gap-4"
             : props.isMenuExpanded
-            ? "mt-4 w-72 gap-2 "
-            : "mt-4 w-16 "
-        } flex h-fit cursor-pointer items-center rounded-md p-1.5 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
+            ? "mt-4 w-full max-w-full gap-2"
+            : "mt-4 w-16 rounded-md"
+        } flex h-fit cursor-pointer items-center  p-1.5  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
         onClick={props.handleClick ?? handleClick}
       >
         <div
@@ -76,21 +80,21 @@ export function NavBarItem(
               color: "#16687B",
             }}
             fontSize={props.isMobile ? "medium" : "large"}
-            className="material-symbols-outlined  "
+            className="material-symbols-outlined"
           >
             {props.icon}
           </Icon>
         </div>
         <div className="flex flex-1 flex-col">
           <h3
-            className={`text-foreground text-lg font-bold ${
+            className={`text-foreground text-base font-bold  ${
               props.isMenuExpanded ? "" : "hidden"
             }`}
           >
             {props.title}
           </h3>
-          {!props.isMobile && (
-            <p className="text-sm text-gray-500 dark:text-foreground/85">
+          {!props.isMobile && props.isMenuExpanded && (
+            <p className="text-sm text-gray-500 dark:text-foreground/85 break-words hyphens-auto">
               {props.caption}
             </p>
           )}

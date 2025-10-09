@@ -40,7 +40,7 @@ export function useTable(instances: RegistryFieldValues[]): TableDescriptor {
 
   const tableData: TableData = useMemo(
     () => {
-      const output: TableData = parseDataForTable(instances, dict.title.blank);
+      const output: TableData = parseDataForTable(instances, dict.title);
       setData(output.data);
       return output;
     },

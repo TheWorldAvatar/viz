@@ -5,27 +5,36 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useDialog } from "hooks/float/useDialog";
+import {
+  closeDrawer,
+  selectDrawerIsOpen,
+  setDrawerOpen,
+} from "state/drawer-component-slice";
 import Button from "../button";
 
 interface DrawerProps {
-  isControlledOpen?: boolean;
-  setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   onClose?: () => void;
   children: React.ReactNode;
 }
 
 /**
  * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
+ * This component is entirely controlled by Redux state.
  *
- * @param {boolean} isControlledOpen Optional controlled state for showing/hiding the drawer.
- * @param  setIsControlledOpen Optional controlled dispatch state to show/hide drawer.
- * @param  onClose Optional function to be executed on close.
+ * @param onClose Optional function to be executed on close.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const [isOpen, setIsOpen] = React.useState<boolean>(true);
-  const dialog = useDialog(props.isControlledOpen ?? isOpen, props.setIsControlledOpen ?? setIsOpen, false);
+  const dispatch = useDispatch();
+  const isOpen: boolean = useSelector(selectDrawerIsOpen);
+
+  const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
+    dispatch(setDrawerOpen(value as boolean));
+  };
+
+  const dialog = useDialog(isOpen, setOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -50,7 +59,6 @@ export default function Drawer(props: Readonly<DrawerProps>) {
       transitionTimingFunction: "ease-out",
     },
   });
-
 
   return (
     <>
@@ -87,16 +95,10 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
                     onClick={() => {
-                      // Close the drawer on click
-                      // Propagate to controlled state or default state
-                      if (props.setIsControlledOpen) {
-                        props.setIsControlledOpen(false);
-                      } else {
-                        setIsOpen(false);
-                      }
+                      dispatch(closeDrawer());
                       // If there are additional close functions to execute
                       if (props.onClose) {
-                        props.onClose()
+                        props.onClose();
                       }
                     }}
                   />
@@ -112,4 +114,3 @@ export default function Drawer(props: Readonly<DrawerProps>) {
     </>
   );
 }
-

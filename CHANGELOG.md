@@ -2,6 +2,82 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.3
+
+### Bug Fixes
+
+- Fixed and issue with the filter unmounting when the column toggle input is changed 
+
+## 5.42.2
+
+### Changes
+
+- Update display for last modified column and cell
+- Bump min version of `VisBackend Agent` from `v1.15.1` to `v1.15.3`
+
+## 5.42.1
+
+### Bug Fixes
+
+- Ensures that form submits an empty value for optional select fields when initialised
+- Display dependent form fields even if independent form field has not been selected
+
+## 5.42.0
+
+### Bug Fixes
+
+- Fixed 'fill' option for legend with a minor refactor
+
+## 5.41.9
+
+### Bug Fixes
+
+- Enable full column selection per row
+
+## 5.41.8
+
+### Changes
+
+- Made the Not Applicable option in the select dropdown to always be the default option if present
+
+## 5.41.7
+
+### Changes
+
+- Improved mobile design for forms
+
+## 5.41.6
+
+### Changes
+
+- Moved the drawer state to a global state
+
+### Bug Fixes
+
+- Fixed the issue with the drawer remains open when navigating on a different page
+- Fixed the issue with the drawer not always being responsive (opening on click)
+
+## 5.41.5
+
+### Changes
+
+- Fixed Issue with the layout of the icon in the export button date input and not closing when clicking outside when a date is selected
+
+## 5.41.4
+
+### Changes
+
+- Improve form branching performance
+- Rerender form fields when switching branches to prevent fields from being stuck
+- Bump min version of `VisBackend Agent` from `v1.15.0` to `v1.15.1`
+
+## 5.41.3
+
+### Changes
+
+- Created a wrapper function that gets the form values and passes them onto the onGeocoding function inside useGeocode hook
+- This allows to skip the form validation when the geocoding button is pressed
+
 ## 5.41.2
 
 ### Bug Fixes

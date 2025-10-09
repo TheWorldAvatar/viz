@@ -42,7 +42,7 @@ export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <NavigationDrawer      >
+    <NavigationDrawer>
       <FormContents {...props} />
     </NavigationDrawer>
   );
