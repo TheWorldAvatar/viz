@@ -274,33 +274,10 @@ input[type="file"] {
   background: var(--background-secondary);
 }
 
-/* * {
-  scrollbar-width: auto;
-  scrollbar-color: var(--border) var(--background-secondary);
-} */
-
 .table-scrollbar::-webkit-scrollbar {
   height: 28px;
   width: 12px;
 }
-
-.table-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 8px;
-  border: 3px solid var(--background-secondary);
-}
-
-.table-scrollbar::-webkit-scrollbar-track {
-  background: var(--background-secondary);
-}
-.table-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--border);
-}
-
-/* .scrollbar-custom {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--background-secondary);
-} */
 
 .hidden-scrollbar {
   /* Hide scrollbar for Chrome, Safari and Opera */
