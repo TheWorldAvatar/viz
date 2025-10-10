@@ -224,6 +224,8 @@ function makeExternalEndpoint(
     }
     case "contracts": {
       const entityType: string = searchParams.get("type");
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
       const stage: LifecycleStage = searchParams.get("stage") as LifecycleStage;
       let stagePath: string;
       if (stage === "pending") {
@@ -235,11 +237,15 @@ function makeExternalEndpoint(
       } else {
         throw Error("Invalid stage");
       }
-      return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes`;
+      return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes&page=${page}&limit=${limit}`;
     }
     case "contract_status": {
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/status/${id}`;
+    }
+    case "count": {
+      const type: string = searchParams.get("type");
+      return `${agentBaseApi}/${type}/count`;
     }
     case "instances": {
       const type: string = searchParams.get("type");
@@ -249,7 +255,9 @@ function makeExternalEndpoint(
 
       let url: string = `${agentBaseApi}/${type}`;
       if (requireLabel === "true") {
-        url += `/label`;
+        const page: string = searchParams.get("page");
+        const limit: string = searchParams.get("limit");
+        url += `/label?page=${page}&limit=${limit}`;
       }
       if (identifier != "null") {
         url += `/${identifier}`;
@@ -311,7 +319,9 @@ function makeExternalEndpoint(
     }
     case "outstanding": {
       const contractType: string = searchParams.get("type");
-      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}`;
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}`;
     }
     case "scheduled":
     case "closed": {
@@ -320,8 +330,10 @@ function makeExternalEndpoint(
       const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
       const endDate: string = searchParams.get("end_date");
       const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
 
-      const url = `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      const url = `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}`;
       return url;
     }
     default:

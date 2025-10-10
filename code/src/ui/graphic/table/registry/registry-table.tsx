@@ -19,6 +19,8 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "state/drawer-component-slice";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import {
@@ -36,8 +38,6 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
-import { useDispatch } from "react-redux";
-import { openDrawer } from "state/drawer-component-slice";
 
 interface RegistryTableProps {
   recordType: string;
@@ -207,7 +207,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination table={props.tableDescriptor.table} />
+          <TablePagination table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">

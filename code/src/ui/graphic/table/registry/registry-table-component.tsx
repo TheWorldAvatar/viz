@@ -8,6 +8,7 @@ import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
 import { DateRange } from "react-day-picker";
+import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -17,7 +18,6 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
@@ -59,8 +59,30 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
+  const [totalRows, setTotalRows] = useState<number>(0);
+  const tableDescriptor: TableDescriptor = useTable(currentInstances, totalRows);
 
-  const tableDescriptor: TableDescriptor = useTable(currentInstances);
+  useEffect(() => {
+    const fetchTotalRows = async (): Promise<void> => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(
+            "count",
+            props.entityType,
+          ),
+          { cache: "no-store", credentials: "same-origin" }
+        );
+        const resBody: AgentResponseBody = await res.json();
+        const totalRows: number = Number.parseInt(resBody.data?.message);
+        setTotalRows(totalRows);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching total row count", error);
+      }
+    };
+    fetchTotalRows();
+  }, []);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -75,7 +97,9 @@ export default function RegistryTableComponent(
               makeInternalRegistryAPIwithParams(
                 "contracts",
                 "active",
-                props.entityType
+                props.entityType,
+                tableDescriptor.pagination.pageIndex.toString(),
+                tableDescriptor.pagination.pageSize.toString(),
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
@@ -99,7 +123,9 @@ export default function RegistryTableComponent(
               makeInternalRegistryAPIwithParams(
                 "contracts",
                 "archive",
-                props.entityType
+                props.entityType,
+                tableDescriptor.pagination.pageIndex.toString(),
+                tableDescriptor.pagination.pageSize.toString(),
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
@@ -114,7 +140,9 @@ export default function RegistryTableComponent(
               makeInternalRegistryAPIwithParams(
                 "tasks",
                 props.entityType,
-                pathNameEnd
+                pathNameEnd,
+                tableDescriptor.pagination.pageIndex.toString(),
+                tableDescriptor.pagination.pageSize.toString(),
               ),
               {
                 cache: "no-store",
@@ -126,7 +154,12 @@ export default function RegistryTableComponent(
           }
         } else if (props.lifecycleStage == "outstanding") {
           const res = await fetch(
-            makeInternalRegistryAPIwithParams("outstanding", props.entityType),
+            makeInternalRegistryAPIwithParams(
+              "outstanding",
+              props.entityType,
+              tableDescriptor.pagination.pageIndex.toString(),
+              tableDescriptor.pagination.pageSize.toString(),
+            ),
             { cache: "no-store", credentials: "same-origin" }
           );
           const resBody: AgentResponseBody = await res.json();
@@ -144,7 +177,9 @@ export default function RegistryTableComponent(
                 .toString(),
               getUTCDate((selectedDate as DateRange).to)
                 .getTime()
-                .toString()
+                .toString(),
+              tableDescriptor.pagination.pageIndex.toString(),
+              tableDescriptor.pagination.pageSize.toString(),
             ),
             {
               cache: "no-store",
@@ -158,7 +193,11 @@ export default function RegistryTableComponent(
             makeInternalRegistryAPIwithParams(
               "instances",
               props.entityType,
-              "true"
+              "true",
+              null,
+              null,
+              tableDescriptor.pagination.pageIndex.toString(),
+              tableDescriptor.pagination.pageSize.toString(),
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
@@ -169,7 +208,9 @@ export default function RegistryTableComponent(
             makeInternalRegistryAPIwithParams(
               "contracts",
               props.lifecycleStage.toString(),
-              props.entityType
+              props.entityType,
+              tableDescriptor.pagination.pageIndex.toString(),
+              tableDescriptor.pagination.pageSize.toString(),
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
@@ -186,7 +227,7 @@ export default function RegistryTableComponent(
 
     // Trigger fetchData when refreshFlag, or selectedDate (range) changes
     fetchData();
-  }, [selectedDate, refreshFlag]);
+  }, [selectedDate, refreshFlag, tableDescriptor.pagination]);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
