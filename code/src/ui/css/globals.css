@@ -260,27 +260,47 @@ input[type="file"] {
   padding-bottom: 100%;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--background-tertiary) var(--background-secondary);
-}
-
-*::-webkit-scrollbar {
-  width: 12px;
+* ::-webkit-scrollbar {
   height: 12px;
+  width: 12px;
+}
+* ::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 3px solid var(--background-secondary);
 }
 
-*::-webkit-scrollbar-track {
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid var(--border-secondary);
+* ::-webkit-scrollbar-track {
+  background: var(--background-secondary);
 }
 
-*::-webkit-scrollbar-thumb {
-  background-color: var(--border-secondary);
-  border-radius: 10px;
-  background-clip: padding-box;
+/* * {
+  scrollbar-width: auto;
+  scrollbar-color: var(--border) var(--background-secondary);
+} */
+
+.table-scrollbar::-webkit-scrollbar {
+  height: 28px;
+  width: 12px;
 }
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 3px solid var(--background-secondary);
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+.table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
+}
+
+/* .scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--background-secondary);
+} */
 
 .hidden-scrollbar {
   /* Hide scrollbar for Chrome, Safari and Opera */
