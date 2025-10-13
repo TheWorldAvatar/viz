@@ -2,11 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.4
+
+### Changes
+
+- Implemented a textarea input
+- Implemented a new component (Expandable table cell), which allows to expand long text in table cells
+- Bump min version of `VisBackend Agent` to `v1.16.1`
+
 ## 5.42.3
 
 ### Bug Fixes
 
-- Fixed and issue with the filter unmounting when the column toggle input is changed 
+- Fixed and issue with the filter unmounting when the column toggle input is changed
 
 ## 5.42.2
 
