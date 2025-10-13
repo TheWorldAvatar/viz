@@ -1,6 +1,6 @@
 import styles from "./field.module.css";
 
-import { FieldError, UseFormReturn } from "react-hook-form";
+import { FieldError, UseFormRegisterReturn, UseFormReturn } from "react-hook-form";
 
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
@@ -36,11 +36,10 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
         : "decimal";
 
 
-  const isStringOrDisabled = props.options?.disabled || props.field?.datatype === "string";
-  const isMultiline = props.field.singleLine?.[VALUE_KEY] === "false";
-  const isNumeric = !isStringOrDisabled;
 
-  const commonProps = {
+  const isMultiline: boolean = props.field.singleLine?.[VALUE_KEY] === "false";
+
+  const commonProps: React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> & UseFormRegisterReturn = {
     id: props.field.fieldId,
     placeholder: props.options?.disabled ? "" : `Add ${props.field.name[VALUE_KEY]} here`,
     readOnly: props.options?.disabled,
@@ -51,7 +50,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
     ),
   };
 
-  const disabledClassName = props.options?.disabled
+  const disabledClassName: string = props.options?.disabled
     ? `${styles["input-disabled"]} ${styles["field-disabled"]}`
     : "";
 
@@ -61,7 +60,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
       error={props.form.formState.errors[props.field.fieldId] as FieldError}
       labelStyles={props.options?.labelStyle}
     >
-      {isNumeric ?
+      {!props.options?.disabled && props.field?.datatype !== "string" ?
         <NumericInputField
           field={props.field}
           form={props.form}
