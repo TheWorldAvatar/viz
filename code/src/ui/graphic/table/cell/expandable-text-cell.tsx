@@ -13,16 +13,15 @@ interface ExpandableTextCellProps {
  * Text is truncated if it exceeds the maxLengthText value.
  *
  * @param {string} text The full text content.
- * @param {number} maxLengthText The maximum text length before truncation.
+ * @param {number} maxLengthText (Optional) The maximum text length before truncation.
  */
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const maxLengthText = props.maxLengthText ?? 100;
-    const shouldTruncate = props.text && props.text.length > maxLengthText;
+    const maxLengthText: number = props.maxLengthText ?? 100;
     const dict: Dictionary = useDictionary();
 
 
-    if (!shouldTruncate) {
+    if (props.text.length <= maxLengthText) {
         return <div className="text-foreground">{props.text}</div>;
     }
 
