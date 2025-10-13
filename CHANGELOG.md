@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.5
+
+### Changes
+
+- Increased the height of the horizontal scrollbar in the registry table
+
 ## 5.42.4
 
 ### Changes
