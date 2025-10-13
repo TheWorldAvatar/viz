@@ -10,7 +10,7 @@ interface ExpandableTextCellProps {
 
 /**
  * This component renders expandable text with a "Show more/Show less" button.
- * Text is truncated if it exceeds the maxLength.
+ * Text is truncated if it exceeds the maxLengthText value.
  *
  * @param {string} text The full text content.
  * @param {number} maxLengthText The maximum text length before truncation.
@@ -23,12 +23,12 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
 
 
     if (!shouldTruncate) {
-        return <div>{props.text}</div>;
+        return <div className="text-foreground">{props.text}</div>;
     }
 
     return (
-        <div className="text-foreground">
-            <div className="text-foreground whitespace-pre-wrap break-all">
+        <div>
+            <div className="text-foreground whitespace-pre-wrap w-[500px] lg:w-[600px] break-words">
                 {isExpanded ? props.text : `${props.text.substring(0, maxLengthText)}...`}
             </div>
             <Button
