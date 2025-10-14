@@ -2,33 +2,22 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ReduxState } from "app/store";
 
 interface ApiLoadingState {
-  loadingRequests: Record<string, boolean>;
+  isLoading: boolean;
   pendingRefresh: boolean; // Flag to trigger refresh when returning to the page
 }
 
 const initialState: ApiLoadingState = {
-  loadingRequests: {},
+  isLoading: false,
   pendingRefresh: false,
 };
 
-// The key is used to track which row in the table is clicked
-// When a user clicks "Approve" on Row 1, only Row 1's buttons are disabled.
-// They can still interact with Row 2, Row 3, etc.
-// Without keys: If a user clicks "Approve" on Row 1,
-// ALL rows would show loading state and ALL approve buttons across all rows would be disabled.
+// Global loading state - when one approval is in progress, all approvals are blocked
 const apiLoadingSlice = createSlice({
   name: "apiLoading",
   initialState,
   reducers: {
-    setApiLoading: (
-      state,
-      action: PayloadAction<{ key: string; isLoading: boolean }>
-    ) => {
-      if (action.payload.isLoading) {
-        state.loadingRequests[action.payload.key] = true;
-      } else {
-        delete state.loadingRequests[action.payload.key];
-      }
+    setApiLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
     },
     setPendingRefresh: (state, action: PayloadAction<boolean>) => {
       state.pendingRefresh = action.payload;
@@ -40,8 +29,8 @@ const apiLoadingSlice = createSlice({
 export const { setApiLoading, setPendingRefresh } = apiLoadingSlice.actions;
 
 // Export selectors
-export const selectIsApiLoading = (key: string) => (state: ReduxState) =>
-  state.apiLoading.loadingRequests[key] === true;
+export const selectIsApiLoading = (state: ReduxState) =>
+  state.apiLoading.isLoading;
 
 export const selectPendingRefresh = (state: ReduxState) =>
   state.apiLoading.pendingRefresh;

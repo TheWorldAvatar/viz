@@ -16,6 +16,8 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { useSelector } from "react-redux";
+import { selectIsApiLoading } from "state/api-loading-slice";
 
 interface TableRibbonProps {
   path: string;
@@ -48,6 +50,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.triggerRefresh();
   };
 
+  const isApproving = useSelector(selectIsApiLoading);
+
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" &&
@@ -55,22 +59,22 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
           <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 border border-border ">
-            <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
+            <div className="flex flex-wrap items-center justify-between sm:gap-4 gap-1">
               {(!keycloakEnabled ||
                 permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.pending}
-                    leftIcon="free_cancellation"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "pending" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                  />
-                </div>
-              )}
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.pending}
+                      leftIcon="free_cancellation"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "pending" ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                )}
 
               <div className="sm:w-auto">
                 <RedirectButton
@@ -123,14 +127,22 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
+          {isApproving && <Button
+            size="sm"
+            leftIcon="hourglass_bottom"
+            variant="outline"
+            label="Approving request"
+            loading={true}
+          />}
+
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
-            <DateInput
-              selectedDate={props.selectedDate}
-              setSelectedDateRange={props.setSelectedDate}
-              disabledDates={getDisabledDates(props.lifecycleStage)}
-            />
-          )}
+              <DateInput
+                selectedDate={props.selectedDate}
+                setSelectedDateRange={props.setSelectedDate}
+                disabledDates={getDisabledDates(props.lifecycleStage)}
+              />
+            )}
         </div>
 
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
@@ -139,16 +151,16 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             .columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
             ) && (
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="medium"
-              className="mt-1"
-              size="icon"
-              onClick={() => props.tableDescriptor.table.resetColumnFilters()}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          )}
+              <Button
+                leftIcon="filter_list_off"
+                iconSize="medium"
+                className="mt-1"
+                size="icon"
+                onClick={() => props.tableDescriptor.table.resetColumnFilters()}
+                tooltipText={dict.action.clearAllFilters}
+                variant="destructive"
+              />
+            )}
           {props.instances.length > 0 && (
             <ColumnToggle
               columns={props.tableDescriptor.table.getAllLeafColumns()}
@@ -192,8 +204,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-            <DownloadButton instances={props.instances} />
-          )}
+              <DownloadButton instances={props.instances} />
+            )}
         </div>
       </div>
     </div>

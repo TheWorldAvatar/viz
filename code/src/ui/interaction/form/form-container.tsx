@@ -89,7 +89,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   const id: string = getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
-  const isApproving = useSelector(selectIsApiLoading(id));
+  const isApproving = useSelector(selectIsApiLoading);
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -172,7 +172,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
-    dispatch(setApiLoading({ key: id, isLoading: true }));
+    dispatch(setApiLoading(true));
     const reqBody: JsonObject = {
       contract: id,
       remarks: "Contract has been approved successfully!",
@@ -194,9 +194,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
     setIsLoading(false);
     dispatch(closeDrawer());
-    // If we trigger only a refresh without router.back(), it will refresh the table but the url will be the same (i.e., /view/contract/:id).
-    // dispatch(setPendingRefresh(true));
-    dispatch(setApiLoading({ key: id, isLoading: false }));
+    triggerRefresh();
+    dispatch(setApiLoading(false));
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {

@@ -56,8 +56,8 @@ export default function RegistryRowAction(
   const recordId: string = props.row.event_id
     ? props.row.event_id
     : props.row.id
-    ? getId(props.row.id)
-    : props.row.iri;
+      ? getId(props.row.id)
+      : props.row.iri;
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -65,7 +65,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const isLoading = useSelector(selectIsApiLoading(recordId));
+  const isLoading = useSelector(selectIsApiLoading);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -97,7 +97,7 @@ export default function RegistryRowAction(
     method: string,
     body: string
   ): Promise<void> => {
-    dispatch(setApiLoading({ key: recordId, isLoading: true }));
+    dispatch(setApiLoading(true));
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
@@ -112,8 +112,9 @@ export default function RegistryRowAction(
       customAgentResponse?.error ? "error" : "success"
     );
 
-    dispatch(setPendingRefresh(true));
-    dispatch(setApiLoading({ key: recordId, isLoading: false }));
+    props.triggerRefresh();
+    //dispatch(setPendingRefresh(true));
+    dispatch(setApiLoading(false));
   };
 
   const handleClickView = (): void => {
@@ -171,10 +172,10 @@ export default function RegistryRowAction(
           isOpen={isActionMenuOpen}
           setIsOpen={setIsActionMenuOpen}
         >
-          {isLoading && (
-            <div className="flex flex-col gap-2 justify-center items-center m-auto p-1.5 cursor-auto ">
-              <LoadingSpinner isSmall={true} />
+          {isLoading && props.lifecycleStage == "pending" && (
+            <div className="flex gap-2 justify-center items-center m-auto p-1.5 cursor-auto">
               {dict.message.processing}
+              <LoadingSpinner isSmall={true} />
             </div>
           )}
           <div className="flex flex-col space-y-8 lg:space-y-4 ">
@@ -316,7 +317,7 @@ export default function RegistryRowAction(
                   size="md"
                   iconSize="medium"
                   className="w-full justify-start"
-                  disabled={isLoading}
+
                   label={parseWordsForLabels(dict.action.view)}
                   onClick={() => {
                     setIsActionMenuOpen(false);
