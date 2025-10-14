@@ -85,6 +85,7 @@ export interface PropertyShape {
   maxInclusive?: JsonLdLiteral;
   minExclusive?: JsonLdLiteral;
   maxExclusive?: JsonLdLiteral;
+  singleLine?: JsonLdLiteral;
   minLength?: JsonLdLiteral;
   maxLength?: JsonLdLiteral;
   pattern?: JsonLdLiteral;
