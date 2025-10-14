@@ -50,7 +50,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.triggerRefresh();
   };
 
-  const isApproving = useSelector(selectIsApiLoading);
+  const isApproving: boolean = useSelector(selectIsApiLoading);
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -131,7 +131,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             size="sm"
             leftIcon="hourglass_bottom"
             variant="outline"
-            label="Approving request"
+            label={dict.message.approvingRequest}
             loading={true}
           />}
 

@@ -89,7 +89,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   const id: string = getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
-  const isApproving = useSelector(selectIsApiLoading);
+  const isApproving: boolean = useSelector(selectIsApiLoading);
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -195,8 +195,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     setIsLoading(false);
     dispatch(closeDrawer());
     triggerRefresh();
-    dispatch(setApiLoading(false));
-
     if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();

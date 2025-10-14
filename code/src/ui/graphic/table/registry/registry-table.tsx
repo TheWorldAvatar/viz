@@ -68,7 +68,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     props.tableDescriptor.setData
   );
 
-  const isApproving = useSelector(selectIsApiLoading);
+  const isApproving: boolean = useSelector(selectIsApiLoading);
 
   const onRowClick = (row: FieldValues) => {
     const recordId: string = row.event_id
@@ -207,7 +207,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   </TableCell>
                                   {row.getVisibleCells().map((cell, index) => (
                                     <TableCell
-
                                       key={cell.id + index}
                                       width={cell.column.getSize()}
                                       onClick={() =>

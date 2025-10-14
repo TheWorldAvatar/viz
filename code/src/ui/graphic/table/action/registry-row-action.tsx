@@ -65,7 +65,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const isLoading = useSelector(selectIsApiLoading);
+  const isLoading: boolean = useSelector(selectIsApiLoading);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -113,8 +113,6 @@ export default function RegistryRowAction(
     );
 
     props.triggerRefresh();
-    //dispatch(setPendingRefresh(true));
-    dispatch(setApiLoading(false));
   };
 
   const handleClickView = (): void => {

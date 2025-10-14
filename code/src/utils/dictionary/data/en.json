@@ -151,7 +151,8 @@
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
-    "processing": "Processing"
+    "processing": "Processing",
+    "approvingRequest": "Approving request"
   },
   "nav": {
     "caption": {
