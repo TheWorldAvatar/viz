@@ -16,7 +16,7 @@ interface TablePaginationProps {
  * @param {Table<FieldValues>} props.table - The table instance.
  */
 
-const PAGE_SIZE_OPTIONS: number[] = [5, 10, 20, 50];
+const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
 
 export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
