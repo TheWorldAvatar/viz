@@ -245,7 +245,32 @@ function makeExternalEndpoint(
     }
     case "count": {
       const type: string = searchParams.get("type");
-      return `${agentBaseApi}/${type}/count`;
+      const lifecycle: string = searchParams.get("lifecycle");
+      if (lifecycle == "null") {
+        return `${agentBaseApi}/${type}/count`;
+      }
+      if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
+        let stagePath: string;
+        if (lifecycle === "pending") {
+          stagePath = "draft";
+        } else if (lifecycle === "active") {
+          stagePath = "service";
+        } else if (lifecycle === "archive") {
+          stagePath = "archive";
+        } else {
+          throw Error("Invalid stage");
+        }
+        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}`;
+      }
+      let params: string = "";
+      if (lifecycle == "scheduled" || lifecycle == "closed") {
+        const startDate: string = searchParams.get("start_date");
+        const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
+        const endDate: string = searchParams.get("end_date");
+        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
+        params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      }
+      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}`;
     }
     case "instances": {
       const type: string = searchParams.get("type");

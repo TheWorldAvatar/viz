@@ -66,11 +66,35 @@ export default function RegistryTableComponent(
     const fetchTotalRows = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const res = await fetch(
-          makeInternalRegistryAPIwithParams(
+        let url: string;
+        if (props.lifecycleStage == "general") {
+          url = makeInternalRegistryAPIwithParams(
             "count",
             props.entityType,
-          ),
+          );
+        } else if (
+          props.lifecycleStage == "scheduled" ||
+          props.lifecycleStage == "closed") {
+          url = makeInternalRegistryAPIwithParams(
+            "count",
+            props.entityType,
+            props.lifecycleStage,
+            getUTCDate((selectedDate as DateRange).from)
+              .getTime()
+              .toString(),
+            getUTCDate((selectedDate as DateRange).to)
+              .getTime()
+              .toString(),
+          );
+        } else {
+          url = makeInternalRegistryAPIwithParams(
+            "count",
+            props.entityType,
+            props.lifecycleStage,
+          );
+        }
+        const res = await fetch(
+          url,
           { cache: "no-store", credentials: "same-origin" }
         );
         const resBody: AgentResponseBody = await res.json();
