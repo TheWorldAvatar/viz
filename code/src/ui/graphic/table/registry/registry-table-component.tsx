@@ -64,7 +64,6 @@ export default function RegistryTableComponent(
 
   useEffect(() => {
     const fetchTotalRows = async (): Promise<void> => {
-      setIsLoading(true);
       try {
         let url: string;
         if (props.lifecycleStage == "general") {
@@ -100,13 +99,12 @@ export default function RegistryTableComponent(
         const resBody: AgentResponseBody = await res.json();
         const totalRows: number = Number.parseInt(resBody.data?.message);
         setTotalRows(totalRows);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching total row count", error);
       }
     };
     fetchTotalRows();
-  }, []);
+  }, [selectedDate, refreshFlag]);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
