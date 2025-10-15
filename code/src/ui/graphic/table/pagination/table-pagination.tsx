@@ -24,7 +24,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
       <div className="text-sm text-foreground">
         {dict.message.numberOfRecords
-          .replace("{replace}", String(props.table.getFilteredRowModel().rows.length))
+          .replace("{replace}", String(props.table.getRowCount()))
           .replace(
             "{replacetotal}",
             String(props.table.getRowCount())
