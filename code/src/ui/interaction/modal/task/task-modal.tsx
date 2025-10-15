@@ -421,6 +421,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={() => {
                   setIsSubmitting(true);
                   setIsDuplicate(true);
+                  setIsSaving(false);
                 }}
               />
             )}
@@ -438,6 +439,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 onClick={() => {
                   setIsSubmitting(true);
                   setIsSaving(true);
+                  setIsDuplicate(false);
                 }}
               />
             )}
