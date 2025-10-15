@@ -58,6 +58,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isFormSubmitting, setIsFormSubmitting] = useState<boolean>(false);
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
@@ -118,6 +119,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       response?.data?.message || response?.error?.message,
       response?.error ? "error" : "success"
     );
+
     if (response && !response?.error) {
       setTimeout(() => {
         // Inform parent to refresh data on successful action
@@ -270,6 +272,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             formRef={formRef}
             fields={formFields}
             submitAction={taskSubmitAction}
+            setIsSubmitting={setIsFormSubmitting}
           />
         )}
       </section>
@@ -278,7 +281,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
-            disabled={isFetching || isSubmitting || isSaving || isDuplicate}
+            disabled={isFetching || isFormSubmitting}
             variant="outline"
             size="icon"
             onClick={triggerRefresh}
@@ -390,7 +393,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                disabled={isSubmitting || isSaving || isDuplicate}
+                loading={isFormSubmitting}
+                disabled={isFormSubmitting}
                 onClick={() => {
                   if (
                     props.task?.type === "complete" &&
@@ -410,12 +414,13 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
-                disabled={isSubmitting || isSaving || isDuplicate}
+                loading={isFormSubmitting || isDuplicate}
+                disabled={isFormSubmitting}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
                 onClick={() => {
-                  setIsDuplicate(true);
                   setIsSubmitting(true);
+                  setIsDuplicate(true);
                 }}
               />
             )}
@@ -426,9 +431,14 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="save"
                 variant="secondary"
+                loading={isFormSubmitting && !isSaving}
+                disabled={isFormSubmitting}
                 label={dict.action.save}
                 tooltipText={dict.action.save}
-                onClick={() => setIsSaving(true)}
+                onClick={() => {
+                  setIsSubmitting(true);
+                  setIsSaving(true);
+                }}
               />
             )}
         </div>
