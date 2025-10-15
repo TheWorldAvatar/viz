@@ -59,8 +59,8 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
               .replace(
                 "{replace}",
                 String(props.pagination.pageIndex + 1)
-              )
-              .replace("{replacecount}", String(props.table.getPageCount()))}
+              ).replace("{replacecount}", String(
+                Math.ceil(props.table.getRowCount() / props.pagination.pageSize)))}
           </span>
         </div>
 
