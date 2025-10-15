@@ -25,11 +25,7 @@ import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectIsApiLoading,
-  setApiLoading,
-  setPendingRefresh,
-} from "state/api-loading-slice";
+import { selectIsApiLoading, setApiLoading } from "state/api-loading-slice";
 import { closeDrawer } from "state/drawer-component-slice";
 
 interface FormContainerComponentProps {

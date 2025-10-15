@@ -28,7 +28,6 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import {
   selectIsApiLoading,
   setApiLoading,
-  setPendingRefresh,
 } from "state/api-loading-slice";
 
 interface RegistryRowActionProps {

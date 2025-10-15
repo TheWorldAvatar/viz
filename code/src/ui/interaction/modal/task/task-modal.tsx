@@ -264,8 +264,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               props.task?.type === "report"
                 ? "report"
                 : props.task?.type === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
@@ -378,19 +378,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.saveTask) &&
-            props.task?.type === "complete" && (
-              <Button
-                leftIcon="save"
-                variant="secondary"
-                disabled={isSubmitting || isSaving || isDuplicate}
-                label={dict.action.save}
-                tooltipText={dict.action.save}
-                onClick={() => setIsSaving(true)}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
             (permissionScheme.hasPermissions.completeTask &&
               props.task?.type === "complete") ||
             (permissionScheme.hasPermissions.reportTask &&
@@ -417,19 +404,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.saveTask) &&
-            props.task?.type === "complete" && (
-              <Button
-                leftIcon="save"
-                variant="secondary"
-                label={dict.action.save}
-                tooltipText={dict.action.save}
-                onClick={() => setIsSaving(true)}
-              />
-            )}
-
-          {(!keycloakEnabled ||
-            !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
             props.task?.type === "complete" &&
             props.task.scheduleType != dict.form.perpetualService && (
@@ -443,6 +417,18 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                   setIsDuplicate(true);
                   setIsSubmitting(true);
                 }}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.saveTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={() => setIsSaving(true)}
               />
             )}
         </div>
