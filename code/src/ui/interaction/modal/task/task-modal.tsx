@@ -414,7 +414,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
-                loading={isFormSubmitting || isDuplicate}
+                loading={isFormSubmitting}
                 disabled={isFormSubmitting}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
@@ -431,7 +431,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="save"
                 variant="secondary"
-                loading={isFormSubmitting && !isSaving}
+                loading={isFormSubmitting}
                 disabled={isFormSubmitting}
                 label={dict.action.save}
                 tooltipText={dict.action.save}
