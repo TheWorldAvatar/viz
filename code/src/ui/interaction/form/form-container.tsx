@@ -75,7 +75,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const [refreshFlag, triggerRefresh] = useRefresh();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<AgentResponseBody>(null);
@@ -136,7 +136,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       lifecycleStage: string,
       eventType: string
     ): Promise<void> => {
-      setIsLoading(true);
       const res = await fetch(
         makeInternalRegistryAPIwithParams(
           "event",
@@ -154,8 +153,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         responseBody.data?.items as Record<string, unknown>[]
       )?.[0]?.property as PropertyShape[];
       setFormFields(template);
-
-      setIsLoading(false);
+      ;
     };
 
     if (isRescindAction) {
@@ -167,7 +165,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    setIsLoading(true);
     dispatch(setApiLoading(true));
     const reqBody: JsonObject = {
       contract: id,
@@ -188,7 +185,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
-    setIsLoading(false);
     dispatch(closeDrawer());
     triggerRefresh();
     if (!customAgentResponse?.error) {
@@ -200,7 +196,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (formRef.current) {
-      setIsLoading(true);
       formRef.current.requestSubmit();
     }
   };
@@ -253,6 +248,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formType={props.formType}
               primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
+              setIsSubmitting={setIsSubmitting}
             />
           ))}
         {formFields.length > 0 && (
@@ -270,7 +266,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           <Button
             leftIcon="cached"
             variant="outline"
-            disabled={isApproving || isLoading}
+            disabled={isApproving || isSubmitting}
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
@@ -332,7 +328,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 disabled={isApproving}
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
-                variant="primary"
+                variant="secondary"
               />
             )}
           {(!keycloakEnabled ||
@@ -356,8 +352,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               leftIcon="send"
               label={dict.action.submit}
               tooltipText={dict.action.submit}
-              loading={isLoading}
-              disabled={isLoading}
+              loading={isSubmitting}
+              disabled={isSubmitting}
               onClick={onSubmit}
             />
           )}
