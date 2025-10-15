@@ -2,11 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
+import {
+  selectPendingRefresh,
+  setPendingRefresh,
+} from "state/api-loading-slice";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -44,8 +48,10 @@ export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
+  const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
+  const pendingRefresh: boolean = useSelector(selectPendingRefresh);
   const [refreshFlag, triggerRefresh] = useRefresh();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
@@ -61,6 +67,14 @@ export default function RegistryTableComponent(
   );
 
   const tableDescriptor: TableDescriptor = useTable(currentInstances);
+
+  // Watch for pending refresh flag and trigger refresh when coming back to the page
+  useEffect(() => {
+    if (pendingRefresh) {
+      triggerRefresh();
+      dispatch(setPendingRefresh(false));
+    }
+  }, [pendingRefresh, triggerRefresh, dispatch]);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {

@@ -58,6 +58,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isFormSubmitting, setIsFormSubmitting] = useState<boolean>(false);
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
@@ -118,6 +119,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       response?.data?.message || response?.error?.message,
       response?.error ? "error" : "success"
     );
+
     if (response && !response?.error) {
       setTimeout(() => {
         // Inform parent to refresh data on successful action
@@ -270,6 +272,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             formRef={formRef}
             fields={formFields}
             submitAction={taskSubmitAction}
+            setIsSubmitting={setIsFormSubmitting}
           />
         )}
       </section>
@@ -278,6 +281,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
+            disabled={isFetching || isFormSubmitting}
             variant="outline"
             size="icon"
             onClick={triggerRefresh}
@@ -389,6 +393,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
+                loading={isFormSubmitting && !isDuplicate && !isSaving}
+                disabled={isFormSubmitting}
                 onClick={() => {
                   if (
                     props.task?.type === "complete" &&
@@ -402,30 +408,38 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.saveTask) &&
-            props.task?.type === "complete" && (
-              <Button
-                leftIcon="save"
-                variant="secondary"
-                label={dict.action.save}
-                tooltipText={dict.action.save}
-                onClick={() => setIsSaving(true)}
-              />
-            )}
-
-          {(!keycloakEnabled ||
-            !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
             props.task?.type === "complete" &&
             props.task.scheduleType != dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
+                loading={isFormSubmitting && isDuplicate && !isSaving}
+                disabled={isFormSubmitting}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
                 onClick={() => {
-                  setIsDuplicate(true);
                   setIsSubmitting(true);
+                  setIsDuplicate(true);
+                  setIsSaving(false);
+                }}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.saveTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                loading={isFormSubmitting && !isSaving && !isDuplicate}
+                disabled={isFormSubmitting}
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={() => {
+                  setIsSubmitting(true);
+                  setIsSaving(true);
+                  setIsDuplicate(false);
                 }}
               />
             )}
