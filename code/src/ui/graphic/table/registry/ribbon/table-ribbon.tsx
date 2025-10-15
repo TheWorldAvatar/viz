@@ -18,6 +18,7 @@ import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { useSelector } from "react-redux";
 import { selectIsApiLoading } from "state/api-loading-slice";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 
 interface TableRibbonProps {
   path: string;
@@ -127,14 +128,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
-          {isApproving && <Button
-            size="sm"
-            leftIcon="hourglass_bottom"
-            variant="outline"
-            label={dict.message.approvingRequest}
-            loading={true}
-          />}
-
+          {isApproving &&
+            <div className="opacity-70 cursor-default h-9 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 bg-transparent border border-border text-foreground  inline-flex items-center justify-center whitespace-nowrap font-medium  shrink-0 [&_svg]:shrink-0 ">
+              <LoadingSpinner isSmall={true} />
+              <span >{dict.message.approvingRequest}</span>
+            </div>
+          }
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
               <DateInput
