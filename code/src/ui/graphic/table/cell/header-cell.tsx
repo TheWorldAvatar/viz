@@ -72,8 +72,13 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             <MultivalueSelector
               title={dict.action.filter}
               options={props.options.sort().map((col) => {
+                // For status column, show translated label but use actual value
+                // This is because the filter function checks against actual value, not the label
+                const isStatusColumn = props.header.id.toLowerCase() === "status";
+                const label = isStatusColumn ? dict.title[col.toLowerCase()] ?? col : col;
+
                 return {
-                  label: col,
+                  label: label,
                   value: col,
                 };
               })}
