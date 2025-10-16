@@ -38,6 +38,7 @@ import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
+import Checkbox from "ui/interaction/input/checkbox";
 
 interface RegistryTableProps {
   recordType: string;
@@ -181,6 +182,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
+                                  {props.lifecycleStage === "pending" && <Checkbox checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
