@@ -125,6 +125,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
+          {props.lifecycleStage === "pending" &&
+            props.selectedRowsCount > 0 && (
+              <Button
+                leftIcon="done_all"
+                label={`${dict.action.approve} (${props.selectedRowsCount})`}
+                tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
+                onClick={props.onBulkApproval}
+                variant="outline"
+                className="border-dashed"
+              />
+            )}
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
               <DateInput
@@ -136,17 +147,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
 
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-          {props.lifecycleStage === "pending" &&
-            props.selectedRowsCount &&
-            props.selectedRowsCount > 0 && (
-              <Button
-                leftIcon="done_all"
-                label={`${dict.action.approve} (${props.selectedRowsCount})`}
-                tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
-                onClick={props.onBulkApproval}
-                variant="outline"
-              />
-            )}
+
           {props.tableDescriptor.table
             .getState()
             .columnFilters?.some(
