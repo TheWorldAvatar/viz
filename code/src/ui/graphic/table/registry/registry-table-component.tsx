@@ -28,6 +28,8 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import { toast } from "ui/interaction/action/toast/toast";
+import { SparqlResponseField } from "types/form";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -61,6 +63,64 @@ export default function RegistryTableComponent(
   );
 
   const tableDescriptor: TableDescriptor = useTable(currentInstances);
+
+
+  const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => {
+      const rowData = row.original as RegistryFieldValues;
+      let id: string;
+
+      if (rowData.event_id) {
+        id = typeof rowData.event_id === 'string' ? rowData.event_id : (rowData.event_id as SparqlResponseField).value;
+      } else if (rowData.id) {
+        id = typeof rowData.id === 'string' ? rowData.id : (rowData.id as SparqlResponseField).value;
+      } else {
+        id = typeof rowData.iri === 'string' ? rowData.iri : (rowData.iri as SparqlResponseField).value;
+      }
+
+      return id
+    });
+
+    try {
+      const reqBody = {
+        contract: contractIds,
+        remarks: `${contractIds.length} contract(s) approved successfully!`,
+      };
+
+      const res = await fetch(
+        makeInternalRegistryAPIwithParams("event", "service", "commence"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+          credentials: "same-origin",
+          body: JSON.stringify({ ...reqBody }),
+        }
+      );
+
+      const responseBody: AgentResponseBody = await res.json();
+
+      toast(
+        responseBody?.data?.message || responseBody?.error?.message,
+        responseBody?.error ? "error" : "success"
+      );
+
+      if (!responseBody?.error) {
+        // Clear selection and refresh table
+        tableDescriptor.table.resetRowSelection();
+        triggerRefresh();
+      }
+    } catch (error) {
+      toast("Failed to approve contracts", "error");
+      console.error("Error approving contracts", error);
+    }
+  };
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -214,6 +274,8 @@ export default function RegistryTableComponent(
           instances={initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
+          onBulkApproval={handleBulkApproval}
+          selectedRowsCount={tableDescriptor.table.getSelectedRowModel().rows.length}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">

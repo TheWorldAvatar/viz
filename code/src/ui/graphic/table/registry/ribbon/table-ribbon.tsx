@@ -26,6 +26,8 @@ interface TableRibbonProps {
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
+  onBulkApproval?: React.MouseEventHandler<HTMLButtonElement>;
+  selectedRowsCount?: number;
 }
 
 /**
@@ -58,19 +60,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
               {(!keycloakEnabled ||
                 permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.pending}
-                    leftIcon="free_cancellation"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "pending" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                  />
-                </div>
-              )}
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.pending}
+                      leftIcon="free_cancellation"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "pending" ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                )}
 
               <div className="sm:w-auto">
                 <RedirectButton
@@ -125,30 +127,41 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
-            <DateInput
-              selectedDate={props.selectedDate}
-              setSelectedDateRange={props.setSelectedDate}
-              disabledDates={getDisabledDates(props.lifecycleStage)}
-            />
-          )}
+              <DateInput
+                selectedDate={props.selectedDate}
+                setSelectedDateRange={props.setSelectedDate}
+                disabledDates={getDisabledDates(props.lifecycleStage)}
+              />
+            )}
         </div>
 
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
+          {props.lifecycleStage === "pending" &&
+            props.selectedRowsCount &&
+            props.selectedRowsCount > 0 && (
+              <Button
+                leftIcon="done_all"
+                label={`${dict.action.approve} (${props.selectedRowsCount})`}
+                tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
+                onClick={props.onBulkApproval}
+                variant="outline"
+              />
+            )}
           {props.tableDescriptor.table
             .getState()
             .columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
             ) && (
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="medium"
-              className="mt-1"
-              size="icon"
-              onClick={() => props.tableDescriptor.table.resetColumnFilters()}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          )}
+              <Button
+                leftIcon="filter_list_off"
+                iconSize="medium"
+                className="mt-1"
+                size="icon"
+                onClick={() => props.tableDescriptor.table.resetColumnFilters()}
+                tooltipText={dict.action.clearAllFilters}
+                variant="destructive"
+              />
+            )}
           {props.instances.length > 0 && (
             <ColumnToggle
               columns={props.tableDescriptor.table.getAllLeafColumns()}
@@ -192,8 +205,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-            <DownloadButton instances={props.instances} />
-          )}
+              <DownloadButton instances={props.instances} />
+            )}
         </div>
       </div>
     </div>
