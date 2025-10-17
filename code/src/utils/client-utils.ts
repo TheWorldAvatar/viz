@@ -183,10 +183,14 @@ export function getInitialDateFromLifecycleStage(
 ): DateRange {
   // For closed and other stages: start with today
   const initialDate: Date = new Date();
-
+  // For scheduled stage, set the date range to four weeks from initial date
+  const fourWeeksFromInitialDate: Date = new Date();
+ 
   if (lifecycleStage === "scheduled") {
     // For scheduled: start with tomorrow since today and past are disabled
     initialDate.setDate(initialDate.getDate() + 1);
+    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
+    return { from: initialDate, to: fourWeeksFromInitialDate };
   }
 
   return { from: initialDate, to: initialDate };
