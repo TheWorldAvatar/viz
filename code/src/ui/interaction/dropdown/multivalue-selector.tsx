@@ -46,6 +46,7 @@ export default function MultivalueSelector(
           (option) =>
             option.value != "id" &&
             option.value != "event_id" &&
+            option.value != "service_location" &&
             option.value != "select-all"
         )
       : []
