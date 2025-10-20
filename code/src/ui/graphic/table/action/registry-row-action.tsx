@@ -23,12 +23,10 @@ import { JsonObject } from "types/json";
 import { toast } from "ui/interaction/action/toast/toast";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { openDrawer } from "state/drawer-component-slice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import {
-  selectIsApiLoading,
-  setApiLoading,
-} from "state/api-loading-slice";
+import useRefresh from "hooks/useRefresh";
+
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -64,7 +62,8 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const isLoading: boolean = useSelector(selectIsApiLoading);
+  const { isLoading, startLoading } = useRefresh();
+
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -96,7 +95,7 @@ export default function RegistryRowAction(
     method: string,
     body: string
   ): Promise<void> => {
-    dispatch(setApiLoading(true));
+    startLoading();
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },

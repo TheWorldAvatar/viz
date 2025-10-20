@@ -16,9 +16,8 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { useSelector } from "react-redux";
-import { selectIsApiLoading } from "state/api-loading-slice";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import useRefresh from "hooks/useRefresh";
 
 interface TableRibbonProps {
   path: string;
@@ -51,7 +50,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.triggerRefresh();
   };
 
-  const isApproving: boolean = useSelector(selectIsApiLoading);
+  const { isLoading } = useRefresh();
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -128,7 +127,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
-          {isApproving &&
+          {isLoading &&
             <div className="opacity-70 cursor-default h-9 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 bg-transparent border border-border text-foreground  inline-flex items-center justify-center whitespace-nowrap font-medium  shrink-0 [&_svg]:shrink-0 ">
               <LoadingSpinner isSmall={true} />
               <span >{dict.message.approvingRequest}</span>

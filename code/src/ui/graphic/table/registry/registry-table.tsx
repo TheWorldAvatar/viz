@@ -33,9 +33,9 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
-import { selectIsApiLoading } from "state/api-loading-slice";
+import useRefresh from "hooks/useRefresh";
 
 interface RegistryTableProps {
   recordType: string;
@@ -68,7 +68,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     props.tableDescriptor.setData
   );
 
-  const isApproving: boolean = useSelector(selectIsApiLoading);
+  const { isLoading } = useRefresh();
 
   const onRowClick = (row: FieldValues) => {
     const recordId: string = row.event_id
@@ -137,7 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 >
                   <table
                     aria-label={`${props.recordType} registry table`}
-                    className={`w-full border-separate border-spacing-0 ${isApproving && props.lifecycleStage == "pending" ? "pointer-events-none" : "pointer-events-auto"}`}
+                    className={`w-full border-separate border-spacing-0 ${isLoading && props.lifecycleStage == "pending" ? "pointer-events-none" : "pointer-events-auto"}`}
                   >
                     <thead className="bg-muted sticky top-0 z-10 ">
                       {props.tableDescriptor.table

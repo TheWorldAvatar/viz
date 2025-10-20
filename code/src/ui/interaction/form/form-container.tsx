@@ -24,9 +24,9 @@ import { FormTemplate } from "./template/form-template";
 
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
-import { useSelector, useDispatch } from "react-redux";
-import { selectIsApiLoading, setApiLoading } from "state/api-loading-slice";
+import { useDispatch } from "react-redux";
 import { closeDrawer } from "state/drawer-component-slice";
+
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -74,7 +74,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
-  const [refreshFlag, triggerRefresh] = useRefresh();
+  const { refreshFlag, triggerRefresh, isLoading, startLoading } = useRefresh();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
@@ -85,7 +85,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   const id: string = getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
-  const isApproving: boolean = useSelector(selectIsApiLoading);
+
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -165,7 +165,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    dispatch(setApiLoading(true));
+    startLoading();
     const reqBody: JsonObject = {
       contract: id,
       remarks: "Contract has been approved successfully!",
@@ -266,7 +266,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           <Button
             leftIcon="cached"
             variant="outline"
-            disabled={isApproving || isSubmitting}
+            disabled={isLoading || isSubmitting}
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
@@ -310,8 +310,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button // Approval button
                 leftIcon="done_outline"
                 label={dict.action.approve}
-                disabled={isApproving}
-                loading={isApproving}
+                disabled={isLoading}
+                loading={isLoading}
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
@@ -325,7 +325,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <RedirectButton // Edit button
                 leftIcon="edit"
                 label={dict.action.edit}
-                disabled={isApproving}
+                disabled={isLoading}
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
                 variant="secondary"
@@ -341,7 +341,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 leftIcon="delete"
                 iconSize="medium"
                 label={dict.action.delete}
-                disabled={isApproving}
+                disabled={isLoading}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
                 variant="secondary"

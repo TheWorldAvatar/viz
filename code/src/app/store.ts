@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { featureInfoAgentApi } from "state/api/fia-api";
-import apiLoadingReducer from "state/api-loading-slice";
+import loadingReducer from "state/loading-slice";
 import contextMenuReducer from "state/context-menu-slice";
 import dimensionSliderSlice from "state/dimension-slider-slice";
 import drawerReducer from "state/drawer-component-slice";
@@ -17,7 +17,7 @@ export const reduxStore = configureStore({
     mapFeature: mapFeatureReducer,
     dimensionSlider: dimensionSliderSlice,
     drawer: drawerReducer,
-    apiLoading: apiLoadingReducer,
+    loading: loadingReducer,
     [featureInfoAgentApi.reducerPath]: featureInfoAgentApi.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling, and other useful features of `rtk-query`.

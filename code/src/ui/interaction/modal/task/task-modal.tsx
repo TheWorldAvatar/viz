@@ -62,7 +62,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
-  const [refreshFlag, triggerRefresh] = useRefresh();
+  const { refreshFlag, triggerRefresh } = useRefresh();
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
