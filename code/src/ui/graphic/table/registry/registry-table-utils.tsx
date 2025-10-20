@@ -112,8 +112,6 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
       return filterValue.includes(translatedBlankText);
     }
     return !!filterValue.find((option) => option === rowValue);
-    // Shouldn't be cleaner if we just check if the filterValue includes the rowValue ?
-    // return filterValue.includes(rowValue);
   };
 }
 

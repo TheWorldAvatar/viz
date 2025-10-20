@@ -41,11 +41,10 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div
-            className={`flex items-center gap-2 ${
-              props.header.column.getCanSort()
-                ? "cursor-pointer select-none "
-                : ""
-            }`}
+            className={`flex items-center gap-2 ${props.header.column.getCanSort()
+              ? "cursor-pointer select-none "
+              : ""
+              }`}
             onClick={props.header.column.getToggleSortingHandler()}
             aria-label={
               props.header.column.getCanSort()
@@ -74,8 +73,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               options={props.options.sort().map((col) => {
                 // For status column, show translated label but use actual value
                 // This is because the filter function checks against actual value, not the label
-                const isStatusColumn = props.header.id.toLowerCase() === "status";
-                const label = isStatusColumn ? dict.title[col.toLowerCase()] ?? col : col;
+                const label: string = props.header.id.toLowerCase() === "status" ? dict.title[col.toLowerCase()] ?? col : col;
 
                 return {
                   label: label,
