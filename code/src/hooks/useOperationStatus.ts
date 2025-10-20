@@ -25,7 +25,6 @@ const useOperationStatus = (): useOperationStatusReturn => {
   // Prevent unnecessary re-creations of the refresh function on every render
   const triggerRefresh = useCallback(() => {
     setRefreshFlag(true);
-    dispatch(setLoading(false));
     setTimeout(() => setRefreshFlag(false), 500);
   }, [dispatch]);
 
