@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.7
+
+### Changes
+
+- Set the default date range for schedule task to be 28 days from tomorrow's date
+
 ## 5.42.6
 
 ### Changes
