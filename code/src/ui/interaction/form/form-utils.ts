@@ -143,10 +143,12 @@ export function parsePropertyShapeOrGroupList(
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
+ * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
  */
 export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
+  reqMatching: boolean,
 ): NodeShape[] {
   // Early termination
   if (nodeShapes.length === 0) {
@@ -167,44 +169,46 @@ export function parseBranches(
   // Find the best matched node states with non-empty values and null values
   let nodeWithMostNonEmpty: NodeShape = results[0];
   let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
-  let maxNonEmptyCount: number = 0;
-  let minNullCount: number = 0;
-  nodeStates.forEach((nodeState, index) => {
-    let currentNonEmptyCount: number = 0;
-    let currentNullCount: number = 0;
-    for (const nodeField in nodeState) {
-      if (Object.hasOwn(nodeState, nodeField)) {
-        const fieldVal = nodeState[nodeField];
-        // If field value is undefined, increment null count
-        if (!fieldVal) {
-          currentNullCount++;
-        }
-        // Increment the counter when it is non-empty
-        // Field arrays are stored as group.index.field in react-hook-form
-        if (
-          typeof fieldVal === "string" &&
-          fieldVal.length > 0 &&
-          fieldVal != "-0.01"
-        ) {
-          currentNonEmptyCount++;
+  if (reqMatching) {
+    let maxNonEmptyCount: number = 0;
+    let minNullCount: number = 0;
+    nodeStates.forEach((nodeState, index) => {
+      let currentNonEmptyCount: number = 0;
+      let currentNullCount: number = 0;
+      for (const nodeField in nodeState) {
+        if (Object.hasOwn(nodeState, nodeField)) {
+          const fieldVal = nodeState[nodeField];
+          // If field value is undefined, increment null count
+          if (!fieldVal) {
+            currentNullCount++;
+          }
+          // Increment the counter when it is non-empty
+          // Field arrays are stored as group.index.field in react-hook-form
+          if (
+            typeof fieldVal === "string" &&
+            fieldVal.length > 0 &&
+            fieldVal != "-0.01"
+          ) {
+            currentNonEmptyCount++;
+          }
         }
       }
-    }
-    // When the current number of non-empty fields exceeds the existing maximum,
-    // the best match node will be updated accordingly
-    if (currentNonEmptyCount > maxNonEmptyCount) {
-      nodeWithMostNonEmpty = results[index];
-      nodeStateWithMostNonEmpty = nodeState;
-      maxNonEmptyCount = currentNonEmptyCount;
-      minNullCount = currentNullCount;
-      // But when the fields are equivalent in matching fields (as branches may have the same fields), 
-      // we will use what is missing based on null values to find the best match
-    } else if (currentNonEmptyCount == maxNonEmptyCount && currentNullCount < minNullCount) {
-      nodeWithMostNonEmpty = results[index];
-      nodeStateWithMostNonEmpty = nodeState;
-      minNullCount = currentNullCount;
-    }
-  });
+      // When the current number of non-empty fields exceeds the existing maximum,
+      // the best match node will be updated accordingly
+      if (currentNonEmptyCount > maxNonEmptyCount) {
+        nodeWithMostNonEmpty = results[index];
+        nodeStateWithMostNonEmpty = nodeState;
+        maxNonEmptyCount = currentNonEmptyCount;
+        minNullCount = currentNullCount;
+        // But when the fields are equivalent in matching fields (as branches may have the same fields), 
+        // we will use what is missing based on null values to find the best match
+      } else if (currentNonEmptyCount == maxNonEmptyCount && currentNullCount < minNullCount) {
+        nodeWithMostNonEmpty = results[index];
+        nodeStateWithMostNonEmpty = nodeState;
+        minNullCount = currentNullCount;
+      }
+    });
+  }
   for (const field in nodeStateWithMostNonEmpty) {
     initialState[field] = nodeStateWithMostNonEmpty[field];
   }
