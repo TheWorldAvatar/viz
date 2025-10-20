@@ -27,9 +27,9 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
-import { toast } from "ui/interaction/action/toast/toast";
 import { useDispatch } from "react-redux";
 import { closeDrawer, openDrawer } from "state/drawer-component-slice";
+import { toast } from "ui/interaction/action/toast/toast";
 import Drawer from "ui/interaction/drawer/drawer";
 
 interface TaskModalProps {
@@ -58,11 +58,10 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isFormSubmitting, setIsFormSubmitting] = useState<boolean>(false);
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
-  const { refreshFlag, triggerRefresh } = useOperationStatus();
+  const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -81,6 +80,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const taskSubmitAction: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
+    startLoading();
     let action = "";
     if (props.task?.type === "dispatch") {
       action = "dispatch";
@@ -115,6 +115,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       response = await submitLifecycleAction(formData, "continue", true);
       setIsDuplicate(false);
     }
+    stopLoading();
     toast(
       response?.data?.message || response?.error?.message,
       response?.error ? "error" : "success"
@@ -272,7 +273,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             formRef={formRef}
             fields={formFields}
             submitAction={taskSubmitAction}
-            setIsSubmitting={setIsFormSubmitting}
           />
         )}
       </section>
@@ -281,7 +281,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
-            disabled={isFetching || isFormSubmitting}
+            disabled={isFetching || isLoading}
             variant="outline"
             size="icon"
             onClick={triggerRefresh}
@@ -393,8 +393,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                loading={isFormSubmitting && !isDuplicate && !isSaving}
-                disabled={isFormSubmitting}
+                loading={isLoading && !isDuplicate && !isSaving}
+                disabled={isLoading}
                 onClick={() => {
                   if (
                     props.task?.type === "complete" &&
@@ -414,8 +414,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
-                loading={isFormSubmitting && isDuplicate && !isSaving}
-                disabled={isFormSubmitting}
+                loading={isLoading && isDuplicate && !isSaving}
+                disabled={isLoading}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
                 onClick={() => {
@@ -432,8 +432,8 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="save"
                 variant="secondary"
-                loading={isFormSubmitting && !isSaving && !isDuplicate}
-                disabled={isFormSubmitting}
+                loading={isLoading && !isSaving && !isDuplicate}
+                disabled={isLoading}
                 label={dict.action.save}
                 tooltipText={dict.action.save}
                 onClick={() => {

@@ -32,6 +32,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import useOperationStatus from "hooks/useOperationStatus";
 import { toast } from "ui/interaction/action/toast/toast";
 
 interface FormComponentProps {
@@ -43,7 +44,6 @@ interface FormComponentProps {
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
   setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsSubmitting?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -57,13 +57,13 @@ interface FormComponentProps {
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
- * @param setIsSubmitting An optional dispatch method to set the submitting state of the parent component.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
 
   // Sets the default value with the requested function call
@@ -130,11 +130,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
-    // Set submitting state to true when form validation passes
-    if (props.setIsSubmitting) {
-      props.setIsSubmitting(true);
-    }
-
+    startLoading();
     let pendingResponse: AgentResponseBody;
     // For perpetual service
     if (formData[FORM_STATES.RECURRENCE] == null) {
@@ -329,16 +325,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
+    stopLoading();
     toast(
       pendingResponse?.data?.message || pendingResponse?.error?.message,
       pendingResponse?.error ? "error" : "success"
     );
-
-    // Reset submitting state when submission completes
-    if (props.setIsSubmitting) {
-      props.setIsSubmitting(false);
-    }
-
     if (!pendingResponse?.error) {
       setTimeout(() => {
         // Close search modal on success

@@ -22,10 +22,10 @@ import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 
-import { toast } from "../action/toast/toast";
-import NavigationDrawer from "../drawer/navigation-drawer";
 import { useDispatch } from "react-redux";
 import { closeDrawer } from "state/drawer-component-slice";
+import { toast } from "../action/toast/toast";
+import NavigationDrawer from "../drawer/navigation-drawer";
 
 
 interface FormContainerComponentProps {
@@ -75,7 +75,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<AgentResponseBody>(null);
@@ -249,7 +248,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formType={props.formType}
               primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
-              setIsSubmitting={setIsSubmitting}
             />
           ))}
         {formFields.length > 0 && (
@@ -267,7 +265,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           <Button
             leftIcon="cached"
             variant="outline"
-            disabled={isLoading || isSubmitting}
+            disabled={isLoading}
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
@@ -353,8 +351,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               leftIcon="send"
               label={dict.action.submit}
               tooltipText={dict.action.submit}
-              loading={isSubmitting}
-              disabled={isSubmitting}
+              loading={isLoading}
+              disabled={isLoading}
               onClick={onSubmit}
             />
           )}

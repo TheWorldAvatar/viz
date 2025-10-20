@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
+import useOperationStatus from 'hooks/useOperationStatus';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
@@ -11,7 +12,6 @@ interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   fields: PropertyShapeOrGroup[];
   submitAction: SubmitHandler<FieldValues>;
-  setIsSubmitting?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -21,9 +21,9 @@ interface FormComponentProps {
  * @param {React.RefObject<HTMLFormElement>} formRef Reference to the form element.
  * @param {PropertyShapeOrGroup[]} fields The fields to render.
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
- * @param {React.Dispatch<React.SetStateAction<boolean>>} setIsSubmitting Optional state setter to track submission state.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
+  const { startLoading, stopLoading } = useOperationStatus();
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
   // Sets the default value with the requested function call if any
@@ -39,24 +39,8 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
     }
   });
 
-
-  const handleSubmit = form.handleSubmit(async (formData: FieldValues) => {
-    // Set submitting state to true when form validation passes
-    if (props.setIsSubmitting) {
-      props.setIsSubmitting(true);
-    }
-    try {
-      await props.submitAction(formData);
-    }
-    finally {
-      if (props.setIsSubmitting) {
-        props.setIsSubmitting(false);
-      }
-    }
-  });
-
   return (
-    <form ref={props.formRef} onSubmit={handleSubmit}>
+    <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
       {form.formState.isLoading ?
         <LoadingSpinner isSmall={false} /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
