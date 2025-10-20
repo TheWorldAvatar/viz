@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 
-import useOperationStatus from 'hooks/useOperationStatus';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
@@ -23,7 +22,6 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
-  const { startLoading, stopLoading } = useOperationStatus();
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
   // Sets the default value with the requested function call if any
