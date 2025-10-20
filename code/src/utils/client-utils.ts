@@ -185,10 +185,12 @@ export function getInitialDateFromLifecycleStage(
   const initialDate: Date = new Date();
 
   if (lifecycleStage === "scheduled") {
-    // For scheduled: start with tomorrow since today and past are disabled
+    // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
+    const fourWeeksFromInitialDate: Date = new Date();
     initialDate.setDate(initialDate.getDate() + 1);
+    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
+    return { from: initialDate, to: fourWeeksFromInitialDate };
   }
-
   return { from: initialDate, to: initialDate };
 }
 

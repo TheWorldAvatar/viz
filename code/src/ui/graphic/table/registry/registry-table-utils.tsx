@@ -123,10 +123,11 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
  * @param {Dictionary} dict Dictionary translations.
  */
 export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
-  // Return translated status label if header is status. 
-  return rows.flatMap((row) => header == "status" ? dict.title[(row.getValue(header) as string).replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())]
-    // Else return the value or default to blank value
-    : row.getValue(header) ?? dict.title.blank);
+  // Return the actual row value (not translated label) for proper filtering
+  // This is because the filter function checks against actual value, not the label
+  // e.g. status value is "new" but label is "open"
+  // So if we return the label here, filtering won't work as expected
+  return rows.flatMap((row) => row.getValue(header) ?? dict.title.blank);
 }
 
 /**
