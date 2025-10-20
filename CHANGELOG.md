@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.6
+
+### Changes
+
+- Exclude "service_location" column from being displayed in the registry table 
+
 ## 5.42.5
 
 ### Changes
