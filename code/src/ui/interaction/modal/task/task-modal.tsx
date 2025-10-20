@@ -393,7 +393,6 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
-                loading={isLoading && !isDuplicate && !isSaving}
                 disabled={isLoading}
                 onClick={() => {
                   if (
@@ -414,14 +413,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
-                loading={isLoading && isDuplicate && !isSaving}
                 disabled={isLoading}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
                 onClick={() => {
                   setIsSubmitting(true);
                   setIsDuplicate(true);
-                  setIsSaving(false);
                 }}
               />
             )}
@@ -432,14 +429,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               <Button
                 leftIcon="save"
                 variant="secondary"
-                loading={isLoading && !isSaving && !isDuplicate}
                 disabled={isLoading}
                 label={dict.action.save}
                 tooltipText={dict.action.save}
                 onClick={() => {
                   setIsSubmitting(true);
                   setIsSaving(true);
-                  setIsDuplicate(false);
                 }}
               />
             )}
