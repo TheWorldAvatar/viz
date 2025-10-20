@@ -62,7 +62,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const { isLoading, startLoading } = useRefresh();
+  const { isLoading, startLoading, stopLoading } = useRefresh();
 
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -105,6 +105,7 @@ export default function RegistryRowAction(
     });
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
+    stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"

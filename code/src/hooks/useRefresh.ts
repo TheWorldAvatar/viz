@@ -1,6 +1,9 @@
-import { useState, useCallback } from 'react';
+'use client';
+
+import { useState, useCallback, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectIsLoading, setLoading } from 'state/loading-slice';
+import { selectIsLoading, selectToastId, setLoading, setToastId } from 'state/loading-slice';
+import { toast } from "sonner"
 
 interface UseRefreshReturn {
   refreshFlag: boolean;
@@ -10,13 +13,12 @@ interface UseRefreshReturn {
   stopLoading: () => void;
 }
 
-
-
 // Custom hook: useRefresh
 const useRefresh = (): UseRefreshReturn => {
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
   const dispatch = useDispatch();
   const isLoading: boolean = useSelector(selectIsLoading);
+  const toastId = useSelector(selectToastId);
 
   // Prevent unnecessary re-creations of the refresh function on every render
   const triggerRefresh = useCallback(() => {
@@ -26,12 +28,18 @@ const useRefresh = (): UseRefreshReturn => {
   }, [dispatch]);
 
   const startLoading = () => {
-    dispatch(setLoading(true));
-  };
+    const id = toast.loading('Loading data, please wait...', {
+      className: "!w-full !py-8"
+    });
+    dispatch(setToastId(id));
+    dispatch(setLoading(true))
+  }
 
   const stopLoading = () => {
+    dispatch(setToastId(null));
+    toast.dismiss(toastId);
     dispatch(setLoading(false));
-  };
+  }
 
   return { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading };
 };

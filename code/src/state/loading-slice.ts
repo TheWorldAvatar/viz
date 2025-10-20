@@ -3,13 +3,14 @@ import { ReduxState } from "app/store";
 
 interface LoadingState {
   isLoading: boolean;
-  pendingRefresh: boolean; // Flag to trigger refresh when returning to the page
+  toastId: number | string | null;
 }
 
 const initialState: LoadingState = {
   isLoading: false,
-  pendingRefresh: false,
+  toastId: null,
 };
+
 
 // Global loading state - when one approval is in progress, all approvals are blocked
 const loadingSlice = createSlice({
@@ -19,16 +20,21 @@ const loadingSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-
+    setToastId: (state, action: PayloadAction<number | string | null>) => {
+      state.toastId = action.payload;
+    },
   },
 });
 
 // Export the actions
-export const { setLoading } = loadingSlice.actions;
+export const { setLoading, setToastId } = loadingSlice.actions;
 
 // Export selectors
 export const selectIsLoading = (state: ReduxState) =>
   state.loading.isLoading;
+
+export const selectToastId = (state: ReduxState) =>
+  state.loading.toastId;
 
 
 // Export the reducer

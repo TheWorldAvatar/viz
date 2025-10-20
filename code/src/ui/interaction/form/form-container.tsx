@@ -74,7 +74,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
-  const { refreshFlag, triggerRefresh, isLoading, startLoading } = useRefresh();
+  const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useRefresh();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
@@ -181,6 +181,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const customAgentResponse: AgentResponseBody = await res.json();
+    stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
