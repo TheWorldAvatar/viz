@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
@@ -49,7 +49,7 @@ export default function RegistryTableComponent(
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
 
-  const { refreshFlag, triggerRefresh } = useRefresh();
+  const { refreshFlag, triggerRefresh } = useOperationStatus();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);

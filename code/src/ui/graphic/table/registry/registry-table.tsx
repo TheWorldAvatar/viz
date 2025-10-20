@@ -35,7 +35,7 @@ import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 
 interface RegistryTableProps {
   recordType: string;
@@ -68,7 +68,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     props.tableDescriptor.setData
   );
 
-  const { isLoading } = useRefresh();
+  const { isLoading } = useOperationStatus();
 
   const onRowClick = (row: FieldValues) => {
     const recordId: string = row.event_id

@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -62,7 +62,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
-  const { refreshFlag, triggerRefresh } = useRefresh();
+  const { refreshFlag, triggerRefresh } = useOperationStatus();
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(

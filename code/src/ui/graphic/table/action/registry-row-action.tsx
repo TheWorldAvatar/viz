@@ -25,7 +25,7 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { openDrawer } from "state/drawer-component-slice";
 import { useDispatch } from "react-redux";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 
 
 interface RegistryRowActionProps {
@@ -62,7 +62,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const { isLoading, startLoading, stopLoading } = useRefresh();
+  const { isLoading, startLoading, stopLoading } = useOperationStatus();
 
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {

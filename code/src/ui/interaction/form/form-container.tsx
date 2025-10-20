@@ -6,7 +6,7 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -74,7 +74,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
-  const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useRefresh();
+  const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);

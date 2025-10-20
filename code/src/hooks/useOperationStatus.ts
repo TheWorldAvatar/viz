@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectIsLoading, selectToastId, setLoading, setToastId } from 'state/loading-slice';
 import { toast } from "sonner"
 
-interface UseRefreshReturn {
+interface useOperationStatusReturn {
   refreshFlag: boolean;
   triggerRefresh: () => void;
   isLoading: boolean;
@@ -13,8 +13,10 @@ interface UseRefreshReturn {
   stopLoading: () => void;
 }
 
-// Custom hook: useRefresh
-const useRefresh = (): UseRefreshReturn => {
+/**
+ * A custom hook to track the status of any operation to set loading status and trigger refreshes as needed.
+ */
+const useOperationStatus = (): useOperationStatusReturn => {
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
   const dispatch = useDispatch();
   const isLoading: boolean = useSelector(selectIsLoading);
@@ -44,4 +46,4 @@ const useRefresh = (): UseRefreshReturn => {
   return { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading };
 };
 
-export default useRefresh;
+export default useOperationStatus;
