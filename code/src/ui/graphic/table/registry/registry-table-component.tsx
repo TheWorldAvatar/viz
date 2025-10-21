@@ -83,7 +83,6 @@ export default function RegistryTableComponent(
       } else {
         id = typeof rowData.iri === 'string' ? rowData.iri : (rowData.iri as SparqlResponseField).value;
       }
-
       return id
     });
 

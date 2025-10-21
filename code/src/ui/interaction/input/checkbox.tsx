@@ -1,5 +1,6 @@
 "use client";
-import * as React from "react";
+
+import React, { useState } from "react";
 import { Icon } from "@mui/material";
 
 interface CheckboxProps
@@ -14,18 +15,17 @@ interface CheckboxProps
 
 export default function Checkbox({
     className = "",
-    label,
+    label = "Hello",
     checked,
     onChange,
     ariaLabel,
     ariaDescribedby,
     ...props
 }: Readonly<CheckboxProps>) {
-    const [internalChecked, setInternalChecked] = React.useState(false);
+    const [internalChecked, setInternalChecked] = useState(false);
 
     // Use controlled value if provided, otherwise use internal state
-    const isChecked =
-        checked !== undefined ? checked : internalChecked;
+    const isChecked = checked !== undefined ? checked : internalChecked;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newChecked = e.target.checked;
@@ -39,12 +39,8 @@ export default function Checkbox({
 
     const checkboxId = React.useId();
 
-    const baseClasses = `
-    ${isChecked
-            ? "bg-black"
-            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
-        }
-    size-4 shrink-0 rounded-[4px] border shadow-sm  transition-all duration-200 
+    const baseClasses = `${isChecked ? "bg-black dark:bg-white border-none" : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"}
+    size-4 shrink-0 rounded-sm border shadow-xs transition-all duration-50
     outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
     disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center
   `;
@@ -74,7 +70,7 @@ export default function Checkbox({
             >
                 <Icon
                     fontSize="small"
-                    className={`material-symbols-outlined text-white transition-opacity duration-100 ${isChecked ? "opacity-100" : "opacity-0"
+                    className={`material-symbols-outlined text-white dark:text-black transition-opacity duration-50 ${isChecked ? "opacity-100" : "opacity-0"
                         }`}
                 >
                     check
