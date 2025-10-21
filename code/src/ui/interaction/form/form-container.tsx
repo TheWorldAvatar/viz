@@ -186,7 +186,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       customAgentResponse?.error ? "error" : "success"
     );
     dispatch(closeDrawer());
-    triggerRefresh();
     if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();

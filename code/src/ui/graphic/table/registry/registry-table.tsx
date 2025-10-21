@@ -71,6 +71,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const { isLoading } = useOperationStatus();
 
   const onRowClick = (row: FieldValues) => {
+    if (isLoading) return;
     const recordId: string = row.event_id
       ? row.event_id
       : row.id
@@ -137,7 +138,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 >
                   <table
                     aria-label={`${props.recordType} registry table`}
-                    className={`w-full border-separate border-spacing-0 ${isLoading && props.lifecycleStage == "pending" ? "pointer-events-none" : "pointer-events-auto"}`}
+                    className="w-full border-separate border-spacing-0"
                   >
                     <thead className="bg-muted sticky top-0 z-10 ">
                       {props.tableDescriptor.table

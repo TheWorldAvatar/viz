@@ -169,14 +169,9 @@ export default function RegistryRowAction(
           isOpen={isActionMenuOpen}
           setIsOpen={setIsActionMenuOpen}
         >
-          {isLoading && props.lifecycleStage == "pending" && (
-            <div className="flex gap-2 justify-center items-center m-auto p-1.5 cursor-auto">
-              {dict.message.processing}
-              <LoadingSpinner isSmall={true} />
-            </div>
-          )}
+
           <div className="flex flex-col space-y-8 lg:space-y-4 ">
-            {isSubmissionOrGeneralPage && !isLoading && (
+            {isSubmissionOrGeneralPage && (
               <>
                 <Button
                   variant="ghost"
@@ -184,7 +179,6 @@ export default function RegistryRowAction(
                   size="md"
                   iconSize="medium"
                   className="w-full justify-start"
-                  disabled={isLoading}
                   label={parseWordsForLabels(dict.action.view)}
                   onClick={() => {
                     setIsActionMenuOpen(false);
@@ -314,7 +308,6 @@ export default function RegistryRowAction(
                   size="md"
                   iconSize="medium"
                   className="w-full justify-start"
-
                   label={parseWordsForLabels(dict.action.view)}
                   onClick={() => {
                     setIsActionMenuOpen(false);
@@ -346,6 +339,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.complete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -372,6 +366,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.dispatch}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -401,6 +396,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -430,6 +426,7 @@ export default function RegistryRowAction(
                       iconSize="medium"
                       className="w-full justify-start"
                       label={dict.action.report}
+                      disabled={isLoading}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
