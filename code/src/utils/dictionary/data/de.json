@@ -151,7 +151,6 @@
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
-    "processing": "Wird verarbeitet",
     "processingRequest": "Bearbeitung der Anfrage..."
    
   },

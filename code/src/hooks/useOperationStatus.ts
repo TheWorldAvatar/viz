@@ -23,7 +23,7 @@ const useOperationStatus = (): useOperationStatusReturn => {
   const dict: Dictionary = useDictionary();
   const dispatch = useDispatch();
   const isLoading: boolean = useSelector(selectIsLoading);
-  const toastId = useSelector(selectToastId);
+  const toastId: number | string = useSelector(selectToastId);
 
   // Prevent unnecessary re-creations of the refresh function on every render
   const triggerRefresh = useCallback(() => {
@@ -32,8 +32,7 @@ const useOperationStatus = (): useOperationStatusReturn => {
   }, [dispatch]);
 
   const startLoading = () => {
-
-    const id = toast(dict.message.processingRequest, "loading");
+    const id: number | string = toast(dict.message.processingRequest, "loading");
     dispatch(setToastId(id));
     dispatch(setLoading(true));
   }

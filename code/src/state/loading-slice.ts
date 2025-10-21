@@ -3,7 +3,7 @@ import { ReduxState } from "app/store";
 
 interface LoadingState {
   isLoading: boolean;
-  toastId: number | string | null;
+  toastId: number | string;
 }
 
 const initialState: LoadingState = {
@@ -20,7 +20,7 @@ const loadingSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-    setToastId: (state, action: PayloadAction<number | string | null>) => {
+    setToastId: (state, action: PayloadAction<number | string>) => {
       state.toastId = action.payload;
     },
   },

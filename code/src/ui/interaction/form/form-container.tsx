@@ -21,9 +21,6 @@ import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-
-import { useDispatch } from "react-redux";
-import { closeDrawer } from "state/drawer-component-slice";
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
 
@@ -83,7 +80,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
-  const dispatch = useDispatch();
 
 
   // Rescind the target contract
@@ -185,7 +181,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
-    dispatch(closeDrawer());
+
     if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();
