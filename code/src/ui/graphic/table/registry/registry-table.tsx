@@ -190,7 +190,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             >
                               <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
                                 <div className="flex gap-1  ">
-                                  <DragActionHandle id={row.id} />
+                                  <DragActionHandle disabled={isLoading} id={row.id} />
                                   <RegistryRowAction
                                     recordType={props.recordType}
                                     lifecycleStage={props.lifecycleStage}
@@ -198,7 +198,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  {props.lifecycleStage === "pending" && <Checkbox checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
+                                  {props.lifecycleStage === "pending" && <Checkbox disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (

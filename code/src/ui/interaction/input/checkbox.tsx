@@ -11,6 +11,7 @@ interface CheckboxProps
     onChange?: (_checked: boolean) => void;
     ariaLabel?: string;
     ariaDescribedby?: string;
+    disabled?: boolean;
 }
 
 export default function Checkbox({
@@ -20,6 +21,7 @@ export default function Checkbox({
     onChange,
     ariaLabel,
     ariaDescribedby,
+    disabled,
     ...props
 }: Readonly<CheckboxProps>) {
     const [internalChecked, setInternalChecked] = useState(false);
@@ -45,7 +47,9 @@ export default function Checkbox({
     disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center
   `;
 
-    const combinedClasses = `${baseClasses} ${className}`.trim();
+    const disabledClasses = disabled ? "cursor-not-allowed opacity-50" : "";
+
+    const combinedClasses = `${baseClasses} ${className} ${disabledClasses} `.trim();
 
     return (
         <label
@@ -59,6 +63,7 @@ export default function Checkbox({
                 checked={isChecked}
                 onChange={handleChange}
                 role="checkbox"
+                disabled={disabled}
                 aria-checked={isChecked}
                 aria-label={ariaLabel || label}
                 aria-describedby={ariaDescribedby}

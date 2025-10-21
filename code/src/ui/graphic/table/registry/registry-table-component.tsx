@@ -31,6 +31,7 @@ import TableRibbon from "./ribbon/table-ribbon";
 import { toast } from "ui/interaction/action/toast/toast";
 import { SparqlResponseField } from "types/form";
 
+
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
@@ -48,7 +49,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
-  const { refreshFlag, triggerRefresh } = useOperationStatus();
+  const { refreshFlag, triggerRefresh, startLoading, stopLoading } = useOperationStatus();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);
@@ -91,7 +92,7 @@ export default function RegistryTableComponent(
         contract: contractIds,
         remarks: `${contractIds.length} contract(s) approved successfully!`,
       };
-
+      startLoading();
       const res = await fetch(
         makeInternalRegistryAPIwithParams("event", "service", "commence"),
         {
@@ -104,7 +105,7 @@ export default function RegistryTableComponent(
       );
 
       const responseBody: AgentResponseBody = await res.json();
-
+      stopLoading();
       toast(
         responseBody?.data?.message || responseBody?.error?.message,
         responseBody?.error ? "error" : "success"

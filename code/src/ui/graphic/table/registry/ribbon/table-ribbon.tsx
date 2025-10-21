@@ -16,6 +16,7 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import useOperationStatus from "hooks/useOperationStatus";
 
 interface TableRibbonProps {
   path: string;
@@ -46,6 +47,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const { isLoading } = useOperationStatus();
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
@@ -133,6 +135,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
                 onClick={props.onBulkApproval}
                 variant="outline"
+                disabled={isLoading}
                 className="border-dashed"
               />
             )}

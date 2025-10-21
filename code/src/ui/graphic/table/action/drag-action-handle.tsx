@@ -6,12 +6,14 @@ import { Dictionary } from "types/dictionary";
 
 interface DragActionHandleProps {
   id: string;
+  disabled?: boolean;
 }
 
 /**
  * Renders the drag action handle for each row in the registry.
  *
  * @param {string} id The drag id.
+ * @param {boolean} disabled Whether the drag handle is disabled.
  */
 export default function DragActionHandle(
   props: Readonly<DragActionHandleProps>
@@ -24,6 +26,7 @@ export default function DragActionHandle(
       leftIcon="drag_indicator"
       size="icon"
       variant="ghost"
+      disabled={props.disabled}
       {...attributes}
       {...listeners}
       tooltipText={dict.message.dragToReorder}
