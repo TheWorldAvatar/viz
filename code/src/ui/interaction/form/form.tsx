@@ -121,7 +121,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       setFormTemplate({
         ...template,
-        node: parseBranches(initialState, template.node),
+        node: parseBranches(initialState, template.node, props.formType != "add"),
         property: parsePropertyShapeOrGroupList(initialState, template.property),
       });
       return initialState;
