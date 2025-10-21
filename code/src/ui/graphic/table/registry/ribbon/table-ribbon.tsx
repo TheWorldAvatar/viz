@@ -118,8 +118,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           </div>
         )}
       <div className="w-full  h-[1px] bg-border " />
-      <div className="flex justify-between items-end    md:gap-2 lg:gap-0 flex-wrap ">
-        <div className="flex items-end   !-ml-2 gap-3 md:gap-4">
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 flex-wrap ">
+        <div className="flex items-end !-ml-2 gap-3 md:gap-4">
           <Button
             className="ml-2"
             size="icon"
