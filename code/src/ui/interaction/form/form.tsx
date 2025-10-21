@@ -32,6 +32,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import useOperationStatus from "hooks/useOperationStatus";
 import { toast } from "ui/interaction/action/toast/toast";
 
 interface FormComponentProps {
@@ -62,6 +63,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
 
   // Sets the default value with the requested function call
@@ -128,6 +130,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
+    startLoading();
     let pendingResponse: AgentResponseBody;
     // For perpetual service
     if (formData[FORM_STATES.RECURRENCE] == null) {
@@ -322,6 +325,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
+    stopLoading();
     toast(
       pendingResponse?.data?.message || pendingResponse?.error?.message,
       pendingResponse?.error ? "error" : "success"

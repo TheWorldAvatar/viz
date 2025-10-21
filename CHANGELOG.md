@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.0
+
+### Changes
+
+- Global (Redux) loading state to show a toast notification when an operation is in progress
+- Updating the disabled state of the buttons in all forms and tables
+- Freeze the form and table interactions when an operation is in progress
+
 ## 5.42.9
 
 ### Bug Fixes

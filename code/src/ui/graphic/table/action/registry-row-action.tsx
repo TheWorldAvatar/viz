@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 
-import React, { useState } from "react";
+import React from "react";
 import { FieldValues } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
@@ -15,7 +15,6 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import Button from "ui/interaction/button";
 import { Status } from "ui/text/status/status";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-
 import { useDictionary } from "hooks/useDictionary";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -24,6 +23,7 @@ import { toast } from "ui/interaction/action/toast/toast";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { openDrawer } from "state/drawer-component-slice";
 import { useDispatch } from "react-redux";
+import useOperationStatus from "hooks/useOperationStatus";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -56,7 +56,10 @@ export default function RegistryRowAction(
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
-  const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isActionMenuOpen, setIsActionMenuOpen] =
+    React.useState<boolean>(false);
+
+  const { isLoading, startLoading, stopLoading } = useOperationStatus();
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -87,6 +90,7 @@ export default function RegistryRowAction(
     method: string,
     body: string
   ): Promise<void> => {
+    startLoading();
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
@@ -96,6 +100,7 @@ export default function RegistryRowAction(
     });
     setIsActionMenuOpen(false);
     const customAgentResponse: AgentResponseBody = await res.json();
+    stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
@@ -111,7 +116,9 @@ export default function RegistryRowAction(
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
     ) {
-      props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
+      props.setTask(
+        genTaskOption(recordId, props.row, "default", dict.title.scheduleType)
+      );
       dispatch(openDrawer());
     } else {
       // Move to the view modal page for the specific record
@@ -156,27 +163,34 @@ export default function RegistryRowAction(
           isOpen={isActionMenuOpen}
           setIsOpen={setIsActionMenuOpen}
         >
-          <div className="flex flex-col space-y-8 lg:space-y-4 ">
-            <Button
-              variant="ghost"
-              leftIcon="open_in_new"
-              size="md"
-              iconSize="medium"
-              className="w-full justify-start"
-              label={parseWordsForLabels(dict.action.view)}
-              onClick={() => {
-                setIsActionMenuOpen(false);
-                if (isSubmissionOrGeneralPage) {
-                  handleClickView();
-                } else {
-                  props.setTask(genTaskOption(recordId, props.row, "default", dict.title.scheduleType));
-                  dispatch(openDrawer());
-                }
-              }}
-            />
 
+          <div className="flex flex-col space-y-8 lg:space-y-4 ">
             {isSubmissionOrGeneralPage && (
               <>
+                <Button
+                  variant="ghost"
+                  leftIcon="open_in_new"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={parseWordsForLabels(dict.action.view)}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    if (isSubmissionOrGeneralPage) {
+                      handleClickView();
+                    } else {
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "default",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }
+                  }}
+                />
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.operation) &&
@@ -187,11 +201,17 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "cancel",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -205,6 +225,7 @@ export default function RegistryRowAction(
                     <Button
                       variant="ghost"
                       leftIcon="done_outline"
+                      disabled={isLoading}
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
@@ -224,6 +245,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.resubmit}
                       onClick={onResubmissionForApproval}
                     />
@@ -239,6 +261,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.edit}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -259,6 +282,7 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.delete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
@@ -270,9 +294,32 @@ export default function RegistryRowAction(
                   )}
               </>
             )}
-
             {!isSubmissionOrGeneralPage && (
               <>
+                <Button
+                  variant="ghost"
+                  leftIcon="open_in_new"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={parseWordsForLabels(dict.action.view)}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    if (isSubmissionOrGeneralPage) {
+                      handleClickView();
+                    } else {
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "default",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }
+                  }}
+                />
                 {(!keycloakEnabled ||
                   !permissionScheme ||
                   permissionScheme.hasPermissions.completeTask) &&
@@ -286,11 +333,17 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.complete}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "complete", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "complete",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -307,11 +360,17 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.dispatch}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "dispatch", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "dispatch",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -331,11 +390,17 @@ export default function RegistryRowAction(
                       size="md"
                       iconSize="medium"
                       className="w-full justify-start"
+                      disabled={isLoading}
                       label={dict.action.cancel}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "cancel", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "cancel",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -355,10 +420,16 @@ export default function RegistryRowAction(
                       iconSize="medium"
                       className="w-full justify-start"
                       label={dict.action.report}
+                      disabled={isLoading}
                       onClick={() => {
                         setIsActionMenuOpen(false);
                         props.setTask(
-                          genTaskOption(recordId, props.row, "report", dict.title.scheduleType)
+                          genTaskOption(
+                            recordId,
+                            props.row,
+                            "report",
+                            dict.title.scheduleType
+                          )
                         );
                         dispatch(openDrawer());
                       }}
@@ -378,7 +449,7 @@ export function genTaskOption(
   recordId: string,
   row: FieldValues,
   taskType: RegistryTaskType,
-  scheduleTypeKey: string,
+  scheduleTypeKey: string
 ): RegistryTaskOption {
   let status: string;
   if (row.order === "0" || row.status?.toLowerCase() === "new") {
