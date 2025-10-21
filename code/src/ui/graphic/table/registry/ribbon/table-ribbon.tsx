@@ -17,8 +17,6 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 
-
-
 interface TableRibbonProps {
   path: string;
   entityType: string;
@@ -49,8 +47,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
-
-
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">

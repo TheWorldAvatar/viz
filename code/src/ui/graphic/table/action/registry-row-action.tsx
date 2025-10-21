@@ -25,7 +25,6 @@ import { openDrawer } from "state/drawer-component-slice";
 import { useDispatch } from "react-redux";
 import useOperationStatus from "hooks/useOperationStatus";
 
-
 interface RegistryRowActionProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
@@ -62,7 +61,6 @@ export default function RegistryRowAction(
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
 
-
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
       contract: recordId,
@@ -73,7 +71,6 @@ export default function RegistryRowAction(
       "service",
       "commence"
     );
-
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
@@ -108,7 +105,6 @@ export default function RegistryRowAction(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
-
     props.triggerRefresh();
   };
 

@@ -24,7 +24,6 @@ import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
 
-
 interface FormContainerComponentProps {
   entityType: string;
   formType: FormType;
@@ -80,7 +79,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
-
 
   // Rescind the target contract
   const rescindContract: SubmitHandler<FieldValues> = async (
@@ -148,7 +146,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         responseBody.data?.items as Record<string, unknown>[]
       )?.[0]?.property as PropertyShape[];
       setFormFields(template);
-      ;
     };
 
     if (isRescindAction) {

@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 
 import { DataParser } from "io/data/data-parser";
 import { DataStore } from "io/data/data-store";
+import { DateRange } from "react-day-picker";
 import {
   MapFeaturePayload,
   clearFeatures,
@@ -12,15 +13,14 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
+import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   SparqlResponseField,
 } from "types/form";
 import { JsonObject } from "types/json";
-import { DateRange } from "react-day-picker";
 import { ToastConfig, ToastType } from "types/toast";
-import { Dictionary } from "types/dictionary";
 
 /**
  * Open full screen mode.
@@ -266,7 +266,6 @@ export function getNormalizedDate(date: Date): string {
  * @param type The type of toast .
  * @param dict The dictionary containing localized strings.
  */
-
 export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
   switch (type) {
     case "success":

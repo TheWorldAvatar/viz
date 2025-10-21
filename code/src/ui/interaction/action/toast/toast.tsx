@@ -5,9 +5,8 @@ import { toast as sonnerToast } from "sonner";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Button from "ui/interaction/button";
-import { ToastType } from "types/toast";
+import { ToastConfig, ToastType } from "types/toast";
 import { getToastConfig } from "utils/client-utils";
-
 
 interface ToastProps {
   id: string | number;
@@ -19,7 +18,7 @@ interface ToastProps {
  * Sets off a toast notification based on the message and type.
  *
  * @param {string} message - The message to display in the toast.
- * @param {string} type- The type of toast (success, error, or loading).
+ * @param {ToastType} type- The type of toast (success, error, or loading).
  */
 export function toast(message: string, type: ToastType) {
   return sonnerToast.custom(
@@ -31,9 +30,9 @@ export function toast(message: string, type: ToastType) {
 /**
  * Dismisses a toast notification by ID.
  *
- * @param {string | number | null} id - The ID of the toast to dismiss.
+ * @param {string | number} id - The ID of the toast to dismiss.
  */
-toast.dismiss = (id?: number | string) => {
+toast.dismiss = (id: number | string) => {
   sonnerToast.dismiss(id);
 };
 
@@ -47,29 +46,29 @@ toast.dismiss = (id?: number | string) => {
 function Toast(props: Readonly<ToastProps>) {
   const { message, id, type } = props;
   const dict: Dictionary = useDictionary();
-  const statusStyles = getToastConfig(type, dict);
+  const toastConfig: ToastConfig = getToastConfig(type, dict);
 
   return (
     <div
-      className={`flex rounded-lg shadow-xl gap-3 w-full md:w-[500px] items-center justify-center p-4 ${statusStyles.bg} ${statusStyles.text} ${statusStyles.border}
+      className={`flex rounded-lg shadow-xl gap-3 w-full md:w-[500px] items-center justify-center p-4 ${toastConfig.bg} ${toastConfig.text} ${toastConfig.border}
         border`}
     >
       <div className="flex-shrink-0 mr-3">
         <Icon
-          className={`material-symbols-outlined flex-shrink-0 mt-0.5 ${statusStyles.animate} ${statusStyles.text}`}
+          className={`material-symbols-outlined flex-shrink-0 mt-0.5 ${toastConfig.animate} ${toastConfig.text}`}
         >
-          {statusStyles.icon}
+          {toastConfig.icon}
         </Icon>
       </div>
       <div className="flex flex-1 items-center">
         <div className="w-full">
           <p
-            className={`text-sm font-medium ${statusStyles.text}`}
+            className={`text-sm font-medium ${toastConfig.text}`}
           >
-            {statusStyles.title}
+            {toastConfig.title}
           </p>
           <p
-            className={`mt-1 text-sm ${statusStyles.text}`}
+            className={`mt-1 text-sm ${toastConfig.text}`}
           >
             {message}
           </p>
@@ -80,7 +79,7 @@ function Toast(props: Readonly<ToastProps>) {
           <Button
             variant="outline"
             onClick={() => {
-              sonnerToast.dismiss(id);
+              toast.dismiss(id);
             }}
           >
             {dict.action.dismiss}

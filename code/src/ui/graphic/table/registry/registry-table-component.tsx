@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
-
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -45,10 +44,8 @@ export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
-
   const { refreshFlag, triggerRefresh } = useOperationStatus();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
@@ -64,8 +61,6 @@ export default function RegistryTableComponent(
   );
 
   const tableDescriptor: TableDescriptor = useTable(currentInstances);
-
-
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
