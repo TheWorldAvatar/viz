@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.9
+
+### Bug Fixes
+
+- Fixed the ontology concept selector to display the default value, if any, on an add form even after switching form branches
+- Fixed the form branch to match based on nullable values as well when branches have overlapping fields
+
 ## 5.42.8
 
 ### Bug Fixes
