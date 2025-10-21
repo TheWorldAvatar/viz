@@ -152,7 +152,9 @@
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
     "processing": "Processing",
-    "approvingRequest": "Approving request"
+    "processingRequest": "Processing request..."
+
+
   },
   "nav": {
     "caption": {
@@ -214,6 +216,7 @@
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
     "success": "Success",
-    "error": "Error"
+    "error": "Error",
+    "loading": "Loading"
   }
 }

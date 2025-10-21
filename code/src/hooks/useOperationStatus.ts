@@ -3,7 +3,9 @@
 import { useState, useCallback, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsLoading, selectToastId, setLoading, setToastId } from 'state/loading-slice';
-import { toast } from "sonner"
+import { toast } from "ui/interaction/action/toast/toast";
+import { useDictionary } from './useDictionary';
+import { Dictionary } from 'types/dictionary';
 
 interface useOperationStatusReturn {
   refreshFlag: boolean;
@@ -18,6 +20,7 @@ interface useOperationStatusReturn {
  */
 const useOperationStatus = (): useOperationStatusReturn => {
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
+  const dict: Dictionary = useDictionary();
   const dispatch = useDispatch();
   const isLoading: boolean = useSelector(selectIsLoading);
   const toastId = useSelector(selectToastId);
@@ -29,11 +32,10 @@ const useOperationStatus = (): useOperationStatusReturn => {
   }, [dispatch]);
 
   const startLoading = () => {
-    const id = toast.loading('Loading data, please wait...', {
-      className: "!w-full !py-8"
-    });
+
+    const id = toast(dict.message.processingRequest, "loading");
     dispatch(setToastId(id));
-    dispatch(setLoading(true))
+    dispatch(setLoading(true));
   }
 
   const stopLoading = () => {

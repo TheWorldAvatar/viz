@@ -152,7 +152,8 @@
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
     "processing": "Wird verarbeitet",
-    "approvingRequest": "Antrag genehmigen"
+    "processingRequest": "Bearbeitung der Anfrage..."
+   
   },
   "nav": {
     "caption": {
@@ -214,6 +215,7 @@
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
-    "error": "Fehlerhaft (Übermittlung war fehlerhaft)"
+    "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
+    "loading": "Laden"
   }
 }

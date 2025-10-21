@@ -24,7 +24,6 @@ import { toast } from "ui/interaction/action/toast/toast";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { openDrawer } from "state/drawer-component-slice";
 import { useDispatch } from "react-redux";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import useOperationStatus from "hooks/useOperationStatus";
 
 
