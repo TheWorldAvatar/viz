@@ -150,7 +150,10 @@
     "minLength": "Input requires at least {replace} letters!",
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
-    "patternFollowed": "This field must follow the pattern {replace}!"
+    "patternFollowed": "This field must follow the pattern {replace}!",
+    "processingRequest": "Processing request..."
+
+
   },
   "nav": {
     "caption": {
@@ -212,6 +215,7 @@
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
     "success": "Success",
-    "error": "Error"
+    "error": "Error",
+    "loading": "Loading"
   }
 }

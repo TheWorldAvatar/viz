@@ -150,7 +150,9 @@
     "minLength": "Die Eingabe muss mindestens {replace} Zeichen umfassen!",
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
-    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!"
+    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
+    "processingRequest": "Bearbeitung der Anfrage..."
+   
   },
   "nav": {
     "caption": {
@@ -212,6 +214,7 @@
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
-    "error": "Fehlerhaft (Übermittlung war fehlerhaft)"
+    "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
+    "loading": "Laden"
   }
 }
