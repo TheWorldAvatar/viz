@@ -2,6 +2,25 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.42.9
+
+### Bug Fixes
+
+- Fixed the ontology concept selector to display the default value, if any, on an add form even after switching form branches
+- Fixed the form branch to match based on nullable values as well when branches have overlapping fields
+
+## 5.42.8
+
+### Bug Fixes
+
+- Fixed an issue with the status column filter options not working as expected in the registry table
+
+## 5.42.7
+
+### Changes
+
+- Set the default date range for schedule task to be 28 days from tomorrow's date
+
 ## 5.42.6
 
 ### Changes
