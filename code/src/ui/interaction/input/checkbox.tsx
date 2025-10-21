@@ -15,7 +15,7 @@ interface CheckboxProps
 
 export default function Checkbox({
     className = "",
-    label = "Hello",
+    label,
     checked,
     onChange,
     ariaLabel,
