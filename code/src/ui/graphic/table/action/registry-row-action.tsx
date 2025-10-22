@@ -79,7 +79,6 @@ export default function RegistryRowAction(
   > = async () => {
     const reqBody: JsonObject = {
       contract: recordId,
-      remarks: "Contract has been resubmited for approval successfully!",
     };
     const url: string = makeInternalRegistryAPIwithParams(
       "event",

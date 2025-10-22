@@ -28,6 +28,7 @@ interface TableRibbonProps {
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
   onBulkApproval?: React.MouseEventHandler<HTMLButtonElement>;
+  onBulkResubmitForApproval?: React.MouseEventHandler<HTMLButtonElement>;
   selectedRowsCount?: number;
 }
 
@@ -134,6 +135,18 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 label={`${dict.action.approve} (${props.selectedRowsCount})`}
                 tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
                 onClick={props.onBulkApproval}
+                variant="outline"
+                disabled={isLoading}
+                className="border-dashed"
+              />
+            )}
+          {props.lifecycleStage === "pending" &&
+            props.selectedRowsCount > 0 && (
+              <Button
+                leftIcon="refresh"
+                label={`Reapprove (${props.selectedRowsCount})`}
+                tooltipText={dict.action.bulkResubmitForApproval || "Resubmit selected contracts for approval"}
+                onClick={props.onBulkResubmitForApproval}
                 variant="outline"
                 disabled={isLoading}
                 className="border-dashed"

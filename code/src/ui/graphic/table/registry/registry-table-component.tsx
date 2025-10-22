@@ -8,6 +8,7 @@ import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { DateRange } from "react-day-picker";
+import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -15,9 +16,10 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
+import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import { toast } from "ui/interaction/action/toast/toast";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
@@ -28,8 +30,6 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import { toast } from "ui/interaction/action/toast/toast";
-import { SparqlResponseField } from "types/form";
 
 
 interface RegistryTableComponentProps {
@@ -65,6 +65,7 @@ export default function RegistryTableComponent(
 
   const tableDescriptor: TableDescriptor = useTable(currentInstances);
 
+
   const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
 
@@ -73,51 +74,76 @@ export default function RegistryTableComponent(
     }
 
     const contractIds: string[] = selectedRows.map(row => {
-      const rowData = row.original as RegistryFieldValues;
-      let id: string;
-
-      if (rowData.event_id) {
-        id = typeof rowData.event_id === 'string' ? rowData.event_id : (rowData.event_id as SparqlResponseField).value;
-      } else if (rowData.id) {
-        id = typeof rowData.id === 'string' ? rowData.id : (rowData.id as SparqlResponseField).value;
-      } else {
-        id = typeof rowData.iri === 'string' ? rowData.iri : (rowData.iri as SparqlResponseField).value;
-      }
-      return id
+      return row.original.id
     });
 
-    try {
-      const reqBody = {
-        contract: contractIds,
-        remarks: `${contractIds.length} contract(s) approved successfully!`,
-      };
-      startLoading();
-      const res = await fetch(
-        makeInternalRegistryAPIwithParams("event", "service", "commence"),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-          credentials: "same-origin",
-          body: JSON.stringify({ ...reqBody }),
-        }
-      );
-
-      const responseBody: AgentResponseBody = await res.json();
-      stopLoading();
-      toast(
-        responseBody?.data?.message || responseBody?.error?.message,
-        responseBody?.error ? "error" : "success"
-      );
-
-      if (!responseBody?.error) {
-        // Clear selection and refresh table
-        tableDescriptor.table.resetRowSelection();
-        triggerRefresh();
+    const reqBody: JsonObject = {
+      contract: contractIds,
+      remarks: `${contractIds.length} contract(s) approved successfully!`,
+    };
+    startLoading();
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
       }
-    } catch (error) {
-      toast("Failed to approve contracts", "error");
-      console.error("Error approving contracts", error);
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      tableDescriptor.table.resetRowSelection();
+      triggerRefresh();
+    }
+  };
+
+  const handleBulkResubmitForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => {
+      return row.original.id
+    });
+
+    const reqBody: JsonObject = {
+      contract: contractIds,
+    };
+    startLoading();
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "draft", "reset"),
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
+      }
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      tableDescriptor.table.resetRowSelection();
+      triggerRefresh();
     }
   };
 
@@ -274,6 +300,7 @@ export default function RegistryTableComponent(
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
           onBulkApproval={handleBulkApproval}
+          onBulkResubmitForApproval={handleBulkResubmitForApproval}
           selectedRowsCount={tableDescriptor.table.getSelectedRowModel().rows.length}
         />
       </div>
