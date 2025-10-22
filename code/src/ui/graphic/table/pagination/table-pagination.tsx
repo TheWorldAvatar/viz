@@ -1,5 +1,5 @@
 import { Table } from "@tanstack/react-table";
-
+import { useEffect } from "react";
 import { FieldValues } from "react-hook-form/dist/types/fields";
 import Button from "ui/interaction/button";
 import { useDictionary } from "hooks/useDictionary";
@@ -20,11 +20,21 @@ const PAGE_SIZE_OPTIONS: number[] = [5, 10, 20, 50];
 export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
   const { table } = props;
+  const numberOfSelectedRows: number = table.getSelectedRowModel().rows.length;
+  const columnFilters = table.getState().columnFilters;
+
+  // Reset row selection when filters change
+  useEffect(() => {
+    if (columnFilters.length > 0) {
+      table.resetRowSelection();
+    }
+  }, [columnFilters, table]);
+
   return (
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
       <div className="text-sm text-foreground">
         {dict.message.numberOfRecords
-          .replace("{replace}", String(table.getFilteredRowModel().rows.length))
+          .replace("{replace}", String(numberOfSelectedRows > 0 ? numberOfSelectedRows : table.getFilteredRowModel().rows.length))
           .replace(
             "{replacetotal}",
             String(table.getCoreRowModel().rows.length)

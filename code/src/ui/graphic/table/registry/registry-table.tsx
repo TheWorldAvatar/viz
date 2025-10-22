@@ -47,6 +47,7 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { AgentResponseBody } from "types/backend-agent";
 import { toast } from "ui/interaction/action/toast/toast";
 
+
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
