@@ -21,6 +21,7 @@ import { JsonObject } from "types/json";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { AgentResponseBody } from "types/backend-agent";
 import { toast } from "ui/interaction/action/toast/toast";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 
 interface TableRibbonProps {
   path: string;
@@ -53,6 +54,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const [isActionMenuOpen, setIsActionMenuOpen] =
+    React.useState<boolean>(false);
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
@@ -214,29 +217,39 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             onClick={triggerRefresh}
           />
           {props.lifecycleStage === "pending" &&
-            props.tableDescriptor.table.getSelectedRowModel().rows.length > 0 && (
-              <Button
-                leftIcon="done_all"
-                label={`${dict.action.approve} (${props.tableDescriptor.table.getSelectedRowModel().rows.length})`}
-                tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
-                onClick={handleBulkApproval}
-                variant="outline"
-                disabled={isLoading}
-                className="border-dashed"
-              />
-            )}
-          {props.lifecycleStage === "pending" &&
-            props.tableDescriptor.table.getSelectedRowModel().rows.length > 0 && (
-              <Button
-                leftIcon="refresh"
-                label={`Reapprove (${props.tableDescriptor.table.getSelectedRowModel().rows.length})`}
-                tooltipText={dict.action.bulkResubmitForApproval || "Resubmit selected contracts for approval"}
-                onClick={handleBulkResubmitForApproval}
-                variant="outline"
-                disabled={isLoading}
-                className="border-dashed"
-              />
-            )}
+            props.tableDescriptor.table.getSelectedRowModel().rows.length > 0 &&
+            <PopoverActionButton
+              placement="bottom-start"
+              leftIcon="more_vert"
+              variant="outline"
+              tooltipText={dict.title.actions}
+              className="border-dashed"
+              label={`Selected (${props.tableDescriptor.table.getSelectedRowModel().rows.length})`}
+              isOpen={isActionMenuOpen}
+              setIsOpen={setIsActionMenuOpen}
+            >
+              <div className="flex flex-col space-y-8 lg:space-y-4">
+                <Button
+                  leftIcon="done_outline"
+                  label={dict.action.approve}
+                  onClick={handleBulkApproval}
+                  variant="outline"
+                  disabled={isLoading}
+                  className="border-dashed"
+                />
+                <Button
+                  leftIcon="published_with_changes"
+                  label={dict.action.resubmit}
+                  onClick={handleBulkResubmitForApproval}
+                  variant="outline"
+                  disabled={isLoading}
+                  className="border-dashed"
+                />
+              </div>
+
+            </PopoverActionButton>
+          }
+
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
               <DateInput

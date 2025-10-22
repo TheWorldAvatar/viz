@@ -16,9 +16,7 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
-import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { toast } from "ui/interaction/action/toast/toast";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import { Status } from "ui/text/status/status";
 import {
@@ -49,7 +47,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
-  const { refreshFlag, triggerRefresh, startLoading, stopLoading } = useOperationStatus();
+  const { refreshFlag, triggerRefresh } = useOperationStatus();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);
@@ -64,88 +62,6 @@ export default function RegistryTableComponent(
   );
 
   const tableDescriptor: TableDescriptor = useTable(currentInstances);
-
-
-  const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
-
-    if (selectedRows.length === 0) {
-      return;
-    }
-
-    const contractIds: string[] = selectedRows.map(row => {
-      return row.original.id
-    });
-
-    const reqBody: JsonObject = {
-      contract: contractIds,
-      remarks: `${contractIds.length} contract(s) approved successfully!`,
-    };
-    startLoading();
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "service", "commence"),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
-    stopLoading();
-    toast(
-      responseBody?.data?.message || responseBody?.error?.message,
-      responseBody?.error ? "error" : "success"
-    );
-
-    if (!responseBody?.error) {
-      // Clear selection and refresh table
-      tableDescriptor.table.resetRowSelection();
-      triggerRefresh();
-    }
-  };
-
-  const handleBulkResubmitForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
-
-    if (selectedRows.length === 0) {
-      return;
-    }
-
-    const contractIds: string[] = selectedRows.map(row => {
-      return row.original.id
-    });
-
-    const reqBody: JsonObject = {
-      contract: contractIds,
-    };
-    startLoading();
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "draft", "reset"),
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
-    stopLoading();
-    toast(
-      responseBody?.data?.message || responseBody?.error?.message,
-      responseBody?.error ? "error" : "success"
-    );
-
-    if (!responseBody?.error) {
-      // Clear selection and refresh table
-      tableDescriptor.table.resetRowSelection();
-      triggerRefresh();
-    }
-  };
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -299,9 +215,6 @@ export default function RegistryTableComponent(
           instances={initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
-          onBulkApproval={handleBulkApproval}
-          onBulkResubmitForApproval={handleBulkResubmitForApproval}
-          selectedRowsCount={tableDescriptor.table.getSelectedRowModel().rows.length}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
