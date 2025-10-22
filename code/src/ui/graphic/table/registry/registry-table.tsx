@@ -147,7 +147,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             isHeader={true}
                           >
                             <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
-                              <div className="flex justify-end">
+                              {props.lifecycleStage === "pending" && <div className="flex justify-end">
                                 <Checkbox
                                   className="mt-12"
                                   disabled={isLoading}
@@ -158,7 +158,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     });
                                   }}
                                 />
-                              </div>
+                              </div>}
+
                             </TableCell>
                             {headerGroup.headers.map((header, index) => {
                               return (
