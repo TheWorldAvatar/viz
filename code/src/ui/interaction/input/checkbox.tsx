@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { Icon } from "@mui/material";
 
 interface CheckboxProps
@@ -24,13 +24,14 @@ export default function Checkbox({
     disabled,
     ...props
 }: Readonly<CheckboxProps>) {
-    const [internalChecked, setInternalChecked] = useState(false);
+    const [internalChecked, setInternalChecked] = useState<boolean>(false);
+    const checkboxId: string = useId();
 
     // Use controlled value if provided, otherwise use internal state
-    const isChecked = checked !== undefined ? checked : internalChecked;
+    const isChecked: boolean = checked !== undefined ? checked : internalChecked;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newChecked = e.target.checked;
+        const newChecked: boolean = e.target.checked;
 
         if (checked === undefined) {
             setInternalChecked(newChecked);
@@ -39,17 +40,16 @@ export default function Checkbox({
         onChange?.(newChecked);
     };
 
-    const checkboxId = React.useId();
 
-    const baseClasses = `${isChecked ? "bg-black dark:bg-white border-none" : "border-border  bg-white dark:bg-ring"}
+
+    const baseClasses: string = `${isChecked ? "bg-black dark:bg-white border-none" : "border-border  bg-white dark:bg-ring"}
     size-4 shrink-0 rounded-sm border shadow-xs transition-all duration-50
     outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
     disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center
   `;
 
-    const disabledClasses = disabled ? "cursor-not-allowed opacity-50" : "";
+    const disabledClasses: string = disabled ? "cursor-not-allowed opacity-50" : "";
 
-    const combinedClasses = `${baseClasses} ${className} ${disabledClasses} `.trim();
 
     return (
         <label
@@ -70,7 +70,7 @@ export default function Checkbox({
                 {...props}
             />
             <span
-                className={combinedClasses}
+                className={`${baseClasses} ${className} ${disabledClasses}`.trim()}
                 aria-hidden="true" // This is just visual, screen reader uses the input
             >
                 <Icon
