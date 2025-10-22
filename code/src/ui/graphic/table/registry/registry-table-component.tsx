@@ -65,7 +65,6 @@ export default function RegistryTableComponent(
 
   const tableDescriptor: TableDescriptor = useTable(currentInstances);
 
-
   const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const selectedRows = tableDescriptor.table.getSelectedRowModel().rows;
 

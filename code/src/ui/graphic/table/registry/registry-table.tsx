@@ -137,7 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     aria-label={`${props.recordType} registry table`}
                     className="w-full border-separate border-spacing-0"
                   >
-                    <thead className="bg-muted sticky top-0 z-10 ">
+                    <thead className="bg-muted sticky top-0 z-10">
                       {props.tableDescriptor.table
                         .getHeaderGroups()
                         .map((headerGroup) => (
@@ -146,11 +146,23 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             id={headerGroup.id}
                             isHeader={true}
                           >
-                            <TableCell className="w-[calc(100%/20)] " />
+                            <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
+                              <div className="flex justify-end">
+                                <Checkbox
+                                  className="mt-12"
+                                  disabled={isLoading}
+                                  checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
+                                  onChange={(checked) => {
+                                    props.tableDescriptor.table.getRowModel().rows.forEach(row => {
+                                      row.toggleSelected(checked);
+                                    });
+                                  }}
+                                />
+                              </div>
+                            </TableCell>
                             {headerGroup.headers.map((header, index) => {
                               return (
                                 <HeaderCell
-
                                   key={header.id + index}
                                   header={header}
                                   options={Array.from(
