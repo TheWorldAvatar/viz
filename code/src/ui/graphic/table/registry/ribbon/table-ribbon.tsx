@@ -17,6 +17,10 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import useOperationStatus from "hooks/useOperationStatus";
+import { JsonObject } from "types/json";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { AgentResponseBody } from "types/backend-agent";
+import { toast } from "ui/interaction/action/toast/toast";
 
 interface TableRibbonProps {
   path: string;
@@ -48,9 +52,90 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { isLoading } = useOperationStatus();
+  const { isLoading, startLoading, stopLoading } = useOperationStatus();
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
+  };
+
+  const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => {
+      return row.original.id
+    });
+
+    const reqBody: JsonObject = {
+      contract: contractIds,
+      remarks: `${contractIds.length} contract(s) approved successfully!`,
+    };
+    startLoading();
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
+      }
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      props.tableDescriptor.table.resetRowSelection();
+      props.triggerRefresh();
+    }
+  };
+
+  const handleBulkResubmitForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => {
+      return row.original.id
+    });
+
+    const reqBody: JsonObject = {
+      contract: contractIds,
+    };
+    startLoading();
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "draft", "reset"),
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
+      }
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      props.tableDescriptor.table.resetRowSelection();
+      props.triggerRefresh();
+    }
   };
 
   return (
@@ -129,24 +214,24 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             onClick={triggerRefresh}
           />
           {props.lifecycleStage === "pending" &&
-            props.selectedRowsCount > 0 && (
+            props.tableDescriptor.table.getSelectedRowModel().rows.length > 0 && (
               <Button
                 leftIcon="done_all"
-                label={`${dict.action.approve} (${props.selectedRowsCount})`}
+                label={`${dict.action.approve} (${props.tableDescriptor.table.getSelectedRowModel().rows.length})`}
                 tooltipText={dict.action.bulkApprove || "Approve selected contracts"}
-                onClick={props.onBulkApproval}
+                onClick={handleBulkApproval}
                 variant="outline"
                 disabled={isLoading}
                 className="border-dashed"
               />
             )}
           {props.lifecycleStage === "pending" &&
-            props.selectedRowsCount > 0 && (
+            props.tableDescriptor.table.getSelectedRowModel().rows.length > 0 && (
               <Button
                 leftIcon="refresh"
-                label={`Reapprove (${props.selectedRowsCount})`}
+                label={`Reapprove (${props.tableDescriptor.table.getSelectedRowModel().rows.length})`}
                 tooltipText={dict.action.bulkResubmitForApproval || "Resubmit selected contracts for approval"}
-                onClick={props.onBulkResubmitForApproval}
+                onClick={handleBulkResubmitForApproval}
                 variant="outline"
                 disabled={isLoading}
                 className="border-dashed"
