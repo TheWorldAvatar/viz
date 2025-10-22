@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -27,9 +27,9 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { PermissionScheme } from "types/auth";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
-import { toast } from "ui/interaction/action/toast/toast";
 import { useDispatch } from "react-redux";
 import { closeDrawer, openDrawer } from "state/drawer-component-slice";
+import { toast } from "ui/interaction/action/toast/toast";
 import Drawer from "ui/interaction/drawer/drawer";
 
 interface TaskModalProps {
@@ -61,7 +61,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   // Form actions
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
-  const [refreshFlag, triggerRefresh] = useRefresh();
+  const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -80,6 +80,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const taskSubmitAction: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
+    startLoading();
     let action = "";
     if (props.task?.type === "dispatch") {
       action = "dispatch";
@@ -114,10 +115,12 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
       response = await submitLifecycleAction(formData, "continue", true);
       setIsDuplicate(false);
     }
+    stopLoading();
     toast(
       response?.data?.message || response?.error?.message,
       response?.error ? "error" : "success"
     );
+
     if (response && !response?.error) {
       setTimeout(() => {
         // Inform parent to refresh data on successful action
@@ -278,6 +281,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
+            disabled={isFetching || isLoading}
             variant="outline"
             size="icon"
             onClick={triggerRefresh}
@@ -389,6 +393,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
                 leftIcon="send"
                 label={dict.action.submit}
                 tooltipText={dict.action.submit}
+                disabled={isLoading}
                 onClick={() => {
                   if (
                     props.task?.type === "complete" &&
@@ -402,30 +407,34 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
-            permissionScheme.hasPermissions.saveTask) &&
-            props.task?.type === "complete" && (
-              <Button
-                leftIcon="save"
-                variant="secondary"
-                label={dict.action.save}
-                tooltipText={dict.action.save}
-                onClick={() => setIsSaving(true)}
-              />
-            )}
-
-          {(!keycloakEnabled ||
-            !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
             props.task?.type === "complete" &&
             props.task.scheduleType != dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
                 variant="secondary"
+                disabled={isLoading}
                 label={dict.action.submitAndDuplicate}
                 tooltipText={dict.action.submitAndDuplicate}
                 onClick={() => {
-                  setIsDuplicate(true);
                   setIsSubmitting(true);
+                  setIsDuplicate(true);
+                }}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.saveTask) &&
+            props.task?.type === "complete" && (
+              <Button
+                leftIcon="save"
+                variant="secondary"
+                disabled={isLoading}
+                label={dict.action.save}
+                tooltipText={dict.action.save}
+                onClick={() => {
+                  setIsSubmitting(true);
+                  setIsSaving(true);
                 }}
               />
             )}

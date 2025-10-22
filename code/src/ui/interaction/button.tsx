@@ -123,8 +123,12 @@ export default function Button({
         onClick={!disabled && !loading ? onClick : undefined}
         {...props}
       >
-        <div className={`flex items-center ${iconSpacing[size]}`}>
-          {loading &&  <LoadingSpinner isSmall={true} />}
+        <div
+          className={`flex items-center ${iconSpacing[size]} ${
+            loading ? "gap-2" : ""
+          }`}
+        >
+          {loading && <LoadingSpinner isSmall={true} />}
           {!loading && leftIcon && (
             <span
               className={`${

@@ -108,11 +108,13 @@ export default function OntologyConceptSelector(
           props.form.setValue(
             props.field.fieldId,
             currentFormType === "add"
-              ? undefined
+            // For add forms, default to default value if available, else, return undefined
+              ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
+              // For every other form type, extract the parent option if available, else, default to base
               : sortedConceptMappings[firstRootOption?.type.value]
-              ? sortedConceptMappings[firstRootOption.type.value][0]?.type
+                ? sortedConceptMappings[firstRootOption.type.value][0]?.type
                   ?.value
-              : firstRootOption?.type?.value
+                : firstRootOption?.type?.value
           );
 
           // Parse the mappings to generate the format for select options
