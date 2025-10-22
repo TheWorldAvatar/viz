@@ -244,7 +244,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   {numberOfSelectedRows > 0 &&
                                     <PopoverActionButton
                                       placement="bottom-start"
-                                      leftIcon="arrow_drop_down"
+                                      leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
                                       variant="ghost"
                                       size="icon"
                                       tooltipText={dict.title.actions}
