@@ -240,7 +240,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           >
                             <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
                               {props.lifecycleStage === "pending" &&
-                                <div className="flex justify-end items-center rounded-md gap-2">
+                                <div className="flex justify-end items-center rounded-md gap-2 mt-10">
                                   {numberOfSelectedRows > 0 &&
                                     <PopoverActionButton
                                       placement="bottom-start"
@@ -251,7 +251,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       isOpen={isActionMenuOpen}
                                       setIsOpen={setIsActionMenuOpen}
                                     >
-                                      <div className="flex flex-col space-y-8 lg:space-y-4">
+                                      <div className="flex flex-col space-y-4">
                                         <Button
                                           leftIcon="done_outline"
                                           label={dict.action.approve}
