@@ -41,7 +41,7 @@ export default function Checkbox({
 
     const checkboxId = React.useId();
 
-    const baseClasses = `${isChecked ? "bg-black dark:bg-white border-none" : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"}
+    const baseClasses = `${isChecked ? "bg-black dark:bg-white border-none" : "border-border  bg-white dark:bg-ring"}
     size-4 shrink-0 rounded-sm border shadow-xs transition-all duration-50
     outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
     disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center
@@ -75,14 +75,13 @@ export default function Checkbox({
             >
                 <Icon
                     fontSize="small"
-                    className={`material-symbols-outlined text-white dark:text-black transition-opacity duration-50 ${isChecked ? "opacity-100" : "opacity-0"
-                        }`}
+                    className={`material-symbols-outlined text-white dark:text-black transition-opacity duration-50 ${isChecked ? "opacity-100" : "opacity-0"}`}
                 >
                     check
                 </Icon>
             </span>
             {label && (
-                <span className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="text-base text-gray-700 dark:text-gray-300">
                     {label}
                 </span>
             )}
