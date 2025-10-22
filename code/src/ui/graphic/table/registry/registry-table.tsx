@@ -40,6 +40,12 @@ import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
 import useOperationStatus from "hooks/useOperationStatus";
 import Checkbox from "ui/interaction/input/checkbox";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import Button from "ui/interaction/button";
+import { JsonObject } from "types/json";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { AgentResponseBody } from "types/backend-agent";
+import { toast } from "ui/interaction/action/toast/toast";
 
 interface RegistryTableProps {
   recordType: string;
@@ -66,13 +72,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const [isActionMenuOpen, setIsActionMenuOpen] =
+    React.useState<boolean>(false);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
     props.tableDescriptor.data,
     props.tableDescriptor.setData
   );
 
-  const { isLoading } = useOperationStatus();
+  const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const numberOfSelectedRows: number = props.tableDescriptor.table.getSelectedRowModel().rows.length;
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -119,6 +128,88 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
+
+  const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => {
+      return row.original.id
+    });
+
+    const reqBody: JsonObject = {
+      contract: contractIds,
+      remarks: `${contractIds.length} contract(s) approved successfully!`,
+    };
+    startLoading();
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
+      }
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      props.tableDescriptor.table.resetRowSelection();
+      props.triggerRefresh();
+    }
+  };
+
+  const handleBulkResubmitForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => {
+      return row.original.id
+    });
+
+    const reqBody: JsonObject = {
+      contract: contractIds,
+    };
+    startLoading();
+    const res = await fetch(
+      makeInternalRegistryAPIwithParams("event", "draft", "reset"),
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify({ ...reqBody }),
+      }
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      props.tableDescriptor.table.resetRowSelection();
+      props.triggerRefresh();
+    }
+  };
+
   return (
     <>
       {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
@@ -147,18 +238,47 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             isHeader={true}
                           >
                             <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
-                              {props.lifecycleStage === "pending" && <div className="flex justify-end">
-                                <Checkbox
-                                  className="mt-12"
-                                  disabled={isLoading}
-                                  checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
-                                  onChange={(checked) => {
-                                    props.tableDescriptor.table.getRowModel().rows.forEach(row => {
-                                      row.toggleSelected(checked);
-                                    });
-                                  }}
-                                />
-                              </div>}
+                              {props.lifecycleStage === "pending" &&
+                                <div className="flex justify-end items-center rounded-md gap-2">
+                                  {numberOfSelectedRows > 0 &&
+                                    <PopoverActionButton
+                                      placement="bottom-start"
+                                      leftIcon="arrow_drop_down"
+                                      variant="ghost"
+                                      size="icon"
+                                      tooltipText={dict.title.actions}
+                                      isOpen={isActionMenuOpen}
+                                      setIsOpen={setIsActionMenuOpen}
+                                    >
+                                      <div className="flex flex-col space-y-8 lg:space-y-4">
+                                        <Button
+                                          leftIcon="done_outline"
+                                          label={dict.action.approve}
+                                          variant="outline"
+                                          disabled={isLoading}
+                                          onClick={handleBulkApproval}
+                                          className="border-dashed"
+                                        />
+                                        <Button
+                                          leftIcon="published_with_changes"
+                                          label={dict.action.resubmit}
+                                          variant="outline"
+                                          disabled={isLoading}
+                                          onClick={handleBulkResubmitForApproval}
+                                          className="border-dashed"
+                                        />
+                                      </div>
+                                    </PopoverActionButton>}
+                                  <Checkbox
+                                    disabled={isLoading}
+                                    checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
+                                    onChange={(checked) => {
+                                      props.tableDescriptor.table.getRowModel().rows.forEach(row => {
+                                        row.toggleSelected(checked);
+                                      });
+                                    }}
+                                  />
+                                </div>}
 
                             </TableCell>
                             {headerGroup.headers.map((header, index) => {

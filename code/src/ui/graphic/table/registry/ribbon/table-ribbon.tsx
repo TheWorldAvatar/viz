@@ -16,12 +16,8 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import useOperationStatus from "hooks/useOperationStatus";
-import { JsonObject } from "types/json";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { AgentResponseBody } from "types/backend-agent";
-import { toast } from "ui/interaction/action/toast/toast";
-import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+
+
 
 interface TableRibbonProps {
   path: string;
@@ -32,9 +28,6 @@ interface TableRibbonProps {
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
-  onBulkApproval?: React.MouseEventHandler<HTMLButtonElement>;
-  onBulkResubmitForApproval?: React.MouseEventHandler<HTMLButtonElement>;
-  selectedRowsCount?: number;
 }
 
 /**
@@ -53,93 +46,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { isLoading, startLoading, stopLoading } = useOperationStatus();
-  const [isActionMenuOpen, setIsActionMenuOpen] =
-    React.useState<boolean>(false);
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
 
-  const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
-
-    if (selectedRows.length === 0) {
-      return;
-    }
-
-    const contractIds: string[] = selectedRows.map(row => {
-      return row.original.id
-    });
-
-    const reqBody: JsonObject = {
-      contract: contractIds,
-      remarks: `${contractIds.length} contract(s) approved successfully!`,
-    };
-    startLoading();
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "service", "commence"),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
-    stopLoading();
-    toast(
-      responseBody?.data?.message || responseBody?.error?.message,
-      responseBody?.error ? "error" : "success"
-    );
-
-    if (!responseBody?.error) {
-      // Clear selection and refresh table
-      props.tableDescriptor.table.resetRowSelection();
-      props.triggerRefresh();
-    }
-  };
-
-  const handleBulkResubmitForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
-
-    if (selectedRows.length === 0) {
-      return;
-    }
-
-    const contractIds: string[] = selectedRows.map(row => {
-      return row.original.id
-    });
-
-    const reqBody: JsonObject = {
-      contract: contractIds,
-    };
-    startLoading();
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "draft", "reset"),
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
-    stopLoading();
-    toast(
-      responseBody?.data?.message || responseBody?.error?.message,
-      responseBody?.error ? "error" : "success"
-    );
-
-    if (!responseBody?.error) {
-      // Clear selection and refresh table
-      props.tableDescriptor.table.resetRowSelection();
-      props.triggerRefresh();
-    }
-  };
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -164,7 +74,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     />
                   </div>
                 )}
-
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.outstanding}
@@ -216,40 +125,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
-          {props.lifecycleStage === "pending" &&
-            props.tableDescriptor.table.getSelectedRowModel().rows.length > 0 &&
-            <PopoverActionButton
-              placement="bottom-start"
-              leftIcon="more_vert"
-              variant="outline"
-              tooltipText={dict.title.actions}
-              className="border-dashed"
-              label={`Selected (${props.tableDescriptor.table.getSelectedRowModel().rows.length})`}
-              isOpen={isActionMenuOpen}
-              setIsOpen={setIsActionMenuOpen}
-            >
-              <div className="flex flex-col space-y-8 lg:space-y-4">
-                <Button
-                  leftIcon="done_outline"
-                  label={dict.action.approve}
-                  onClick={handleBulkApproval}
-                  variant="outline"
-                  disabled={isLoading}
-                  className="border-dashed"
-                />
-                <Button
-                  leftIcon="published_with_changes"
-                  label={dict.action.resubmit}
-                  onClick={handleBulkResubmitForApproval}
-                  variant="outline"
-                  disabled={isLoading}
-                  className="border-dashed"
-                />
-              </div>
-
-            </PopoverActionButton>
-          }
-
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
               <DateInput
@@ -259,9 +134,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
         </div>
-
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-
           {props.tableDescriptor.table
             .getState()
             .columnFilters?.some(
@@ -272,7 +145,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 iconSize="medium"
                 className="mt-1"
                 size="icon"
-                onClick={() => props.tableDescriptor.table.resetColumnFilters()}
+                onClick={() => {
+                  props.tableDescriptor.table.resetColumnFilters()
+                  props.tableDescriptor.table.resetRowSelection()
+                }}
                 tooltipText={dict.action.clearAllFilters}
                 variant="destructive"
               />
