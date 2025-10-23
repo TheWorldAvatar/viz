@@ -4,6 +4,7 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
+  OnChangeFn,
   PaginationState,
   SortingState,
   Table,
@@ -15,6 +16,7 @@ import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
 import {
+  genSortParams,
   parseDataForTable,
   TableData,
 } from "ui/graphic/table/registry/registry-table-utils";
@@ -26,6 +28,7 @@ export interface TableDescriptor {
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   pagination: PaginationState,
   firstActiveFilter: string;
+  sortParams: string;
 }
 
 /**
@@ -37,12 +40,20 @@ export interface TableDescriptor {
 export function useTable(instances: RegistryFieldValues[], totalRows: number): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [sortParams, setSortParams] = useState<string>(genSortParams(sorting));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0, // initial page index
     pageSize: 10, // default page size
   });
+
+  const onSortingChange: OnChangeFn<SortingState> = (updater) => {
+    const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
+    setSorting(newSorting);
+    const params: string = genSortParams(newSorting);
+    setSortParams(params);
+  };
 
   const tableData: TableData = useMemo(
     () => {
@@ -66,7 +77,7 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
     rowCount: totalRows,
     onPaginationChange: setPagination,
     onColumnFiltersChange: setColumnFilters,
-    onSortingChange: setSorting,
+    onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -82,5 +93,6 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
     setData,
     pagination,
     firstActiveFilter,
+    sortParams,
   };
 }

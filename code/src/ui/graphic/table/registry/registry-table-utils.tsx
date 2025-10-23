@@ -1,7 +1,8 @@
 import {
   ColumnDef,
   FilterFnOption,
-  Row
+  Row,
+  SortingState
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -10,9 +11,9 @@ import {
   LifecycleStage,
   RegistryFieldValues
 } from "types/form";
+import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 
 export type TableData = {
   data: FieldValues[];
@@ -93,6 +94,27 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
     }
   }
   return results;
+}
+
+/**
+ * Generates the sort parameters required for the API endpoint based on the input sort.
+ *
+ * @param {SortingState} currentSort The current sorting order.
+ */
+export function genSortParams(currentSort: SortingState): string {
+  let params: string = "";
+  if (currentSort.length == 0) {
+    return "%2Bid"
+  }
+  for (const column of currentSort) {
+    if (column.desc) {
+      params += "-";
+    } else {
+      params += "%2B";
+    }
+    params += column.id;
+  }
+  return params;
 }
 
 /**

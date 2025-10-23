@@ -1,12 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
+import { useSelector } from "react-redux";
 import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -122,6 +122,7 @@ export default function RegistryTableComponent(
                 props.entityType,
                 tableDescriptor.pagination.pageIndex.toString(),
                 tableDescriptor.pagination.pageSize.toString(),
+                tableDescriptor.sortParams,
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
@@ -148,6 +149,7 @@ export default function RegistryTableComponent(
                 props.entityType,
                 tableDescriptor.pagination.pageIndex.toString(),
                 tableDescriptor.pagination.pageSize.toString(),
+                tableDescriptor.sortParams,
               ),
               { cache: "no-store", credentials: "same-origin" }
             );
@@ -165,6 +167,7 @@ export default function RegistryTableComponent(
                 pathNameEnd,
                 tableDescriptor.pagination.pageIndex.toString(),
                 tableDescriptor.pagination.pageSize.toString(),
+                tableDescriptor.sortParams,
               ),
               {
                 cache: "no-store",
@@ -181,6 +184,7 @@ export default function RegistryTableComponent(
               props.entityType,
               tableDescriptor.pagination.pageIndex.toString(),
               tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.sortParams,
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
@@ -202,6 +206,7 @@ export default function RegistryTableComponent(
                 .toString(),
               tableDescriptor.pagination.pageIndex.toString(),
               tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.sortParams,
             ),
             {
               cache: "no-store",
@@ -220,6 +225,7 @@ export default function RegistryTableComponent(
               null,
               tableDescriptor.pagination.pageIndex.toString(),
               tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.sortParams,
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
@@ -233,6 +239,7 @@ export default function RegistryTableComponent(
               props.entityType,
               tableDescriptor.pagination.pageIndex.toString(),
               tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.sortParams,
             ),
             { cache: "no-store", credentials: "same-origin" }
           );
@@ -249,7 +256,7 @@ export default function RegistryTableComponent(
 
     // Trigger fetchData when refreshFlag, or selectedDate (range) changes
     fetchData();
-  }, [selectedDate, refreshFlag, tableDescriptor.pagination]);
+  }, [selectedDate, refreshFlag, tableDescriptor.pagination, tableDescriptor.sortParams]);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
