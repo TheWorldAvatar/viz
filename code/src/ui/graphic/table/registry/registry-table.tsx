@@ -73,8 +73,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const [isActionMenuOpen, setIsActionMenuOpen] =
-    React.useState<boolean>(false);
+  const [isActionMenuOpen, setIsActionMenuOpen] = React.useState<boolean>(false);
+  const [recurrenceCount, setRecurrenceCount] = React.useState<number>(1);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
     props.tableDescriptor.data,
@@ -86,8 +86,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     row => (row.original.status as string)?.toLowerCase() === "amended"
   );
-
-
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -199,7 +197,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     const reqBody: JsonObject = {
       id: contractIds,
       type: props.recordType,
-      recurrence: 1
+      recurrence: recurrenceCount
     };
 
     startLoading();
@@ -257,7 +255,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             isHeader={true}
                           >
                             <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
-
                               <div className="flex justify-end items-center rounded-md gap-2 mt-10">
                                 {numberOfSelectedRows > 0 &&
                                   <PopoverActionButton
@@ -292,7 +289,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       }
                                       <Button
                                         leftIcon="content_copy"
-                                        label="Duplicate"
+                                        label={dict.action.copy}
                                         variant="outline"
                                         disabled={isLoading}
                                         onClick={handleDuplicateContract}
@@ -301,7 +298,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     </div>
                                   </PopoverActionButton>
                                 }
-                                <Checkbox
+                                {props.recordType === "job" && <Checkbox
                                   ariaLabel={dict.action.selectAll}
                                   disabled={isLoading}
                                   checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
@@ -310,7 +307,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       row.toggleSelected(checked);
                                     });
                                   }}
-                                />
+                                />}
                               </div>
                             </TableCell>
                             {headerGroup.headers.map((header, index) => {
@@ -364,7 +361,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />
+                                  {props.recordType === "job" && < Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
