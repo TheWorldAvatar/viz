@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useId } from "react";
-import { Icon } from "@mui/material";
 
 interface CheckboxProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
@@ -41,20 +40,14 @@ export default function Checkbox({
     };
 
 
-    const baseClasses: string = `${isChecked ? "bg-black dark:bg-white border-none" : "border-border  bg-white dark:bg-ring"}
-    size-4 shrink-0 rounded-sm border shadow-xs transition-all duration-50
-    outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-    disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center
-  `;
-
-    const disabledClasses: string = disabled ? "cursor-not-allowed opacity-50" : "";
+    const disabledClasses: string = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
     return (
         <div className="flex items-center space-x-2">
             <input
                 id={checkboxId}
                 type="checkbox"
-                className="sr-only" // Screen reader only, not completely hidden
+                className={`${disabledClasses} ${className} accent-black dark:accent-white outline-none  focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
                 checked={isChecked}
                 onChange={handleChange}
                 role="checkbox"
@@ -63,21 +56,8 @@ export default function Checkbox({
                 aria-label={ariaLabel || label}
                 {...props}
             />
-            <label htmlFor={checkboxId} className="cursor-pointer">
-                <span
-                    className={`${baseClasses} ${className} ${disabledClasses}`.trim()}
-                    aria-hidden="true" // This is just visual, screen reader uses the input
-                >
-                    <Icon
-                        fontSize="small"
-                        className={`material-symbols-outlined text-white dark:text-black transition-opacity duration-50 ${isChecked ? "opacity-100" : "opacity-0"}`}
-                    >
-                        check
-                    </Icon>
-                </span>
-            </label>
             {label && (
-                <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300 cursor-pointer">
+                <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300">
                     {label}
                 </label>
             )}
