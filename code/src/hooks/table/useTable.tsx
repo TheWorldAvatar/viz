@@ -40,7 +40,7 @@ export interface TableDescriptor {
 export function useTable(instances: RegistryFieldValues[], totalRows: number): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [sortParams, setSortParams] = useState<string>(genSortParams(sorting));
+  const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -51,7 +51,7 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
     setSorting(newSorting);
-    const params: string = genSortParams(newSorting);
+    const params: string = genSortParams(newSorting, dict.title);
     setSortParams(params);
   };
 

@@ -24,7 +24,7 @@ export type TableData = {
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
- * @param { Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseDataForTable(instances: RegistryFieldValues[], titleDict: Record<string, string>): TableData {
   const results: TableData = {
@@ -100,8 +100,9 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
  * Generates the sort parameters required for the API endpoint based on the input sort.
  *
  * @param {SortingState} currentSort The current sorting order.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function genSortParams(currentSort: SortingState): string {
+export function genSortParams(currentSort: SortingState, titleDict: Record<string, string>): string {
   let params: string = "";
   if (currentSort.length == 0) {
     return "%2Bid"
@@ -112,7 +113,8 @@ export function genSortParams(currentSort: SortingState): string {
     } else {
       params += "%2B";
     }
-    params += column.id;
+    const field: string = column.id === titleDict.lastModified ? "lastModified" : column.id
+    params += field;
   }
   return params;
 }
