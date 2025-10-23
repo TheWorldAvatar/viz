@@ -132,7 +132,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-
   const handleBulkAction = async (action: "approve" | "resubmit") => {
     const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
 
@@ -289,7 +288,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       }
                                       <Button
                                         leftIcon="content_copy"
-                                        label={dict.action.copy}
+                                        label={dict.action.draftTemplate}
                                         variant="outline"
                                         disabled={isLoading}
                                         onClick={handleDuplicateContract}
