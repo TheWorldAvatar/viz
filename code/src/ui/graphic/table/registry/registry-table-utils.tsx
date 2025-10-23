@@ -108,6 +108,9 @@ export function genSortParams(currentSort: SortingState, titleDict: Record<strin
     return "%2Bid"
   }
   for (const column of currentSort) {
+    if (params != "") {
+      params += ","
+    }
     if (column.desc) {
       params += "-";
     } else {
