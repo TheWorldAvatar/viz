@@ -20,6 +20,8 @@ export const SelectCheckboxOption: ComponentType<OptionProps<SelectOption, boole
           onChange={() => null}
           className="mr-3"
           label={props.label}
+          ariaLabel={props.label}
+          disabled={props.isDisabled}
         />
       </div>
     </components.Option>

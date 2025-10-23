@@ -271,6 +271,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       </div>
                                     </PopoverActionButton>}
                                   <Checkbox
+                                    ariaLabel={dict.action.selectAll}
                                     disabled={isLoading}
                                     checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
                                     onChange={(checked) => {
@@ -332,7 +333,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  {props.lifecycleStage === "pending" && <Checkbox className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
+                                  {props.lifecycleStage === "pending" && <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (

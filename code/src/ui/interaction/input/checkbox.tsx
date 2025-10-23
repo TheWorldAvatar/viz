@@ -10,7 +10,6 @@ interface CheckboxProps
     className?: string;
     label?: string;
     ariaLabel?: string;
-    ariaDescribedby?: string;
     disabled?: boolean;
 }
 
@@ -20,7 +19,6 @@ export default function Checkbox({
     checked,
     onChange,
     ariaLabel,
-    ariaDescribedby,
     disabled,
     ...props
 }: Readonly<CheckboxProps>) {
@@ -59,7 +57,6 @@ export default function Checkbox({
                 disabled={disabled}
                 aria-checked={isChecked}
                 aria-label={ariaLabel || label}
-                aria-describedby={ariaDescribedby}
                 {...props}
             />
             <label htmlFor={checkboxId} className="cursor-pointer">
