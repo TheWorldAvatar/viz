@@ -85,7 +85,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     row => (row.original.status as string)?.toLowerCase() === "amended"
   );
-  const allowMultipleSelection: boolean = props.lifecycleStage === "pending" || props.lifecycleStage === "outstanding" || props.lifecycleStage === "scheduled" || props.lifecycleStage === "closed";
+  const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
