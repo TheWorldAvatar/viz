@@ -17,8 +17,6 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 
-
-
 interface TableRibbonProps {
   path: string;
   entityType: string;
@@ -49,7 +47,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
-
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -86,7 +83,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
               </div>
-
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.scheduled}
@@ -99,7 +95,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
               </div>
-
               <div className="w-full sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.closed}
@@ -158,7 +153,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               columns={props.tableDescriptor.table.getAllLeafColumns()}
             />
           )}
-
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
