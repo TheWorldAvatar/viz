@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.1
+
+### Changes
+
+- Implement a checkbox input that allows for selecting multiple rows in the registry table for bulk actions
+- Implemented a bulking function in the registry table component that allows for multiple job approval and resubmit requests at the same time
+- Added a select all checkbox in the registry table header to select all visible rows for bulk actions
+- New checkbox component to be used across the application
+
 ## 5.43.0
 
 ### Changes
