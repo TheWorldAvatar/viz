@@ -30,10 +30,14 @@ export default function Checkbox({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newChecked: boolean = e.target.checked;
+
+        // Update internal state if component is uncontrolled
         if (checked === undefined) {
             setInternalChecked(newChecked);
         }
-        onChange?.(newChecked);
+        if (onChange) {
+            onChange(newChecked);
+        }
     };
 
 
