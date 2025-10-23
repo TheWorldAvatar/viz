@@ -280,6 +280,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       )
                                     )
                                   )}
+                                  resetRowSelection={props.tableDescriptor.table.resetRowSelection}
                                 />
                               );
                             })}

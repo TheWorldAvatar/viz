@@ -1,9 +1,8 @@
 import { Table } from "@tanstack/react-table";
-import { useEffect } from "react";
-import { FieldValues } from "react-hook-form/dist/types/fields";
-import Button from "ui/interaction/button";
 import { useDictionary } from "hooks/useDictionary";
+import { FieldValues } from "react-hook-form/dist/types/fields";
 import { Dictionary } from "types/dictionary";
+import Button from "ui/interaction/button";
 
 interface TablePaginationProps {
   table: Table<FieldValues>;
@@ -21,15 +20,6 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
   const { table } = props;
   const numberOfSelectedRows: number = table.getSelectedRowModel().rows.length;
-  const columnFilters = table.getState().columnFilters;
-
-  // Reset row selection when filters change
-  useEffect(() => {
-    if (columnFilters.length > 0) {
-      table.resetRowSelection();
-    }
-  }, [columnFilters, table]);
-
   return (
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
       <div className="text-sm text-foreground">

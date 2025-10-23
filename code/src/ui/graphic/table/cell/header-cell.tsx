@@ -12,6 +12,7 @@ import TableCell from "./table-cell";
 interface HeaderCellProps {
   options: string[];
   header: Header<FieldValues, unknown>;
+  resetRowSelection?: () => void;
 }
 
 /**
@@ -19,6 +20,7 @@ interface HeaderCellProps {
  *
  * @param {string[]} options The list of values available for filtering.
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
+ * @param resetRowSelection Optional row selection function to reset row when unused.
  */
 
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
@@ -30,6 +32,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       props.header.column.setFilterValue(
         selectedOptions.map((opt) => opt.value)
       );
+    }
+    if (props.resetRowSelection) {
+      props.resetRowSelection();
     }
   }, [selectedOptions]);
 
