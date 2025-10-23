@@ -5,10 +5,10 @@ import { Icon } from "@mui/material";
 
 interface CheckboxProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+    checked: boolean;
+    onChange: (_checked: boolean) => void;
     className?: string;
     label?: string;
-    checked?: boolean;
-    onChange?: (_checked: boolean) => void;
     ariaLabel?: string;
     ariaDescribedby?: string;
     disabled?: boolean;
@@ -32,14 +32,11 @@ export default function Checkbox({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newChecked: boolean = e.target.checked;
-
         if (checked === undefined) {
             setInternalChecked(newChecked);
         }
-
         onChange?.(newChecked);
     };
-
 
 
     const baseClasses: string = `${isChecked ? "bg-black dark:bg-white border-none" : "border-border  bg-white dark:bg-ring"}
@@ -50,12 +47,8 @@ export default function Checkbox({
 
     const disabledClasses: string = disabled ? "cursor-not-allowed opacity-50" : "";
 
-
     return (
-        <label
-            htmlFor={checkboxId}
-            className="flex items-center space-x-2 cursor-pointer"
-        >
+        <div className="flex items-center space-x-2">
             <input
                 id={checkboxId}
                 type="checkbox"
@@ -69,22 +62,24 @@ export default function Checkbox({
                 aria-describedby={ariaDescribedby}
                 {...props}
             />
-            <span
-                className={`${baseClasses} ${className} ${disabledClasses}`.trim()}
-                aria-hidden="true" // This is just visual, screen reader uses the input
-            >
-                <Icon
-                    fontSize="small"
-                    className={`material-symbols-outlined text-white dark:text-black transition-opacity duration-50 ${isChecked ? "opacity-100" : "opacity-0"}`}
+            <label htmlFor={checkboxId} className="cursor-pointer">
+                <span
+                    className={`${baseClasses} ${className} ${disabledClasses}`.trim()}
+                    aria-hidden="true" // This is just visual, screen reader uses the input
                 >
-                    check
-                </Icon>
-            </span>
-            {label && (
-                <span className="text-base text-gray-700 dark:text-gray-300">
-                    {label}
+                    <Icon
+                        fontSize="small"
+                        className={`material-symbols-outlined text-white dark:text-black transition-opacity duration-50 ${isChecked ? "opacity-100" : "opacity-0"}`}
+                    >
+                        check
+                    </Icon>
                 </span>
+            </label>
+            {label && (
+                <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300 cursor-pointer">
+                    {label}
+                </label>
             )}
-        </label>
+        </div>
     );
 }
