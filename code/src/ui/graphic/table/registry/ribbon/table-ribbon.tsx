@@ -71,7 +71,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     />
                   </div>
                 )}
-
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.outstanding}
@@ -84,7 +83,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
               </div>
-
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.scheduled}
@@ -97,7 +95,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
               </div>
-
               <div className="w-full sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.closed}
@@ -114,8 +111,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           </div>
         )}
       <div className="w-full  h-[1px] bg-border " />
-      <div className="flex justify-between items-end    md:gap-2 lg:gap-0 flex-wrap ">
-        <div className="flex items-end   !-ml-2 gap-3 md:gap-4">
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 flex-wrap ">
+        <div className="flex items-end !-ml-2 gap-3 md:gap-4">
           <Button
             className="ml-2"
             size="icon"
@@ -132,7 +129,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
         </div>
-
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
           {props.tableDescriptor.table
             .getState()
@@ -144,7 +140,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 iconSize="medium"
                 className="mt-1"
                 size="icon"
-                onClick={() => props.tableDescriptor.table.resetColumnFilters()}
+                onClick={() => {
+                  props.tableDescriptor.table.resetColumnFilters()
+                  props.tableDescriptor.table.resetRowSelection()
+                }}
                 tooltipText={dict.action.clearAllFilters}
                 variant="destructive"
               />
@@ -154,7 +153,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               columns={props.tableDescriptor.table.getAllLeafColumns()}
             />
           )}
-
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&

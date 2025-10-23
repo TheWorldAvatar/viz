@@ -77,12 +77,15 @@ export default function RegistryRowAction(
   const onResubmissionForApproval: React.MouseEventHandler<
     HTMLButtonElement
   > = async () => {
+    const reqBody: JsonObject = {
+      contract: recordId,
+    };
     const url: string = makeInternalRegistryAPIwithParams(
       "event",
       "draft",
-      props.row?.id
+      "reset"
     );
-    submitPendingActions(url, "PUT", "{}");
+    submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
 
   const submitPendingActions = async (

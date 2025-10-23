@@ -1,6 +1,6 @@
 import { PaginationState, Table } from "@tanstack/react-table";
-
 import { useDictionary } from "hooks/useDictionary";
+
 import { FieldValues } from "react-hook-form/dist/types/fields";
 import { Dictionary } from "types/dictionary";
 import Button from "ui/interaction/button";
@@ -20,11 +20,12 @@ const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
 
 export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
+  const numberOfSelectedRows: number = props.table.getSelectedRowModel().rows.length;
   return (
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
       <div className="text-sm text-foreground">
         {dict.message.numberOfRecords
-          .replace("{replace}", String(props.table.getRowCount()))
+          .replace("{replace}", String(numberOfSelectedRows > 0 ? numberOfSelectedRows : props.table.getFilteredRowModel().rows.length))
           .replace(
             "{replacetotal}",
             String(props.table.getRowCount())
