@@ -15,18 +15,28 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { TableDescriptor } from "hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
+import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "state/drawer-component-slice";
 import { PermissionScheme } from "types/auth";
+import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
+import { JsonObject } from "types/json";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import { toast } from "ui/interaction/action/toast/toast";
+import Button from "ui/interaction/button";
+import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction, {
   genTaskOption,
@@ -36,16 +46,6 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
-import { useDispatch } from "react-redux";
-import { openDrawer } from "state/drawer-component-slice";
-import useOperationStatus from "hooks/useOperationStatus";
-import Checkbox from "ui/interaction/input/checkbox";
-import PopoverActionButton from "ui/interaction/action/popover/popover-button";
-import Button from "ui/interaction/button";
-import { JsonObject } from "types/json";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { AgentResponseBody } from "types/backend-agent";
-import { toast } from "ui/interaction/action/toast/toast";
 
 
 interface RegistryTableProps {
@@ -337,7 +337,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination table={props.tableDescriptor.table} />
+          <TablePagination table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">

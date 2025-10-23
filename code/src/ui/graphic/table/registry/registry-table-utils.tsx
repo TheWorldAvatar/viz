@@ -1,7 +1,8 @@
 import {
   ColumnDef,
   FilterFnOption,
-  Row
+  Row,
+  SortingState
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -10,9 +11,9 @@ import {
   LifecycleStage,
   RegistryFieldValues
 } from "types/form";
+import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 
 export type TableData = {
   data: FieldValues[];
@@ -23,7 +24,7 @@ export type TableData = {
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
- * @param { Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseDataForTable(instances: RegistryFieldValues[], titleDict: Record<string, string>): TableData {
   const results: TableData = {
@@ -93,6 +94,32 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
     }
   }
   return results;
+}
+
+/**
+ * Generates the sort parameters required for the API endpoint based on the input sort.
+ *
+ * @param {SortingState} currentSort The current sorting order.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function genSortParams(currentSort: SortingState, titleDict: Record<string, string>): string {
+  let params: string = "";
+  if (currentSort.length == 0) {
+    return "%2Bid"
+  }
+  for (const column of currentSort) {
+    if (params != "") {
+      params += ","
+    }
+    if (column.desc) {
+      params += "-";
+    } else {
+      params += "%2B";
+    }
+    const field: string = column.id === titleDict.lastModified ? "lastModified" : column.id
+    params += field;
+  }
+  return params;
 }
 
 /**
