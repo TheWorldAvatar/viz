@@ -227,7 +227,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       isOpen={isActionMenuOpen}
                                       setIsOpen={setIsActionMenuOpen}
                                     >
-                                      <div className="flex flex-col space-y-4">
+                                      <div className="flex flex-col space-y-3">
                                         <Button
                                           leftIcon="done_outline"
                                           label={dict.action.approve}
@@ -236,14 +236,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           onClick={() => handleBulkAction("approve")}
                                           className="border-dashed"
                                         />
-                                        <Button
+                                        {hasAmendedStatus && <Button
                                           leftIcon="published_with_changes"
                                           label={dict.action.resubmit}
                                           variant="outline"
-                                          disabled={isLoading || !hasAmendedStatus}
+                                          disabled={isLoading}
                                           onClick={() => handleBulkAction("resubmit")}
                                           className="border-dashed"
-                                        />
+                                        />}
                                       </div>
                                     </PopoverActionButton>}
                                   <Checkbox
