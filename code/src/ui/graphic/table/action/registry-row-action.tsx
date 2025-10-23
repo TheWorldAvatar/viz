@@ -1,8 +1,6 @@
 import { useRouter } from "next/navigation";
-
 import React from "react";
 import { FieldValues } from "react-hook-form";
-
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
@@ -73,8 +71,6 @@ export default function RegistryRowAction(
     );
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
-
-
 
   const onResubmissionForApproval: React.MouseEventHandler<
     HTMLButtonElement
