@@ -130,30 +130,41 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   };
 
 
-  const handleBulkApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  const handleBulkAction = async (action: "approve" | "resubmit") => {
     const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
 
     if (selectedRows.length === 0) {
       return;
     }
 
-    const contractIds: string[] = selectedRows.map(row => {
-      return row.original.id
-    });
+    const contractIds: string[] = selectedRows.map(row => row.original.id);
 
-    const reqBody: JsonObject = {
-      contract: contractIds,
-      remarks: `${contractIds.length} contract(s) approved successfully!`,
-    };
+    const isApprove = action === "approve";
+
+    const reqBody: JsonObject = isApprove
+      ? {
+        contract: contractIds,
+        remarks: `${contractIds.length} contract(s) approved successfully!`,
+      }
+      : {
+        contract: contractIds,
+      };
+
+    const apiUrl = isApprove
+      ? makeInternalRegistryAPIwithParams("event", "service", "commence")
+      : makeInternalRegistryAPIwithParams("event", "draft", "reset");
+
+    const method = isApprove ? "POST" : "PUT";
+
     startLoading();
     const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "service", "commence"),
+      apiUrl,
       {
-        method: "POST",
+        method,
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
         credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
+        body: JSON.stringify(reqBody),
       }
     );
 
@@ -171,45 +182,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-  const handleBulkResubmitForApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
 
-    if (selectedRows.length === 0) {
-      return;
-    }
-
-    const contractIds: string[] = selectedRows.map(row => {
-      return row.original.id
-    });
-
-    const reqBody: JsonObject = {
-      contract: contractIds,
-    };
-    startLoading();
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "draft", "reset"),
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
-    stopLoading();
-    toast(
-      responseBody?.data?.message || responseBody?.error?.message,
-      responseBody?.error ? "error" : "success"
-    );
-
-    if (!responseBody?.error) {
-      // Clear selection and refresh table
-      props.tableDescriptor.table.resetRowSelection();
-      props.triggerRefresh();
-    }
-  };
 
   return (
     <>
@@ -257,7 +230,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           label={dict.action.approve}
                                           variant="outline"
                                           disabled={isLoading}
-                                          onClick={handleBulkApproval}
+                                          onClick={() => handleBulkAction("approve")}
                                           className="border-dashed"
                                         />
                                         <Button
@@ -265,7 +238,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           label={dict.action.resubmit}
                                           variant="outline"
                                           disabled={isLoading}
-                                          onClick={handleBulkResubmitForApproval}
+                                          onClick={() => handleBulkAction("resubmit")}
                                           className="border-dashed"
                                         />
                                       </div>
