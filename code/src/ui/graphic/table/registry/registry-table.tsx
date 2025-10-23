@@ -142,7 +142,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
     const contractIds: string[] = selectedRows.map(row => row.original.id);
 
-    const isApprove = action === "approve";
+    const isApprove: boolean = action === "approve";
 
     const reqBody: JsonObject = isApprove
       ? {
@@ -157,7 +157,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       ? makeInternalRegistryAPIwithParams("event", "service", "commence")
       : makeInternalRegistryAPIwithParams("event", "draft", "reset");
 
-    const method = isApprove ? "POST" : "PUT";
+    const method: string = isApprove ? "POST" : "PUT";
 
     startLoading();
     const res = await fetch(
