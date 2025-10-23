@@ -74,6 +74,8 @@ export default function RegistryRowAction(
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
+
+
   const onResubmissionForApproval: React.MouseEventHandler<
     HTMLButtonElement
   > = async () => {
@@ -149,6 +151,7 @@ export default function RegistryRowAction(
           variant="ghost"
           leftIcon="open_in_new"
           size="icon"
+          className="ml-2"
           iconSize="medium"
           tooltipText={parseWordsForLabels(dict.action.view)}
           tooltipPosition="right"

@@ -87,6 +87,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     row => (row.original.status as string)?.toLowerCase() === "amended"
   );
 
+
+
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
     const recordId: string = row.event_id
@@ -185,6 +187,46 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
+  const handleDuplicateContract: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
+
+    if (selectedRows.length === 0) {
+      return;
+    }
+
+    const contractIds: string[] = selectedRows.map(row => row.original.id);
+
+    const reqBody: JsonObject = {
+      id: contractIds,
+      type: props.recordType,
+      recurrence: 1
+    };
+
+    startLoading();
+    const res = await fetch(makeInternalRegistryAPIwithParams("event", "draft", "copy"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin",
+        body: JSON.stringify(reqBody),
+      }
+    );
+
+    const responseBody: AgentResponseBody = await res.json();
+    stopLoading();
+    toast(
+      responseBody?.data?.message || responseBody?.error?.message,
+      responseBody?.error ? "error" : "success"
+    );
+
+    if (!responseBody?.error) {
+      // Clear selection and refresh table
+      props.tableDescriptor.table.resetRowSelection();
+      props.triggerRefresh();
+    }
+  };
+
 
 
   return (
@@ -215,49 +257,61 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             isHeader={true}
                           >
                             <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
-                              {props.lifecycleStage === "pending" &&
-                                <div className="flex justify-end items-center rounded-md gap-2 mt-10">
-                                  {numberOfSelectedRows > 0 &&
-                                    <PopoverActionButton
-                                      placement="bottom-start"
-                                      leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
-                                      variant="ghost"
-                                      size="icon"
-                                      tooltipText={dict.title.actions}
-                                      isOpen={isActionMenuOpen}
-                                      setIsOpen={setIsActionMenuOpen}
-                                    >
-                                      <div className="flex flex-col space-y-3">
-                                        <Button
-                                          leftIcon="done_outline"
-                                          label={dict.action.approve}
-                                          variant="outline"
-                                          disabled={isLoading}
-                                          onClick={() => handleBulkAction("approve")}
-                                          className="border-dashed"
-                                        />
-                                        {hasAmendedStatus && <Button
-                                          leftIcon="published_with_changes"
-                                          label={dict.action.resubmit}
-                                          variant="outline"
-                                          disabled={isLoading}
-                                          onClick={() => handleBulkAction("resubmit")}
-                                          className="border-dashed"
-                                        />}
-                                      </div>
-                                    </PopoverActionButton>}
-                                  <Checkbox
-                                    ariaLabel={dict.action.selectAll}
-                                    disabled={isLoading}
-                                    checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
-                                    onChange={(checked) => {
-                                      props.tableDescriptor.table.getRowModel().rows.forEach(row => {
-                                        row.toggleSelected(checked);
-                                      });
-                                    }}
-                                  />
-                                </div>}
 
+                              <div className="flex justify-end items-center rounded-md gap-2 mt-10">
+                                {numberOfSelectedRows > 0 &&
+                                  <PopoverActionButton
+                                    placement="bottom-start"
+                                    leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
+                                    variant="ghost"
+                                    size="icon"
+                                    tooltipText={dict.title.actions}
+                                    isOpen={isActionMenuOpen}
+                                    setIsOpen={setIsActionMenuOpen}
+                                  >
+                                    <div className="flex flex-col space-y-3">
+                                      {props.lifecycleStage === "pending" &&
+                                        <>
+                                          <Button
+                                            leftIcon="done_outline"
+                                            label={dict.action.approve}
+                                            variant="outline"
+                                            disabled={isLoading}
+                                            onClick={() => handleBulkAction("approve")}
+                                            className="border-dashed"
+                                          />
+                                          {hasAmendedStatus && <Button
+                                            leftIcon="published_with_changes"
+                                            label={dict.action.resubmit}
+                                            variant="outline"
+                                            disabled={isLoading}
+                                            onClick={() => handleBulkAction("resubmit")}
+                                            className="border-dashed"
+                                          />}
+                                        </>
+                                      }
+                                      <Button
+                                        leftIcon="content_copy"
+                                        label="Duplicate"
+                                        variant="outline"
+                                        disabled={isLoading}
+                                        onClick={handleDuplicateContract}
+                                        className="border-dashed"
+                                      />
+                                    </div>
+                                  </PopoverActionButton>
+                                }
+                                <Checkbox
+                                  ariaLabel={dict.action.selectAll}
+                                  disabled={isLoading}
+                                  checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
+                                  onChange={(checked) => {
+                                    props.tableDescriptor.table.getRowModel().rows.forEach(row => {
+                                      row.toggleSelected(checked);
+                                    });
+                                  }}
+                                />
+                              </div>
                             </TableCell>
                             {headerGroup.headers.map((header, index) => {
                               return (
@@ -310,7 +364,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  {props.lifecycleStage === "pending" && <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
+                                  <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
