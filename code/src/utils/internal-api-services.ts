@@ -26,6 +26,7 @@ export function makeInternalRegistryAPIwithParams(
         type: params[1],
         page: params[2],
         limit: params[3],
+        sort_by: params[4],
       });
       break;
     case "contract_status":
@@ -49,6 +50,7 @@ export function makeInternalRegistryAPIwithParams(
         subtype: params[3] ?? null,
         page: params[4] ?? null,
         limit: params[5] ?? null,
+        sort_by: params[6] ?? null,
       });
       break;
     case "event":
@@ -102,6 +104,7 @@ export function makeInternalRegistryAPIwithParams(
         type: params[0],
         page: params[1],
         limit: params[2],
+        sort_by: params[3],
       });
       break;
     case "scheduled":
@@ -112,6 +115,7 @@ export function makeInternalRegistryAPIwithParams(
         end_date: params[2],
         page: params[3],
         limit: params[4],
+        sort_by: params[5],
       });
       break;
   }
