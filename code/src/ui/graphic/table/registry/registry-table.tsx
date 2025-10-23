@@ -86,6 +86,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     row => (row.original.status as string)?.toLowerCase() === "amended"
   );
+  const allowMultipleSelection: boolean = props.lifecycleStage === "pending" || props.lifecycleStage === "outstanding" || props.lifecycleStage === "scheduled" || props.lifecycleStage === "closed";
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -297,7 +298,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     </div>
                                   </PopoverActionButton>
                                 }
-                                {props.recordType === "job" && <Checkbox
+                                {allowMultipleSelection && <Checkbox
                                   ariaLabel={dict.action.selectAll}
                                   disabled={isLoading}
                                   checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
@@ -360,7 +361,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  {props.recordType === "job" && < Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
+                                  {allowMultipleSelection && <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
