@@ -83,6 +83,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
   const numberOfSelectedRows: number = props.tableDescriptor.table.getSelectedRowModel().rows.length;
+  const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
+    row => (row.original.status as string)?.toLowerCase() === "amended"
+  );
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -237,7 +240,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           leftIcon="published_with_changes"
                                           label={dict.action.resubmit}
                                           variant="outline"
-                                          disabled={isLoading}
+                                          disabled={isLoading || !hasAmendedStatus}
                                           onClick={() => handleBulkAction("resubmit")}
                                           className="border-dashed"
                                         />
