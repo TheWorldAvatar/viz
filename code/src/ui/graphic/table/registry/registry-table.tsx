@@ -145,28 +145,33 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     let apiUrl: string;
     let method: string;
 
-    if (action === "duplicate") {
-      reqBody = {
-        id: contractIds,
-        type: props.recordType,
-        recurrence: recurrenceCount
-      };
-      apiUrl = makeInternalRegistryAPIwithParams("event", "draft", "copy");
-      method = "POST";
-    } else {
-      const isApprove: boolean = action === "approve";
-      reqBody = isApprove
-        ? {
+    switch (action) {
+      case "duplicate":
+        reqBody = {
+          id: contractIds,
+          type: props.recordType,
+          recurrence: recurrenceCount
+        };
+        apiUrl = makeInternalRegistryAPIwithParams("event", "draft", "copy");
+        method = "POST";
+        break;
+      case "approve":
+        reqBody = {
           contract: contractIds,
           remarks: `${contractIds.length} contract(s) approved successfully!`,
-        }
-        : {
+        };
+        apiUrl = makeInternalRegistryAPIwithParams("event", "service", "commence");
+        method = "POST";
+        break;
+      case "resubmit":
+        reqBody = {
           contract: contractIds,
         };
-      apiUrl = isApprove
-        ? makeInternalRegistryAPIwithParams("event", "service", "commence")
-        : makeInternalRegistryAPIwithParams("event", "draft", "reset");
-      method = isApprove ? "POST" : "PUT";
+        apiUrl = makeInternalRegistryAPIwithParams("event", "draft", "reset");
+        method = "PUT";
+        break;
+      default:
+        throw new Error("Invalid action");
     }
 
     startLoading();
@@ -194,8 +199,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.triggerRefresh();
     }
   };
-
-
 
   return (
     <>
