@@ -22,6 +22,7 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { openDrawer } from "state/drawer-component-slice";
 import { useDispatch } from "react-redux";
 import useOperationStatus from "hooks/useOperationStatus";
+import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -431,34 +432,7 @@ export default function RegistryRowAction(
                 )}
             </>
           )}
-          {props.lifecycleStage !== "general" && <div className="flex gap-2 items-baseline">
-            <Button
-              leftIcon="content_copy"
-              label={dict.action.draftTemplate}
-              variant="ghost"
-              disabled={isLoading}
-              onClick={onDraftTemplate}
-            />
-            <div className="flex items-center gap-2">
-              <Button
-                leftIcon="remove"
-                size="icon"
-                variant="outline"
-                disabled={isLoading || recurrenceCount <= 1}
-                onClick={() => setRecurrenceCount(prev => prev - 1)}
-                className="border-dashed"
-              />
-              <span>{recurrenceCount}</span>
-              <Button
-                leftIcon="add"
-                size="icon"
-                variant="outline"
-                disabled={isLoading}
-                onClick={() => setRecurrenceCount(prev => prev + 1)}
-                className="border-dashed"
-              />
-            </div>
-          </div>}
+          {props.lifecycleStage !== "general" && <DraftTemplateButton onDraftTemplate={onDraftTemplate} recurrenceCount={recurrenceCount} setRecurrenceCount={setRecurrenceCount} />}
         </div>
       </PopoverActionButton>
     </div>

@@ -46,6 +46,7 @@ import { JsonObject } from "types/json";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { AgentResponseBody } from "types/backend-agent";
 import { toast } from "ui/interaction/action/toast/toast";
+import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 
 interface RegistryTableProps {
   recordType: string;
@@ -260,35 +261,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           />}
                                         </>
                                       }
-                                      <div className="flex gap-2 items-baseline">
-                                        <Button
-                                          leftIcon="content_copy"
-                                          label={dict.action.draftTemplate}
-                                          variant="outline"
-                                          disabled={isLoading}
-                                          onClick={() => handleBulkAction("duplicate")}
-                                          className="border-dashed"
-                                        />
-                                        <div className="flex items-center gap-2">
-                                          <Button
-                                            leftIcon="remove"
-                                            size="icon"
-                                            variant="outline"
-                                            disabled={isLoading || recurrenceCount <= 1}
-                                            onClick={() => setRecurrenceCount(prev => prev - 1)}
-                                            className="border-dashed"
-                                          />
-                                          <span>{recurrenceCount}</span>
-                                          <Button
-                                            leftIcon="add"
-                                            size="icon"
-                                            variant="outline"
-                                            disabled={isLoading}
-                                            onClick={() => setRecurrenceCount(prev => prev + 1)}
-                                            className="border-dashed"
-                                          />
-                                        </div>
-                                      </div>
+                                      <DraftTemplateButton
+                                        recurrenceCount={recurrenceCount}
+                                        setRecurrenceCount={setRecurrenceCount}
+                                        onDraftTemplate={() => {
+                                          handleBulkAction("duplicate");
+                                        }}
+                                      />
                                     </div>
                                   </PopoverActionButton>
                                 }
