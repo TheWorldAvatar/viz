@@ -56,6 +56,7 @@ export default function RegistryRowAction(
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
+  const [recurrenceCount, setRecurrenceCount] = React.useState<number>(1);
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
 
@@ -68,6 +69,20 @@ export default function RegistryRowAction(
       "event",
       "service",
       "commence"
+    );
+    submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
+  };
+
+  const onDraftTemplate: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const reqBody: JsonObject = {
+      id: props.row.id,
+      type: props.recordType,
+      recurrence: recurrenceCount
+    };
+    const url: string = makeInternalRegistryAPIwithParams(
+      "event",
+      "draft",
+      "copy"
     );
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
@@ -165,7 +180,6 @@ export default function RegistryRowAction(
           isOpen={isActionMenuOpen}
           setIsOpen={setIsActionMenuOpen}
         >
-
           <div className="flex flex-col space-y-8 lg:space-y-4 ">
             {isSubmissionOrGeneralPage && (
               <>
@@ -439,6 +453,34 @@ export default function RegistryRowAction(
                   )}
               </>
             )}
+            {props.lifecycleStage !== "general" && <div className="flex gap-2 items-baseline">
+              <Button
+                leftIcon="content_copy"
+                label={dict.action.draftTemplate}
+                variant="ghost"
+                disabled={isLoading}
+                onClick={onDraftTemplate}
+              />
+              <div className="flex items-center gap-2">
+                <Button
+                  leftIcon="remove"
+                  size="icon"
+                  variant="outline"
+                  disabled={isLoading || recurrenceCount <= 1}
+                  onClick={() => setRecurrenceCount(prev => prev - 1)}
+                  className="border-dashed"
+                />
+                <span>{recurrenceCount}</span>
+                <Button
+                  leftIcon="add"
+                  size="icon"
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => setRecurrenceCount(prev => prev + 1)}
+                  className="border-dashed"
+                />
+              </div>
+            </div>}
           </div>
         </PopoverActionButton>
       )}
