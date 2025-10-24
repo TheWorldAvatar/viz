@@ -142,336 +142,325 @@ export default function RegistryRowAction(
     }
   };
 
-  const showsExpandedTask: boolean =
-    (props.lifecycleStage === "report" ||
-      props.lifecycleStage === "tasks" ||
-      props.lifecycleStage === "outstanding" ||
-      props.lifecycleStage === "scheduled" ||
-      props.lifecycleStage === "closed") &&
-    !(
-      props.row?.status?.toLowerCase() === "issue" ||
-      props.row?.status?.toLowerCase() === "cancelled"
-    );
+
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == "pending" || props.lifecycleStage == "general";
 
   return (
     <div aria-label="Actions">
-      {(!isSubmissionOrGeneralPage || !showsExpandedTask) && (
-        <PopoverActionButton
-          placement="bottom-start"
-          leftIcon="more_vert"
-          variant="ghost"
-          tooltipText={dict.title.actions}
-          size="icon"
-          className="ml-2"
-          isOpen={isActionMenuOpen}
-          setIsOpen={setIsActionMenuOpen}
-        >
-          <div className="flex flex-col space-y-8 lg:space-y-4 ">
-            {isSubmissionOrGeneralPage && (
-              <>
-                <Button
-                  variant="ghost"
-                  leftIcon="open_in_new"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
-                  label={parseWordsForLabels(dict.action.view)}
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    if (isSubmissionOrGeneralPage) {
-                      handleClickView();
-                    } else {
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "default",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
-                    }
-                  }}
-                />
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.operation) &&
-                  props.lifecycleStage === "active" && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="cancel"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.cancel}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        props.setTask(
-                          genTaskOption(
-                            recordId,
-                            props.row,
-                            "cancel",
-                            dict.title.scheduleType
-                          )
-                        );
-                        dispatch(openDrawer());
-                      }}
-                    />
-                  )}
-
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.operation) &&
-                  props.lifecycleStage === "pending" && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="done_outline"
-                      disabled={isLoading}
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      label={dict.action.approve}
-                      onClick={onApproval}
-                    />
-                  )}
-
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.sales) &&
-                  props.lifecycleStage === "pending" &&
-                  props.row?.status?.toLowerCase() === "amended" && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="published_with_changes"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.resubmit}
-                      onClick={onResubmissionForApproval}
-                    />
-                  )}
-
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.sales) &&
-                  isSubmissionOrGeneralPage && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="edit"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.edit}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        router.push(
-                          `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
-                        );
-                      }}
-                    />
-                  )}
-
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.sales) &&
-                  isSubmissionOrGeneralPage && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="delete"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.delete}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        router.push(
-                          `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
-                        );
-                      }}
-                    />
-                  )}
-              </>
-            )}
-            {!isSubmissionOrGeneralPage && (
-              <>
-                <Button
-                  variant="ghost"
-                  leftIcon="open_in_new"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
-                  label={parseWordsForLabels(dict.action.view)}
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    if (isSubmissionOrGeneralPage) {
-                      handleClickView();
-                    } else {
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "default",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
-                    }
-                  }}
-                />
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.completeTask) &&
-                  (props.lifecycleStage === "outstanding" ||
-                    props.lifecycleStage === "closed") &&
-                  (props.row?.status?.toLowerCase() === "assigned" ||
-                    props.row?.status?.toLowerCase() === "completed") && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="done_outline"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.complete}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        props.setTask(
-                          genTaskOption(
-                            recordId,
-                            props.row,
-                            "complete",
-                            dict.title.scheduleType
-                          )
-                        );
-                        dispatch(openDrawer());
-                      }}
-                    />
-                  )}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.operation) &&
-                  props.row?.status?.toLowerCase() !== "issue" &&
-                  props.row?.status?.toLowerCase() !== "cancelled" && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="assignment"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.dispatch}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        props.setTask(
-                          genTaskOption(
-                            recordId,
-                            props.row,
-                            "dispatch",
-                            dict.title.scheduleType
-                          )
-                        );
-                        dispatch(openDrawer());
-                      }}
-                    />
-                  )}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.operation) &&
-                  (props.lifecycleStage === "outstanding" ||
-                    props.lifecycleStage === "scheduled") &&
-                  compareDates(props.row?.date, true) &&
-                  (props.row?.status?.toLowerCase() === "new" ||
-                    props.row?.status?.toLowerCase() === "assigned") && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="cancel"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      disabled={isLoading}
-                      label={dict.action.cancel}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        props.setTask(
-                          genTaskOption(
-                            recordId,
-                            props.row,
-                            "cancel",
-                            dict.title.scheduleType
-                          )
-                        );
-                        dispatch(openDrawer());
-                      }}
-                    />
-                  )}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.reportTask) &&
-                  props.lifecycleStage === "outstanding" &&
-                  compareDates(props.row?.date, false) &&
-                  (props.row?.status?.toLowerCase() === "new" ||
-                    props.row?.status?.toLowerCase() === "assigned") && (
-                    <Button
-                      variant="ghost"
-                      leftIcon="report"
-                      size="md"
-                      iconSize="medium"
-                      className="w-full justify-start"
-                      label={dict.action.report}
-                      disabled={isLoading}
-                      onClick={() => {
-                        setIsActionMenuOpen(false);
-                        props.setTask(
-                          genTaskOption(
-                            recordId,
-                            props.row,
-                            "report",
-                            dict.title.scheduleType
-                          )
-                        );
-                        dispatch(openDrawer());
-                      }}
-                    />
-                  )}
-              </>
-            )}
-            {props.lifecycleStage !== "general" && <div className="flex gap-2 items-baseline">
+      <PopoverActionButton
+        placement="bottom-start"
+        leftIcon="more_vert"
+        variant="ghost"
+        tooltipText={dict.title.actions}
+        size="icon"
+        className="ml-2"
+        isOpen={isActionMenuOpen}
+        setIsOpen={setIsActionMenuOpen}
+      >
+        <div className="flex flex-col space-y-8 lg:space-y-4 ">
+          {isSubmissionOrGeneralPage && (
+            <>
               <Button
-                leftIcon="content_copy"
-                label={dict.action.draftTemplate}
                 variant="ghost"
-                disabled={isLoading}
-                onClick={onDraftTemplate}
+                leftIcon="open_in_new"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={parseWordsForLabels(dict.action.view)}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  if (isSubmissionOrGeneralPage) {
+                    handleClickView();
+                  } else {
+                    props.setTask(
+                      genTaskOption(
+                        recordId,
+                        props.row,
+                        "default",
+                        dict.title.scheduleType
+                      )
+                    );
+                    dispatch(openDrawer());
+                  }
+                }}
               />
-              <div className="flex items-center gap-2">
-                <Button
-                  leftIcon="remove"
-                  size="icon"
-                  variant="outline"
-                  disabled={isLoading || recurrenceCount <= 1}
-                  onClick={() => setRecurrenceCount(prev => prev - 1)}
-                  className="border-dashed"
-                />
-                <span>{recurrenceCount}</span>
-                <Button
-                  leftIcon="add"
-                  size="icon"
-                  variant="outline"
-                  disabled={isLoading}
-                  onClick={() => setRecurrenceCount(prev => prev + 1)}
-                  className="border-dashed"
-                />
-              </div>
-            </div>}
-          </div>
-        </PopoverActionButton>
-      )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                props.lifecycleStage === "active" && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="cancel"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.cancel}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "cancel",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                props.lifecycleStage === "pending" && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="done_outline"
+                    disabled={isLoading}
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.approve}
+                    onClick={onApproval}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.sales) &&
+                props.lifecycleStage === "pending" &&
+                props.row?.status?.toLowerCase() === "amended" && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="published_with_changes"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.resubmit}
+                    onClick={onResubmissionForApproval}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.sales) &&
+                isSubmissionOrGeneralPage && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="edit"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.edit}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      router.push(
+                        `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
+                      );
+                    }}
+                  />
+                )}
+
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.sales) &&
+                isSubmissionOrGeneralPage && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="delete"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.delete}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      router.push(
+                        `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
+                      );
+                    }}
+                  />
+                )}
+            </>
+          )}
+          {!isSubmissionOrGeneralPage && (
+            <>
+              <Button
+                variant="ghost"
+                leftIcon="open_in_new"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={parseWordsForLabels(dict.action.view)}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  if (isSubmissionOrGeneralPage) {
+                    handleClickView();
+                  } else {
+                    props.setTask(
+                      genTaskOption(
+                        recordId,
+                        props.row,
+                        "default",
+                        dict.title.scheduleType
+                      )
+                    );
+                    dispatch(openDrawer());
+                  }
+                }}
+              />
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.completeTask) &&
+                (props.lifecycleStage === "outstanding" ||
+                  props.lifecycleStage === "closed") &&
+                (props.row?.status?.toLowerCase() === "assigned" ||
+                  props.row?.status?.toLowerCase() === "completed") && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="done_outline"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.complete}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "complete",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                props.row?.status?.toLowerCase() !== "issue" &&
+                props.row?.status?.toLowerCase() !== "cancelled" && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="assignment"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.dispatch}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "dispatch",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
+                (props.lifecycleStage === "outstanding" ||
+                  props.lifecycleStage === "scheduled") &&
+                compareDates(props.row?.date, true) &&
+                (props.row?.status?.toLowerCase() === "new" ||
+                  props.row?.status?.toLowerCase() === "assigned") && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="cancel"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.cancel}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "cancel",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.reportTask) &&
+                props.lifecycleStage === "outstanding" &&
+                compareDates(props.row?.date, false) &&
+                (props.row?.status?.toLowerCase() === "new" ||
+                  props.row?.status?.toLowerCase() === "assigned") && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="report"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    label={dict.action.report}
+                    disabled={isLoading}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      props.setTask(
+                        genTaskOption(
+                          recordId,
+                          props.row,
+                          "report",
+                          dict.title.scheduleType
+                        )
+                      );
+                      dispatch(openDrawer());
+                    }}
+                  />
+                )}
+            </>
+          )}
+          {props.lifecycleStage !== "general" && <div className="flex gap-2 items-baseline">
+            <Button
+              leftIcon="content_copy"
+              label={dict.action.draftTemplate}
+              variant="ghost"
+              disabled={isLoading}
+              onClick={onDraftTemplate}
+            />
+            <div className="flex items-center gap-2">
+              <Button
+                leftIcon="remove"
+                size="icon"
+                variant="outline"
+                disabled={isLoading || recurrenceCount <= 1}
+                onClick={() => setRecurrenceCount(prev => prev - 1)}
+                className="border-dashed"
+              />
+              <span>{recurrenceCount}</span>
+              <Button
+                leftIcon="add"
+                size="icon"
+                variant="outline"
+                disabled={isLoading}
+                onClick={() => setRecurrenceCount(prev => prev + 1)}
+                className="border-dashed"
+              />
+            </div>
+          </div>}
+        </div>
+      </PopoverActionButton>
     </div>
   );
 }
