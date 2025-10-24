@@ -157,19 +157,7 @@ export default function RegistryRowAction(
 
   return (
     <div aria-label="Actions">
-      {!isSubmissionOrGeneralPage && !showsExpandedTask && (
-        <Button
-          variant="ghost"
-          leftIcon="open_in_new"
-          size="icon"
-          className="ml-2"
-          iconSize="medium"
-          tooltipText={parseWordsForLabels(dict.action.view)}
-          tooltipPosition="right"
-          onClick={handleClickView}
-        />
-      )}
-      {(isSubmissionOrGeneralPage || showsExpandedTask) && (
+      {(!isSubmissionOrGeneralPage || !showsExpandedTask) && (
         <PopoverActionButton
           placement="bottom-start"
           leftIcon="more_vert"
