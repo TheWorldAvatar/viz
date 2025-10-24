@@ -74,7 +74,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = React.useState<boolean>(false);
-  const [recurrenceCount, setRecurrenceCount] = React.useState<number>(1);
+
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
     props.tableDescriptor.data,
@@ -133,7 +133,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-  const handleBulkAction = async (action: "approve" | "resubmit" | "duplicate") => {
+  const handleBulkAction = async (action: "approve" | "resubmit") => {
     const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
 
     if (selectedRows.length === 0) {
@@ -147,15 +147,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     let method: string;
 
     switch (action) {
-      case "duplicate":
-        reqBody = {
-          id: contractIds,
-          type: props.recordType,
-          recurrence: recurrenceCount
-        };
-        apiUrl = makeInternalRegistryAPIwithParams("event", "draft", "copy");
-        method = "POST";
-        break;
       case "approve":
         reqBody = {
           contract: contractIds,
@@ -174,7 +165,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       default:
         throw new Error("Invalid action");
     }
-
     startLoading();
     const res = await fetch(
       apiUrl,
@@ -262,11 +252,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                         </>
                                       }
                                       <DraftTemplateButton
-                                        recurrenceCount={recurrenceCount}
-                                        setRecurrenceCount={setRecurrenceCount}
-                                        onDraftTemplate={() => {
-                                          handleBulkAction("duplicate");
-                                        }}
+                                        tableDescriptor={props.tableDescriptor}
+                                        recordType={props.recordType}
+                                        triggerRefresh={props.triggerRefresh}
                                       />
                                     </div>
                                   </PopoverActionButton>

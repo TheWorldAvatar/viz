@@ -57,7 +57,6 @@ export default function RegistryRowAction(
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
-  const [recurrenceCount, setRecurrenceCount] = React.useState<number>(1);
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
 
@@ -70,20 +69,6 @@ export default function RegistryRowAction(
       "event",
       "service",
       "commence"
-    );
-    submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
-  };
-
-  const onDraftTemplate: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const reqBody: JsonObject = {
-      id: props.row.id,
-      type: props.recordType,
-      recurrence: recurrenceCount
-    };
-    const url: string = makeInternalRegistryAPIwithParams(
-      "event",
-      "draft",
-      "copy"
     );
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
@@ -432,7 +417,7 @@ export default function RegistryRowAction(
                 )}
             </>
           )}
-          {props.lifecycleStage !== "general" && <DraftTemplateButton onDraftTemplate={onDraftTemplate} recurrenceCount={recurrenceCount} setRecurrenceCount={setRecurrenceCount} />}
+          {props.lifecycleStage !== "general" && <DraftTemplateButton rowId={props.row.id} recordType={props.recordType} triggerRefresh={props.triggerRefresh} />}
         </div>
       </PopoverActionButton>
     </div>
