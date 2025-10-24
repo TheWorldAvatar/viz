@@ -236,18 +236,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           <Button
                                             leftIcon="done_outline"
                                             label={dict.action.approve}
-                                            variant="outline"
+                                            variant="ghost"
                                             disabled={isLoading}
                                             onClick={() => handleBulkAction("approve")}
-                                            className="border-dashed"
                                           />
                                           {hasAmendedStatus && <Button
                                             leftIcon="published_with_changes"
                                             label={dict.action.resubmit}
-                                            variant="outline"
+                                            variant="ghost"
                                             disabled={isLoading}
                                             onClick={() => handleBulkAction("resubmit")}
-                                            className="border-dashed"
                                           />}
                                         </>
                                       }
