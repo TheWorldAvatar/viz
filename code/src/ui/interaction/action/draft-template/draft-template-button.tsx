@@ -13,8 +13,9 @@ import { TableDescriptor } from "hooks/table/useTable";
 interface DraftTemplateButtonProps {
     triggerRefresh: () => void;
     recordType: string;
-    rowId?: string;
+    rowId?: string[];
     tableDescriptor?: TableDescriptor;
+    resetRowSelection?: () => void;
 }
 
 /**
@@ -24,6 +25,7 @@ interface DraftTemplateButtonProps {
  *  @param {string} recordType The type of the record.
  *  @param {string} rowId The ID of the row to draft the template for.
  *  @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ *  @param resetRowSelection A function to reset the row selection in the table.
  */
 
 export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonProps>) {
@@ -32,19 +34,9 @@ export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonP
     const [recurrenceCount, setRecurrenceCount] = useState<number>(1);
 
     const handleDraftTemplate: React.MouseEventHandler<HTMLButtonElement> = async () => {
-        // Determine contract IDs based on whether it's bulk or single row action
-        const contractIds: string[] = props.tableDescriptor
-            ? props.tableDescriptor.table.getSelectedRowModel().rows.map(row => row.original.id)
-            : props.rowId
-                ? [props.rowId]
-                : [];
-
-        if (contractIds.length === 0) {
-            return;
-        }
 
         const reqBody: JsonObject = {
-            id: contractIds,
+            id: props.rowId,
             type: props.recordType,
             recurrence: recurrenceCount
         };
@@ -69,40 +61,27 @@ export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonP
         );
 
         if (!responseBody?.error) {
-            // Clear selection if bulk action, and refresh table
-            if (props.tableDescriptor) {
-                props.tableDescriptor.table.resetRowSelection();
-            }
-            props.triggerRefresh?.();
+            props.resetRowSelection?.();
+            props.triggerRefresh();
         }
-
     }
 
     return (
-        <div className="flex gap-2 items-baseline">
+        <div className="flex gap-1 items-center">
             <Button
                 leftIcon="content_copy"
-                label={dict.action.draftTemplate + " x " + recurrenceCount}
+                label={dict.action.draftTemplate + " x "}
                 variant="ghost"
                 disabled={isLoading}
                 onClick={handleDraftTemplate}
             />
-            <div className="flex items-center gap-2">
-                <Button
-                    leftIcon="remove"
-                    size="icon"
-                    variant="outline"
-                    disabled={isLoading || recurrenceCount <= 1}
-                    onClick={() => setRecurrenceCount(prev => prev - 1)}
-                    className="border-dashed"
-                />
-                <Button
-                    leftIcon="add"
-                    size="icon"
-                    variant="outline"
+            <div className="flex justify-center items-center ">
+                <input type="number"
+                    min={1}
+                    value={recurrenceCount}
+                    onChange={(e) => setRecurrenceCount(Number(e.target.value))}
+                    className="w-12 p-2 border border-border rounded-md text-sm text-foreground bg-muted"
                     disabled={isLoading}
-                    onClick={() => setRecurrenceCount(prev => prev + 1)}
-                    className="border-dashed"
                 />
             </div>
         </div>

@@ -417,7 +417,7 @@ export default function RegistryRowAction(
                 )}
             </>
           )}
-          {props.lifecycleStage !== "general" && <DraftTemplateButton rowId={props.row.id} recordType={props.recordType} triggerRefresh={props.triggerRefresh} />}
+          {props.lifecycleStage !== "general" && <DraftTemplateButton rowId={[props.row.id]} recordType={props.recordType} triggerRefresh={props.triggerRefresh} />}
         </div>
       </PopoverActionButton>
     </div>

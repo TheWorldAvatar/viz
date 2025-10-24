@@ -250,9 +250,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                         </>
                                       }
                                       <DraftTemplateButton
-                                        tableDescriptor={props.tableDescriptor}
+                                        rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map(row => row.original.id)}
                                         recordType={props.recordType}
                                         triggerRefresh={props.triggerRefresh}
+                                        resetRowSelection={props.tableDescriptor.table.resetRowSelection}
                                       />
                                     </div>
                                   </PopoverActionButton>
