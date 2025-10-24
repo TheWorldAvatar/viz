@@ -132,7 +132,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-  const handleBulkAction = async (action: "approve" | "resubmit") => {
+  const handleBulkAction = async (action: "approve" | "resubmit" | "duplicate") => {
     const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
 
     if (selectedRows.length === 0) {
@@ -141,68 +141,39 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
     const contractIds: string[] = selectedRows.map(row => row.original.id);
 
-    const isApprove: boolean = action === "approve";
+    let reqBody: JsonObject;
+    let apiUrl: string;
+    let method: string;
 
-    const reqBody: JsonObject = isApprove
-      ? {
-        contract: contractIds,
-        remarks: `${contractIds.length} contract(s) approved successfully!`,
-      }
-      : {
-        contract: contractIds,
+    if (action === "duplicate") {
+      reqBody = {
+        id: contractIds,
+        type: props.recordType,
+        recurrence: recurrenceCount
       };
-
-    const apiUrl = isApprove
-      ? makeInternalRegistryAPIwithParams("event", "service", "commence")
-      : makeInternalRegistryAPIwithParams("event", "draft", "reset");
-
-    const method: string = isApprove ? "POST" : "PUT";
+      apiUrl = makeInternalRegistryAPIwithParams("event", "draft", "copy");
+      method = "POST";
+    } else {
+      const isApprove: boolean = action === "approve";
+      reqBody = isApprove
+        ? {
+          contract: contractIds,
+          remarks: `${contractIds.length} contract(s) approved successfully!`,
+        }
+        : {
+          contract: contractIds,
+        };
+      apiUrl = isApprove
+        ? makeInternalRegistryAPIwithParams("event", "service", "commence")
+        : makeInternalRegistryAPIwithParams("event", "draft", "reset");
+      method = isApprove ? "POST" : "PUT";
+    }
 
     startLoading();
     const res = await fetch(
       apiUrl,
       {
         method,
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify(reqBody),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
-    stopLoading();
-    toast(
-      responseBody?.data?.message || responseBody?.error?.message,
-      responseBody?.error ? "error" : "success"
-    );
-
-    if (!responseBody?.error) {
-      // Clear selection and refresh table
-      props.tableDescriptor.table.resetRowSelection();
-      props.triggerRefresh();
-    }
-  };
-
-  const handleDuplicateContract: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const selectedRows = props.tableDescriptor.table.getSelectedRowModel().rows;
-
-    if (selectedRows.length === 0) {
-      return;
-    }
-
-    const contractIds: string[] = selectedRows.map(row => row.original.id);
-
-    const reqBody: JsonObject = {
-      id: contractIds,
-      type: props.recordType,
-      recurrence: recurrenceCount
-    };
-
-    startLoading();
-    const res = await fetch(makeInternalRegistryAPIwithParams("event", "draft", "copy"),
-      {
-        method: "POST",
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
         credentials: "same-origin",
@@ -292,7 +263,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           label={dict.action.draftTemplate}
                                           variant="outline"
                                           disabled={isLoading}
-                                          onClick={handleDuplicateContract}
+                                          onClick={() => handleBulkAction("duplicate")}
                                           className="border-dashed"
                                         />
                                         <div className="flex items-center gap-2">
