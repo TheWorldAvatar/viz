@@ -13,6 +13,7 @@ interface MultivalueDropdownProps {
   toggleAll?: boolean;
   isActive?: boolean;
   isClearable?: boolean;
+  initialSelectedOptions?: SelectOption[];
   setControlledSelectedOptions?: React.Dispatch<
     React.SetStateAction<SelectOption[]>
   >;
@@ -26,6 +27,7 @@ interface MultivalueDropdownProps {
  * @param {boolean} toggleAll - Provides an additional option to select all options. Defaults to false.
  * @param {boolean} isActive - Renders different style to indicate the input is currently active. Defaults to false.
  * @param {boolean} isClearable - All values in the dropdown can be cleared with an additional input. Defaults to true.
+ * @param {SelectOption[]} initialSelectedOptions - Optional initial value for the selected options.
  * @param setControlledSelectedOptions - Optional dispatch method to update selected options for further processing.
  */
 export default function MultivalueSelector(
@@ -40,8 +42,13 @@ export default function MultivalueSelector(
   const defaultOptions: SelectOption[] = props.toggleAll
     ? [selectAllOption, ...props.options]
     : props.options;
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(
-    props.toggleAll
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(() => {
+    // Use initial value if provided
+    if (props.initialSelectedOptions) {
+      return props.initialSelectedOptions;
+    }
+    // Otherwise use default initialization
+    return props.toggleAll
       ? defaultOptions.filter(
           (option) =>
             option.value != "id" &&
@@ -49,8 +56,8 @@ export default function MultivalueSelector(
             option.value != "service_location" &&
             option.value != "select-all"
         )
-      : []
-  );
+      : [];
+  });
 
   // Notify parent on initial mount if toggleAll is enabled
   // This useEffect updates the null state (In Column toggle component) on the first render

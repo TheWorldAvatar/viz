@@ -25,7 +25,28 @@ interface HeaderCellProps {
 
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(null);
+
+  // Initialize selectedOptions from the existing filter value if it exists
+  const initialFilterValue = props.header.column.getFilterValue() as string[];
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(() => {
+    if (
+      initialFilterValue &&
+      Array.isArray(initialFilterValue) &&
+      initialFilterValue.length > 0
+    ) {
+      return initialFilterValue.map((value) => {
+        const label =
+          props.header.id.toLowerCase() === "status"
+            ? dict.title[value.toLowerCase()]
+            : value;
+        return {
+          label: label,
+          value: value,
+        };
+      });
+    }
+    return null;
+  });
 
   useEffect(() => {
     if (selectedOptions) {
@@ -47,9 +68,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
         <div className="flex flex-col gap-2">
           <div
             className={`flex items-center gap-2 ${props.header.column.getCanSort()
-              ? "cursor-pointer select-none "
-              : ""
-              }`}
+                ? "cursor-pointer select-none"
+                : ""
+            }`}
             onClick={props.header.column.getToggleSortingHandler()}
             aria-label={
               props.header.column.getCanSort()
@@ -79,7 +100,6 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 // For status column, show translated label but use actual value
                 // This is because the filter function checks against actual value, not the label
                 const label: string = props.header.id.toLowerCase() === "status" ? dict.title[col.toLowerCase()] : col;
-
                 return {
                   label: label,
                   value: col,
@@ -90,6 +110,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 props.header.column.getFilterValue() !== undefined &&
                 (props.header.column.getFilterValue() as string[])?.length > 0
               }
+              initialSelectedOptions={selectedOptions}
               setControlledSelectedOptions={setSelectedOptions}
             />
           </div>
