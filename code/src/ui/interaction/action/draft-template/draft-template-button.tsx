@@ -8,33 +8,28 @@ import { JsonObject } from "types/json";
 import Button from "ui/interaction/button";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { toast } from "../toast/toast";
-import { TableDescriptor } from "hooks/table/useTable";
 
 interface DraftTemplateButtonProps {
-    triggerRefresh: () => void;
     recordType: string;
-    rowId?: string[];
-    tableDescriptor?: TableDescriptor;
+    rowId: string[];
+    triggerRefresh: () => void;
     resetRowSelection?: () => void;
 }
 
 /**
  * This component renders a button to draft templates for single or multiple records.
  *
- *  @param triggerRefresh A function to refresh the table when required.
  *  @param {string} recordType The type of the record.
  *  @param {string} rowId The ID of the row to draft the template for.
- *  @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
- *  @param resetRowSelection A function to reset the row selection in the table.
+ *  @param triggerRefresh A function to refresh the table when required.
+ *  @param resetRowSelection An optional function to reset the row selection in the table.
  */
-
 export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonProps>) {
     const dict: Dictionary = useDictionary();
     const { isLoading, startLoading, stopLoading } = useOperationStatus();
     const [recurrenceCount, setRecurrenceCount] = useState<number>(1);
 
     const handleDraftTemplate: React.MouseEventHandler<HTMLButtonElement> = async () => {
-
         const reqBody: JsonObject = {
             id: props.rowId,
             type: props.recordType,
