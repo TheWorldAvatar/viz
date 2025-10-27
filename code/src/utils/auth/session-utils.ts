@@ -12,6 +12,7 @@ const hasPermitionsInitial: HasPermissions = {
   invoice: false,
   sales: false,
   operation: false,
+  draftTemplate: false,
   viewTask: false,
   completeTask: false,
   completeAndDuplicateTask: false,
@@ -64,6 +65,9 @@ export function parsePermissions(roles: string[]): PermissionScheme {
     permissionScheme.hasPermissions.viewTask = true;
     permissionScheme.hasPermissions.completeTask = true;
     permissionScheme.hasPermissions.reportTask = true;
+  }
+  if (roles.includes("draft-template")) {
+    permissionScheme.hasPermissions.draftTemplate = true;
   }
   if (roles.includes("duplicate-complete")) {
     permissionScheme.hasPermissions.completeAndDuplicateTask = true;

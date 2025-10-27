@@ -1,28 +1,28 @@
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDictionary } from "hooks/useDictionary";
+import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
-import { Routes } from "io/config/routes";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "state/drawer-component-slice";
 import { PermissionScheme } from "types/auth";
+import { AgentResponseBody } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryTaskOption,
   RegistryTaskType,
 } from "types/form";
+import { JsonObject } from "types/json";
+import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import { Status } from "ui/text/status/status";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "hooks/useDictionary";
-import { AgentResponseBody } from "types/backend-agent";
-import { Dictionary } from "types/dictionary";
-import { JsonObject } from "types/json";
-import { toast } from "ui/interaction/action/toast/toast";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { openDrawer } from "state/drawer-component-slice";
-import { useDispatch } from "react-redux";
-import useOperationStatus from "hooks/useOperationStatus";
-import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -417,7 +417,12 @@ export default function RegistryRowAction(
                 )}
             </>
           )}
-          {props.lifecycleStage !== "general" && <DraftTemplateButton rowId={[props.row.id]} recordType={props.recordType} triggerRefresh={props.triggerRefresh} />}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.draftTemplate) &&
+            props.lifecycleStage !== "general" &&
+            <DraftTemplateButton rowId={[props.row.id]} recordType={props.recordType} triggerRefresh={props.triggerRefresh} />
+          }
         </div>
       </PopoverActionButton>
     </div>
