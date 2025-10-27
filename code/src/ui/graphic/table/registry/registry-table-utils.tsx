@@ -12,6 +12,7 @@ import {
 } from "types/form";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 
 export type TableData = {
   data: FieldValues[];
@@ -22,15 +23,15 @@ export type TableData = {
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
- * @param {string} translatedBlankText The translated blank text.
+ * @param { Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], translatedBlankText: string): TableData {
+export function parseDataForTable(instances: RegistryFieldValues[], titleDict: Record<string, string>): TableData {
   const results: TableData = {
     data: [],
     columns: [],
   };
   if (instances?.length > 0) {
-    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(translatedBlankText);
+    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
     let columnNames: Set<string> = new Set<string>();
     let maxFieldLength: number = 0;
     instances.map(instance => {
@@ -44,10 +45,15 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
         } else {
           flattenInstance[field] = fieldValue?.value;
         }
+        // Update last modified field to translated title format
+        if (field === "lastModified") {
+          flattenInstance[titleDict.lastModified] = new Date(flattenInstance[field]).toLocaleString();
+          delete flattenInstance[field]
+        }
         // Whenever the number of fields in a row exceeds the current max number of fields,
         // add column field to a temporary set
         if (fields.length > maxFieldLength) {
-          tempColumns.add(field);
+          tempColumns.add(field === "lastModified" ? titleDict.lastModified : field);
         }
       });
       results.data.push(flattenInstance);
@@ -76,13 +82,12 @@ export function parseDataForTable(instances: RegistryFieldValues[], translatedBl
           }
 
           return (
-            <div className="text-foreground">
-              {parseWordsForLabels(value)}
-            </div>
+            <ExpandableTextCell text={parseWordsForLabels(value)} maxLengthText={80} />
           );
         },
         filterFn: multiSelectFilter,
         size: minWidth,
+
         enableSorting: true,
       });
     }
@@ -118,10 +123,11 @@ export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnO
  * @param {Dictionary} dict Dictionary translations.
  */
 export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
-  // Return translated status label if header is status. 
-  return rows.flatMap((row) => header == "status" ? dict.title[(row.getValue(header) as string).replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())]
-    // Else return the value or default to blank value
-    : row.getValue(header) ?? dict.title.blank);
+  // Return the actual row value (not translated label) for proper filtering
+  // This is because the filter function checks against actual value, not the label
+  // e.g. status value is "new" but label is "open"
+  // So if we return the label here, filtering won't work as expected
+  return rows.flatMap((row) => row.getValue(header) ?? dict.title.blank);
 }
 
 /**

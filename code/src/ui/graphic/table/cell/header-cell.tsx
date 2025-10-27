@@ -12,6 +12,7 @@ import TableCell from "./table-cell";
 interface HeaderCellProps {
   options: string[];
   header: Header<FieldValues, unknown>;
+  resetRowSelection?: () => void;
 }
 
 /**
@@ -19,6 +20,7 @@ interface HeaderCellProps {
  *
  * @param {string[]} options The list of values available for filtering.
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
+ * @param resetRowSelection Optional row selection function to reset row when unused.
  */
 
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
@@ -31,6 +33,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
         selectedOptions.map((opt) => opt.value)
       );
     }
+    if (props.resetRowSelection) {
+      props.resetRowSelection();
+    }
   }, [selectedOptions]);
 
   return (
@@ -41,11 +46,10 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div
-            className={`flex items-center gap-2 ${
-              props.header.column.getCanSort()
-                ? "cursor-pointer select-none "
-                : ""
-            }`}
+            className={`flex items-center gap-2 ${props.header.column.getCanSort()
+              ? "cursor-pointer select-none "
+              : ""
+              }`}
             onClick={props.header.column.getToggleSortingHandler()}
             aria-label={
               props.header.column.getCanSort()
@@ -72,8 +76,12 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             <MultivalueSelector
               title={dict.action.filter}
               options={props.options.sort().map((col) => {
+                // For status column, show translated label but use actual value
+                // This is because the filter function checks against actual value, not the label
+                const label: string = props.header.id.toLowerCase() === "status" ? dict.title[col.toLowerCase()] : col;
+
                 return {
-                  label: col,
+                  label: label,
                   value: col,
                 };
               })}

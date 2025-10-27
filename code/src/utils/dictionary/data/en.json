@@ -34,6 +34,7 @@
     "report": "Report",
     "submit": "Submit",
     "submitAndDuplicate": "Submit and duplicate",
+    "draftTemplate": "Draft template",
     "save": "Save",
     "return": "Return",
     "approve": "Approve",
@@ -43,7 +44,9 @@
     "selectLocation": "Select location",
     "clickIncrease": "Click to increase",
     "clickDecrease": "Click to decrease",
-    "clearAllFilters": "Clear all filters"
+    "clearAllFilters": "Clear all filters",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "form": {
     "singleService": "Single Service",
@@ -148,7 +151,10 @@
     "minLength": "Input requires at least {replace} letters!",
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
-    "patternFollowed": "This field must follow the pattern {replace}!"
+    "patternFollowed": "This field must follow the pattern {replace}!",
+    "processingRequest": "Processing request..."
+
+
   },
   "nav": {
     "caption": {
@@ -190,6 +196,7 @@
     "customiseCol": "Show/Hide Columns",
     "description": "Description",
     "serviceType": "Service Type",
+    "lastModified": "Last modified",
     "available": "available",
     "unavailable": "unavailable",
     "active": "active",
@@ -209,6 +216,7 @@
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
     "success": "Success",
-    "error": "Error"
+    "error": "Error",
+    "loading": "Loading"
   }
 }

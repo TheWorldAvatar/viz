@@ -87,9 +87,6 @@ export default function BranchFormSection(
     // Update form branch fields and values
     const nodeState: FieldValues = {};
     parsePropertyShapeOrGroupList(nodeState, matchingNode.property);
-    Object.keys(nodeState).forEach((nodeField) => {
-      props.form.setValue(nodeField, nodeState[nodeField]);
-    });
     setSelectedModel(matchingNode);
     setTimeout(() => setIsSwitching(false), 250);
   };

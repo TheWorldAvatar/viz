@@ -34,6 +34,7 @@
     "report": "Bericht",
     "submit": "Einreichen",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",
+    "draftTemplate": "Entwurf Vorlage",
     "save": "Speichern",
     "return": "Zurück",
     "approve": "Genehmigen",
@@ -43,7 +44,9 @@
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
     "clickDecrease": "Zum Verringern anklicken",
-    "clearAllFilters": "Alle Filter löschen"
+    "clearAllFilters": "Alle Filter löschen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -148,7 +151,9 @@
     "minLength": "Die Eingabe muss mindestens {replace} Zeichen umfassen!",
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
-    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!"
+    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
+    "processingRequest": "Bearbeitung der Anfrage..."
+   
   },
   "nav": {
     "caption": {
@@ -190,6 +195,7 @@
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
     "serviceType": "Art der Dienstleistung",
+    "lastModified": "Zuletzt Geändert",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "active": "Aktiv",
@@ -209,6 +215,7 @@
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
-    "error": "Fehlerhaft (Übermittlung war fehlerhaft)"
+    "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
+    "loading": "Laden"
   }
 }

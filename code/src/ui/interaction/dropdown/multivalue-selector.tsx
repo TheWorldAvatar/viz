@@ -1,10 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
-import Select, {
-  ActionMeta,
-  MultiValue,
-  StylesConfig
-} from "react-select";
+import Select, { ActionMeta, MultiValue, StylesConfig } from "react-select";
 import { Dictionary } from "types/dictionary";
 import { checkboxInputsSelectorStyles } from "ui/css/selector-style";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
@@ -12,12 +8,14 @@ import { SelectCheckboxOption } from "ui/interaction/input/select-checkbox";
 import { parseWordsForLabels } from "utils/client-utils";
 
 interface MultivalueDropdownProps {
-  title: string
+  title: string;
   options: SelectOption[];
   toggleAll?: boolean;
   isActive?: boolean;
   isClearable?: boolean;
-  setControlledSelectedOptions?: React.Dispatch<React.SetStateAction<SelectOption[]>>;
+  setControlledSelectedOptions?: React.Dispatch<
+    React.SetStateAction<SelectOption[]>
+  >;
 }
 
 /**
@@ -39,18 +37,36 @@ export default function MultivalueSelector(
     value: "select-all",
   };
 
-  const defaultOptions: SelectOption[] = (props.toggleAll ? [selectAllOption, ...props.options] : props.options);
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.toggleAll ? defaultOptions.filter(
-        (option) => option.value != "id" && option.value != "event_id"  && option.value != "select-all"
-      ) : []);
+  const defaultOptions: SelectOption[] = props.toggleAll
+    ? [selectAllOption, ...props.options]
+    : props.options;
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(
+    props.toggleAll
+      ? defaultOptions.filter(
+          (option) =>
+            option.value != "id" &&
+            option.value != "event_id" &&
+            option.value != "service_location" &&
+            option.value != "select-all"
+        )
+      : []
+  );
+
+  // Notify parent on initial mount if toggleAll is enabled
+  // This useEffect updates the null state (In Column toggle component) on the first render
+  useEffect(() => {
+    if (props.toggleAll) {
+      props.setControlledSelectedOptions?.(selectedOptions);
+    }
+  }, []);
 
   useEffect(() => {
     // Explicitly reset only for false value, as it is an optional prop that can return true
     if (props.isActive === false) {
       setSelectedOptions([]);
+      // Notify parent about the reset
+      props.setControlledSelectedOptions?.([]);
     }
-    // Update this on first render
-    props.setControlledSelectedOptions(selectedOptions);
   }, [props.isActive]);
 
   const handleChange = (
@@ -67,9 +83,16 @@ export default function MultivalueSelector(
       props.setControlledSelectedOptions([]);
     } else {
       const newSelectedOptions: SelectOption[] = newValue as SelectOption[];
-      if (props.toggleAll && action === "select-option" && newSelectedOptions.length == defaultOptions.length - 1) {
+      if (
+        props.toggleAll &&
+        action === "select-option" &&
+        newSelectedOptions.length == defaultOptions.length - 1
+      ) {
         newSelectedOptions.unshift(selectAllOption);
-      } else if (action === "deselect-option" && newSelectedOptions?.[0]?.value == selectAllOption.value) {
+      } else if (
+        action === "deselect-option" &&
+        newSelectedOptions?.[0]?.value == selectAllOption.value
+      ) {
         newSelectedOptions.shift();
       }
       setSelectedOptions(newSelectedOptions);
@@ -86,7 +109,9 @@ export default function MultivalueSelector(
         ...baseStyles.control?.(provided, state),
         backgroundColor: props.isActive ? "var(--ring)" : "var(--background)",
         ":hover": {
-          backgroundColor: props.isActive ? "var(--ring-hover)" : "var(--muted)",
+          backgroundColor: props.isActive
+            ? "var(--ring-hover)"
+            : "var(--muted)",
         },
       }),
     };

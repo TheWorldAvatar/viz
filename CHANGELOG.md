@@ -2,6 +2,84 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.2
+
+### Changes
+
+- Allow for a single or multiple contracts to be duplicated
+- Implemented the functionality to specify the number of duplicates to create
+- Bump min version of `VisBackend Agent` to `v1.18.0`
+
+## 5.43.1
+
+### Changes
+
+- Implement a checkbox input that allows for selecting multiple rows in the registry table for bulk actions
+- Implemented a bulking function in the registry table component that allows for multiple job approval and resubmit requests at the same time
+- Added a select all checkbox in the registry table header to select all visible rows for bulk actions
+- New checkbox component to be used across the application
+- Bump min version of `VisBackend Agent` to `v1.17.0`
+
+## 5.43.0
+
+### Changes
+
+- Global (Redux) loading state to show a toast notification when an operation is in progress
+- Updating the disabled state of the buttons in all forms and tables
+- Freeze the form and table interactions when an operation is in progress
+
+## 5.42.9
+
+### Bug Fixes
+
+- Fixed the ontology concept selector to display the default value, if any, on an add form even after switching form branches
+- Fixed the form branch to match based on nullable values as well when branches have overlapping fields
+
+## 5.42.8
+
+### Bug Fixes
+
+- Fixed an issue with the status column filter options not working as expected in the registry table
+
+## 5.42.7
+
+### Changes
+
+- Set the default date range for schedule task to be 28 days from tomorrow's date
+
+## 5.42.6
+
+### Changes
+
+- Exclude "service_location" column from being displayed in the registry table 
+
+## 5.42.5
+
+### Changes
+
+- Increased the height of the horizontal scrollbar in the registry table
+
+## 5.42.4
+
+### Changes
+
+- Implemented a textarea input
+- Implemented a new component (Expandable table cell), which allows to expand long text in table cells
+- Bump min version of `VisBackend Agent` to `v1.16.1`
+
+## 5.42.3
+
+### Bug Fixes
+
+- Fixed and issue with the filter unmounting when the column toggle input is changed
+
+## 5.42.2
+
+### Changes
+
+- Update display for last modified column and cell
+- Bump min version of `VisBackend Agent` from `v1.15.1` to `v1.15.3`
+
 ## 5.42.1
 
 ### Bug Fixes
