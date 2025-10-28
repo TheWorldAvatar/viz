@@ -21,6 +21,7 @@ const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
 export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
   const numberOfSelectedRows: number = props.table.getSelectedRowModel().rows.length;
+  const lastPageIndex: number = Math.ceil(props.table.getRowCount() / props.pagination.pageSize);
   return (
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
       <div className="text-sm text-foreground">
@@ -60,8 +61,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
               .replace(
                 "{replace}",
                 String(props.pagination.pageIndex + 1)
-              ).replace("{replacecount}", String(
-                Math.ceil(props.table.getRowCount() / props.pagination.pageSize)))}
+              ).replace("{replacecount}", String(lastPageIndex))}
           </span>
         </div>
 
@@ -88,7 +88,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             leftIcon="keyboard_arrow_right"
             size="icon"
             onClick={() => props.table.nextPage()}
-            disabled={!props.table.getCanNextPage()}
+            disabled={props.pagination.pageIndex == lastPageIndex - 1}
             aria-label="Go to next page"
           />
           <Button
@@ -97,7 +97,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             className="!hidden md:!flex"
             size="icon"
             onClick={() => props.table.setPageIndex(props.table.getPageCount() - 1)}
-            disabled={!props.table.getCanNextPage()}
+            disabled={props.pagination.pageIndex == lastPageIndex - 1}
             aria-label="Go to last page"
           />
         </div>
