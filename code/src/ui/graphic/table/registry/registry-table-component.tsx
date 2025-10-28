@@ -120,8 +120,8 @@ export default function RegistryTableComponent(
                 "contracts",
                 "active",
                 props.entityType,
-                tableDescriptor.pagination.pageIndex.toString(),
-                tableDescriptor.pagination.pageSize.toString(),
+                tableDescriptor.apiPagination.pageIndex.toString(),
+                tableDescriptor.apiPagination.pageSize.toString(),
                 tableDescriptor.sortParams,
               ),
               { cache: "no-store", credentials: "same-origin" }
@@ -147,8 +147,8 @@ export default function RegistryTableComponent(
                 "contracts",
                 "archive",
                 props.entityType,
-                tableDescriptor.pagination.pageIndex.toString(),
-                tableDescriptor.pagination.pageSize.toString(),
+                tableDescriptor.apiPagination.pageIndex.toString(),
+                tableDescriptor.apiPagination.pageSize.toString(),
                 tableDescriptor.sortParams,
               ),
               { cache: "no-store", credentials: "same-origin" }
@@ -165,8 +165,8 @@ export default function RegistryTableComponent(
                 "tasks",
                 props.entityType,
                 pathNameEnd,
-                tableDescriptor.pagination.pageIndex.toString(),
-                tableDescriptor.pagination.pageSize.toString(),
+                tableDescriptor.apiPagination.pageIndex.toString(),
+                tableDescriptor.apiPagination.pageSize.toString(),
                 tableDescriptor.sortParams,
               ),
               {
@@ -182,8 +182,8 @@ export default function RegistryTableComponent(
             makeInternalRegistryAPIwithParams(
               "outstanding",
               props.entityType,
-              tableDescriptor.pagination.pageIndex.toString(),
-              tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.apiPagination.pageIndex.toString(),
+              tableDescriptor.apiPagination.pageSize.toString(),
               tableDescriptor.sortParams,
             ),
             { cache: "no-store", credentials: "same-origin" }
@@ -204,8 +204,8 @@ export default function RegistryTableComponent(
               getUTCDate((selectedDate as DateRange).to)
                 .getTime()
                 .toString(),
-              tableDescriptor.pagination.pageIndex.toString(),
-              tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.apiPagination.pageIndex.toString(),
+              tableDescriptor.apiPagination.pageSize.toString(),
               tableDescriptor.sortParams,
             ),
             {
@@ -223,8 +223,8 @@ export default function RegistryTableComponent(
               "true",
               null,
               null,
-              tableDescriptor.pagination.pageIndex.toString(),
-              tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.apiPagination.pageIndex.toString(),
+              tableDescriptor.apiPagination.pageSize.toString(),
               tableDescriptor.sortParams,
             ),
             { cache: "no-store", credentials: "same-origin" }
@@ -237,8 +237,8 @@ export default function RegistryTableComponent(
               "contracts",
               props.lifecycleStage.toString(),
               props.entityType,
-              tableDescriptor.pagination.pageIndex.toString(),
-              tableDescriptor.pagination.pageSize.toString(),
+              tableDescriptor.apiPagination.pageIndex.toString(),
+              tableDescriptor.apiPagination.pageSize.toString(),
               tableDescriptor.sortParams,
             ),
             { cache: "no-store", credentials: "same-origin" }
@@ -256,7 +256,7 @@ export default function RegistryTableComponent(
 
     // Trigger fetchData when refreshFlag, or selectedDate (range) changes
     fetchData();
-  }, [selectedDate, refreshFlag, tableDescriptor.pagination, tableDescriptor.sortParams]);
+  }, [selectedDate, refreshFlag, tableDescriptor.apiPagination, tableDescriptor.sortParams]);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs

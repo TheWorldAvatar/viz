@@ -11,7 +11,7 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { RegistryFieldValues } from "types/form";
@@ -21,12 +21,14 @@ import {
   TableData,
 } from "ui/graphic/table/registry/registry-table-utils";
 import { useFirstActiveFilter } from "./useFirstActiveFilter";
+import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   table: Table<FieldValues>;
   data: FieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   pagination: PaginationState,
+  apiPagination: PaginationState,
   firstActiveFilter: string;
   sortParams: string;
 }
@@ -43,10 +45,7 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0, // initial page index
-    pageSize: 10, // default page size
-  });
+  const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -58,11 +57,15 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
   const tableData: TableData = useMemo(
     () => {
       const output: TableData = parseDataForTable(instances, dict.title);
-      setData(output.data);
       return output;
     },
     [instances]
   );
+
+  useEffect(() => {
+    setData(tableData.data.slice(startIndex, startIndex + pagination.pageSize));
+  }, [tableData, pagination.pageIndex]);
+
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData.columns,
@@ -75,7 +78,7 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
     },
     manualPagination: true,
     rowCount: totalRows,
-    onPaginationChange: setPagination,
+    onPaginationChange,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
@@ -92,6 +95,7 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
     data,
     setData,
     pagination,
+    apiPagination,
     firstActiveFilter,
     sortParams,
   };
