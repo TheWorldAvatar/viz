@@ -26,6 +26,7 @@ export type HasPermissions = {
     invoice: boolean;
     sales: boolean;
     operation: boolean;
+    draftTemplate: boolean;
     viewTask: boolean;
     completeTask: boolean;
     completeAndDuplicateTask: boolean;

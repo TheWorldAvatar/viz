@@ -12,6 +12,7 @@ import {
   RegistryFieldValues
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
+import { SelectOption } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 
@@ -127,7 +128,7 @@ export function genSortParams(currentSort: SortingState, titleDict: Record<strin
  * 
  * @param {string} translatedBlankText The translated blank text.
  */
-export function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<FieldValues> {
+function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<FieldValues> {
   return (
     row,
     columnId,
@@ -155,6 +156,26 @@ export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: stri
   // e.g. status value is "new" but label is "open"
   // So if we return the label here, filtering won't work as expected
   return rows.flatMap((row) => row.getValue(header) ?? dict.title.blank);
+}
+
+/**
+ * Parses the options into the required select options.
+ *
+ * @param {string} header Current header name header of interest.
+ * @param {string[]} options Input list of options.
+ * @param {Dictionary} dict Dictionary translations.
+ */
+export function parseSelectOptions(header: string, options: string[], dict: Dictionary): SelectOption[] {
+  // Returns null if options are undefined
+  return options?.sort().map((col) => {
+    // For status column, show translated label but use actual value
+    // This is because the filter function checks against actual value, not the label
+    const label: string = header === "status" ? dict.title[col.toLowerCase()] : col;
+    return {
+      label: label,
+      value: col,
+    };
+  });
 }
 
 /**

@@ -2,6 +2,20 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.3
+
+### Bug Fixes
+
+- Fixed an issue with the clear indicator in the column filter not showing after the table refreshes
+
+## 5.43.2
+
+### Changes
+
+- Allow for a single or multiple contracts to be duplicated
+- Implemented the functionality to specify the number of duplicates to create
+- Bump min version of `VisBackend Agent` to `v1.18.0`
+
 ## 5.43.1
 
 ### Changes
@@ -10,6 +24,7 @@
 - Implemented a bulking function in the registry table component that allows for multiple job approval and resubmit requests at the same time
 - Added a select all checkbox in the registry table header to select all visible rows for bulk actions
 - New checkbox component to be used across the application
+- Bump min version of `VisBackend Agent` to `v1.17.0`
 
 ## 5.43.0
 

@@ -7,6 +7,7 @@ import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { parseSelectOptions } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
 
 interface HeaderCellProps {
@@ -25,7 +26,13 @@ interface HeaderCellProps {
 
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(null);
+
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(
+    parseSelectOptions(
+      props.header.id.toLowerCase(),
+      props.header.column.getFilterValue() as string[],
+      dict)
+  );
 
   useEffect(() => {
     if (selectedOptions) {
@@ -47,7 +54,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
         <div className="flex flex-col gap-2">
           <div
             className={`flex items-center gap-2 ${props.header.column.getCanSort()
-              ? "cursor-pointer select-none "
+              ? "cursor-pointer select-none"
               : ""
               }`}
             onClick={props.header.column.getToggleSortingHandler()}
@@ -75,21 +82,13 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
           <div className="w-full min-w-36 h-full">
             <MultivalueSelector
               title={dict.action.filter}
-              options={props.options.sort().map((col) => {
-                // For status column, show translated label but use actual value
-                // This is because the filter function checks against actual value, not the label
-                const label: string = props.header.id.toLowerCase() === "status" ? dict.title[col.toLowerCase()] : col;
-
-                return {
-                  label: label,
-                  value: col,
-                };
-              })}
+              options={parseSelectOptions(props.header.id.toLowerCase(), props.options, dict)}
               toggleAll={false}
               isActive={
                 props.header.column.getFilterValue() !== undefined &&
                 (props.header.column.getFilterValue() as string[])?.length > 0
               }
+              controlledSelectedOptions={selectedOptions}
               setControlledSelectedOptions={setSelectedOptions}
             />
           </div>
