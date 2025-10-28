@@ -43,8 +43,8 @@ export default function MultivalueSelector(
     ? [selectAllOption, ...props.options]
     : props.options;
   // Use any existing option if it is provided
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.controlledSelectedOptions ?? props.toggleAll
-    ? defaultOptions.filter(
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.controlledSelectedOptions ? props.controlledSelectedOptions :
+    props.toggleAll ? defaultOptions.filter(
       (option) =>
         option.value != "id" &&
         option.value != "event_id" &&
