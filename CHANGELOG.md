@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.3
+
+### Bug Fixes
+
+- Fixed an issue with the clear indicator in the column filter not showing after the table refreshes
+
 ## 5.43.2
 
 ### Changes
