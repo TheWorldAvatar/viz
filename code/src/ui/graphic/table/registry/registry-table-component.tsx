@@ -1,5 +1,6 @@
 "use client";
 
+import { useTotalRowCount } from "hooks/table/api/useTotalRowCount";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -59,52 +60,8 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
-  const [totalRows, setTotalRows] = useState<number>(0);
+  const totalRows: number = useTotalRowCount(props.entityType, refreshFlag, props.lifecycleStage, selectedDate);
   const tableDescriptor: TableDescriptor = useTable(currentInstances, totalRows);
-
-  useEffect(() => {
-    const fetchTotalRows = async (): Promise<void> => {
-      try {
-        let url: string;
-        if (props.lifecycleStage == "general") {
-          url = makeInternalRegistryAPIwithParams(
-            "count",
-            props.entityType,
-          );
-        } else if (
-          props.lifecycleStage == "scheduled" ||
-          props.lifecycleStage == "closed") {
-          url = makeInternalRegistryAPIwithParams(
-            "count",
-            props.entityType,
-            props.lifecycleStage,
-            getUTCDate((selectedDate as DateRange).from)
-              .getTime()
-              .toString(),
-            getUTCDate((selectedDate as DateRange).to)
-              .getTime()
-              .toString(),
-          );
-        } else {
-          url = makeInternalRegistryAPIwithParams(
-            "count",
-            props.entityType,
-            props.lifecycleStage,
-          );
-        }
-        const res = await fetch(
-          url,
-          { cache: "no-store", credentials: "same-origin" }
-        );
-        const resBody: AgentResponseBody = await res.json();
-        const totalRows: number = Number.parseInt(resBody.data?.message);
-        setTotalRows(totalRows);
-      } catch (error) {
-        console.error("Error fetching total row count", error);
-      }
-    };
-    fetchTotalRows();
-  }, [selectedDate, refreshFlag]);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
