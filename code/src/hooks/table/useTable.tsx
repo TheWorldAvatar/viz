@@ -78,6 +78,7 @@ export function useTable(instances: RegistryFieldValues[], totalRows: number): T
     },
     manualPagination: true,
     rowCount: totalRows,
+    maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange,
