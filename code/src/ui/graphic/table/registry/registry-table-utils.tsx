@@ -89,8 +89,8 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         },
         filterFn: multiSelectFilter,
         size: minWidth,
-
         enableSorting: true,
+        sortDescFirst: true,
       });
     }
   }
