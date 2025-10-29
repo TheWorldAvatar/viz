@@ -13,6 +13,7 @@ interface MultivalueDropdownProps {
   toggleAll?: boolean;
   isActive?: boolean;
   isClearable?: boolean;
+  controlledSelectedOptions?: SelectOption[];
   setControlledSelectedOptions?: React.Dispatch<
     React.SetStateAction<SelectOption[]>
   >;
@@ -26,6 +27,7 @@ interface MultivalueDropdownProps {
  * @param {boolean} toggleAll - Provides an additional option to select all options. Defaults to false.
  * @param {boolean} isActive - Renders different style to indicate the input is currently active. Defaults to false.
  * @param {boolean} isClearable - All values in the dropdown can be cleared with an additional input. Defaults to true.
+ * @param {SelectOption[]} controlledSelectedOptions - Optional controlled state for the selected options.
  * @param setControlledSelectedOptions - Optional dispatch method to update selected options for further processing.
  */
 export default function MultivalueSelector(
@@ -40,17 +42,15 @@ export default function MultivalueSelector(
   const defaultOptions: SelectOption[] = props.toggleAll
     ? [selectAllOption, ...props.options]
     : props.options;
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(
-    props.toggleAll
-      ? defaultOptions.filter(
-          (option) =>
-            option.value != "id" &&
-            option.value != "event_id" &&
-            option.value != "service_location" &&
-            option.value != "select-all"
-        )
-      : []
-  );
+  // Use any existing option if it is provided
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.controlledSelectedOptions ? props.controlledSelectedOptions :
+    props.toggleAll ? defaultOptions.filter(
+      (option) =>
+        option.value != "id" &&
+        option.value != "event_id" &&
+        option.value != "service_location" &&
+        option.value != "select-all"
+    ) : []);
 
   // Notify parent on initial mount if toggleAll is enabled
   // This useEffect updates the null state (In Column toggle component) on the first render
