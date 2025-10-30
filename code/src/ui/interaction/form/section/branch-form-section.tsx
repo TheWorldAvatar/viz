@@ -13,7 +13,7 @@ import {
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector, {
-  SelectOption,
+  SelectOptionType,
 } from "ui/interaction/dropdown/simple-selector";
 import { parseWordsForLabels } from "utils/client-utils";
 import { renderFormField } from "../form";
@@ -42,7 +42,7 @@ export default function BranchFormSection(
 
   // Declare a function to transform node shape to a form option
   const convertNodeShapeToFormOption = useCallback(
-    (nodeShape: NodeShape): SelectOption => {
+    (nodeShape: NodeShape): SelectOptionType => {
       return {
         label: parseWordsForLabels(nodeShape?.label[VALUE_KEY]),
         value: nodeShape.label[VALUE_KEY],
@@ -64,7 +64,7 @@ export default function BranchFormSection(
   }, []);
 
   // Handle change event for the branch selection
-  const handleModelChange = (formOption: SelectOption) => {
+  const handleModelChange = (formOption: SelectOptionType) => {
     setIsSwitching(true);
     const matchingNode: NodeShape = props.node.find(
       (nodeShape) => nodeShape.label[VALUE_KEY] === formOption.value

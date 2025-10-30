@@ -6,7 +6,7 @@ import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { parseSelectOptions } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
 
@@ -27,7 +27,7 @@ interface HeaderCellProps {
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
 
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(
+  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(
     parseSelectOptions(
       props.header.id.toLowerCase(),
       props.header.column.getFilterValue() as string[],

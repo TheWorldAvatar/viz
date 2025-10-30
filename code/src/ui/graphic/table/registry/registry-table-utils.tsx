@@ -12,7 +12,7 @@ import {
   RegistryFieldValues
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 
@@ -165,7 +165,7 @@ export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: stri
  * @param {string[]} options Input list of options.
  * @param {Dictionary} dict Dictionary translations.
  */
-export function parseSelectOptions(header: string, options: string[], dict: Dictionary): SelectOption[] {
+export function parseSelectOptions(header: string, options: string[], dict: Dictionary): SelectOptionType[] {
   // Returns null if options are undefined
   return options?.sort().map((col) => {
     // For status column, show translated label but use actual value
