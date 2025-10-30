@@ -1,4 +1,4 @@
-import { InternalApiIdentifier } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifier } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
@@ -120,4 +120,11 @@ export function makeInternalRegistryAPIwithParams(
       break;
   }
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
+}
+
+export async function queryInternalApi(url: string): Promise<AgentResponseBody> {
+  const activeRes = await fetch(url,
+    { cache: "no-store", credentials: "same-origin" }
+  );
+  return await activeRes.json();
 }

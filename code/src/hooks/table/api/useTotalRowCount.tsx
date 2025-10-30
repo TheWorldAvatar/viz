@@ -3,7 +3,7 @@ import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { LifecycleStage } from "types/form";
 import { getUTCDate } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 /**
 * A custom hook to retrieve the total row count.
@@ -42,12 +42,8 @@ export function useTotalRowCount(entityType: string, refreshFlag: boolean, lifec
             lifecycleStage,
           );
         }
-        const res = await fetch(
-          url,
-          { cache: "no-store", credentials: "same-origin" }
-        );
-        const resBody: AgentResponseBody = await res.json();
-        const totalRows: number = Number.parseInt(resBody.data?.message);
+        const res: AgentResponseBody = await queryInternalApi(url);
+        const totalRows: number = Number.parseInt(res.data?.message);
         setTotalRows(totalRows);
       } catch (error) {
         console.error("Error fetching total row count", error);

@@ -8,7 +8,7 @@ import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { Status } from "ui/text/status/status";
 import { getUTCDate, parseWordsForLabels } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
@@ -53,7 +53,7 @@ export function useTableData(
         if (lifecycleStage === "report") {
           if (pathNameEnd === entityType) {
             // Fetch active contracts
-            const activeRes = await fetch(
+            const activeResBody: AgentResponseBody = await queryInternalApi(
               makeInternalRegistryAPIwithParams(
                 "contracts",
                 "active",
@@ -61,10 +61,7 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
-              ),
-              { cache: "no-store", credentials: "same-origin" }
-            );
-            const activeResBody: AgentResponseBody = await activeRes.json();
+              ));
             let activeInstances =
               (activeResBody.data.items as RegistryFieldValues[]) ?? [];
             activeInstances = activeInstances.map(
@@ -80,7 +77,7 @@ export function useTableData(
             );
 
             // Fetch archived contracts
-            const archivedRes = await fetch(
+            const archivedResponseBody: AgentResponseBody = await queryInternalApi(
               makeInternalRegistryAPIwithParams(
                 "contracts",
                 "archive",
@@ -88,17 +85,13 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
-              ),
-              { cache: "no-store", credentials: "same-origin" }
-            );
-            const archivedResponseBody: AgentResponseBody =
-              await archivedRes.json();
+              ));
             const archivedInstances: RegistryFieldValues[] =
               (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
             instances = activeInstances.concat(archivedInstances);
           } else {
             // Fetch service tasks for a specific contract
-            const res = await fetch(
+            const res: AgentResponseBody = await queryInternalApi(
               makeInternalRegistryAPIwithParams(
                 "tasks",
                 entityType,
@@ -106,34 +99,24 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
-              ),
-              {
-                cache: "no-store",
-                credentials: "same-origin",
-              }
-            );
-            const resBody: AgentResponseBody = await res.json();
-            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+              ));
+            instances = (res.data?.items as RegistryFieldValues[]) ?? [];
           }
-        } else if (lifecycleStage == "outstanding") {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
+        } else {
+          let url: string;
+          if (lifecycleStage == "outstanding") {
+            url = makeInternalRegistryAPIwithParams(
               "outstanding",
               entityType,
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
-            ),
-            { cache: "no-store", credentials: "same-origin" }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else if (
-          lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed"
-        ) {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
+            );
+          } else if (
+            lifecycleStage == "scheduled" ||
+            lifecycleStage == "closed"
+          ) {
+            url = makeInternalRegistryAPIwithParams(
               lifecycleStage == "scheduled" ? "scheduled" : "closed",
               entityType,
               getUTCDate(selectedDate.from).getTime().toString(),
@@ -141,17 +124,9 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
-            ),
-            {
-              cache: "no-store",
-              credentials: "same-origin",
-            }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else if (lifecycleStage == "general") {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
+            );
+          } else if (lifecycleStage == "general") {
+            url = makeInternalRegistryAPIwithParams(
               "instances",
               entityType,
               "true",
@@ -160,25 +135,19 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
-            ),
-            { cache: "no-store", credentials: "same-origin" }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
+            );
+          } else {
+            url = makeInternalRegistryAPIwithParams(
               "contracts",
               lifecycleStage.toString(),
               entityType,
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
-            ),
-            { cache: "no-store", credentials: "same-origin" }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
+            );
+          }
+          const res: AgentResponseBody = await queryInternalApi(url);
+          instances = (res.data?.items as RegistryFieldValues[]) ?? [];
         }
         setInitialInstances(instances);
         setData(parseDataForTable(instances, dict.title));
