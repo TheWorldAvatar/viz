@@ -304,6 +304,12 @@ function makeExternalEndpoint(
       }
       return url;
     }
+    case "filter": {
+      const type = searchParams.get("type");
+      const field = searchParams.get("field");
+      const urlParams = new URLSearchParams({ field });
+      return `${agentBaseApi}/${type}/filter?${urlParams.toString()}`;
+    }
     case "form": {
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");

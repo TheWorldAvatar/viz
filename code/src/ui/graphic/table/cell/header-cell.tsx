@@ -1,17 +1,18 @@
 import { Icon } from "@mui/material";
 import { flexRender, Header } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
-import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
-import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
-import { parseSelectOptions } from "../registry/registry-table-utils";
+import { useFilterOptions } from "hooks/table/api/useFilterOptions";
+import LoadingSpinner from "ui/graphic/loader/spinner";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import Button from "ui/interaction/button";
+import SelectOption from "ui/interaction/input/select-option";
 import TableCell from "./table-cell";
 
 interface HeaderCellProps {
-  options: string[];
+  type: string;
   header: Header<FieldValues, unknown>;
   resetRowSelection?: () => void;
 }
@@ -19,31 +20,16 @@ interface HeaderCellProps {
 /**
  * This component renders a header cell for the table.
  *
- * @param {string[]} options The list of values available for filtering.
+ * @param {string} type The entity type to query for.
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param resetRowSelection Optional row selection function to reset row when unused.
  */
-
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-
-  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(
-    parseSelectOptions(
-      props.header.id.toLowerCase(),
-      props.header.column.getFilterValue() as string[],
-      dict)
-  );
-
-  useEffect(() => {
-    if (selectedOptions) {
-      props.header.column.setFilterValue(
-        selectedOptions.map((opt) => opt.value)
-      );
-    }
-    if (props.resetRowSelection) {
-      props.resetRowSelection();
-    }
-  }, [selectedOptions]);
+  const { options, isLoading, showFilterDropdown, setShowFilterDropdown, setTriggerFetch } = useFilterOptions(props.type, props.header.id.toLowerCase())
+  const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
+    (props.header.column.getFilterValue() as string[])?.length > 0;
+  const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
 
   return (
     <TableCell
@@ -78,19 +64,57 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 </Icon>
               ),
             }[props.header.column.getIsSorted() as string] ?? null}
-          </div>
-          <div className="w-full min-w-36 h-full">
-            <MultivalueSelector
-              title={dict.action.filter}
-              options={parseSelectOptions(props.header.id.toLowerCase(), props.options, dict)}
-              toggleAll={false}
-              isActive={
-                props.header.column.getFilterValue() !== undefined &&
-                (props.header.column.getFilterValue() as string[])?.length > 0
-              }
-              controlledSelectedOptions={selectedOptions}
-              setControlledSelectedOptions={setSelectedOptions}
-            />
+            <PopoverActionButton
+              placement="bottom-end"
+              leftIcon="filter_list"
+              variant={isActiveFilter ? "secondary" : "ghost"}
+              tooltipText={dict.action.filter}
+              size="icon"
+              className="ml-2"
+              isOpen={showFilterDropdown}
+              setIsOpen={setShowFilterDropdown}
+              onClick={(event) => {
+                event.stopPropagation();
+                setTriggerFetch(!showFilterDropdown);
+                setShowFilterDropdown(!showFilterDropdown);
+              }}
+            >
+              {!isLoading && currentFilters.length > 0 && <Button
+                leftIcon="filter_list_off"
+                iconSize="medium"
+                size="icon"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  props.header.column.setFilterValue([]);
+                  props.resetRowSelection();
+                }}
+                tooltipText={dict.action.clearAllFilters}
+                variant="destructive"
+              />}
+              {isLoading && <LoadingSpinner isSmall={true} />}
+              {!isLoading && <div className="max-h-60 overflow-y-auto">
+                {options.map((option) => (
+                  <SelectOption
+                    key={option}
+                    option={option}
+                    initialChecked={props.header.column.getFilterValue() !== null && currentFilters.includes(option)}
+                    onClick={() => {
+                      let filters: string[] = currentFilters;
+                      if (filters.includes(option)) {
+                        filters = currentFilters.filter((value) => value !== option);
+                      } else {
+                        filters.push(option);
+                      }
+                      props.header.column.setFilterValue(filters);
+                      if (props.resetRowSelection) {
+                        props.resetRowSelection();
+                      }
+                    }}
+                  />
+                ))}
+              </div>}
+            </PopoverActionButton>
           </div>
         </div>
       )}

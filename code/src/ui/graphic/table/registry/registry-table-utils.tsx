@@ -1,18 +1,15 @@
 import {
   ColumnDef,
   FilterFnOption,
-  Row,
   SortingState
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 
@@ -141,41 +138,6 @@ function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<F
     }
     return !!filterValue.find((option) => option === rowValue);
   };
-}
-
-/**
- * Parses the rows obtained from TanStack into filtering options.
- *
- * @param {Row<FieldValues>[]} instances Raw instances queried from knowledge graph.
- * @param {string} header Column header of interest.
- * @param {Dictionary} dict Dictionary translations.
- */
-export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
-  // Return the actual row value (not translated label) for proper filtering
-  // This is because the filter function checks against actual value, not the label
-  // e.g. status value is "new" but label is "open"
-  // So if we return the label here, filtering won't work as expected
-  return rows.flatMap((row) => row.getValue(header) ?? dict.title.blank);
-}
-
-/**
- * Parses the options into the required select options.
- *
- * @param {string} header Current header name header of interest.
- * @param {string[]} options Input list of options.
- * @param {Dictionary} dict Dictionary translations.
- */
-export function parseSelectOptions(header: string, options: string[], dict: Dictionary): SelectOptionType[] {
-  // Returns null if options are undefined
-  return options?.sort().map((col) => {
-    // For status column, show translated label but use actual value
-    // This is because the filter function checks against actual value, not the label
-    const label: string = header === "status" ? dict.title[col.toLowerCase()] : col;
-    return {
-      label: label,
-      value: col,
-    };
-  });
 }
 
 /**
