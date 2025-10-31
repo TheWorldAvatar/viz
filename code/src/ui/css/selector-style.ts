@@ -1,12 +1,12 @@
 import { GroupBase, StylesConfig } from "react-select";
 
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 // Selector styles for react select
 export const selectorStyles: StylesConfig<
-  SelectOption,
+  SelectOptionType,
   boolean,
-  GroupBase<SelectOption>
+  GroupBase<SelectOptionType>
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
@@ -123,9 +123,9 @@ export const selectorStyles: StylesConfig<
 };
 
 export const checkboxInputsSelectorStyles: StylesConfig<
-  SelectOption,
+  SelectOptionType,
   boolean,
-  GroupBase<SelectOption>
+  GroupBase<SelectOptionType>
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,

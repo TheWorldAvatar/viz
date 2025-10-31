@@ -8,13 +8,13 @@ import {
   VALUE_KEY,
 } from "types/form";
 import SimpleSelector, {
-  SelectOption,
+  SelectOptionType,
 } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../form-input-container";
 import { getRegisterOptions } from "../../form-utils";
 
 interface FormSelectorProps {
-  selectOptions: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>;
+  selectOptions: OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>;
   field: PropertyShape;
   form: UseFormReturn;
   selectedOption?: OntologyConcept;
@@ -25,7 +25,7 @@ interface FormSelectorProps {
 /**
  * This component renders a dropdown selector for the form.
  *
- * @param {OptionsOrGroups<SelectOption, GroupBase<SelectOption>>} selectOptions The list of options to render.
+ * @param {OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>} selectOptions The list of options to render.
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {OntologyConcept} selectedOption Optional selected option description.
@@ -55,7 +55,7 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
               options={props.selectOptions}
               defaultVal={value}
               onChange={(selectedOption) => {
-                onChange((selectedOption as SelectOption).value);
+                onChange((selectedOption as SelectOptionType).value);
               }}
               isDisabled={props.options?.disabled}
               noOptionMessage={props.noOptionMessage}

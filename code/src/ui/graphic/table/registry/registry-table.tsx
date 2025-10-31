@@ -46,7 +46,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { parseRowsForFilterOptions } from "./registry-table-utils";
 
 
 interface RegistryTableProps {
@@ -279,22 +278,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <HeaderCell
                                   key={header.id + index}
                                   header={header}
-                                  options={Array.from(
-                                    new Set(
-                                      parseRowsForFilterOptions(
-                                        !props.tableDescriptor
-                                          .firstActiveFilter ||
-                                          props.tableDescriptor
-                                            .firstActiveFilter === header.id
-                                          ? props.tableDescriptor.table.getCoreRowModel()
-                                            .flatRows
-                                          : props.tableDescriptor.table.getFilteredRowModel()
-                                            .flatRows,
-                                        header.id,
-                                        dict
-                                      )
-                                    )
-                                  )}
+                                  type ={props.recordType}
                                   resetRowSelection={props.tableDescriptor.table.resetRowSelection}
                                 />
                               );

@@ -13,7 +13,7 @@ import {
   PropertyShape,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   FORM_STATES,
   getMatchingConcept,
@@ -49,7 +49,7 @@ export default function OntologyConceptSelector(
   const [conceptMappings, setConceptMappings] =
     useState<OntologyConceptMappings>({});
   const [options, setOptions] = useState<
-    OptionsOrGroups<SelectOption, GroupBase<SelectOption>>
+    OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>
   >([]);
 
   // Retrieve the matching concept from the mappings
@@ -118,29 +118,29 @@ export default function OntologyConceptSelector(
           );
 
           // Parse the mappings to generate the format for select options
-          const formOptions: SelectOption[] = [];
-          const formGroups: GroupBase<SelectOption>[] = [];
+          const formOptions: SelectOptionType[] = [];
+          const formGroups: GroupBase<SelectOptionType>[] = [];
 
           sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT].forEach((option) => {
             const parentKey: string = option.type.value;
             // If there are children options, return the opt group with the children options
             if (sortedConceptMappings[parentKey]) {
-              const formChildrenOptions: SelectOption[] = [];
+              const formChildrenOptions: SelectOptionType[] = [];
 
               sortedConceptMappings[parentKey].forEach((childOption) => {
-                const formOption: SelectOption = {
+                const formOption: SelectOptionType = {
                   value: childOption.type.value,
                   label: childOption.label.value,
                 };
                 formChildrenOptions.push(formOption);
               });
-              const groupOption: GroupBase<SelectOption> = {
+              const groupOption: GroupBase<SelectOptionType> = {
                 label: option.label.value + " ↓",
                 options: formChildrenOptions,
               };
               formGroups.push(groupOption);
             } else {
-              const formOption: SelectOption = {
+              const formOption: SelectOptionType = {
                 value: option.type.value,
                 label: option.label.value,
               };
