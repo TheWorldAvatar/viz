@@ -53,7 +53,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const totalRows: number = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate);
-  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, refreshFlag, lifecycleStage, selectedDate, apiPagination);
+  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;

@@ -1,4 +1,4 @@
-import { PaginationState } from "@tanstack/react-table";
+import { ColumnFilter, PaginationState } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -34,7 +34,8 @@ export function useTableData(
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
-  apiPagination: PaginationState): TableDataDescriptor {
+  apiPagination: PaginationState,
+  filters: ColumnFilter[]): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [initialInstances, setInitialInstances] = useState<
@@ -48,6 +49,13 @@ export function useTableData(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
+      const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
+      const filterParams: string = remainingFilters.length === 0 ? "" : filters.map(filter => {
+        if (filter.value === undefined || (filter.value as string[]).length === 0) {
+          return "";
+        }
+        return `&${filter.id}=${(filter.value as string[]).join("%7C")}`
+      }).join("");
       try {
         let instances: RegistryFieldValues[] = [];
         if (lifecycleStage === "report") {
@@ -61,6 +69,7 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
+                filterParams,
               ));
             let activeInstances =
               (activeResBody.data.items as RegistryFieldValues[]) ?? [];
@@ -85,6 +94,7 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
+                filterParams,
               ));
             const archivedInstances: RegistryFieldValues[] =
               (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
@@ -99,6 +109,7 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
+                filterParams,
               ));
             instances = (res.data?.items as RegistryFieldValues[]) ?? [];
           }
@@ -111,6 +122,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           } else if (
             lifecycleStage == "scheduled" ||
@@ -124,6 +136,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           } else if (lifecycleStage == "general") {
             url = makeInternalRegistryAPIwithParams(
@@ -135,6 +148,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           } else {
             url = makeInternalRegistryAPIwithParams(
@@ -144,6 +158,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           }
           const res: AgentResponseBody = await queryInternalApi(url);
@@ -157,9 +172,8 @@ export function useTableData(
       }
     };
 
-    // Trigger fetchData when refreshFlag, or selectedDate (range) changes
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters]);
 
   return {
     isLoading,

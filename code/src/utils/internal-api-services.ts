@@ -27,6 +27,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[2],
         limit: params[3],
         sort_by: params[4],
+        filters: params[5],
       });
       break;
     case "contract_status":
@@ -51,6 +52,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[4] ?? null,
         limit: params[5] ?? null,
         sort_by: params[6] ?? null,
+        filters: params[7] ?? "",
       });
       break;
     case "event":
@@ -103,6 +105,7 @@ export function makeInternalRegistryAPIwithParams(
       searchParams = new URLSearchParams({
         type: params[0],
         idOrTimestamp: params[1],
+        filters: params[2],
       });
       break;
     case "outstanding":
@@ -111,6 +114,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[1],
         limit: params[2],
         sort_by: params[3],
+        filters: params[4],
       });
       break;
     case "scheduled":
@@ -122,6 +126,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[3],
         limit: params[4],
         sort_by: params[5],
+        filters: params[6],
       });
       break;
   }

@@ -228,6 +228,7 @@ function makeExternalEndpoint(
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const stage: LifecycleStage = searchParams.get("stage") as LifecycleStage;
+      const filters: string = searchParams.get("filters");
       let stagePath: string;
       if (stage === "pending") {
         stagePath = "draft";
@@ -238,7 +239,7 @@ function makeExternalEndpoint(
       } else {
         throw Error("Invalid stage");
       }
-      return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+      return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case "contract_status": {
       const id: string = searchParams.get("id");
@@ -284,7 +285,8 @@ function makeExternalEndpoint(
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
-        url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}`;
+        const filters: string = searchParams.get("filters");
+        url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
       if (identifier != "null") {
         url += `/${identifier}`;
@@ -348,14 +350,16 @@ function makeExternalEndpoint(
     case "tasks": {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}`;
+      const filters: string = searchParams.get("filters");
+      return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
     case "outstanding": {
       const contractType: string = searchParams.get("type");
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
-      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+      const filters: string = searchParams.get("filters");
+      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case "scheduled":
     case "closed": {
@@ -367,8 +371,9 @@ function makeExternalEndpoint(
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
+      const filters: string = searchParams.get("filters");
 
-      return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+      return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     default:
       return null;
