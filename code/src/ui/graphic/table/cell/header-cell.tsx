@@ -26,7 +26,7 @@ interface HeaderCellProps {
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const { options, isLoading, showFilterDropdown, setShowFilterDropdown, setTriggerFetch } = useFilterOptions(props.type, props.header.id.toLowerCase())
+  const { options, isLoading, showFilterDropdown, setIsLoading, setShowFilterDropdown, setTriggerFetch } = useFilterOptions(props.type, props.header.id.toLowerCase())
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
   const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
@@ -86,6 +86,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
+                  setIsLoading(true);
+                  setTimeout(() => setIsLoading(false), 300);
                   props.header.column.setFilterValue([]);
                   props.resetRowSelection();
                 }}
