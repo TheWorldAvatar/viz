@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.4
+
+### Bug Fixes
+
+- Fixed an issue when adding a new job request with default "Waste Collection Service" that was throwing an error (missing contract parameter) due to a default NULL value being sent to the backend
+
 ## 5.43.3
 
 ### Bug Fixes
