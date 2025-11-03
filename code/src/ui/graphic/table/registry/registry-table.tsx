@@ -334,7 +334,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
+          <TablePagination rows ={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">

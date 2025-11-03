@@ -20,7 +20,7 @@ import {
   genSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
 import { useTableData } from "./api/useTableData";
-import { useTotalRowCount } from "./api/useTotalRowCount";
+import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useFirstActiveFilter } from "./useFirstActiveFilter";
 import { useTablePagination } from "./useTablePagination";
 
@@ -32,6 +32,7 @@ export interface TableDescriptor {
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   pagination: PaginationState,
   apiPagination: PaginationState,
+  totalRows: number;
   firstActiveFilter: string;
   sortParams: string;
 }
@@ -52,7 +53,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const totalRows: number = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate);
+  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
   const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -77,7 +78,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
       sorting: sorting,
     },
     manualPagination: true,
-    rowCount: totalRows,
+    rowCount: rowCounts.filter,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange: setColumnFilters,
@@ -99,6 +100,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     initialInstances,
     pagination,
     apiPagination,
+    totalRows: rowCounts.total,
     firstActiveFilter,
     sortParams,
   };

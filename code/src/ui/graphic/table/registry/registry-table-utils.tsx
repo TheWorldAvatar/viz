@@ -1,5 +1,6 @@
 import {
   ColumnDef,
+  ColumnFilter,
   FilterFnOption,
   SortingState
 } from "@tanstack/react-table";
@@ -16,6 +17,21 @@ import { parseWordsForLabels } from "utils/client-utils";
 export type TableData = {
   data: FieldValues[];
   columns: ColumnDef<FieldValues>[];
+}
+
+/**
+ * Parses the column filters into URL parameters for API querying.
+ *
+ * @param { ColumnFilter[]} filters Target filters for parsing.
+ */
+export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[]): string {
+  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
+  return remainingFilters.length === 0 ? "" : filters.map(filter => {
+    if (filter.value === undefined || (filter.value as string[]).length === 0) {
+      return "";
+    }
+    return `&${filter.id}=${(filter.value as string[]).join("%7C")}`
+  }).join("");
 }
 
 /**

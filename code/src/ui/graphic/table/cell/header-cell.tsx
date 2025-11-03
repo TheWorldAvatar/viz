@@ -79,6 +79,11 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
+              {options.length > 20 && <input
+                type="text"
+                placeholder="Filter not listed? Start typing..."
+                aria-label={props.header.id + "filter-input"}
+              />}
               {!isLoading && currentFilters.length > 0 && <Button
                 leftIcon="filter_list_off"
                 iconSize="medium"

@@ -5,7 +5,7 @@ import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
+import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { Status } from "ui/text/status/status";
 import { getUTCDate, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
@@ -26,6 +26,7 @@ export interface TableDataDescriptor {
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
+* @param { ColumnFilter[]} filters The current filters set.
 */
 export function useTableData(
   pathNameEnd: string,
@@ -49,13 +50,7 @@ export function useTableData(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
-      const filterParams: string = remainingFilters.length === 0 ? "" : filters.map(filter => {
-        if (filter.value === undefined || (filter.value as string[]).length === 0) {
-          return "";
-        }
-        return `&${filter.id}=${(filter.value as string[]).join("%7C")}`
-      }).join("");
+      const filterParams: string = parseColumnFiltersIntoUrlParams(filters);
       try {
         let instances: RegistryFieldValues[] = [];
         if (lifecycleStage === "report") {

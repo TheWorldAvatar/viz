@@ -28,6 +28,7 @@ export async function GET(
   const { slug } = await params;
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -248,8 +249,9 @@ function makeExternalEndpoint(
     case "count": {
       const type: string = searchParams.get("type");
       const lifecycle: string = searchParams.get("lifecycle");
+      const filters: string = searchParams.get("filters");
       if (lifecycle == "null") {
-        return `${agentBaseApi}/${type}/count`;
+        return `${agentBaseApi}/${type}/count${filters.length === 0 ? "" : "?" + filters.slice(1)}`;
       }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
@@ -262,7 +264,7 @@ function makeExternalEndpoint(
         } else {
           throw Error("Invalid stage");
         }
-        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}`;
+        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}${filters}`;
       }
       let params: string = "";
       if (lifecycle == "scheduled" || lifecycle == "closed") {
@@ -272,7 +274,7 @@ function makeExternalEndpoint(
         const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
         params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       }
-      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}`;
+      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
     }
     case "instances": {
       const type: string = searchParams.get("type");

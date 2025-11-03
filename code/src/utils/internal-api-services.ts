@@ -38,9 +38,10 @@ export function makeInternalRegistryAPIwithParams(
     case "count":
       searchParams = new URLSearchParams({
         type: params[0],
-        lifecycle: params[1] ?? null,
-        start_date: params[2] ?? null,
-        end_date: params[3] ?? null,
+        filters: params[1] ?? "",
+        lifecycle: params[2] ?? null,
+        start_date: params[3] ?? null,
+        end_date: params[4] ?? null,
       });
       break;
     case "instances":
