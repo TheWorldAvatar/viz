@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.5
+
+### Bug Fixes
+
+- Fixed an issue when reading JSONs and trying to determine the column headers of a table, all unique entries should be included
+
 ## 5.43.4
 
 ### Bug Fixes
