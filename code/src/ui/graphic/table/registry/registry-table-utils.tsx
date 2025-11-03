@@ -33,37 +33,37 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   };
   if (instances?.length > 0) {
     const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
-    let columnNames: Set<string> = new Set<string>();
-    let maxFieldLength: number = 0;
-    instances.map(instance => {
+    const columnNames: string[] = [];
+    instances.forEach(instance => {
       const flattenInstance: Record<string, string> = {};
       const fields: string[] = Object.keys(instance);
-      const tempColumns: Set<string> = new Set<string>();
-      fields.forEach((field) => {
+
+      fields.forEach((field, index) => {
         const fieldValue = instance[field];
         if (Array.isArray(fieldValue)) {
           flattenInstance[field] = fieldValue[0]?.value;
         } else {
           flattenInstance[field] = fieldValue?.value;
         }
-        // Update last modified field to translated title format
+
+        const normalizedField: string = field === "lastModified" ? titleDict.lastModified : field;
+
         if (field === "lastModified") {
-          flattenInstance[titleDict.lastModified] = new Date(flattenInstance[field]).toLocaleString();
-          delete flattenInstance[field]
+          flattenInstance[normalizedField] = new Date(flattenInstance[field]).toLocaleString();
+          delete flattenInstance[field];
         }
-        // Whenever the number of fields in a row exceeds the current max number of fields,
-        // add column field to a temporary set
-        if (fields.length > maxFieldLength) {
-          tempColumns.add(field === "lastModified" ? titleDict.lastModified : field);
+
+        if (!columnNames.includes(normalizedField)) {
+          // Insert at the current index if possible, else push to end
+          const insertIndex: number = Math.min(index, columnNames.length);
+          columnNames.splice(insertIndex, 0, normalizedField);
         }
       });
+
       results.data.push(flattenInstance);
-      // Merge additional columns with existing main set
-      if (fields.length > maxFieldLength) {
-        columnNames = new Set([...columnNames, ...tempColumns]);
-        maxFieldLength = fields.length;
-      }
     });
+
+
     // Create column definitions based on available columns
     for (const col of columnNames) {
       const title: string = parseWordsForLabels(col);
@@ -98,7 +98,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 
 /**
  * Builds a custom filter function to filter for multiple values when selected.
- * 
+ *
  * @param {string} translatedBlankText The translated blank text.
  */
 function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<FieldValues> {
