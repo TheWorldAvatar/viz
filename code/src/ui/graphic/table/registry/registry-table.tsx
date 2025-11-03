@@ -46,6 +46,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import TableSkeleton from "../skeleton/table-skeleton";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
 
 interface RegistryTableProps {
@@ -74,6 +75,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = React.useState<boolean>(false);
+  const [isPaginationLoading, setIsPaginationLoading] = React.useState<boolean>(false);
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -87,6 +89,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     row => (row.original.status as string)?.toLowerCase() === "amended"
   );
   const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
+
+  const handlePaginationChange = React.useCallback((action: () => void) => {
+    setIsPaginationLoading(true);
+    action();
+    // Use setTimeout to allow the table to re-render with the skeleton
+    setTimeout(() => {
+      setIsPaginationLoading(false);
+    }, 300);
+  }, []);
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -303,7 +314,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     </thead>
 
                     <tbody>
-                      {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
+                      {isPaginationLoading ? (
+                        <TableSkeleton
+                          rows={props.tableDescriptor.table.getState().pagination.pageSize}
+                          columns={props.tableDescriptor.table.getVisibleLeafColumns().length}
+                        />
+                      ) : props.tableDescriptor.table.getRowModel().rows?.length > 0 ? (
                         <SortableContext
                           items={dragAndDropDescriptor.dataIds}
                           strategy={verticalListSortingStrategy}
@@ -344,14 +360,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             </TableRow>
                           ))}
                         </SortableContext>
-                      )}
+                      ) : null}
                     </tbody>
                   </table>
                 </DndContext>
               </div>
             </div>
           </div>
-          <TablePagination table={props.tableDescriptor.table} />
+          <TablePagination
+            table={props.tableDescriptor.table}
+            onPaginationChange={handlePaginationChange}
+          />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
