@@ -21,10 +21,10 @@ export default function IconComponent(props: IconComponentProps) {
     return (
       <div className={props.classes}>
         <Image
-          width={0}
-          height={0}
+          width={500}
+          height={500}
           sizes="100vw"
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: 'auto', height: '100%', maxWidth: '100%' }}
           src={props.icon}
           alt="Icon" />
       </div>

@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.5
+
+### Changes
+
+- Fixed styling issue for mobile design (react-select dropdown not fully visible when its the last element in the form)
+- Fixed the logo images not showing on some mobile devices or diffrent browsers due to the the width and height attributes being set to 0
+
+## 5.43.4
+
+### Bug Fixes
+
+- Fixed an issue when adding a new job request with default "Waste Collection Service" that was throwing an error (missing contract parameter) due to a default NULL value being sent to the backend
+
 ## 5.43.3
 
 ### Bug Fixes
