@@ -67,12 +67,10 @@ export const ENTITY_STATUS: Record<string, string> = {
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
- * @param {boolean} isDefaultNullable Indicate if default values are nullable. If true, defaults can return null. Optional parameter that is set to false by default.
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
-  isDefaultNullable: boolean = false,
 ): PropertyShapeOrGroup[] {
   return fields.map((field) => {
     // Properties as part of a group
@@ -93,7 +91,6 @@ export function parsePropertyShapeOrGroupList(
             updatedProp,
             initialState,
             fieldset.label[VALUE_KEY],
-            isDefaultNullable,
             true,
             parseInt(fieldset.minCount?.[VALUE_KEY])
           );
@@ -101,7 +98,7 @@ export function parsePropertyShapeOrGroupList(
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
-        return initFormField(updatedProp, initialState, fieldId, isDefaultNullable);
+        return initFormField(updatedProp, initialState, fieldId);
       });
       // Update the property group with updated properties
       return {
@@ -122,7 +119,6 @@ export function parsePropertyShapeOrGroupList(
           fieldShape,
           initialState,
           fieldShape.name[VALUE_KEY],
-          isDefaultNullable,
           true,
           parseInt(fieldShape.minCount?.[VALUE_KEY])
         );
@@ -132,7 +128,6 @@ export function parsePropertyShapeOrGroupList(
         fieldShape,
         initialState,
         fieldShape.name[VALUE_KEY],
-        isDefaultNullable,
       );
     }
   });
@@ -159,7 +154,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, true);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property);
     nodeStates.push(nodeState);
     results.push({
       ...shape,
@@ -223,7 +218,6 @@ export function parseBranches(
  * @param {PropertyShape} field The data model for the field of interest.
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
- * @param {boolean} isDefaultNullable Indicate if default values are nullable. If true, defaults can be null
  * @param {boolean} isArray Optional state to initialise array fields.
  * @param {number} minSize Optional parameter to indicate the minimum array size.
  */
@@ -231,7 +225,6 @@ function initFormField(
   field: PropertyShape,
   outputState: FieldValues,
   fieldId: string,
-  isDefaultNullable: boolean,
   isArray?: boolean,
   minSize?: number
 ): PropertyShape {
@@ -290,8 +283,7 @@ function initFormField(
     outputState[fieldId] = getDefaultVal(
       fieldId,
       defaultVal,
-      outputState.formType,
-      isDefaultNullable
+      outputState.formType
     );
   }
   // Update property shape with field ID property
@@ -308,13 +300,11 @@ function initFormField(
  * @param {string} field The field of interest.
  * @param {string} defaultValue Default value retrieved from the backend, if any.
  * @param {string} formType The type of form.
- * @param {boolean} isDefaultNullable Indicate if default values are nullable. If true, defaults can return null. Optional parameter that is set to false by default.
  */
 export function getDefaultVal(
   field: string,
   defaultValue: string,
   formType: FormType,
-  isDefaultNullable: boolean = false,
 ): boolean | number | string {
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
@@ -360,8 +350,8 @@ export function getDefaultVal(
     // Default value can be null, and should return false if null
     return !!defaultValue;
   }
-  // Returns the default value if passed, or else, nothing
-  return defaultValue ? defaultValue : isDefaultNullable ? null : "";
+  // Returns the default value if passed, or else, empty string
+  return defaultValue ? defaultValue : "";
 }
 
 /**
