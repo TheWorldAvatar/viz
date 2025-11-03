@@ -51,7 +51,6 @@ import TableRow from "../row/table-row";
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
-  instances: RegistryFieldValues[];
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
@@ -62,7 +61,6 @@ interface RegistryTableProps {
  *
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {RegistryFieldValues[]} instances The instance values for the table.
  * @param setTask A dispatch method to set the task option when required.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
