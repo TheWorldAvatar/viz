@@ -6,21 +6,19 @@ import Button from "ui/interaction/button";
 
 interface TablePaginationProps {
   table: Table<FieldValues>;
-  onPaginationChange?: (_action: () => void) => void;
 }
 
 /**
  * A pagination component for the table.
  *
  * @param {Table<FieldValues>} props.table - The table instance.
- * @param {Function} props.onPaginationChange - Optional callback to handle pagination changes with loading state.
  */
 
 const PAGE_SIZE_OPTIONS: number[] = [5, 10, 20, 50];
 
 export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
-  const { table, onPaginationChange } = props;
+  const { table } = props;
   const numberOfSelectedRows: number = table.getSelectedRowModel().rows.length;
   return (
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
@@ -72,13 +70,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             leftIcon="keyboard_double_arrow_left"
             size="icon"
             className="!hidden md:!flex"
-            onClick={() => {
-              if (onPaginationChange) {
-                onPaginationChange(() => table.setPageIndex(0));
-              } else {
-                table.setPageIndex(0);
-              }
-            }}
+            onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
             aria-label="Go to first page"
           />
@@ -86,13 +78,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             variant="outline"
             leftIcon="keyboard_arrow_left"
             size="icon"
-            onClick={() => {
-              if (onPaginationChange) {
-                onPaginationChange(() => table.previousPage());
-              } else {
-                table.previousPage();
-              }
-            }}
+            onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             aria-label="Go to previous page"
           />
@@ -100,13 +86,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             variant="outline"
             leftIcon="keyboard_arrow_right"
             size="icon"
-            onClick={() => {
-              if (onPaginationChange) {
-                onPaginationChange(() => table.nextPage());
-              } else {
-                table.nextPage();
-              }
-            }}
+            onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             aria-label="Go to next page"
           />
@@ -115,13 +95,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             leftIcon="keyboard_double_arrow_right"
             className="!hidden md:!flex"
             size="icon"
-            onClick={() => {
-              if (onPaginationChange) {
-                onPaginationChange(() => table.setPageIndex(table.getPageCount() - 1));
-              } else {
-                table.setPageIndex(table.getPageCount() - 1);
-              }
-            }}
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
             aria-label="Go to last page"
           />

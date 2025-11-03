@@ -18,7 +18,7 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FieldValues } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
@@ -74,8 +74,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const [isActionMenuOpen, setIsActionMenuOpen] = React.useState<boolean>(false);
-  const [isPaginationLoading, setIsPaginationLoading] = React.useState<boolean>(false);
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isPaginationLoading, setIsPaginationLoading] = useState<boolean>(false);
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -90,14 +90,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   );
   const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
 
-  const handlePaginationChange = React.useCallback((action: () => void) => {
+  const currentPage = props.tableDescriptor.table.getState().pagination.pageIndex;
+  useEffect(() => {
     setIsPaginationLoading(true);
-    action();
-    // Use setTimeout to allow the table to re-render with the skeleton
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsPaginationLoading(false);
     }, 300);
-  }, []);
+    return () => clearTimeout(timer);
+  }, [currentPage]);
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -369,7 +369,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           </div>
           <TablePagination
             table={props.tableDescriptor.table}
-            onPaginationChange={handlePaginationChange}
           />
         </>
       ) : (
