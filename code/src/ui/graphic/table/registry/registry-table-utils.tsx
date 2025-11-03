@@ -46,7 +46,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           flattenInstance[field] = fieldValue?.value;
         }
 
-        const normalizedField = field === "lastModified" ? titleDict.lastModified : field;
+        const normalizedField: string = field === "lastModified" ? titleDict.lastModified : field;
 
         if (field === "lastModified") {
           flattenInstance[normalizedField] = new Date(flattenInstance[field]).toLocaleString();
@@ -55,7 +55,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 
         if (!columnNames.includes(normalizedField)) {
           // Insert at the current index if possible, else push to end
-          const insertIndex = Math.min(index, columnNames.length);
+          const insertIndex: number = Math.min(index, columnNames.length);
           columnNames.splice(insertIndex, 0, normalizedField);
         }
       });
