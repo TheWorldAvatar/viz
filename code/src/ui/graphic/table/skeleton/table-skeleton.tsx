@@ -15,7 +15,7 @@ export default function TableSkeleton() {
                                     </div>
                                 </th>
                                 {/* Header cells */}
-                                {Array.from({ length: 5 }).map((_, colIndex) => (
+                                {[...Array(5)].map((_, colIndex) => (
                                     <th
                                         key={`skeleton-header-${colIndex}`}
                                         className="border-r border-border border-b p-2 md:p-3 text-left font-semibold whitespace-nowrap last:border-r-0"
@@ -26,7 +26,7 @@ export default function TableSkeleton() {
                             </tr>
                         </thead>
                         <tbody>
-                            {Array.from({ length: 5 }).map((_, rowIndex) => (
+                            {[...Array(5)].map((_, rowIndex) => (
                                 <tr key={`skeleton-row-${rowIndex}`} className="group">
                                     {/* Action cells */}
                                     <th className="w-[calc(100%/20)] border-r border-border border-b  p-2 md:p-3 sticky left-0 z-20 bg-background group-hover:bg-muted">
@@ -49,20 +49,18 @@ export default function TableSkeleton() {
                                         </div>
                                     </th>
                                     {/* Data cells */}
-                                    {
-                                        Array.from({ length: 5 }).map((_, colIndex) => (
-                                            <th
-                                                key={`skeleton-col-${colIndex}`}
-                                                className="border-r bg-background border-border border-b p-2 md:p-3 whitespace-nowrap last:border-r-0 group-hover:bg-muted "
-                                            >
-                                                <div
-                                                    className="h-6 bg-ring animate-pulse rounded w-full"
-                                                    style={{
-                                                        maxWidth: `${120 + (colIndex * 20) % 100}px`
-                                                    }}
-                                                />
-                                            </th>
-                                        ))
+                                    {[...Array(5)].map((_, colIndex) => (
+                                        <th key={`skeleton-col-${colIndex}`}
+                                            className="border-r bg-background border-border border-b p-2 md:p-3 whitespace-nowrap last:border-r-0 group-hover:bg-muted "
+                                        >
+                                            <div
+                                                className="h-6 bg-ring animate-pulse rounded w-full"
+                                                style={{
+                                                    maxWidth: `${120 + (colIndex * 20) % 100}px`
+                                                }}
+                                            />
+                                        </th>
+                                    ))
                                     }
                                 </tr>
                             ))}
