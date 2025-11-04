@@ -231,7 +231,7 @@ export default function RegistryTableComponent(
             triggerRefresh={triggerRefresh}
           />
         ) : (
-          <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
+          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
       {isTaskModalOpen && task && (
