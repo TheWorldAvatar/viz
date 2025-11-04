@@ -303,7 +303,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     </thead>
 
                     <tbody>
-                      {props.tableDescriptor.table.getRowModel().rows?.length > 0 ? (
+                      {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
                         <SortableContext
                           items={dragAndDropDescriptor.dataIds}
                           strategy={verticalListSortingStrategy}
@@ -344,7 +344,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             </TableRow>
                           ))}
                         </SortableContext>
-                      ) : null}
+                      )}
                     </tbody>
                   </table>
                 </DndContext>

@@ -217,10 +217,7 @@ export default function RegistryTableComponent(
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {refreshFlag || isLoading ? (
-          <TableSkeleton
-            rows={tableDescriptor.table.getState().pagination.pageSize}
-            columns={5}
-          />
+          <TableSkeleton />
         ) : currentInstances.length > 0 ? (
           <RegistryTable
             recordType={props.entityType}

@@ -1,17 +1,6 @@
 import { Icon } from "@mui/material";
 
-interface TableSkeletonProps {
-    rows: number;
-    columns: number;
-}
-
-/**
- * A skeleton loading component for table rows while pagination is loading.
- *
- * @param {number} rows - Number of skeleton rows to display 
- * @param {number} columns - Number of skeleton columns to display 
- */
-export default function TableSkeleton(props: Readonly<TableSkeletonProps>) {
+export default function TableSkeleton() {
     return (
         <div className="w-full rounded-lg border border-border   flex flex-col h-full overflow-hidden">
             {/* Table container */}
@@ -26,7 +15,7 @@ export default function TableSkeleton(props: Readonly<TableSkeletonProps>) {
                                     </div>
                                 </th>
                                 {/* Header cells */}
-                                {Array.from({ length: props.columns }).map((_, colIndex) => (
+                                {Array.from({ length: 5 }).map((_, colIndex) => (
                                     <th
                                         key={`skeleton-header-${colIndex}`}
                                         className="border-r border-border border-b p-2 md:p-3 text-left font-semibold whitespace-nowrap last:border-r-0"
@@ -37,7 +26,7 @@ export default function TableSkeleton(props: Readonly<TableSkeletonProps>) {
                             </tr>
                         </thead>
                         <tbody>
-                            {Array.from({ length: props.rows }).map((_, rowIndex) => (
+                            {Array.from({ length: 5 }).map((_, rowIndex) => (
                                 <tr key={`skeleton-row-${rowIndex}`} className="group">
                                     {/* Action cells */}
                                     <th className="w-[calc(100%/20)] border-r border-border border-b  p-2 md:p-3 sticky left-0 z-20 bg-background group-hover:bg-muted">
@@ -61,7 +50,7 @@ export default function TableSkeleton(props: Readonly<TableSkeletonProps>) {
                                     </th>
                                     {/* Data cells */}
                                     {
-                                        Array.from({ length: props.columns }).map((_, colIndex) => (
+                                        Array.from({ length: 5 }).map((_, colIndex) => (
                                             <th
                                                 key={`skeleton-col-${colIndex}`}
                                                 className="border-r bg-background border-border border-b p-2 md:p-3 whitespace-nowrap last:border-r-0 group-hover:bg-muted "
