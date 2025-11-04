@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.43.7
+
+### Changes
+
+- Added a loading skeleton for the registry table to improve user experience during data fetching
+
 ## 5.43.6
 
 ### Bug Fixes
