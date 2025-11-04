@@ -1,5 +1,6 @@
 import {
   ColumnFiltersState,
+  ColumnSort,
   getCoreRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
@@ -54,7 +55,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
+  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -78,13 +79,13 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
       sorting: sorting,
     },
     manualPagination: true,
+    manualSorting: true,
     rowCount: rowCounts.filter,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row, index) => row.id + index,
