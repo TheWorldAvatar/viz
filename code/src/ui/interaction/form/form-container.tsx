@@ -12,7 +12,6 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
@@ -23,6 +22,7 @@ import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
+import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -231,8 +231,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       </section>
       <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {!(isRescindAction || isTerminateAction) &&
-          (refreshFlag ? (
-            <LoadingSpinner isSmall={false} />
+          (refreshFlag || isLoading ? (
+            <FormSkeleton />
           ) : (
             <FormComponent
               formRef={formRef}
