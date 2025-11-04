@@ -27,8 +27,7 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  RegistryFieldValues,
-  RegistryTaskOption,
+  RegistryTaskOption
 } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";

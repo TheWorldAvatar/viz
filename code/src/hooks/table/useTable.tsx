@@ -1,10 +1,8 @@
 import {
   ColumnFiltersState,
-  ColumnSort,
   getCoreRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getSortedRowModel,
   OnChangeFn,
   PaginationState,
   SortingState,

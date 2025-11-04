@@ -1,6 +1,5 @@
 "use client";
 
-import { useTotalRowCount } from "hooks/table/api/useTotalRowCount";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -9,25 +8,20 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useSelector } from "react-redux";
 import { selectDrawerIsOpen } from "state/drawer-component-slice";
-import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  RegistryFieldValues,
-  RegistryTaskOption,
+  RegistryTaskOption
 } from "types/form";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
-  getUTCDate,
-  parseWordsForLabels,
+  parseWordsForLabels
 } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import TableSkeleton from "../skeleton/table-skeleton";
 
 interface RegistryTableComponentProps {
   entityType: string;

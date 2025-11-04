@@ -67,6 +67,7 @@ export function makeInternalRegistryAPIwithParams(
       searchParams = new URLSearchParams({
         type: params[0],
         field: params[1],
+        lifecycle: params[2] ?? null,
       });
       break;
     case "form":
