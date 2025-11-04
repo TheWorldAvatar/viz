@@ -53,12 +53,7 @@ export default function TableSkeleton() {
                                         <th key={`skeleton-col-${colIndex}`}
                                             className="border-r bg-background border-border border-b p-2 md:p-3 whitespace-nowrap last:border-r-0 group-hover:bg-muted "
                                         >
-                                            <div
-                                                className="h-6 bg-ring animate-pulse rounded w-full"
-                                                style={{
-                                                    maxWidth: `${120 + (colIndex * 20) % 100}px`
-                                                }}
-                                            />
+                                            <div className="h-6 bg-ring animate-pulse rounded w-full" />
                                         </th>
                                     ))
                                     }
