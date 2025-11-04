@@ -18,7 +18,7 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
@@ -73,7 +73,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const [isActionMenuOpen, setIsActionMenuOpen] = React.useState<boolean>(false);
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -351,7 +351,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination table={props.tableDescriptor.table} />
+          <TablePagination
+            table={props.tableDescriptor.table}
+          />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
