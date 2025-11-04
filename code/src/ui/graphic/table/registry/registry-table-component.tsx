@@ -15,7 +15,6 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import { Status } from "ui/text/status/status";
 import {
@@ -27,7 +26,7 @@ import {
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-
+import TableSkeleton from "../skeleton/table-skeleton";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -218,7 +217,10 @@ export default function RegistryTableComponent(
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {refreshFlag || isLoading ? (
-          <LoadingSpinner isSmall={false} />
+          <TableSkeleton
+            rows={tableDescriptor.table.getState().pagination.pageSize}
+            columns={5}
+          />
         ) : currentInstances.length > 0 ? (
           <RegistryTable
             recordType={props.entityType}

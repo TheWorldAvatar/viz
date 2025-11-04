@@ -18,7 +18,7 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
@@ -46,7 +46,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import TableSkeleton from "../skeleton/table-skeleton";
 import { parseRowsForFilterOptions } from "./registry-table-utils";
 
 interface RegistryTableProps {
@@ -75,7 +74,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
-  const [isPaginationLoading, setIsPaginationLoading] = useState<boolean>(false);
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -89,15 +87,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     row => (row.original.status as string)?.toLowerCase() === "amended"
   );
   const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
-
-  const currentPage = props.tableDescriptor.table.getState().pagination.pageIndex;
-  useEffect(() => {
-    setIsPaginationLoading(true);
-    const timer = setTimeout(() => {
-      setIsPaginationLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [currentPage]);
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -314,12 +303,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     </thead>
 
                     <tbody>
-                      {isPaginationLoading ? (
-                        <TableSkeleton
-                          rows={props.tableDescriptor.table.getState().pagination.pageSize}
-                          columns={props.tableDescriptor.table.getVisibleLeafColumns().length}
-                        />
-                      ) : props.tableDescriptor.table.getRowModel().rows?.length > 0 ? (
+                      {props.tableDescriptor.table.getRowModel().rows?.length > 0 ? (
                         <SortableContext
                           items={dragAndDropDescriptor.dataIds}
                           strategy={verticalListSortingStrategy}
