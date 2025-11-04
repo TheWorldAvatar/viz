@@ -16,10 +16,10 @@ export default function TableSkeleton({ rows = 5, columns = 6 }: Readonly<TableS
                 <tr key={`skeleton-row-${rowIndex}`} className="group">
                     {/* Action cells*/}
                     <th className="border-r border-border border-b p-2 md:p-3 sticky left-0 z-20 bg-background">
-                        <div className="flex gap-0.5">
-                            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-800 animate-pulse rounded" />
-                            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-800 animate-pulse rounded" />
-                            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-800 animate-pulse rounded" />
+                        <div className="flex gap-1.5">
+                            <div className="h-8 w-8 bg-ring animate-pulse rounded" />
+                            <div className="h-8 w-8 bg-ring animate-pulse rounded" />
+                            <div className="h-8 w-8 bg-ring animate-pulse rounded" />
                         </div>
                     </th>
                     {/* Data cells */}
@@ -28,7 +28,7 @@ export default function TableSkeleton({ rows = 5, columns = 6 }: Readonly<TableS
                             key={`skeleton-col-${colIndex}`}
                             className="border-r bg-background border-border border-b p-2 md:p-3 animate-pulse whitespace-nowrap last:border-r-0"
                         >
-                            <div className="h-6 bg-gray-200 dark:bg-gray-800 animate-pulse rounded w-full max-w-[200px]" />
+                            <div className="h-6 bg-ring animate-pulse rounded w-full max-w-[200px]" />
                         </th>
                     ))}
                 </tr>
