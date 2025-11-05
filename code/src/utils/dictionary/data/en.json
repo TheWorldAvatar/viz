@@ -161,6 +161,7 @@
       "map": "Geospatial data visualisation",
       "dashboard": "Discover trends and insights at a glance",
       "registry": "Manage your orders",
+      "billing": "View and manage your billing",
       "submission": "Manage your submissions",
       "generalReg": "Manage {replace}",
       "help": "Get help for this web platform"
@@ -170,6 +171,7 @@
       "map": "Map",
       "dashboard": "Analyse",
       "registry": "Registry Records",
+      "billing": "Billing",
       "submission": "Registry Submission",
       "help": "Help Centre",
       "pending": "Pending",

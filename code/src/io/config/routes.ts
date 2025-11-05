@@ -6,6 +6,7 @@ export const Modules: {
   MAP: "map",
   DASHBOARD: "dashboard",
   REGISTRY: "registry",
+  BILLING: "billing",
   HELP: "help",
 };
 
@@ -23,6 +24,10 @@ export const Paths: {
   MAP: "map",
   DASHBOARD: "analytics",
   REGISTRY: "view",
+  BILLING: "billing",
+  BILLING_BILLING_ACCOUNTS: "billing/billing_accounts",
+  BILLING_PRICING_MODELS: "billing/pricing_models",
+  BILLING_BILLING_ACTIVITY: "billing/billing_activity",
   REGISTRY_GENERAL: "registry",
   REGISTRY_TASK_OUTSTANDING: "registry/task/outstanding",
   REGISTRY_TASK_SCHEDULED: "registry/task/scheduled",
@@ -42,6 +47,10 @@ export const Routes: {
   MAP: `${ASSET_PREFIX}/${Paths.MAP}`,
   DASHBOARD: `${ASSET_PREFIX}/${Paths.DASHBOARD}`,
   REGISTRY: `${ASSET_PREFIX}/${Paths.REGISTRY}`,
+  BILLING: `${ASSET_PREFIX}/${Paths.BILLING}`,
+  BILLING_BILLING_ACCOUNTS: `${ASSET_PREFIX}/${Paths.BILLING_BILLING_ACCOUNTS}`,
+  BILLING_PRICING_MODELS: `${ASSET_PREFIX}/${Paths.BILLING_PRICING_MODELS}`,
+  BILLING_BILLING_ACTIVITY: `${ASSET_PREFIX}/${Paths.BILLING_BILLING_ACTIVITY}`,
   REGISTRY_GENERAL: `${ASSET_PREFIX}/${Paths.REGISTRY_GENERAL}`,
   REGISTRY_TASK_OUTSTANDING: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_OUTSTANDING}`,
   REGISTRY_TASK_SCHEDULED: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_SCHEDULED}`,
@@ -59,5 +68,6 @@ export const PageTitles: {
   MAP: "Explore",
   DASHBOARD: "Analytics",
   REGISTRY: "Registry",
+  BILLING: "Billing",
   HELP: "Help",
 };
