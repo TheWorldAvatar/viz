@@ -9,6 +9,10 @@ export default function FormSkeleton() {
                             <div className="h-12 bg-ring rounded w-full" />
                             <div className="h-12 bg-ring rounded w-full" />
                             <div className="h-26 bg-ring rounded w-full" />
+                            <div className="flex items-center justify-between">
+                                <div className="h-12 bg-ring rounded w-46 max-w-24" />
+                                <div className="h-12 bg-ring rounded w-46" />
+                            </div>
                         </div>
                     ))}
                 </div>
