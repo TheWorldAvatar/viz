@@ -51,6 +51,10 @@ export default async function Post({ params }: Properties) {
   if (!exclusions.includes(resolvedParams.id)) {
     // Get cached page content.
     const page: OptionalPage = OptionalPages.getPage(resolvedParams.id);
+
+    if (!page) {
+      return notFound();
+    }
     const markdownResult = markdowner.render(page.content);
     return (
       <StaticContentPage
