@@ -46,7 +46,9 @@
     "clickDecrease": "Zum Verringern anklicken",
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen"
+    "showLess": "Weniger anzeigen",
+    "back": "Zurück",
+    "backHome": "Nach Hause gehen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -152,8 +154,8 @@
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
-    "processingRequest": "Bearbeitung der Anfrage..."
-   
+    "processingRequest": "Bearbeitung der Anfrage...",
+    "notFound": "Diese Seite konnte nicht gefunden werden."
   },
   "nav": {
     "caption": {
