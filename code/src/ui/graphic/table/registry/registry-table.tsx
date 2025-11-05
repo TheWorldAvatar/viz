@@ -46,7 +46,6 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 
-
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
@@ -275,7 +274,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <HeaderCell
                                   key={header.id + index}
                                   header={header}
-                                  type ={props.recordType}
+                                  lifecycleStage={props.lifecycleStage}
+                                  type={props.recordType}
                                   resetRowSelection={props.tableDescriptor.table.resetRowSelection}
                                 />
                               );
@@ -333,7 +333,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination rows ={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
+          <TablePagination rows={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">

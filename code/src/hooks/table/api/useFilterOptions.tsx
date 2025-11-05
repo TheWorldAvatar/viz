@@ -1,5 +1,9 @@
+import { useDictionary } from "hooks/useDictionary";
 import React, { useEffect, useState } from "react";
 import { AgentResponseBody } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
+import { LifecycleStage } from "types/form";
+import { parseTranslatedFieldToOriginal } from "ui/graphic/table/registry/registry-table-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface FilterOptionsDescriptor {
@@ -16,11 +20,14 @@ export interface FilterOptionsDescriptor {
 * 
 * @param {string} entityType Type of entity for rendering.
 * @param {string} field List of parameters for sorting.
+* @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 */
 export function useFilterOptions(
   entityType: string,
   field: string,
+  lifecycleStage: LifecycleStage,
 ): FilterOptionsDescriptor {
+  const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const [triggerFetch, setTriggerFetch] = useState<boolean>(false);
@@ -36,8 +43,8 @@ export function useFilterOptions(
           makeInternalRegistryAPIwithParams(
             "filter",
             entityType,
-            field,
-
+            parseTranslatedFieldToOriginal(field, dict.title),
+            lifecycleStage,
           ));
         setOptions(res.data?.items as string[]);
       } catch (error) {

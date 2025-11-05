@@ -311,8 +311,23 @@ function makeExternalEndpoint(
     case "filter": {
       const type = searchParams.get("type");
       const field = searchParams.get("field");
-      const urlParams = new URLSearchParams({ field });
-      return `${agentBaseApi}/${type}/filter?${urlParams.toString()}`;
+      const lifecycle: string = searchParams.get("lifecycle");
+      const urlParams = new URLSearchParams({ type, field });
+      if (lifecycle == "general") {
+        return `${agentBaseApi}/${type}/filter?${urlParams.toString()}`;
+      }
+      if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
+        let stagePath: string;
+        if (lifecycle === "pending") {
+          stagePath = "draft";
+        } else if (lifecycle === "active") {
+          stagePath = "service";
+        } else if (lifecycle === "archive") {
+          stagePath = "archive";
+        }
+        return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}`;
+      }
+      return "";
     }
     case "form": {
       const entityType: string = searchParams.get("type");

@@ -130,10 +130,23 @@ export function genSortParams(currentSort: SortingState, titleDict: Record<strin
     } else {
       params += "%2B";
     }
-    const field: string = column.id === titleDict.lastModified ? "lastModified" : column.id
+    const field: string = parseTranslatedFieldToOriginal(column.id, titleDict);
     params += field;
   }
   return params;
+}
+
+/**
+ * Parses the translated field back to the original name.
+ *
+ * @param {string} field Name of field for translations
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<string, string>): string {
+  if (field.toLowerCase() === titleDict.lastModified.toLowerCase()) {
+    return "lastModified";
+  }
+  return field;
 }
 
 /**
