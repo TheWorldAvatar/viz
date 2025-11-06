@@ -50,6 +50,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
       <RegistryTableComponent
         entityType={decodedType}
         lifecycleStage={lifecycleStage}
+        uiSettings={uiSettings}
       />
     );
   } else {
