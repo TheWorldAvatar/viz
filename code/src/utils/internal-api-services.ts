@@ -3,7 +3,6 @@ import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
-const prefixedBillingURL: string = `${assetPrefix}/api/billing/`;
 
 export function makeInternalRegistryAPIwithParams(
   internalIdentifier: InternalApiIdentifier,
@@ -107,29 +106,4 @@ export function makeInternalRegistryAPIwithParams(
       break;
   }
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
-}
-
-export function makeInternalBillingAPIwithParams(
-  internalIdentifier: string,
-  ...params: string[]
-): string {
-  let searchParams: URLSearchParams;
-  switch (internalIdentifier) {
-    case "billing_accounts":
-      searchParams = new URLSearchParams({
-        account_id: params[0],
-      });
-      break;
-    case "pricing_models":
-      searchParams = new URLSearchParams({
-        model_type: params[0],
-      });
-      break;
-    case "billing_activity":
-      searchParams = new URLSearchParams({
-        user_id: params[0],
-      });
-      break;
-  }
-  return `${prefixedBillingURL}${internalIdentifier}?${searchParams.toString()}`;
 }
