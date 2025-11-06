@@ -85,15 +85,6 @@ export default class SettingsStore {
   }
 
 
-  // Retrieves billing URL from settings
-  public static async getBillingURL(): Promise<string> {
-    if (!this.UI_SETTINGS) {
-      this.readUISettings();
-    }
-    return this.UI_SETTINGS.resources?.billing?.url ?? "";
-  }
-
-
   /**
    * Reads the data settings for populating the map
   */
