@@ -83,6 +83,7 @@ export default function RegistryTableComponent(
           <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
+            selectedDate={selectedDate}
             setTask={setTask}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}

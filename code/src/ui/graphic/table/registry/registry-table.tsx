@@ -45,10 +45,12 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import { DateRange } from "react-day-picker";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
+  selectedDate: DateRange;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
@@ -59,6 +61,7 @@ interface RegistryTableProps {
  *
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {DateRange} selectedDate The currently selected date.
  * @param setTask A dispatch method to set the task option when required.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
@@ -275,6 +278,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   key={header.id + index}
                                   header={header}
                                   lifecycleStage={props.lifecycleStage}
+                                  selectedDate={props.selectedDate}
                                   type={props.recordType}
                                   resetRowSelection={props.tableDescriptor.table.resetRowSelection}
                                 />

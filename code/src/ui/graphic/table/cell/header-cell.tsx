@@ -11,10 +11,12 @@ import Button from "ui/interaction/button";
 import SelectOption from "ui/interaction/input/select-option";
 import TableCell from "./table-cell";
 import { LifecycleStage } from "types/form";
+import { DateRange } from "react-day-picker";
 
 interface HeaderCellProps {
   type: string;
   lifecycleStage: LifecycleStage;
+  selectedDate: DateRange;
   header: Header<FieldValues, unknown>;
   resetRowSelection?: () => void;
 }
@@ -24,12 +26,20 @@ interface HeaderCellProps {
  *
  * @param {string} type The entity type to query for.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {DateRange} selectedDate The currently selected date.
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param resetRowSelection Optional row selection function to reset row when unused.
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const { options, isLoading, showFilterDropdown, setIsLoading, setShowFilterDropdown, setTriggerFetch } = useFilterOptions(props.type, props.header.id.toLowerCase(), props.lifecycleStage)
+  const {
+    options,
+    isLoading,
+    showFilterDropdown,
+    setIsLoading,
+    setShowFilterDropdown,
+    setTriggerFetch
+  } = useFilterOptions(props.type, props.header.id.toLowerCase(), props.lifecycleStage, props.selectedDate)
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
   const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];

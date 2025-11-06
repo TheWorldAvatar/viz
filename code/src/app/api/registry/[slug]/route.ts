@@ -309,10 +309,10 @@ function makeExternalEndpoint(
       return url;
     }
     case "filter": {
-      const type = searchParams.get("type");
-      const field = searchParams.get("field");
+      const type: string = searchParams.get("type");
+      const field: string = searchParams.get("field");
       const lifecycle: string = searchParams.get("lifecycle");
-      const urlParams = new URLSearchParams({ type, field });
+      const urlParams: URLSearchParams = new URLSearchParams({ type, field });
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}`;
       }
@@ -326,6 +326,14 @@ function makeExternalEndpoint(
           stagePath = "archive";
         }
         return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}`;
+      } else if (lifecycle == "outstanding") {
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}`;
+      } else if (lifecycle == "scheduled" || lifecycle == "closed") {
+        const startDate: string = searchParams.get("start_date");
+        const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
+        const endDate: string = searchParams.get("end_date");
+        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       }
       return "";
     }

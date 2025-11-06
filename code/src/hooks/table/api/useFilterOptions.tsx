@@ -1,9 +1,11 @@
 import { useDictionary } from "hooks/useDictionary";
 import React, { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
 import { parseTranslatedFieldToOriginal } from "ui/graphic/table/registry/registry-table-utils";
+import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface FilterOptionsDescriptor {
@@ -21,11 +23,13 @@ export interface FilterOptionsDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {string} field List of parameters for sorting.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+* @param {DateRange} selectedDate The currently selected date.
 */
 export function useFilterOptions(
   entityType: string,
   field: string,
   lifecycleStage: LifecycleStage,
+  selectedDate: DateRange,
 ): FilterOptionsDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -39,13 +43,28 @@ export function useFilterOptions(
       setIsLoading(true);
       try {
         // Fetch service tasks for a specific contract
-        const res: AgentResponseBody = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(
+        let url: string;
+        if (
+          lifecycleStage == "scheduled" ||
+          lifecycleStage == "closed"
+        ) {
+          url = makeInternalRegistryAPIwithParams(
             "filter",
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
             lifecycleStage,
-          ));
+            getUTCDate(selectedDate.from).getTime().toString(),
+            getUTCDate(selectedDate.to).getTime().toString(),
+          );
+        } else {
+          url = makeInternalRegistryAPIwithParams(
+            "filter",
+            entityType,
+            parseTranslatedFieldToOriginal(field, dict.title),
+            lifecycleStage,
+          );
+        }
+        const res: AgentResponseBody = await queryInternalApi(url);
         setOptions(res.data?.items as string[]);
       } catch (error) {
         console.error("Error fetching instances", error);
