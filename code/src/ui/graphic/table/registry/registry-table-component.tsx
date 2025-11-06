@@ -15,6 +15,7 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
+import { UISettings } from "types/settings";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import { Status } from "ui/text/status/status";
 import {
@@ -31,6 +32,7 @@ import TableSkeleton from "../skeleton/table-skeleton";
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage?: LifecycleStage;
+  uiSettings?: UISettings;
 }
 
 /**
@@ -213,6 +215,7 @@ export default function RegistryTableComponent(
           instances={initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
+          uiSettings={props.uiSettings}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
