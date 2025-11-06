@@ -3,8 +3,7 @@ import RegistryTableComponent from "ui/graphic/table/registry/registry-table-com
 export default function BillingActivityPage() {
   return (
     <RegistryTableComponent
-      entityType="billing"
-      lifecycleStage="billing_activity"
+      entityType="billing_activity"
     />
   );
 }

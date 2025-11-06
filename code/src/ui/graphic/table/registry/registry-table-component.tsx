@@ -30,7 +30,7 @@ import TableSkeleton from "../skeleton/table-skeleton";
 
 interface RegistryTableComponentProps {
   entityType: string;
-  lifecycleStage: LifecycleStage;
+  lifecycleStage?: LifecycleStage;
 }
 
 /**
