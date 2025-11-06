@@ -51,7 +51,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" &&
-        props.entityType !== "billing" &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -111,7 +110,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           </div>
         )}
-      {props.entityType === "billing" &&
+      {props.lifecycleStage === "general" &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -126,7 +125,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     hasMobileIcon={false}
                     url={Routes.BILLING_BILLING_ACCOUNTS}
                     variant={
-                      props.lifecycleStage == "billing_accounts"
+                      props.entityType == "billing_account"
                         ? "active"
                         : "ghost"
                     }
@@ -141,7 +140,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={Routes.BILLING_PRICING_MODELS}
                   variant={
-                    props.lifecycleStage == "pricing_models"
+                    props.entityType == "pricing"
                       ? "active"
                       : "ghost"
                   }
@@ -155,7 +154,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={Routes.BILLING_BILLING_ACTIVITY}
                   variant={
-                    props.lifecycleStage == "billing_activity"
+                    props.entityType == "billing_activity"
                       ? "active"
                       : "ghost"
                   }
