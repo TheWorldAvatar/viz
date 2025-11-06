@@ -1,10 +1,26 @@
 import SettingsStore from "io/config/settings";
-import { UISettings } from "types/settings";
+import { NavBarItemSettings, UISettings } from "types/settings";
 import RegistryTableComponent from "ui/graphic/table/registry/registry-table-component";
 import { redirect } from "next/navigation";
-import { Routes } from "io/config/routes";
+import { Modules, PageTitles, Routes } from "io/config/routes";
 import { LifecycleStage } from "types/form";
 import { parseStringsForUrls } from "utils/client-utils";
+import { Metadata } from "next";
+
+
+
+/**
+ * Set page metadata.
+ * 
+ * @returns metadata promise.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const uiSettings: UISettings = SettingsStore.getUISettings();
+  const metadata: NavBarItemSettings = uiSettings.links?.find(link => link.url === Modules.BILLING);
+  return {
+    title: metadata?.title ?? PageTitles.BILLING,
+  }
+}
 
 export default function PricingModelsPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
