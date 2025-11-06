@@ -65,7 +65,8 @@ export function useFilterOptions(
           );
         }
         const res: AgentResponseBody = await queryInternalApi(url);
-        setOptions(res.data?.items as string[]);
+        const resOptions: string[] = (res.data?.items as string[]).map(option => !option ? dict.title.blank : option);
+        setOptions(resOptions);
       } catch (error) {
         console.error("Error fetching instances", error);
       } finally {
