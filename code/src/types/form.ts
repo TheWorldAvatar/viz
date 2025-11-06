@@ -8,6 +8,9 @@ export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
 export type LifecycleStage =
+  | "billing_accounts"
+  | "pricing_models"
+  | "billing_activity"
   | "general"
   | "pending"
   | "active"

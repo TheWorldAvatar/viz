@@ -1,10 +1,10 @@
-import BillingTableComponent from "ui/graphic/table/billing/billing-table-component";
+import RegistryTableComponent from "ui/graphic/table/registry/registry-table-component";
 
 export default function BillingAccountsPage() {
-    return (
-        <BillingTableComponent
-            entityType="billing_accounts"
-            lifecycleStage="active"
-        />
-    );
+  return (
+    <RegistryTableComponent
+      entityType="billing"
+      lifecycleStage="billing_accounts"
+    />
+  );
 }
