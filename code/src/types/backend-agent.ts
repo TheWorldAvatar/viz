@@ -26,9 +26,6 @@ export type InternalApiIdentifier =
   | "instances"
   | "schedule"
   | "tasks"
-  | "billing_account"
-  | "pricing"
-  | "billing_activity"
   | "outstanding"
   | "scheduled"
   | "closed";
