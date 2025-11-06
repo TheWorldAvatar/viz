@@ -51,6 +51,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       {props.lifecycleStage !== "general" &&
+        props.entityType !== "billing" &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -110,7 +111,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           </div>
         )}
-      {props.entityType !== "job" &&
+      {props.entityType === "billing" &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -143,18 +144,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     props.lifecycleStage == "pricing_models"
                       ? "active"
                       : "ghost"
-                  }
-                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                />
-              </div>
-              <div className="sm:w-auto">
-                <RedirectButton
-                  label={dict.nav.title.scheduled}
-                  leftIcon="schedule"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-                  variant={
-                    props.lifecycleStage == "scheduled" ? "active" : "ghost"
                   }
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
