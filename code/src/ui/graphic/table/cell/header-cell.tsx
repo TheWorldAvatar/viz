@@ -12,6 +12,8 @@ import SelectOption from "ui/interaction/input/select-option";
 import TableCell from "./table-cell";
 import { LifecycleStage } from "types/form";
 import { DateRange } from "react-day-picker";
+import { useState } from "react";
+import SearchSelector from "ui/interaction/dropdown/search-selector";
 
 interface HeaderCellProps {
   type: string;
@@ -92,48 +94,30 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              {options.length > 20 && <input
-                type="text"
-                placeholder="Filter not listed? Start typing..."
-                aria-label={props.header.id + "filter-input"}
-              />}
-              {!isLoading && currentFilters.length > 0 && <Button
-                leftIcon="filter_list_off"
-                iconSize="medium"
-                size="icon"
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
+              {isLoading && <LoadingSpinner isSmall={true} />}
+              {!isLoading && <SearchSelector
+                options={options}
+                label={props.header.id}
+                initialOptionChecked={(option) => props.header.column.getFilterValue() !== null && currentFilters.includes(option)}
+                onOptionChange={(option) => {
+                  let filters: string[] = currentFilters;
+                  if (filters.includes(option)) {
+                    filters = currentFilters.filter((value) => value !== option);
+                  } else {
+                    filters.push(option);
+                  }
+                  props.header.column.setFilterValue(filters);
+                  if (props.resetRowSelection) {
+                    props.resetRowSelection();
+                  }
+                }}
+                onClear={() => {
                   setIsLoading(true);
                   setTimeout(() => setIsLoading(false), 300);
                   props.header.column.setFilterValue([]);
                   props.resetRowSelection();
                 }}
-                tooltipText={dict.action.clearAllFilters}
-                variant="destructive"
               />}
-              {isLoading && <LoadingSpinner isSmall={true} />}
-              {!isLoading && <div className="max-h-60 overflow-y-auto">
-                {options.map((option) => (
-                  <SelectOption
-                    key={option}
-                    option={option}
-                    initialChecked={props.header.column.getFilterValue() !== null && currentFilters.includes(option)}
-                    onClick={() => {
-                      let filters: string[] = currentFilters;
-                      if (filters.includes(option)) {
-                        filters = currentFilters.filter((value) => value !== option);
-                      } else {
-                        filters.push(option);
-                      }
-                      props.header.column.setFilterValue(filters);
-                      if (props.resetRowSelection) {
-                        props.resetRowSelection();
-                      }
-                    }}
-                  />
-                ))}
-              </div>}
             </PopoverActionButton>
           </div>
         </div>
