@@ -34,8 +34,10 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
 
   const {
     options,
+    search,
     isLoading,
     showFilterDropdown,
+    setSearch,
     setShowFilterDropdown,
     setTriggerFetch
   } = useFilterOptions(props.type, props.header.id.toLowerCase(), props.lifecycleStage, props.selectedDate)
@@ -93,6 +95,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             >
               {isLoading && <LoadingSpinner isSmall={true} />}
               {!isLoading && <SearchSelector
+                searchString={search}
                 options={options}
                 label={props.header.id}
                 initSelectedOptions={currentFilters}
@@ -100,6 +103,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.header.column.setFilterValue(selectedOptions);
                   props.resetRowSelection();
                 }}
+                setSearchString={setSearch}
               />}
             </PopoverActionButton>
           </div>

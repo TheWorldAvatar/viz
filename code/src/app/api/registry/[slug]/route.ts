@@ -311,8 +311,9 @@ function makeExternalEndpoint(
     case "filter": {
       const type: string = searchParams.get("type");
       const field: string = searchParams.get("field");
+      const search: string = searchParams.get("search");
       const lifecycle: string = searchParams.get("lifecycle");
-      const urlParams: URLSearchParams = new URLSearchParams({ type, field });
+      const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}`;
       }

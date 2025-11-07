@@ -7,18 +7,22 @@ import SelectOption from "../input/select-option";
 
 interface SearchSelectorProps {
   label: string;
+  searchString: string;
   options: string[];
   initSelectedOptions: string[];
   onSubmission: (_options: string[]) => void;
+  setSearchString: React.Dispatch<React.SetStateAction<string>>;
 }
 
 /**
  * This component renders a dropdown selector with searching capabilities.
  *
  * @param {string} label The aria-label for the component.
+ * @param {string} searchString The uncontrolled search option.
  * @param {string[]} options The options to be displayed.
  * @param {string[]} initSelectedOptions The initial options that have been selected.
  * @param onSubmission Function to be executed on submission.
+ * @param setSearchString Dispatch function to set search string state.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
@@ -29,8 +33,16 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
     <>
       {props.options.length > 20 && <input
         type="text"
+        value={props.searchString}
         placeholder="Filter not listed? Start typing..."
-        aria-label={"Search input for " + props.label}
+        aria-label={"search input for " + props.label}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+        onChange={(event) => {
+          props.setSearchString(event.target.value);
+        }}
       />}
       <div className="flex flex-row justify-between mx-1">
         <Button

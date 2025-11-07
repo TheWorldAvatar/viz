@@ -10,8 +10,10 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/inter
 
 export interface FilterOptionsDescriptor {
   options: string[];
+  search: string;
   isLoading: boolean;
   showFilterDropdown: boolean;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
   setShowFilterDropdown: React.Dispatch<React.SetStateAction<boolean>>;
   setTriggerFetch: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -35,6 +37,7 @@ export function useFilterOptions(
   const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const [triggerFetch, setTriggerFetch] = useState<boolean>(false);
   const [options, setOptions] = useState<string[]>([]);
+  const [search, setSearch] = useState<string>("");
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -51,6 +54,7 @@ export function useFilterOptions(
             "filter",
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
+            search,
             lifecycleStage,
             getUTCDate(selectedDate.from).getTime().toString(),
             getUTCDate(selectedDate.to).getTime().toString(),
@@ -60,6 +64,7 @@ export function useFilterOptions(
             "filter",
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
+            search,
             lifecycleStage,
           );
         }
@@ -79,8 +84,10 @@ export function useFilterOptions(
 
   return {
     options,
+    search,
     isLoading,
     showFilterDropdown,
+    setSearch,
     setShowFilterDropdown,
     setTriggerFetch,
   };
