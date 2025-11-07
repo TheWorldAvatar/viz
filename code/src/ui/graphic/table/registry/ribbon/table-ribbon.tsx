@@ -18,6 +18,7 @@ import DateInput from "ui/interaction/input/date-input";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 
 interface TableRibbonProps {
   path: string;
@@ -235,6 +236,16 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
         </div>
       </div>
+      {isBillingEntity && props.entityType === "pricing" && (
+        <div className="flex justify-start">
+         <div className="md:w-[300px]">
+           <MultivalueSelector
+             title="Billing Accounts"
+             options={[]}
+           />
+         </div>
+       </div>
+      )}  
     </div>
   );
 }
