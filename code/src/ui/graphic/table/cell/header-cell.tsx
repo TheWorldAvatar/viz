@@ -5,15 +5,12 @@ import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 
 import { useFilterOptions } from "hooks/table/api/useFilterOptions";
+import { DateRange } from "react-day-picker";
+import { LifecycleStage } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
-import Button from "ui/interaction/button";
-import SelectOption from "ui/interaction/input/select-option";
-import TableCell from "./table-cell";
-import { LifecycleStage } from "types/form";
-import { DateRange } from "react-day-picker";
-import { useState } from "react";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
+import TableCell from "./table-cell";
 
 interface HeaderCellProps {
   type: string;
@@ -34,11 +31,11 @@ interface HeaderCellProps {
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
+
   const {
     options,
     isLoading,
     showFilterDropdown,
-    setIsLoading,
     setShowFilterDropdown,
     setTriggerFetch
   } = useFilterOptions(props.type, props.header.id.toLowerCase(), props.lifecycleStage, props.selectedDate)
@@ -98,23 +95,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               {!isLoading && <SearchSelector
                 options={options}
                 label={props.header.id}
-                initialOptionChecked={(option) => props.header.column.getFilterValue() !== null && currentFilters.includes(option)}
-                onOptionChange={(option) => {
-                  let filters: string[] = currentFilters;
-                  if (filters.includes(option)) {
-                    filters = currentFilters.filter((value) => value !== option);
-                  } else {
-                    filters.push(option);
-                  }
-                  props.header.column.setFilterValue(filters);
-                  if (props.resetRowSelection) {
-                    props.resetRowSelection();
-                  }
-                }}
-                onClear={() => {
-                  setIsLoading(true);
-                  setTimeout(() => setIsLoading(false), 300);
-                  props.header.column.setFilterValue([]);
+                initSelectedOptions={currentFilters}
+                onSubmission={(selectedOptions: string[]) => {
+                  props.header.column.setFilterValue(selectedOptions);
                   props.resetRowSelection();
                 }}
               />}

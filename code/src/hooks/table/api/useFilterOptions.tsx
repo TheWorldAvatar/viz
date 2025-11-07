@@ -12,7 +12,6 @@ export interface FilterOptionsDescriptor {
   options: string[];
   isLoading: boolean;
   showFilterDropdown: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setShowFilterDropdown: React.Dispatch<React.SetStateAction<boolean>>;
   setTriggerFetch: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -82,7 +81,6 @@ export function useFilterOptions(
     options,
     isLoading,
     showFilterDropdown,
-    setIsLoading,
     setShowFilterDropdown,
     setTriggerFetch,
   };

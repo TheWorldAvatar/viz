@@ -1,4 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
+import useRefresh from "hooks/useRefresh";
+import { useState } from "react";
 import { Dictionary } from "types/dictionary";
 import Button from "../button";
 import SelectOption from "../input/select-option";
@@ -6,9 +8,8 @@ import SelectOption from "../input/select-option";
 interface SearchSelectorProps {
   label: string;
   options: string[];
-  initialOptionChecked: (_option: string) => boolean;
-  onOptionChange: (_option: string) => void;
-  onClear: () => void;
+  initSelectedOptions: string[];
+  onSubmission: (_options: string[]) => void;
 }
 
 /**
@@ -16,12 +17,14 @@ interface SearchSelectorProps {
  *
  * @param {string} label The aria-label for the component.
  * @param {string[]} options The options to be displayed.
- * @param initialOptionChecked Function to check if the option should be initially checked by taking the option value itself.
- * @param onOptionChange Function to handle changes for each individual option.
- * @param onClear Function to be executed when clearing selected options.
+ * @param {string[]} initSelectedOptions The initial options that have been selected.
+ * @param onSubmission Function to be executed on submission.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
+  const { refreshFlag, triggerRefresh } = useRefresh(100);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
+
   return (
     <>
       {props.options.length > 20 && <input
@@ -29,27 +32,50 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         placeholder="Filter not listed? Start typing..."
         aria-label={"Search input for " + props.label}
       />}
-      {props.options.length > 0 && <Button
-        leftIcon="filter_list_off"
-        iconSize="medium"
-        size="icon"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          props.onClear();
+      <div className="flex flex-row justify-between mx-1">
+        <Button
+          leftIcon="send"
+          iconSize="medium"
+          size="icon"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            props.onSubmission(selectedOptions);
 
-        }}
-        tooltipText={dict.action.clearAllFilters}
-        variant="destructive"
-        aria-label={"Clear all filters for " + props.label}
-      />}
+          }}
+          tooltipText={dict.action.submit}
+          variant="primary"
+          aria-label={"Submit for " + props.label}
+        />
+        {selectedOptions.length > 0 && <Button
+          leftIcon="filter_list_off"
+          iconSize="medium"
+          size="icon"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            triggerRefresh();
+            setSelectedOptions([]);
+          }}
+          tooltipText={dict.action.clearAllFilters}
+          variant="destructive"
+          aria-label={"Clear all options for " + props.label}
+        />}
+      </div>
       <div className="max-h-60 overflow-y-auto">
-        {props.options.map((option) => (
+        {!refreshFlag && props.options.map((option) => (
           <SelectOption
             key={option}
             option={option}
-            initialChecked={props.initialOptionChecked(option)}
-            onClick={() => props.onOptionChange(option)}
+            initialChecked={selectedOptions.includes(option)}
+            onClick={() => {
+              if (selectedOptions.includes(option)) {
+                setSelectedOptions(selectedOptions.filter((value) => value !== option));
+              } else {
+                const newOptions: string[] = [...selectedOptions, option];
+                setSelectedOptions(newOptions);
+              }
+            }}
           />
         ))}
       </div>
