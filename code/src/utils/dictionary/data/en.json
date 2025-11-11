@@ -142,6 +142,7 @@
     "pickDateRange": "Pick a date range.",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
+    "typeMore": "Type more to narrow results",
     "exportReport": "Export report",
     "required": "Required",
     "minInclusive": "Please enter a number that is {replace} or greater!",
@@ -153,8 +154,6 @@
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
     "processingRequest": "Processing request..."
-
-
   },
   "nav": {
     "caption": {

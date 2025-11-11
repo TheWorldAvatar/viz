@@ -83,6 +83,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         />}
       </div>
       <div className="max-h-60 overflow-y-auto">
+        {props.showOptions && <p className="text-sm text-foreground/80 italic px-2">
+          {props.options.length === 0 && dict.message.noOptions}
+          {props.options.length > 20 && props.searchString.length > 0 &&
+            dict.message.typeMore
+          }
+        </p>}
         {props.showOptions && !refreshFlag && props.options.map((option) => (
           <SelectOption
             key={option}
@@ -98,11 +104,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }}
           />
         ))}
-        {props.options.length === 0 && (
-          <p className="text-sm text-foreground/80 italic p-2">
-            {dict.message.noOptions}
-          </p>
-        )}
       </div>
     </>
   );
