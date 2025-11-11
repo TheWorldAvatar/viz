@@ -12,6 +12,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import TableCell from "./table-cell";
 
+
 interface HeaderCellProps {
   type: string;
   lifecycleStage: LifecycleStage;
@@ -32,6 +33,11 @@ interface HeaderCellProps {
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
 
+  const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
+    (props.header.column.getFilterValue() as string[])?.length > 0;
+  const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
+
+
   const {
     options,
     search,
@@ -40,10 +46,15 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     setSearch,
     setShowFilterDropdown,
     setTriggerFetch
-  } = useFilterOptions(props.type, props.header.id.toLowerCase(), props.lifecycleStage, props.selectedDate)
-  const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
-    (props.header.column.getFilterValue() as string[])?.length > 0;
-  const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
+  } = useFilterOptions(
+    props.type,
+    props.header.id.toLowerCase(),
+    props.lifecycleStage,
+    props.selectedDate,
+    currentFilters
+  );
+
+
 
   return (
     <TableCell
@@ -79,7 +90,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               ),
             }[props.header.column.getIsSorted() as string] ?? null}
             <PopoverActionButton
-              placement="bottom-end"
+              placement="bottom-start"
               leftIcon="filter_list"
               variant={isActiveFilter ? "secondary" : "ghost"}
               tooltipText={dict.action.filter}

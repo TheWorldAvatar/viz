@@ -1,5 +1,5 @@
 import { useDictionary } from "hooks/useDictionary";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -13,6 +13,7 @@ export interface FilterOptionsDescriptor {
   search: string;
   isLoading: boolean;
   showFilterDropdown: boolean;
+  currentFilters: string[];
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   setShowFilterDropdown: React.Dispatch<React.SetStateAction<boolean>>;
   setTriggerFetch: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,12 +26,14 @@ export interface FilterOptionsDescriptor {
 * @param {string} field List of parameters for sorting.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
+* @param {string[]} currentFilters The currently selected filter values.
 */
 export function useFilterOptions(
   entityType: string,
   field: string,
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
+  currentFilters: string[],
 ): FilterOptionsDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -38,8 +41,24 @@ export function useFilterOptions(
   const [triggerFetch, setTriggerFetch] = useState<boolean>(false);
   const [options, setOptions] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const currentFiltersRef = useRef<string[]>(currentFilters);
 
-  // A hook that refetches all data when the dialogs are closed
+  // Update ref when currentFilters changes
+  useEffect(() => {
+    currentFiltersRef.current = currentFilters;
+  }, [currentFilters]);
+
+  // Debounce search input to avoid excessive API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300); // Wait 300ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
@@ -54,7 +73,7 @@ export function useFilterOptions(
             "filter",
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
-            search,
+            debouncedSearch,
             lifecycleStage,
             getUTCDate(selectedDate.from).getTime().toString(),
             getUTCDate(selectedDate.to).getTime().toString(),
@@ -64,29 +83,35 @@ export function useFilterOptions(
             "filter",
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
-            search,
+            debouncedSearch,
             lifecycleStage,
           );
         }
         const res: AgentResponseBody = await queryInternalApi(url);
         const resOptions: string[] = (res.data?.items as string[]).map(option => !option ? dict.title.blank : option);
-        setOptions(resOptions);
+
+        // Merge selected filters with fetched options to ensure selected items are always visible
+        // Use set to avoid duplicates
+        const mergedOptions = [...new Set([...currentFiltersRef.current, ...resOptions])];
+        setOptions(mergedOptions);
       } catch (error) {
         console.error("Error fetching instances", error);
       } finally {
         setIsLoading(false);
       }
     };
-    if (triggerFetch && options.length === 0) {
+
+    if (triggerFetch) {
       fetchData();
     }
-  }, [triggerFetch]);
+  }, [triggerFetch, debouncedSearch, entityType, field, lifecycleStage, selectedDate, dict.title]);
 
   return {
     options,
     search,
     isLoading,
     showFilterDropdown,
+    currentFilters,
     setSearch,
     setShowFilterDropdown,
     setTriggerFetch,
