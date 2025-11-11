@@ -2,6 +2,18 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.44.1
+
+### Bug Fixes
+
+- Fixed a layout issue in the headerbar where the account menu and hambureger menu were misaligned
+
+## 5.44.0
+
+### Changes
+
+- Improved redis connection failure handling for ease of debugging
+
 ## 5.43.7
 
 ### Changes
