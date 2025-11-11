@@ -23,14 +23,22 @@ export type TableData = {
  * Parses the column filters into URL parameters for API querying.
  *
  * @param { ColumnFilter[]} filters Target filters for parsing.
+ * @param {string} translatedBlankText The translated blank text.
  */
-export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[]): string {
+export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string): string {
   const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
   return remainingFilters.length === 0 ? "" : filters.map(filter => {
     if (filter.value === undefined || (filter.value as string[]).length === 0) {
       return "";
     }
-    return `&${filter.id}=${(filter.value as string[]).join("%7C")}`
+    const currentFilterValues: string[] = filter.value as string[];
+    let filterParams: string[];
+    if (currentFilterValues.includes(translatedBlankText)) {
+      filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
+    } else {
+      filterParams = currentFilterValues;
+    }
+    return `&${filter.id}=${filterParams.join("%7C")}`
   }).join("");
 }
 
