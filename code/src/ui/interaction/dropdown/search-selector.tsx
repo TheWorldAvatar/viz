@@ -93,9 +93,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
         ))}
         {props.options.length === 0 && (
-          <div className="text-sm text-foreground/80 italic p-2">
+          <p className="text-sm text-foreground/80 italic p-2">
             {dict.message.noOptions}
-          </div>
+          </p>
         )}
       </div>
     </>
