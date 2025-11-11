@@ -1,7 +1,9 @@
 import { ColumnFilter } from "@tanstack/react-table";
+import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
 import { parseColumnFiltersIntoUrlParams } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
@@ -27,6 +29,7 @@ export function useTotalRowCount(
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   filters: ColumnFilter[]): RowCounts {
+  const dict: Dictionary = useDictionary();
   const [totalRows, setTotalRows] = useState<number>(0);
   const [totalFilteredRows, setTotalFilteredRows] = useState<number>(-1);
 
@@ -73,7 +76,7 @@ export function useTotalRowCount(
     // Fetch total row counts
     fetchTotalRows(null);
     // Fetch total row counts when filters are applied
-    const filterParams: string = parseColumnFiltersIntoUrlParams(filters);
+    const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank);
     fetchTotalRows(filterParams);
   }, [selectedDate, refreshFlag, filters]);
   return {
