@@ -1,5 +1,5 @@
 import { useDictionary } from "hooks/useDictionary";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -42,12 +42,6 @@ export function useFilterOptions(
   const [options, setOptions] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-  const currentFiltersRef = useRef<string[]>(currentFilters);
-
-  // Update ref when currentFilters changes
-  useEffect(() => {
-    currentFiltersRef.current = currentFilters;
-  }, [currentFilters]);
 
   // Debounce search input to avoid excessive API calls
   useEffect(() => {
@@ -92,7 +86,7 @@ export function useFilterOptions(
 
         // Merge selected filters with fetched options to ensure selected items are always visible
         // Use set to avoid duplicates
-        const mergedOptions = [...new Set([...currentFiltersRef.current, ...resOptions])];
+        const mergedOptions: string[] = [...new Set([...currentFilters, ...resOptions])];
         setOptions(mergedOptions);
       } catch (error) {
         console.error("Error fetching instances", error);
