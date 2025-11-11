@@ -40,7 +40,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             type="text"
             className="border border-border rounded pl-3 pr-14 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
             value={props.searchString}
-            placeholder="Filter not listed? Start typing.."
+            placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
             onClick={(event) => {
               event.preventDefault();

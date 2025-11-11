@@ -142,6 +142,7 @@
     "pickDateRange": "Pick a date range.",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
+    "typeFilter": "Filter not listed? Start typing...",
     "typeMore": "Type more to narrow results",
     "exportReport": "Export report",
     "required": "Required",

@@ -142,6 +142,7 @@
     "pickDateRange": "Wählen Sie einen Zeitraum aus.",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
+    "typeFilter": "Filter nicht aufgeführt? Beginnen Sie mit der Eingabe...",
     "typeMore": "Mehr eingeben, um Ergebnisse einzugrenzen",
     "exportReport": "Exportbericht",
     "required": "Erforderlich",
