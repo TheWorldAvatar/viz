@@ -1,3 +1,4 @@
+import { useDebounce } from "hooks/useDebounce";
 import { useDictionary } from "hooks/useDictionary";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -41,16 +42,7 @@ export function useFilterOptions(
   const [triggerFetch, setTriggerFetch] = useState<boolean>(false);
   const [options, setOptions] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-
-  // Debounce search input to avoid excessive API calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 300); // Wait 300ms after user stops typing
-
-    return () => clearTimeout(timer);
-  }, [search]);
+  const debouncedSearch: string = useDebounce<string>(search, 500);
 
   //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {
