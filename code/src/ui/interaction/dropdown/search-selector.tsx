@@ -32,35 +32,40 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <>
-      <div className="flex flex-row items-center justify-between gap-2">
-        <input
-          autoFocus
-          type="text"
-          className="border border-border rounded px-2 py-2 mb-1 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-          value={props.searchString}
-          placeholder="Filter not listed? Start typing..."
-          aria-label={"search input for " + props.label}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-          }}
-          onChange={(event) => {
-            props.setSearchString(event.target.value);
-          }}
-        />
-        <Button
-          leftIcon="search"
-          iconSize="medium"
-          size="icon"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            props.onSubmission(selectedOptions);
-          }}
-          tooltipText={dict.action.search}
-          variant="primary"
-          aria-label={"Submit for " + props.label}
-        />
+      <div className="flex flex-row items-end justify-between gap-1.5">
+        <div className="relative flex-1 ">
+          <input
+            autoFocus
+            type="text"
+            className="border border-border rounded pl-3 pr-14 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+            value={props.searchString}
+            placeholder="Filter not listed? Start typing.."
+            aria-label={"search input for " + props.label}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
+            onChange={(event) => {
+              props.setSearchString(event.target.value);
+            }}
+          />
+          <div className="absolute right-0 top-0 bottom-0 flex items-stretch">
+            <Button
+              leftIcon="search"
+              iconSize="medium"
+              size="icon"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                props.onSubmission(selectedOptions);
+              }}
+              tooltipText={dict.action.search}
+              variant="primary"
+              className="h-full rounded-l-none w-12"
+              aria-label={"Submit for " + props.label}
+            />
+          </div>
+        </div>
         {selectedOptions.length > 0 && <Button
           leftIcon="filter_list_off"
           iconSize="medium"
