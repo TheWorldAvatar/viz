@@ -29,19 +29,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
 
-  // Focus on the input right after it is rendered
-  // Alternative to useRef to avoid unnecessary re-renders
-  const focusInput = (element: HTMLInputElement) => {
-    if (element) {
-      element.focus();
-    }
-  };
 
   return (
     <>
       <div className="flex flex-row items-center justify-between gap-2">
         <input
-          ref={focusInput}
+          autoFocus
           type="text"
           className="border border-border rounded px-2 py-2 mb-1 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
           value={props.searchString}
