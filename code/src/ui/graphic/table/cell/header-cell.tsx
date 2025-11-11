@@ -104,18 +104,19 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              {isLoading && <LoadingSpinner isSmall={true} />}
-              {!isLoading && <SearchSelector
+              <SearchSelector
                 searchString={search}
                 options={options}
                 label={props.header.id}
                 initSelectedOptions={currentFilters}
+                showOptions={!isLoading}
                 onSubmission={(selectedOptions: string[]) => {
                   props.header.column.setFilterValue(selectedOptions);
                   props.resetRowSelection();
                 }}
                 setSearchString={setSearch}
-              />}
+              />
+              {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
           </div>
         </div>

@@ -10,6 +10,7 @@ interface SearchSelectorProps {
   searchString: string;
   options: string[];
   initSelectedOptions: string[];
+  showOptions: boolean;
   onSubmission: (_options: string[]) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -21,6 +22,7 @@ interface SearchSelectorProps {
  * @param {string} searchString The uncontrolled search option.
  * @param {string[]} options The options to be displayed.
  * @param {string[]} initSelectedOptions The initial options that have been selected.
+ * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
  */
@@ -28,7 +30,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
-
 
   return (
     <>
@@ -82,7 +83,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         />}
       </div>
       <div className="max-h-60 overflow-y-auto">
-        {!refreshFlag && props.options.map((option) => (
+        {props.showOptions && !refreshFlag && props.options.map((option) => (
           <SelectOption
             key={option}
             option={option}
