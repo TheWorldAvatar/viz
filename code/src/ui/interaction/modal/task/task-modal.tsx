@@ -253,7 +253,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               )}`}
           </p>
         )}
-        {isFetching || ((refreshFlag || isLoading) && <FormSkeleton />)}
+        {isFetching || (refreshFlag && <FormSkeleton />)}
         {props.task?.type === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}

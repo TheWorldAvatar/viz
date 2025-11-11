@@ -231,7 +231,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       </section>
       <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {!(isRescindAction || isTerminateAction) &&
-          (refreshFlag || isLoading ? (
+          (refreshFlag ? (
             <FormSkeleton />
           ) : (
             <FormComponent
