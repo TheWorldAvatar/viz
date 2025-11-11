@@ -29,7 +29,7 @@ export default function SelectOption(props: Readonly<SelectOptionProps>) {
     };
 
     return (
-        <div onClick={handleClick} className={`${uncontrolledChecked ? "bg-background-tertiary" : ""} hover:bg-background-tertiary p-2 my-0.5`}>
+        <div onClick={handleClick} className={`${uncontrolledChecked ? "bg-background-tertiary" : ""} hover:bg-background-tertiary p-2 my-0.5 cursor-pointer`}>
             <Checkbox
                 checked={uncontrolledChecked}
                 onChange={() => setUncontrolledChecked(!uncontrolledChecked)}
