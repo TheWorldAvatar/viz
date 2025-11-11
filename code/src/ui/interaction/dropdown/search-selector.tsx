@@ -56,7 +56,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           }}
         />
         <Button
-          leftIcon="send"
+          leftIcon="search"
           iconSize="medium"
           size="icon"
           onClick={(event) => {
@@ -64,7 +64,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             event.stopPropagation();
             props.onSubmission(selectedOptions);
           }}
-          tooltipText={dict.action.submit}
+          tooltipText={dict.action.search}
           variant="primary"
           aria-label={"Submit for " + props.label}
         />
