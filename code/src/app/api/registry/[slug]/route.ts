@@ -313,9 +313,10 @@ function makeExternalEndpoint(
       const field: string = searchParams.get("field");
       const search: string = searchParams.get("search");
       const lifecycle: string = searchParams.get("lifecycle");
+      const filters: string = searchParams.get("filters");
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (lifecycle == "general") {
-        return `${agentBaseApi}/${type}/filter?${urlParams.toString()}`;
+        return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
       }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
@@ -326,15 +327,15 @@ function makeExternalEndpoint(
         } else if (lifecycle === "archive") {
           stagePath = "archive";
         }
-        return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}`;
+        return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}${filters}`;
       } else if (lifecycle == "outstanding") {
-        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}`;
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}${filters}`;
       } else if (lifecycle == "scheduled" || lifecycle == "closed") {
         const startDate: string = searchParams.get("start_date");
         const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
         const endDate: string = searchParams.get("end_date");
         const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
-        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
       }
       return "";
     }

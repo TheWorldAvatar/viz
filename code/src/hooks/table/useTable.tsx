@@ -1,4 +1,5 @@
 import {
+  ColumnFilter,
   ColumnFiltersState,
   getCoreRowModel,
   getFacetedUniqueValues,
@@ -20,7 +21,6 @@ import {
 } from "ui/graphic/table/registry/registry-table-utils";
 import { useTableData } from "./api/useTableData";
 import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
-import { useFirstActiveFilter } from "./useFirstActiveFilter";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
@@ -32,7 +32,7 @@ export interface TableDescriptor {
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
-  firstActiveFilter: string;
+  filters: ColumnFilter[];
   sortParams: string;
 }
 
@@ -89,8 +89,6 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     getRowId: (row, index) => row.id + index,
   });
 
-  const firstActiveFilter: string = useFirstActiveFilter(columnFilters);
-
   return {
     isLoading,
     table,
@@ -100,7 +98,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     pagination,
     apiPagination,
     totalRows: rowCounts.total,
-    firstActiveFilter,
+    filters: columnFilters,
     sortParams,
   };
 }

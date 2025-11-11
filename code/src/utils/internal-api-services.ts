@@ -68,9 +68,10 @@ export function makeInternalRegistryAPIwithParams(
         type: params[0],
         field: params[1],
         search: params[2] ?? null,
-        lifecycle: params[3] ?? null,
-        start_date: params[4] ?? null,
-        end_date: params[5] ?? null,
+        filters: params[3] ?? "",
+        lifecycle: params[4] ?? null,
+        start_date: params[5] ?? null,
+        end_date: params[6] ?? null,
       });
       break;
     case "form":

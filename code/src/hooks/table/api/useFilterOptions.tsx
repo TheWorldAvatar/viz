@@ -1,3 +1,4 @@
+import { ColumnFilter } from "@tanstack/react-table";
 import { useDebounce } from "hooks/useDebounce";
 import { useDictionary } from "hooks/useDictionary";
 import React, { useEffect, useState } from "react";
@@ -5,7 +6,7 @@ import { DateRange } from "react-day-picker";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
-import { parseTranslatedFieldToOriginal } from "ui/graphic/table/registry/registry-table-utils";
+import { parseColumnFiltersIntoUrlParams, parseTranslatedFieldToOriginal } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -28,6 +29,7 @@ export interface FilterOptionsDescriptor {
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {string[]} currentFilters The currently selected filter values.
+* @param {ColumnFilter[]} allFilters Filter state for the entire table.
 */
 export function useFilterOptions(
   entityType: string,
@@ -35,6 +37,7 @@ export function useFilterOptions(
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   currentFilters: string[],
+  allFilters: ColumnFilter[],
 ): FilterOptionsDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,6 +51,7 @@ export function useFilterOptions(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
+      const filterParams: string = parseColumnFiltersIntoUrlParams(allFilters, dict.title.blank);
       try {
         // Fetch service tasks for a specific contract
         let url: string;
@@ -60,6 +64,7 @@ export function useFilterOptions(
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
             debouncedSearch,
+            filterParams,
             lifecycleStage,
             getUTCDate(selectedDate.from).getTime().toString(),
             getUTCDate(selectedDate.to).getTime().toString(),
@@ -70,6 +75,7 @@ export function useFilterOptions(
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
             debouncedSearch,
+            filterParams,
             lifecycleStage,
           );
         }

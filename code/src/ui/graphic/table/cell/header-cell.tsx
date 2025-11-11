@@ -1,5 +1,5 @@
 import { Icon } from "@mui/material";
-import { flexRender, Header } from "@tanstack/react-table";
+import { ColumnFilter, flexRender, Header } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
@@ -15,9 +15,10 @@ import TableCell from "./table-cell";
 
 interface HeaderCellProps {
   type: string;
+  header: Header<FieldValues, unknown>;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
-  header: Header<FieldValues, unknown>;
+  filters: ColumnFilter[];
   resetRowSelection?: () => void;
 }
 
@@ -25,9 +26,10 @@ interface HeaderCellProps {
  * This component renders a header cell for the table.
  *
  * @param {string} type The entity type to query for.
+ * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
- * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
+ * @param {ColumnFilter[]} filters Filter state for the entire table.
  * @param resetRowSelection Optional row selection function to reset row when unused.
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
@@ -36,7 +38,6 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
   const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
-
 
   const {
     options,
@@ -51,10 +52,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     props.header.id.toLowerCase(),
     props.lifecycleStage,
     props.selectedDate,
-    currentFilters
+    currentFilters,
+    props.filters,
   );
-
-
 
   return (
     <TableCell
