@@ -86,7 +86,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
       )}
 
       {/* Render each component as required */}
-      <div>
+      <div className="flex">
         <div className={`flex ${pathname.endsWith("map") ? "" : "xl:hidden"} `}>
           <NavMenu
             pages={props.pages}
