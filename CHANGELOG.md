@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.44.2
+
+### Changes
+
+- Added loading skeleton for the foerms to improve user experience during data fetching
+
 ## 5.44.1
 
 ### Bug Fixes
