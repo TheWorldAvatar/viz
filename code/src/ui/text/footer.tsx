@@ -10,7 +10,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="sticky bottom-0 left-0 text-foreground flex items-center justify-center p-1 z-[999]">
+    <footer className="sticky bottom-0 mt-auto text-foreground flex items-center justify-center p-1 bg-muted w-full">
       <div className="flex items-center gap-1">
         <Image
           alt={"TWA Logo"}
@@ -20,7 +20,7 @@ export default function Footer() {
           className="pr-1"
         />
         <span>
-          Powered by&nbsp;iris
+          Powered by&nbsp;
           <Link
             className="text-links hover:text-links-hover"
             href="https://theworldavatar.io"
