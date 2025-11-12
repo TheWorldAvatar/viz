@@ -152,9 +152,8 @@
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
-    "processingRequest": "Processing request..."
-
-
+    "processingRequest": "Processing request...",
+    "sort": "Click to sort in ascending or descending order. Shift-click to sort by multiple columns."
   },
   "nav": {
     "caption": {
