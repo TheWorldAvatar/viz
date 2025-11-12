@@ -152,8 +152,8 @@
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
-    "processingRequest": "Bearbeitung der Anfrage..."
-   
+    "processingRequest": "Bearbeitung der Anfrage...",
+    "sort": "Klicken Sie, um in aufsteigender oder absteigender Reihenfolge zu sortieren. Klicken Sie bei gedrückter Umschalttaste, um nach mehreren Spalten zu sortieren."
   },
   "nav": {
     "caption": {
