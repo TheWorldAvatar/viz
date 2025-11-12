@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.44.4
+
+### Bug fixes
+
+- Fixed overflow of the content in the quick view drop-down field
+
 ## 5.44.3
 
 ### Changes
