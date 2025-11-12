@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.44.3
+
+### Changes
+
+- Added global loading state to show a loading indicator when navigating between pages
+
 ## 5.44.2
 
 ### Changes
