@@ -153,8 +153,6 @@
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
     "processingRequest": "Processing request..."
-
-
   },
   "nav": {
     "caption": {
