@@ -51,7 +51,7 @@ export function useFilterOptions(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      const filterParams: string = parseColumnFiltersIntoUrlParams(allFilters, dict.title.blank);
+      const filterParams: string = parseColumnFiltersIntoUrlParams(allFilters, dict.title.blank, dict.title);
       try {
         // Fetch service tasks for a specific contract
         let url: string;

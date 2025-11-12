@@ -24,8 +24,9 @@ export type TableData = {
  *
  * @param { ColumnFilter[]} filters Target filters for parsing.
  * @param {string} translatedBlankText The translated blank text.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string): string {
+export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string, titleDict: Record<string, string>): string {
   const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
   return remainingFilters.length === 0 ? "" : filters.map(filter => {
     if (filter.value === undefined || (filter.value as string[]).length === 0) {
@@ -38,7 +39,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     } else {
       filterParams = currentFilterValues;
     }
-    return `&${filter.id}=${filterParams.join("%7C")}`
+    return `&${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`
   }).join("");
 }
 

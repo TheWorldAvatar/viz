@@ -53,7 +53,7 @@ export function useTableData(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank);
+      const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       try {
         let instances: RegistryFieldValues[] = [];
         if (lifecycleStage === "report") {

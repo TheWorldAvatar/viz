@@ -76,7 +76,7 @@ export function useTotalRowCount(
     // Fetch total row counts
     fetchTotalRows(null);
     // Fetch total row counts when filters are applied
-    const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank);
+    const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
     fetchTotalRows(filterParams);
   }, [selectedDate, refreshFlag, filters]);
   return {
