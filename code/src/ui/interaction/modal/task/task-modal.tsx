@@ -31,6 +31,7 @@ import { useDispatch } from "react-redux";
 import { closeDrawer, openDrawer } from "state/drawer-component-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 import Drawer from "ui/interaction/drawer/drawer";
+import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 
 interface TaskModalProps {
   entityType: string;
@@ -252,7 +253,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               )}`}
           </p>
         )}
-        {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
+        {isFetching || (refreshFlag && <FormSkeleton />)}
         {props.task?.type === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}
