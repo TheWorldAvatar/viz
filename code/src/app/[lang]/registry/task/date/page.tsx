@@ -33,6 +33,7 @@ export default function RegistryTaskByDatePage() {
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={"tasks"}
+        uiSettings={uiSettings}
       />
     );
   } else {

@@ -38,6 +38,7 @@ export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistr
       <RegistryTableComponent
         entityType={decodeURIComponent(resolvedParams.type)}
         lifecycleStage={'archive'}
+        uiSettings={uiSettings}
       />
     );
   } else {
