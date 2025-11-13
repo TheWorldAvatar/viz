@@ -76,6 +76,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
       columnFilters,
       sorting: sorting,
     },
+    manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
     rowCount: rowCounts.filter,
@@ -84,7 +85,6 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     onColumnFiltersChange: setColumnFilters,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row, index) => row.id + index,
   });
