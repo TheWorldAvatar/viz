@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { InterceptFormContainerComponent } from "ui/interaction/form/form-container";
+import { FormContainerComponent } from "ui/interaction/form/form-container";
 
-interface InterceptReportTaskPageProps {
+interface ReportFormPageProps {
   params: Promise<{
     id: string;
     type: string;
@@ -28,16 +28,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the intercepted route for editing a specific entity through a modal.
+ * Displays the form page for reporting a task.
  */
-export default async function InterceptReportTaskPage(
-  props: Readonly<InterceptReportTaskPageProps>
+export default async function ReportFormPage(
+  props: Readonly<ReportFormPageProps>
 ) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <InterceptFormContainerComponent
+    <FormContainerComponent
       entityType={decodedType}
       formType={"report"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}

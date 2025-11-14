@@ -5,8 +5,9 @@ import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import { FormContainerComponent } from "ui/interaction/form/form-container";
 
-interface CancelFormPageProps {
+interface DispatchFormPageProps {
   params: Promise<{
+    id: string;
     type: string;
   }>;
 }
@@ -27,10 +28,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the form page for adding an entity.
+ * Displays the form page for dispatching a task.
  */
-export default async function CancelFormPage(
-  props: Readonly<CancelFormPageProps>
+export default async function DispatchFormPage(
+  props: Readonly<DispatchFormPageProps>
 ) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
@@ -38,7 +39,7 @@ export default async function CancelFormPage(
   return (
     <FormContainerComponent
       entityType={decodedType}
-      formType={"cancel"}
+      formType={"dispatch"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
     />
   );

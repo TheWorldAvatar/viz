@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { InterceptFormContainerComponent } from "ui/interaction/form/form-container";
+import { FormContainerComponent } from "ui/interaction/form/form-container";
 
-interface InterceptCancelTaskPageProps {
+interface CancelFormPageProps {
   params: Promise<{
     id: string;
     type: string;
@@ -28,16 +28,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the intercepted route for editing a specific entity through a modal.
+ * Displays the form page for canceling a task.
  */
-export default async function InterceptCancelTaskPage(
-  props: Readonly<InterceptCancelTaskPageProps>
+export default async function CancelFormPage(
+  props: Readonly<CancelFormPageProps>
 ) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <InterceptFormContainerComponent
+    <FormContainerComponent
       entityType={decodedType}
       formType={"cancel"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}

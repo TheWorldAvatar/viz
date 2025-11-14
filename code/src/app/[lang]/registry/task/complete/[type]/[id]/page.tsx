@@ -5,8 +5,9 @@ import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import { FormContainerComponent } from "ui/interaction/form/form-container";
 
-interface ReportFormPageProps {
+interface CompleteFormPageProps {
   params: Promise<{
+    id: string;
     type: string;
   }>;
 }
@@ -27,10 +28,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the form page for adding an entity.
+ * Displays the form page for completing a task.
  */
-export default async function ReportFormPage(
-  props: Readonly<ReportFormPageProps>
+export default async function CompleteFormPage(
+  props: Readonly<CompleteFormPageProps>
 ) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
@@ -38,7 +39,7 @@ export default async function ReportFormPage(
   return (
     <FormContainerComponent
       entityType={decodedType}
-      formType={"report"}
+      formType={"complete"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
     />
   );

@@ -3,10 +3,11 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { FormContainerComponent } from "ui/interaction/form/form-container";
+import { InterceptFormContainerComponent } from "ui/interaction/form/form-container";
 
-interface CompleteFormPageProps {
+interface InterceptCancelTaskPageProps {
   params: Promise<{
+    id: string;
     type: string;
   }>;
 }
@@ -27,18 +28,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the form page for adding an entity.
+ * Displays the intercepted route for canceling a task through a modal.
  */
-export default async function CompleteFormPage(
-  props: Readonly<CompleteFormPageProps>
+export default async function InterceptCancelTaskPage(
+  props: Readonly<InterceptCancelTaskPageProps>
 ) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <FormContainerComponent
+    <InterceptFormContainerComponent
       entityType={decodedType}
-      formType={"complete"}
+      formType={"cancel"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
     />
   );

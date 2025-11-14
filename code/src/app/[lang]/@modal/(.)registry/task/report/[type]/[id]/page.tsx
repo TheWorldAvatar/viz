@@ -3,10 +3,11 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { FormContainerComponent } from "ui/interaction/form/form-container";
+import { InterceptFormContainerComponent } from "ui/interaction/form/form-container";
 
-interface ViewFormPageProps {
+interface InterceptReportTaskPageProps {
   params: Promise<{
+    id: string;
     type: string;
   }>;
 }
@@ -27,16 +28,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the form page for adding an entity.
+ * Displays the intercepted route for reporting a task through a modal.
  */
-export default async function ViewFormPage(props: Readonly<ViewFormPageProps>) {
+export default async function InterceptReportTaskPage(
+  props: Readonly<InterceptReportTaskPageProps>
+) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <FormContainerComponent
+    <InterceptFormContainerComponent
       entityType={decodedType}
-      formType={"view"}
+      formType={"report"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
     />
   );

@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the intercepted route for editing a specific entity through a modal.
+ * Displays the intercepted route for completing a task through a modal.
  */
 export default async function InterceptCompleteTaskPage(
   props: Readonly<InterceptCompleteTaskPageProps>
