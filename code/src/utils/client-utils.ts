@@ -259,6 +259,32 @@ export function getNormalizedDate(date: Date): string {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
 
+/**
+ * Get the untranslated status key.
+ *
+ * @param status The translated status.
+ * @param dict The dictionary containing localised strings.
+ */
+export function getUntranslatedStatus(
+  status: string,
+  titleDict: Record<string, string>
+): string {
+  switch (status.toLowerCase()) {
+    case titleDict.assigned:
+      return "assigned";
+    case titleDict.cancelled:
+      return "cancelled";
+    case titleDict.completed:
+      return "completed";
+    case titleDict.issue:
+      return "issue";
+    case titleDict.new:
+      return "new";
+    default:
+      return null;
+  }
+}
+
 
 /**
  * Get the configuration for a toast notification.
