@@ -2,21 +2,6 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { parseWordsForLabels } from "utils/client-utils";
 
-export const Status: {
-  [key: string]: string;
-} = {
-  AVAILABLE: "available",
-  UNAVAILABLE: "unavailable",
-  ACTIVE: "active",
-  NEW: "open",
-  ASSIGNED: "assigned",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-  ISSUE: "issue",
-  RESCINDED: "rescinded",
-  TERMINATED: "terminated",
-};
-
 interface StatusComponentProps<> {
   status: string;
 }
@@ -26,25 +11,25 @@ export function getTranslatedStatusLabel(
   dict: Dictionary
 ): string {
   switch (status.toLowerCase()) {
-    case Status.AVAILABLE:
+    case "available":
       return dict.title.available;
-    case Status.UNAVAILABLE:
+    case "unavailable":
       return dict.title.unavailable;
-    case Status.ACTIVE:
+    case "active":
       return dict.title.active;
-    case Status.ASSIGNED:
+    case "assigned":
       return dict.title.assigned;
-    case Status.COMPLETED:
+    case "completed":
       return dict.title.completed;
-    case Status.CANCELLED:
+    case "cancelled":
       return dict.title.cancelled;
-    case Status.NEW:
+    case "new":
       return dict.title.new;
-    case Status.ISSUE:
+    case "issue":
       return dict.title.issue;
-    case Status.RESCINDED:
+    case "rescinded":
       return dict.title.rescinded;
-    case Status.TERMINATED:
+    case "terminated":
       return dict.title.terminated;
     default:
       return null;

@@ -44,7 +44,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <div className="flex">
+      <div className="flex mr-1.5">
         <PopoverActionButton
           variant="ghost"
           leftIcon="menu"

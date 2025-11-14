@@ -1,9 +1,9 @@
 import { ComponentType } from "react";
 import { GroupBase, OptionProps, components } from "react-select";
-import { SelectOption } from "../dropdown/simple-selector";
+import { SelectOptionType } from "../dropdown/simple-selector";
 import Checkbox from "./checkbox";
 
-export const SelectCheckboxOption: ComponentType<OptionProps<SelectOption, boolean, GroupBase<SelectOption>>> = (props: OptionProps<SelectOption, boolean, GroupBase<SelectOption>>) => {
+export const SelectCheckboxOption: ComponentType<OptionProps<SelectOptionType, boolean, GroupBase<SelectOptionType>>> = (props: OptionProps<SelectOptionType, boolean, GroupBase<SelectOptionType>>) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

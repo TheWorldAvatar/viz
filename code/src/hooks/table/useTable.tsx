@@ -1,10 +1,9 @@
 import {
+  ColumnFilter,
   ColumnFiltersState,
-  ColumnSort,
   getCoreRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getSortedRowModel,
   OnChangeFn,
   PaginationState,
   SortingState,
@@ -21,8 +20,7 @@ import {
   genSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
 import { useTableData } from "./api/useTableData";
-import { useTotalRowCount } from "./api/useTotalRowCount";
-import { useFirstActiveFilter } from "./useFirstActiveFilter";
+import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
@@ -33,7 +31,8 @@ export interface TableDescriptor {
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   pagination: PaginationState,
   apiPagination: PaginationState,
-  firstActiveFilter: string;
+  totalRows: number;
+  filters: ColumnFilter[];
   sortParams: string;
 }
 
@@ -53,8 +52,8 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const totalRows: number = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate);
-  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination);
+  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
+  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -77,20 +76,18 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
       columnFilters,
       sorting: sorting,
     },
+    manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    rowCount: totalRows,
+    rowCount: rowCounts.filter,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row, index) => row.id + index,
   });
-
-  const firstActiveFilter: string = useFirstActiveFilter(columnFilters);
 
   return {
     isLoading,
@@ -100,7 +97,8 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     initialInstances,
     pagination,
     apiPagination,
-    firstActiveFilter,
+    totalRows: rowCounts.total,
+    filters: columnFilters,
     sortParams,
   };
 }

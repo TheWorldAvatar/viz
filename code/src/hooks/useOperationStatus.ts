@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useCallback, } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsLoading, selectToastId, setLoading, setToastId } from 'state/loading-slice';
+import { Dictionary } from 'types/dictionary';
 import { toast } from "ui/interaction/action/toast/toast";
 import { useDictionary } from './useDictionary';
-import { Dictionary } from 'types/dictionary';
+import useRefresh from './useRefresh';
 
 interface useOperationStatusReturn {
   refreshFlag: boolean;
@@ -19,17 +19,11 @@ interface useOperationStatusReturn {
  * A custom hook to track the status of any operation to set loading status and trigger refreshes as needed.
  */
 const useOperationStatus = (): useOperationStatusReturn => {
-  const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
   const dict: Dictionary = useDictionary();
   const dispatch = useDispatch();
   const isLoading: boolean = useSelector(selectIsLoading);
   const toastId: number | string = useSelector(selectToastId);
-
-  // Prevent unnecessary re-creations of the refresh function on every render
-  const triggerRefresh = useCallback(() => {
-    setRefreshFlag(true);
-    setTimeout(() => setRefreshFlag(false), 500);
-  }, [dispatch]);
+  const { refreshFlag, triggerRefresh } = useRefresh(500);
 
   const startLoading = () => {
     const id: number | string = toast(dict.message.processingRequest, "loading");
