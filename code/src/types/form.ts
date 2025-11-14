@@ -18,7 +18,16 @@ export type LifecycleStage =
   | "scheduled"
   | "closed";
 
-export type FormType = "add" | "delete" | "edit" | "view" | "search";
+export type FormType =
+  | "add"
+  | "delete"
+  | "edit"
+  | "view"
+  | "search"
+  | "dispatch"
+  | "complete"
+  | "cancel"
+  | "report";
 
 export interface SparqlResponseField {
   value: string;
