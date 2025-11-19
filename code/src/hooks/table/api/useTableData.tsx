@@ -7,7 +7,6 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
-import { Status } from "ui/text/status/status";
 import { getUTCDate, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -74,7 +73,7 @@ export function useTableData(
             activeInstances = activeInstances.map(
               (contract: RegistryFieldValues) => ({
                 status: {
-                  value: parseWordsForLabels(Status.ACTIVE),
+                  value: parseWordsForLabels("active"),
                   type: "literal",
                   dataType: "http://www.w3.org/2001/XMLSchema#string",
                   lang: "",
