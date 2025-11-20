@@ -229,7 +229,7 @@ function makeExternalEndpoint(
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const stage: LifecycleStage = searchParams.get("stage") as LifecycleStage;
-      const filters: string = searchParams.get("filters");
+      const filters: string = decodeFilters(searchParams.get("filters"), "&");
       let stagePath: string;
       if (stage === "pending") {
         stagePath = "draft";
@@ -249,9 +249,9 @@ function makeExternalEndpoint(
     case "count": {
       const type: string = searchParams.get("type");
       const lifecycle: string = searchParams.get("lifecycle");
-      const filters: string = searchParams.get("filters");
+      const filters: string = decodeFilters(searchParams.get("filters"), "?");
       if (lifecycle == "null") {
-        return `${agentBaseApi}/${type}/count${filters.length === 0 ? "" : "?" + filters.slice(1)}`;
+        return `${agentBaseApi}/${type}/count${filters}`;
       }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
@@ -287,7 +287,7 @@ function makeExternalEndpoint(
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
-        const filters: string = searchParams.get("filters");
+        const filters: string = decodeFilters(searchParams.get("filters"), "&");
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
       if (identifier != "null") {
@@ -313,7 +313,7 @@ function makeExternalEndpoint(
       const field: string = searchParams.get("field");
       const search: string = searchParams.get("search");
       const lifecycle: string = searchParams.get("lifecycle");
-      const filters: string = searchParams.get("filters");
+      const filters: string = decodeFilters(searchParams.get("filters"), "&");
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
@@ -377,7 +377,7 @@ function makeExternalEndpoint(
     case "tasks": {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      const filters: string = searchParams.get("filters");
+      const filters: string = decodeFilters(searchParams.get("filters"), "&");
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
     case "outstanding": {
@@ -385,7 +385,7 @@ function makeExternalEndpoint(
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
-      const filters: string = searchParams.get("filters");
+      const filters: string = decodeFilters(searchParams.get("filters"), "&");
       return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case "scheduled":
@@ -398,13 +398,24 @@ function makeExternalEndpoint(
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
-      const filters: string = searchParams.get("filters");
+      const filters: string = decodeFilters(searchParams.get("filters"), "&");
 
       return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     default:
       return null;
   }
+}
+
+function decodeFilters(filterInputParams: string, initialCharacter: string): string {
+  const filters: string = decodeURIComponent(filterInputParams);
+  return filters.length === 0 ? "" : initialCharacter + filters.substring(1).split("~").map(pair => {
+    // Split only on the first '=' to handle values that might contain '='
+    const [key, rawValue] = pair.split("=", 2);
+    // Encode values directly
+    const encodedValue = encodeURIComponent(rawValue);
+    return `${key}=${encodedValue}`;
+  }).join("&");
 }
 
 async function parseBody(req: NextRequest): Promise<AgentResponseBody> {
