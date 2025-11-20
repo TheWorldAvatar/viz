@@ -3,7 +3,6 @@ import {
   ColumnFiltersState,
   getCoreRowModel,
   getFacetedUniqueValues,
-  getFilteredRowModel,
   OnChangeFn,
   PaginationState,
   SortingState,
@@ -69,12 +68,10 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData?.columns,
-    initialState: {
-      pagination,
-    },
     state: {
       columnFilters,
-      sorting: sorting,
+      pagination,
+      sorting,
     },
     manualFiltering: true,
     manualPagination: true,
