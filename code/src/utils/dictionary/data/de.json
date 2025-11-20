@@ -215,6 +215,7 @@
     "scheduleType": "Art des Zeitplans",
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
+    "status": "Status",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
     "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
     "loading": "Laden"

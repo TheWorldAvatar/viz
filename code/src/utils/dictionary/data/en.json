@@ -215,6 +215,7 @@
     "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
+    "status": "status",
     "success": "Success",
     "error": "Error",
     "loading": "Loading"

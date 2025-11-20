@@ -71,12 +71,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           flattenInstance[field] = fieldValue?.value;
         }
 
-        const normalizedField: string = field === "lastModified" ? titleDict.lastModified : field;
-
-        if (field === "lastModified") {
-          flattenInstance[normalizedField] = new Date(flattenInstance[field]).toLocaleString();
-          delete flattenInstance[field];
-        }
+        const normalizedField: string = parseLifecycleFieldsToTranslations(field, flattenInstance, titleDict);
 
         if (!columnNames.includes(normalizedField)) {
           // Insert at the current index if possible, else push to end
@@ -87,7 +82,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 
       results.data.push(flattenInstance);
     });
-
 
     // Create column definitions based on available columns
     for (const col of columnNames) {
@@ -119,6 +113,33 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
     }
   }
   return results;
+}
+
+/**
+ * Parses the lifecycle field to their translations.
+ *
+ * @param {string} field Name of field from backend to be translated.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function parseLifecycleFieldsToTranslations(field: string, outputRow: Record<string, string>, titleDict: Record<string, string>): string {
+  const currentVal: string = outputRow[field];
+  // Delete unmodified field first before adding the translation
+  switch (field.toLowerCase()) {
+    case "lastmodified":
+      delete outputRow[field];
+      outputRow[titleDict.lastModified] = new Date(currentVal).toLocaleString();
+      return titleDict.lastModified;
+    case "scheduletype":
+      delete outputRow[field];
+      outputRow[titleDict.scheduleType] = currentVal;
+      return titleDict.scheduleType;
+    case "status":
+      delete outputRow[field];
+      outputRow[titleDict.status] = currentVal;
+      return titleDict.status;
+    default:
+      return field;
+  }
 }
 
 /**
@@ -154,10 +175,16 @@ export function genSortParams(currentSort: SortingState, titleDict: Record<strin
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<string, string>): string {
-  if (field.toLowerCase() === titleDict.lastModified.toLowerCase()) {
-    return "lastModified";
+  switch (field.toLowerCase()) {
+    case titleDict.lastModified.toLowerCase():
+      return "lastModified";
+    case titleDict.scheduleType.toLowerCase():
+      return "scheduleType";
+    case titleDict.status.toLowerCase():
+      return "status";
+    default:
+      return field;
   }
-  return field;
 }
 
 /**
