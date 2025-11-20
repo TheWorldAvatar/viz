@@ -96,7 +96,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             leftIcon="keyboard_double_arrow_right"
             className="!hidden md:!flex"
             size="icon"
-            onClick={() => props.table.setPageIndex(props.table.getPageCount() - 1)}
+            onClick={() => props.table.setPageIndex(lastPageIndex - 1)}
             disabled={props.pagination.pageIndex == lastPageIndex - 1}
             aria-label="Go to last page"
           />
