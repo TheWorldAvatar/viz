@@ -2,11 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { useSelector } from "react-redux";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 import { DateRange } from "react-day-picker";
+import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -14,17 +15,18 @@ import {
   RegistryFieldValues,
   RegistryTaskOption,
 } from "types/form";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
+  getUTCDate,
   parseWordsForLabels,
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import TableSkeleton from "../skeleton/table-skeleton";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -42,7 +44,8 @@ export default function RegistryTableComponent(
 ) {
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
-  const [refreshFlag, triggerRefresh] = useRefresh();
+  const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
+  const { refreshFlag, triggerRefresh } = useOperationStatus();
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);
@@ -50,7 +53,6 @@ export default function RegistryTableComponent(
     RegistryFieldValues[]
   >([]);
   const [task, setTask] = useState<RegistryTaskOption>(null);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
@@ -132,27 +134,16 @@ export default function RegistryTableComponent(
           props.lifecycleStage == "scheduled" ||
           props.lifecycleStage == "closed"
         ) {
-          const startDate = new Date(
-            Date.UTC(
-              selectedDate.from.getFullYear(),
-              selectedDate.from.getMonth(),
-              selectedDate.from.getDate()
-            )
-          );
-          const endDate = new Date(
-            Date.UTC(
-              selectedDate.to.getFullYear(),
-              selectedDate.to.getMonth(),
-              selectedDate.to.getDate()
-            )
-          );
-
           const res = await fetch(
             makeInternalRegistryAPIwithParams(
               props.lifecycleStage == "scheduled" ? "scheduled" : "closed",
               props.entityType,
-              startDate.getTime().toString(),
-              endDate.getTime().toString()
+              getUTCDate((selectedDate as DateRange).from)
+                .getTime()
+                .toString(),
+              getUTCDate((selectedDate as DateRange).to)
+                .getTime()
+                .toString()
             ),
             {
               cache: "no-store",
@@ -197,13 +188,18 @@ export default function RegistryTableComponent(
   }, [selectedDate, refreshFlag]);
 
   useEffect(() => {
-    if (task) {
-      setIsTaskModalOpen(true);
-    }
-  }, [task]);
+    // Trigger refresh when back navigation occurs
+    const handleHistoryChange = () => {
+      triggerRefresh();
+    };
+    window.addEventListener("popstate", handleHistoryChange);
+    return () => {
+      window.removeEventListener("popstate", handleHistoryChange);
+    };
+  }, []);
 
   return (
-    <div className="bg-muted  mx-auto overflow-auto w-full p-4 h-dvh ">
+    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 md:p-4 h-dvh">
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {parseWordsForLabels(props.entityType)}
@@ -211,7 +207,7 @@ export default function RegistryTableComponent(
         <TableRibbon
           path={pathNameEnd}
           entityType={props.entityType}
-          selectedDate={selectedDate}
+          selectedDate={selectedDate as DateRange}
           setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
           instances={initialInstances}
@@ -221,7 +217,7 @@ export default function RegistryTableComponent(
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {refreshFlag || isLoading ? (
-          <LoadingSpinner isSmall={false} />
+          <TableSkeleton />
         ) : currentInstances.length > 0 ? (
           <RegistryTable
             recordType={props.entityType}
@@ -229,17 +225,16 @@ export default function RegistryTableComponent(
             instances={currentInstances}
             setTask={setTask}
             tableDescriptor={tableDescriptor}
+            triggerRefresh={triggerRefresh}
           />
         ) : (
-          <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
+          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
       {isTaskModalOpen && task && (
         <TaskModal
           entityType={props.entityType}
-          isOpen={isTaskModalOpen}
           task={task}
-          setIsOpen={setIsTaskModalOpen}
           setTask={setTask}
           onSuccess={triggerRefresh}
         />

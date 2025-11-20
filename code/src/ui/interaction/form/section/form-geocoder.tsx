@@ -1,13 +1,13 @@
 import { useGeocode } from "hooks/geocode/useGeocode";
-import { GeocodeTemplateDescriptor, useGeocodeTemplate } from "hooks/geocode/useGeocodeTemplate";
+import {
+  GeocodeTemplateDescriptor,
+  useGeocodeTemplate,
+} from "hooks/geocode/useGeocodeTemplate";
 import { useDictionary } from "hooks/useDictionary";
-import React, { useState } from "react";
+import React from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import {
-  PropertyShape,
-  VALUE_KEY
-} from "types/form";
+import { PropertyShape, VALUE_KEY } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
@@ -120,84 +120,85 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
         </div>
       )}
 
-      {!isFetching && <>
-        <div className="flex items-center gap-2 mb-2">
-          {postalCodeShape && (
-            <FormFieldComponent field={postalCodeShape} form={props.form} />
-          )}
+      {!isFetching && (
+        <>
+          <div className="flex items-center gap-2 mb-2">
+            {postalCodeShape && (
+              <FormFieldComponent field={postalCodeShape} form={props.form} />
+            )}
 
-          {(formType == "add" || formType == "edit") && (
+            {(formType == "add" || formType == "edit") && (
               <div className="flex mt-12">
                 <Button
                   leftIcon="place"
                   size="icon"
                   tooltipText={dict.action.selectLocation}
-                  onClick={
-                    props.form.handleSubmit(onGeocoding)
-                  } type="button"
+                  onClick={() => onGeocoding(props.form.getValues())}
+                  type="button"
                 />
               </div>
             )}
-        </div>
+          </div>
 
-        {hasNoAddressFound && (
-          <div className="m-2">
-            <ErrorComponent message={dict.message.noAddressFound} />
-          </div>
-        )}
-        {addresses?.length > 1 && showAddressOptions && (
-          <div className="flex flex-wrap w-fit gap-2">
-            {addresses.map((address, index) => (
-              <button
-                key={address.street + index}
-                className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  // Prevent form submission
-                  event.preventDefault();
-                  event.stopPropagation();
-                  selectAddress(address);
-                }}
-              >
-                {String.fromCharCode(62)} {address.block}{" "}
-                {parseWordsForLabels(address.street)}, {address.city}
-              </button>
-            ))}
-          </div>
-        )}
-        {addressShapes.length > 0 && showAddressShapes && (
-          <div className="flex flex-wrap w-full p-0 m-0">
-            {addressShapes.map((shape, index) => (
-              <FormFieldComponent
-                key={shape.fieldId + index}
-                field={shape}
+          {hasNoAddressFound && (
+            <div className="m-2">
+              <ErrorComponent message={dict.message.noAddressFound} />
+            </div>
+          )}
+          {addresses?.length > 1 && showAddressOptions && (
+            <div className="flex flex-wrap w-fit gap-2">
+              {addresses.map((address, index) => (
+                <button
+                  key={address.street + index}
+                  className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    // Prevent form submission
+                    event.preventDefault();
+                    event.stopPropagation();
+                    selectAddress(address);
+                  }}
+                >
+                  {String.fromCharCode(62)} {address.block}{" "}
+                  {parseWordsForLabels(address.street)}, {address.city}
+                </button>
+              ))}
+            </div>
+          )}
+          {addressShapes.length > 0 && showAddressShapes && (
+            <div className="flex flex-wrap w-full p-0 m-0">
+              {addressShapes.map((shape, index) => (
+                <FormFieldComponent
+                  key={shape.fieldId + index}
+                  field={shape}
+                  form={props.form}
+                />
+              ))}
+            </div>
+          )}
+          {latitude && longitude && (
+            <div className="flex flex-wrap w-full">
+              <GeocodeMapContainer
                 form={props.form}
+                fieldId={props.field.fieldId}
               />
-            ))}
-          </div>
-        )}
-        {latitude && longitude && (
-          <div className="flex flex-wrap w-full">
-            <GeocodeMapContainer
-              form={props.form}
-              fieldId={props.field.fieldId}
-            />
-            <FormFieldComponent
-              field={latitudeShape}
-              form={props.form}
-              options={{
-                disabled: formType == "view" || formType == "delete",
-              }}
-            />
-            <FormFieldComponent
-              field={longitudeShape}
-              form={props.form}
-              options={{
-                disabled: formType == "view" || formType == "delete",
-              }}
-            />
-          </div>
-        )}
-      </>}
+              <FormFieldComponent
+                field={latitudeShape}
+                form={props.form}
+                options={{
+                  disabled: formType == "view" || formType == "delete",
+                }}
+              />
+              <FormFieldComponent
+                field={longitudeShape}
+                form={props.form}
+                options={{
+                  disabled: formType == "view" || formType == "delete",
+                }}
+              />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

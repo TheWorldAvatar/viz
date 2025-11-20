@@ -7,11 +7,13 @@ import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { parseSelectOptions } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
 
 interface HeaderCellProps {
   options: string[];
   header: Header<FieldValues, unknown>;
+  resetRowSelection?: () => void;
 }
 
 /**
@@ -19,17 +21,27 @@ interface HeaderCellProps {
  *
  * @param {string[]} options The list of values available for filtering.
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
+ * @param resetRowSelection Optional row selection function to reset row when unused.
  */
 
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(null);
+
+  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(
+    parseSelectOptions(
+      props.header.id.toLowerCase(),
+      props.header.column.getFilterValue() as string[],
+      dict)
+  );
 
   useEffect(() => {
     if (selectedOptions) {
       props.header.column.setFilterValue(
         selectedOptions.map((opt) => opt.value)
       );
+    }
+    if (props.resetRowSelection) {
+      props.resetRowSelection();
     }
   }, [selectedOptions]);
 
@@ -41,11 +53,10 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div
-            className={`flex items-center gap-2 ${
-              props.header.column.getCanSort()
-                ? "cursor-pointer select-none "
-                : ""
-            }`}
+            className={`flex items-center gap-2 ${props.header.column.getCanSort()
+              ? "cursor-pointer select-none"
+              : ""
+              }`}
             onClick={props.header.column.getToggleSortingHandler()}
             aria-label={
               props.header.column.getCanSort()
@@ -71,17 +82,13 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
           <div className="w-full min-w-36 h-full">
             <MultivalueSelector
               title={dict.action.filter}
-              options={props.options.sort().map((col) => {
-                return {
-                  label: col,
-                  value: col,
-                };
-              })}
+              options={parseSelectOptions(props.header.id.toLowerCase(), props.options, dict)}
               toggleAll={false}
               isActive={
                 props.header.column.getFilterValue() !== undefined &&
                 (props.header.column.getFilterValue() as string[])?.length > 0
               }
+              controlledSelectedOptions={selectedOptions}
               setControlledSelectedOptions={setSelectedOptions}
             />
           </div>

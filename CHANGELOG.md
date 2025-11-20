@@ -2,6 +2,301 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.44.4
+
+### Bug fixes
+
+- Fixed overflow of the content in the quick view drop-down field
+
+## 5.44.3
+
+### Changes
+
+- Added global loading state to show a loading indicator when navigating between pages
+
+## 5.44.2
+
+### Changes
+
+- Added loading skeleton for the foerms to improve user experience during data fetching
+
+## 5.44.1
+
+### Bug Fixes
+
+- Fixed a layout issue in the headerbar where the account menu and hambureger menu were misaligned
+
+## 5.44.0
+
+### Changes
+
+- Improved redis connection failure handling for ease of debugging
+
+## 5.43.7
+
+### Changes
+
+- Added a loading skeleton for the registry table to improve user experience during data fetching
+
+## 5.43.6
+
+### Bug Fixes
+
+- Fixed an issue when reading JSONs and trying to determine the column headers of a table, all unique entries should be included
+
+## 5.43.5
+
+### Changes
+
+- Fixed styling issue for mobile design (react-select dropdown not fully visible when its the last element in the form)
+- Fixed the logo images not showing on some mobile devices or diffrent browsers due to the the width and height attributes being set to 0
+
+## 5.43.4
+
+### Bug Fixes
+
+- Fixed an issue when adding a new job request with default "Waste Collection Service" that was throwing an error (missing contract parameter) due to a default NULL value being sent to the backend
+
+## 5.43.3
+
+### Bug Fixes
+
+- Fixed an issue with the clear indicator in the column filter not showing after the table refreshes
+
+## 5.43.2
+
+### Changes
+
+- Allow for a single or multiple contracts to be duplicated
+- Implemented the functionality to specify the number of duplicates to create
+- Bump min version of `VisBackend Agent` to `v1.18.0`
+
+## 5.43.1
+
+### Changes
+
+- Implement a checkbox input that allows for selecting multiple rows in the registry table for bulk actions
+- Implemented a bulking function in the registry table component that allows for multiple job approval and resubmit requests at the same time
+- Added a select all checkbox in the registry table header to select all visible rows for bulk actions
+- New checkbox component to be used across the application
+- Bump min version of `VisBackend Agent` to `v1.17.0`
+
+## 5.43.0
+
+### Changes
+
+- Global (Redux) loading state to show a toast notification when an operation is in progress
+- Updating the disabled state of the buttons in all forms and tables
+- Freeze the form and table interactions when an operation is in progress
+
+## 5.42.9
+
+### Bug Fixes
+
+- Fixed the ontology concept selector to display the default value, if any, on an add form even after switching form branches
+- Fixed the form branch to match based on nullable values as well when branches have overlapping fields
+
+## 5.42.8
+
+### Bug Fixes
+
+- Fixed an issue with the status column filter options not working as expected in the registry table
+
+## 5.42.7
+
+### Changes
+
+- Set the default date range for schedule task to be 28 days from tomorrow's date
+
+## 5.42.6
+
+### Changes
+
+- Exclude "service_location" column from being displayed in the registry table 
+
+## 5.42.5
+
+### Changes
+
+- Increased the height of the horizontal scrollbar in the registry table
+
+## 5.42.4
+
+### Changes
+
+- Implemented a textarea input
+- Implemented a new component (Expandable table cell), which allows to expand long text in table cells
+- Bump min version of `VisBackend Agent` to `v1.16.1`
+
+## 5.42.3
+
+### Bug Fixes
+
+- Fixed and issue with the filter unmounting when the column toggle input is changed
+
+## 5.42.2
+
+### Changes
+
+- Update display for last modified column and cell
+- Bump min version of `VisBackend Agent` from `v1.15.1` to `v1.15.3`
+
+## 5.42.1
+
+### Bug Fixes
+
+- Ensures that form submits an empty value for optional select fields when initialised
+- Display dependent form fields even if independent form field has not been selected
+
+## 5.42.0
+
+### Bug Fixes
+
+- Fixed 'fill' option for legend with a minor refactor
+
+## 5.41.9
+
+### Bug Fixes
+
+- Enable full column selection per row
+
+## 5.41.8
+
+### Changes
+
+- Made the Not Applicable option in the select dropdown to always be the default option if present
+
+## 5.41.7
+
+### Changes
+
+- Improved mobile design for forms
+
+## 5.41.6
+
+### Changes
+
+- Moved the drawer state to a global state
+
+### Bug Fixes
+
+- Fixed the issue with the drawer remains open when navigating on a different page
+- Fixed the issue with the drawer not always being responsive (opening on click)
+
+## 5.41.5
+
+### Changes
+
+- Fixed Issue with the layout of the icon in the export button date input and not closing when clicking outside when a date is selected
+
+## 5.41.4
+
+### Changes
+
+- Improve form branching performance
+- Rerender form fields when switching branches to prevent fields from being stuck
+- Bump min version of `VisBackend Agent` from `v1.15.0` to `v1.15.1`
+
+## 5.41.3
+
+### Changes
+
+- Created a wrapper function that gets the form values and passes them onto the onGeocoding function inside useGeocode hook
+- This allows to skip the form validation when the geocoding button is pressed
+
+## 5.41.2
+
+### Bug Fixes
+
+- Trigger automatic refresh of registry table on close for intercept form routes and actions
+
+## 5.41.1
+
+### Changes
+
+- Added form validation for the drop down selectors for add form type
+- Changed the default values of the simple selectors (empty placeholder)
+
+## 5.41.0
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.13.0` to `v1.15.0`
+- Allow users to submit a perpetual service type
+- Users will continue and duplicate the perpetual service by default on submission
+
+## 5.40.4
+
+### Bug Fixes
+
+- Fixed the wrong filter option display for the status column in the registry
+
+## 5.40.3
+
+### Bug Fixes
+
+- Fixed the issue with the disabled states of the single date input
+
+## 5.40.2
+
+### Changes
+
+- Redone the date range component to accept single date selection as well as range selection
+- Added a utility function to get the normalized date format in yyyy-mm-dd from a Date object
+
+## 5.40.1
+
+### Changes
+
+- Removed the comma from the WKT point
+- Removed the id column from the default column display in the registry table
+
+## 5.40.0
+
+### Changes
+
+- Implemented a new quick view component that enables users to have a quick view of the dependent fields, without having to open a new tab or window.
+
+## 5.39.6
+
+### Changes
+
+- Adjusted the form component to comply with Service type form branching logic, conditionally rendering form components based on a selected service type.
+
+## 5.39.5
+
+### Changes
+
+- Changed the default type of the external links type to be "default" if not specified
+
+## 5.39.4
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.12.0` to `v1.13.0`
+- Extended to allow users to resubmit for approval with changes to backend
+
+## 5.39.3
+
+### Bug Fixes
+
+- Fixed false error message when changing service type of job
+- Fixed approve button not working when pressed from the view form
+- Fixed single service end date issue
+
+## 5.39.2
+
+### Changes
+
+- Added a date range selection for exporting data
+- Updated design of file upload
+
+## 5.39.1
+
+### Bug Fixes
+
+- Fixed the inability to change months in the date input menu
+
 ## 5.39.0
 
 ### Changes
@@ -10,7 +305,6 @@
 - Added role permissions for saving and submit and duplicate tasks.
 - Redesigned the permitted registry row actions in each registry.
 - Bump min version of `VisBackend Agent` from `v1.10.0` to `v1.12.0`
-
 
 ## 5.38.4
 

@@ -108,7 +108,7 @@ export default function MapboxMapComponent(props: MapProperties) {
   return (
     <div
       ref={mapContainerRef}
-      className={` w-full  pointer-events-auto  ${props.styles}`}
+      className={`w-full pointer-events-auto rounded-lg ${props.styles}`}
     />
   );
 }

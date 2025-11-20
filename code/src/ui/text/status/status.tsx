@@ -1,5 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
+import { parseWordsForLabels } from "utils/client-utils";
 
 export const Status: {
   [key: string]: string;
@@ -99,7 +100,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
           backgroundColor: statusBackgroundColor,
         }}
       >
-        {props.status}
+        {parseWordsForLabels(dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status)}
       </p>
     </span>
   );

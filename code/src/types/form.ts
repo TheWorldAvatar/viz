@@ -85,6 +85,7 @@ export interface PropertyShape {
   maxInclusive?: JsonLdLiteral;
   minExclusive?: JsonLdLiteral;
   maxExclusive?: JsonLdLiteral;
+  singleLine?: JsonLdLiteral;
   minLength?: JsonLdLiteral;
   maxLength?: JsonLdLiteral;
   pattern?: JsonLdLiteral;
@@ -142,6 +143,7 @@ export interface RegistryTaskOption {
   contract: string;
   status: string;
   date: string;
+  scheduleType: string;
   type: RegistryTaskType;
 }
 
@@ -151,3 +153,6 @@ export type RegistryTaskType =
   | "cancel"
   | "report"
   | "default";
+
+export type QuickViewGroupings = Record<string, QuickViewFields>;
+export type QuickViewFields = Record<string, SparqlResponseField[]>;

@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 
 import { DataParser } from "io/data/data-parser";
 import { DataStore } from "io/data/data-store";
+import { DateRange } from "react-day-picker";
 import {
   MapFeaturePayload,
   clearFeatures,
@@ -12,13 +13,14 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
+import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   SparqlResponseField,
 } from "types/form";
 import { JsonObject } from "types/json";
-import { DateRange } from "react-day-picker";
+import { ToastConfig, ToastType } from "types/toast";
 
 /**
  * Open full screen mode.
@@ -173,25 +175,30 @@ export function extractResponseField(
   }
 }
 
-
 /**
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
  */
-export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage): DateRange {
+export function getInitialDateFromLifecycleStage(
+  lifecycleStage: LifecycleStage
+): DateRange {
   // For closed and other stages: start with today
   const initialDate: Date = new Date();
 
   if (lifecycleStage === "scheduled") {
-    // For scheduled: start with tomorrow since today and past are disabled
+    // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
+    const fourWeeksFromInitialDate: Date = new Date();
     initialDate.setDate(initialDate.getDate() + 1);
+    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
+    return { from: initialDate, to: fourWeeksFromInitialDate };
   }
-
   return { from: initialDate, to: initialDate };
 }
 
 /**
+
+=======
   * Compares the target and reference date to verify if they are before or after each other. Note that this function returns true if they are equivalent.
   *
   * @param {string} targetDate The target date for comparison.
@@ -202,6 +209,7 @@ export function compareDates(
   targetDate: string,
   isAfter: boolean,
   refDate?: string,
+
 ): boolean {
   const targetDateObject = new Date(targetDate);
   // Defaults to today if reference date is not provided
@@ -214,4 +222,78 @@ export function compareDates(
     return targetDateObject >= refDateObject;
   }
   return targetDateObject <= refDateObject;
+}
+
+/**
+ * Get initial date ie today.
+ */
+export function getInitialDate(): DateRange {
+  const currentDate: Date = new Date();
+  return {
+    from: currentDate,
+    to: currentDate,
+  }
+}
+
+/**
+  * Get the UTC date from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
+export function getUTCDate(date: Date): Date {
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
+  );
+}
+
+/**
+  * Get the normalized date format in yyyy-mm-dd from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
+export function getNormalizedDate(date: Date): string {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+}
+
+
+/**
+ * Get the configuration for a toast notification.
+ *
+ * @param type The type of toast .
+ * @param dict The dictionary containing localized strings.
+ */
+export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
+  switch (type) {
+    case "success":
+      return {
+        bg: "bg-status-success-bg",
+        border: "border-green-200",
+        text: "text-status-success-text",
+        icon: "check_circle",
+        title: dict.title.success,
+      };
+    case "error":
+      return {
+        bg: "bg-status-error-bg",
+        border: "border-red-200",
+        text: "text-status-error-text",
+        icon: "error",
+        title: dict.title.error,
+      };
+    case "loading":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "hourglass_bottom",
+        title: dict.title.loading,
+        animate: "animate-spin",
+      };
+    default:
+      throw new Error(`Unsupported toast type: ${type}`);
+  }
 }

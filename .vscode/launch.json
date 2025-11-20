@@ -10,6 +10,14 @@
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}/code"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "Launch Edge with React App",
+            "url": "http://localhost:1997",
+            "webRoot": "${workspaceFolder}/code",
+            "sourceMaps": true
         }
     ]
 }
