@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.44.5
+
+### Changes
+
+- Add all parameters from the GeoServer layer to the request for the feature info agent
+
 ## 5.44.4
 
 ### Bug fixes
