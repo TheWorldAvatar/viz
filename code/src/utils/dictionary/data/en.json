@@ -2,6 +2,7 @@
   "lang": "en",
   "action": {
     "add": "Add",
+    "applyFilter": "Apply filter",
     "addItem": "add {replace}",
     "delete": "Delete",
     "dismiss": "Dismiss",

@@ -52,7 +52,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
           <div className="absolute right-0 top-0 bottom-0 flex items-stretch">
             <Button
-              leftIcon="search"
+              leftIcon="filter_alt"
               iconSize="medium"
               size="icon"
               onClick={(event) => {
@@ -60,7 +60,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
                 event.stopPropagation();
                 props.onSubmission(selectedOptions);
               }}
-              tooltipText={dict.action.search}
+              tooltipText={dict.action.applyFilter}
               variant="primary"
               className="h-full rounded-l-none w-12"
               aria-label={"Submit for " + props.label}
