@@ -17,7 +17,6 @@ export const SelectCheckboxOption: ComponentType<OptionProps<SelectOptionType, b
       <div className="flex items-center" onClick={handleClick}>
         <Checkbox
           checked={props.isSelected}
-          onChange={() => null}
           className="mr-3"
           label={props.label}
           ariaLabel={props.label}

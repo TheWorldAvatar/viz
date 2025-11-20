@@ -2,65 +2,64 @@
 
 import React, { ReactNode, useId, useState } from "react";
 
-interface CheckboxProps
-    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
     checked: boolean;
-    onChange: (_checked: boolean) => void;
-    className?: string;
     label?: string;
     ariaLabel?: string;
     disabled?: boolean;
     labelComponent?: ReactNode;
+    handleChange?: (_checked: boolean) => void;
 }
 
-export default function Checkbox({
-    className = "",
-    label,
-    checked,
-    onChange,
-    ariaLabel,
-    disabled,
-    ...props
-}: Readonly<CheckboxProps>) {
+/**
+ * This component renders a checkbox component.
+ *
+ * @param {boolean} checked Controlled checked state.
+ * @param {string} label Text label for the checkbox.
+ * @param {string} ariaLabel Accessiblity label for the checkbox.
+ * @param {boolean} disabled If the checkbox should be disabled.
+ * @param {ReactNode} labelComponent An optional component that replaces the default text label if present.
+ * @param handleChange Optional functionality to execute on change.
+ */
+export default function Checkbox(props: Readonly<CheckboxProps>) {
     const [internalChecked, setInternalChecked] = useState<boolean>(false);
     const checkboxId: string = useId();
 
     // Use controlled value if provided, otherwise use internal state
-    const isChecked: boolean = checked !== undefined ? checked : internalChecked;
+    const isChecked: boolean = !props.checked ? props.checked : internalChecked;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newChecked: boolean = e.target.checked;
 
         // Update internal state if component is uncontrolled
-        if (checked === undefined) {
+        if (!props.checked) {
             setInternalChecked(newChecked);
         }
-        if (onChange) {
-            onChange(newChecked);
+        if (props.handleChange) {
+            props.handleChange(newChecked);
         }
     };
 
-
-    const disabledClasses: string = disabled ? "cursor-not-allowed" : "cursor-pointer";
+    const disabledClasses: string = props.disabled ? "cursor-not-allowed" : "cursor-pointer";
 
     return (
         <div className="flex items-center space-x-2">
             <input
                 id={checkboxId}
                 type="checkbox"
-                className={`${disabledClasses} ${className} accent-black dark:accent-white outline-none  focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
+                className={`${disabledClasses} ${props.className} accent-black dark:accent-white outline-none  focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
                 checked={isChecked}
                 onChange={handleChange}
                 role="checkbox"
-                disabled={disabled}
+                disabled={props.disabled}
                 aria-checked={isChecked}
-                aria-label={ariaLabel || label}
+                aria-label={props.ariaLabel || props.label}
                 {...props}
             />
             {props.labelComponent}
-            {!props.labelComponent && label && (
+            {!props.labelComponent && props.label && (
                 <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300">
-                    {label}
+                    {props.label}
                 </label>
             )}
         </div>

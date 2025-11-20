@@ -264,7 +264,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   ariaLabel={dict.action.selectAll}
                                   disabled={isLoading}
                                   checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
-                                  onChange={(checked) => {
+                                  handleChange={(checked) => {
                                     props.tableDescriptor.table.getRowModel().rows.forEach(row => {
                                       row.toggleSelected(checked);
                                     });
@@ -311,7 +311,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  {allowMultipleSelection && <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
+                                  {allowMultipleSelection && <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} handleChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
