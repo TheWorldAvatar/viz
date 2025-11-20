@@ -19,7 +19,7 @@ export const SelectCheckboxOption: ComponentType<OptionProps<SelectOptionType, b
           checked={props.isSelected}
           className="mr-3"
           label={props.label}
-          ariaLabel={props.label}
+          aria-label={props.label}
           disabled={props.isDisabled}
         />
       </div>

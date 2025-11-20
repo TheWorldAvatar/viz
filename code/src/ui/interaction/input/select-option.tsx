@@ -36,7 +36,7 @@ export default function SelectOption(props: Readonly<SelectOptionProps>) {
                 checked={uncontrolledChecked}
                 className="mr-3"
                 label={props.option}
-                ariaLabel={props.option}
+                aria-label={props.option}
                 labelComponent={props.labelComponent}
                 handleChange={() => setUncontrolledChecked(!uncontrolledChecked)}
             />
