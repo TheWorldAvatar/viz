@@ -87,9 +87,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}
         </p>}
-        {props.showOptions && !refreshFlag && props.options.map((option) => (
+        {props.showOptions && !refreshFlag && props.options.map((option, index) => (
           <SelectOption
-            key={option}
+            key={option + index}
             option={option}
             initialChecked={selectedOptions.includes(option)}
             onClick={() => {
