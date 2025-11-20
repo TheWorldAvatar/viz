@@ -4,6 +4,7 @@ import { Dictionary } from "types/dictionary";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 import { useState } from "react";
+import StatusComponent from "ui/text/status/status";
 
 interface SearchSelectorProps {
   label: string;
@@ -90,7 +91,8 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         {props.showOptions && !refreshFlag && props.options.map((option, index) => (
           <SelectOption
             key={option + index}
-            option={option}
+            option={props.label === "status" ? dict.title[option.toLowerCase()] : option}
+            labelComponent={props.label === "status" ? <StatusComponent status={dict.title[option.toLowerCase()]} /> : null}
             initialChecked={selectedOptions.includes(option)}
             onClick={() => {
               if (selectedOptions.includes(option)) {

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import Checkbox from "./checkbox";
 
 interface SelectOptionProps {
     option: string;
     initialChecked: boolean;
     onClick?: () => void;
+    labelComponent?: ReactNode;
 }
 
 /**
@@ -15,6 +16,7 @@ interface SelectOptionProps {
  * @param {String} option The display value
  * @param {boolean} initialChecked If the option starts as checked.
  * @param onClick Additional functions to be executed on click.
+ * @param {ReactNode} labelComponent An optional component that replaces the default text label if present.
  */
 export default function SelectOption(props: Readonly<SelectOptionProps>) {
     const [uncontrolledChecked, setUncontrolledChecked] = useState<boolean>(props.initialChecked);
@@ -36,6 +38,7 @@ export default function SelectOption(props: Readonly<SelectOptionProps>) {
                 className="mr-3"
                 label={props.option}
                 ariaLabel={props.option}
+                labelComponent={props.labelComponent}
             />
         </div>
     );

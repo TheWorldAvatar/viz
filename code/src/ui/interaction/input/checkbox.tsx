@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { ReactNode, useId, useState } from "react";
 
 interface CheckboxProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
@@ -10,6 +10,7 @@ interface CheckboxProps
     label?: string;
     ariaLabel?: string;
     disabled?: boolean;
+    labelComponent?: ReactNode;
 }
 
 export default function Checkbox({
@@ -56,7 +57,8 @@ export default function Checkbox({
                 aria-label={ariaLabel || label}
                 {...props}
             />
-            {label && (
+            {props.labelComponent}
+            {!props.labelComponent && label && (
                 <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300">
                     {label}
                 </label>

@@ -81,8 +81,7 @@ export function useFilterOptions(
         }
         const res: AgentResponseBody = await queryInternalApi(url);
         const resOptions: string[] = (res.data?.items as string[]).map(option =>
-          field === "status" ? dict.title[option.toLowerCase()] :
-            !option ? dict.title.blank : option);
+          !option ? dict.title.blank : option);
 
         // Merge selected filters with fetched options to ensure selected items are always visible
         // Use set to avoid duplicates
