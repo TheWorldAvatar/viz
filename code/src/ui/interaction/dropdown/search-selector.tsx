@@ -1,10 +1,10 @@
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
+import { useState } from "react";
 import { Dictionary } from "types/dictionary";
+import StatusComponent from "ui/text/status/status";
 import Button from "../button";
 import SelectOption from "../input/select-option";
-import { useState } from "react";
-import StatusComponent from "ui/text/status/status";
 
 interface SearchSelectorProps {
   label: string;
@@ -92,7 +92,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <SelectOption
             key={option + index}
             option={props.label === "status" ? dict.title[option.toLowerCase()] : option}
-            labelComponent={props.label === "status" ? <StatusComponent status={dict.title[option.toLowerCase()]} /> : null}
+            labelComponent={props.label === "status" ? <StatusComponent status={option} /> : null}
             initialChecked={selectedOptions.includes(option)}
             onClick={() => {
               if (selectedOptions.includes(option)) {

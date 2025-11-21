@@ -39,14 +39,15 @@ export function getTranslatedStatusLabel(
 /**
  * Renders the status with a circle indicator.
  *
- * @param {string} status The status to display.
+ * @param {string} status The untranslated status key. Status will be translated within this component.
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusTextColor: string;
   let statusBackgroundColor: string;
   const dict: Dictionary = useDictionary();
 
-  switch (props.status.toLowerCase()) {
+  const statusVal: string = dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status;
+  switch (statusVal.toLowerCase()) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
@@ -85,7 +86,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
           backgroundColor: statusBackgroundColor,
         }}
       >
-        {parseWordsForLabels(dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status)}
+        {parseWordsForLabels(statusVal)}
       </p>
     </span>
   );
