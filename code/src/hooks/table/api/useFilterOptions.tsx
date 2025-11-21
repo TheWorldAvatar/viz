@@ -7,7 +7,7 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage } from "types/form";
 import { parseColumnFiltersIntoUrlParams, parseTranslatedFieldToOriginal } from "ui/graphic/table/registry/registry-table-utils";
-import { getUTCDate } from "utils/client-utils";
+import { getAfterDelimiter, getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface FilterOptionsDescriptor {
@@ -81,8 +81,7 @@ export function useFilterOptions(
         }
         const res: AgentResponseBody = await queryInternalApi(url);
         const resOptions: string[] = (res.data?.items as string[]).map(option =>
-          !option ? dict.title.blank : option);
-
+          field === "event_id" ? getAfterDelimiter(option, "/") : !option ? dict.title.blank : option);
         // Merge selected filters with fetched options to ensure selected items are always visible
         // Use set to avoid duplicates
         const mergedOptions: string[] = [...new Set([...currentFilters, ...resOptions])];
