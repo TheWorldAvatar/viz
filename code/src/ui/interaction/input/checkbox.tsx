@@ -20,25 +20,33 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
  * @param handleChange Optional functionality to execute on change.
  */
 export default function Checkbox(props: Readonly<CheckboxProps>) {
+    const {
+        checked,
+        label,
+        disabled,
+        labelComponent,
+        handleChange,
+        ...rest
+    } = props;
     const [internalChecked, setInternalChecked] = useState<boolean>(false);
     const checkboxId: string = useId();
 
     // Use controlled value if provided, otherwise use internal state
-    const isChecked: boolean = !props.checked ? props.checked : internalChecked;
+    const isChecked: boolean = !checked ? checked : internalChecked;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newChecked: boolean = e.target.checked;
 
         // Update internal state if component is uncontrolled
         if (!props.checked) {
             setInternalChecked(newChecked);
         }
-        if (props.handleChange) {
-            props.handleChange(newChecked);
+        if (handleChange) {
+            handleChange(newChecked);
         }
     };
 
-    const disabledClasses: string = props.disabled ? "cursor-not-allowed" : "cursor-pointer";
+    const disabledClasses: string = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
     return (
         <div className="flex items-center space-x-2">
@@ -47,17 +55,17 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
                 type="checkbox"
                 className={`${disabledClasses} ${props.className} accent-black dark:accent-white outline-none  focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
                 checked={isChecked}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 role="checkbox"
-                disabled={props.disabled}
+                disabled={disabled}
                 aria-checked={isChecked}
-                aria-label={props["aria-label"] || props.label}
-                {...props}
+                aria-label={props["aria-label"] || label}
+                {...rest}
             />
-            {!!props.labelComponent && props.labelComponent}
-            {!props.labelComponent && props.label && (
+            {!!labelComponent && labelComponent}
+            {!labelComponent && label && (
                 <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300">
-                    {props.label}
+                    {label}
                 </label>
             )}
         </div>
