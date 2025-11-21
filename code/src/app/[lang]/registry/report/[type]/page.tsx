@@ -31,6 +31,7 @@ export default function RegistryReportPage() {
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={'report'}
+        uiSettings={uiSettings}
       />
     );
   } else {

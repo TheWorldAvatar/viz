@@ -160,6 +160,7 @@
       "map": "Visualisierung von Geodaten",
       "dashboard": "Entdecken Sie Trends und Erkenntnisse auf einen Blick",
       "registry": "Verwalten Sie Ihre Datensätze",
+      "billing": "Ihre Abrechnungen anzeigen und verwalten",
       "submission": "Verwalten Sie Ihre Einreichungen",
       "generalReg": "{replace} verwalten",
       "help": "Hilfe für diese Webplattform"
@@ -169,6 +170,7 @@
       "map": "Karte",
       "dashboard": "Analyse",
       "registry": "Register",
+      "billing": "Abrechnung",
       "submission": "Einreichung des Registers",
       "help": "Hilfe-Center",
       "pending": "Ausstehend",
