@@ -229,7 +229,7 @@ function makeExternalEndpoint(
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const stage: LifecycleStage = searchParams.get("stage") as LifecycleStage;
-      const filters: string = decodeFilters(searchParams.get("filters"));
+      const filters: string = encodeFilters(searchParams.get("filters"));
       let stagePath: string;
       if (stage === "pending") {
         stagePath = "draft";
@@ -249,10 +249,11 @@ function makeExternalEndpoint(
     case "count": {
       const type: string = searchParams.get("type");
       const lifecycle: string = searchParams.get("lifecycle");
-      const filters: string = decodeFilters(searchParams.get("filters"));
       if (lifecycle == "null") {
+        const filters: string = encodeFilters(searchParams.get("filters"), "?");
         return `${agentBaseApi}/${type}/count${filters}`;
       }
+      const filters: string = encodeFilters(searchParams.get("filters"));
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
         if (lifecycle === "pending") {
@@ -287,7 +288,7 @@ function makeExternalEndpoint(
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
-        const filters: string = decodeFilters(searchParams.get("filters"));
+        const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
       if (identifier != "null") {
@@ -313,7 +314,7 @@ function makeExternalEndpoint(
       const field: string = searchParams.get("field");
       const search: string = searchParams.get("search");
       const lifecycle: string = searchParams.get("lifecycle");
-      const filters: string = decodeFilters(searchParams.get("filters"));
+      const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
@@ -377,7 +378,7 @@ function makeExternalEndpoint(
     case "tasks": {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      const filters: string = decodeFilters(searchParams.get("filters"));
+      const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
     case "outstanding": {
@@ -385,7 +386,7 @@ function makeExternalEndpoint(
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
-      const filters: string = decodeFilters(searchParams.get("filters"));
+      const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case "scheduled":
@@ -398,7 +399,7 @@ function makeExternalEndpoint(
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
-      const filters: string = decodeFilters(searchParams.get("filters"));
+      const filters: string = encodeFilters(searchParams.get("filters"));
 
       return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
@@ -407,9 +408,15 @@ function makeExternalEndpoint(
   }
 }
 
-function decodeFilters(filterInputParams: string): string {
+/**
+ * Encodes the filter input parameters by first decoding and processing them for the backend input.
+ *
+ * @param {string} filterInputParams Input params.
+ * @param {string} initialChar Initial character to append. Defaults to &.
+ */
+function encodeFilters(filterInputParams: string, initialChar: string = "&"): string {
   const filters: string = decodeURIComponent(filterInputParams);
-  return filters.length === 0 ? "" : "&" + filters.substring(1).split("~").map(pair => {
+  return filters.length === 0 ? "" : initialChar + filters.substring(1).split("~").map(pair => {
     // Split only on the first '=' to handle values that might contain '='
     const [key, rawValue] = pair.split("=", 2);
     // Encode values directly
