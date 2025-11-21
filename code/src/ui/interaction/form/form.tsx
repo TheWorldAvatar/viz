@@ -19,7 +19,6 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import { getAfterDelimiter } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
@@ -34,6 +33,7 @@ import FormSection from "./section/form-section";
 
 import useOperationStatus from "hooks/useOperationStatus";
 import { toast } from "ui/interaction/action/toast/toast";
+import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -345,7 +345,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   return (
     <form ref={props.formRef} onSubmit={onSubmit}>
-      {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
+      {form.formState.isLoading && <FormSkeleton />}
       {!form.formState.isLoading &&
         renderFormField(
           props.entityType,

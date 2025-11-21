@@ -1,12 +1,12 @@
 import { GroupBase, StylesConfig } from "react-select";
 
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 // Selector styles for react select
 export const selectorStyles: StylesConfig<
-  SelectOption,
+  SelectOptionType,
   boolean,
-  GroupBase<SelectOption>
+  GroupBase<SelectOptionType>
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
@@ -34,13 +34,12 @@ export const selectorStyles: StylesConfig<
     ...provided,
     backgroundColor: "var(--muted)",
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
-    borderRadius: "0.5rem !important",
+    borderRadius: "0.2rem",
     margin: "0.25rem 0",
     minWidth: "100%",
-    width: "fit-content",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "hidden",
+    overflow: "visible",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -123,9 +122,9 @@ export const selectorStyles: StylesConfig<
 };
 
 export const checkboxInputsSelectorStyles: StylesConfig<
-  SelectOption,
+  SelectOptionType,
   boolean,
-  GroupBase<SelectOption>
+  GroupBase<SelectOptionType>
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
@@ -156,13 +155,13 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     ...provided,
     backgroundColor: "var(--background)",
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
-    borderRadius: "0.5rem !important",
+    borderRadius: "0.2rem",
     margin: "0.25rem 0",
     minWidth: "100%",
     width: "fit-content",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "hidden",
+    overflow: "visible",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,

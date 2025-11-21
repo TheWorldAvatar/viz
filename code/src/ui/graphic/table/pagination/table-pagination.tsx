@@ -6,18 +6,20 @@ import { Dictionary } from "types/dictionary";
 import Button from "ui/interaction/button";
 
 interface TablePaginationProps {
+  rows: number;
   table: Table<FieldValues>;
   pagination: PaginationState;
 }
 
+const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
+
 /**
  * A pagination component for the table.
  *
- * @param {Table<FieldValues>} props.table - The table instance.
+ * @param {number} rows - The total number of rows
+ * @param {Table<FieldValues>} table - The table instance.
+ * @param {PaginationState} pagination - The pagination state values.
  */
-
-const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
-
 export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const dict: Dictionary = useDictionary();
   const numberOfSelectedRows: number = props.table.getSelectedRowModel().rows.length;
@@ -26,10 +28,8 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
     <div className="flex items-center justify-between p-4 bg-muted border-t border-border flex-shrink-0">
       <div className="text-sm text-foreground">
         {dict.message.numberOfRecords
-          .replace("{replace}", String(numberOfSelectedRows > 0 ? numberOfSelectedRows : props.table.getFilteredRowModel().rows.length))
-          .replace(
-            "{replacetotal}",
-            String(props.table.getRowCount())
+          .replace("{replace}", String(numberOfSelectedRows > 0 ? numberOfSelectedRows : Math.min(props.rows, props.table.getRowCount())))
+          .replace("{replacetotal}", String(props.rows)
           )}
       </div>
       <div className="flex items-center gap-8">
@@ -96,7 +96,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             leftIcon="keyboard_double_arrow_right"
             className="!hidden md:!flex"
             size="icon"
-            onClick={() => props.table.setPageIndex(props.table.getPageCount() - 1)}
+            onClick={() => props.table.setPageIndex(lastPageIndex - 1)}
             disabled={props.pagination.pageIndex == lastPageIndex - 1}
             aria-label="Go to last page"
           />

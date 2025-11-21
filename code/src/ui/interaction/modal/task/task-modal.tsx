@@ -20,7 +20,7 @@ import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 
-import { getTranslatedStatusLabel, Status } from "ui/text/status/status";
+import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
@@ -31,6 +31,7 @@ import { useDispatch } from "react-redux";
 import { closeDrawer, openDrawer } from "state/drawer-component-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 import Drawer from "ui/interaction/drawer/drawer";
+import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 
 interface TaskModalProps {
   entityType: string;
@@ -67,7 +68,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
   const getPrevEventOccurrenceEnum = useCallback(
     (currentStatus: string): number => {
       // Enum should be 0 for order received at pending dispatch state
-      if (currentStatus === Status.NEW) {
+      if (currentStatus === "new") {
         return 0;
       } else {
         // Enum will be 1 as there is already a dispatch event instantiated
@@ -252,7 +253,7 @@ export default function TaskModal(props: Readonly<TaskModalProps>) {
               )}`}
           </p>
         )}
-        {isFetching || (refreshFlag && <LoadingSpinner isSmall={false} />)}
+        {isFetching || (refreshFlag && <FormSkeleton />)}
         {props.task?.type === "default" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}

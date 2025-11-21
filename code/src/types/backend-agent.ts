@@ -19,6 +19,7 @@ export type InternalApiIdentifier =
   | "contract_status"
   | "count"
   | "event"
+  | "filter"
   | "form"
   | "geocode_postal"
   | "geocode_address"
