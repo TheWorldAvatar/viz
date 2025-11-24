@@ -22,8 +22,12 @@ export default function SelectOption(props: Readonly<SelectOptionProps>) {
     const [uncontrolledChecked, setUncontrolledChecked] = useState<boolean>(props.initialChecked);
 
     const handleClick = (e: React.MouseEvent) => {
-        e.preventDefault();
         e.stopPropagation();
+        // Only handle clicks on the div itself, not on the checkbox or label
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'LABEL') {
+            return;
+        }
         setUncontrolledChecked(!uncontrolledChecked);
         if (props.onClick) {
             props.onClick();
@@ -31,14 +35,19 @@ export default function SelectOption(props: Readonly<SelectOptionProps>) {
     };
 
     return (
-        <div onClick={handleClick} className={`${uncontrolledChecked ? "bg-background-tertiary" : ""} hover:bg-background-tertiary p-2 my-0.5 cursor-pointer`}>
+        <div onClick={handleClick} className={`${uncontrolledChecked ? "bg-ring" : ""} hover:bg-background-tertiary p-2 my-0.5 `}>
             <Checkbox
                 checked={uncontrolledChecked}
                 className="mr-3"
                 label={props.option}
                 aria-label={props.option}
                 labelComponent={props.labelComponent}
-                handleChange={() => setUncontrolledChecked(!uncontrolledChecked)}
+                handleChange={() => {
+                    setUncontrolledChecked(!uncontrolledChecked);
+                    if (props.onClick) {
+                        props.onClick();
+                    }
+                }}
             />
         </div>
     );

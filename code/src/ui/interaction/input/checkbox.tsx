@@ -32,13 +32,14 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
     const checkboxId: string = useId();
 
     // Use controlled value if provided, otherwise use internal state
-    const isChecked: boolean = !checked ? checked : internalChecked;
+    const isChecked: boolean = checked !== undefined ? checked : internalChecked;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
         const newChecked: boolean = e.target.checked;
 
         // Update internal state if component is uncontrolled
-        if (!props.checked) {
+        if (checked === undefined) {
             setInternalChecked(newChecked);
         }
         if (handleChange) {
@@ -46,14 +47,14 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
         }
     };
 
-    const disabledClasses: string = disabled ? "cursor-not-allowed" : "cursor-pointer";
+    const disabledClasses: string = disabled ? "cursor-not-allowed" : "";
 
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 accent-black dark:accent-white">
             <input
                 id={checkboxId}
                 type="checkbox"
-                className={`${disabledClasses} ${props.className} accent-black dark:accent-white outline-none  focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
+                className={`${disabledClasses} ${props.className}  outline-none focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
                 checked={isChecked}
                 onChange={handleInputChange}
                 role="checkbox"
