@@ -5,7 +5,7 @@ import { Dictionary } from "types/dictionary";
 import StatusComponent from "ui/text/status/status";
 import Button from "../button";
 import SelectOption from "../input/select-option";
-import { Icon } from "@mui/material";
+
 
 interface SearchSelectorProps {
   label: string;
