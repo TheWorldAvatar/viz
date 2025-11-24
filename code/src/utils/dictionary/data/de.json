@@ -156,7 +156,7 @@
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
     "processingRequest": "Bearbeitung der Anfrage...",
-     "maxFilters": "Sie können nicht mehr als {replace} Filter gleichzeitig anwenden."
+     "maxFilters": "Sie können nicht mehr als 3 Filter gleichzeitig anwenden."
   },
   "nav": {
     "caption": {

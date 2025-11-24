@@ -37,7 +37,7 @@ export interface TableDescriptor {
 }
 
 
-const MAX_FILTERS: number = 3;
+
 
 /**
 * A custom hook to retrieve table data into functionalities for the registry table to function.
@@ -69,22 +69,19 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
   }, [tableData, pagination.pageIndex]);
 
-  const handleColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
-    // 1. Resolve the new state (updater can be a function or a new state value)
-    const newFilters = (updater instanceof Function)
+
+  const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+
+    const newFilters: ColumnFiltersState = (updater instanceof Function)
       ? updater(columnFilters)
       : updater;
 
-    // 2. Filter out entries with no value (i.e., filters that were just cleared)
-    const activeNewFilters = newFilters.filter(filter =>
-      filter.value !== undefined && filter.value !== '' && filter.value !== null
-    );
+    const activeNewFilters: ColumnFilter[] = newFilters.filter(filter => !!filter.value);
 
-    // 3. Check the restriction
-    if (activeNewFilters.length > MAX_FILTERS) {
-      // Optionally: Show a toast or other UI feedback to the user
+    // Limit to maximum 3 active filters at a time 
+    if (activeNewFilters.length > 3) {
       toast(
-        dict.message.maxFilters.replace("{replace}", MAX_FILTERS.toString()),
+        dict.message.maxFilters,
         "default",
       );
 
@@ -108,7 +105,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     rowCount: rowCounts.filter,
     maxMultiSortColCount: 3,
     onPaginationChange,
-    onColumnFiltersChange: handleColumnFiltersChange,
+    onColumnFiltersChange,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),

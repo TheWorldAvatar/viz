@@ -32,6 +32,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
     const checkboxId: string = useId();
 
     // Use controlled value if provided, otherwise use internal state
+    // Check for undefined instead of falsy (!cheked) because checked can be false and we want to allow that
     const isChecked: boolean = checked !== undefined ? checked : internalChecked;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +40,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
         const newChecked: boolean = e.target.checked;
 
         // Update internal state if component is uncontrolled
+        // Check for undefined instead of falsy (!checked) because checked can be false and we want to allow that
         if (checked === undefined) {
             setInternalChecked(newChecked);
         }
