@@ -5,6 +5,7 @@ import { Dictionary } from "types/dictionary";
 import StatusComponent from "ui/text/status/status";
 import Button from "../button";
 import SelectOption from "../input/select-option";
+import { Icon } from "@mui/material";
 
 interface SearchSelectorProps {
   label: string;
@@ -84,7 +85,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         />}
       </div>
       <div className="max-h-60 overflow-y-auto">
-        {props.showOptions && <p className="text-sm text-foreground/80 italic px-2">
+        {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}
         </p>}
@@ -104,6 +105,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }}
           />
         ))}
+        <p className="text-2xl text-foreground/80 italic px-2 ">
+          {props.options.length > 20 && "..."}
+        </p>
       </div>
     </>
   );
