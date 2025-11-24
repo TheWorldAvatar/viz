@@ -155,7 +155,8 @@
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
-    "processingRequest": "Processing request..."
+    "processingRequest": "Processing request...",
+    "maxFilters": "You can't apply more than {replace} filters at a time."
   },
   "nav": {
     "caption": {

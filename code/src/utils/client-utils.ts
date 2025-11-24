@@ -294,6 +294,13 @@ export function getUntranslatedStatus(
  */
 export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
   switch (type) {
+    case "default":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "info",
+      };
     case "success":
       return {
         bg: "bg-status-success-bg",

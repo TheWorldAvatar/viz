@@ -155,7 +155,8 @@
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
-    "processingRequest": "Bearbeitung der Anfrage..."
+    "processingRequest": "Bearbeitung der Anfrage...",
+     "maxFilters": "Sie können nicht mehr als {replace} Filter gleichzeitig anwenden."
   },
   "nav": {
     "caption": {

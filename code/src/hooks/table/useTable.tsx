@@ -21,6 +21,7 @@ import {
 import { useTableData } from "./api/useTableData";
 import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
+import { toast } from "ui/interaction/action/toast/toast";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -34,6 +35,9 @@ export interface TableDescriptor {
   filters: ColumnFilter[];
   sortParams: string;
 }
+
+
+const MAX_FILTERS: number = 3;
 
 /**
 * A custom hook to retrieve table data into functionalities for the registry table to function.
@@ -65,6 +69,31 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
   }, [tableData, pagination.pageIndex]);
 
+  const handleColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+    // 1. Resolve the new state (updater can be a function or a new state value)
+    const newFilters = (updater instanceof Function)
+      ? updater(columnFilters)
+      : updater;
+
+    // 2. Filter out entries with no value (i.e., filters that were just cleared)
+    const activeNewFilters = newFilters.filter(filter =>
+      filter.value !== undefined && filter.value !== '' && filter.value !== null
+    );
+
+    // 3. Check the restriction
+    if (activeNewFilters.length > MAX_FILTERS) {
+      // Optionally: Show a toast or other UI feedback to the user
+      toast(
+        dict.message.maxFilters.replace("{replace}", MAX_FILTERS.toString()),
+        "default",
+      );
+
+      return;
+    }
+
+    setColumnFilters(newFilters);
+  };
+
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData?.columns,
@@ -79,12 +108,14 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     rowCount: rowCounts.filter,
     maxMultiSortColCount: 3,
     onPaginationChange,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row, index) => row.id + index,
   });
+
+
 
   return {
     isLoading,

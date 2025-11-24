@@ -1,4 +1,4 @@
-export type ToastType = "success" | "error" | "loading";
+export type ToastType = "success" | "error" | "loading" | "default";
 
 export type ToastConfig = {
     bg: string;
