@@ -260,33 +260,6 @@ export function getNormalizedDate(date: Date): string {
 }
 
 /**
- * Get the untranslated status key.
- *
- * @param status The translated status.
- * @param dict The dictionary containing localised strings.
- */
-export function getUntranslatedStatus(
-  status: string,
-  titleDict: Record<string, string>
-): string {
-  switch (status.toLowerCase()) {
-    case titleDict.assigned:
-      return "assigned";
-    case titleDict.cancelled:
-      return "cancelled";
-    case titleDict.completed:
-      return "completed";
-    case titleDict.issue:
-      return "issue";
-    case titleDict.new:
-      return "new";
-    default:
-      return null;
-  }
-}
-
-
-/**
  * Get the configuration for a toast notification.
  *
  * @param type The type of toast .

@@ -12,7 +12,7 @@ import {
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { getUntranslatedStatus, parseWordsForLabels } from "utils/client-utils";
+import { parseWordsForLabels } from "utils/client-utils";
 
 export type TableData = {
   data: FieldValues[];
@@ -34,9 +34,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     }
     const currentFilterValues: string[] = filter.value as string[];
     let filterParams: string[];
-    if (filter.id === "status") {
-      filterParams = currentFilterValues.map(val => getUntranslatedStatus(val, titleDict));
-    } else if (currentFilterValues.includes(translatedBlankText)) {
+    if (currentFilterValues.includes(translatedBlankText)) {
       filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
     } else {
       filterParams = currentFilterValues;
