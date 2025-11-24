@@ -277,11 +277,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <HeaderCell
                                   key={header.id + index}
                                   type={props.recordType}
+                                  table={props.tableDescriptor.table}
                                   header={header}
                                   lifecycleStage={props.lifecycleStage}
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
-                                  resetRowSelection={props.tableDescriptor.table.resetRowSelection}
                                 />
                               );
                             })}

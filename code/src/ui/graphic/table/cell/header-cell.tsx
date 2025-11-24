@@ -1,5 +1,5 @@
 import { Icon } from "@mui/material";
-import { ColumnFilter, flexRender, Header } from "@tanstack/react-table";
+import { ColumnFilter, flexRender, Header, Table } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
@@ -15,22 +15,22 @@ import TableCell from "./table-cell";
 
 interface HeaderCellProps {
   type: string;
+  table: Table<FieldValues>;
   header: Header<FieldValues, unknown>;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
   filters: ColumnFilter[];
-  resetRowSelection?: () => void;
 }
 
 /**
  * This component renders a header cell for the table.
  *
  * @param {string} type The entity type to query for.
+ * @param {Table<FieldValues>} table Tanstack table object.
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {ColumnFilter[]} filters Filter state for the entire table.
- * @param resetRowSelection Optional row selection function to reset row when unused.
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
@@ -112,7 +112,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 showOptions={!isLoading}
                 onSubmission={(selectedOptions: string[]) => {
                   props.header.column.setFilterValue(selectedOptions);
-                  props.resetRowSelection();
+                  props.table.resetRowSelection();
+                  props.table.resetPageIndex();
                 }}
                 setSearchString={setSearch}
               />
