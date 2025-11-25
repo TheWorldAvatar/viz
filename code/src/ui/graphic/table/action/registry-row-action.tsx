@@ -20,7 +20,6 @@ import DraftTemplateButton from "ui/interaction/action/draft-template/draft-temp
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import { Status } from "ui/text/status/status";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
@@ -436,23 +435,9 @@ export function genTaskOption(
   taskType: RegistryTaskType,
   scheduleTypeKey: string
 ): RegistryTaskOption {
-  let status: string;
-  if (row.order === "0" || row.status?.toLowerCase() === "new") {
-    status = Status.NEW;
-  } else if (row.order === "1" || row.status?.toLowerCase() === "assigned") {
-    status = Status.ASSIGNED;
-  } else if (row.order === "2" || row.status?.toLowerCase() === "completed") {
-    status = Status.COMPLETED;
-  } else if (row.order === "3" || row.status?.toLowerCase() === "cancelled") {
-    status = Status.CANCELLED;
-  } else if (row.order === "4" || row.status?.toLowerCase() === "issue") {
-    status = Status.ISSUE;
-  } else {
-    status = "";
-  }
   return {
     id: recordId,
-    status: status,
+    status: row.status,
     contract: row.id,
     date: row.date,
     scheduleType: row[scheduleTypeKey],

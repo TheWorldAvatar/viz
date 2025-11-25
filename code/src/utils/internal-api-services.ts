@@ -27,6 +27,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[2],
         limit: params[3],
         sort_by: params[4],
+        filters: params[5],
       });
       break;
     case "contract_status":
@@ -37,9 +38,10 @@ export function makeInternalRegistryAPIwithParams(
     case "count":
       searchParams = new URLSearchParams({
         type: params[0],
-        lifecycle: params[1] ?? null,
-        start_date: params[2] ?? null,
-        end_date: params[3] ?? null,
+        filters: params[1] ?? "",
+        lifecycle: params[2] ?? null,
+        start_date: params[3] ?? null,
+        end_date: params[4] ?? null,
       });
       break;
     case "instances":
@@ -51,6 +53,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[4] ?? null,
         limit: params[5] ?? null,
         sort_by: params[6] ?? null,
+        filters: params[7] ?? "",
       });
       break;
     case "event":
@@ -58,6 +61,17 @@ export function makeInternalRegistryAPIwithParams(
         stage: params[0],
         type: params[1],
         identifier: params[2] ?? null,
+      });
+      break;
+    case "filter":
+      searchParams = new URLSearchParams({
+        type: params[0],
+        field: params[1],
+        search: params[2] ?? null,
+        filters: params[3] ?? "",
+        lifecycle: params[4] ?? null,
+        start_date: params[5] ?? null,
+        end_date: params[6] ?? null,
       });
       break;
     case "form":
@@ -97,6 +111,7 @@ export function makeInternalRegistryAPIwithParams(
       searchParams = new URLSearchParams({
         type: params[0],
         idOrTimestamp: params[1],
+        filters: params[2],
       });
       break;
     case "outstanding":
@@ -105,6 +120,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[1],
         limit: params[2],
         sort_by: params[3],
+        filters: params[4],
       });
       break;
     case "scheduled":
@@ -116,6 +132,7 @@ export function makeInternalRegistryAPIwithParams(
         page: params[3],
         limit: params[4],
         sort_by: params[5],
+        filters: params[6],
       });
       break;
   }

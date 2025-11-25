@@ -2,6 +2,7 @@
   "lang": "en",
   "action": {
     "add": "Add",
+    "applyFilter": "Apply filter",
     "addItem": "add {replace}",
     "delete": "Delete",
     "dismiss": "Dismiss",
@@ -15,8 +16,8 @@
     "overview": "overview",
     "file": "Choose file",
     "filter": "Filter",
-    "search": "SEARCH",
-    "showAll": "SHOW ALL",
+    "search": "Search",
+    "showAll": "Show all",
     "show": "Show",
     "hide": "Hide",
     "viewMore": "view more",
@@ -142,6 +143,8 @@
     "pickDateRange": "Pick a date range.",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
+    "typeFilter": "Filter not listed? Start typing...",
+    "typeMore": "Type more to narrow results",
     "exportReport": "Export report",
     "required": "Required",
     "minInclusive": "Please enter a number that is {replace} or greater!",
@@ -152,9 +155,8 @@
     "maxLength": "Input has exceeded maximum length of {replace} letters!",
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
-    "processingRequest": "Processing request..."
-
-
+    "processingRequest": "Processing request...",
+    "maxFilters": "You can't apply more than 3 filters at a time."
   },
   "nav": {
     "caption": {
@@ -195,7 +197,6 @@
     "blank": "(blank)",
     "customiseCol": "Show/Hide Columns",
     "description": "Description",
-    "serviceType": "Service Type",
     "lastModified": "Last modified",
     "available": "available",
     "unavailable": "unavailable",
@@ -215,6 +216,7 @@
     "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
+    "status": "status",
     "success": "Success",
     "error": "Error",
     "loading": "Loading"

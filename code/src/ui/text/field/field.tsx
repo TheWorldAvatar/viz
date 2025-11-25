@@ -10,12 +10,13 @@ interface TextFieldProps {
  * @param {string} content The text content.
  */
 export default function TextField(props: Readonly<TextFieldProps>) {
+
   return (
     <div className="flex flex-row sm:items-start py-2 min-w-0">
       <h4 className="flex-shrink-0 w-28 sm:w-32 text-sm sm:text-base font-semibold text-foreground capitalize">
         {props.label}
       </h4>
-      <p className="flex-1 min-w-0 hyphens-auto break-all overflow-wrap-anywhere text-sm sm:text-base text-gray-600 dark:text-gray-300">
+      <p className="min-w-0 flex-1 text-wrap hyphens-auto break-all text-sm text-gray-600 dark:text-gray-300">
         {props.content}
       </p>
     </div>

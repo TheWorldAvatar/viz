@@ -1,10 +1,8 @@
 import {
+  ColumnFilter,
   ColumnFiltersState,
-  ColumnSort,
   getCoreRowModel,
   getFacetedUniqueValues,
-  getFilteredRowModel,
-  getSortedRowModel,
   OnChangeFn,
   PaginationState,
   SortingState,
@@ -21,9 +19,9 @@ import {
   genSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
 import { useTableData } from "./api/useTableData";
-import { useTotalRowCount } from "./api/useTotalRowCount";
-import { useFirstActiveFilter } from "./useFirstActiveFilter";
+import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
+import { toast } from "ui/interaction/action/toast/toast";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -33,9 +31,13 @@ export interface TableDescriptor {
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   pagination: PaginationState,
   apiPagination: PaginationState,
-  firstActiveFilter: string;
+  totalRows: number;
+  filters: ColumnFilter[];
   sortParams: string;
 }
+
+
+
 
 /**
 * A custom hook to retrieve table data into functionalities for the registry table to function.
@@ -53,8 +55,8 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const totalRows: number = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate);
-  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination);
+  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
+  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -67,30 +69,50 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
   }, [tableData, pagination.pageIndex]);
 
+
+  const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+
+    const newFilters: ColumnFiltersState = (updater instanceof Function)
+      ? updater(columnFilters)
+      : updater;
+
+    const activeNewFilters: ColumnFilter[] = newFilters.filter(filter => !!filter.value);
+
+    // Limit to maximum 3 active filters at a time 
+    if (activeNewFilters.length > 3) {
+      toast(
+        dict.message.maxFilters,
+        "default",
+      );
+
+      return;
+    }
+
+    setColumnFilters(newFilters);
+  };
+
   const table: Table<FieldValues> = useReactTable({
     data,
     columns: tableData?.columns,
-    initialState: {
-      pagination,
-    },
     state: {
       columnFilters,
-      sorting: sorting,
+      pagination,
+      sorting,
     },
+    manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    rowCount: totalRows,
+    rowCount: rowCounts.filter,
     maxMultiSortColCount: 3,
     onPaginationChange,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row, index) => row.id + index,
   });
 
-  const firstActiveFilter: string = useFirstActiveFilter(columnFilters);
+
 
   return {
     isLoading,
@@ -100,7 +122,8 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     initialInstances,
     pagination,
     apiPagination,
-    firstActiveFilter,
+    totalRows: rowCounts.total,
+    filters: columnFilters,
     sortParams,
   };
 }

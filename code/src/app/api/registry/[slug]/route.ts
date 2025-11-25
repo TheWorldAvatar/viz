@@ -28,6 +28,7 @@ export async function GET(
   const { slug } = await params;
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -228,6 +229,7 @@ function makeExternalEndpoint(
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const stage: LifecycleStage = searchParams.get("stage") as LifecycleStage;
+      const filters: string = encodeFilters(searchParams.get("filters"));
       let stagePath: string;
       if (stage === "pending") {
         stagePath = "draft";
@@ -238,7 +240,7 @@ function makeExternalEndpoint(
       } else {
         throw Error("Invalid stage");
       }
-      return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+      return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case "contract_status": {
       const id: string = searchParams.get("id");
@@ -248,8 +250,10 @@ function makeExternalEndpoint(
       const type: string = searchParams.get("type");
       const lifecycle: string = searchParams.get("lifecycle");
       if (lifecycle == "null") {
-        return `${agentBaseApi}/${type}/count`;
+        const filters: string = encodeFilters(searchParams.get("filters"), "?");
+        return `${agentBaseApi}/${type}/count${filters}`;
       }
+      const filters: string = encodeFilters(searchParams.get("filters"));
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
         if (lifecycle === "pending") {
@@ -261,7 +265,7 @@ function makeExternalEndpoint(
         } else {
           throw Error("Invalid stage");
         }
-        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}`;
+        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}${filters}`;
       }
       let params: string = "";
       if (lifecycle == "scheduled" || lifecycle == "closed") {
@@ -271,7 +275,7 @@ function makeExternalEndpoint(
         const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
         params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       }
-      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}`;
+      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
     }
     case "instances": {
       const type: string = searchParams.get("type");
@@ -284,7 +288,8 @@ function makeExternalEndpoint(
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
-        url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}`;
+        const filters: string = encodeFilters(searchParams.get("filters"));
+        url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
       if (identifier != "null") {
         url += `/${identifier}`;
@@ -303,6 +308,37 @@ function makeExternalEndpoint(
         url += `/${identifier}`;
       }
       return url;
+    }
+    case "filter": {
+      const type: string = searchParams.get("type");
+      const field: string = searchParams.get("field");
+      const search: string = searchParams.get("search");
+      const lifecycle: string = searchParams.get("lifecycle");
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
+      if (lifecycle == "general") {
+        return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
+      }
+      if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
+        let stagePath: string;
+        if (lifecycle === "pending") {
+          stagePath = "draft";
+        } else if (lifecycle === "active") {
+          stagePath = "service";
+        } else if (lifecycle === "archive") {
+          stagePath = "archive";
+        }
+        return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}${filters}`;
+      } else if (lifecycle == "outstanding") {
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}${filters}`;
+      } else if (lifecycle == "scheduled" || lifecycle == "closed") {
+        const startDate: string = searchParams.get("start_date");
+        const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
+        const endDate: string = searchParams.get("end_date");
+        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
+      }
+      return "";
     }
     case "form": {
       const entityType: string = searchParams.get("type");
@@ -342,14 +378,16 @@ function makeExternalEndpoint(
     case "tasks": {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
-      return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}`;
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
     case "outstanding": {
       const contractType: string = searchParams.get("type");
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
-      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case "scheduled":
     case "closed": {
@@ -361,12 +399,30 @@ function makeExternalEndpoint(
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
+      const filters: string = encodeFilters(searchParams.get("filters"));
 
-      return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}`;
+      return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     default:
       return null;
   }
+}
+
+/**
+ * Encodes the filter input parameters by first decoding and processing them for the backend input.
+ *
+ * @param {string} filterInputParams Input params.
+ * @param {string} initialChar Initial character to append. Defaults to &.
+ */
+function encodeFilters(filterInputParams: string, initialChar: string = "&"): string {
+  const filters: string = decodeURIComponent(filterInputParams);
+  return filters.length === 0 ? "" : initialChar + filters.substring(1).split("~").map(pair => {
+    // Split only on the first '=' to handle values that might contain '='
+    const [key, rawValue] = pair.split("=", 2);
+    // Encode values directly
+    const encodedValue = encodeURIComponent(rawValue);
+    return `${key}=${encodedValue}`;
+  }).join("&");
 }
 
 async function parseBody(req: NextRequest): Promise<AgentResponseBody> {

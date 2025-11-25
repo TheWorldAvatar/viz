@@ -1,6 +1,5 @@
 "use client";
 
-import { useTotalRowCount } from "hooks/table/api/useTotalRowCount";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -9,26 +8,20 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useSelector } from "react-redux";
 import { selectDrawerIsOpen } from "state/drawer-component-slice";
-import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  RegistryFieldValues,
-  RegistryTaskOption,
+  RegistryTaskOption
 } from "types/form";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
-  getUTCDate,
-  parseWordsForLabels,
+  parseWordsForLabels
 } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -67,7 +60,7 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted  mx-auto overflow-auto w-full p-4 h-dvh ">
+    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 md:p-4 h-dvh">
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {parseWordsForLabels(props.entityType)}
@@ -85,18 +78,18 @@ export default function RegistryTableComponent(
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
         {refreshFlag || tableDescriptor.isLoading ? (
-          <LoadingSpinner isSmall={false} />
+          <TableSkeleton />
         ) : tableDescriptor.data?.length > 0 ? (
           <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
-            instances={tableDescriptor.data}
+            selectedDate={selectedDate}
             setTask={setTask}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}
           />
         ) : (
-          <div className="text-lg  ml-6">{dict.message.noResultFound}</div>
+          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
       {isTaskModalOpen && task && (

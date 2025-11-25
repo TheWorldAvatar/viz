@@ -1,4 +1,4 @@
-import { PaginationState, SortingState } from "@tanstack/react-table";
+import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -6,8 +6,7 @@ import { FieldValues } from "react-hook-form";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
-import { Status } from "ui/text/status/status";
+import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -28,6 +27,7 @@ export interface TableDataDescriptor {
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
+* @param { ColumnFilter[]} filters The current filters set.
 */
 export function useTableData(
   pathNameEnd: string,
@@ -37,7 +37,8 @@ export function useTableData(
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
-  apiPagination: PaginationState): TableDataDescriptor {
+  apiPagination: PaginationState,
+  filters: ColumnFilter[]): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [initialInstances, setInitialInstances] = useState<
@@ -51,6 +52,7 @@ export function useTableData(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
+      const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       try {
         let instances: RegistryFieldValues[] = [];
         if (lifecycleStage === "report") {
@@ -64,13 +66,14 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
+                filterParams,
               ));
             let activeInstances =
               (activeResBody.data.items as RegistryFieldValues[]) ?? [];
             activeInstances = activeInstances.map(
               (contract: RegistryFieldValues) => ({
                 status: {
-                  value: parseWordsForLabels(Status.ACTIVE),
+                  value: parseWordsForLabels("active"),
                   type: "literal",
                   dataType: "http://www.w3.org/2001/XMLSchema#string",
                   lang: "",
@@ -88,6 +91,7 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
+                filterParams,
               ));
             const archivedInstances: RegistryFieldValues[] =
               (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
@@ -102,6 +106,7 @@ export function useTableData(
                 apiPagination.pageIndex.toString(),
                 apiPagination.pageSize.toString(),
                 sortParams,
+                filterParams,
               ));
             instances = (res.data?.items as RegistryFieldValues[]) ?? [];
           }
@@ -114,6 +119,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           } else if (
             lifecycleStage == "scheduled" ||
@@ -127,6 +133,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           } else if (lifecycleStage == "general") {
             url = makeInternalRegistryAPIwithParams(
@@ -138,6 +145,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           } else {
             url = makeInternalRegistryAPIwithParams(
@@ -147,6 +155,7 @@ export function useTableData(
               apiPagination.pageIndex.toString(),
               apiPagination.pageSize.toString(),
               sortParams,
+              filterParams,
             );
           }
           const res: AgentResponseBody = await queryInternalApi(url);
@@ -185,9 +194,8 @@ export function useTableData(
       }
     };
 
-    // Trigger fetchData when refreshFlag, or selectedDate (range) changes
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters]);
 
   return {
     isLoading,
