@@ -282,6 +282,8 @@ function makeExternalEndpoint(
       const requireLabel: string = searchParams.get("label");
       const identifier: string = searchParams.get("identifier");
       const subtype: string = searchParams.get("subtype");
+      const branchDelete: string = searchParams.get("branch_delete");
+
 
       let url: string = `${agentBaseApi}/${type}`;
       if (requireLabel === "true") {
@@ -297,6 +299,13 @@ function makeExternalEndpoint(
           url += `/${subtype}`;
         }
       }
+
+      if (branchDelete && branchDelete !== "null") {
+        const separator = url.includes("?") ? "&" : "?";
+        url += `${separator}branch_delete=${encodeURIComponent(branchDelete)}`;
+      }
+
+      console.log("URL FOR BRANCH:", url);
       return url;
     }
     case "event": {
