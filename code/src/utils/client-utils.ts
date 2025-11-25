@@ -259,7 +259,6 @@ export function getNormalizedDate(date: Date): string {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
 
-
 /**
  * Get the configuration for a toast notification.
  *
@@ -268,6 +267,13 @@ export function getNormalizedDate(date: Date): string {
  */
 export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
   switch (type) {
+    case "default":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "info",
+      };
     case "success":
       return {
         bg: "bg-status-success-bg",

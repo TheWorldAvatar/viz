@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.45.0
+
+### Changes
+
+- Shift towards server-side pagination and filters
+- Bump min version of `VisBackend Agent` to `v1.19.0`
+
 ## 5.44.5
 
 ### Changes
