@@ -69,7 +69,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
-    if (map && marker) {
+    if (map && marker && !isNaN(longitude) && !isNaN(latitude)) {
       marker.setLngLat([longitude, latitude]);
       props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
