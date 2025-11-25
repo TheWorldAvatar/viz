@@ -58,13 +58,21 @@ export default function BranchFormSection(
   );
 
   useEffect(() => {
-    const initialNode: NodeShape = props.node[0];
-    setSelectedModel(initialNode);
-    setIsSwitching(false);
-  }, []);
+    if (props.node.length > 0) {
+      const initialNode: NodeShape = props.node[0];
+      setSelectedModel(initialNode);
+      setIsSwitching(false);
+      const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+      const branchKey: string = formType === "delete" ? "branch_delete" : "branch_add";
+      props.form.setValue(branchKey, initialNode.label[VALUE_KEY]);
+    }
+  }, [props.node, props.form]);
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOptionType) => {
+    const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+    const branchKey: string = formType === "delete" ? "branch_delete" : "branch_add";
+    props.form.setValue(branchKey, formOption.value);
     setIsSwitching(true);
     const matchingNode: NodeShape = props.node.find(
       (nodeShape) => nodeShape.label[VALUE_KEY] === formOption.value

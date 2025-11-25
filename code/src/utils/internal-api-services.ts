@@ -54,6 +54,7 @@ export function makeInternalRegistryAPIwithParams(
         limit: params[5] ?? null,
         sort_by: params[6] ?? null,
         filters: params[7] ?? "",
+        branch_delete: params[8] ?? null,
       });
       break;
     case "event":
