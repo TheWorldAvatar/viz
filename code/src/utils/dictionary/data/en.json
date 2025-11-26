@@ -156,7 +156,9 @@
     "numericalValuesOnly": "Only numerical inputs are allowed!",
     "patternFollowed": "This field must follow the pattern {replace}!",
     "processingRequest": "Processing request...",
-    "maxFilters": "You can't apply more than 3 filters at a time."
+    "maxFilters": "You can't apply more than 3 filters at a time.",
+    "latitudeRange": "Latitude must be between -90° and 90° degrees!",
+    "longitudeRange": "Longitude must be between -180° and 180° degrees!"
   },
   "nav": {
     "caption": {
