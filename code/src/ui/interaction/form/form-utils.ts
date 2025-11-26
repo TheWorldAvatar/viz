@@ -513,6 +513,28 @@ export function getRegisterOptions(
     };
   }
 
+  if(field.fieldId === "latitude"){
+    options.min = {
+      value: -90,
+      message: "Latitude must be between -90 and 90",
+    };
+    options.max = {
+      value: 90,
+      message: "Latitude must be between -90 and 90",
+    };
+  }
+
+  if(field.fieldId === "longitude"){
+    options.min = {
+      value: -180,
+      message: "Longitude must be between -180 and 180",
+    };
+    options.max = {
+      value: 180,
+      message: "Longitude must be between -180 and 180",
+    };
+  }
+
   return options;
 }
 

@@ -35,9 +35,21 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     name: FORM_STATES.LATITUDE,
   });
 
+  // Function to check if coordinates are valid for Mapbox
+  const isValidCoordinates = (lng: number, lat: number): boolean => {
+    return (
+      !isNaN(lng) &&
+      !isNaN(lat) &&
+      lng >= -180 &&
+      lng <= 180 &&
+      lat >= -90 &&
+      lat <= 90
+    );
+  };
+
   // Provide valid default coordinates (fallback to 0, 0 if invalid)
-  const validLongitude = !isNaN(longitude) && longitude !== null ? longitude : 0;
-  const validLatitude = !isNaN(latitude) && latitude !== null ? latitude : 0;
+  const validLongitude = isValidCoordinates(longitude, latitude) ? longitude : 0;
+  const validLatitude = isValidCoordinates(longitude, latitude) ? latitude : 0;
 
   // Set a inital camera position
   const defaultPosition: CameraPosition = {
@@ -50,7 +62,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // Create a new draggable marker on any map rerenders
   useEffect(() => {
-    if (map && !isNaN(longitude) && !isNaN(latitude)) {
+   if (map && isValidCoordinates(longitude, latitude)) {
       // Remove old marker if it exists
       if (marker) {
         marker.remove();
@@ -79,15 +91,15 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
-    if (map && marker && !isNaN(longitude) && !isNaN(latitude)) {
+    if (map && marker && isValidCoordinates(longitude, latitude)) {
       marker.setLngLat([longitude, latitude]);
       props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
-    } else if (map && !marker && !isNaN(longitude) && !isNaN(latitude)) {
+    } else if (map && !marker && isValidCoordinates(longitude, latitude)) {
       // If marker doesn't exist yet but we have valid coordinates, just center the map
       map.jumpTo({ center: [longitude, latitude] });
     }
-  }, [longitude, latitude, marker, map, props.fieldId, props.form]);
+  }, [longitude, latitude, marker, map]);
 
   return (
     <MapSettingsProvider
