@@ -1,17 +1,16 @@
 import {
   ColumnDef,
+  ColumnFilter,
   FilterFnOption,
-  Row
+  SortingState
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 
@@ -21,10 +20,34 @@ export type TableData = {
 }
 
 /**
+ * Parses the column filters into URL parameters for API querying.
+ *
+ * @param { ColumnFilter[]} filters Target filters for parsing.
+ * @param {string} translatedBlankText The translated blank text.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string, titleDict: Record<string, string>): string {
+  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
+  return remainingFilters.length === 0 ? "" : filters.map(filter => {
+    if (filter.value === undefined || (filter.value as string[]).length === 0) {
+      return "";
+    }
+    const currentFilterValues: string[] = filter.value as string[];
+    let filterParams: string[];
+    if (currentFilterValues.includes(translatedBlankText)) {
+      filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
+    } else {
+      filterParams = currentFilterValues;
+    }
+    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`
+  }).join("");
+}
+
+/**
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
- * @param { Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseDataForTable(instances: RegistryFieldValues[], titleDict: Record<string, string>): TableData {
   const results: TableData = {
@@ -46,12 +69,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           flattenInstance[field] = fieldValue?.value;
         }
 
-        const normalizedField: string = field === "lastModified" ? titleDict.lastModified : field;
-
-        if (field === "lastModified") {
-          flattenInstance[normalizedField] = new Date(flattenInstance[field]).toLocaleString();
-          delete flattenInstance[field];
-        }
+        const normalizedField: string = parseLifecycleFieldsToTranslations(field, flattenInstance, titleDict);
 
         if (!columnNames.includes(normalizedField)) {
           // Insert at the current index if possible, else push to end
@@ -62,7 +80,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 
       results.data.push(flattenInstance);
     });
-
 
     // Create column definitions based on available columns
     for (const col of columnNames) {
@@ -88,12 +105,84 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         },
         filterFn: multiSelectFilter,
         size: minWidth,
-
         enableSorting: true,
+        sortDescFirst: true,
       });
     }
   }
   return results;
+}
+
+/**
+ * Parses the lifecycle field to their translations.
+ *
+ * @param {string} field Name of field from backend to be translated.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function parseLifecycleFieldsToTranslations(field: string, outputRow: Record<string, string>, titleDict: Record<string, string>): string {
+  const currentVal: string = outputRow[field];
+  // Delete unmodified field first before adding the translation
+  switch (field.toLowerCase()) {
+    case "lastmodified":
+      delete outputRow[field];
+      outputRow[titleDict.lastModified] = new Date(currentVal).toLocaleString();
+      return titleDict.lastModified;
+    case "scheduletype":
+      delete outputRow[field];
+      outputRow[titleDict.scheduleType] = currentVal;
+      return titleDict.scheduleType;
+    case "status":
+      delete outputRow[field];
+      outputRow[titleDict.status] = currentVal;
+      return titleDict.status;
+    default:
+      return field;
+  }
+}
+
+/**
+ * Generates the sort parameters required for the API endpoint based on the input sort.
+ *
+ * @param {SortingState} currentSort The current sorting order.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function genSortParams(currentSort: SortingState, titleDict: Record<string, string>): string {
+  let params: string = "";
+  if (currentSort.length == 0) {
+    return "%2Bid"
+  }
+  for (const column of currentSort) {
+    if (params != "") {
+      params += ","
+    }
+    if (column.desc) {
+      params += "-";
+    } else {
+      params += "%2B";
+    }
+    const field: string = parseTranslatedFieldToOriginal(column.id, titleDict);
+    params += field;
+  }
+  return params;
+}
+
+/**
+ * Parses the translated field back to the original name.
+ *
+ * @param {string} field Name of field for translations
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<string, string>): string {
+  switch (field.toLowerCase()) {
+    case titleDict.lastModified.toLowerCase():
+      return "lastModified";
+    case titleDict.scheduleType.toLowerCase():
+      return "scheduleType";
+    case titleDict.status.toLowerCase():
+      return "status";
+    default:
+      return field;
+  }
 }
 
 /**
@@ -114,41 +203,6 @@ function buildMultiFilterFnOption(translatedBlankText: string): FilterFnOption<F
     }
     return !!filterValue.find((option) => option === rowValue);
   };
-}
-
-/**
- * Parses the rows obtained from TanStack into filtering options.
- *
- * @param {Row<FieldValues>[]} instances Raw instances queried from knowledge graph.
- * @param {string} header Column header of interest.
- * @param {Dictionary} dict Dictionary translations.
- */
-export function parseRowsForFilterOptions(rows: Row<FieldValues>[], header: string, dict: Dictionary): string[] {
-  // Return the actual row value (not translated label) for proper filtering
-  // This is because the filter function checks against actual value, not the label
-  // e.g. status value is "new" but label is "open"
-  // So if we return the label here, filtering won't work as expected
-  return rows.flatMap((row) => row.getValue(header) ?? dict.title.blank);
-}
-
-/**
- * Parses the options into the required select options.
- *
- * @param {string} header Current header name header of interest.
- * @param {string[]} options Input list of options.
- * @param {Dictionary} dict Dictionary translations.
- */
-export function parseSelectOptions(header: string, options: string[], dict: Dictionary): SelectOption[] {
-  // Returns null if options are undefined
-  return options?.sort().map((col) => {
-    // For status column, show translated label but use actual value
-    // This is because the filter function checks against actual value, not the label
-    const label: string = header === "status" ? dict.title[col.toLowerCase()] : col;
-    return {
-      label: label,
-      value: col,
-    };
-  });
 }
 
 /**

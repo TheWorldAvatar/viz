@@ -3,19 +3,19 @@ import { useEffect, useState } from "react";
 import Select, { ActionMeta, MultiValue, StylesConfig } from "react-select";
 import { Dictionary } from "types/dictionary";
 import { checkboxInputsSelectorStyles } from "ui/css/selector-style";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { SelectCheckboxOption } from "ui/interaction/input/select-checkbox";
 import { parseWordsForLabels } from "utils/client-utils";
 
 interface MultivalueDropdownProps {
   title: string;
-  options: SelectOption[];
+  options: SelectOptionType[];
   toggleAll?: boolean;
   isActive?: boolean;
   isClearable?: boolean;
-  controlledSelectedOptions?: SelectOption[];
+  controlledSelectedOptions?: SelectOptionType[];
   setControlledSelectedOptions?: React.Dispatch<
-    React.SetStateAction<SelectOption[]>
+    React.SetStateAction<SelectOptionType[]>
   >;
 }
 
@@ -23,27 +23,27 @@ interface MultivalueDropdownProps {
  * This component renders a dropdown selector with checkbox interactions using the react-select library for multi-value selections.
  *
  * @param {string} title - The display title for the input.
- * @param {SelectOption[]} options - Select options.
+ * @param {SelectOptionType[]} options - Select options.
  * @param {boolean} toggleAll - Provides an additional option to select all options. Defaults to false.
  * @param {boolean} isActive - Renders different style to indicate the input is currently active. Defaults to false.
  * @param {boolean} isClearable - All values in the dropdown can be cleared with an additional input. Defaults to true.
- * @param {SelectOption[]} controlledSelectedOptions - Optional controlled state for the selected options.
+ * @param {SelectOptionType[]} controlledSelectedOptions - Optional controlled state for the selected options.
  * @param setControlledSelectedOptions - Optional dispatch method to update selected options for further processing.
  */
 export default function MultivalueSelector(
   props: Readonly<MultivalueDropdownProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const selectAllOption: SelectOption = {
+  const selectAllOption: SelectOptionType = {
     label: parseWordsForLabels(dict.title.allCol),
     value: "select-all",
   };
 
-  const defaultOptions: SelectOption[] = props.toggleAll
+  const defaultOptions: SelectOptionType[] = props.toggleAll
     ? [selectAllOption, ...props.options]
     : props.options;
   // Use any existing option if it is provided
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(props.controlledSelectedOptions ? props.controlledSelectedOptions :
+  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(props.controlledSelectedOptions ? props.controlledSelectedOptions :
     props.toggleAll ? defaultOptions.filter(
       (option) =>
         option.value != "id" &&
@@ -70,8 +70,8 @@ export default function MultivalueSelector(
   }, [props.isActive]);
 
   const handleChange = (
-    newValue: SelectOption | MultiValue<SelectOption>,
-    actionMeta: ActionMeta<SelectOption>
+    newValue: SelectOptionType | MultiValue<SelectOptionType>,
+    actionMeta: ActionMeta<SelectOptionType>
   ) => {
     const { action, option } = actionMeta;
 
@@ -82,7 +82,7 @@ export default function MultivalueSelector(
       setSelectedOptions([]);
       props.setControlledSelectedOptions([]);
     } else {
-      const newSelectedOptions: SelectOption[] = newValue as SelectOption[];
+      const newSelectedOptions: SelectOptionType[] = newValue as SelectOptionType[];
       if (
         props.toggleAll &&
         action === "select-option" &&
@@ -101,7 +101,7 @@ export default function MultivalueSelector(
   };
 
   // Custom styles that change based on active state
-  const getCustomStyles = (): StylesConfig<SelectOption, true> => {
+  const getCustomStyles = (): StylesConfig<SelectOptionType, true> => {
     const baseStyles = checkboxInputsSelectorStyles;
     return {
       ...baseStyles,

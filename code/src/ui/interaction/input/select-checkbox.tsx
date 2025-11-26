@@ -1,9 +1,9 @@
 import { ComponentType } from "react";
 import { GroupBase, OptionProps, components } from "react-select";
-import { SelectOption } from "../dropdown/simple-selector";
+import { SelectOptionType } from "../dropdown/simple-selector";
 import Checkbox from "./checkbox";
 
-export const SelectCheckboxOption: ComponentType<OptionProps<SelectOption, boolean, GroupBase<SelectOption>>> = (props: OptionProps<SelectOption, boolean, GroupBase<SelectOption>>) => {
+export const SelectCheckboxOption: ComponentType<OptionProps<SelectOptionType, boolean, GroupBase<SelectOptionType>>> = (props: OptionProps<SelectOptionType, boolean, GroupBase<SelectOptionType>>) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -17,10 +17,9 @@ export const SelectCheckboxOption: ComponentType<OptionProps<SelectOption, boole
       <div className="flex items-center" onClick={handleClick}>
         <Checkbox
           checked={props.isSelected}
-          onChange={() => null}
           className="mr-3"
           label={props.label}
-          ariaLabel={props.label}
+          aria-label={props.label}
           disabled={props.isDisabled}
         />
       </div>
