@@ -32,7 +32,7 @@ export const FORM_STATES: Record<string, string> = {
   CONTRACT: "contract",
   ORDER: "order",
   REMARKS: "remarks",
-  RECURRENCE: "recurrence",
+  RECURRENCE: "recurrences",
   MON: "monday",
   TUES: "tuesday",
   WED: "wednesday",

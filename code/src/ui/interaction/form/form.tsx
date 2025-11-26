@@ -115,7 +115,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
 
         if (hasScheduleField) {
-          initialState.recurrence = 0;
+          initialState[FORM_STATES.RECURRENCE] = 0;
         }
       }
 
