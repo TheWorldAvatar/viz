@@ -15,7 +15,7 @@ import {
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   extractResponseField,
   getAfterDelimiter,
@@ -50,7 +50,7 @@ export function DependentFormSection(
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
+  const [selectElements, setSelectElements] = useState<SelectOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -188,7 +188,7 @@ export function DependentFormSection(
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
 
-      const formFields: SelectOption[] = [];
+      const formFields: SelectOptionType[] = [];
 
       // Retrieve and set the display field accordingly
       if (entities.length > 0) {
@@ -204,7 +204,7 @@ export function DependentFormSection(
           );
         }
         entities.forEach((entity) => {
-          const formOption: SelectOption = {
+          const formOption: SelectOptionType = {
             value: extractResponseField(entity, FORM_STATES.IRI)?.value,
             label: extractResponseField(entity, displayField)?.value,
           };
