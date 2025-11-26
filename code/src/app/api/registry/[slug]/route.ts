@@ -284,28 +284,24 @@ function makeExternalEndpoint(
       const subtype: string = searchParams.get("subtype");
       const branchDelete: string = searchParams.get("branch_delete");
 
-
       let url: string = `${agentBaseApi}/${type}`;
+
       if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
         const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
-      }
-      if (identifier != "null") {
+      } else if (identifier != "null") {
         url += `/${identifier}`;
         if (subtype != "null") {
           url += `/${subtype}`;
         }
+        if (branchDelete && branchDelete != "null") {
+          url += `?branch_delete=${encodeURIComponent(branchDelete)}`;
+        }
       }
 
-      if (branchDelete && branchDelete !== "null") {
-        const separator = url.includes("?") ? "&" : "?";
-        url += `${separator}branch_delete=${encodeURIComponent(branchDelete)}`;
-      }
-
-      console.log("URL FOR BRANCH:", url);
       return url;
     }
     case "event": {
