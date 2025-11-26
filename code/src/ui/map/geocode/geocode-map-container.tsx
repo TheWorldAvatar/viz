@@ -34,10 +34,15 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     control,
     name: FORM_STATES.LATITUDE,
   });
+
+  // Provide valid default coordinates (fallback to 0, 0 if invalid)
+  const validLongitude = !isNaN(longitude) && longitude !== null ? longitude : 0;
+  const validLatitude = !isNaN(latitude) && latitude !== null ? latitude : 0;
+
   // Set a inital camera position
   const defaultPosition: CameraPosition = {
     name: "",
-    center: [longitude, latitude],
+    center: [validLongitude, validLatitude],
     zoom: 16,
     bearing: 0,
     pitch: 0,
@@ -45,8 +50,13 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // Create a new draggable marker on any map rerenders
   useEffect(() => {
-    if (map) {
-      const marker = new Marker({
+    if (map && !isNaN(longitude) && !isNaN(latitude)) {
+      // Remove old marker if it exists
+      if (marker) {
+        marker.remove();
+      }
+
+      const newMarker = new Marker({
         color: "#146a7d",
         draggable: formType === "add" || formType === "edit",
       })
@@ -54,8 +64,8 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
         .addTo(map);
 
       // Marker must update the form values when draggred
-      marker.on("dragend", () => {
-        const lngLat = marker.getLngLat();
+      newMarker.on("dragend", () => {
+        const lngLat = newMarker.getLngLat();
         updateLatLong(
           props.fieldId,
           lngLat.lat.toString(),
@@ -63,9 +73,9 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
           props.form
         );
       });
-      setMarker(marker);
+      setMarker(newMarker);
     }
-  }, [map]);
+  }, [map, longitude, latitude, formType]);
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
@@ -73,8 +83,11 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
       marker.setLngLat([longitude, latitude]);
       props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
+    } else if (map && !marker && !isNaN(longitude) && !isNaN(latitude)) {
+      // If marker doesn't exist yet but we have valid coordinates, just center the map
+      map.jumpTo({ center: [longitude, latitude] });
     }
-  }, [longitude, latitude, marker, map]);
+  }, [longitude, latitude, marker, map, props.fieldId, props.form]);
 
   return (
     <MapSettingsProvider

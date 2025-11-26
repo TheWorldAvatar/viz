@@ -5,7 +5,7 @@ import {
 } from "hooks/geocode/useGeocodeTemplate";
 import { useDictionary } from "hooks/useDictionary";
 import React from "react";
-import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { PropertyShape, VALUE_KEY } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -82,17 +82,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       "@type": "http://www.w3.org/2001/XMLSchema#integer",
     },
   };
-
-  const control: Control = props.form.control;
-
-  const latitude: string = useWatch<FieldValues>({
-    control,
-    name: FORM_STATES.LATITUDE,
-  });
-  const longitude: string = useWatch<FieldValues>({
-    control,
-    name: FORM_STATES.LONGITUDE,
-  });
 
   const {
     isFetching,
@@ -175,28 +164,26 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               ))}
             </div>
           )}
-          {latitude && longitude && (
-            <div className="flex flex-wrap w-full">
-              <GeocodeMapContainer
-                form={props.form}
-                fieldId={props.field.fieldId}
-              />
-              <FormFieldComponent
-                field={latitudeShape}
-                form={props.form}
-                options={{
-                  disabled: formType == "view" || formType == "delete",
-                }}
-              />
-              <FormFieldComponent
-                field={longitudeShape}
-                form={props.form}
-                options={{
-                  disabled: formType == "view" || formType == "delete",
-                }}
-              />
-            </div>
-          )}
+          <div className="flex flex-wrap w-full">
+            <GeocodeMapContainer
+              form={props.form}
+              fieldId={props.field.fieldId}
+            />
+            <FormFieldComponent
+              field={latitudeShape}
+              form={props.form}
+              options={{
+                disabled: formType == "view" || formType == "delete",
+              }}
+            />
+            <FormFieldComponent
+              field={longitudeShape}
+              form={props.form}
+              options={{
+                disabled: formType == "view" || formType == "delete",
+              }}
+            />
+          </div>
         </>
       )}
     </div>
