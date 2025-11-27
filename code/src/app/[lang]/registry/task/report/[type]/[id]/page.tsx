@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { FormContainerComponent } from "ui/interaction/form/form-container";
+import { TaskFormContainerComponent } from "ui/interaction/form/task-form-container";
 
 interface ReportFormPageProps {
   params: Promise<{
@@ -37,7 +37,7 @@ export default async function ReportFormPage(
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <FormContainerComponent
+    <TaskFormContainerComponent
       entityType={decodedType}
       formType={"report"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}

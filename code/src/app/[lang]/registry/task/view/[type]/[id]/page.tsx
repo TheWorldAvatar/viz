@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { FormContainerComponent } from "ui/interaction/form/form-container";
+import { TaskFormContainerComponent } from "ui/interaction/form/task-form-container";
 
 interface ViewFormPageProps {
   params: Promise<{
@@ -30,14 +30,12 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Displays the form page for viewing a task.
  */
-export default async function ViewFormPage(
-  props: Readonly<ViewFormPageProps>
-) {
+export default async function ViewFormPage(props: Readonly<ViewFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <FormContainerComponent
+    <TaskFormContainerComponent
       entityType={decodedType}
       formType={"view"}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
