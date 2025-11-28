@@ -81,11 +81,14 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
-    if (map && marker && props.isValidCoordinates(longitude, latitude)) {
+    if (!map || !props.isValidCoordinates(longitude, latitude)) {
+      return;
+    }
+    if (marker) {
       marker.setLngLat([longitude, latitude]);
       props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
-    } else if (map && !marker && props.isValidCoordinates(longitude, latitude)) {
+    } else {
       // If marker doesn't exist yet but we have valid coordinates, just center the map
       map.jumpTo({ center: [longitude, latitude] });
     }
