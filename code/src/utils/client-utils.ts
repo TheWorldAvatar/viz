@@ -303,3 +303,21 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
       throw new Error(`Unsupported toast type: ${type}`);
   }
 }
+
+
+/**
+ * Validates whether the provided longitude and latitude are within acceptable ranges for Mapbox.
+ *
+ * @param lng The longitude value.
+ * @param lat The latitude value.
+ */
+export function isValidCoordinates(lng: number, lat: number): boolean {
+  return (
+    !isNaN(lng) &&
+    !isNaN(lat) &&
+    lng >= -180 &&
+    lng <= 180 &&
+    lat >= -90 &&
+    lat <= 90
+  );
+};
