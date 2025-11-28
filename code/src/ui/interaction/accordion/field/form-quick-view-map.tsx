@@ -75,7 +75,7 @@ export default function FormQuickViewMap(
             {props.label}
           </h1>
           <div className="flex-1 h-96">
-            <GeocodeMapContainer form={mapForm} fieldId="mapDisplay" />
+            <GeocodeMapContainer isValidCoordinates={(lng, lat) => coordinates[0] === lng && coordinates[1] === lat} form={mapForm} fieldId="mapDisplay" />
           </div>
         </div>
       </Modal>
