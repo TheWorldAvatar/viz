@@ -11,7 +11,7 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import TableCell from "./table-cell";
-
+import Tooltip from "ui/interaction/tooltip/tooltip";
 
 interface HeaderCellProps {
   type: string;
@@ -63,32 +63,36 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     >
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
-          <div
-            className={`flex items-center gap-2 ${props.header.column.getCanSort()
-              ? "cursor-pointer select-none"
-              : ""
-              }`}
-            onClick={props.header.column.getToggleSortingHandler()}
-            aria-label={
-              props.header.column.getCanSort()
-                ? `Sort by ${props.header.column.columnDef.header}`
-                : undefined
-            }
-          >
-            {flexRender(
-              props.header.column.columnDef.header,
-              props.header.getContext()
-            )}
-            {{
-              asc: (
-                <Icon className="material-symbols-outlined">arrow_upward</Icon>
-              ),
-              desc: (
-                <Icon className="material-symbols-outlined">
-                  arrow_downward
-                </Icon>
-              ),
-            }[props.header.column.getIsSorted() as string] ?? null}
+          <div className="flex items-center gap-2">
+            <Tooltip text={dict.message.sort} placement="top-start">
+              <div
+                className={`flex items-center gap-2 ${props.header.column.getCanSort()
+                  ? "cursor-pointer select-none"
+                  : ""
+                  }`}
+                onClick={props.header.column.getToggleSortingHandler()}
+                aria-label={
+                  props.header.column.getCanSort()
+                    ? `Sort by ${props.header.column.columnDef.header}`
+                    : undefined
+                }
+              >
+                {flexRender(
+                  props.header.column.columnDef.header,
+                  props.header.getContext()
+                )}
+                {{
+                  asc: (
+                    <Icon className="material-symbols-outlined">arrow_upward</Icon>
+                  ),
+                  desc: (
+                    <Icon className="material-symbols-outlined">
+                      arrow_downward
+                    </Icon>
+                  ),
+                }[props.header.column.getIsSorted() as string] ?? null}
+              </div>
+            </Tooltip>
             <PopoverActionButton
               placement="bottom-start"
               leftIcon="filter_list"
