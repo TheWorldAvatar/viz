@@ -304,8 +304,14 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
   }
 }
 
-// Function to check if coordinates are valid for Mapbox
-export const isValidCoordinates = (lng: number, lat: number): boolean => {
+
+/**
+ * Validates whether the provided longitude and latitude are within acceptable ranges for Mapbox.
+ *
+ * @param lng The longitude value.
+ * @param lat The latitude value.
+ */
+export function isValidCoordinates(lng: number, lat: number): boolean {
   return (
     !isNaN(lng) &&
     !isNaN(lat) &&
