@@ -1,7 +1,4 @@
-import {
-  closestCenter,
-  DndContext
-} from "@dnd-kit/core";
+import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
   restrictToVerticalAxis,
@@ -18,17 +15,12 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import  { useState } from "react";
 import { FieldValues } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { openDrawer } from "state/drawer-component-slice";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import {
-  LifecycleStage,
-  RegistryTaskOption
-} from "types/form";
+import { LifecycleStage } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -38,9 +30,7 @@ import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
-import RegistryRowAction, {
-  genTaskOption,
-} from "../action/registry-row-action";
+import RegistryRowAction from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
@@ -51,7 +41,6 @@ interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
-  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
 }
@@ -62,14 +51,12 @@ interface RegistryTableProps {
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
- * @param setTask A dispatch method to set the task option when required.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
@@ -83,17 +70,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
   const numberOfSelectedRows: number = props.tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
-    row => (row.original.status as string)?.toLowerCase() === "amended"
-  );
+      (row) => (row.original.status as string)?.toLowerCase() === "amended"
+    );
   const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
     const recordId: string = row.event_id
-      ? row.event_id
+      ? getId(row.event_id)
       : row.id
-        ? getId(row.id)
-        : row.iri;
+      ? getId(row.id)
+      : getId(row.iri);
     if (
       props.lifecycleStage === "tasks" ||
       props.lifecycleStage === "report" ||
@@ -101,25 +88,36 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
+      // Build task URL with query params for date, status, contract, scheduleType
+      const params: URLSearchParams = new URLSearchParams({
+        date: row.date || "",
+        status: row.status || "",
+        contract: row.id || "",
+        scheduleType: row[dict.title.scheduleType] || "",
+      });
+
+      // Determine the appropriate task route based on status and permissions
+      let taskRoute: string;
       if (
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.operation) &&
         ((row.status as string).toLowerCase() === "new" ||
-          ((row.status as string).toLowerCase() === "assigned" && props.lifecycleStage === "scheduled")
-        )) {
-        props.setTask(genTaskOption(recordId, row, "dispatch", dict.title.scheduleType));
+          ((row.status as string).toLowerCase() === "assigned" &&
+            props.lifecycleStage === "scheduled"))
+      ) {
+        taskRoute = Routes.REGISTRY_TASK_DISPATCH;
       } else if (
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.completeTask) &&
         (row.status as string).toLowerCase() === "assigned"
       ) {
-        props.setTask(genTaskOption(recordId, row, "complete", dict.title.scheduleType));
+        taskRoute = Routes.REGISTRY_TASK_COMPLETE;
       } else {
-        props.setTask(genTaskOption(recordId, row, "default", dict.title.scheduleType));
+        taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
-      dispatch(openDrawer());
+      router.push(`${taskRoute}/${props.recordType}/${recordId}?${params.toString()}`);
     } else {
       const registryRoute: string =
         !keycloakEnabled ||
@@ -139,7 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       return;
     }
 
-    const contractIds: string[] = selectedRows.map(row => row.original.id);
+    const contractIds: string[] = selectedRows.map((row) => row.original.id);
 
     let reqBody: JsonObject;
     let apiUrl: string;
@@ -219,7 +217,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           >
                             <TableCell className="w-[calc(100%/20)] sticky left-0 z-20 bg-muted">
                               <div className="flex justify-end items-center rounded-md gap-2 mt-10">
-                                {numberOfSelectedRows > 0 &&
+                                {numberOfSelectedRows > 0 && (
                                   <PopoverActionButton
                                     placement="bottom-start"
                                     leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
@@ -230,7 +228,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setIsOpen={setIsActionMenuOpen}
                                   >
                                     <div className="flex flex-col space-y-3">
-                                      {props.lifecycleStage === "pending" &&
+                                      {props.lifecycleStage === "pending" && (
                                         <>
                                           <Button
                                             leftIcon="done_outline"
@@ -239,37 +237,43 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                             disabled={isLoading}
                                             onClick={() => handleBulkAction("approve")}
                                           />
-                                          {hasAmendedStatus && <Button
-                                            leftIcon="published_with_changes"
-                                            label={dict.action.resubmit}
-                                            variant="ghost"
-                                            disabled={isLoading}
-                                            onClick={() => handleBulkAction("resubmit")}
-                                          />}
+                                          {hasAmendedStatus && (
+                                            <Button
+                                              leftIcon="published_with_changes"
+                                              label={dict.action.resubmit}
+                                              variant="ghost"
+                                              disabled={isLoading}
+                                              onClick={() => handleBulkAction("resubmit")}
+                                            />
+                                          )}
                                         </>
-                                      }
+                                      )}
                                       {(!keycloakEnabled ||
                                         !permissionScheme ||
-                                        permissionScheme.hasPermissions.draftTemplate) &&
+                                        permissionScheme.hasPermissions
+                                          .draftTemplate) && (
                                         <DraftTemplateButton
-                                          rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map(row => row.original.id)}
+                                          rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
                                           recordType={props.recordType}
                                           triggerRefresh={props.triggerRefresh}
                                           resetRowSelection={props.tableDescriptor.table.resetRowSelection}
-                                        />}
+                                        />
+                                      )}
                                     </div>
                                   </PopoverActionButton>
-                                }
-                                {allowMultipleSelection && <Checkbox
-                                  aria-label={dict.action.selectAll}
-                                  disabled={isLoading}
-                                  checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
-                                  handleChange={(checked) => {
-                                    props.tableDescriptor.table.getRowModel().rows.forEach(row => {
-                                      row.toggleSelected(checked);
-                                    });
-                                  }}
-                                />}
+                                )}
+                                {allowMultipleSelection && (
+                                  <Checkbox
+                                    aria-label={dict.action.selectAll}
+                                    disabled={isLoading}
+                                    checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
+                                    handleChange={(checked) => {
+                                      props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
+                                          row.toggleSelected(checked);
+                                        });
+                                    }}
+                                  />
+                                )}
                               </div>
                             </TableCell>
                             {headerGroup.headers.map((header, index) => {
@@ -296,40 +300,49 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           strategy={verticalListSortingStrategy}
                         >
                           {props.tableDescriptor.table.getRowModel().rows.map((row, index) => (
-                            <TableRow
-                              key={row.id + index}
-                              id={row.id}
-                              isHeader={false}
-                            >
-                              <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                                <div className="flex gap-0.5">
-                                  <DragActionHandle disabled={isLoading} id={row.id} />
-                                  <RegistryRowAction
-                                    recordType={props.recordType}
-                                    lifecycleStage={props.lifecycleStage}
-                                    row={row.original}
-                                    setTask={props.setTask}
-                                    triggerRefresh={props.triggerRefresh}
-                                  />
-                                  {allowMultipleSelection && <Checkbox aria-label={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} handleChange={(checked) => row.toggleSelected(checked)} />}
-                                </div>
-                              </TableCell>
-                              {row.getVisibleCells().map((cell, index) => (
-                                <TableCell
-                                  key={cell.id + index}
-                                  width={cell.column.getSize()}
-                                  onClick={() =>
-                                    onRowClick(row.original as FieldValues)
-                                  }
-                                >
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
-                                  )}
+                              <TableRow
+                                key={row.id + index}
+                                id={row.id}
+                                isHeader={false}
+                              >
+                                <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
+                                  <div className="flex gap-0.5">
+                                    <DragActionHandle disabled={isLoading} id={row.id} />
+                                    <RegistryRowAction
+                                      recordType={props.recordType}
+                                      lifecycleStage={props.lifecycleStage}
+                                      row={row.original}
+                                      triggerRefresh={props.triggerRefresh}
+                                    />
+                                    {allowMultipleSelection && (
+                                      <Checkbox
+                                        aria-label={row.id}
+                                        className="ml-2"
+                                        disabled={isLoading}
+                                        checked={row.getIsSelected()}
+                                        handleChange={(checked) =>
+                                          row.toggleSelected(checked)
+                                        }
+                                      />
+                                    )}
+                                  </div>
                                 </TableCell>
-                              ))}
-                            </TableRow>
-                          ))}
+                                {row.getVisibleCells().map((cell, index) => (
+                                  <TableCell
+                                    key={cell.id + index}
+                                    width={cell.column.getSize()}
+                                    onClick={() =>
+                                      onRowClick(row.original as FieldValues)
+                                    }
+                                  >
+                                    {flexRender(
+                                      cell.column.columnDef.cell,
+                                      cell.getContext()
+                                    )}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))}
                         </SortableContext>
                       )}
                     </tbody>
