@@ -112,6 +112,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     addresses,
     selectAddress,
     onGeocoding,
+    isValidCoordinates,
   } = useGeocode(addressShapes, props.field, props.form);
 
   return (
@@ -184,6 +185,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
             <GeocodeMapContainer
               form={props.form}
               fieldId={props.field.fieldId}
+              isValidCoordinates={isValidCoordinates}
             />
             <FormFieldComponent
               field={latitudeShape}

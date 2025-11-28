@@ -13,6 +13,7 @@ export interface GeocodingActions {
   addresses: Address[];
   selectAddress: (_address: Address) => Promise<void>
   onGeocoding: SubmitHandler<FieldValues>,
+  isValidCoordinates: (lng: number, lat: number) => boolean,
 }
 /**
   * A custom hook to return geocoding executable actions.
@@ -160,6 +161,18 @@ export function useGeocode(
     setShowAddressShapes(true);
   };
 
+  // Function to check if coordinates are valid for Mapbox
+  const isValidCoordinates = (lng: number, lat: number): boolean => {
+    return (
+      !isNaN(lng) &&
+      !isNaN(lat) &&
+      lng >= -180 &&
+      lng <= 180 &&
+      lat >= -90 &&
+      lat <= 90
+    );
+  };
+
   return {
     hasNoAddressFound,
     showAddressOptions,
@@ -167,5 +180,6 @@ export function useGeocode(
     addresses,
     selectAddress,
     onGeocoding,
+    isValidCoordinates
   }
 }

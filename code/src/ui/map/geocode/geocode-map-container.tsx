@@ -14,6 +14,7 @@ import MapboxMapComponent from "ui/map/mapbox/mapbox-container";
 interface GeocodeMapContainerProps {
   form: UseFormReturn;
   fieldId: string;
+  isValidCoordinates: (lng: number, lat: number) => boolean;
 }
 
 /**
@@ -23,6 +24,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const [map, setMap] = useState<Map>(null);
   const [marker, setMarker] = useState<Marker>(null);
+
 
   // Monitor longitude and latitude values
   const control: Control = props.form.control;
@@ -35,21 +37,9 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     name: FORM_STATES.LATITUDE,
   });
 
-  // Function to check if coordinates are valid for Mapbox
-  const isValidCoordinates = (lng: number, lat: number): boolean => {
-    return (
-      !isNaN(lng) &&
-      !isNaN(lat) &&
-      lng >= -180 &&
-      lng <= 180 &&
-      lat >= -90 &&
-      lat <= 90
-    );
-  };
-
   // Provide valid default coordinates (fallback to 0, 0 if invalid)
-  const validLongitude = isValidCoordinates(longitude, latitude) ? longitude : 0;
-  const validLatitude = isValidCoordinates(longitude, latitude) ? latitude : 0;
+  const validLongitude = props.isValidCoordinates(longitude, latitude) ? longitude : 0;
+  const validLatitude = props.isValidCoordinates(longitude, latitude) ? latitude : 0;
 
   // Set a inital camera position
   const defaultPosition: CameraPosition = {
@@ -62,7 +52,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // Create a new draggable marker on any map rerenders
   useEffect(() => {
-   if (map && isValidCoordinates(longitude, latitude)) {
+    if (map && props.isValidCoordinates(longitude, latitude)) {
       // Remove old marker if it exists
       if (marker) {
         marker.remove();
@@ -91,11 +81,11 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
-    if (map && marker && isValidCoordinates(longitude, latitude)) {
+    if (map && marker && props.isValidCoordinates(longitude, latitude)) {
       marker.setLngLat([longitude, latitude]);
       props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
-    } else if (map && !marker && isValidCoordinates(longitude, latitude)) {
+    } else if (map && !marker && props.isValidCoordinates(longitude, latitude)) {
       // If marker doesn't exist yet but we have valid coordinates, just center the map
       map.jumpTo({ center: [longitude, latitude] });
     }
