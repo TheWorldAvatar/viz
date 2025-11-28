@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.45.2
+
+### Changes
+
+- Added validation for geocoder coordinates to prevent map errors when invalid coordinates are provided
+- Added validation for numerical inputs only in the geocoder form section
+
+## 5.45.1
+
+### Changes
+
+- Added instructions for multi-column sorting, using Shift + Click
+
 ## 5.45.0
 
 ### Changes
