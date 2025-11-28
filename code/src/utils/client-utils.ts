@@ -303,3 +303,15 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
       throw new Error(`Unsupported toast type: ${type}`);
   }
 }
+
+// Function to check if coordinates are valid for Mapbox
+export const isValidCoordinates = (lng: number, lat: number): boolean => {
+  return (
+    !isNaN(lng) &&
+    !isNaN(lat) &&
+    lng >= -180 &&
+    lng <= 180 &&
+    lat >= -90 &&
+    lat <= 90
+  );
+};

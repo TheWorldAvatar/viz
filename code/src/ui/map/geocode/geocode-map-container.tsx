@@ -10,11 +10,11 @@ import { CameraPosition } from "types/settings";
 import { FORM_STATES, updateLatLong } from "ui/interaction/form/form-utils";
 import { MapSettingsProvider } from "ui/map/mapbox/map-settings-context";
 import MapboxMapComponent from "ui/map/mapbox/mapbox-container";
+import { isValidCoordinates } from "utils/client-utils";
 
 interface GeocodeMapContainerProps {
   form: UseFormReturn;
   fieldId: string;
-  isValidCoordinates: (_lng: number, _lat: number) => boolean;
 }
 
 /**
@@ -38,8 +38,8 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
   });
 
   // Provide valid default coordinates (fallback to 0, 0 if invalid)
-  const validLongitude = props.isValidCoordinates(longitude, latitude) ? longitude : 0;
-  const validLatitude = props.isValidCoordinates(longitude, latitude) ? latitude : 0;
+  const validLongitude: number = isValidCoordinates(longitude, latitude) ? longitude : 0;
+  const validLatitude: number = isValidCoordinates(longitude, latitude) ? latitude : 0;
 
   // Set a inital camera position
   const defaultPosition: CameraPosition = {
@@ -52,7 +52,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // Create a new draggable marker on any map rerenders
   useEffect(() => {
-    if (map && props.isValidCoordinates(longitude, latitude)) {
+    if (map && isValidCoordinates(longitude, latitude)) {
       // Remove old marker if it exists
       if (marker) {
         marker.remove();
@@ -81,7 +81,7 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
-    if (!map || !props.isValidCoordinates(longitude, latitude)) {
+    if (!map || !isValidCoordinates(longitude, latitude)) {
       return;
     }
     if (marker) {
