@@ -14,7 +14,7 @@ import MapboxMapComponent from "ui/map/mapbox/mapbox-container";
 interface GeocodeMapContainerProps {
   form: UseFormReturn;
   fieldId: string;
-  isValidCoordinates: (lng: number, lat: number) => boolean;
+  isValidCoordinates: (_lng: number, _lat: number) => boolean;
 }
 
 /**

@@ -13,7 +13,7 @@ export interface GeocodingActions {
   addresses: Address[];
   selectAddress: (_address: Address) => Promise<void>
   onGeocoding: SubmitHandler<FieldValues>,
-  isValidCoordinates: (lng: number, lat: number) => boolean,
+  isValidCoordinates: (_lng: number, _lat: number) => boolean,
 }
 /**
   * A custom hook to return geocoding executable actions.
