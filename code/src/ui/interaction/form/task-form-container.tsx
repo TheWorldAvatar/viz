@@ -88,10 +88,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const id: string = getAfterDelimiter(pathname, "/");
 
   // Get task data from URL query parameters
-  const taskDate = searchParams.get("date") || "";
-  const taskStatus = searchParams.get("status") || "";
-  const taskContract = searchParams.get("contract") || "";
-  const taskScheduleType = searchParams.get("scheduleType") || "";
+  const taskDate: string = searchParams.get("date") || "";
+  const taskStatus: string = searchParams.get("status") || "";
+  const taskContract: string = searchParams.get("contract") || "";
+  const taskScheduleType: string = searchParams.get("scheduleType") || "";
 
   // State for task data
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -358,8 +358,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               taskType === "report"
                 ? "report"
                 : taskType === "cancel"
-                ? "cancellation"
-                : "dispatch"
+                  ? "cancellation"
+                  : "dispatch"
             }
             formRef={formRef}
             fields={formFields}
