@@ -58,13 +58,41 @@ export default function BranchFormSection(
   );
 
   useEffect(() => {
-    const initialNode: NodeShape = props.node[0];
-    setSelectedModel(initialNode);
-    setIsSwitching(false);
-  }, []);
+    if (props.node.length > 0) {
+      const initialNode: NodeShape = props.node[0];
+      setSelectedModel(initialNode);
+      setIsSwitching(false);
+      const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+      const initialBranchName: string = initialNode.label[VALUE_KEY];
+
+      if (formType === "delete") {
+        props.form.setValue("branch_delete", initialBranchName);
+      } else if (formType === "edit") {
+        // Set both values - branch_add for new, branch_delete for original
+        props.form.setValue("branch_add", initialBranchName);
+        props.form.setValue("branch_delete", initialBranchName);
+      } else {
+        // For add forms
+        props.form.setValue("branch_add", initialBranchName);
+      }
+    }
+  }, [props.node, props.form]);
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOptionType) => {
+    const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+    const newBranchName: string = formOption.value;
+
+    if (formType === "edit") {
+      //  branch_add is the new selection, branch_delete stays as original
+      props.form.setValue("branch_add", newBranchName);
+      // branch_delete remains the original value (already set in useEffect)
+    } else if (formType === "delete") {
+      props.form.setValue("branch_delete", newBranchName);
+    } else {
+      props.form.setValue("branch_add", newBranchName);
+    }
+
     setIsSwitching(true);
     const matchingNode: NodeShape = props.node.find(
       (nodeShape) => nodeShape.label[VALUE_KEY] === formOption.value
