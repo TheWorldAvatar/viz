@@ -156,9 +156,7 @@
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
     "processingRequest": "Bearbeitung der Anfrage...",
-    "maxFilters": "Sie können nicht mehr als 3 Filter gleichzeitig anwenden.",
-    "latitudeRange": "Der Breitengrad muss zwischen -90° und 90° Grad liegen!",
-    "longitudeRange": "Die Längengrade müssen zwischen -180° und 180° liegen!"
+    "maxFilters": "Sie können nicht mehr als 3 Filter gleichzeitig anwenden."
   },
   "nav": {
     "caption": {

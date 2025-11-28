@@ -47,6 +47,14 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       "@value": "0.00000001",
       "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
+    minInclusive: {
+      "@value": "-90",
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
+    },
+    maxInclusive: {
+      "@value": "90",
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
+    },
     minCount: {
       "@value": "1",
       "@type": "http://www.w3.org/2001/XMLSchema#integer",
@@ -73,6 +81,14 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       "@type": "http://www.w3.org/2001/XMLSchema#decimal",
     },
     datatype: "decimal",
+    minInclusive: {
+      "@value": "-180",
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
+    },
+    maxInclusive: {
+      "@value": "180",
+      "@type": "http://www.w3.org/2001/XMLSchema#decimal",
+    },
     minCount: {
       "@value": "1",
       "@type": "http://www.w3.org/2001/XMLSchema#integer",

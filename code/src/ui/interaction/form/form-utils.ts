@@ -513,28 +513,6 @@ export function getRegisterOptions(
     };
   }
 
-  if(field.fieldId === "latitude"){
-    options.min = {
-      value: -90,
-      message: dict.message.latitudeRange,
-    };
-    options.max = {
-      value: 90,
-      message: dict.message.latitudeRange,
-    };
-  }
-
-  if(field.fieldId === "longitude"){
-    options.min = {
-      value: -180,
-      message: dict.message.longitudeRange,
-    };
-    options.max = {
-      value: 180,
-      message: dict.message.longitudeRange,
-    };
-  }
-
   return options;
 }
 
