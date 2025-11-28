@@ -157,7 +157,7 @@
     "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
     "processingRequest": "Bearbeitung der Anfrage...",
     "maxFilters": "Sie können nicht mehr als 3 Filter gleichzeitig anwenden.",
-    "sort": "Klicken Sie, um in aufsteigender oder absteigender Reihenfolge zu sortieren. Klicken Sie bei gedrückter Umschalttaste, um nach mehreren Spalten zu sortieren."
+    "sort": "Klicken Sie auf eine Spaltenüberschrift, um aufsteigend oder absteigend zu sortieren. Um nach mehreren Spalten zu sortieren, halten Sie die Umschalttaste auf Ihrer Tastatur gedrückt und klicken Sie auf weitere Überschriften."
   },
   "nav": {
     "caption": {
