@@ -49,7 +49,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-    <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
+    <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-6">
       {props.lifecycleStage !== "general" &&
         (!keycloakEnabled ||
           !permissionScheme ||
@@ -60,12 +60,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 permissionScheme?.hasPermissions.pendingRegistry) && (
                   <div className="sm:w-auto">
                     <RedirectButton
-                      label={dict.nav.title.pending}
-                      leftIcon="free_cancellation"
+                      label={"Jobs"}
+                      leftIcon="table_chart"
                       hasMobileIcon={false}
                       url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
                       variant={
-                        props.lifecycleStage == "pending" ? "active" : "ghost"
+                        props.lifecycleStage == "pending" || props.lifecycleStage == "active" || props.lifecycleStage == "archive" ? "active" : "ghost"
                       }
                       className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                     />
@@ -73,36 +73,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 )}
               <div className="sm:w-auto">
                 <RedirectButton
-                  label={dict.nav.title.outstanding}
-                  leftIcon="pending"
+                  label={"Tasks"}
+                  leftIcon="list_alt"
                   hasMobileIcon={false}
                   url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
                   variant={
-                    props.lifecycleStage == "outstanding" ? "active" : "ghost"
-                  }
-                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                />
-              </div>
-              <div className="sm:w-auto">
-                <RedirectButton
-                  label={dict.nav.title.scheduled}
-                  leftIcon="schedule"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-                  variant={
-                    props.lifecycleStage == "scheduled" ? "active" : "ghost"
-                  }
-                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                />
-              </div>
-              <div className="w-full sm:w-auto">
-                <RedirectButton
-                  label={dict.nav.title.closed}
-                  leftIcon="event_busy"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_TASK_CLOSED}`}
-                  variant={
-                    props.lifecycleStage == "closed" ? "active" : "ghost"
+                    props.lifecycleStage == "outstanding" || props.lifecycleStage == "scheduled" || props.lifecycleStage == "closed" ? "active" : "ghost"
                   }
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
@@ -110,7 +86,81 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           </div>
         )}
-      <div className="w-full  h-[1px] bg-border " />
+      {props.lifecycleStage !== "general" && (props.lifecycleStage === "pending" || props.lifecycleStage === "active" || props.lifecycleStage === "archive") &&
+        <div className="flex flex-wrap items-center sm:gap-3 gap-1">
+          <div className="w-full sm:w-auto">
+            <RedirectButton
+              label={dict.nav.title.pending}
+              leftIcon="query_builder"
+              iconSize="small"
+              variant="outline"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+              className={`w-full sm:w-auto !py-2 px-6 text-sm font-medium !rounded-full border transition-colors duration-200  ${props.lifecycleStage === "pending" ? "shadow-sm !bg-amber-100 !border-amber-300 !text-amber-800 hover:!bg-amber-200 dark:!bg-amber-900/50 dark:!border-amber-700 dark:!text-amber-200 dark:hover:!bg-amber-800/50" : ""}`}
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <RedirectButton
+              label={dict.nav.title.active}
+              leftIcon="bolt"
+              iconSize="small"
+              variant="outline"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+              className={`w-full sm:w-auto !py-2 px-6 text-sm font-medium !rounded-full border transition-colors duration-200  ${props.lifecycleStage === "active" ? "shadow-sm !bg-emerald-100 !border-emerald-300 !text-emerald-800 hover:!bg-emerald-200 dark:!bg-emerald-900/50 dark:!border-emerald-700 dark:!text-emerald-200 dark:hover:!bg-emerald-800/50" : ""}`}
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <RedirectButton
+              label={dict.nav.title.archive}
+              leftIcon="inventory_2"
+              iconSize="small"
+              variant="outline"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+              className={`w-full sm:w-auto !py-2 px-6 text-sm font-medium !rounded-full border transition-colors duration-200 ${props.lifecycleStage === "archive" ? "shadow-sm !bg-slate-100 !border-slate-300 !text-slate-800 hover:!bg-slate-200 dark:!bg-slate-800/50 dark:!border-slate-600 dark:!text-slate-200 dark:hover:!bg-slate-700/50" : ""}`}
+            />
+          </div>
+        </div>
+      }
+      {props.lifecycleStage !== "general" && (props.lifecycleStage === "outstanding" || props.lifecycleStage === "scheduled" || props.lifecycleStage === "closed") &&
+        <div className="flex flex-wrap items-center sm:gap-3 gap-1">
+          <div className="w-full sm:w-auto">
+            <RedirectButton
+              label={dict.nav.title.outstanding}
+              iconSize="small"
+              leftIcon="pending"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+              variant="outline"
+              className={`w-full sm:w-auto !py-2 px-6 text-sm font-medium !rounded-full border transition-colors duration-200  ${props.lifecycleStage === "outstanding" ? "shadow-sm !bg-amber-100 !border-amber-300 !text-amber-800 hover:!bg-amber-200 dark:!bg-amber-900/50 dark:!border-amber-700 dark:!text-amber-200 dark:hover:!bg-amber-800/50" : ""}`}
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <RedirectButton
+              label={dict.nav.title.scheduled}
+              leftIcon="schedule"
+              iconSize="small"
+              variant="outline"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+              className={`w-full sm:w-auto !py-2 px-6 text-sm font-medium !rounded-full border transition-colors duration-200  ${props.lifecycleStage === "scheduled" ? "shadow-sm !bg-emerald-100 !border-emerald-300 !text-emerald-800 hover:!bg-emerald-200 dark:!bg-emerald-900/50 dark:!border-emerald-700 dark:!text-emerald-200 dark:hover:!bg-emerald-800/50" : ""}`}
+            />
+          </div>
+          <div className="w-full sm:w-auto">
+            <RedirectButton
+              label={dict.nav.title.closed}
+              leftIcon="event_busy"
+              iconSize="small"
+              variant="outline"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_TASK_CLOSED}`}
+              className={`w-full sm:w-auto !py-2 px-6 text-sm font-medium !rounded-full border transition-colors duration-200 ${props.lifecycleStage === "closed" ? "shadow-sm !bg-slate-100 !border-slate-300 !text-slate-800 hover:!bg-slate-200 dark:!bg-slate-800/50 dark:!border-slate-600 dark:!text-slate-200 dark:hover:!bg-slate-700/50" : ""}`}
+            />
+          </div>
+        </div>
+      }
+      {/* <div className="w-full  h-[0.5px] bg-border" /> */}
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-end !-ml-2 gap-3 md:gap-4">
           <Button
