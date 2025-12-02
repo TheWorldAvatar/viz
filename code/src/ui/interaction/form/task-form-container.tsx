@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
@@ -18,6 +18,7 @@ import {
   PropertyShapeOrGroup,
   RegistryTaskOption,
   RegistryTaskType,
+  SparqlResponseField,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
@@ -78,20 +79,12 @@ export function TaskFormContainerComponent(
 function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
-
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(pathname, "/");
-
-  // Get task data from URL query parameters
-  const taskDate: string = searchParams.get("date") || "";
-  const taskStatus: string = searchParams.get("status") || "";
-  const taskContract: string = searchParams.get("contract") || "";
-  const taskScheduleType: string = searchParams.get("scheduleType") || "";
 
   // State for task data
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -99,6 +92,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
+  const [taskData, setTaskData] = useState<RegistryTaskOption | null>(null);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
@@ -120,15 +114,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   const taskType = getTaskType();
 
-  // Build task data from URL params
-  const taskData: RegistryTaskOption = {
-    id: id,
-    contract: taskContract,
-    status: taskStatus,
-    date: taskDate,
-    scheduleType: taskScheduleType,
-    type: taskType,
-  };
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -195,6 +180,50 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     }
   }, [id, taskType]);
 
+
+  // Handle task metadata (status, date, contract, scheduleType) from internal tasks API
+
+  useEffect(() => {
+    const fetchTask = async (): Promise<void> => {
+      setIsFetching(true);
+      try {
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams("task", id),
+          {
+            cache: "no-store",
+            credentials: "same-origin",
+          }
+        );
+        const resBody: AgentResponseBody = await res.json();
+        const itemData: Record<string, SparqlResponseField> = resBody.data?.items?.[0] as Record<string, SparqlResponseField>;
+        const item: RegistryTaskOption = {
+          contract: itemData.contract.value,
+          status: itemData.status.value,
+          date: itemData.date.value,
+          scheduleType: itemData.scheduleType.value,
+        };
+
+        if (item) {
+          setTaskData({
+            contract: item.contract ?? "",
+            status: item.status ?? "",
+            date: item.date ?? "",
+            scheduleType: item.scheduleType ?? "",
+          });
+        }
+      } catch (error) {
+        // Should I add task errror as a toast here?
+        console.error("Failed to fetch task data:", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    if (id) {
+      fetchTask();
+    }
+  }, [id]);
+
   // Handle form submission when buttons are clicked
   useEffect(() => {
     if ((isSubmitting || isSaving) && formRef.current) {
@@ -221,10 +250,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       formData[FORM_STATES.ORDER] = 1;
     } else if (taskType === "cancel") {
       action = "cancel";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(taskData.status);
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(taskData?.status ?? "");
     } else if (taskType === "report") {
       action = "report";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(taskData.status);
+      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(taskData?.status ?? "");
     } else {
       return;
     }
@@ -260,8 +289,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     isPost: boolean
   ) => {
     // Add contract and date field
-    formData[FORM_STATES.CONTRACT] = taskData.contract;
-    formData[FORM_STATES.DATE] = taskData.date;
+    if (taskData) {
+      formData[FORM_STATES.CONTRACT] = taskData.contract;
+      formData[FORM_STATES.DATE] = taskData.date;
+    }
 
     let response: AgentResponseBody;
     if (isPost) {
@@ -301,13 +332,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       report: Routes.REGISTRY_TASK_REPORT,
       default: Routes.REGISTRY_TASK_VIEW,
     };
-    const params: URLSearchParams = new URLSearchParams({
-      date: taskData.date,
-      status: taskData.status,
-      contract: taskData.contract,
-      scheduleType: taskData.scheduleType,
-    });
-    router.push(`${routeMap[action]}/${props.entityType}/${id}?${params.toString()}`);
+
+    router.push(`${routeMap[action]}/${props.entityType}/${id}`);
   };
 
   return (
@@ -317,16 +343,16 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         <h1 className="text-xl font-bold">
           {parseWordsForLabels(dict.title.actions)}
         </h1>
-        {taskData.date && (
+        {taskData?.date && (
           <h2 className="text-base md:text-lg md:mr-8">
-            {taskData.date}: {getTranslatedStatusLabel(taskData.status, dict)}
+            {taskData.date}: {getTranslatedStatusLabel(taskData.status ?? "", dict)}
           </h2>
         )}
       </section>
 
       {/* Scrollable Content */}
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
-        {taskType !== "default" && taskData.date && (
+        {taskType !== "default" && taskData?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
             {taskType === "complete" && dict.message.completeInstruction}
             {taskType === "dispatch" &&
@@ -348,7 +374,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
-            id={getAfterDelimiter(taskData.contract, "/")}
+            id={taskData ? getAfterDelimiter(taskData.contract, "/") : ""}
           />
         )}
 
@@ -390,6 +416,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeTask) &&
+            taskData &&
             (taskData.status?.toLowerCase() === "assigned" ||
               taskData.status?.toLowerCase() === "completed") &&
             taskType === "default" && (
@@ -407,6 +434,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
+            taskData &&
             taskData.status?.toLowerCase() !== "issue" &&
             taskData.status?.toLowerCase() !== "cancelled" &&
             taskType === "default" && (
@@ -424,6 +452,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
+            taskData &&
             (taskData.status?.toLowerCase() === "new" ||
               taskData.status?.toLowerCase() === "assigned") &&
             taskType === "default" && (
@@ -442,6 +471,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.reportTask) &&
+            taskData &&
             (taskData.status?.toLowerCase() === "new" ||
               taskData.status?.toLowerCase() === "assigned") &&
             taskType === "default" && (
@@ -465,7 +495,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               taskType === "report") ||
             (permissionScheme.hasPermissions.operation &&
               (taskType === "dispatch" || taskType === "cancel"))) &&
-            taskType !== "default" && (
+            taskType !== "default" && taskData && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
@@ -488,6 +518,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
             taskType === "complete" &&
+            taskData &&
             taskData.scheduleType !== dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
@@ -506,7 +537,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.saveTask) &&
-            taskType === "complete" && (
+            taskType === "complete" && taskData && (
               <Button
                 leftIcon="save"
                 variant="secondary"
