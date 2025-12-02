@@ -159,7 +159,7 @@ export type RegistryTaskType =
   | "complete"
   | "cancel"
   | "report"
-  | "default";
+  | "view";
 
 export type QuickViewGroupings = Record<string, QuickViewFields>;
 export type QuickViewFields = Record<string, SparqlResponseField[]>;

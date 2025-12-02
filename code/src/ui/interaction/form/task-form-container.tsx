@@ -96,23 +96,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
-  // Map formType to RegistryTaskType
-  const getTaskType = (): RegistryTaskType => {
-    switch (props.formType) {
-      case "dispatch":
-        return "dispatch";
-      case "complete":
-        return "complete";
-      case "cancel":
-        return "cancel";
-      case "report":
-        return "report";
-      default:
-        return "default";
-    }
-  };
-
-  const taskType = getTaskType();
 
 
   // Declare a function to get the previous event occurrence enum based on the current status.
@@ -169,16 +152,16 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     triggerRefresh();
     setFormFields([]);
 
-    if (taskType === "dispatch") {
+    if (props.formType === "dispatch") {
       getFormTemplate("service", "dispatch", id);
-    } else if (taskType === "complete") {
+    } else if (props.formType === "complete") {
       getFormTemplate("service", "complete", id);
-    } else if (taskType === "report") {
+    } else if (props.formType === "report") {
       getFormTemplate("service", "report");
-    } else if (taskType === "cancel") {
+    } else if (props.formType === "cancel") {
       getFormTemplate("service", "cancel");
     }
-  }, [id, taskType]);
+  }, [id, props.formType]);
 
 
   // Handle task metadata (status, date, contract, scheduleType) from internal tasks API
@@ -231,10 +214,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   ) => {
     startLoading();
     let action = "";
-    if (taskType === "dispatch") {
+    if (props.formType === "dispatch") {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
-    } else if (taskType === "complete") {
+    } else if (props.formType === "complete") {
       if (isSaving) {
         action = "saved";
         setIsSaving(false);
@@ -242,10 +225,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         action = "complete";
       }
       formData[FORM_STATES.ORDER] = 1;
-    } else if (taskType === "cancel") {
+    } else if (props.formType === "cancel") {
       action = "cancel";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(taskData?.status ?? "");
-    } else if (taskType === "report") {
+    } else if (props.formType === "report") {
       action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(taskData?.status ?? "");
     } else {
@@ -255,7 +238,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     let response: AgentResponseBody = await submitLifecycleAction(
       formData,
       action,
-      taskType !== "dispatch" && taskType !== "complete"
+      props.formType !== "dispatch" && props.formType !== "complete"
     );
 
     if (!response?.error && isDuplicate) {
@@ -324,7 +307,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       complete: Routes.REGISTRY_TASK_COMPLETE,
       cancel: Routes.REGISTRY_TASK_CANCEL,
       report: Routes.REGISTRY_TASK_REPORT,
-      default: Routes.REGISTRY_TASK_VIEW,
+      view: Routes.REGISTRY_TASK_VIEW,
     };
 
     router.push(`${routeMap[action]}/${props.entityType}/${id}`);
@@ -346,14 +329,14 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
       {/* Scrollable Content */}
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
-        {taskType !== "default" && taskData?.date && (
+        {props.formType !== "view" && taskData?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {taskType === "complete" && dict.message.completeInstruction}
-            {taskType === "dispatch" &&
+            {props.formType === "complete" && dict.message.completeInstruction}
+            {props.formType === "dispatch" &&
               `${dict.message.dispatchInstruction} ${taskData.date}:`}
-            {taskType === "cancel" &&
+            {props.formType === "cancel" &&
               `${dict.message.cancelInstruction} ${taskData.date}:`}
-            {taskType === "report" &&
+            {props.formType === "report" &&
               `${dict.message.reportInstruction.replace(
                 "{date}",
                 taskData.date
@@ -363,7 +346,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
         {(isFetching || refreshFlag) && <FormSkeleton />}
 
-        {taskType === "default" && !(refreshFlag || isFetching) && (
+        {props.formType === "view" && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}
             entityType={props.entityType}
@@ -375,9 +358,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         {formFields?.length > 0 && !refreshFlag && (
           <FormTemplate
             entityType={
-              taskType === "report"
+              props.formType === "report"
                 ? "report"
-                : taskType === "cancel"
+                : props.formType === "cancel"
                   ? "cancellation"
                   : "dispatch"
             }
@@ -412,7 +395,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.completeTask) &&
             (taskData?.status?.toLowerCase() === "assigned" ||
               taskData?.status?.toLowerCase() === "completed") &&
-            taskType === "default" && (
+            props.formType === "view" && (
               <Button
                 leftIcon="done_outline"
                 size="md"
@@ -429,7 +412,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.operation) &&
             taskData?.status?.toLowerCase() !== "issue" &&
             taskData?.status?.toLowerCase() !== "cancelled" &&
-            taskType === "default" && (
+            props.formType === "view" && (
               <Button
                 leftIcon="assignment"
                 size="md"
@@ -446,7 +429,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.operation) &&
             (taskData?.status?.toLowerCase() === "new" ||
               taskData?.status?.toLowerCase() === "assigned") &&
-            taskType === "default" && (
+            props.formType === "view" && (
               <Button
                 variant="secondary"
                 leftIcon="cancel"
@@ -464,7 +447,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.reportTask) &&
             (taskData?.status?.toLowerCase() === "new" ||
               taskData?.status?.toLowerCase() === "assigned") &&
-            taskType === "default" && (
+            props.formType === "view" && (
               <Button
                 variant="secondary"
                 leftIcon="report"
@@ -480,12 +463,12 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             (permissionScheme.hasPermissions.completeTask &&
-              taskType === "complete") ||
+              props.formType === "complete") ||
             (permissionScheme.hasPermissions.reportTask &&
-              taskType === "report") ||
+              props.formType === "report") ||
             (permissionScheme.hasPermissions.operation &&
-              (taskType === "dispatch" || taskType === "cancel"))) &&
-            taskType !== "default" && (
+              (props.formType === "dispatch" || props.formType === "cancel"))) &&
+            props.formType !== "view" && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
@@ -493,7 +476,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 disabled={isLoading}
                 onClick={() => {
                   if (
-                    taskType === "complete" &&
+                    props.formType === "complete" &&
                     taskData?.scheduleType === dict.form.perpetualService
                   ) {
                     setIsDuplicate(true);
@@ -507,7 +490,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
-            taskType === "complete" &&
+            props.formType === "complete" &&
             taskData?.scheduleType !== dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
@@ -526,7 +509,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.saveTask) &&
-            taskType === "complete" && (
+            props.formType === "complete" && (
               <Button
                 leftIcon="save"
                 variant="secondary"
