@@ -148,12 +148,10 @@ export const defaultSearchOption: OntologyConcept = {
 };
 
 export interface RegistryTaskOption {
-  id: string;
   contract: string;
   status: string;
   date: string;
   scheduleType: string;
-  type: RegistryTaskType;
 }
 
 export type RegistryTaskType =
