@@ -101,6 +101,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           return body.data?.items?.[0] as FormTemplateType;
         });
       }
+
+      if (!template) {
+        return initialState;
+      }
+
       if (props.additionalFields) {
         props.additionalFields.forEach((field) =>
           template.property.push(field)
