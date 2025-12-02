@@ -35,7 +35,7 @@ export default async function InterceptDispatchTaskPage(
 ) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const decodedType = decodeURIComponent(resolvedParams?.type);
+  const decodedType: string = decodeURIComponent(resolvedParams?.type);
   return (
     <InterceptTaskFormContainerComponent
       entityType={decodedType}
