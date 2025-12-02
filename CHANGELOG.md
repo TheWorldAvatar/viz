@@ -2,6 +2,62 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.45.2
+
+### Changes
+
+- Added validation for geocoder coordinates to prevent map errors when invalid coordinates are provided
+- Added validation for numerical inputs only in the geocoder form section
+
+## 5.45.1
+
+### Changes
+
+- Added instructions for multi-column sorting, using Shift + Click
+
+## 5.45.0
+
+### Changes
+
+- Shift towards server-side pagination and filters
+- Bump min version of `VisBackend Agent` to `v1.19.0`
+
+## 5.44.5
+
+### Changes
+
+- Add all parameters from the GeoServer layer to the request for the feature info agent
+
+## 5.44.4
+
+### Bug fixes
+
+- Fixed overflow of the content in the quick view drop-down field
+
+## 5.44.3
+
+### Changes
+
+- Added global loading state to show a loading indicator when navigating between pages
+
+## 5.44.2
+
+### Changes
+
+- Added loading skeleton for the foerms to improve user experience during data fetching
+
+## 5.44.1
+
+### Bug Fixes
+
+- Fixed a layout issue in the headerbar where the account menu and hambureger menu were misaligned
+
+## 5.44.0
+
+### Changes
+
+- Improved redis connection failure handling for ease of debugging
+
 ## 5.43.7
 
 ### Changes

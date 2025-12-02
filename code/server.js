@@ -16,11 +16,11 @@
 import express from "express";
 import next from "next";
 
-import session, { MemoryStore } from 'express-session';
-import { createClient } from "redis"
-import { RedisStore } from 'connect-redis';
-import Keycloak from 'keycloak-connect';
 import axios from 'axios';
+import { RedisStore } from 'connect-redis';
+import session, { MemoryStore } from 'express-session';
+import Keycloak from 'keycloak-connect';
+import { createClient } from "redis";
 
 const colourReset = "\x1b[0m";
 const colourRed = "\x1b[31m";
@@ -48,7 +48,7 @@ const handle = nextApp.getRequestHandler();
 let store;
 
 // Prepare the Next.js application and then start the Express server
-nextApp.prepare().then(() => {
+nextApp.prepare().then(async () => {
     const expressServer = express();
 
     if (keycloakEnabled) { // do keycloak auth stuff if env var is set
@@ -72,12 +72,13 @@ nextApp.prepare().then(() => {
                 console.info('Error while creating Redis Client, please ensure that Redis is running and the host is specified as an environment variable if this viz app is in a Docker container');
                 console.error(error);
             }
-            redisClient.connect().catch('Error while creating Redis Client, please ensure that Redis is running and the host is specified as an environment variable if this viz app is in a Docker container', console.error);
+            await connectRedis(redisClient);
             store = new RedisStore({
                 client: redisClient,
                 prefix: "redis",
                 ttl: undefined,
             });
+
         } else {
             store = new MemoryStore(); // use in-memory store for session data in dev mode
             console.info(`development mode is:`, dev ? colourYellow : colourRed, dev, colourReset, `-> using in-memory session store (express-session MemoryStore())`);
@@ -170,3 +171,14 @@ nextApp.prepare().then(() => {
         console.info('Running at', colourGreen, `http://localhost:${port}${colourReset}`, `(on host / inside container). Development mode :${dev ? colourYellow : colourGreen}`, dev, colourReset);
     });
 });
+
+async function connectRedis(client) {
+    try {
+        await client.connect();
+        console.info(colourGreen, "Successfully connected to Redis");
+    } catch (error) {
+        console.info(colourRed, "Unable to connect to Redis at", colourGreen, `${redisHost}:${redisPort}`, colourReset)
+        console.error(error);
+        throw error;
+    }
+}

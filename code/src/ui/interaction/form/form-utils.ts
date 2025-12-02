@@ -32,7 +32,7 @@ export const FORM_STATES: Record<string, string> = {
   CONTRACT: "contract",
   ORDER: "order",
   REMARKS: "remarks",
-  RECURRENCE: "recurrence",
+  RECURRENCE: "recurrences",
   MON: "monday",
   TUES: "tuesday",
   WED: "wednesday",
@@ -499,6 +499,20 @@ export function getRegisterOptions(
       message: msg,
     };
   }
+
+  // Validate that the input is a number for decimal and integer types
+  if (field.datatype === "integer") {
+    options.pattern = {
+      value: /^-?\d+$/,
+      message: dict.message.numericalValuesOnly,
+    };
+  } else if (field.datatype === "decimal") {
+    options.pattern = {
+      value: /^-?\d*\.?\d+$/,
+      message: dict.message.numericalValuesOnly,
+    };
+  }
+
   return options;
 }
 

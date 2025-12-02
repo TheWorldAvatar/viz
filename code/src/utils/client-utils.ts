@@ -259,7 +259,6 @@ export function getNormalizedDate(date: Date): string {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
 
-
 /**
  * Get the configuration for a toast notification.
  *
@@ -268,6 +267,13 @@ export function getNormalizedDate(date: Date): string {
  */
 export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
   switch (type) {
+    case "default":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "info",
+      };
     case "success":
       return {
         bg: "bg-status-success-bg",
@@ -297,3 +303,21 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
       throw new Error(`Unsupported toast type: ${type}`);
   }
 }
+
+
+/**
+ * Validates whether the provided longitude and latitude are within acceptable ranges for Mapbox.
+ *
+ * @param lng The longitude value.
+ * @param lat The latitude value.
+ */
+export function isValidCoordinates(lng: number, lat: number): boolean {
+  return (
+    !isNaN(lng) &&
+    !isNaN(lat) &&
+    lng >= -180 &&
+    lng <= 180 &&
+    lat >= -90 &&
+    lat <= 90
+  );
+};

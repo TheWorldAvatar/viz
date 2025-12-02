@@ -1,33 +1,28 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
+import { useSelector } from "react-redux";
 import { selectDrawerIsOpen } from "state/drawer-component-slice";
-import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  RegistryFieldValues,
-  RegistryTaskOption,
+  RegistryTaskOption
 } from "types/form";
 import { UISettings } from "types/settings";
 import TaskModal from "ui/interaction/modal/task/task-modal";
-import { Status } from "ui/text/status/status";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
-  getUTCDate,
-  parseWordsForLabels,
+  parseWordsForLabels
 } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import TableSkeleton from "../skeleton/table-skeleton";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -48,146 +43,12 @@ export default function RegistryTableComponent(
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
   const { refreshFlag, triggerRefresh } = useOperationStatus();
-  const [initialInstances, setInitialInstances] = useState<
-    RegistryFieldValues[]
-  >([]);
-  const [currentInstances, setCurrentInstances] = useState<
-    RegistryFieldValues[]
-  >([]);
   const [task, setTask] = useState<RegistryTaskOption>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
-
-  const tableDescriptor: TableDescriptor = useTable(currentInstances);
-
-  // A hook that refetches all data when the dialogs are closed
-  useEffect(() => {
-    const fetchData = async (): Promise<void> => {
-      setIsLoading(true);
-      try {
-        let instances: RegistryFieldValues[] = [];
-        if (props.lifecycleStage === "report") {
-          if (pathNameEnd === props.entityType) {
-            // Fetch active contracts
-            const activeRes = await fetch(
-              makeInternalRegistryAPIwithParams(
-                "contracts",
-                "active",
-                props.entityType
-              ),
-              { cache: "no-store", credentials: "same-origin" }
-            );
-            const activeResBody: AgentResponseBody = await activeRes.json();
-            let activeInstances =
-              (activeResBody.data.items as RegistryFieldValues[]) ?? [];
-            activeInstances = activeInstances.map(
-              (contract: RegistryFieldValues) => ({
-                status: {
-                  value: parseWordsForLabels(Status.ACTIVE),
-                  type: "literal",
-                  dataType: "http://www.w3.org/2001/XMLSchema#string",
-                  lang: "",
-                },
-                ...contract,
-              })
-            );
-
-            // Fetch archived contracts
-            const archivedRes = await fetch(
-              makeInternalRegistryAPIwithParams(
-                "contracts",
-                "archive",
-                props.entityType
-              ),
-              { cache: "no-store", credentials: "same-origin" }
-            );
-            const archivedResponseBody: AgentResponseBody =
-              await archivedRes.json();
-            const archivedInstances: RegistryFieldValues[] =
-              (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
-            instances = activeInstances.concat(archivedInstances);
-          } else {
-            // Fetch service tasks for a specific contract
-            const res = await fetch(
-              makeInternalRegistryAPIwithParams(
-                "tasks",
-                props.entityType,
-                pathNameEnd
-              ),
-              {
-                cache: "no-store",
-                credentials: "same-origin",
-              }
-            );
-            const resBody: AgentResponseBody = await res.json();
-            instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-          }
-        } else if (props.lifecycleStage == "outstanding") {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams("outstanding", props.entityType),
-            { cache: "no-store", credentials: "same-origin" }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else if (
-          props.lifecycleStage == "scheduled" ||
-          props.lifecycleStage == "closed"
-        ) {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
-              props.lifecycleStage == "scheduled" ? "scheduled" : "closed",
-              props.entityType,
-              getUTCDate((selectedDate as DateRange).from)
-                .getTime()
-                .toString(),
-              getUTCDate((selectedDate as DateRange).to)
-                .getTime()
-                .toString()
-            ),
-            {
-              cache: "no-store",
-              credentials: "same-origin",
-            }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else if (props.lifecycleStage == "general") {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
-              "instances",
-              props.entityType,
-              "true"
-            ),
-            { cache: "no-store", credentials: "same-origin" }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        } else {
-          const res = await fetch(
-            makeInternalRegistryAPIwithParams(
-              "contracts",
-              props.lifecycleStage.toString(),
-              props.entityType
-            ),
-            { cache: "no-store", credentials: "same-origin" }
-          );
-          const resBody: AgentResponseBody = await res.json();
-          instances = (resBody.data?.items as RegistryFieldValues[]) ?? [];
-        }
-        setInitialInstances(instances);
-        setCurrentInstances(instances);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching instances", error);
-      }
-    };
-
-    // Trigger fetchData when refreshFlag, or selectedDate (range) changes
-    fetchData();
-  }, [selectedDate, refreshFlag]);
+  const tableDescriptor: TableDescriptor = useTable(pathNameEnd, props.entityType, refreshFlag, props.lifecycleStage, selectedDate);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
@@ -212,20 +73,20 @@ export default function RegistryTableComponent(
           selectedDate={selectedDate as DateRange}
           setSelectedDate={setSelectedDate}
           lifecycleStage={props.lifecycleStage}
-          instances={initialInstances}
+          instances={tableDescriptor.initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
           uiSettings={props.uiSettings}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
-        {refreshFlag || isLoading ? (
+        {refreshFlag || tableDescriptor.isLoading ? (
           <TableSkeleton />
-        ) : currentInstances.length > 0 ? (
+        ) : tableDescriptor.data?.length > 0 ? (
           <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
-            instances={currentInstances}
+            selectedDate={selectedDate}
             setTask={setTask}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}

@@ -207,7 +207,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               className="text-lg font-bold flex gap-4"
               htmlFor="select-input"
             >
-              {dict.title.serviceType}
+              {parseWordsForLabels(dict.title.scheduleType)}
               <Tooltip text={serviceDescription} placement="right">
                 <Icon className="material-symbols-outlined">{"info"}</Icon>
               </Tooltip>

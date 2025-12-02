@@ -27,8 +27,7 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  RegistryFieldValues,
-  RegistryTaskOption,
+  RegistryTaskOption
 } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
@@ -46,12 +45,12 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { parseRowsForFilterOptions } from "./registry-table-utils";
+import { DateRange } from "react-day-picker";
 
 interface RegistryTableProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
-  instances: RegistryFieldValues[];
+  selectedDate: DateRange;
   setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
@@ -62,7 +61,7 @@ interface RegistryTableProps {
  *
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {RegistryFieldValues[]} instances The instance values for the table.
+ * @param {DateRange} selectedDate The currently selected date.
  * @param setTask A dispatch method to set the task option when required.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
@@ -262,10 +261,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   </PopoverActionButton>
                                 }
                                 {allowMultipleSelection && <Checkbox
-                                  ariaLabel={dict.action.selectAll}
+                                  aria-label={dict.action.selectAll}
                                   disabled={isLoading}
                                   checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
-                                  onChange={(checked) => {
+                                  handleChange={(checked) => {
                                     props.tableDescriptor.table.getRowModel().rows.forEach(row => {
                                       row.toggleSelected(checked);
                                     });
@@ -277,24 +276,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               return (
                                 <HeaderCell
                                   key={header.id + index}
+                                  type={props.recordType}
+                                  table={props.tableDescriptor.table}
                                   header={header}
-                                  options={Array.from(
-                                    new Set(
-                                      parseRowsForFilterOptions(
-                                        !props.tableDescriptor
-                                          .firstActiveFilter ||
-                                          props.tableDescriptor
-                                            .firstActiveFilter === header.id
-                                          ? props.tableDescriptor.table.getCoreRowModel()
-                                            .flatRows
-                                          : props.tableDescriptor.table.getFilteredRowModel()
-                                            .flatRows,
-                                        header.id,
-                                        dict
-                                      )
-                                    )
-                                  )}
-                                  resetRowSelection={props.tableDescriptor.table.resetRowSelection}
+                                  lifecycleStage={props.lifecycleStage}
+                                  selectedDate={props.selectedDate}
+                                  filters={props.tableDescriptor.filters}
                                 />
                               );
                             })}
@@ -324,7 +311,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     setTask={props.setTask}
                                     triggerRefresh={props.triggerRefresh}
                                   />
-                                  {allowMultipleSelection && <Checkbox ariaLabel={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} onChange={(checked) => row.toggleSelected(checked)} />}
+                                  {allowMultipleSelection && <Checkbox aria-label={row.id} className="ml-2" disabled={isLoading} checked={row.getIsSelected()} handleChange={(checked) => row.toggleSelected(checked)} />}
                                 </div>
                               </TableCell>
                               {row.getVisibleCells().map((cell, index) => (
@@ -351,9 +338,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </div>
             </div>
           </div>
-          <TablePagination
-            table={props.tableDescriptor.table}
-          />
+          <TablePagination rows={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
