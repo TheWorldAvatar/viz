@@ -39,8 +39,8 @@ export default function RegistryRowAction(
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
     : props.row.id
-    ? getId(props.row.id)
-    : getId(props.row.iri);
+      ? getId(props.row.id)
+      : getId(props.row.iri);
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -100,15 +100,9 @@ export default function RegistryRowAction(
     props.triggerRefresh();
   };
 
-  // Build task URL with query params for date, status, contract, scheduleType
+  // Build task URL
   const buildTaskUrl = (route: string): string => {
-    const params = new URLSearchParams({
-      date: props.row.date || "",
-      status: props.row.status || "",
-      contract: props.row.id || "",
-      scheduleType: props.row[dict.title.scheduleType] || "",
-    });
-    return `${route}/${props.recordType}/${recordId}?${params.toString()}`;
+    return `${route}/${props.recordType}/${recordId}`;
   };
 
   const handleClickView = (): void => {

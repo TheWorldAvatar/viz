@@ -15,7 +15,7 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
-import  { useState } from "react";
+import { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
@@ -70,8 +70,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
   const numberOfSelectedRows: number = props.tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
-      (row) => (row.original.status as string)?.toLowerCase() === "amended"
-    );
+    (row) => (row.original.status as string)?.toLowerCase() === "amended"
+  );
   const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
 
   const onRowClick = (row: FieldValues) => {
@@ -79,8 +79,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     const recordId: string = row.event_id
       ? getId(row.event_id)
       : row.id
-      ? getId(row.id)
-      : getId(row.iri);
+        ? getId(row.id)
+        : getId(row.iri);
     if (
       props.lifecycleStage === "tasks" ||
       props.lifecycleStage === "report" ||
@@ -88,13 +88,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"
     ) {
-      // Build task URL with query params for date, status, contract, scheduleType
-      const params: URLSearchParams = new URLSearchParams({
-        date: row.date || "",
-        status: row.status || "",
-        contract: row.id || "",
-        scheduleType: row[dict.title.scheduleType] || "",
-      });
 
       // Determine the appropriate task route based on status and permissions
       let taskRoute: string;
@@ -117,7 +110,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
-      router.push(`${taskRoute}/${props.recordType}/${recordId}?${params.toString()}`);
+      router.push(`${taskRoute}/${props.recordType}/${recordId}`);
     } else {
       const registryRoute: string =
         !keycloakEnabled ||
@@ -252,13 +245,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                         !permissionScheme ||
                                         permissionScheme.hasPermissions
                                           .draftTemplate) && (
-                                        <DraftTemplateButton
-                                          rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
-                                          recordType={props.recordType}
-                                          triggerRefresh={props.triggerRefresh}
-                                          resetRowSelection={props.tableDescriptor.table.resetRowSelection}
-                                        />
-                                      )}
+                                          <DraftTemplateButton
+                                            rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
+                                            recordType={props.recordType}
+                                            triggerRefresh={props.triggerRefresh}
+                                            resetRowSelection={props.tableDescriptor.table.resetRowSelection}
+                                          />
+                                        )}
                                     </div>
                                   </PopoverActionButton>
                                 )}
@@ -269,8 +262,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
                                     handleChange={(checked) => {
                                       props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
-                                          row.toggleSelected(checked);
-                                        });
+                                        row.toggleSelected(checked);
+                                      });
                                     }}
                                   />
                                 )}
@@ -300,49 +293,49 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           strategy={verticalListSortingStrategy}
                         >
                           {props.tableDescriptor.table.getRowModel().rows.map((row, index) => (
-                              <TableRow
-                                key={row.id + index}
-                                id={row.id}
-                                isHeader={false}
-                              >
-                                <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                                  <div className="flex gap-0.5">
-                                    <DragActionHandle disabled={isLoading} id={row.id} />
-                                    <RegistryRowAction
-                                      recordType={props.recordType}
-                                      lifecycleStage={props.lifecycleStage}
-                                      row={row.original}
-                                      triggerRefresh={props.triggerRefresh}
+                            <TableRow
+                              key={row.id + index}
+                              id={row.id}
+                              isHeader={false}
+                            >
+                              <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
+                                <div className="flex gap-0.5">
+                                  <DragActionHandle disabled={isLoading} id={row.id} />
+                                  <RegistryRowAction
+                                    recordType={props.recordType}
+                                    lifecycleStage={props.lifecycleStage}
+                                    row={row.original}
+                                    triggerRefresh={props.triggerRefresh}
+                                  />
+                                  {allowMultipleSelection && (
+                                    <Checkbox
+                                      aria-label={row.id}
+                                      className="ml-2"
+                                      disabled={isLoading}
+                                      checked={row.getIsSelected()}
+                                      handleChange={(checked) =>
+                                        row.toggleSelected(checked)
+                                      }
                                     />
-                                    {allowMultipleSelection && (
-                                      <Checkbox
-                                        aria-label={row.id}
-                                        className="ml-2"
-                                        disabled={isLoading}
-                                        checked={row.getIsSelected()}
-                                        handleChange={(checked) =>
-                                          row.toggleSelected(checked)
-                                        }
-                                      />
-                                    )}
-                                  </div>
+                                  )}
+                                </div>
+                              </TableCell>
+                              {row.getVisibleCells().map((cell, index) => (
+                                <TableCell
+                                  key={cell.id + index}
+                                  width={cell.column.getSize()}
+                                  onClick={() =>
+                                    onRowClick(row.original as FieldValues)
+                                  }
+                                >
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                  )}
                                 </TableCell>
-                                {row.getVisibleCells().map((cell, index) => (
-                                  <TableCell
-                                    key={cell.id + index}
-                                    width={cell.column.getSize()}
-                                    onClick={() =>
-                                      onRowClick(row.original as FieldValues)
-                                    }
-                                  >
-                                    {flexRender(
-                                      cell.column.columnDef.cell,
-                                      cell.getContext()
-                                    )}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            ))}
+                              ))}
+                            </TableRow>
+                          ))}
                         </SortableContext>
                       )}
                     </tbody>
