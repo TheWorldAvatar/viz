@@ -19,6 +19,7 @@ import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "state/drawer-component-slice";
@@ -45,7 +46,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { DateRange } from "react-day-picker";
 
 interface RegistryTableProps {
   recordType: string;
@@ -96,7 +96,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         : row.iri;
     if (
       props.lifecycleStage === "tasks" ||
-      props.lifecycleStage === "report" ||
       props.lifecycleStage === "outstanding" ||
       props.lifecycleStage === "scheduled" ||
       props.lifecycleStage === "closed"

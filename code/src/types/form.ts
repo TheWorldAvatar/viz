@@ -12,13 +12,12 @@ export type LifecycleStage =
   | "pending"
   | "active"
   | "archive"
-  | "report"
   | "tasks"
   | "outstanding"
   | "scheduled"
   | "closed"
-  | "account" 
-  | "activity" 
+  | "account"
+  | "activity"
   | "pricing";
 
 export type FormType = "add" | "delete" | "edit" | "view" | "search";

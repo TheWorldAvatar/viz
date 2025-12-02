@@ -11,11 +11,9 @@ import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
-import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import DateInput from "ui/interaction/input/date-input";
-import { parseWordsForLabels } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 
@@ -219,25 +217,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
-              />
-            )}
-          {props.lifecycleStage == "report" && (
-            <ReturnButton
-              leftIcon="first_page"
-              label={dict.action.backTo.replace(
-                "{replace}",
-                props.entityType.replace("_", " ")
-              )}
-            />
-          )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.invoice) &&
-            props.lifecycleStage == "report" && (
-              <RedirectButton
-                leftIcon="print"
-                label={dict.action.generateReport}
-                url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
               />
             )}
           {(!keycloakEnabled ||

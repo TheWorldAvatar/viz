@@ -7,7 +7,7 @@ import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
-import { getUTCDate, parseWordsForLabels } from "utils/client-utils";
+import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface TableDataDescriptor {
@@ -55,116 +55,60 @@ export function useTableData(
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (lifecycleStage === "report") {
-          if (pathNameEnd === entityType) {
-            // Fetch active contracts
-            const activeResBody: AgentResponseBody = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(
-                "contracts",
-                "active",
-                entityType,
-                apiPagination.pageIndex.toString(),
-                apiPagination.pageSize.toString(),
-                sortParams,
-                filterParams,
-              ));
-            let activeInstances =
-              (activeResBody.data.items as RegistryFieldValues[]) ?? [];
-            activeInstances = activeInstances.map(
-              (contract: RegistryFieldValues) => ({
-                status: {
-                  value: parseWordsForLabels("active"),
-                  type: "literal",
-                  dataType: "http://www.w3.org/2001/XMLSchema#string",
-                  lang: "",
-                },
-                ...contract,
-              })
-            );
-
-            // Fetch archived contracts
-            const archivedResponseBody: AgentResponseBody = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(
-                "contracts",
-                "archive",
-                entityType,
-                apiPagination.pageIndex.toString(),
-                apiPagination.pageSize.toString(),
-                sortParams,
-                filterParams,
-              ));
-            const archivedInstances: RegistryFieldValues[] =
-              (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
-            instances = activeInstances.concat(archivedInstances);
-          } else {
-            // Fetch service tasks for a specific contract
-            const res: AgentResponseBody = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(
-                "tasks",
-                entityType,
-                pathNameEnd,
-                apiPagination.pageIndex.toString(),
-                apiPagination.pageSize.toString(),
-                sortParams,
-                filterParams,
-              ));
-            instances = (res.data?.items as RegistryFieldValues[]) ?? [];
-          }
+        let url: string;
+        if (lifecycleStage == "outstanding") {
+          url = makeInternalRegistryAPIwithParams(
+            "outstanding",
+            entityType,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (
+          lifecycleStage == "scheduled" ||
+          lifecycleStage == "closed" ||
+          lifecycleStage == "activity"
+        ) {
+          url = makeInternalRegistryAPIwithParams(
+            lifecycleStage,
+            entityType,
+            getUTCDate(selectedDate.from).getTime().toString(),
+            getUTCDate(selectedDate.to).getTime().toString(),
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (
+          lifecycleStage == "general" ||
+          lifecycleStage == "account" ||
+          lifecycleStage == "pricing") {
+          url = makeInternalRegistryAPIwithParams(
+            "instances",
+            entityType,
+            "true",
+            null,
+            null,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
         } else {
-          let url: string;
-          if (lifecycleStage == "outstanding") {
-            url = makeInternalRegistryAPIwithParams(
-              "outstanding",
-              entityType,
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          } else if (
-            lifecycleStage == "scheduled" ||
-            lifecycleStage == "closed" ||
-            lifecycleStage == "activity"
-          ) {
-            url = makeInternalRegistryAPIwithParams(
-              lifecycleStage,
-              entityType,
-              getUTCDate(selectedDate.from).getTime().toString(),
-              getUTCDate(selectedDate.to).getTime().toString(),
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          } else if (
-            lifecycleStage == "general" ||
-            lifecycleStage == "account" ||
-            lifecycleStage == "pricing") {
-            url = makeInternalRegistryAPIwithParams(
-              "instances",
-              entityType,
-              "true",
-              null,
-              null,
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          } else {
-            url = makeInternalRegistryAPIwithParams(
-              "contracts",
-              lifecycleStage.toString(),
-              entityType,
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          }
-          const res: AgentResponseBody = await queryInternalApi(url);
-          instances = (res.data?.items as RegistryFieldValues[]) ?? [];
+          url = makeInternalRegistryAPIwithParams(
+            "contracts",
+            lifecycleStage.toString(),
+            entityType,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
         }
+        const res: AgentResponseBody = await queryInternalApi(url);
+        instances = (res.data?.items as RegistryFieldValues[]) ?? [];
+
         setInitialInstances(instances);
         const parsedData: TableData = parseDataForTable(instances, dict.title);
         setData({
