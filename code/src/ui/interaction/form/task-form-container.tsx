@@ -299,17 +299,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     return response;
   };
 
-  // Navigate to a different task action with query params
+  // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    const routeMap: Record<RegistryTaskType, string> = {
-      dispatch: Routes.REGISTRY_TASK_DISPATCH,
-      complete: Routes.REGISTRY_TASK_COMPLETE,
-      cancel: Routes.REGISTRY_TASK_CANCEL,
-      report: Routes.REGISTRY_TASK_REPORT,
-      view: Routes.REGISTRY_TASK_VIEW,
-    };
-
-    router.push(`${routeMap[action]}/${props.entityType}/${id}`);
+    router.push(`${Routes.REGISTRY_TASK}/${action}/${props.entityType}/${id}`);
   };
 
   return (
