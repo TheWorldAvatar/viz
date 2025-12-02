@@ -381,6 +381,10 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
+    case "task": {
+      const id: string = searchParams.get("id");
+      return `${agentBaseApi}/contracts/task/${id}`
+    }
     case "outstanding": {
       const contractType: string = searchParams.get("type");
       const page: string = searchParams.get("page");

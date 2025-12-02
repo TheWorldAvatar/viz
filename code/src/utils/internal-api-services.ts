@@ -114,6 +114,11 @@ export function makeInternalRegistryAPIwithParams(
         filters: params[2],
       });
       break;
+    case "task":
+      searchParams = new URLSearchParams({
+        id: params[0],
+      });
+      break;
     case "outstanding":
       searchParams = new URLSearchParams({
         type: params[0],
