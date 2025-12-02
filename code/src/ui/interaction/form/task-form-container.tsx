@@ -30,7 +30,7 @@ import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -170,14 +170,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     const fetchTask = async (): Promise<void> => {
       setIsFetching(true);
       try {
-        const res = await fetch(
-          makeInternalRegistryAPIwithParams("task", id),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
+        const resBody: AgentResponseBody = await queryInternalApi(
+          makeInternalRegistryAPIwithParams("task", id)
         );
-        const resBody: AgentResponseBody = await res.json();
         const itemData: Record<string, SparqlResponseField> = resBody.data?.items?.[0] as Record<string, SparqlResponseField>;
         const item: RegistryTaskOption = {
           contract: itemData.contract.value,
