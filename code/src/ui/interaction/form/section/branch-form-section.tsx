@@ -18,6 +18,7 @@ import SimpleSelector, {
 import { parseWordsForLabels } from "utils/client-utils";
 import { renderFormField } from "../form";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "../form-utils";
+import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 
 interface OptionBasedFormSectionProps {
   entityType: string;
@@ -66,14 +67,14 @@ export default function BranchFormSection(
       const initialBranchName: string = initialNode.label[VALUE_KEY];
 
       if (formType === "delete") {
-        props.form.setValue("branch_delete", initialBranchName);
+        props.form.setValue(BRANCH_DELETE, initialBranchName);
       } else if (formType === "edit") {
         // Set both values - branch_add for new, branch_delete for original
-        props.form.setValue("branch_add", initialBranchName);
-        props.form.setValue("branch_delete", initialBranchName);
-      } else {
+        props.form.setValue(BRANCH_ADD, initialBranchName);
+        props.form.setValue(BRANCH_DELETE, initialBranchName);
+      } else if (formType === "add") {
         // For add forms
-        props.form.setValue("branch_add", initialBranchName);
+        props.form.setValue(BRANCH_ADD, initialBranchName);
       }
     }
   }, [props.node, props.form]);
@@ -85,12 +86,12 @@ export default function BranchFormSection(
 
     if (formType === "edit") {
       //  branch_add is the new selection, branch_delete stays as original
-      props.form.setValue("branch_add", newBranchName);
+      props.form.setValue(BRANCH_ADD, newBranchName);
       // branch_delete remains the original value (already set in useEffect)
     } else if (formType === "delete") {
-      props.form.setValue("branch_delete", newBranchName);
-    } else {
-      props.form.setValue("branch_add", newBranchName);
+      props.form.setValue(BRANCH_DELETE, newBranchName);
+    } else if (formType === "add") {
+      props.form.setValue(BRANCH_ADD, newBranchName);
     }
 
     setIsSwitching(true);
