@@ -268,12 +268,15 @@ function makeExternalEndpoint(
         return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}${filters}`;
       }
       let params: string = "";
-      if (lifecycle == "scheduled" || lifecycle == "closed") {
+      if (lifecycle == "scheduled" || lifecycle == "closed" || lifecycle == "activity") {
         const startDate: string = searchParams.get("start_date");
         const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
         const endDate: string = searchParams.get("end_date");
         const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
         params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
+      }
+      if (lifecycle == "activity") {
+        return `${agentBaseApi}/report/task/count?type=${type}${params}${filters}`;
       }
       return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
     }
@@ -331,11 +334,14 @@ function makeExternalEndpoint(
         return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}${filters}`;
       } else if (lifecycle == "outstanding") {
         return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}${filters}`;
-      } else if (lifecycle == "scheduled" || lifecycle == "closed") {
+      } else if (lifecycle == "scheduled" || lifecycle == "closed" || lifecycle == "activity") {
         const startDate: string = searchParams.get("start_date");
         const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
         const endDate: string = searchParams.get("end_date");
         const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
+        if (lifecycle == "activity") {
+          return `${agentBaseApi}/report/task/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
+        }
         return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
       }
       return "";
@@ -389,6 +395,7 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
+    case "activity":
     case "scheduled":
     case "closed": {
       const contractType: string = searchParams.get("type");
@@ -400,7 +407,9 @@ function makeExternalEndpoint(
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const filters: string = encodeFilters(searchParams.get("filters"));
-
+      if (slug == "activity") {
+        return `${agentBaseApi}/report/task?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+      }
       return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     default:

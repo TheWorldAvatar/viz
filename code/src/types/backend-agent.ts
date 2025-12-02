@@ -14,6 +14,7 @@ export type AgentResponseBody = {
 
 export type InternalApiIdentifier =
   | "address"
+  | "activity"
   | "concept"
   | "contracts"
   | "contract_status"

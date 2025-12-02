@@ -39,8 +39,7 @@ export function useTotalRowCount(
         let url: string;
         if (lifecycleStage == "general" ||
           lifecycleStage == "account" ||
-          lifecycleStage == "pricing" ||
-          lifecycleStage == "activity") {
+          lifecycleStage == "pricing") {
           url = makeInternalRegistryAPIwithParams(
             "count",
             entityType,
@@ -48,7 +47,8 @@ export function useTotalRowCount(
           );
         } else if (
           lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed") {
+          lifecycleStage == "closed" ||
+          lifecycleStage == "activity") {
           url = makeInternalRegistryAPIwithParams(
             "count",
             entityType,

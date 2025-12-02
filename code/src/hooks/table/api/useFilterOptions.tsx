@@ -57,7 +57,8 @@ export function useFilterOptions(
         let url: string;
         if (
           lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed"
+          lifecycleStage == "closed" ||
+          lifecycleStage == "activity"
         ) {
           url = makeInternalRegistryAPIwithParams(
             "filter",
@@ -72,8 +73,7 @@ export function useFilterOptions(
         } else {
           let parsedStage: string = lifecycleStage;
           if (lifecycleStage == "account" ||
-            lifecycleStage == "pricing" ||
-            lifecycleStage == "activity") {
+            lifecycleStage == "pricing") {
             parsedStage = "general";
           }
           url = makeInternalRegistryAPIwithParams(

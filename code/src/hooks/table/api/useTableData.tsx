@@ -123,10 +123,11 @@ export function useTableData(
             );
           } else if (
             lifecycleStage == "scheduled" ||
-            lifecycleStage == "closed"
+            lifecycleStage == "closed" ||
+            lifecycleStage == "activity"
           ) {
             url = makeInternalRegistryAPIwithParams(
-              lifecycleStage == "scheduled" ? "scheduled" : "closed",
+              lifecycleStage,
               entityType,
               getUTCDate(selectedDate.from).getTime().toString(),
               getUTCDate(selectedDate.to).getTime().toString(),
@@ -138,8 +139,7 @@ export function useTableData(
           } else if (
             lifecycleStage == "general" ||
             lifecycleStage == "account" ||
-            lifecycleStage == "pricing" ||
-            lifecycleStage == "activity") {
+            lifecycleStage == "pricing") {
             url = makeInternalRegistryAPIwithParams(
               "instances",
               entityType,

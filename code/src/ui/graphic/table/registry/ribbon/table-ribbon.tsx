@@ -172,7 +172,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             onClick={triggerRefresh}
           />
           {(props.lifecycleStage == "scheduled" ||
-            props.lifecycleStage == "closed") && (
+            props.lifecycleStage == "closed" ||
+            props.lifecycleStage == "activity") && (
               <DateInput
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
