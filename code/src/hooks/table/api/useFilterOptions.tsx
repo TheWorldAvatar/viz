@@ -70,13 +70,19 @@ export function useFilterOptions(
             getUTCDate(selectedDate.to).getTime().toString(),
           );
         } else {
+          let parsedStage: string = lifecycleStage;
+          if (lifecycleStage == "account" ||
+            lifecycleStage == "pricing" ||
+            lifecycleStage == "activity") {
+            parsedStage = "general";
+          }
           url = makeInternalRegistryAPIwithParams(
             "filter",
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
             debouncedSearch,
             filterParams,
-            lifecycleStage,
+            parsedStage,
           );
         }
         const res: AgentResponseBody = await queryInternalApi(url);

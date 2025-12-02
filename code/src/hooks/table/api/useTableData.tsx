@@ -135,7 +135,11 @@ export function useTableData(
               sortParams,
               filterParams,
             );
-          } else if (lifecycleStage == "general") {
+          } else if (
+            lifecycleStage == "general" ||
+            lifecycleStage == "account" ||
+            lifecycleStage == "pricing" ||
+            lifecycleStage == "activity") {
             url = makeInternalRegistryAPIwithParams(
               "instances",
               entityType,

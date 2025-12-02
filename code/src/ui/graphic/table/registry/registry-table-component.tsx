@@ -13,7 +13,6 @@ import {
   LifecycleStage,
   RegistryTaskOption
 } from "types/form";
-import { UISettings } from "types/settings";
 import TaskModal from "ui/interaction/modal/task/task-modal";
 import {
   getAfterDelimiter,
@@ -27,7 +26,6 @@ import TableRibbon from "./ribbon/table-ribbon";
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
-  uiSettings: UISettings;
 }
 
 /**
@@ -65,7 +63,10 @@ export default function RegistryTableComponent(
     <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 md:p-4 h-dvh">
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
-          {parseWordsForLabels(props.entityType)}
+          {props.lifecycleStage === "account" ||
+            props.lifecycleStage === "pricing" ||
+            props.lifecycleStage === "activity" ? dict.nav.title.billing
+            : parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
           path={pathNameEnd}
@@ -76,7 +77,6 @@ export default function RegistryTableComponent(
           instances={tableDescriptor.initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
-          uiSettings={props.uiSettings}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">

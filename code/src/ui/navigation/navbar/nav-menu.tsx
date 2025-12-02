@@ -243,7 +243,7 @@ function NavMenuContents(
         <NavBarItem
           title={billingLinkProps?.title ?? dict.nav.title.billing}
           icon="receipt_long"
-          url={Routes.BILLING_BILLING_ACCOUNTS}
+          url={Routes.BILLING_ACCOUNTS}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={

@@ -31,6 +31,7 @@ export type UISettings = {
 
 export interface ResourcesPathSettings {
   type: string;
+  key?: string;
   icon?: string;
 }
 

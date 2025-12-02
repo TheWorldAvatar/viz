@@ -9,16 +9,15 @@ import { DateRange } from "react-day-picker";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { UISettings } from "types/settings";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
+import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import DateInput from "ui/interaction/input/date-input";
-import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
+import { parseWordsForLabels } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 
 interface TableRibbonProps {
   path: string;
@@ -29,7 +28,6 @@ interface TableRibbonProps {
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
-  uiSettings: UISettings;
 }
 
 /**
@@ -52,18 +50,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
-  const isBillingEntity =
-    props.uiSettings.modules.billing &&
-    props.uiSettings.resources?.billing?.paths?.some(
-      (path) =>
-        path.type === props.entityType ||
-        parseStringsForUrls(path.type) === props.entityType
-    );
+  const isBillingStage: boolean = props.lifecycleStage === "account" ||
+    props.lifecycleStage === "pricing" ||
+    props.lifecycleStage === "activity";
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
-      {props.lifecycleStage !== "general" &&
-        !isBillingEntity &&
+      {props.lifecycleStage !== "general" && !isBillingStage &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -71,19 +64,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <div className="flex flex-wrap items-center justify-between sm:gap-4 gap-1">
               {(!keycloakEnabled ||
                 permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.pending}
-                    leftIcon="free_cancellation"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "pending" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                  />
-                </div>
-              )}
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.pending}
+                      leftIcon="free_cancellation"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "pending" ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                )}
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.outstanding}
@@ -123,32 +116,48 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           </div>
         )}
-      {props.lifecycleStage === "general" &&
-        isBillingEntity &&
+      {isBillingStage &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
           <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 border border-border ">
             <div className="flex flex-wrap items-center justify-between sm:gap-4 gap-1">
-              {props.uiSettings.modules.billing &&
-                props.uiSettings.resources?.billing?.paths?.map(
-                  (path, index) => (
-                    <div key={path.type + index} className="sm:w-auto">
-                      <RedirectButton
-                        label={parseWordsForLabels(path.type)}
-                        leftIcon={path.icon ?? "account_balance_wallet"}
-                        hasMobileIcon={false}
-                        url={`${Routes.BILLING}/${parseStringsForUrls(
-                          path.type
-                        )}`}
-                        variant={
-                          props.entityType === path.type ? "active" : "ghost"
-                        }
-                        className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                      />
-                    </div>
-                  )
-                )}
+              <div className="sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.accounts}
+                  leftIcon={"account_balance_wallet"}
+                  hasMobileIcon={false}
+                  url={Routes.BILLING_ACCOUNTS}
+                  variant={
+                    props.lifecycleStage === "account" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+              <div className="sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.pricing}
+                  leftIcon={"account_balance_wallet"}
+                  hasMobileIcon={false}
+                  url={Routes.BILLING_PRICING_MODELS}
+                  variant={
+                    props.lifecycleStage === "pricing" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+              <div className="sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.activities}
+                  leftIcon={"account_balance_wallet"}
+                  hasMobileIcon={false}
+                  url={Routes.BILLING_ACTIVITY}
+                  variant={
+                    props.lifecycleStage === "activity" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
             </div>
           </div>
         )}
@@ -164,12 +173,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
-            <DateInput
-              selectedDate={props.selectedDate}
-              setSelectedDateRange={props.setSelectedDate}
-              disabledDates={getDisabledDates(props.lifecycleStage)}
-            />
-          )}
+              <DateInput
+                selectedDate={props.selectedDate}
+                setSelectedDateRange={props.setSelectedDate}
+                disabledDates={getDisabledDates(props.lifecycleStage)}
+              />
+            )}
         </div>
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
           {props.tableDescriptor.table
@@ -177,19 +186,19 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             .columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
             ) && (
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="medium"
-              className="mt-1"
-              size="icon"
-              onClick={() => {
-                props.tableDescriptor.table.resetColumnFilters();
-                props.tableDescriptor.table.resetRowSelection();
-              }}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          )}
+              <Button
+                leftIcon="filter_list_off"
+                iconSize="medium"
+                className="mt-1"
+                size="icon"
+                onClick={() => {
+                  props.tableDescriptor.table.resetColumnFilters();
+                  props.tableDescriptor.table.resetRowSelection();
+                }}
+                tooltipText={dict.action.clearAllFilters}
+                variant="destructive"
+              />
+            )}
           {props.instances.length > 0 && (
             <ColumnToggle
               columns={props.tableDescriptor.table.getAllLeafColumns()}
@@ -199,7 +208,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             (props.lifecycleStage == "pending" ||
-              props.lifecycleStage == "general") && (
+              props.lifecycleStage == "general" ||
+              isBillingStage) && (
               <RedirectButton
                 leftIcon="add"
                 size="icon"
@@ -232,20 +242,20 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-            <DownloadButton instances={props.instances} />
-          )}
+              <DownloadButton instances={props.instances} />
+            )}
         </div>
       </div>
-      {isBillingEntity && props.entityType === "pricing" && (
+      {props.lifecycleStage === "pricing" && (
         <div className="flex justify-start">
-         <div className="md:w-[300px]">
-           <MultivalueSelector
-             title="Billing Accounts"
-             options={[]}
-           />
-         </div>
-       </div>
-      )}  
+          <div className="md:w-[300px]">
+            <MultivalueSelector
+              title="Billing Accounts"
+              options={[]}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -16,7 +16,10 @@ export type LifecycleStage =
   | "tasks"
   | "outstanding"
   | "scheduled"
-  | "closed";
+  | "closed"
+  | "account" 
+  | "activity" 
+  | "pricing";
 
 export type FormType = "add" | "delete" | "edit" | "view" | "search";
 
