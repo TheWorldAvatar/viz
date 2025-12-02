@@ -368,7 +368,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             formRef={formRef}
             entityType={props.entityType}
             formType={"view"}
-            id={getAfterDelimiter(taskData?.contract, "/")}
+            id={taskData ? getAfterDelimiter(taskData.contract, "/") : ""}
           />
         )}
 
