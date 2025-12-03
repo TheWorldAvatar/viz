@@ -29,8 +29,9 @@ import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, parseWordsForLabels, buildUrl } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -171,7 +172,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       setIsFetching(true);
       try {
         const resBody: AgentResponseBody = await queryInternalApi(
-          makeInternalRegistryAPIwithParams("task", id)
+          makeInternalRegistryAPIwithParams("tasks", "task", id)
         );
         const itemData: Record<string, SparqlResponseField> = resBody.data?.items?.[0] as Record<string, SparqlResponseField>;
         const item: RegistryTaskOption = {
@@ -296,7 +297,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    router.push(`${Routes.REGISTRY_TASK}/${action}/${props.entityType}/${id}`);
+    router.push(buildUrl(Routes.REGISTRY_TASK, action, props.entityType, id));
   };
 
   return (

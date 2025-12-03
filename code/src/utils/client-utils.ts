@@ -321,3 +321,15 @@ export function isValidCoordinates(lng: number, lat: number): boolean {
     lat <= 90
   );
 };
+
+
+
+/**
+ * Builds a URL by concatenating the provided arguments with '/' as a separator.
+ *
+ * @param args The parts of the URL to concatenate.
+ */
+
+export function buildUrl(...args: string[]): string {
+  return args.join("/");
+};

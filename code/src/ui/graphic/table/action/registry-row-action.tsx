@@ -16,6 +16,7 @@ import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { buildUrl } from "utils/client-utils";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -100,10 +101,6 @@ export default function RegistryRowAction(
     props.triggerRefresh();
   };
 
-  // Build task URL
-  const buildTaskUrl = (route: string): string => {
-    return `${route}/${props.recordType}/${recordId}`;
-  };
 
   const handleClickView = (): void => {
     if (
@@ -114,10 +111,10 @@ export default function RegistryRowAction(
       props.lifecycleStage == "closed"
     ) {
       // Navigate to task view modal route
-      router.push(buildTaskUrl(Routes.REGISTRY_TASK_VIEW));
+      router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, props.recordType, recordId));
     } else {
       // Move to the view modal page for the specific record
-      router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
+      router.push(buildUrl(Routes.REGISTRY, props.recordType, recordId));
     }
   };
 
@@ -165,7 +162,7 @@ export default function RegistryRowAction(
                     label={dict.action.cancel}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildTaskUrl(Routes.REGISTRY_TASK_CANCEL));
+                      router.push(buildUrl(Routes.REGISTRY_TASK_CANCEL, props.recordType, recordId));
                     }}
                   />
                 )}
@@ -218,7 +215,7 @@ export default function RegistryRowAction(
                     onClick={() => {
                       setIsActionMenuOpen(false);
                       router.push(
-                        `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
+                        buildUrl(Routes.REGISTRY_EDIT, props.recordType, recordId)
                       );
                     }}
                   />
@@ -239,7 +236,7 @@ export default function RegistryRowAction(
                     onClick={() => {
                       setIsActionMenuOpen(false);
                       router.push(
-                        `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
+                        buildUrl(Routes.REGISTRY_DELETE, props.recordType, recordId)
                       );
                     }}
                   />
@@ -257,7 +254,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  router.push(buildTaskUrl(Routes.REGISTRY_TASK_VIEW));
+                  router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, props.recordType, recordId));
                 }}
               />
               {(!keycloakEnabled ||
@@ -277,7 +274,7 @@ export default function RegistryRowAction(
                     label={dict.action.complete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildTaskUrl(Routes.REGISTRY_TASK_COMPLETE));
+                      router.push(buildUrl(Routes.REGISTRY_TASK_COMPLETE, props.recordType, recordId));
                     }}
                   />
                 )}
@@ -296,7 +293,7 @@ export default function RegistryRowAction(
                     label={dict.action.dispatch}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildTaskUrl(Routes.REGISTRY_TASK_DISPATCH));
+                      router.push(buildUrl(Routes.REGISTRY_TASK_DISPATCH, props.recordType, recordId));
                     }}
                   />
                 )}
@@ -318,7 +315,7 @@ export default function RegistryRowAction(
                     label={dict.action.cancel}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildTaskUrl(Routes.REGISTRY_TASK_CANCEL));
+                      router.push(buildUrl(Routes.REGISTRY_TASK_CANCEL, props.recordType, recordId));
                     }}
                   />
                 )}
@@ -339,7 +336,7 @@ export default function RegistryRowAction(
                     disabled={isLoading}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildTaskUrl(Routes.REGISTRY_TASK_REPORT));
+                      router.push(buildUrl(Routes.REGISTRY_TASK_REPORT, props.recordType, recordId));
                     }}
                   />
                 )}
