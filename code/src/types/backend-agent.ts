@@ -28,6 +28,7 @@ export type InternalApiIdentifier =
   | "instances"
   | "schedule"
   | "tasks"
+  | "task"
   | "outstanding"
   | "scheduled"
   | "closed";
