@@ -3,6 +3,8 @@ import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
+export const BRANCH_ADD = "branch_add";
+export const BRANCH_DELETE = "branch_delete";
 
 export function makeInternalRegistryAPIwithParams(
   internalIdentifier: InternalApiIdentifier,
@@ -54,6 +56,7 @@ export function makeInternalRegistryAPIwithParams(
         limit: params[5] ?? null,
         sort_by: params[6] ?? null,
         filters: params[7] ?? "",
+        branch_delete: params[8] ?? null,
       });
       break;
     case "event":

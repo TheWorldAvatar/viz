@@ -209,7 +209,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             "instances",
             props.entityType,
             "false",
-            formData[FORM_STATES.ID]
+            formData[FORM_STATES.ID],
+            null,
+            null,
+            null,
+            null,
+            null,
+            formData["branch_delete"]
           ),
           {
             method: "DELETE",
