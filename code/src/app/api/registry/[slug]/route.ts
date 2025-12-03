@@ -378,12 +378,11 @@ function makeExternalEndpoint(
     case "tasks": {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
+      if (contractType == "task") {
+        return `${agentBaseApi}/contracts/task/${idOrTimestamp}`;
+      }
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
-    }
-    case "task": {
-      const id: string = searchParams.get("id");
-      return `${agentBaseApi}/contracts/task/${id}`
     }
     case "outstanding": {
       const contractType: string = searchParams.get("type");
