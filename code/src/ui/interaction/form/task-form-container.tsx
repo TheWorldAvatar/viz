@@ -29,7 +29,7 @@ import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels, buildUrl } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 
 interface TaskFormContainerComponentProps {
@@ -119,21 +119,15 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     ): Promise<void> => {
       setIsFetching(true);
       try {
-        const template: FormTemplateType = await fetch(
+        const resBody: AgentResponseBody = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             "event",
             lifecycleStage,
             eventType,
             targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER
-          ),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        ).then(async (res) => {
-          const resBody: AgentResponseBody = await res.json();
-          return resBody.data?.items?.[0] as FormTemplateType;
-        });
+          )
+        );
+        const template = resBody.data?.items?.[0] as FormTemplateType;
         if (template?.property) {
           setFormFields(template.property);
         }
