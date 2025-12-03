@@ -27,7 +27,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
-import { getId } from "utils/client-utils";
+import { getId, buildUrl } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
@@ -110,7 +110,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
-      router.push(`${taskRoute}/${props.recordType}/${recordId}`);
+      router.push(buildUrl(taskRoute, recordId));
     } else {
       const registryRoute: string =
         !keycloakEnabled ||
@@ -119,7 +119,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           permissionScheme.hasPermissions.sales
           ? Routes.REGISTRY_EDIT
           : Routes.REGISTRY;
-      router.push(`${registryRoute}/${props.recordType}/${recordId}`);
+      router.push(buildUrl(registryRoute, props.recordType, recordId));
     }
   };
 

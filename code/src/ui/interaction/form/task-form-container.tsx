@@ -35,7 +35,6 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 interface TaskFormContainerComponentProps {
   entityType: string;
   formType: FormType;
-  isPrimaryEntity?: boolean;
 }
 
 /**
@@ -43,7 +42,6 @@ interface TaskFormContainerComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
- * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function InterceptTaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
@@ -60,7 +58,6 @@ export function InterceptTaskFormContainerComponent(
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
- * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function TaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
@@ -264,7 +261,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    router.push(buildUrl(Routes.REGISTRY_TASK, action, props.entityType, id));
+    router.push(buildUrl(Routes.REGISTRY_TASK, action, id));
   };
 
   return (
