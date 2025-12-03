@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useTaskData } from "hooks/form/api/useTaskData";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
@@ -16,9 +17,7 @@ import {
   FormTemplateType,
   FormType,
   PropertyShapeOrGroup,
-  RegistryTaskOption,
   RegistryTaskType,
-  SparqlResponseField,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
@@ -30,7 +29,7 @@ import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels, buildUrl } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 
 
 interface TaskFormContainerComponentProps {
@@ -87,17 +86,16 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   const id: string = getAfterDelimiter(pathname, "/");
 
-  // State for task data
+  // State for form data
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const [task, setTask] = useState<RegistryTaskOption | null>(null);
+
+  const { task } = useTaskData(id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-
-
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -164,37 +162,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     }
   }, [id, props.formType]);
 
-
-  // Handle task metadata (status, date, contract, scheduleType) from internal tasks API
-
-  useEffect(() => {
-    const fetchTask = async (): Promise<void> => {
-      setIsFetching(true);
-      try {
-        const resBody: AgentResponseBody = await queryInternalApi(
-          makeInternalRegistryAPIwithParams("tasks", "task", id)
-        );
-        const itemData: Record<string, SparqlResponseField> = resBody.data?.items?.[0] as Record<string, SparqlResponseField>;
-        const item: RegistryTaskOption = {
-          contract: itemData.contract.value,
-          status: itemData.status.value,
-          date: itemData.date.value,
-          scheduleType: itemData.scheduleType.value,
-        };
-
-        setTask(item);
-
-      } catch (error) {
-        console.error("Failed to fetch task data:", error);
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
-    if (id) {
-      fetchTask();
-    }
-  }, [id]);
 
   // Handle form submission when buttons are clicked
   useEffect(() => {
