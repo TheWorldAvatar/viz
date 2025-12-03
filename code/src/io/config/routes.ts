@@ -15,6 +15,9 @@ export const Apis: {
   MAP_SETTINGS: `${ASSET_PREFIX}/api/map/settings`,
 };
 
+const REGISTRY_GENERAL: string = "registry";
+const REGISTRY_TASK: string = `${REGISTRY_GENERAL}/task`;
+
 // Default available path names
 export const Paths: {
   [key: string]: string;
@@ -23,20 +26,20 @@ export const Paths: {
   MAP: "map",
   DASHBOARD: "analytics",
   REGISTRY: "view",
-  REGISTRY_TASK: "registry/task",
-  REGISTRY_GENERAL: "registry",
-  REGISTRY_TASK_OUTSTANDING: "registry/task/outstanding",
-  REGISTRY_TASK_SCHEDULED: "registry/task/scheduled",
-  REGISTRY_TASK_CLOSED: "registry/task/closed",
-  REGISTRY_REPORT: "registry/report",
+  REGISTRY_GENERAL: REGISTRY_GENERAL,
+  REGISTRY_TASK: REGISTRY_TASK,
+  REGISTRY_TASK_OUTSTANDING: `${REGISTRY_TASK}/outstanding`,
+  REGISTRY_TASK_SCHEDULED: `${REGISTRY_TASK}/scheduled`,
+  REGISTRY_TASK_CLOSED: `${REGISTRY_TASK}/closed`,
+  REGISTRY_REPORT: `${REGISTRY_GENERAL}/report`,
   REGISTRY_ADD: "add",
   REGISTRY_EDIT: "edit",
   REGISTRY_DELETE: "delete",
-  REGISTRY_TASK_DISPATCH: "registry/task/dispatch",
-  REGISTRY_TASK_COMPLETE: "registry/task/complete",
-  REGISTRY_TASK_CANCEL: "registry/task/cancel",
-  REGISTRY_TASK_REPORT: "registry/task/report",
-  REGISTRY_TASK_VIEW: "registry/task/view",
+  REGISTRY_TASK_DISPATCH: `${REGISTRY_TASK}/dispatch`,
+  REGISTRY_TASK_COMPLETE: `${REGISTRY_TASK}/complete`,
+  REGISTRY_TASK_CANCEL: `${REGISTRY_TASK}/cancel`,
+  REGISTRY_TASK_REPORT: `${REGISTRY_TASK}/report`,
+  REGISTRY_TASK_VIEW: `${REGISTRY_TASK}/view`,
   HELP: "help",
 };
 
