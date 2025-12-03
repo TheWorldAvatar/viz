@@ -88,12 +88,18 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         title.length * 15,
         125
       );
+      const isDate: boolean = isDateColumn(col, titleDict);
       results.columns.push({
         accessorKey: col,
         header: title,
         cell: ({ getValue }) => {
           const value: string = getValue() as string;
           if (!value) return "";
+
+          // Format date columns for display (date and time)
+          if (isDate) {
+            return new Date(value).toLocaleString();
+          }
 
           if (col.toLowerCase() === "status") {
             return <StatusComponent status={value} />;
@@ -107,10 +113,22 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         size: minWidth,
         enableSorting: true,
         sortDescFirst: true,
+        sortingFn: isDate ? "datetime" : undefined,
       });
     }
   }
   return results;
+}
+
+/**
+ * Checks if a column is a date column that requires datetime sorting.
+ *
+ * @param {string} col The column name to check.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+function isDateColumn(col: string, titleDict: Record<string, string>): boolean {
+  const lowerCol = col.toLowerCase();
+  return lowerCol === titleDict.lastModified.toLowerCase() || lowerCol === "date";
 }
 
 /**
@@ -125,7 +143,7 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
   switch (field.toLowerCase()) {
     case "lastmodified":
       delete outputRow[field];
-      outputRow[titleDict.lastModified] = new Date(currentVal).toLocaleString();
+      outputRow[titleDict.lastModified] = currentVal; // Keep raw ISO date for sorting
       return titleDict.lastModified;
     case "scheduletype":
       delete outputRow[field];
