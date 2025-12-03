@@ -101,6 +101,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           return body.data?.items?.[0] as FormTemplateType;
         });
       }
+
+      if (!template) {
+        return initialState;
+      }
+
       if (props.additionalFields) {
         props.additionalFields.forEach((field) =>
           template.property.push(field)
@@ -209,7 +214,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             "instances",
             props.entityType,
             "false",
-            formData[FORM_STATES.ID]
+            formData[FORM_STATES.ID],
+            null,
+            null,
+            null,
+            null,
+            null,
+            formData["branch_delete"]
           ),
           {
             method: "DELETE",

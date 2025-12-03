@@ -20,7 +20,16 @@ export type LifecycleStage =
   | "activity"
   | "pricing";
 
-export type FormType = "add" | "delete" | "edit" | "view" | "search";
+export type FormType =
+  | "add"
+  | "delete"
+  | "edit"
+  | "view"
+  | "search"
+  | "dispatch"
+  | "complete"
+  | "cancel"
+  | "report";
 
 export interface SparqlResponseField {
   value: string;
@@ -141,12 +150,10 @@ export const defaultSearchOption: OntologyConcept = {
 };
 
 export interface RegistryTaskOption {
-  id: string;
   contract: string;
   status: string;
   date: string;
   scheduleType: string;
-  type: RegistryTaskType;
 }
 
 export type RegistryTaskType =
@@ -154,7 +161,7 @@ export type RegistryTaskType =
   | "complete"
   | "cancel"
   | "report"
-  | "default";
+  | "view";
 
 export type QuickViewGroupings = Record<string, QuickViewFields>;
 export type QuickViewFields = Record<string, SparqlResponseField[]>;

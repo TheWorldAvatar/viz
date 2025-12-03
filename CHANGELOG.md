@@ -2,6 +2,20 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.45.4
+
+### Bug fixes
+
+- Transformed the task handling to use intercept routes. Removed the task modal.
+- Bump min version of `VisBackend Agent` to `v1.21.1`
+
+## 5.45.3
+
+### Changes
+
+- Added the functionality to send branch_add and branch_delete for form branching when you submit a form/request. This allows the backend to create or delete branches accordingly
+- Bump min version of `VisBackend Agent` to `v1.21.0`
+
 ## 5.45.2
 
 ### Changes
