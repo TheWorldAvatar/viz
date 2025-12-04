@@ -57,6 +57,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const regularService: string = dict.form.regularService;
   const alternateService: string = dict.form.alternateService;
   const perpetualService: string = dict.form.perpetualService;
+  const fixedService: string = dict.form.fixedService;
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == "view" || formType == "delete",
   };
@@ -66,10 +67,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     props.form.getValues(FORM_STATES.RECURRENCE) == null
       ? perpetualService
       : props.form.getValues(FORM_STATES.RECURRENCE) > 0
-      ? regularService
-      : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-      ? alternateService
-      : singleService
+        ? regularService
+        : props.form.getValues(FORM_STATES.RECURRENCE) == -1
+          ? alternateService
+          : singleService
   );
 
   useEffect(() => {
@@ -102,10 +103,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           recurrence == null
             ? perpetualService
             : recurrence == 0
-            ? singleService
-            : recurrence == -1
-            ? alternateService
-            : regularService
+              ? singleService
+              : recurrence == -1
+                ? alternateService
+                : regularService
         );
 
         defaultTimeSlotStart = getDefaultVal(
@@ -265,9 +266,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${
-                    props.options?.disabled && "cursor-not-allowed"
-                  }`}
+                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
+                    }`}
                   step={"1"}
                   readOnly={formType == "view" || formType == "delete"}
                   aria-label={FORM_STATES.RECURRENCE}
