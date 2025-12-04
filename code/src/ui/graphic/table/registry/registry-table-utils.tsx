@@ -14,7 +14,7 @@ import {
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import { XSD_DATETIME, XSD_DATE, XSD_TIME } from "utils/constants";
+import { XSD_DATETIME, XSD_DATE } from "utils/constants";
 
 
 export type TableData = {
@@ -104,7 +104,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         125
       );
       const dataType: string = columnDataTypes[col];
-      const isDateTimeColumn: boolean = isDateTimeType(dataType);
+      const isDateTimeColumn: boolean = dataType === XSD_DATETIME || dataType === XSD_DATE;
       results.columns.push({
         accessorKey: col,
         header: title,
@@ -112,9 +112,9 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           const value: string = getValue() as string;
           if (!value) return "";
 
-          // Format datetime/date/time columns for display
+          // Format datetime/date columns for display
           if (isDateTimeColumn) {
-            return formatDateTimeValue(value, dataType);
+            return formatValueByDataType(value, dataType);
           }
 
           if (col.toLowerCase() === "status") {
@@ -136,14 +136,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   return results;
 }
 
-/**
- * Checks if a dataType is a datetime, date, or time type.
- *
- * @param {string} dataType The XSD dataType from the backend.
- */
-function isDateTimeType(dataType: string): boolean {
-  return dataType === XSD_DATETIME || dataType === XSD_DATE || dataType === XSD_TIME;
-}
 
 /**
  * Formats a datetime/date/time value for display based on its dataType.
@@ -151,17 +143,14 @@ function isDateTimeType(dataType: string): boolean {
  * @param {string} value The raw value from the backend.
  * @param {string} dataType The XSD dataType from the backend.
  */
-function formatDateTimeValue(value: string, dataType: string): string {
+function formatValueByDataType(value: string, dataType: string): string {
   switch (dataType) {
     case XSD_DATETIME:
       return new Date(value).toLocaleString();
     case XSD_DATE:
       return new Date(value).toLocaleDateString();
-    case XSD_TIME:
-      // Time values like "00:00" or "23:59" are not valid Date strings
-      // Return as-is since they're already formatted
-      return value;
     default:
+      // For time or unknown types, return as is
       return value;
   }
 }
