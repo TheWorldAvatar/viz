@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.45.5
+
+### Bug fixes
+
+- Fixed a bug where the sorting functionality was not working as expected, thus not returning the right sorting order.
+- Added datatype check for every column when sorting to ensure correct sorting behavior for different data types (e.g., datetime, date).
+
 ## 5.45.4
 
 ### Bug fixes

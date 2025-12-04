@@ -8,11 +8,14 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
-  RegistryFieldValues
+  RegistryFieldValues,
+  SparqlResponseField
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+import { XSD_DATETIME, XSD_DATE } from "utils/constants";
+
 
 export type TableData = {
   data: FieldValues[];
@@ -57,19 +60,31 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   if (instances?.length > 0) {
     const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
     const columnNames: string[] = [];
+    // Track column dataTypes 
+    const columnDataTypes: Record<string, string> = {};
+
     instances.forEach(instance => {
       const flattenInstance: Record<string, string> = {};
       const fields: string[] = Object.keys(instance);
 
       fields.forEach((field, index) => {
-        const fieldValue = instance[field];
+        const fieldValue: SparqlResponseField | SparqlResponseField[] = instance[field];
+        let firstValue: SparqlResponseField;
+
         if (Array.isArray(fieldValue)) {
-          flattenInstance[field] = fieldValue[0]?.value;
+          firstValue = fieldValue[0];
         } else {
-          flattenInstance[field] = fieldValue?.value;
+          firstValue = fieldValue;
         }
 
+        flattenInstance[field] = firstValue?.value;
+
         const normalizedField: string = parseLifecycleFieldsToTranslations(field, flattenInstance, titleDict);
+
+        // Store the dataType using the normalized field name only if not already stored
+        if (firstValue?.dataType && !columnDataTypes[normalizedField]) {
+          columnDataTypes[normalizedField] = firstValue.dataType;
+        }
 
         if (!columnNames.includes(normalizedField)) {
           // Insert at the current index if possible, else push to end
@@ -88,12 +103,19 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         title.length * 15,
         125
       );
+      const dataType: string = columnDataTypes[col];
+      const isDateTimeColumn: boolean = dataType === XSD_DATETIME || dataType === XSD_DATE;
       results.columns.push({
         accessorKey: col,
         header: title,
         cell: ({ getValue }) => {
           const value: string = getValue() as string;
           if (!value) return "";
+
+          // Format datetime/date columns for display
+          if (isDateTimeColumn) {
+            return formatValueByDataType(value, dataType);
+          }
 
           if (col.toLowerCase() === "status") {
             return <StatusComponent status={value} />;
@@ -107,16 +129,37 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         size: minWidth,
         enableSorting: true,
         sortDescFirst: true,
+        sortingFn: isDateTimeColumn ? "datetime" : undefined,
       });
     }
   }
   return results;
 }
 
+
+/**
+ * Formats a datetime/date/time value for display based on its dataType.
+ *
+ * @param {string} value The raw value from the backend.
+ * @param {string} dataType The XSD dataType from the backend.
+ */
+function formatValueByDataType(value: string, dataType: string): string {
+  switch (dataType) {
+    case XSD_DATETIME:
+      return new Date(value).toLocaleString();
+    case XSD_DATE:
+      return new Date(value).toLocaleDateString();
+    default:
+      // For time or unknown types, return as is
+      return value;
+  }
+}
+
 /**
  * Parses the lifecycle field to their translations.
  *
  * @param {string} field Name of field from backend to be translated.
+ * @param {Record<string, string>} outputRow The row data being built.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseLifecycleFieldsToTranslations(field: string, outputRow: Record<string, string>, titleDict: Record<string, string>): string {
@@ -125,7 +168,7 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
   switch (field.toLowerCase()) {
     case "lastmodified":
       delete outputRow[field];
-      outputRow[titleDict.lastModified] = new Date(currentVal).toLocaleString();
+      outputRow[titleDict.lastModified] = currentVal; // Keep raw ISO date for sorting
       return titleDict.lastModified;
     case "scheduletype":
       delete outputRow[field];
