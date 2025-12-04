@@ -14,10 +14,8 @@ import {
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+import { XSD_DATETIME, XSD_DATE, XSD_TIME } from "utils/constants";
 
-const XSD_DATETIME = "http://www.w3.org/2001/XMLSchema#dateTime";
-const XSD_DATE = "http://www.w3.org/2001/XMLSchema#date";
-const XSD_TIME = "http://www.w3.org/2001/XMLSchema#time";
 
 export type TableData = {
   data: FieldValues[];
