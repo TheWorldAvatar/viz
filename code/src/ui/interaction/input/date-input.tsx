@@ -24,13 +24,15 @@ import Button from "ui/interaction/button";
 import { getNormalizedDate } from "utils/client-utils";
 
 interface DateInputProps {
-  selectedDate: Date | DateRange;
+  selectedDate: Date | DateRange | Date[];
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
+  setSelectedDates?: React.Dispatch<React.SetStateAction<Date[]>>;
   placement?: Placement;
   disabledDates?: DateBefore;
   disabled?: boolean;
   disableMobileView?: boolean;
+  mode: "single" | "range" | "multiple";
 }
 
 /** A component to display a date range input
@@ -42,18 +44,24 @@ interface DateInputProps {
  * @param {DateBefore} disabledDates Optional dates to be disabled.
  * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
+ * @param {"single" | "range" | "multiple"} mode The mode of the date input, either single date, date range or multiple dates.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
   const id: string = useId();
   const dict: Dictionary = useDictionary();
   const screenType: ScreenType = useScreenType();
-  const isDateType: boolean = props.selectedDate instanceof Date;
   const defaultDayPickerClassNames = getDefaultClassNames();
 
-  const extractDateDisplay = (targetDate: Date | DateRange) => {
-    if (isDateType) {
+  const extractDateDisplay = (targetDate: Date | DateRange | Date[]): string => {
+    if (props.mode === "single") {
       return getNormalizedDate(targetDate as Date);
     }
+    if (props.mode === "multiple") {
+      const dates = targetDate as Date[];
+      if (!Array.isArray(dates) || dates.length === 0) return "";
+      return dates.map(d => d.toLocaleDateString()).join(", ");
+    }
+    // range mode
     const targetDateRange: DateRange = targetDate as DateRange;
     const fromDate: string = targetDateRange?.from?.toLocaleDateString();
     const toDate: string = targetDateRange?.to?.toLocaleDateString();
@@ -72,11 +80,13 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     },
   });
 
-  const handleDateSelect = (date: DateRange | Date) => {
-    if (isDateType) {
-      props.setSelectedDate(date as Date);
+  const handleDateSelect = (date: Date | DateRange | Date[]) => {
+    if (props.mode === "single") {
+      props.setSelectedDate?.(date as Date);
+    } else if (props.mode === "multiple") {
+      props.setSelectedDates?.(date as Date[]);
     } else {
-      props.setSelectedDateRange({
+      props.setSelectedDateRange?.({
         from: (date as DateRange)?.from ?? undefined,
         to: (date as DateRange)?.to ?? undefined,
       });
@@ -107,12 +117,11 @@ export default function DateInput(props: Readonly<DateInputProps>) {
         <div className="flex items-center w-full">
           <div className="relative w-full">
             <Icon
-              fontSize={isDateType ? "small" : "medium"}
-              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${
-                isDateType
-                  ? "text-foreground"
-                  : "text-blue-600 dark:text-blue-400"
-              }  pointer-events-none`}
+              fontSize={props.mode === "single" ? "small" : "medium"}
+              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${props.mode === "single"
+                ? "text-foreground"
+                : "text-blue-600 dark:text-blue-400"
+                }  pointer-events-none`}
             >
               calendar_month
             </Icon>
@@ -122,15 +131,13 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               value={displayedDateValues}
               readOnly
               className={
-                isDateType
-                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${
-                      props.disabled ? "cursor-not-allowed opacity-75" : ""
-                    }`
-                  : `h-10  ${
-                      (props.selectedDate as DateRange)?.to
-                        ? "w-62 pr-10 pl-4"
-                        : "w-24"
-                    }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
+                props.mode === "single"
+                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${props.disabled ? "cursor-not-allowed opacity-75" : ""
+                  }`
+                  : `h-10  ${(props.selectedDate as DateRange)?.to
+                    ? "w-62 pr-10 pl-4"
+                    : "w-24"
+                  }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
               }
               {...popover.getReferenceProps()}
             />
@@ -155,7 +162,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                 }}
                 className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
               >
-                {!isDateType && (
+                {props.mode === "range" && (
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="range"
@@ -175,7 +182,23 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     required={true}
                   />
                 )}
-                {isDateType && !props.disabled && (
+                {props.mode === "multiple" && (
+                  <DayPicker
+                    locale={dict.lang === "de" ? de : enGB}
+                    mode="multiple"
+                    selected={props.selectedDate as Date[]}
+                    onSelect={handleDateSelect}
+                    disabled={props.disabledDates}
+                    classNames={{
+                      today: `text-yellow-500`,
+                      selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                      root: `${defaultDayPickerClassNames.root}  p-4`,
+                      chevron: ` fill-foreground`,
+                    }}
+                    required={true}
+                  />
+                )}
+                {props.mode === "single" && !props.disabled && (
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="single"
