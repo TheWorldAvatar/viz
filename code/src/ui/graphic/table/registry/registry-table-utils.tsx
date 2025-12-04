@@ -8,11 +8,16 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
-  RegistryFieldValues
+  RegistryFieldValues,
+  SparqlResponseField
 } from "types/form";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
+
+const XSD_DATETIME = "http://www.w3.org/2001/XMLSchema#dateTime";
+const XSD_DATE = "http://www.w3.org/2001/XMLSchema#date";
+const XSD_TIME = "http://www.w3.org/2001/XMLSchema#time";
 
 export type TableData = {
   data: FieldValues[];
@@ -57,19 +62,31 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   if (instances?.length > 0) {
     const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
     const columnNames: string[] = [];
+    // Track column dataTypes 
+    const columnDataTypes: Record<string, string> = {};
+
     instances.forEach(instance => {
       const flattenInstance: Record<string, string> = {};
       const fields: string[] = Object.keys(instance);
 
       fields.forEach((field, index) => {
-        const fieldValue = instance[field];
+        const fieldValue: SparqlResponseField | SparqlResponseField[] = instance[field];
+        let firstValue: SparqlResponseField;
+
         if (Array.isArray(fieldValue)) {
-          flattenInstance[field] = fieldValue[0]?.value;
+          firstValue = fieldValue[0];
         } else {
-          flattenInstance[field] = fieldValue?.value;
+          firstValue = fieldValue;
         }
 
+        flattenInstance[field] = firstValue?.value;
+
         const normalizedField: string = parseLifecycleFieldsToTranslations(field, flattenInstance, titleDict);
+
+        // Store the dataType using the normalized field name only if not already stored
+        if (firstValue?.dataType && !columnDataTypes[normalizedField]) {
+          columnDataTypes[normalizedField] = firstValue.dataType;
+        }
 
         if (!columnNames.includes(normalizedField)) {
           // Insert at the current index if possible, else push to end
@@ -88,7 +105,8 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         title.length * 15,
         125
       );
-      const isDate: boolean = isDateColumn(col, titleDict);
+      const dataType: string = columnDataTypes[col];
+      const isDateTimeColumn: boolean = isDateTimeType(dataType);
       results.columns.push({
         accessorKey: col,
         header: title,
@@ -96,9 +114,9 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           const value: string = getValue() as string;
           if (!value) return "";
 
-          // Format date columns for display (date and time)
-          if (isDate) {
-            return new Date(value).toLocaleString();
+          // Format datetime/date/time columns for display
+          if (isDateTimeColumn) {
+            return formatDateTimeValue(value, dataType);
           }
 
           if (col.toLowerCase() === "status") {
@@ -113,7 +131,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         size: minWidth,
         enableSorting: true,
         sortDescFirst: true,
-        sortingFn: isDate ? "datetime" : undefined,
+        sortingFn: isDateTimeColumn ? "datetime" : undefined,
       });
     }
   }
@@ -121,20 +139,40 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 }
 
 /**
- * Checks if a column is a date column that requires datetime sorting.
+ * Checks if a dataType is a datetime, date, or time type.
  *
- * @param {string} col The column name to check.
- * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {string} dataType The XSD dataType from the backend.
  */
-function isDateColumn(col: string, titleDict: Record<string, string>): boolean {
-  const lowerCol = col.toLowerCase();
-  return lowerCol === titleDict.lastModified.toLowerCase() || lowerCol === "date";
+function isDateTimeType(dataType: string): boolean {
+  return dataType === XSD_DATETIME || dataType === XSD_DATE || dataType === XSD_TIME;
+}
+
+/**
+ * Formats a datetime/date/time value for display based on its dataType.
+ *
+ * @param {string} value The raw value from the backend.
+ * @param {string} dataType The XSD dataType from the backend.
+ */
+function formatDateTimeValue(value: string, dataType: string): string {
+  switch (dataType) {
+    case XSD_DATETIME:
+      return new Date(value).toLocaleString();
+    case XSD_DATE:
+      return new Date(value).toLocaleDateString();
+    case XSD_TIME:
+      // Time values like "00:00" or "23:59" are not valid Date strings
+      // Return as-is since they're already formatted
+      return value;
+    default:
+      return value;
+  }
 }
 
 /**
  * Parses the lifecycle field to their translations.
  *
  * @param {string} field Name of field from backend to be translated.
+ * @param {Record<string, string>} outputRow The row data being built.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseLifecycleFieldsToTranslations(field: string, outputRow: Record<string, string>, titleDict: Record<string, string>): string {
