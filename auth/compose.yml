@@ -60,12 +60,11 @@ services:
   #   networks:
   #     - auth-network
 
-#   dragonfly:
-#     image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
-#     container_name: "session-store"
+# redis:
+#     image: 'redis:8'
+#     container_name: "viz-session-store"
 #     restart: always
-#     ulimits:
-#       memlock: -1
+#     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 #     ports:
 #       - "6379:6379"
 #     networks:
@@ -76,7 +75,8 @@ services:
 #       timeout: 5s
 #       retries: 10
 #     volumes:
-#       - dragonfly-data:/data
+#       - redis-data:/data
+#     - ./redis.conf:/usr/local/etc/redis/redis.conf
 
 #   postgres:
 #     restart: always
@@ -128,5 +128,5 @@ networks:
 #     file: ./postgres-password
 
 # volumes:
-#   dragonfly-data:
+#   redis-data:
 #   postgres-data:
