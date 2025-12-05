@@ -206,22 +206,24 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
-    // Clear entry dates for all non-fixed services
-    props.form.setValue(FORM_STATES.ENTRY_DATES, undefined);
-
-    if (value === perpetualService) {
-      props.form.setValue(FORM_STATES.RECURRENCE, null);
-    } else if (value === singleService) {
-      props.form.setValue(FORM_STATES.RECURRENCE, 0);
-    } else if (value === alternateService) {
-      props.form.setValue(FORM_STATES.RECURRENCE, -1);
-    } else if (value === fixedService) {
+    if (value === fixedService) {
       // Ensure at least today's date is set for fixed service
       const datesToSet: Date[] = fixedDates.length > 0 ? fixedDates : [new Date()];
       if (fixedDates.length === 0) setFixedDates(datesToSet);
       props.form.setValue(FORM_STATES.ENTRY_DATES, datesToSet);
     } else {
-      props.form.setValue(FORM_STATES.RECURRENCE, 1);
+      // Clear entry dates for all non-fixed services
+      props.form.setValue(FORM_STATES.ENTRY_DATES, undefined);
+
+      if (value === perpetualService) {
+        props.form.setValue(FORM_STATES.RECURRENCE, null);
+      } else if (value === singleService) {
+        props.form.setValue(FORM_STATES.RECURRENCE, 0);
+      } else if (value === alternateService) {
+        props.form.setValue(FORM_STATES.RECURRENCE, -1);
+      } else {
+        props.form.setValue(FORM_STATES.RECURRENCE, 1);
+      }
     }
     setSelectedServiceOption(value);
   };
