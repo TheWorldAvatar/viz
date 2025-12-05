@@ -64,7 +64,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     disabled: formType == "view" || formType == "delete",
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fixedDates, setFixedDates] = useState<Date[]>([]);
+  const [fixedDates, setFixedDates] = useState<Date[]>([new Date()]);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.RECURRENCE) == null
@@ -213,7 +213,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     } else if (value === alternateService) {
       props.form.setValue(FORM_STATES.RECURRENCE, -1);
     } else if (value === fixedService) {
-      props.form.setValue(FORM_STATES.ENTRY_DATES, fixedDates);
+      // Ensure at least today's date is set for fixed service
+      const datesToSet: Date[] = fixedDates.length > 0 ? fixedDates : [new Date()];
+      if (fixedDates.length === 0) setFixedDates(datesToSet);
+      props.form.setValue(FORM_STATES.ENTRY_DATES, datesToSet);
     } else {
       props.form.setValue(FORM_STATES.RECURRENCE, 1);
     }
@@ -276,9 +279,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 setSelectedDates={handleFixedDatesChange}
                 disabled={formType === "view" || formType === "delete"}
               />
-              {fixedDates.length === 0 && formType === "add" && (
-                <p className="text-sm text-red-500">{dict.form.selectAtLeastOneDate}</p>
-              )}
               {fixedDates.length > 0 && (
                 <div className="flex flex-wrap gap-2 p-3 bg-muted border border-border rounded-lg">
                   {[...fixedDates]

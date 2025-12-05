@@ -83,7 +83,9 @@
     "searchStartTimeDesc": "Wählen Sie das Startdatum/die Startzeit für Ihre Suche.",
     "searchEndTimeDesc": "Wählen Sie das Enddatum/die Endzeit für Ihre Suche.",
     "min": "Min",
-    "max": "Max"
+    "max": "Max",
+    "selectDates": "Daten auswählen",
+    "selectDatesDesc": "Sie können mehrere einzelne Daten auswählen. Das Datumsfeld zeigt den Beginn und das Ende des ausgewählten Zeitraums an, während alle Daten innerhalb dieses Zeitraums darunter aufgelistet sind."
   },
   "map": {
     "title": {

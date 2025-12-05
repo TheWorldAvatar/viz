@@ -83,7 +83,9 @@
     "searchStartTimeDesc": "Select the starting date/time for your search.",
     "searchEndTimeDesc": "Select the ending date/time for your search.",
     "min": "Min",
-    "max": "Max"
+    "max": "Max",
+    "selectDates": "Select Dates",
+    "selectDatesDesc": "You can select multiple individual dates. The date field displays the start and end of your selected range, while every date covered within that range is listed below."
   },
   "map": {
     "title": {
