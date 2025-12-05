@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 
 import { DataParser } from "io/data/data-parser";
 import { DataStore } from "io/data/data-store";
+import { DateRange } from "react-day-picker";
 import {
   MapFeaturePayload,
   clearFeatures,
@@ -12,13 +13,14 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
+import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   SparqlResponseField,
 } from "types/form";
 import { JsonObject } from "types/json";
-import { DateRange } from "react-day-picker";
+import { ToastConfig, ToastType } from "types/toast";
 
 /**
  * Open full screen mode.
@@ -185,10 +187,12 @@ export function getInitialDateFromLifecycleStage(
   const initialDate: Date = new Date();
 
   if (lifecycleStage === "scheduled") {
-    // For scheduled: start with tomorrow since today and past are disabled
+    // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
+    const fourWeeksFromInitialDate: Date = new Date();
     initialDate.setDate(initialDate.getDate() + 1);
+    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
+    return { from: initialDate, to: fourWeeksFromInitialDate };
   }
-
   return { from: initialDate, to: initialDate };
 }
 
@@ -254,3 +258,78 @@ export function getUTCDate(date: Date): Date {
 export function getNormalizedDate(date: Date): string {
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
+
+/**
+ * Get the configuration for a toast notification.
+ *
+ * @param type The type of toast .
+ * @param dict The dictionary containing localized strings.
+ */
+export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
+  switch (type) {
+    case "default":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "info",
+      };
+    case "success":
+      return {
+        bg: "bg-status-success-bg",
+        border: "border-green-200",
+        text: "text-status-success-text",
+        icon: "check_circle",
+        title: dict.title.success,
+      };
+    case "error":
+      return {
+        bg: "bg-status-error-bg",
+        border: "border-red-200",
+        text: "text-status-error-text",
+        icon: "error",
+        title: dict.title.error,
+      };
+    case "loading":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "hourglass_bottom",
+        title: dict.title.loading,
+        animate: "animate-spin",
+      };
+    default:
+      throw new Error(`Unsupported toast type: ${type}`);
+  }
+}
+
+
+/**
+ * Validates whether the provided longitude and latitude are within acceptable ranges for Mapbox.
+ *
+ * @param lng The longitude value.
+ * @param lat The latitude value.
+ */
+export function isValidCoordinates(lng: number, lat: number): boolean {
+  return (
+    !isNaN(lng) &&
+    !isNaN(lat) &&
+    lng >= -180 &&
+    lng <= 180 &&
+    lat >= -90 &&
+    lat <= 90
+  );
+};
+
+
+
+/**
+ * Builds a URL by concatenating the provided arguments with '/' as a separator.
+ *
+ * @param args The parts of the URL to concatenate.
+ */
+
+export function buildUrl(...args: string[]): string {
+  return args.join("/");
+};

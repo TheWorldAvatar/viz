@@ -39,9 +39,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<DateRange>(
-    getInitialDate()
-  );
+  const [selectedDate, setSelectedDate] = useState<DateRange>(getInitialDate());
   const router = useRouter();
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
@@ -143,7 +141,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
         <form ref={formRef} onSubmit={onFormSubmit} className="space-y-6">
           <div className="space-y-4">
             {props.type === "date" && (
-              <div className="relative">
+              <div className="relative w-fit">
                 <DateInput
                   selectedDate={selectedDate}
                   setSelectedDateRange={setSelectedDate}

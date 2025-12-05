@@ -15,7 +15,7 @@ import {
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   extractResponseField,
   getAfterDelimiter,
@@ -50,7 +50,7 @@ export function DependentFormSection(
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
+  const [selectElements, setSelectElements] = useState<SelectOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -188,7 +188,7 @@ export function DependentFormSection(
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
 
-      const formFields: SelectOption[] = [];
+      const formFields: SelectOptionType[] = [];
 
       // Retrieve and set the display field accordingly
       if (entities.length > 0) {
@@ -204,7 +204,7 @@ export function DependentFormSection(
           );
         }
         entities.forEach((entity) => {
-          const formOption: SelectOption = {
+          const formOption: SelectOptionType = {
             value: extractResponseField(entity, FORM_STATES.IRI)?.value,
             label: extractResponseField(entity, displayField)?.value,
           };
@@ -233,55 +233,51 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
-  // the parent element has been queried and selected
-  if (
-    !props.dependentProp.dependentOn ||
-    (currentParentOption && parentField != "")
-  ) {
-    return (
-      <div className="rounded-lg my-4">
-        {isFetching && (
-          <div className="mr-2">
-            <LoadingSpinner isSmall={true} />
-          </div>
-        )}
-        {!isFetching && (
-          <div className="flex flex-col w-full gap-2">
-            <FormSelector
-              selectOptions={selectElements}
-              field={props.dependentProp}
-              form={props.form}
-              noOptionMessage={dict.message.noInstances}
-              options={{
-                disabled: formType == "view" || formType == "delete",
-                labelStyle: [
-                  fieldStyles["form-input-label-add"],
-                  fieldStyles["form-input-label"],
-                ],
-              }}
-            />
-            <FormQuickViewHeader
-              id={id}
-              title={dict.title.quickView}
-              selectedEntityId={selectedEntityId}
-              entityType={queryEntityType}
-              isFormView={formType == "view"}
-              isOpen={isQuickViewOpen}
-              setIsOpen={setIsQuickViewOpen}
-            />
-            {currentOption &&
-              isQuickViewOpen &&
-              (isQuickViewLoading ? (
-                <div className="flex justify-center p-4">
-                  <LoadingSpinner isSmall={true} />
-                </div>
-              ) : (
-                <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
-              ))}
-          </div>
-        )}
-      </div>
-    );
-  }
+  return (
+    <div className="rounded-lg my-4">
+      {isFetching && (
+        <div className="mr-2">
+          <LoadingSpinner isSmall={true} />
+        </div>
+      )}
+      {!isFetching && (
+        <div className="flex flex-col w-full gap-2">
+          <FormSelector
+            selectOptions={selectElements}
+            field={props.dependentProp}
+            form={props.form}
+            noOptionMessage={dict.message.noInstances}
+            options={{
+              disabled:
+                formType == "view" ||
+                formType == "delete" ||
+                currentParentOption === "",
+              labelStyle: [
+                fieldStyles["form-input-label-add"],
+                fieldStyles["form-input-label"],
+              ],
+            }}
+          />
+          <FormQuickViewHeader
+            id={id}
+            title={dict.title.quickView}
+            selectedEntityId={selectedEntityId}
+            entityType={queryEntityType}
+            isFormView={formType == "view"}
+            isOpen={isQuickViewOpen}
+            setIsOpen={setIsQuickViewOpen}
+          />
+          {currentOption &&
+            isQuickViewOpen &&
+            (isQuickViewLoading ? (
+              <div className="flex justify-center p-4">
+                <LoadingSpinner isSmall={true} />
+              </div>
+            ) : (
+              <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
+            ))}
+        </div>
+      )}
+    </div>
+  );
 }

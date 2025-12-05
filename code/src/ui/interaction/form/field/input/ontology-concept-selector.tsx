@@ -13,7 +13,7 @@ import {
   PropertyShape,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   FORM_STATES,
   getMatchingConcept,
@@ -49,7 +49,7 @@ export default function OntologyConceptSelector(
   const [conceptMappings, setConceptMappings] =
     useState<OntologyConceptMappings>({});
   const [options, setOptions] = useState<
-    OptionsOrGroups<SelectOption, GroupBase<SelectOption>>
+    OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>
   >([]);
 
   // Retrieve the matching concept from the mappings
@@ -108,37 +108,39 @@ export default function OntologyConceptSelector(
           props.form.setValue(
             props.field.fieldId,
             currentFormType === "add"
-              ? undefined
+            // For add forms, default to default value if available, else, return undefined
+              ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
+              // For every other form type, extract the parent option if available, else, default to base
               : sortedConceptMappings[firstRootOption?.type.value]
-              ? sortedConceptMappings[firstRootOption.type.value][0]?.type
+                ? sortedConceptMappings[firstRootOption.type.value][0]?.type
                   ?.value
-              : firstRootOption?.type?.value
+                : firstRootOption?.type?.value
           );
 
           // Parse the mappings to generate the format for select options
-          const formOptions: SelectOption[] = [];
-          const formGroups: GroupBase<SelectOption>[] = [];
+          const formOptions: SelectOptionType[] = [];
+          const formGroups: GroupBase<SelectOptionType>[] = [];
 
           sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT].forEach((option) => {
             const parentKey: string = option.type.value;
             // If there are children options, return the opt group with the children options
             if (sortedConceptMappings[parentKey]) {
-              const formChildrenOptions: SelectOption[] = [];
+              const formChildrenOptions: SelectOptionType[] = [];
 
               sortedConceptMappings[parentKey].forEach((childOption) => {
-                const formOption: SelectOption = {
+                const formOption: SelectOptionType = {
                   value: childOption.type.value,
                   label: childOption.label.value,
                 };
                 formChildrenOptions.push(formOption);
               });
-              const groupOption: GroupBase<SelectOption> = {
+              const groupOption: GroupBase<SelectOptionType> = {
                 label: option.label.value + " ↓",
                 options: formChildrenOptions,
               };
               formGroups.push(groupOption);
             } else {
-              const formOption: SelectOption = {
+              const formOption: SelectOptionType = {
                 value: option.type.value,
                 label: option.label.value,
               };

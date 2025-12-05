@@ -46,6 +46,7 @@
 .input-disabled {
   border: 1px solid var(--border);
   background-color: var(--muted);
+  cursor: not-allowed !important;
   opacity: 0.75;
 }
 
@@ -130,8 +131,10 @@
   color: var(--text-color-secondary);
 }
 
+
 @media only screen and (max-width: 480px) {
   .form-checkbox {
     width: 100%;
   }
+
 }

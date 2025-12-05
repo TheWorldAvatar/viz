@@ -54,24 +54,23 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
-          <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 ">
-            <div className="flex flex-wrap items-center justify-between   sm:gap-4 gap-1">
+          <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 border border-border ">
+            <div className="flex flex-wrap items-center justify-between sm:gap-4 gap-1">
               {(!keycloakEnabled ||
                 permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.pending}
-                    leftIcon="free_cancellation"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "pending" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                  />
-                </div>
-              )}
-
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.pending}
+                      leftIcon="free_cancellation"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "pending" ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                )}
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.outstanding}
@@ -84,7 +83,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
               </div>
-
               <div className="sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.scheduled}
@@ -97,7 +95,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
               </div>
-
               <div className="w-full sm:w-auto">
                 <RedirectButton
                   label={dict.nav.title.closed}
@@ -113,9 +110,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           </div>
         )}
-      <div className="w-full border-[0.5px] border-border" />
-      <div className="flex justify-between items-end    md:gap-2 lg:gap-0 flex-wrap ">
-        <div className="flex items-end   !-ml-2 gap-3 md:gap-4">
+      <div className="w-full  h-[1px] bg-border " />
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 flex-wrap ">
+        <div className="flex items-end !-ml-2 gap-3 md:gap-4">
           <Button
             className="ml-2"
             size="icon"
@@ -125,36 +122,37 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           />
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
-            <DateInput
-              selectedDate={props.selectedDate}
-              setSelectedDateRange={props.setSelectedDate}
-              disabledDates={getDisabledDates(props.lifecycleStage)}
-            />
-          )}
+              <DateInput
+                selectedDate={props.selectedDate}
+                setSelectedDateRange={props.setSelectedDate}
+                disabledDates={getDisabledDates(props.lifecycleStage)}
+              />
+            )}
         </div>
-
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
           {props.tableDescriptor.table
             .getState()
             .columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
             ) && (
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="medium"
-              className="mt-1"
-              size="icon"
-              onClick={() => props.tableDescriptor.table.resetColumnFilters()}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          )}
+              <Button
+                leftIcon="filter_list_off"
+                iconSize="medium"
+                className="mt-1"
+                size="icon"
+                onClick={() => {
+                  props.tableDescriptor.table.resetColumnFilters()
+                  props.tableDescriptor.table.resetRowSelection()
+                }}
+                tooltipText={dict.action.clearAllFilters}
+                variant="destructive"
+              />
+            )}
           {props.instances.length > 0 && (
             <ColumnToggle
               columns={props.tableDescriptor.table.getAllLeafColumns()}
             />
           )}
-
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
@@ -192,8 +190,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
-            <DownloadButton instances={props.instances} />
-          )}
+              <DownloadButton instances={props.instances} />
+            )}
         </div>
       </div>
     </div>

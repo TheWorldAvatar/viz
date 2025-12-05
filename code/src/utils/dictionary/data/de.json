@@ -2,6 +2,7 @@
   "lang": "de",
   "action": {
     "add": "Hinzufügen",
+    "applyFilter": "Filter anwenden",
     "addItem": "{replace} hinzufügen",
     "edit": "Bearbeiten",
     "delete": "Löschen",
@@ -34,6 +35,7 @@
     "report": "Bericht",
     "submit": "Einreichen",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",
+    "draftTemplate": "Entwurf Vorlage",
     "save": "Speichern",
     "return": "Zurück",
     "approve": "Genehmigen",
@@ -43,7 +45,9 @@
     "selectLocation": "Ort auswählen",
     "clickIncrease": "Zum Erhöhen anklicken",
     "clickDecrease": "Zum Verringern anklicken",
-    "clearAllFilters": "Alle Filter löschen"
+    "clearAllFilters": "Alle Filter löschen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -139,6 +143,8 @@
     "pickDateRange": "Wählen Sie einen Zeitraum aus.",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
+    "typeFilter": "Filter nicht aufgeführt? Beginnen Sie mit der Eingabe...",
+    "typeMore": "Mehr eingeben, um Ergebnisse einzugrenzen",
     "exportReport": "Exportbericht",
     "required": "Erforderlich",
     "minInclusive": "Bitte geben Sie eine Zahl ein, die {replace} oder größer ist!",
@@ -148,7 +154,10 @@
     "minLength": "Die Eingabe muss mindestens {replace} Zeichen umfassen!",
     "maxLength": "Die Eingabe hat die maximale Länge von {replace} Zeichen überschritten!",
     "numericalValuesOnly": "Es sind nur numerische Eingaben zulässig!",
-    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!"
+    "patternFollowed": "Dieses Feld muss dem Muster {replace} entsprechen!",
+    "processingRequest": "Bearbeitung der Anfrage...",
+    "maxFilters": "Sie können nicht mehr als 3 Filter gleichzeitig anwenden.",
+    "sort": "Klicken Sie auf eine Spaltenüberschrift, um aufsteigend oder absteigend zu sortieren. Um nach mehreren Spalten zu sortieren, halten Sie die Umschalttaste auf Ihrer Tastatur gedrückt und klicken Sie auf weitere Überschriften."
   },
   "nav": {
     "caption": {
@@ -189,7 +198,7 @@
     "blank": "(leer)",
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
-    "serviceType": "Art der Dienstleistung",
+    "lastModified": "Zuletzt Geändert",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "active": "Aktiv",
@@ -208,7 +217,9 @@
     "scheduleType": "Art des Zeitplans",
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
+    "status": "Status",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
-    "error": "Fehlerhaft (Übermittlung war fehlerhaft)"
+    "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
+    "loading": "Laden"
   }
 }
