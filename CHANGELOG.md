@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.46.0
+
+### Security
+
+- _Critical security update_ to NextJS. All users should update to this version
+
 ## 5.45.5
 
 ### Bug fixes
