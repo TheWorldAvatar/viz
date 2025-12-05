@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { CameraPosition } from "types/settings";
-import { FORM_STATES } from "ui/interaction/form/form-utils";
+import { FORM_STATES, updateLatLong } from "ui/interaction/form/form-utils";
 import { MapSettingsProvider } from "ui/map/mapbox/map-settings-context";
 import MapboxMapComponent from "ui/map/mapbox/mapbox-container";
+import { isValidCoordinates } from "utils/client-utils";
 
 interface GeocodeMapContainerProps {
   form: UseFormReturn;
@@ -20,8 +21,10 @@ interface GeocodeMapContainerProps {
  * Renders the geocoding map based on form inputs.
  */
 export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
+  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const [map, setMap] = useState<Map>(null);
   const [marker, setMarker] = useState<Marker>(null);
+
 
   // Monitor longitude and latitude values
   const control: Control = props.form.control;
@@ -33,10 +36,15 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
     control,
     name: FORM_STATES.LATITUDE,
   });
+
+  // Provide valid default coordinates (fallback to 0, 0 if invalid)
+  const validLongitude: number = isValidCoordinates(longitude, latitude) ? longitude : 0;
+  const validLatitude: number = isValidCoordinates(longitude, latitude) ? latitude : 0;
+
   // Set a inital camera position
   const defaultPosition: CameraPosition = {
     name: "",
-    center: [longitude, latitude],
+    center: [validLongitude, validLatitude],
     zoom: 16,
     bearing: 0,
     pitch: 0,
@@ -44,34 +52,45 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
 
   // Create a new draggable marker on any map rerenders
   useEffect(() => {
-    if (map) {
-      const marker = new Marker({
+    if (map && isValidCoordinates(longitude, latitude)) {
+      // Remove old marker if it exists
+      if (marker) {
+        marker.remove();
+      }
+
+      const newMarker = new Marker({
         color: "#146a7d",
-        draggable: true,
+        draggable: formType === "add" || formType === "edit",
       })
         .setLngLat([longitude, latitude])
         .addTo(map);
 
       // Marker must update the form values when draggred
-      marker.on("dragend", () => {
-        const lngLat = marker.getLngLat();
-        props.form.setValue(FORM_STATES.LATITUDE, lngLat.lat.toString());
-        props.form.setValue(FORM_STATES.LONGITUDE, lngLat.lng.toString());
-        props.form.setValue(
+      newMarker.on("dragend", () => {
+        const lngLat = newMarker.getLngLat();
+        updateLatLong(
           props.fieldId,
-          `POINT(${lngLat.lng}, ${lngLat.lat})`
+          lngLat.lat.toString(),
+          lngLat.lng.toString(),
+          props.form
         );
       });
-      setMarker(marker);
+      setMarker(newMarker);
     }
-  }, [map]);
+  }, [map, longitude, latitude, formType]);
 
   // This function updates the map when longitude and latitude form values are updated
   useEffect(() => {
-    if (map && marker) {
+    if (!map || !isValidCoordinates(longitude, latitude)) {
+      return;
+    }
+    if (marker) {
       marker.setLngLat([longitude, latitude]);
-      props.form.setValue(props.fieldId, `POINT(${longitude}, ${latitude})`);
+      props.form.setValue(props.fieldId, `POINT(${longitude} ${latitude})`);
       map.flyTo({ center: [longitude, latitude] });
+    } else {
+      // If marker doesn't exist yet but we have valid coordinates, just center the map
+      map.jumpTo({ center: [longitude, latitude] });
     }
   }, [longitude, latitude, marker, map]);
 
@@ -83,12 +102,11 @@ export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
         imagery: null,
       }}
     >
-      <div className="flex  w-full h-[50vh]  my-4 ">
+      <div className="flex w-full h-[50vh] md:h-[70vh] my-4">
         <MapboxMapComponent
           currentMap={map}
           setMap={setMap}
           defaultPosition={defaultPosition}
-          styles="w-full h-[50vh]"
         />
       </div>
     </MapSettingsProvider>

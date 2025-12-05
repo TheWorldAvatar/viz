@@ -1,6 +1,8 @@
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 
+export type ScreenType = "mobile" | "tablet" | "desktop";
+
 /**
  * Interface of default settings for landing page.
  */

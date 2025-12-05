@@ -12,18 +12,18 @@ import {
   FormType,
   ID_KEY,
   PROPERTY_GROUP_TYPE,
+  PROPERTY_SHAPE_TYPE,
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import { getAfterDelimiter } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
-import { FORM_STATES, parsePropertyShapeOrGroupList } from "./form-utils";
+import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
 import { DependentFormSection } from "./section/dependent-form-section";
 import FormGeocoder from "./section/form-geocoder";
@@ -31,7 +31,9 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
+import useOperationStatus from "hooks/useOperationStatus";
 import { toast } from "ui/interaction/action/toast/toast";
+import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -61,6 +63,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
 
   // Sets the default value with the requested function call
@@ -98,18 +101,33 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           return body.data?.items?.[0] as FormTemplateType;
         });
       }
+
+      if (!template) {
+        return initialState;
+      }
+
       if (props.additionalFields) {
         props.additionalFields.forEach((field) =>
           template.property.push(field)
         );
       }
 
-      const updatedProperties: PropertyShapeOrGroup[] =
-        parsePropertyShapeOrGroupList(initialState, template.property);
+      if (props.formType == "add") {
+        const hasScheduleField: boolean = template.property.some(
+          (field) =>
+            (field as PropertyShape)?.class?.[ID_KEY] ===
+            "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
+        );
+
+        if (hasScheduleField) {
+          initialState[FORM_STATES.RECURRENCE] = 0;
+        }
+      }
 
       setFormTemplate({
         ...template,
-        property: updatedProperties,
+        node: parseBranches(initialState, template.node, props.formType != "add"),
+        property: parsePropertyShapeOrGroupList(initialState, template.property),
       });
       return initialState;
     },
@@ -117,9 +135,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
+    startLoading();
     let pendingResponse: AgentResponseBody;
-    // For single service
-    if (formData[FORM_STATES.RECURRENCE] == 0) {
+    // For perpetual service
+    if (formData[FORM_STATES.RECURRENCE] == null) {
+      formData = {
+        ...formData,
+        recurrence: "",
+        "end date": "",
+      };
+      // For single service
+    } else if (formData[FORM_STATES.RECURRENCE] == 0) {
       const startDate: string = formData[FORM_STATES.START_DATE];
       const dateObject: Date = new Date(startDate);
       const dayOfWeek = daysOfWeek[dateObject.getUTCDay()];
@@ -188,7 +214,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             "instances",
             props.entityType,
             "false",
-            formData[FORM_STATES.ID]
+            formData[FORM_STATES.ID],
+            null,
+            null,
+            null,
+            null,
+            null,
+            formData["branch_delete"]
           ),
           {
             method: "DELETE",
@@ -221,7 +253,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "/contracts/draft"),
+            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
             {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -304,14 +336,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
-    toast(pendingResponse?.data?.message || pendingResponse?.error?.message,
-      pendingResponse?.error ? "error" : "success");
-    // For successful responses, either close the modal or go back to previous page
+    stopLoading();
+    toast(
+      pendingResponse?.data?.message || pendingResponse?.error?.message,
+      pendingResponse?.error ? "error" : "success"
+    );
     if (!pendingResponse?.error) {
       setTimeout(() => {
+        // Close search modal on success
         if (props.formType === "search") {
-          props.setShowSearchModalState(false)
+          props.setShowSearchModalState(false);
         } else {
+          // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
         }
       }, 2000);
@@ -320,11 +356,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   return (
     <form ref={props.formRef} onSubmit={onSubmit}>
-      {form.formState.isLoading && <LoadingSpinner isSmall={false} />}
+      {form.formState.isLoading && <FormSkeleton />}
       {!form.formState.isLoading &&
-        formTemplate.property.map((field, index) => {
-          return renderFormField(props.entityType, field, form, index);
-        })}
+        renderFormField(
+          props.entityType,
+          formTemplate.property.find(
+            (node) =>
+              node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
+              (node as PropertyShape).name[VALUE_KEY] === "id"
+          ),
+          form,
+          -1
+        )}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
@@ -332,6 +375,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           form={form}
         />
       )}
+      {!form.formState.isLoading &&
+        formTemplate.property
+          .filter(
+            (node) =>
+              !(
+                node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
+                (node as PropertyShape).name[VALUE_KEY] === "id"
+              )
+          )
+          .map((field, index) =>
+            renderFormField(props.entityType, field, form, index)
+          )}
     </form>
   );
 }
@@ -356,8 +411,10 @@ export function renderFormField(
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
     formType === "view" || formType === "delete";
+
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
+
     return (
       <FormSection
         key={fieldset[ID_KEY] + currentIndex}

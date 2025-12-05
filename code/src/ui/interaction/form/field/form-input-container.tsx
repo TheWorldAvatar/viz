@@ -1,14 +1,9 @@
 import { FieldError } from "react-hook-form";
-import { Dictionary } from "types/dictionary";
-
 import { OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
-import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import { useDictionary } from "hooks/useDictionary";
 import { Icon } from "@mui/material";
 import Tooltip from "ui/interaction/tooltip/tooltip";
-import Button from "ui/interaction/button";
 
 export interface FormInputContainerProps {
   field: PropertyShape;
@@ -17,7 +12,6 @@ export interface FormInputContainerProps {
   formatLabel?: string;
   labelStyles?: string[];
   selectedOption?: OntologyConcept;
-  redirectOptions?: FormInputContainerRedirectOptions;
 }
 
 export interface FormInputContainerRedirectOptions {
@@ -40,7 +34,6 @@ export default function FormInputContainer(
 ) {
   const labelClassNames: string = props.labelStyles?.join(" ");
   const label: string = props.field.name[VALUE_KEY];
-  const dict: Dictionary = useDictionary();
 
   const description =
     props.field.description[VALUE_KEY] != ""
@@ -53,35 +46,19 @@ export default function FormInputContainer(
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between  ">
+      <div className="flex flex-wrap items-center justify-between">
         <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
-          <span className="text-lg font-semibold flex gap-4">
+          <span className="text-lg  font-semibold flex items gap-1.5">
             {parseWordsForLabels(label)}
             {props.error && "*"}
             <Tooltip text={description} placement="right">
-              <Icon className="material-symbols-outlined">{"info"}</Icon>
+              <Icon className="material-symbols-outlined ">{"info"}</Icon>
             </Tooltip>
           </span>
           {props.formatLabel && (
             <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
           )}
         </label>
-        <div className="flex items-center  gap-2">
-          {props.redirectOptions?.addUrl && (
-            <RedirectButton
-              label={dict.action.add}
-              leftIcon="add"
-              url={props.redirectOptions.addUrl}
-            />
-          )}
-          {props.redirectOptions?.view && (
-            <Button
-              label={dict.action.view}
-              leftIcon="arrow_forward"
-              onClick={props.redirectOptions.view}
-            />
-          )}
-        </div>
       </div>
       <div>{props.children}</div>
 

@@ -1,14 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Control, FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
-import { GroupBase, OptionsOrGroups } from 'react-select';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { GroupBase, OptionsOrGroups } from "react-select";
 
-import { AgentResponseBody } from 'types/backend-agent';
-import { defaultSearchOption, FormFieldOptions, ID_KEY, ONTOLOGY_CONCEPT_ROOT, OntologyConcept, OntologyConceptMappings, PropertyShape, VALUE_KEY } from 'types/form';
-import LoadingSpinner from 'ui/graphic/loader/spinner';
-import { SelectOption } from 'ui/interaction/dropdown/simple-selector';
-import { FORM_STATES, getMatchingConcept, parseConcepts } from 'ui/interaction/form/form-utils';
-import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
-import FormSelector from './form-selector';
+import { AgentResponseBody } from "types/backend-agent";
+import {
+  defaultSearchOption,
+  FormFieldOptions,
+  ID_KEY,
+  ONTOLOGY_CONCEPT_ROOT,
+  OntologyConcept,
+  OntologyConceptMappings,
+  PropertyShape,
+} from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import {
+  FORM_STATES,
+  getMatchingConcept,
+  parseConcepts,
+} from "ui/interaction/form/form-utils";
+import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import FormSelector from "./form-selector";
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -18,12 +30,14 @@ interface OntologyConceptSelectorProps {
 
 /**
  * This component renders a dropdown selector for the form.
- * 
+ *
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
-export default function OntologyConceptSelector(props: Readonly<OntologyConceptSelectorProps>) {
+export default function OntologyConceptSelector(
+  props: Readonly<OntologyConceptSelectorProps>
+) {
   const control: Control = props.form.control;
   const currentOption: string = useWatch<FieldValues>({
     control,
@@ -32,8 +46,11 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
 
   const effectRan = useRef(false);
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [conceptMappings, setConceptMappings] = useState<OntologyConceptMappings>({});
-  const [options, setOptions] = useState<OptionsOrGroups<SelectOption, GroupBase<SelectOption>>>([]);
+  const [conceptMappings, setConceptMappings] =
+    useState<OntologyConceptMappings>({});
+  const [options, setOptions] = useState<
+    OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>
+  >([]);
 
   // Retrieve the matching concept from the mappings
   const selectedOption: OntologyConcept = useMemo(() => {
@@ -47,66 +64,83 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
       setIsFetching(true);
       try {
         // Extract all the concept types and extract all the types from the endpoint
-        const conceptTypes: string[] = props.field.in.map(subClass => subClass[ID_KEY])
+        const conceptTypes: string[] = props.field.in.map(
+          (subClass) => subClass[ID_KEY]
+        );
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
-          conceptTypes.map(conceptType => fetch(makeInternalRegistryAPIwithParams('concept', conceptType), {
-            cache: 'no-store',
-            credentials: 'same-origin'
-          }).then(async (response) => {
-            if (!response.ok) {
-              throw new Error(`Failed to fetch available types for ${conceptType}`);
-            }
-            const resBody: AgentResponseBody = await response.json();
-            return resBody.data?.items as OntologyConcept[];
-          })
+          conceptTypes.map((conceptType) =>
+            fetch(makeInternalRegistryAPIwithParams("concept", conceptType), {
+              cache: "no-store",
+              credentials: "same-origin",
+            }).then(async (response) => {
+              if (!response.ok) {
+                throw new Error(
+                  `Failed to fetch available types for ${conceptType}`
+                );
+              }
+              const resBody: AgentResponseBody = await response.json();
+              return resBody.data?.items as OntologyConcept[];
+            })
           )
         );
         const concepts: OntologyConcept[] = conceptsArrays.flat();
         if (concepts && concepts.length > 0) {
           let firstOption: string = props.form.getValues(props.field.fieldId);
-          // WIP: Set default value Singapore for any Country Field temporarily
-          // Default values should not be hardcoded here but retrieved in a config instead
-          if (props.field.name[VALUE_KEY].toLowerCase() === "country" && !firstOption) {
-            firstOption = "Singapore";
-          }
+
           // Add the default search option only if this is the search form
           if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
           }
-          const sortedConceptMappings: OntologyConceptMappings = parseConcepts(concepts, firstOption);
+          const sortedConceptMappings: OntologyConceptMappings = parseConcepts(
+            concepts,
+            firstOption
+          );
           setConceptMappings(sortedConceptMappings);
+
+          // Only auto-select default values for non-add forms to force explicit user selection in add forms
+          const currentFormType: string = props.form.getValues(
+            FORM_STATES.FORM_TYPE
+          );
           // First option should be set if available, else the first parent value should be prioritised
-          const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
-          props.form.setValue(props.field.fieldId,
-            sortedConceptMappings[firstRootOption?.type.value] ? sortedConceptMappings[firstRootOption.type.value][0]?.type?.value
-              : firstRootOption?.type?.value);
+          const firstRootOption: OntologyConcept =
+            sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
+          props.form.setValue(
+            props.field.fieldId,
+            currentFormType === "add"
+            // For add forms, default to default value if available, else, return undefined
+              ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
+              // For every other form type, extract the parent option if available, else, default to base
+              : sortedConceptMappings[firstRootOption?.type.value]
+                ? sortedConceptMappings[firstRootOption.type.value][0]?.type
+                  ?.value
+                : firstRootOption?.type?.value
+          );
 
           // Parse the mappings to generate the format for select options
-          const formOptions: SelectOption[] = [];
-          const formGroups: GroupBase<SelectOption>[] = [];
+          const formOptions: SelectOptionType[] = [];
+          const formGroups: GroupBase<SelectOptionType>[] = [];
 
           sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT].forEach((option) => {
             const parentKey: string = option.type.value;
             // If there are children options, return the opt group with the children options
             if (sortedConceptMappings[parentKey]) {
-              const formChildrenOptions: SelectOption[] = [];
+              const formChildrenOptions: SelectOptionType[] = [];
 
-              sortedConceptMappings[parentKey].forEach(childOption => {
-                const formOption: SelectOption = {
+              sortedConceptMappings[parentKey].forEach((childOption) => {
+                const formOption: SelectOptionType = {
                   value: childOption.type.value,
                   label: childOption.label.value,
                 };
                 formChildrenOptions.push(formOption);
               });
-              const groupOption: GroupBase<SelectOption> = {
+              const groupOption: GroupBase<SelectOptionType> = {
                 label: option.label.value + " ↓",
                 options: formChildrenOptions,
               };
               formGroups.push(groupOption);
-
             } else {
-              const formOption: SelectOption = {
+              const formOption: SelectOptionType = {
                 value: option.type.value,
                 label: option.label.value,
               };
@@ -115,24 +149,25 @@ export default function OntologyConceptSelector(props: Readonly<OntologyConceptS
           });
           setOptions([...formOptions, ...formGroups]);
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error fetching concepts:", error);
       } finally {
         setIsFetching(false);
       }
-    }
+    };
 
     if (!effectRan.current) {
       getEntityConcepts();
     }
     // Control flow of data fetching on first and remount to ensure only one fetch request is executed in development mode
     // Read this for more details: https://stackoverflow.com/a/74609594
-    return () => { effectRan.current = true };
+    return () => {
+      effectRan.current = true;
+    };
   }, []);
 
   if (isFetching) {
-    return <LoadingSpinner isSmall={true} />
+    return <LoadingSpinner isSmall={true} />;
   }
   if (conceptMappings[ONTOLOGY_CONCEPT_ROOT] && options.length > 0) {
     return (

@@ -3,6 +3,7 @@ export const ID_KEY = "@id";
 export const TYPE_KEY = "@type";
 export const VALUE_KEY = "@value";
 export const PROPERTY_GROUP_TYPE = "PropertyGroup";
+export const PROPERTY_SHAPE_TYPE = "PropertyShape";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
@@ -17,7 +18,16 @@ export type LifecycleStage =
   | "scheduled"
   | "closed";
 
-export type FormType = "add" | "delete" | "edit" | "view" | "search";
+export type FormType =
+  | "add"
+  | "delete"
+  | "edit"
+  | "view"
+  | "search"
+  | "dispatch"
+  | "complete"
+  | "cancel"
+  | "report";
 
 export interface SparqlResponseField {
   value: string;
@@ -84,6 +94,7 @@ export interface PropertyShape {
   maxInclusive?: JsonLdLiteral;
   minExclusive?: JsonLdLiteral;
   maxExclusive?: JsonLdLiteral;
+  singleLine?: JsonLdLiteral;
   minLength?: JsonLdLiteral;
   maxLength?: JsonLdLiteral;
   pattern?: JsonLdLiteral;
@@ -137,11 +148,10 @@ export const defaultSearchOption: OntologyConcept = {
 };
 
 export interface RegistryTaskOption {
-  id: string;
   contract: string;
   status: string;
   date: string;
-  type: RegistryTaskType;
+  scheduleType: string;
 }
 
 export type RegistryTaskType =
@@ -149,4 +159,7 @@ export type RegistryTaskType =
   | "complete"
   | "cancel"
   | "report"
-  | "default";
+  | "view";
+
+export type QuickViewGroupings = Record<string, QuickViewFields>;
+export type QuickViewFields = Record<string, SparqlResponseField[]>;

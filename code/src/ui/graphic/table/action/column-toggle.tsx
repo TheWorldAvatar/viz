@@ -5,7 +5,7 @@ import { FieldValues } from "react-hook-form/dist/types/fields";
 import { Dictionary } from "types/dictionary";
 
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { parseWordsForLabels } from "utils/client-utils";
 
 interface ColumnToggleProps {
@@ -20,12 +20,12 @@ interface ColumnToggleProps {
  */
 export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
   const dict: Dictionary = useDictionary();
-  const options: SelectOption[] = props.columns.map((col) => ({
+  const options: SelectOptionType[] = props.columns.map((col) => ({
     label: parseWordsForLabels(col.id),
     value: col.id,
   }));
 
-  const [selectedOptions, setSelectedOptions] = useState<SelectOption[]>(null);
+  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(null);
 
   useEffect(() => {
     if (selectedOptions) {
@@ -46,7 +46,6 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
           toggleAll={true}
           isClearable={false}
           setControlledSelectedOptions={setSelectedOptions}
-          isAllInitiallySelected={true}
         />
       </div>
     </div>

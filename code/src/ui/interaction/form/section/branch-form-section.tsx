@@ -1,24 +1,24 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
-import { Routes } from "io/config/routes";
 import { Dictionary } from "types/dictionary";
 import {
   NodeShape,
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
   PropertyShape,
-  PropertyShapeOrGroup,
   TYPE_KEY,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector, {
-  SelectOption,
+  SelectOptionType,
 } from "ui/interaction/dropdown/simple-selector";
 import { parseWordsForLabels } from "utils/client-utils";
 import { renderFormField } from "../form";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "../form-utils";
+import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 
 interface OptionBasedFormSectionProps {
   entityType: string;
@@ -36,67 +36,16 @@ interface OptionBasedFormSectionProps {
 export default function BranchFormSection(
   props: Readonly<OptionBasedFormSectionProps>
 ) {
-  // Declare a function to get the most suitablebranch node and set default values if present
-  const getBranchNode = useCallback((nodeShapes: NodeShape[]): NodeShape => {
-    // Iterate to find and store any default values in these node states
-    const nodeStates: FieldValues[] = [];
-    nodeShapes.forEach((shape) => {
-      const nodeState: FieldValues = {};
-      parsePropertyShapeOrGroupList(nodeState, shape.property);
-      nodeStates.push(nodeState);
-    });
-    // Find the best matched node states with non-empty values
-    let nodeWithMostNonEmpty: NodeShape = nodeShapes[0];
-    let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
-    let maxNonEmptyCount: number = 0;
-    nodeStates.forEach((nodeState, index) => {
-      let currentNonEmptyCount: number = 0;
-      for (const nodeField in nodeState) {
-        if (Object.hasOwn(nodeState, nodeField)) {
-          const fieldVal = nodeState[nodeField];
-          // Increment the counter when it is non-empty
-          // Field arrays are stored as group.index.field in react-hook-form
-          if (
-            typeof fieldVal === "string" &&
-            fieldVal.length > 0 &&
-            fieldVal != "-0.01"
-          ) {
-            currentNonEmptyCount++;
-          }
-        }
-      }
-      // update the best match
-      if (currentNonEmptyCount > maxNonEmptyCount) {
-        nodeWithMostNonEmpty = props.node[index];
-        nodeStateWithMostNonEmpty = nodeState;
-        maxNonEmptyCount = currentNonEmptyCount;
-      }
-    });
-    // For setting the branch value, attempt this
-    Object.keys(nodeStateWithMostNonEmpty).forEach((nodeField) => {
-      props.form.setValue(nodeField, nodeStateWithMostNonEmpty[nodeField]);
-    });
-    return nodeWithMostNonEmpty;
-  }, []);
-
   const dict: Dictionary = useDictionary();
-  // Extract the initial node shape
-  const initialNodeShape: NodeShape = useMemo(() => {
-    return getBranchNode(props.node);
-  }, []);
-
+  const [isSwitching, setIsSwitching] = useState<boolean>(true);
   // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] =
-    useState<NodeShape>(initialNodeShape);
-  const [selectedFields, setSelectedFields] = useState<PropertyShapeOrGroup[]>(
-    parsePropertyShapeOrGroupList({}, initialNodeShape.property)
-  );
+  const [selectedModel, setSelectedModel] = useState<NodeShape>(null);
 
   // Declare a function to transform node shape to a form option
   const convertNodeShapeToFormOption = useCallback(
-    (nodeShape: NodeShape): SelectOption => {
+    (nodeShape: NodeShape): SelectOptionType => {
       return {
-        label: parseWordsForLabels(nodeShape.label[VALUE_KEY]),
+        label: parseWordsForLabels(nodeShape?.label[VALUE_KEY]),
         value: nodeShape.label[VALUE_KEY],
       };
     },
@@ -109,8 +58,43 @@ export default function BranchFormSection(
     []
   );
 
+  useEffect(() => {
+    if (props.node.length > 0) {
+      const initialNode: NodeShape = props.node[0];
+      setSelectedModel(initialNode);
+      setIsSwitching(false);
+      const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+      const initialBranchName: string = initialNode.label[VALUE_KEY];
+
+      if (formType === "delete") {
+        props.form.setValue(BRANCH_DELETE, initialBranchName);
+      } else if (formType === "edit") {
+        // Set both values - branch_add for new, branch_delete for original
+        props.form.setValue(BRANCH_ADD, initialBranchName);
+        props.form.setValue(BRANCH_DELETE, initialBranchName);
+      } else if (formType === "add") {
+        // For add forms
+        props.form.setValue(BRANCH_ADD, initialBranchName);
+      }
+    }
+  }, [props.node, props.form]);
+
   // Handle change event for the branch selection
-  const handleModelChange = (formOption: SelectOption) => {
+  const handleModelChange = (formOption: SelectOptionType) => {
+    const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+    const newBranchName: string = formOption.value;
+
+    if (formType === "edit") {
+      //  branch_add is the new selection, branch_delete stays as original
+      props.form.setValue(BRANCH_ADD, newBranchName);
+      // branch_delete remains the original value (already set in useEffect)
+    } else if (formType === "delete") {
+      props.form.setValue(BRANCH_DELETE, newBranchName);
+    } else if (formType === "add") {
+      props.form.setValue(BRANCH_ADD, newBranchName);
+    }
+
+    setIsSwitching(true);
     const matchingNode: NodeShape = props.node.find(
       (nodeShape) => nodeShape.label[VALUE_KEY] === formOption.value
     );
@@ -129,20 +113,20 @@ export default function BranchFormSection(
         props.form.unregister((field as PropertyShape).name[VALUE_KEY]);
       }
     });
-    // update branch node fields with existing values if present
-    getBranchNode([matchingNode]);
-    // Update form branch
-    setSelectedFields(parsePropertyShapeOrGroupList({}, matchingNode.property));
+    // Update form branch fields and values
+    const nodeState: FieldValues = {};
+    parsePropertyShapeOrGroupList(nodeState, matchingNode.property);
     setSelectedModel(matchingNode);
+    setTimeout(() => setIsSwitching(false), 250);
   };
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 mt-4">
         <label className="text-md md:text-lg" htmlFor="select-input">
           {dict.message.branchInstruction}:
         </label>
-        <SimpleSelector
+        {selectedModel && <SimpleSelector
           options={formOptions}
           defaultVal={convertNodeShapeToFormOption(selectedModel).value}
           onChange={(selectedOption) => {
@@ -151,19 +135,19 @@ export default function BranchFormSection(
             }
           }}
           isDisabled={
-            props.form.getValues(FORM_STATES.FORM_TYPE) ==
-              Routes.REGISTRY_DELETE ||
-            props.form.getValues(FORM_STATES.FORM_TYPE) == Routes.REGISTRY
+            props.form.getValues(FORM_STATES.FORM_TYPE) == "delete" ||
+            props.form.getValues(FORM_STATES.FORM_TYPE) == "view"
           }
-        />
+        />}
         <p className="text-md md:text-lg">
           <b className="text-md md:text-lg">{dict.title.description}: </b>
           {selectedModel?.comment[VALUE_KEY]}
         </p>
       </div>
-      {selectedFields.map((field, index) => {
-        return renderFormField(props.entityType, field, props.form, index);
-      })}
+      {isSwitching ? <LoadingSpinner isSmall={true} />
+        : selectedModel?.property.map((field, index) => {
+          return renderFormField(props.entityType, field, props.form, index);
+        })}
     </>
   );
 }

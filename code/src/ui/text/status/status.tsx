@@ -1,22 +1,8 @@
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
+import { parseWordsForLabels } from "utils/client-utils";
 
-export const Status: {
-  [key: string]: string;
-} = {
-  AVAILABLE: "available",
-  UNAVAILABLE: "unavailable",
-  ACTIVE: "active",
-  NEW: "open",
-  ASSIGNED: "assigned",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-  ISSUE: "issue",
-  RESCINDED: "rescinded",
-  TERMINATED: "terminated",
-};
-
-interface StatusComponentProps<> {
+interface StatusComponentProps {
   status: string;
 }
 
@@ -25,25 +11,25 @@ export function getTranslatedStatusLabel(
   dict: Dictionary
 ): string {
   switch (status.toLowerCase()) {
-    case Status.AVAILABLE:
+    case "available":
       return dict.title.available;
-    case Status.UNAVAILABLE:
+    case "unavailable":
       return dict.title.unavailable;
-    case Status.ACTIVE:
+    case "active":
       return dict.title.active;
-    case Status.ASSIGNED:
+    case "assigned":
       return dict.title.assigned;
-    case Status.COMPLETED:
+    case "completed":
       return dict.title.completed;
-    case Status.CANCELLED:
+    case "cancelled":
       return dict.title.cancelled;
-    case Status.NEW:
+    case "new":
       return dict.title.new;
-    case Status.ISSUE:
+    case "issue":
       return dict.title.issue;
-    case Status.RESCINDED:
+    case "rescinded":
       return dict.title.rescinded;
-    case Status.TERMINATED:
+    case "terminated":
       return dict.title.terminated;
     default:
       return null;
@@ -53,44 +39,54 @@ export function getTranslatedStatusLabel(
 /**
  * Renders the status with a circle indicator.
  *
- * @param {string} status The status to display.
+ * @param {string} status The untranslated status key. Status will be translated within this component.
  */
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
-  let statusColor: string;
+  let statusTextColor: string;
+  let statusBackgroundColor: string;
   const dict: Dictionary = useDictionary();
 
-  switch (props.status.toLowerCase()) {
+  const statusVal: string = dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status;
+  switch (statusVal.toLowerCase()) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
-      statusColor = "#52B7A5";
+      statusTextColor = "var(--status-open-text)";
+      statusBackgroundColor = "var(--status-open-bg)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
-      statusColor = "#D96E6E";
+      statusTextColor = "var(--status-cancelled-text)";
+      statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     case dict.title.issue.toLowerCase():
-      statusColor = "#ffbe0b";
+      statusTextColor = "var(--status-issue-text)";
+      statusBackgroundColor = "var(--status-issue-bg)";
       break;
     case dict.title.completed.toLowerCase():
-      statusColor = "#52B7A5";
+      statusTextColor = "var(--status-open-text)";
+      statusBackgroundColor = "var(--status-open-bg)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
-      statusColor = "#D7653D";
+      statusTextColor = "var(--status-cancelled-text)";
+      statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     default:
-      statusColor = "#666";
+      statusTextColor = "var(--status-assigned-text)";
+      statusBackgroundColor = "var(--status-assigned-bg)";
   }
 
   return (
-    <span className="inline-flex items-center ">
-      <span
-        className="h-2 w-2 mx-1 rounded-full bg-background border-1 border-solid"
-        style={{ borderColor: statusColor }}
-      ></span>
-      <p className="text-lg" style={{ color: statusColor }}>
-        {props.status}
+    <span className="flex justify-center items-center">
+      <p
+        className="text-lg px-8 py-1 rounded-4xl"
+        style={{
+          color: statusTextColor,
+          backgroundColor: statusBackgroundColor,
+        }}
+      >
+        {parseWordsForLabels(statusVal)}
       </p>
     </span>
   );

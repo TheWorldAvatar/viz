@@ -6,31 +6,45 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
-import useRefresh from "hooks/useRefresh";
+import useOperationStatus from "hooks/useOperationStatus";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import { FormComponent } from "ui/interaction/form/form";
-import Modal from "ui/interaction/modal/modal";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
-import ReturnButton from "../action/redirect/return-button";
 import Button from "../button";
 import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
-
 import { toast } from "../action/toast/toast";
+import NavigationDrawer from "../drawer/navigation-drawer";
+import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormContainerComponentProps {
   entityType: string;
   formType: FormType;
   isPrimaryEntity?: boolean;
-  isModal?: boolean;
+}
+
+/**
+ * Renders a form container for intercept routes.
+ *
+ * @param {string} entityType The type of entity.
+ * @param {FormType} formType The type of form such as add, update, delete, and view.
+ * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
+ */
+export function InterceptFormContainerComponent(
+  props: Readonly<FormContainerComponentProps>
+) {
+  return (
+    <NavigationDrawer>
+      <FormContents {...props} />
+    </NavigationDrawer>
+  );
 }
 
 /**
@@ -39,23 +53,12 @@ interface FormContainerComponentProps {
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as add, update, delete, and view.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
- * @param {boolean} isModal An optional indicator to render the form as a modal.
  */
-export default function FormContainerComponent(
+export function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
-  const [isOpen, setIsOpen] = React.useState<boolean>(props.isModal);
-
-  if (props.isModal) {
-    return (
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} returnPrevPage={true}>
-        <FormContents {...props} />
-      </Modal>
-    );
-  }
-
   return (
-    <div className=" flex flex-col w-full h-dvh mt-0   xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-zinc-100 dark:bg-modal-bg-dark xl:border-1 xl:shadow-2xl xl:border-border xl:rounded-xl xl:mt-4  ">
+    <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
       <FormContents {...props} />
     </div>
   );
@@ -67,8 +70,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
 
-  const [refreshFlag, triggerRefresh] = useRefresh();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
   const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
   const [status, setStatus] = useState<AgentResponseBody>(null);
@@ -127,7 +129,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       lifecycleStage: string,
       eventType: string
     ): Promise<void> => {
-      setIsLoading(true);
       const res = await fetch(
         makeInternalRegistryAPIwithParams(
           "event",
@@ -145,8 +146,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         responseBody.data?.items as Record<string, unknown>[]
       )?.[0]?.property as PropertyShape[];
       setFormFields(template);
-
-      setIsLoading(false);
     };
 
     if (isRescindAction) {
@@ -158,9 +157,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    setIsLoading(true);
+    startLoading();
     const reqBody: JsonObject = {
-      contract: status?.data?.id,
+      contract: id,
       remarks: "Contract has been approved successfully!",
     };
     const res = await fetch(
@@ -174,16 +173,16 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       }
     );
     const customAgentResponse: AgentResponseBody = await res.json();
+    stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
       customAgentResponse?.error ? "error" : "success"
     );
-    setIsLoading(false);
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {
         router.back();
-      }, 2000);
+      }, 1000);
     }
   };
 
@@ -220,18 +219,20 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   return (
     <>
-      <div className="text-xl font-bold">
-        <span>{`${translateFormType(
+      <section
+        className={`flex justify-between items-center text-nowrap text-foreground p-1 mt-5 mb-0.5  shrink-0`}
+      >
+        <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
         ).toUpperCase()} ${parseWordsForLabels(props.entityType)
           .toUpperCase()
-          .replace("_", " ")}`}</span>
-      </div>
-      <div className="overflow-y-auto overflow-x-hidden h-[75vh] w-full mx-auto md:p-6 p-1 ">
+          .replace("_", " ")}`}</h1>
+      </section>
+      <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {!(isRescindAction || isTerminateAction) &&
           (refreshFlag ? (
-            <LoadingSpinner isSmall={false} />
+            <FormSkeleton />
           ) : (
             <FormComponent
               formRef={formRef}
@@ -250,19 +251,19 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
       </div>
-      <div className="flex justify-between p-1 sm:p-2  items-center">
+
+      <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
             variant="outline"
+            disabled={isLoading}
             tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
             size="icon"
           />
         )}
-        {formRef.current?.formState?.isSubmitting ||
-          (isLoading && <LoadingSpinner isSmall={false} />)}
-        <div className="flex flex-wrap gap-2 justify-end items-center  ">
+        <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
@@ -300,6 +301,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <Button // Approval button
                 leftIcon="done_outline"
                 label={dict.action.approve}
+                disabled={isLoading}
+                loading={isLoading}
                 tooltipText={dict.action.approve}
                 onClick={onApproval}
               />
@@ -313,9 +316,10 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               <RedirectButton // Edit button
                 leftIcon="edit"
                 label={dict.action.edit}
+                disabled={isLoading}
                 tooltipText={dict.action.edit}
                 url={`../../edit/${props.entityType}/${id}`}
-                variant="primary"
+                variant="secondary"
               />
             )}
           {(!keycloakEnabled ||
@@ -326,10 +330,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
                 leftIcon="delete"
+                iconSize="medium"
                 label={dict.action.delete}
+                disabled={isLoading}
                 tooltipText={dict.action.delete}
                 url={`../../delete/${props.entityType}/${id}`}
-                variant="destructive"
+                variant="secondary"
               />
             )}
           {props.formType != "view" && (
@@ -337,6 +343,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               leftIcon="send"
               label={dict.action.submit}
               tooltipText={dict.action.submit}
+              loading={isLoading}
+              disabled={isLoading}
               onClick={onSubmit}
             />
           )}
@@ -353,17 +361,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 }}
               />
             ))}
-          {!(isRescindAction || isTerminateAction) && (
-            <ReturnButton
-              label={dict.action.return}
-              leftIcon={"first_page"}
-              className="ml-2"
-              variant="secondary"
-              tooltipText={dict.action.return}
-            />
-          )}
         </div>
-      </div>
+      </section>
     </>
   );
 }

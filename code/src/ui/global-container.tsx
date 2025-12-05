@@ -75,7 +75,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
         <HeaderBar pages={props.pages} settings={props.settings} />
 
-        <main className="flex h-[92dvh] w-full ">
+        <main className="flex h-[92dvh] w-full">
           {!pathname.endsWith("map") && (
             <NavMenu
               setContentWidthClass={setContentWidthClass}
@@ -84,9 +84,9 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
               isMobile={false}
             />
           )}
-          <div className={`flex grow flex-col ${contentWidthClass}`}>
+          <div className={`flex grow flex-col bg-muted ${contentWidthClass}`}>
             {props.children}
-            <Footer />
+            {!pathname.endsWith("map") && <Footer />}
           </div>
         </main>
 

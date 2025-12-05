@@ -58,16 +58,19 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <div
       id="headerbar"
-      className="bg-muted border-b-border z-[999] flex h-[8dvh]  items-center justify-between overflow-hidden border-b "
+      className="bg-muted border-b-border z-[999] flex h-[8dvh] items-center justify-between overflow-hidden border-b"
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
         // Handle the case where header bar is a list
-        <div className="flex h-14 items-center justify-center gap-2">
+        <div className="flex  items-center gap-5 md:gap-2">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
               <Link key={logo} href={Routes.HOME}>
-                <IconComponent icon={logo} classes="h-12 w-auto ml-2 md:ml-8" />
+                <IconComponent
+                  icon={logo}
+                  classes="h-8 md:h-12 w-auto ml-4 md:ml-8"
+                />
               </Link>
             ))
           ) : (
@@ -75,7 +78,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
             <Link href={Routes.HOME}>
               <IconComponent
                 icon={props.settings?.branding?.navbar}
-                classes="h-12 ml-4 w-auto"
+                classes="h-8 md:h-12 ml-4 w-auto"
               />
             </Link>
           )}
@@ -83,7 +86,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
       )}
 
       {/* Render each component as required */}
-      <div className="flex items-center justify-center">
+      <div className="flex">
         <div className={`flex ${pathname.endsWith("map") ? "" : "xl:hidden"} `}>
           <NavMenu
             pages={props.pages}
