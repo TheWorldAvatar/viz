@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { Icon } from "@mui/material"
 import Button from "ui/interaction/button"
 import { useDictionary } from "hooks/useDictionary"
 
@@ -18,11 +17,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
 
     return (
         <div className="w-full space-y-2">
-            <button
-                type="button"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className={`w-full p-3 border border-border rounded-lg flex items-center justify-between transition-all hover:bg-muted/50 bg-muted ${props.disabled ? "opacity-75" : ""}`}
-            >
+            <div className={`w-full rounded-lg flex items-center justify-between  ${props.disabled ? "opacity-75" : ""}`}>
                 <div className="flex items-center gap-2 text-left">
                     <div className="flex items-center justify-center w-8 h-8 rounded-full bg-ring text-foreground font-semibold text-sm">
                         {props.dates.length}
@@ -33,15 +28,17 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                         </span>
                     </div>
                 </div>
-                <Icon
-                    className="material-symbols-outlined transition-transform"
-                    style={{
-                        transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                <Button
+                    onClick={(e) => {
+                        e.preventDefault()
+                        setIsExpanded(!isExpanded)
                     }}
-                >
-                    expand_more
-                </Icon>
-            </button>
+                    leftIcon={isExpanded ? "expand_less" : "expand_more"}
+                    variant="outline"
+                    size="icon"
+                    iconSize="small"
+                />
+            </div>
 
             {isExpanded && (
                 <div className={`bg-muted border border-border rounded-lg overflow-hidden ${props.disabled ? "opacity-75" : ""}`}>
@@ -49,16 +46,11 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                         {sortedDates.map((date, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-between p-2 bg-background rounded-md border border-border/50"
+                                className="flex items-center justify-between border-b last:border-b-0 border-border "
                             >
-                                <div className="flex items-center gap-2 ml-2">
+                                <div className="flex items-center ">
                                     <span className="text-sm font-medium text-foreground">
-                                        {date.toLocaleDateString(dict.lang === "de" ? "de-DE" : "en-UK", {
-                                            weekday: "short",
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric",
-                                        })}
+                                        {date.toLocaleDateString()}
                                     </span>
                                 </div>
                                 <Button
@@ -67,7 +59,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                     variant="ghost"
                                     size="icon"
                                     iconSize="small"
-                                    className="w-8 h-8 text-red-400 hover:bg-red-100 dark:text-red-600 dark:hover:!bg-red-200 "
+                                    className="w-8 h-8 text-red-400 hover:bg-red-100 dark:text-red-600 dark:hover:!bg-red-200 mb-1"
                                     onClick={() => {
                                         // Find index by timestamp value 
                                         const originalIndex = props.dates.findIndex(d => d.getTime() === date.getTime());
