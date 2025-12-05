@@ -7,29 +7,34 @@ export const PROPERTY_SHAPE_TYPE = "PropertyShape";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
-export type LifecycleStage =
-  | "general"
-  | "pending"
-  | "active"
-  | "archive"
-  | "tasks"
-  | "outstanding"
-  | "scheduled"
-  | "closed"
-  | "account"
-  | "activity"
-  | "pricing";
+export const LifecycleStageMap = {
+  GENERAL: "general",
+  PENDING: "pending",
+  ACTIVE: "active",
+  ARCHIVE: "archive",
+  TASKS: "tasks",
+  OUTSTANDING: "outstanding",
+  SCHEDULED: "scheduled",
+  CLOSED: "closed",
+  ACCOUNT: "account",
+  ACTIVITY: "activity",
+  PRICING: "pricing",
+} as const;
+export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
 
-export type FormType =
-  | "add"
-  | "delete"
-  | "edit"
-  | "view"
-  | "search"
-  | "dispatch"
-  | "complete"
-  | "cancel"
-  | "report";
+export const FormTypeMap = {
+  ADD: "add",
+  ADD_BILL: "addbill",
+  DELETE: "delete",
+  EDIT: "edit",
+  VIEW: "view",
+  SEARCH: "search",
+  DISPATCH: "dispatch",
+  COMPLETE: "complete",
+  CANCEL: "cancel",
+  REPORT: "report"
+} as const;
+export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 
 export interface SparqlResponseField {
   value: string;
