@@ -5,30 +5,23 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { openDrawer } from "state/drawer-component-slice";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import {
-  LifecycleStage,
-  RegistryTaskOption,
-  RegistryTaskType,
-} from "types/form";
+import { LifecycleStage } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import { Status } from "ui/text/status/status";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { buildUrl } from "utils/client-utils";
 
 interface RegistryRowActionProps {
   recordType: string;
   lifecycleStage: LifecycleStage;
   row: FieldValues;
-  setTask: React.Dispatch<React.SetStateAction<RegistryTaskOption>>;
   triggerRefresh: () => void;
 }
 
@@ -38,19 +31,17 @@ interface RegistryRowActionProps {
  * @param {string} recordType The type of the record.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {FieldValues} row Row values.
- * @param setTask A dispatch method to set the task option when required.
  * @param triggerRefresh A function to refresh the table when required.
  */
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const recordId: string = props.row.event_id
-    ? props.row.event_id
+    ? getId(props.row.event_id)
     : props.row.id
       ? getId(props.row.id)
-      : props.row.iri;
+      : getId(props.row.iri);
 
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -110,6 +101,7 @@ export default function RegistryRowAction(
     props.triggerRefresh();
   };
 
+
   const handleClickView = (): void => {
     if (
       props.lifecycleStage == "tasks" ||
@@ -118,16 +110,13 @@ export default function RegistryRowAction(
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
     ) {
-      props.setTask(
-        genTaskOption(recordId, props.row, "default", dict.title.scheduleType)
-      );
-      dispatch(openDrawer());
+      // Navigate to task view modal route
+      router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
     } else {
       // Move to the view modal page for the specific record
-      router.push(`${Routes.REGISTRY}/${props.recordType}/${recordId}`);
+      router.push(buildUrl(Routes.REGISTRY, props.recordType, recordId));
     }
   };
-
 
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == "pending" || props.lifecycleStage == "general";
@@ -156,19 +145,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  if (isSubmissionOrGeneralPage) {
-                    handleClickView();
-                  } else {
-                    props.setTask(
-                      genTaskOption(
-                        recordId,
-                        props.row,
-                        "default",
-                        dict.title.scheduleType
-                      )
-                    );
-                    dispatch(openDrawer());
-                  }
+                  handleClickView();
                 }}
               />
               {(!keycloakEnabled ||
@@ -185,15 +162,7 @@ export default function RegistryRowAction(
                     label={dict.action.cancel}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "cancel",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
+                      router.push(buildUrl(Routes.REGISTRY_TASK_CANCEL, recordId));
                     }}
                   />
                 )}
@@ -246,7 +215,7 @@ export default function RegistryRowAction(
                     onClick={() => {
                       setIsActionMenuOpen(false);
                       router.push(
-                        `${Routes.REGISTRY_EDIT}/${props.recordType}/${recordId}`
+                        buildUrl(Routes.REGISTRY_EDIT, props.recordType, recordId)
                       );
                     }}
                   />
@@ -267,7 +236,7 @@ export default function RegistryRowAction(
                     onClick={() => {
                       setIsActionMenuOpen(false);
                       router.push(
-                        `${Routes.REGISTRY_DELETE}/${props.recordType}/${recordId}`
+                        buildUrl(Routes.REGISTRY_DELETE, props.recordType, recordId)
                       );
                     }}
                   />
@@ -285,19 +254,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  if (isSubmissionOrGeneralPage) {
-                    handleClickView();
-                  } else {
-                    props.setTask(
-                      genTaskOption(
-                        recordId,
-                        props.row,
-                        "default",
-                        dict.title.scheduleType
-                      )
-                    );
-                    dispatch(openDrawer());
-                  }
+                  router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
                 }}
               />
               {(!keycloakEnabled ||
@@ -317,15 +274,7 @@ export default function RegistryRowAction(
                     label={dict.action.complete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "complete",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
+                      router.push(buildUrl(Routes.REGISTRY_TASK_COMPLETE, recordId));
                     }}
                   />
                 )}
@@ -344,15 +293,7 @@ export default function RegistryRowAction(
                     label={dict.action.dispatch}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "dispatch",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
+                      router.push(buildUrl(Routes.REGISTRY_TASK_DISPATCH, recordId));
                     }}
                   />
                 )}
@@ -374,15 +315,7 @@ export default function RegistryRowAction(
                     label={dict.action.cancel}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "cancel",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
+                      router.push(buildUrl(Routes.REGISTRY_TASK_CANCEL, recordId));
                     }}
                   />
                 )}
@@ -403,15 +336,7 @@ export default function RegistryRowAction(
                     disabled={isLoading}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "report",
-                          dict.title.scheduleType
-                        )
-                      );
-                      dispatch(openDrawer());
+                      router.push(buildUrl(Routes.REGISTRY_TASK_REPORT, recordId));
                     }}
                   />
                 )}
@@ -420,42 +345,15 @@ export default function RegistryRowAction(
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.draftTemplate) &&
-            props.lifecycleStage !== "general" &&
-            <DraftTemplateButton rowId={[props.row.id]} recordType={props.recordType} triggerRefresh={props.triggerRefresh} />
-          }
+            props.lifecycleStage !== "general" && (
+              <DraftTemplateButton
+                rowId={[props.row.id]}
+                recordType={props.recordType}
+                triggerRefresh={props.triggerRefresh}
+              />
+            )}
         </div>
       </PopoverActionButton>
     </div>
   );
-}
-
-// Generates a task option based on the input parameters
-export function genTaskOption(
-  recordId: string,
-  row: FieldValues,
-  taskType: RegistryTaskType,
-  scheduleTypeKey: string
-): RegistryTaskOption {
-  let status: string;
-  if (row.order === "0" || row.status?.toLowerCase() === "new") {
-    status = Status.NEW;
-  } else if (row.order === "1" || row.status?.toLowerCase() === "assigned") {
-    status = Status.ASSIGNED;
-  } else if (row.order === "2" || row.status?.toLowerCase() === "completed") {
-    status = Status.COMPLETED;
-  } else if (row.order === "3" || row.status?.toLowerCase() === "cancelled") {
-    status = Status.CANCELLED;
-  } else if (row.order === "4" || row.status?.toLowerCase() === "issue") {
-    status = Status.ISSUE;
-  } else {
-    status = "";
-  }
-  return {
-    id: recordId,
-    status: status,
-    contract: row.id,
-    date: row.date,
-    scheduleType: row[scheduleTypeKey],
-    type: taskType,
-  };
 }

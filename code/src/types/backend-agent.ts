@@ -17,7 +17,9 @@ export type InternalApiIdentifier =
   | "concept"
   | "contracts"
   | "contract_status"
+  | "count"
   | "event"
+  | "filter"
   | "form"
   | "geocode_postal"
   | "geocode_address"
@@ -26,6 +28,7 @@ export type InternalApiIdentifier =
   | "instances"
   | "schedule"
   | "tasks"
+  | "task"
   | "outstanding"
   | "scheduled"
   | "closed";

@@ -1,8 +1,10 @@
-import { InternalApiIdentifier } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifier } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
+export const BRANCH_ADD = "branch_add";
+export const BRANCH_DELETE = "branch_delete";
 
 export function makeInternalRegistryAPIwithParams(
   internalIdentifier: InternalApiIdentifier,
@@ -24,11 +26,24 @@ export function makeInternalRegistryAPIwithParams(
       searchParams = new URLSearchParams({
         stage: params[0],
         type: params[1],
+        page: params[2],
+        limit: params[3],
+        sort_by: params[4],
+        filters: params[5],
       });
       break;
     case "contract_status":
       searchParams = new URLSearchParams({
         id: params[0],
+      });
+      break;
+    case "count":
+      searchParams = new URLSearchParams({
+        type: params[0],
+        filters: params[1] ?? "",
+        lifecycle: params[2] ?? null,
+        start_date: params[3] ?? null,
+        end_date: params[4] ?? null,
       });
       break;
     case "instances":
@@ -37,6 +52,11 @@ export function makeInternalRegistryAPIwithParams(
         label: params[1] ?? null,
         identifier: params[2] ?? null,
         subtype: params[3] ?? null,
+        page: params[4] ?? null,
+        limit: params[5] ?? null,
+        sort_by: params[6] ?? null,
+        filters: params[7] ?? "",
+        branch_delete: params[8] ?? null,
       });
       break;
     case "event":
@@ -44,6 +64,17 @@ export function makeInternalRegistryAPIwithParams(
         stage: params[0],
         type: params[1],
         identifier: params[2] ?? null,
+      });
+      break;
+    case "filter":
+      searchParams = new URLSearchParams({
+        type: params[0],
+        field: params[1],
+        search: params[2] ?? null,
+        filters: params[3] ?? "",
+        lifecycle: params[4] ?? null,
+        start_date: params[5] ?? null,
+        end_date: params[6] ?? null,
       });
       break;
     case "form":
@@ -81,29 +112,39 @@ export function makeInternalRegistryAPIwithParams(
       break;
     case "tasks":
       searchParams = new URLSearchParams({
-        type: params[0],
-        idOrTimestamp: params[1],
+        type: params[0] ?? null,
+        idOrTimestamp: params[1] ?? null,
+        filters: params[2] ?? null,
       });
       break;
     case "outstanding":
       searchParams = new URLSearchParams({
         type: params[0],
+        page: params[1],
+        limit: params[2],
+        sort_by: params[3],
+        filters: params[4],
       });
       break;
     case "scheduled":
-      searchParams = new URLSearchParams({
-        type: params[0],
-        start_date: params[1],
-        end_date: params[2],
-      });
-      break;
     case "closed":
       searchParams = new URLSearchParams({
         type: params[0],
         start_date: params[1],
         end_date: params[2],
+        page: params[3],
+        limit: params[4],
+        sort_by: params[5],
+        filters: params[6],
       });
       break;
   }
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
+}
+
+export async function queryInternalApi(url: string): Promise<AgentResponseBody> {
+  const activeRes = await fetch(url,
+    { cache: "no-store", credentials: "same-origin" }
+  );
+  return await activeRes.json();
 }
