@@ -1,4 +1,4 @@
-import { AgentResponseBody, InternalApiIdentifier } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
@@ -12,17 +12,17 @@ export function makeInternalRegistryAPIwithParams(
 ): string {
   let searchParams: URLSearchParams;
   switch (internalIdentifier) {
-    case "address":
+    case InternalApiIdentifierMap.ADDRESS:
       searchParams = new URLSearchParams({
         postal_code: params[0],
       });
       break;
-    case "concept":
+    case InternalApiIdentifierMap.CONCEPT:
       searchParams = new URLSearchParams({
         uri: params[0],
       });
       break;
-    case "contracts":
+    case InternalApiIdentifierMap.CONTRACTS:
       searchParams = new URLSearchParams({
         stage: params[0],
         type: params[1],
@@ -32,12 +32,12 @@ export function makeInternalRegistryAPIwithParams(
         filters: params[5],
       });
       break;
-    case "contract_status":
+    case InternalApiIdentifierMap.CONTRACT_STATUS:
       searchParams = new URLSearchParams({
         id: params[0],
       });
       break;
-    case "count":
+    case InternalApiIdentifierMap.COUNT:
       searchParams = new URLSearchParams({
         type: params[0],
         filters: params[1] ?? "",
@@ -46,7 +46,7 @@ export function makeInternalRegistryAPIwithParams(
         end_date: params[4] ?? null,
       });
       break;
-    case "instances":
+    case InternalApiIdentifierMap.INSTANCES:
       searchParams = new URLSearchParams({
         type: params[0],
         label: params[1] ?? null,
@@ -59,14 +59,14 @@ export function makeInternalRegistryAPIwithParams(
         branch_delete: params[8] ?? null,
       });
       break;
-    case "event":
+    case InternalApiIdentifierMap.EVENT:
       searchParams = new URLSearchParams({
         stage: params[0],
         type: params[1],
         identifier: params[2] ?? null,
       });
       break;
-    case "filter":
+    case InternalApiIdentifierMap.FILTER:
       searchParams = new URLSearchParams({
         type: params[0],
         field: params[1],
@@ -77,47 +77,47 @@ export function makeInternalRegistryAPIwithParams(
         end_date: params[6] ?? null,
       });
       break;
-    case "form":
+    case InternalApiIdentifierMap.FORM:
       searchParams = new URLSearchParams({
         type: parseStringsForUrls(params[0]),
         identifier: params[1] ?? null,
       });
       break;
-    case "geocode_address":
+    case InternalApiIdentifierMap.GEOCODE_ADDRESS:
       searchParams = new URLSearchParams({
         block: params[0] ?? null,
         street: params[1] ?? null,
       });
       break;
-    case "geocode_postal":
+    case InternalApiIdentifierMap.GEOCODE_POSTAL:
       searchParams = new URLSearchParams({
         postalCode: params[0] ?? null,
       });
       break;
-    case "geocode_city":
+    case InternalApiIdentifierMap.GEOCODE_CITY:
       searchParams = new URLSearchParams({
         city: params[0] ?? null,
         country: params[1] ?? null,
       });
       break;
-    case "geodecode":
+    case InternalApiIdentifierMap.GEODECODE:
       searchParams = new URLSearchParams({
         iri: params[0],
       });
       break;
-    case "schedule":
+    case InternalApiIdentifierMap.SCHEDULE:
       searchParams = new URLSearchParams({
         id: params[0],
       });
       break;
-    case "tasks":
+    case InternalApiIdentifierMap.TASKS:
       searchParams = new URLSearchParams({
         type: params[0] ?? null,
         idOrTimestamp: params[1] ?? null,
         filters: params[2] ?? null,
       });
       break;
-    case "outstanding":
+    case InternalApiIdentifierMap.OUTSTANDING:
       searchParams = new URLSearchParams({
         type: params[0],
         page: params[1],
@@ -126,9 +126,9 @@ export function makeInternalRegistryAPIwithParams(
         filters: params[4],
       });
       break;
-    case "activity":
-    case "scheduled":
-    case "closed":
+    case InternalApiIdentifierMap.ACTIVITY:
+    case InternalApiIdentifierMap.SCHEDULED:
+    case InternalApiIdentifierMap.CLOSED:
       searchParams = new URLSearchParams({
         type: params[0],
         start_date: params[1],

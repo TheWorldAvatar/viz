@@ -1,6 +1,6 @@
 import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
-import { AgentResponseBody, InternalApiIdentifier } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { LifecycleStage } from "types/form";
 import { logColours } from "utils/logColours";
 
@@ -210,20 +210,19 @@ function makeExternalEndpoint(
   searchParams: URLSearchParams
 ): string {
   switch (slug) {
-    case "address": {
+    case InternalApiIdentifierMap.ADDRESS: {
       const postalCode: string = searchParams.get("postal_code");
       const urlObj: URL = new URL(`${agentBaseApi}/location/addresses`);
       urlObj.searchParams.set("postal_code", postalCode);
       return urlObj.toString();
     }
-    case "concept": {
+    case InternalApiIdentifierMap.CONCEPT: {
       const uri: string = searchParams.get("uri");
-
       const urlObj: URL = new URL(`${agentBaseApi}/type`);
       urlObj.searchParams.set("uri", uri);
       return urlObj.toString();
     }
-    case "contracts": {
+    case InternalApiIdentifierMap.CONTRACTS: {
       const entityType: string = searchParams.get("type");
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
@@ -242,11 +241,11 @@ function makeExternalEndpoint(
       }
       return `${agentBaseApi}/contracts/${stagePath}?type=${entityType}&label=yes&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
-    case "contract_status": {
+    case InternalApiIdentifierMap.CONTRACT_STATUS: {
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/status/${id}`;
     }
-    case "count": {
+    case InternalApiIdentifierMap.COUNT: {
       const type: string = searchParams.get("type");
       const lifecycle: string = searchParams.get("lifecycle");
       if (lifecycle == "null") {
@@ -280,7 +279,7 @@ function makeExternalEndpoint(
       }
       return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
     }
-    case "instances": {
+    case InternalApiIdentifierMap.INSTANCES: {
       const type: string = searchParams.get("type");
       const requireLabel: string = searchParams.get("label");
       const identifier: string = searchParams.get("identifier");
@@ -307,7 +306,7 @@ function makeExternalEndpoint(
 
       return url;
     }
-    case "event": {
+    case InternalApiIdentifierMap.EVENT: {
       const stage = searchParams.get("stage");
       const eventType = searchParams.get("type");
       const identifier = searchParams.get("identifier");
@@ -317,7 +316,7 @@ function makeExternalEndpoint(
       }
       return url;
     }
-    case "filter": {
+    case InternalApiIdentifierMap.FILTER: {
       const type: string = searchParams.get("type");
       const field: string = searchParams.get("field");
       const search: string = searchParams.get("search");
@@ -351,7 +350,7 @@ function makeExternalEndpoint(
       }
       return "";
     }
-    case "form": {
+    case InternalApiIdentifierMap.FORM: {
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");
 
@@ -361,32 +360,32 @@ function makeExternalEndpoint(
       }
       return url;
     }
-    case "geocode_address": {
+    case InternalApiIdentifierMap.GEOCODE_ADDRESS: {
       const block: string = searchParams.get("block");
       const street: string = searchParams.get("street");
       const urlParams = new URLSearchParams({ block, street });
       return `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
     }
-    case "geocode_postal": {
+    case InternalApiIdentifierMap.GEOCODE_POSTAL: {
       const postalCode: string = searchParams.get("postalCode");
       const urlParams = new URLSearchParams({ postal_code: postalCode });
       return `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
     }
-    case "geocode_city": {
+    case InternalApiIdentifierMap.GEOCODE_CITY: {
       const city: string = searchParams.get("city");
       const country: string = searchParams.get("country");
       const urlParams = new URLSearchParams({ city, country });
       return `${agentBaseApi}/location/geocode?${urlParams.toString()}`;
     }
-    case "geodecode": {
+    case InternalApiIdentifierMap.GEODECODE: {
       const iri: string = searchParams.get("iri");
       return `${agentBaseApi}/location?iri=${encodeURIComponent(iri)}`;
     }
-    case "schedule": {
+    case InternalApiIdentifierMap.SCHEDULE: {
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/schedule/${id}`;
     }
-    case "tasks": {
+    case InternalApiIdentifierMap.TASKS: {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
       if (contractType == "task") {
@@ -395,7 +394,7 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
-    case "outstanding": {
+    case InternalApiIdentifierMap.OUTSTANDING: {
       const contractType: string = searchParams.get("type");
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
@@ -403,9 +402,9 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
-    case "activity":
-    case "scheduled":
-    case "closed": {
+    case InternalApiIdentifierMap.ACTIVITY:
+    case InternalApiIdentifierMap.SCHEDULED:
+    case InternalApiIdentifierMap.CLOSED: {
       const contractType: string = searchParams.get("type");
       const startDate: string = searchParams.get("start_date");
       const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
