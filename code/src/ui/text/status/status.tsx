@@ -2,7 +2,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { parseWordsForLabels } from "utils/client-utils";
 
-interface StatusComponentProps<> {
+interface StatusComponentProps {
   status: string;
 }
 
