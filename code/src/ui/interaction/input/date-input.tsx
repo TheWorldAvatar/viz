@@ -59,7 +59,10 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     if (props.mode === "multiple") {
       const dates = targetDate as Date[];
       if (!Array.isArray(dates) || dates.length === 0) return "";
-      return dates.map(d => d.toLocaleDateString()).join(", ");
+      const sortedDates = [...dates].sort((a, b) => a.getTime() - b.getTime());
+      const first = sortedDates[0].toLocaleDateString();
+      const last = sortedDates.at(-1).toLocaleDateString();
+      return dates.length === 1 ? first : `${first} - ${last}`;
     }
     // range mode
     const targetDateRange: DateRange = targetDate as DateRange;
@@ -117,8 +120,8 @@ export default function DateInput(props: Readonly<DateInputProps>) {
         <div className="flex items-center w-full">
           <div className="relative w-full">
             <Icon
-              fontSize={props.mode === "single" ? "small" : "medium"}
-              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${props.mode === "single"
+              fontSize={props.mode === "single" || props.mode === "multiple" ? "small" : "medium"}
+              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${props.mode === "single" || props.mode === "multiple"
                 ? "text-foreground"
                 : "text-blue-600 dark:text-blue-400"
                 }  pointer-events-none`}
@@ -131,8 +134,12 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               value={displayedDateValues}
               readOnly
               className={
-                props.mode === "single"
-                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${props.disabled ? "cursor-not-allowed opacity-75" : ""
+                props.mode === "single" || props.mode === "multiple"
+                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${props.disabled
+                    ? props.mode === "multiple"
+                      ? "opacity-75"
+                      : "cursor-not-allowed opacity-75"
+                    : ""
                   }`
                   : `h-10  ${(props.selectedDate as DateRange)?.to
                     ? "w-62 pr-10 pl-4"
@@ -188,7 +195,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     mode="multiple"
                     selected={props.selectedDate as Date[]}
                     onSelect={handleDateSelect}
-                    disabled={props.disabledDates}
+                    disabled={props.disabledDates || props.disabled}
                     classNames={{
                       today: `text-yellow-500`,
                       selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,

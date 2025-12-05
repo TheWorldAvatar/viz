@@ -7,9 +7,11 @@ import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, FormType, RegistryFieldValues } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
+import DateInput from "ui/interaction/input/date-input";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   extractResponseField,
+  extractResponseFieldArray,
   parseStringsForUrls,
   parseWordsForLabels,
 } from "utils/client-utils";
@@ -62,6 +64,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     disabled: formType == "view" || formType == "delete",
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [fixedDates, setFixedDates] = useState<Date[]>([]);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.RECURRENCE) == null
@@ -93,31 +96,46 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           }
         ).then((res) => res.json());
 
-        // Retrieve recurrence and selected service option
-        recurrence = getDefaultVal(
-          FORM_STATES.RECURRENCE,
-          extractResponseField(fields, FORM_STATES.RECURRENCE, true)?.value,
-          formType
-        ) as number;
-        setSelectedServiceOption(
-          recurrence == null
-            ? perpetualService
-            : recurrence == 0
-              ? singleService
-              : recurrence == -1
-                ? alternateService
-                : regularService
+        // Check if this is a fixed service (has entry_date field)
+        const entryDates = extractResponseFieldArray(
+          fields,
+          FORM_STATES.ENTRY_DATES
         );
+        if (entryDates.length > 0) {
+          // This is a fixed service - extract dates
+          const parsedDates: Date[] = entryDates
+            .filter((entry) => entry?.value)
+            .map((entry) => new Date(entry.value));
+          setFixedDates(parsedDates);
+          setSelectedServiceOption(fixedService);
+          props.form.setValue(FORM_STATES.ENTRY_DATES, parsedDates);
+        } else {
+          // Retrieve recurrence and selected service option
+          recurrence = getDefaultVal(
+            FORM_STATES.RECURRENCE,
+            extractResponseField(fields, FORM_STATES.RECURRENCE, true)?.value,
+            formType
+          ) as number;
+          setSelectedServiceOption(
+            recurrence == null
+              ? perpetualService
+              : recurrence == 0
+                ? singleService
+                : recurrence == -1
+                  ? alternateService
+                  : regularService
+          );
+        }
 
         defaultTimeSlotStart = getDefaultVal(
           FORM_STATES.TIME_SLOT_START,
-          extractResponseField(fields, "start_time", true).value,
+          extractResponseField(fields, "start_time", true)?.value,
           formType
         ).toString();
 
         defaultTimeSlotEnd = getDefaultVal(
           FORM_STATES.TIME_SLOT_END,
-          extractResponseField(fields, "end_time", true).value,
+          extractResponseField(fields, "end_time", true)?.value,
           formType
         ).toString();
 
@@ -129,7 +147,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               fields,
               parseStringsForUrls(FORM_STATES.START_DATE),
               true
-            ).value,
+            )?.value,
             formType
           )
         );
@@ -151,7 +169,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             dayOfWeek,
             getDefaultVal(
               dayOfWeek,
-              extractResponseField(fields, dayOfWeek, true).value,
+              extractResponseField(fields, dayOfWeek, true)?.value,
               formType
             )
           );
@@ -176,6 +194,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       return dict.form.singleServiceDesc;
     } else if (selectedServiceOption === alternateService) {
       return dict.form.alternateServiceDesc;
+    } else if (selectedServiceOption === fixedService) {
+      return dict.form.fixedServiceDesc;
     } else {
       return dict.form.regularServiceDesc;
     }
@@ -183,16 +203,28 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
+    // Clear entry dates for all non-fixed services
+    props.form.setValue(FORM_STATES.ENTRY_DATES, undefined);
+
     if (value === perpetualService) {
       props.form.setValue(FORM_STATES.RECURRENCE, null);
     } else if (value === singleService) {
       props.form.setValue(FORM_STATES.RECURRENCE, 0);
     } else if (value === alternateService) {
       props.form.setValue(FORM_STATES.RECURRENCE, -1);
+    } else if (value === fixedService) {
+      props.form.setValue(FORM_STATES.ENTRY_DATES, fixedDates);
     } else {
       props.form.setValue(FORM_STATES.RECURRENCE, 1);
     }
     setSelectedServiceOption(value);
+  };
+
+  // Wrapper to sync fixedDates with form state
+  const handleFixedDatesChange: React.Dispatch<React.SetStateAction<Date[]>> = (value) => {
+    const newDates = typeof value === "function" ? value(fixedDates) : value;
+    setFixedDates(newDates);
+    props.form.setValue(FORM_STATES.ENTRY_DATES, newDates);
   };
 
   return (
@@ -219,6 +251,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 { label: regularService, value: regularService },
                 { label: alternateService, value: alternateService },
                 { label: perpetualService, value: perpetualService },
+                { label: fixedService, value: fixedService },
               ]}
               defaultVal={selectedServiceOption}
               onChange={(selectedOption) => {
@@ -229,21 +262,57 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               isDisabled={formType == "view" || formType == "delete"}
             />
           </div>
-          <FormFieldComponent
-            field={{
-              "@id": "string",
-              "@type": "http://www.w3.org/ns/shacl#PropertyShape",
-              name: { "@value": FORM_STATES.START_DATE },
-              fieldId: FORM_STATES.START_DATE,
-              datatype: "date",
-              description: { "@value": dict.form.startDateDesc },
-              order: 0,
-            }}
-            form={props.form}
-            options={isDisabledOption}
-          />
+          {selectedServiceOption === fixedService && (
+            <div className="flex flex-col w-full gap-4">
+              <label className="text-lg font-bold flex gap-4">
+                {dict.form.selectDates}
+                <Tooltip text={dict.form.selectDatesDesc} placement="right">
+                  <Icon className="material-symbols-outlined">{"info"}</Icon>
+                </Tooltip>
+              </label>
+              <DateInput
+                mode="multiple"
+                selectedDate={fixedDates}
+                setSelectedDates={handleFixedDatesChange}
+                disabled={formType === "view" || formType === "delete"}
+              />
+              {fixedDates.length === 0 && formType === "add" && (
+                <p className="text-sm text-red-500">{dict.form.selectAtLeastOneDate}</p>
+              )}
+              {fixedDates.length > 0 && (
+                <div className="flex flex-wrap gap-2 p-3 bg-muted border border-border rounded-lg">
+                  {[...fixedDates]
+                    .sort((a, b) => a.getTime() - b.getTime())
+                    .map((date, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-background border border-border rounded-full text-sm"
+                      >
+                        {date.toLocaleDateString()}
+                      </span>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
+          {selectedServiceOption !== fixedService && (
+            <FormFieldComponent
+              field={{
+                "@id": "string",
+                "@type": "http://www.w3.org/ns/shacl#PropertyShape",
+                name: { "@value": FORM_STATES.START_DATE },
+                fieldId: FORM_STATES.START_DATE,
+                datatype: "date",
+                description: { "@value": dict.form.startDateDesc },
+                order: 0,
+              }}
+              form={props.form}
+              options={isDisabledOption}
+            />
+          )}
           {selectedServiceOption != singleService &&
-            selectedServiceOption != perpetualService && (
+            selectedServiceOption != perpetualService &&
+            selectedServiceOption != fixedService && (
               <FormFieldComponent
                 field={{
                   "@id": "string",
