@@ -68,13 +68,15 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const [fixedDates, setFixedDates] = useState<Date[]>([new Date()]);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
-    props.form.getValues(FORM_STATES.RECURRENCE) == null
-      ? perpetualService
-      : props.form.getValues(FORM_STATES.RECURRENCE) > 0
-        ? regularService
-        : props.form.getValues(FORM_STATES.RECURRENCE) == -1
-          ? alternateService
-          : singleService
+    props.form.getValues(FORM_STATES.ENTRY_DATES)?.length > 0
+      ? fixedService
+      : props.form.getValues(FORM_STATES.RECURRENCE) == null
+        ? perpetualService
+        : props.form.getValues(FORM_STATES.RECURRENCE) > 0
+          ? regularService
+          : props.form.getValues(FORM_STATES.RECURRENCE) == -1
+            ? alternateService
+            : singleService
   );
 
   useEffect(() => {
