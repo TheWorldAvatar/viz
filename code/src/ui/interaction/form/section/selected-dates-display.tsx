@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Button from "ui/interaction/button"
 import { useDictionary } from "hooks/useDictionary"
+import { Dictionary } from "types/dictionary"
 
 interface SelectedDatesDisplayProps {
     dates: Date[]
@@ -11,9 +12,9 @@ interface SelectedDatesDisplayProps {
 }
 
 export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDisplayProps>) {
-    const dict = useDictionary()
+    const dict: Dictionary = useDictionary()
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
-    const sortedDates = [...props.dates].sort((a, b) => a.getTime() - b.getTime())
+    const sortedDates: Date[] = [...props.dates].sort((a, b) => a.getTime() - b.getTime())
 
     return (
         <div className="w-full space-y-2">

@@ -59,9 +59,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     if (props.mode === "multiple") {
       const dates = targetDate as Date[];
       if (!Array.isArray(dates) || dates.length === 0) return "";
-      const sortedDates = [...dates].sort((a, b) => a.getTime() - b.getTime());
-      const first = sortedDates[0].toLocaleDateString();
-      const last = sortedDates.at(-1).toLocaleDateString();
+      const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
+      const first: string = sortedDates[0].toLocaleDateString();
+      const last: string = sortedDates.at(-1).toLocaleDateString();
       return dates.length === 1 ? first : `${first} - ${last}`;
     }
     // range mode
