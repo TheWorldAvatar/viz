@@ -85,7 +85,9 @@
     "min": "Min",
     "max": "Max",
     "selectDates": "Select Dates",
-    "selectDatesDesc": "You can select multiple individual dates. The date field displays the start and end of your selected range, while every date covered within that range is listed below."
+    "selectDatesDesc": "You can select multiple individual dates. The date field displays the start and end of your selected range, while every date covered within that range is listed below.",
+    "dateSelected": "date selected",
+    "datesSelected": "dates selected"
   },
   "map": {
     "title": {

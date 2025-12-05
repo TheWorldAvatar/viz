@@ -19,6 +19,7 @@ import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
+import SelectedDatesDisplay from "./selected-dates-display";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -230,6 +231,12 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     props.form.setValue(FORM_STATES.ENTRY_DATES, newDates);
   };
 
+  const handleRemoveDate = (indexToRemove: number) => {
+    const updatedDates: Date[] = fixedDates.filter((_, index) => index !== indexToRemove)
+    handleFixedDatesChange(updatedDates)
+  }
+
+
   return (
     <div className="p-3 md:p-8 bg-background border-2 md:border-1 border-border rounded-lg my-4 mx-auto space-y-4">
       <h2 className="text-xl md:text-2xl  font-bold">
@@ -280,18 +287,11 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 disabled={formType === "view" || formType === "delete"}
               />
               {fixedDates.length > 0 && (
-                <div className="flex flex-wrap gap-2 p-3 bg-muted border border-border rounded-lg">
-                  {[...fixedDates]
-                    .sort((a, b) => a.getTime() - b.getTime())
-                    .map((date, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-background border border-border rounded-full text-sm"
-                      >
-                        {date.toLocaleDateString()}
-                      </span>
-                    ))}
-                </div>
+                <SelectedDatesDisplay
+                  dates={fixedDates}
+                  onDateRemove={handleRemoveDate}
+                  disabled={formType === "view" || formType === "delete"}
+                />
               )}
             </div>
           )}

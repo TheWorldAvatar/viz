@@ -85,7 +85,9 @@
     "min": "Min",
     "max": "Max",
     "selectDates": "Daten auswählen",
-    "selectDatesDesc": "Sie können mehrere einzelne Daten auswählen. Das Datumsfeld zeigt den Beginn und das Ende des ausgewählten Zeitraums an, während alle Daten innerhalb dieses Zeitraums darunter aufgelistet sind."
+    "selectDatesDesc": "Sie können mehrere einzelne Daten auswählen. Das Datumsfeld zeigt den Beginn und das Ende des ausgewählten Zeitraums an, während alle Daten innerhalb dieses Zeitraums darunter aufgelistet sind.",
+    "dateSelected": "ausgewähltes Datum",
+    "datesSelected": "ausgewählte Daten"
   },
   "map": {
     "title": {
