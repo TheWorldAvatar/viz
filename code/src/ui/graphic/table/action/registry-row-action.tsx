@@ -105,7 +105,6 @@ export default function RegistryRowAction(
   const handleClickView = (): void => {
     if (
       props.lifecycleStage == "tasks" ||
-      props.lifecycleStage == "report" ||
       props.lifecycleStage == "outstanding" ||
       props.lifecycleStage == "scheduled" ||
       props.lifecycleStage == "closed"
