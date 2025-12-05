@@ -126,6 +126,7 @@ export function makeInternalRegistryAPIwithParams(
         filters: params[4],
       });
       break;
+    case "activity":
     case "scheduled":
     case "closed":
       searchParams = new URLSearchParams({

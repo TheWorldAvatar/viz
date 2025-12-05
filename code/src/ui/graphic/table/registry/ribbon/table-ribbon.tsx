@@ -11,8 +11,8 @@ import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
-import ReturnButton from "ui/interaction/action/redirect/return-button";
 import Button from "ui/interaction/button";
+import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
@@ -39,6 +39,7 @@ interface TableRibbonProps {
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param {UISettings} uiSettings The UI settings from configuration.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
@@ -47,10 +48,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
+  const isBillingStage: boolean = props.lifecycleStage === "account" ||
+    props.lifecycleStage === "pricing" ||
+    props.lifecycleStage === "activity";
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
-      {props.lifecycleStage !== "general" &&
+      {props.lifecycleStage !== "general" && !isBillingStage &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -110,6 +114,51 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           </div>
         )}
+      {isBillingStage &&
+        (!keycloakEnabled ||
+          !permissionScheme ||
+          permissionScheme.hasPermissions.registry) && (
+          <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 border border-border ">
+            <div className="flex flex-wrap items-center justify-between sm:gap-4 gap-1">
+              <div className="sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.accounts}
+                  leftIcon={"account_balance_wallet"}
+                  hasMobileIcon={false}
+                  url={Routes.BILLING_ACCOUNTS}
+                  variant={
+                    props.lifecycleStage === "account" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+              <div className="sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.pricing}
+                  leftIcon={"account_balance_wallet"}
+                  hasMobileIcon={false}
+                  url={Routes.BILLING_PRICING_MODELS}
+                  variant={
+                    props.lifecycleStage === "pricing" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+              <div className="sm:w-auto">
+                <RedirectButton
+                  label={dict.nav.title.activities}
+                  leftIcon={"account_balance_wallet"}
+                  hasMobileIcon={false}
+                  url={Routes.BILLING_ACTIVITY}
+                  variant={
+                    props.lifecycleStage === "activity" ? "active" : "ghost"
+                  }
+                  className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       <div className="w-full  h-[1px] bg-border " />
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 flex-wrap ">
         <div className="flex items-end !-ml-2 gap-3 md:gap-4">
@@ -121,7 +170,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             onClick={triggerRefresh}
           />
           {(props.lifecycleStage == "scheduled" ||
-            props.lifecycleStage == "closed") && (
+            props.lifecycleStage == "closed" ||
+            props.lifecycleStage == "activity") && (
               <DateInput
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
@@ -141,8 +191,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 className="mt-1"
                 size="icon"
                 onClick={() => {
-                  props.tableDescriptor.table.resetColumnFilters()
-                  props.tableDescriptor.table.resetRowSelection()
+                  props.tableDescriptor.table.resetColumnFilters();
+                  props.tableDescriptor.table.resetRowSelection();
                 }}
                 tooltipText={dict.action.clearAllFilters}
                 variant="destructive"
@@ -157,7 +207,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
             (props.lifecycleStage == "pending" ||
-              props.lifecycleStage == "general") && (
+              props.lifecycleStage == "general" ||
+              isBillingStage) && (
               <RedirectButton
                 leftIcon="add"
                 size="icon"
@@ -168,25 +219,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
               />
             )}
-          {props.lifecycleStage == "report" && (
-            <ReturnButton
-              leftIcon="first_page"
-              label={dict.action.backTo.replace(
-                "{replace}",
-                props.entityType.replace("_", " ")
-              )}
-            />
-          )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.invoice) &&
-            props.lifecycleStage == "report" && (
-              <RedirectButton
-                leftIcon="print"
-                label={dict.action.generateReport}
-                url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
-              />
-            )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.export) && (
@@ -194,6 +226,16 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
         </div>
       </div>
+      {props.lifecycleStage === "pricing" && (
+        <div className="flex justify-start">
+          <div className="md:w-[300px]">
+            <MultivalueSelector
+              title="Billing Accounts"
+              options={[]}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

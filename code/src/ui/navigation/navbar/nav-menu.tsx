@@ -128,6 +128,10 @@ function NavMenuContents(
     (link) => link.url === Modules.REGISTRY
   );
 
+  const billingLinkProps: NavBarItemSettings = props.settings.links?.find(
+    (link) => link.url === Modules.BILLING
+  );
+
   function createHandleFileClick(
     url: string,
     type: NavBarItemType
@@ -158,23 +162,20 @@ function NavMenuContents(
   return (
     <div
       ref={navMenuRef}
-      className={`${
-        props.isMobile
-          ? "flex gap-4 p-2 w-full"
-          : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20"
-      }
+      className={`${props.isMobile
+        ? "flex gap-4 p-2 w-full"
+        : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20"
+        }
       ${navMenuWidthClass}
-      xl:flex flex-col ${
-        isMenuExpanded ? "items-stretch" : "items-center"
-      }  transition-all duration-200 ease-in-out `}
+      xl:flex flex-col ${isMenuExpanded ? "items-stretch" : "items-center"
+        }  transition-all duration-200 ease-in-out `}
     >
       {!props.isMobile && (
         <button
-          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${
-            isMenuExpanded
-              ? "mr-2 self-end rounded-md -mb-8 "
-              : " justify-center items-center rounded-full -mb-4"
-          }`}
+          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
+            ? "mr-2 self-end rounded-md -mb-8 "
+            : " justify-center items-center rounded-full -mb-4"
+            }`}
           onClick={handleMenuToggle}
         >
           <Icon className="material-symbols-outlined">
@@ -238,6 +239,21 @@ function NavMenuContents(
           isMenuExpanded={isMenuExpanded}
         />
       )}
+      {props.settings?.modules?.billing && (
+        <NavBarItem
+          title={billingLinkProps?.title ?? dict.nav.title.billing}
+          icon="receipt_long"
+          url={Routes.BILLING_ACCOUNTS}
+          isMobile={props.isMobile}
+          setIsOpen={props.setIsMenuOpen}
+          caption={
+            isMenuExpanded
+              ? billingLinkProps?.caption ?? dict.nav.caption.billing
+              : undefined
+          }
+          isMenuExpanded={isMenuExpanded}
+        />
+      )}
       {props.settings?.modules?.help && (
         <NavBarItem
           title={helpLinkProps?.title ?? dict.nav.title.help}
@@ -264,7 +280,7 @@ function NavMenuContents(
             icon={registryLinkProps?.icon ?? "table_chart"}
             url={
               !keycloakEnabled ||
-              permissionScheme?.hasPermissions.pendingRegistry
+                permissionScheme?.hasPermissions.pendingRegistry
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
                 : Routes.REGISTRY_TASK_OUTSTANDING
             }
@@ -290,9 +306,9 @@ function NavMenuContents(
             caption={
               isMenuExpanded
                 ? dict.nav.caption.generalReg.replace(
-                    "{replace}",
-                    parseWordsForLabels(path.type).toLowerCase()
-                  )
+                  "{replace}",
+                  parseWordsForLabels(path.type).toLowerCase()
+                )
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}

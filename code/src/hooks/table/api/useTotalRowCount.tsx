@@ -37,7 +37,9 @@ export function useTotalRowCount(
     const fetchTotalRows = async (filterParams: string): Promise<void> => {
       try {
         let url: string;
-        if (lifecycleStage == "general") {
+        if (lifecycleStage == "general" ||
+          lifecycleStage == "account" ||
+          lifecycleStage == "pricing") {
           url = makeInternalRegistryAPIwithParams(
             "count",
             entityType,
@@ -45,7 +47,8 @@ export function useTotalRowCount(
           );
         } else if (
           lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed") {
+          lifecycleStage == "closed" ||
+          lifecycleStage == "activity") {
           url = makeInternalRegistryAPIwithParams(
             "count",
             entityType,
