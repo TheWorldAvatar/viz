@@ -57,7 +57,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       return getNormalizedDate(targetDate as Date);
     }
     if (props.mode === "multiple") {
-      const dates = targetDate as Date[];
+      const dates: Date[] = targetDate as Date[];
       if (!Array.isArray(dates) || dates.length === 0) return "";
       const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
       const first: string = sortedDates[0].toLocaleDateString();
