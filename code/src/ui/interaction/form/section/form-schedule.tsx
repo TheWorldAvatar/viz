@@ -235,11 +235,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     props.form.setValue(FORM_STATES.ENTRY_DATES, newDates);
   };
 
-  const handleRemoveDate = (indexToRemove: number) => {
-    const updatedDates: Date[] = fixedDates.filter((_, index) => index !== indexToRemove)
-    handleFixedDatesChange(updatedDates)
-  }
-
 
   return (
     <div className="p-3 md:p-8 bg-background border-2 md:border-1 border-border rounded-lg my-4 mx-auto space-y-4">
@@ -293,7 +288,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               {fixedDates.length > 0 && (
                 <SelectedDatesDisplay
                   dates={fixedDates}
-                  onDateRemove={handleRemoveDate}
+                  onDatesChange={handleFixedDatesChange}
                   disabled={formType === "view" || formType === "delete"}
                 />
               )}

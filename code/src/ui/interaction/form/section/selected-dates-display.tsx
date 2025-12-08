@@ -7,7 +7,7 @@ import { Dictionary } from "types/dictionary"
 
 interface SelectedDatesDisplayProps {
     dates: Date[]
-    onDateRemove: (_index: number) => void
+    onDatesChange: (_dates: Date[]) => void
     disabled?: boolean
 }
 
@@ -15,6 +15,11 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
     const dict: Dictionary = useDictionary()
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const sortedDates: Date[] = [...props.dates].sort((a, b) => a.getTime() - b.getTime())
+
+    const handleRemoveDate = (indexToRemove: number) => {
+        const updatedDates: Date[] = props.dates.filter((_, index) => index !== indexToRemove)
+        props.onDatesChange(updatedDates)
+    }
 
     return (
         <div className="w-full space-y-2">
@@ -64,7 +69,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                     onClick={() => {
                                         // Find index by timestamp value 
                                         const originalIndex = props.dates.findIndex(d => d.getTime() === date.getTime());
-                                        props.onDateRemove(originalIndex);
+                                        handleRemoveDate(originalIndex);
                                     }}
                                     disabled={props.disabled || props.dates.length === 1}
                                     aria-label={`Remove date ${date.toLocaleDateString()}`}
