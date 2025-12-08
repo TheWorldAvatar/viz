@@ -12,6 +12,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { useScreenType } from "hooks/useScreenType";
 import { useEffect, useId, useState } from "react";
 import {
+  ClassNames,
   DateBefore,
   DateRange,
   DayPicker,
@@ -50,7 +51,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   const id: string = useId();
   const dict: Dictionary = useDictionary();
   const screenType: ScreenType = useScreenType();
-  const defaultDayPickerClassNames = getDefaultClassNames();
+  const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
 
   const extractDateDisplay = (targetDate: Date | DateRange | Date[]): string => {
     if (props.mode === "single") {
@@ -101,12 +102,12 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   }, [props.selectedDate]);
 
 
-  const dayPickerClassNames = {
-    today: `text-yellow-500`,
-    selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-    root: `${defaultDayPickerClassNames.root}  p-4`,
-    chevron: ` fill-foreground`,
-  }
+  const dayPickerClassNames: Partial<ClassNames> = {
+    today: "text-yellow-500",
+    selected: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+    root: `${defaultDayPickerClassNames.root} p-4`,
+    chevron: "fill-foreground",
+  };
 
   return (
     <div
@@ -185,14 +186,12 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
                     classNames={{
-                      today: `text-yellow-500`,
-                      selected: `bg-gray-200 dark:bg-zinc-800`,
-                      root: `${defaultDayPickerClassNames.root}  p-4`,
-                      chevron: ` fill-foreground`,
-                      footer: `mt-4 font-bold text-foreground flex justify-center items-center`,
-                      range_middle: ` `,
-                      range_start: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                      range_end: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+                      ...dayPickerClassNames,
+                      selected: "bg-gray-200 dark:bg-zinc-800",
+                      // range_middle is an empty string to override default styles (required)
+                      range_middle: "",
+                      range_start: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+                      range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
                     }}
                     required={true}
                   />
