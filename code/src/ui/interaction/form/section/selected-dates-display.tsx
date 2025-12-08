@@ -14,7 +14,7 @@ interface SelectedDatesDisplayProps {
 export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDisplayProps>) {
     const dict: Dictionary = useDictionary()
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
-    const sortedDates: Date[] = [...props.dates].sort((a, b) => a.getTime() - b.getTime())
+    const sortedDatesWithIndex: { date: Date; originalIndex: number }[] = props.dates.map((date, originalIndex) => ({ date, originalIndex })).sort((a, b) => a.date.getTime() - b.date.getTime())
 
     const handleRemoveDate = (indexToRemove: number) => {
         const updatedDates: Date[] = props.dates.filter((_, index) => index !== indexToRemove)
@@ -49,7 +49,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
             {isExpanded && (
                 <div className={`bg-muted border border-border rounded-lg overflow-hidden ${props.disabled ? "opacity-75" : ""}`}>
                     <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
-                        {sortedDates.map((date, index) => (
+                        {sortedDatesWithIndex.map(({ date, originalIndex }, index) => (
                             <div
                                 key={index}
                                 className="flex items-center justify-between border-b last:border-b-0 border-border "
@@ -66,11 +66,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                     size="icon"
                                     iconSize="small"
                                     className="w-8 h-8 text-red-400 hover:bg-red-100 dark:text-red-600 dark:hover:!bg-red-200 mb-1"
-                                    onClick={() => {
-                                        // Find index by timestamp value 
-                                        const originalIndex = props.dates.findIndex(d => d.getTime() === date.getTime());
-                                        handleRemoveDate(originalIndex);
-                                    }}
+                                    onClick={() => handleRemoveDate(originalIndex)}
                                     disabled={props.disabled || props.dates.length === 1}
                                     aria-label={`Remove date ${date.toLocaleDateString()}`}
                                 />
