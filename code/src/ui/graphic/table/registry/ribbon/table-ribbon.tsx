@@ -123,6 +123,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
               <DateInput
+                mode="range"
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
                 disabledDates={getDisabledDates(props.lifecycleStage)}
