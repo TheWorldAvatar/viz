@@ -1,6 +1,5 @@
 import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
-import { report } from "process";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { buildUrl } from "utils/client-utils";
