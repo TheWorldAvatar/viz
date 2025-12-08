@@ -1,7 +1,9 @@
 import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
+import { report } from "process";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { buildUrl } from "utils/client-utils";
 import { logColours } from "utils/logColours";
 
 const agentBaseApi: string = await SettingsStore.getRegistryURL();
@@ -215,6 +217,16 @@ function makeExternalEndpoint(
       const urlObj: URL = new URL(`${agentBaseApi}/location/addresses`);
       urlObj.searchParams.set("postal_code", postalCode);
       return urlObj.toString();
+    }
+    case InternalApiIdentifierMap.BILL: {
+      const type: string = searchParams.get("type");
+      if (type == LifecycleStageMap.ACCOUNT) {
+        return buildUrl(agentBaseApi, "report", "account");
+      }
+      if (type == LifecycleStageMap.PRICING) {
+        return buildUrl(agentBaseApi, "report", "account", "price");
+      }
+      return "";
     }
     case InternalApiIdentifierMap.CONCEPT: {
       const uri: string = searchParams.get("uri");

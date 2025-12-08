@@ -15,6 +15,7 @@ export type AgentResponseBody = {
 export const InternalApiIdentifierMap = {
   ADDRESS: "address",
   ACTIVITY: "activity",
+  BILL: "bill",
   CONCEPT: "concept",
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",

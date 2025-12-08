@@ -8,7 +8,7 @@ import React from "react";
 import { DateRange } from "react-day-picker";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
@@ -16,6 +16,7 @@ import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { buildUrl } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -216,7 +217,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   "{replace}",
                   props.entityType.replace("_", " ")
                 )}
-                url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
+                url={
+                  buildUrl(Routes.REGISTRY_ADD,
+                    ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+                      props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
+                    props.entityType
+                  )
+                }
               />
             )}
           {(!keycloakEnabled ||

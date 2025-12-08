@@ -17,6 +17,11 @@ export function makeInternalRegistryAPIwithParams(
         postal_code: params[0],
       });
       break;
+    case InternalApiIdentifierMap.BILL:
+      searchParams = new URLSearchParams({
+        type: params[0],
+      });
+      break;
     case InternalApiIdentifierMap.CONCEPT:
       searchParams = new URLSearchParams({
         uri: params[0],

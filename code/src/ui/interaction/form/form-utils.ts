@@ -7,6 +7,7 @@ import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
   FormType,
+  FormTypeMap,
   ID_KEY,
   NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
@@ -705,15 +706,16 @@ export function findMatchingDropdownOptionValue(
  */
 export function translateFormType(input: FormType, dict: Dictionary): string {
   switch (input) {
-    case "view":
+    case FormTypeMap.VIEW:
       return dict.action.view;
-    case "add":
+    case FormTypeMap.ADD:
+    case FormTypeMap.ADD_BILL:
       return dict.action.add;
-    case "edit":
+    case FormTypeMap.EDIT:
       return dict.action.edit;
-    case "delete":
+    case FormTypeMap.DELETE:
       return dict.action.delete;
-    case "search":
+    case FormTypeMap.SEARCH:
       return dict.action.search;
     default:
       break;

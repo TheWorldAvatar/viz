@@ -1,16 +1,18 @@
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
   FormType,
+  FormTypeMap,
   ID_KEY,
+  LifecycleStageMap,
   PROPERTY_GROUP_TYPE,
   PROPERTY_SHAPE_TYPE,
   PropertyGroup,
@@ -65,6 +67,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
+  const searchParams: URLSearchParams = useSearchParams()
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -77,7 +80,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // Retrieve template from APIs
       let template: FormTemplateType;
       // For add form, get a blank template
-      if (props.formType == "add" || props.formType == "search") {
+      if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.SEARCH) {
         template = await fetch(
           makeInternalRegistryAPIwithParams("form", props.entityType),
           {
@@ -174,7 +177,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     delete formData[FORM_STATES.FORM_TYPE];
 
     switch (props.formType) {
-      case "add": {
+      case FormTypeMap.ADD: {
         // Add entity via API route
         const res = await fetch(
           makeInternalRegistryAPIwithParams("instances", props.entityType),
@@ -205,6 +208,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           );
           pendingResponse = await draftRes.json();
         }
+        break;
+      }
+      case FormTypeMap.ADD_BILL: {
+        formData["type"] = props.entityType;
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.ACCOUNT),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
         break;
       }
       case "delete": {
