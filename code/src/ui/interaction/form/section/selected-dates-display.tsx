@@ -11,14 +11,22 @@ interface SelectedDatesDisplayProps {
     disabled?: boolean
 }
 
+/**
+ * This component renders a selected dates display.
+ *
+ * @param {Date[]} dates The array of selected dates.
+ * @param {Function} onDatesChange The method to update the selected dates.
+ * @param {boolean} disabled Indicator if the component is disabled.
+ */
+
 export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDisplayProps>) {
-    const dict: Dictionary = useDictionary()
-    const [isExpanded, setIsExpanded] = useState<boolean>(false)
-    const sortedDatesWithIndex: { date: Date; originalIndex: number }[] = props.dates.map((date, originalIndex) => ({ date, originalIndex })).sort((a, b) => a.date.getTime() - b.date.getTime())
+    const dict: Dictionary = useDictionary();
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const sortedDatesWithIndex: { date: Date; originalIndex: number }[] = props.dates.map((date, originalIndex) => ({ date, originalIndex })).sort((a, b) => a.date.getTime() - b.date.getTime());
 
     const handleRemoveDate = (indexToRemove: number) => {
-        const updatedDates: Date[] = props.dates.filter((_, index) => index !== indexToRemove)
-        props.onDatesChange(updatedDates)
+        const updatedDates: Date[] = props.dates.filter((_, index) => index !== indexToRemove);
+        props.onDatesChange(updatedDates);
     }
 
     return (

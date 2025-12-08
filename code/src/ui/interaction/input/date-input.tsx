@@ -100,6 +100,14 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     setDisplayedDateValues(extractDateDisplay(props.selectedDate));
   }, [props.selectedDate]);
 
+
+  const dayPickerClassNames = {
+    today: `text-yellow-500`,
+    selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
+    root: `${defaultDayPickerClassNames.root}  p-4`,
+    chevron: ` fill-foreground`,
+  }
+
   return (
     <div
       ref={popover.refs.setReference}
@@ -196,12 +204,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     selected={props.selectedDate as Date[]}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates || props.disabled}
-                    classNames={{
-                      today: `text-yellow-500`,
-                      selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                      root: `${defaultDayPickerClassNames.root}  p-4`,
-                      chevron: ` fill-foreground`,
-                    }}
+                    classNames={dayPickerClassNames}
                     required={true}
                   />
                 )}
@@ -212,12 +215,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     selected={props.selectedDate as Date}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
-                    classNames={{
-                      today: `text-yellow-500`,
-                      selected: `!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full`,
-                      root: `${defaultDayPickerClassNames.root}  p-4`,
-                      chevron: ` fill-foreground`,
-                    }}
+                    classNames={dayPickerClassNames}
                     required={true}
                   />
                 )}
