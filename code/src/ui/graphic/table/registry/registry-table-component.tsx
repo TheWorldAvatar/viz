@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
@@ -20,6 +20,7 @@ import TableRibbon from "./ribbon/table-ribbon";
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
+  accountType?: string;
 }
 
 /**
@@ -27,6 +28,7 @@ interface RegistryTableComponentProps {
  *
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
@@ -55,9 +57,9 @@ export default function RegistryTableComponent(
     <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 md:p-4 h-dvh">
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
-          {props.lifecycleStage === "account" ||
-            props.lifecycleStage === "pricing" ||
-            props.lifecycleStage === "activity" ? dict.nav.title.billing
+          {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+            props.lifecycleStage === LifecycleStageMap.PRICING ||
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY ? dict.nav.title.billing
             : parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon

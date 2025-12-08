@@ -2,6 +2,7 @@ import { Modules, PageTitles, Routes } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { LifecycleStageMap } from "types/form";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import RegistryTableComponent from "ui/graphic/table/registry/registry-table-component";
 
@@ -27,8 +28,9 @@ export default function PricingModelsPage() {
 
   return (
     <RegistryTableComponent
-      entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === "pricing").key}
-      lifecycleStage={"pricing"}
+      entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      lifecycleStage={LifecycleStageMap.PRICING}
     />
   );
 }
