@@ -129,7 +129,7 @@ export default function RegistryRowAction(
 
 
   const isSubmissionOrGeneralPage: boolean =
-    props.lifecycleStage == "pending" || props.lifecycleStage == "general";
+    props.lifecycleStage == "pending" || props.lifecycleStage == "general" || props.lifecycleStage == "active" || props.lifecycleStage == "archive";
 
   return (
     <div aria-label="Actions">
@@ -176,23 +176,17 @@ export default function RegistryRowAction(
                 props.lifecycleStage === "active" && (
                   <Button
                     variant="ghost"
-                    leftIcon="cancel"
+                    leftIcon="block"
                     size="md"
                     iconSize="medium"
                     className="w-full justify-start"
                     disabled={isLoading}
-                    label={dict.action.cancel}
+                    label={dict.action.terminate}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      props.setTask(
-                        genTaskOption(
-                          recordId,
-                          props.row,
-                          "cancel",
-                          dict.title.scheduleType
-                        )
+                      router.push(
+                        `${Routes.REGISTRY_TERMINATE}/${props.recordType}/${recordId}`
                       );
-                      dispatch(openDrawer());
                     }}
                   />
                 )}

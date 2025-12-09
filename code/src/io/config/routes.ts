@@ -31,6 +31,7 @@ export const Paths: {
   REGISTRY_ADD: "add",
   REGISTRY_EDIT: "edit",
   REGISTRY_DELETE: "delete",
+  REGISTRY_TERMINATE: "terminate",
   HELP: "help",
 };
 
@@ -50,6 +51,7 @@ export const Routes: {
   REGISTRY_ADD: `${ASSET_PREFIX}/${Paths.REGISTRY_ADD}`,
   REGISTRY_EDIT: `${ASSET_PREFIX}/${Paths.REGISTRY_EDIT}`,
   REGISTRY_DELETE: `${ASSET_PREFIX}/${Paths.REGISTRY_DELETE}`,
+  REGISTRY_TERMINATE: `${ASSET_PREFIX}/${Paths.REGISTRY_TERMINATE}`,
   HELP: `${ASSET_PREFIX}/${Paths.HELP}`,
 };
 
