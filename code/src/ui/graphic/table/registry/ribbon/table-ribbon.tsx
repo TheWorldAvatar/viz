@@ -4,7 +4,7 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
@@ -20,6 +20,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import { useFilterOptions } from "hooks/table/api/useFilterOptions";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import { ColumnFiltersState } from "@tanstack/react-table";
 
 interface TableRibbonProps {
   path: string;
@@ -57,10 +58,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.lifecycleStage === "pricing" ||
     props.lifecycleStage === "activity";
 
-  const shouldUseAccountFilter = props.lifecycleStage === "pricing" && props.accountType;
-
-  // Local state for selected accounts
-  const [selectedAccounts, setSelectedAccounts] = React.useState<string[]>([]);
+  const shouldUseAccountFilter: boolean = props.lifecycleStage === "pricing";
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
   const {
     options: accountOptions,
@@ -71,7 +70,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     setShowFilterDropdown,
     setTriggerFetch
   } = useFilterOptions(
-    shouldUseAccountFilter ? props.accountType! : "",
+    shouldUseAccountFilter ? props.accountType : "",
     "name",
     props.lifecycleStage,
     props.selectedDate,
@@ -79,7 +78,24 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     shouldUseAccountFilter ? props.tableDescriptor.filters : [],
   );
 
-  const isActiveFilter = selectedAccounts.length > 0;
+  const isActiveFilter: boolean = selectedAccounts.length > 0;
+
+  useEffect(() => {
+    if (shouldUseAccountFilter && props.tableDescriptor?.table) {
+
+      const currentFilters: ColumnFiltersState = props.tableDescriptor.table.getState().columnFilters;
+      // Filter by "client" field which links pricing models to accounts
+      const otherFilters: ColumnFiltersState = currentFilters.filter(f => f?.id !== props.accountType);
+
+      if (selectedAccounts.length > 0) {
+        props.tableDescriptor.table.setColumnFilters([
+          ...otherFilters,
+          // column filter is expected in the format {id: string, value: unknown}
+          { id: props.accountType, value: selectedAccounts }
+        ]);
+      }
+    }
+  }, [selectedAccounts, shouldUseAccountFilter]);
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
