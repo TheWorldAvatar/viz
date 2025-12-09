@@ -12,11 +12,14 @@ import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/fo
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
-import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { buildUrl } from "utils/client-utils";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import SearchSelector from "ui/interaction/dropdown/search-selector";
+import { useFilterOptions } from "hooks/table/api/useFilterOptions";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 
 interface TableRibbonProps {
   path: string;
@@ -27,6 +30,7 @@ interface TableRibbonProps {
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
+  accountType?: string;
 }
 
 /**
@@ -52,6 +56,30 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isBillingStage: boolean = props.lifecycleStage === "account" ||
     props.lifecycleStage === "pricing" ||
     props.lifecycleStage === "activity";
+
+  const shouldUseAccountFilter = props.lifecycleStage === "pricing" && props.accountType;
+
+  // Local state for selected accounts
+  const [selectedAccounts, setSelectedAccounts] = React.useState<string[]>([]);
+
+  const {
+    options: accountOptions,
+    search,
+    isLoading: isLoadingAccounts,
+    showFilterDropdown,
+    setSearch,
+    setShowFilterDropdown,
+    setTriggerFetch
+  } = useFilterOptions(
+    shouldUseAccountFilter ? props.accountType! : "",
+    "name",
+    props.lifecycleStage,
+    props.selectedDate,
+    selectedAccounts,
+    shouldUseAccountFilter ? props.tableDescriptor.filters : [],
+  );
+
+  const isActiveFilter = selectedAccounts.length > 0;
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -236,10 +264,35 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       {props.lifecycleStage === "pricing" && (
         <div className="flex justify-start">
           <div className="md:w-[300px]">
-            <MultivalueSelector
-              title="Billing Accounts"
-              options={[]}
-            />
+            <PopoverActionButton
+              placement="bottom-start"
+              rightIcon="filter_list"
+              variant={isActiveFilter ? "secondary" : "outline"}
+              tooltipText={dict.action.filter}
+              label="Billing Accounts"
+              isOpen={showFilterDropdown}
+              setIsOpen={setShowFilterDropdown}
+              onClick={(event) => {
+                event.stopPropagation();
+                setTriggerFetch(!showFilterDropdown);
+                setShowFilterDropdown(!showFilterDropdown);
+              }}
+            >
+              <SearchSelector
+                searchString={search}
+                options={accountOptions}
+                label="Account"
+                initSelectedOptions={selectedAccounts}
+                showOptions={!isLoadingAccounts}
+                onSubmission={(selectedOptions: string[]) => {
+                  setSelectedAccounts(selectedOptions);
+                  props.tableDescriptor.table.resetRowSelection();
+                  props.tableDescriptor.table.resetPageIndex();
+                }}
+                setSearchString={setSearch}
+              />
+              {isLoadingAccounts && <LoadingSpinner isSmall={true} />}
+            </PopoverActionButton>
           </div>
         </div>
       )}
