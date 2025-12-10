@@ -10,19 +10,19 @@ import useOperationStatus from "hooks/useOperationStatus";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
+import { FORM_IDENTIFIER, FormType, FormTypeMap, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
-import Button from "../button";
-import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
-import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
+import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
+import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { FormTemplate } from "./template/form-template";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -209,9 +209,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     if (
       props.isPrimaryEntity &&
       !status &&
-      (props.formType === "view" ||
-        props.formType === "delete" ||
-        props.formType === "edit")
+      (props.formType === FormTypeMap.VIEW ||
+        props.formType === FormTypeMap.DELETE ||
+        props.formType === FormTypeMap.EDIT)
     ) {
       getContractStatus();
     }
@@ -267,7 +267,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
@@ -282,7 +282,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
@@ -296,7 +296,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
@@ -310,7 +310,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
@@ -325,7 +325,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
@@ -338,7 +338,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="secondary"
               />
             )}
-          {props.formType != "view" && (
+          {props.formType != FormTypeMap.VIEW && (
             <Button
               leftIcon="send"
               label={dict.action.submit}

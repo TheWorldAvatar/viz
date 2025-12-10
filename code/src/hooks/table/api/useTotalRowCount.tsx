@@ -2,9 +2,9 @@ import { ColumnFilter } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { parseColumnFiltersIntoUrlParams } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
@@ -37,20 +37,20 @@ export function useTotalRowCount(
     const fetchTotalRows = async (filterParams: string): Promise<void> => {
       try {
         let url: string;
-        if (lifecycleStage == "general" ||
-          lifecycleStage == "account" ||
-          lifecycleStage == "pricing") {
+        if (lifecycleStage == LifecycleStageMap.GENERAL ||
+          lifecycleStage == LifecycleStageMap.ACCOUNT ||
+          lifecycleStage == LifecycleStageMap.PRICING) {
           url = makeInternalRegistryAPIwithParams(
-            "count",
+            InternalApiIdentifierMap.COUNT,
             entityType,
             filterParams ?? "",
           );
         } else if (
-          lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed" ||
-          lifecycleStage == "activity") {
+          lifecycleStage == LifecycleStageMap.SCHEDULED ||
+          lifecycleStage == LifecycleStageMap.CLOSED ||
+          lifecycleStage == LifecycleStageMap.ACTIVITY) {
           url = makeInternalRegistryAPIwithParams(
-            "count",
+            InternalApiIdentifierMap.COUNT,
             entityType,
             filterParams ?? "",
             lifecycleStage,
@@ -59,7 +59,7 @@ export function useTotalRowCount(
           );
         } else {
           url = makeInternalRegistryAPIwithParams(
-            "count",
+            InternalApiIdentifierMap.COUNT,
             entityType,
             filterParams ?? "",
             lifecycleStage,

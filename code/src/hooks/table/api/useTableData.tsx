@@ -3,9 +3,9 @@ import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
@@ -56,9 +56,9 @@ export function useTableData(
       try {
         let instances: RegistryFieldValues[] = [];
         let url: string;
-        if (lifecycleStage == "outstanding") {
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
           url = makeInternalRegistryAPIwithParams(
-            "outstanding",
+            InternalApiIdentifierMap.OUTSTANDING,
             entityType,
             apiPagination.pageIndex.toString(),
             apiPagination.pageSize.toString(),
@@ -66,9 +66,9 @@ export function useTableData(
             filterParams,
           );
         } else if (
-          lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed" ||
-          lifecycleStage == "activity"
+          lifecycleStage == LifecycleStageMap.SCHEDULED ||
+          lifecycleStage == LifecycleStageMap.CLOSED ||
+          lifecycleStage == LifecycleStageMap.ACTIVITY
         ) {
           url = makeInternalRegistryAPIwithParams(
             lifecycleStage,
@@ -81,11 +81,11 @@ export function useTableData(
             filterParams,
           );
         } else if (
-          lifecycleStage == "general" ||
-          lifecycleStage == "account" ||
-          lifecycleStage == "pricing") {
+          lifecycleStage == LifecycleStageMap.GENERAL ||
+          lifecycleStage == LifecycleStageMap.ACCOUNT ||
+          lifecycleStage == LifecycleStageMap.PRICING) {
           url = makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             entityType,
             "true",
             null,
@@ -97,7 +97,7 @@ export function useTableData(
           );
         } else {
           url = makeInternalRegistryAPIwithParams(
-            "contracts",
+            InternalApiIdentifierMap.CONTRACTS,
             lifecycleStage.toString(),
             entityType,
             apiPagination.pageIndex.toString(),

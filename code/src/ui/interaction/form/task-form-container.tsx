@@ -10,25 +10,26 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { PermissionScheme } from "types/auth";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FORM_IDENTIFIER,
   FormTemplateType,
   FormType,
+  FormTypeMap,
   PropertyShapeOrGroup,
   RegistryTaskType,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import { FormComponent } from "ui/interaction/form/form";
 import { FORM_STATES } from "ui/interaction/form/form-utils";
-import { FormTemplate } from "ui/interaction/form/template/form-template";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
-import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
-import { toast } from "ui/interaction/action/toast/toast";
+import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, parseWordsForLabels, buildUrl } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 
@@ -121,7 +122,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       try {
         const resBody: AgentResponseBody = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
-            "event",
+            InternalApiIdentifierMap.EVENT,
             lifecycleStage,
             eventType,
             targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER
@@ -142,13 +143,13 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     triggerRefresh();
     setFormFields([]);
 
-    if (props.formType === "dispatch") {
+    if (props.formType === FormTypeMap.DISPATCH) {
       getFormTemplate("service", "dispatch", id);
-    } else if (props.formType === "complete") {
+    } else if (props.formType === FormTypeMap.COMPLETE) {
       getFormTemplate("service", "complete", id);
-    } else if (props.formType === "report") {
+    } else if (props.formType === FormTypeMap.REPORT) {
       getFormTemplate("service", "report");
-    } else if (props.formType === "cancel") {
+    } else if (props.formType === FormTypeMap.CANCEL) {
       getFormTemplate("service", "cancel");
     }
   }, [id, props.formType]);
@@ -167,10 +168,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   ) => {
     startLoading();
     let action = "";
-    if (props.formType === "dispatch") {
+    if (props.formType === FormTypeMap.DISPATCH) {
       action = "dispatch";
       formData[FORM_STATES.ORDER] = 0;
-    } else if (props.formType === "complete") {
+    } else if (props.formType === FormTypeMap.COMPLETE) {
       if (isSaving) {
         action = "saved";
         setIsSaving(false);
@@ -178,10 +179,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         action = "complete";
       }
       formData[FORM_STATES.ORDER] = 1;
-    } else if (props.formType === "cancel") {
+    } else if (props.formType === FormTypeMap.CANCEL) {
       action = "cancel";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
-    } else if (props.formType === "report") {
+    } else if (props.formType === FormTypeMap.REPORT) {
       action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
     } else {
@@ -191,7 +192,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     let response: AgentResponseBody = await submitLifecycleAction(
       formData,
       action,
-      props.formType !== "dispatch" && props.formType !== "complete"
+      props.formType !== FormTypeMap.DISPATCH && props.formType !== FormTypeMap.COMPLETE,
     );
 
     if (!response?.error && isDuplicate) {
@@ -227,7 +228,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     let response: AgentResponseBody;
     if (isPost) {
       const res = await fetch(
-        makeInternalRegistryAPIwithParams("event", "service", action),
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -239,7 +240,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       response = await res.json();
     } else {
       const res = await fetch(
-        makeInternalRegistryAPIwithParams("event", "service", action),
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -274,14 +275,14 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
       {/* Scrollable Content */}
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
-        {props.formType !== "view" && task?.date && (
+        {props.formType !== FormTypeMap.VIEW && task?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {props.formType === "complete" && dict.message.completeInstruction}
-            {props.formType === "dispatch" &&
+            {props.formType === FormTypeMap.COMPLETE && dict.message.completeInstruction}
+            {props.formType === FormTypeMap.DISPATCH &&
               `${dict.message.dispatchInstruction} ${task.date}:`}
-            {props.formType === "cancel" &&
+            {props.formType === FormTypeMap.CANCEL &&
               `${dict.message.cancelInstruction} ${task.date}:`}
-            {props.formType === "report" &&
+            {props.formType === FormTypeMap.REPORT &&
               `${dict.message.reportInstruction.replace(
                 "{date}",
                 task.date
@@ -291,11 +292,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
         {(isFetching || refreshFlag) && <FormSkeleton />}
 
-        {props.formType === "view" && !(refreshFlag || isFetching) && (
+        {props.formType === FormTypeMap.VIEW && !(refreshFlag || isFetching) && (
           <FormComponent
             formRef={formRef}
             entityType={props.entityType}
-            formType={"view"}
+            formType={FormTypeMap.VIEW}
             id={task ? getAfterDelimiter(task.contract, "/") : ""}
           />
         )}
@@ -303,9 +304,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         {formFields?.length > 0 && !refreshFlag && (
           <FormTemplate
             entityType={
-              props.formType === "report"
+              props.formType === FormTypeMap.REPORT
                 ? "report"
-                : props.formType === "cancel"
+                : props.formType === FormTypeMap.CANCEL
                   ? "cancellation"
                   : "dispatch"
             }
@@ -340,7 +341,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.completeTask) &&
             (task?.status?.toLowerCase() === "assigned" ||
               task?.status?.toLowerCase() === "completed") &&
-            props.formType === "view" && (
+            props.formType === FormTypeMap.VIEW && (
               <Button
                 leftIcon="done_outline"
                 size="md"
@@ -357,7 +358,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.operation) &&
             task?.status?.toLowerCase() !== "issue" &&
             task?.status?.toLowerCase() !== "cancelled" &&
-            props.formType === "view" && (
+            props.formType === FormTypeMap.VIEW && (
               <Button
                 leftIcon="assignment"
                 size="md"
@@ -374,7 +375,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.operation) &&
             (task?.status?.toLowerCase() === "new" ||
               task?.status?.toLowerCase() === "assigned") &&
-            props.formType === "view" && (
+            props.formType === FormTypeMap.VIEW && (
               <Button
                 variant="secondary"
                 leftIcon="cancel"
@@ -392,7 +393,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
             permissionScheme.hasPermissions.reportTask) &&
             (task?.status?.toLowerCase() === "new" ||
               task?.status?.toLowerCase() === "assigned") &&
-            props.formType === "view" && (
+            props.formType === FormTypeMap.VIEW && (
               <Button
                 variant="secondary"
                 leftIcon="report"
@@ -408,12 +409,12 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             (permissionScheme.hasPermissions.completeTask &&
-              props.formType === "complete") ||
+              props.formType === FormTypeMap.COMPLETE) ||
             (permissionScheme.hasPermissions.reportTask &&
-              props.formType === "report") ||
+              props.formType === FormTypeMap.REPORT) ||
             (permissionScheme.hasPermissions.operation &&
-              (props.formType === "dispatch" || props.formType === "cancel"))) &&
-            props.formType !== "view" && (
+              (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.CANCEL))) &&
+            props.formType !== FormTypeMap.VIEW && (
               <Button
                 leftIcon="send"
                 label={dict.action.submit}
@@ -421,7 +422,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 disabled={isLoading}
                 onClick={() => {
                   if (
-                    props.formType === "complete" &&
+                    props.formType === FormTypeMap.COMPLETE &&
                     task?.scheduleType === dict.form.perpetualService
                   ) {
                     setIsDuplicate(true);
@@ -435,7 +436,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.completeAndDuplicateTask) &&
-            props.formType === "complete" &&
+            props.formType === FormTypeMap.COMPLETE &&
             task?.scheduleType !== dict.form.perpetualService && (
               <Button
                 leftIcon="schedule_send"
@@ -454,7 +455,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.saveTask) &&
-            props.formType === "complete" && (
+            props.formType === FormTypeMap.COMPLETE && (
               <Button
                 leftIcon="save"
                 variant="secondary"

@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { PermissionScheme } from "types/auth";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -57,7 +57,7 @@ export default function RegistryRowAction(
       remarks: "Contract has been approved successfully!",
     };
     const url: string = makeInternalRegistryAPIwithParams(
-      "event",
+      InternalApiIdentifierMap.EVENT,
       "service",
       "commence"
     );
@@ -71,7 +71,7 @@ export default function RegistryRowAction(
       contract: recordId,
     };
     const url: string = makeInternalRegistryAPIwithParams(
-      "event",
+      InternalApiIdentifierMap.EVENT,
       "draft",
       "reset"
     );
@@ -104,10 +104,10 @@ export default function RegistryRowAction(
 
   const handleClickView = (): void => {
     if (
-      props.lifecycleStage == "tasks" ||
-      props.lifecycleStage == "outstanding" ||
-      props.lifecycleStage == "scheduled" ||
-      props.lifecycleStage == "closed"
+      props.lifecycleStage == LifecycleStageMap.TASKS ||
+      props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+      props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+      props.lifecycleStage == LifecycleStageMap.CLOSED
     ) {
       // Navigate to task view modal route
       router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
@@ -118,7 +118,7 @@ export default function RegistryRowAction(
   };
 
   const isSubmissionOrGeneralPage: boolean =
-    props.lifecycleStage == "pending" || props.lifecycleStage == "general" || props.lifecycleStage == "account" || props.lifecycleStage == "pricing";
+    props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL || props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING;
 
   return (
     <div aria-label="Actions">
@@ -150,7 +150,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === "active" && (
+                props.lifecycleStage === LifecycleStageMap.ACTIVE && (
                   <Button
                     variant="ghost"
                     leftIcon="cancel"
@@ -169,7 +169,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === "pending" && (
+                props.lifecycleStage === LifecycleStageMap.PENDING && (
                   <Button
                     variant="ghost"
                     leftIcon="done_outline"
@@ -185,7 +185,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.sales) &&
-                props.lifecycleStage === "pending" &&
+                props.lifecycleStage === LifecycleStageMap.PENDING &&
                 props.row?.status?.toLowerCase() === "amended" && (
                   <Button
                     variant="ghost"
@@ -259,8 +259,8 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.completeTask) &&
-                (props.lifecycleStage === "outstanding" ||
-                  props.lifecycleStage === "closed") &&
+                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+                  props.lifecycleStage === LifecycleStageMap.CLOSED) &&
                 (props.row?.status?.toLowerCase() === "assigned" ||
                   props.row?.status?.toLowerCase() === "completed") && (
                   <Button
@@ -299,8 +299,8 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                (props.lifecycleStage === "outstanding" ||
-                  props.lifecycleStage === "scheduled") &&
+                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+                  props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
                 compareDates(props.row?.date, true) &&
                 (props.row?.status?.toLowerCase() === "new" ||
                   props.row?.status?.toLowerCase() === "assigned") && (
@@ -321,7 +321,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.reportTask) &&
-                props.lifecycleStage === "outstanding" &&
+                props.lifecycleStage === LifecycleStageMap.OUTSTANDING &&
                 compareDates(props.row?.date, false) &&
                 (props.row?.status?.toLowerCase() === "new" ||
                   props.row?.status?.toLowerCase() === "assigned") && (
@@ -344,7 +344,7 @@ export default function RegistryRowAction(
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.draftTemplate) &&
-            props.lifecycleStage !== "general" && props.lifecycleStage !== "account" && props.lifecycleStage !== "pricing" && (
+            props.lifecycleStage !== LifecycleStageMap.GENERAL && props.lifecycleStage !== LifecycleStageMap.ACCOUNT && props.lifecycleStage !== LifecycleStageMap.PRICING && (
               <DraftTemplateButton
                 rowId={[props.row.id]}
                 recordType={props.recordType}

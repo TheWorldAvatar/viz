@@ -1,6 +1,8 @@
 "use client";
 
+import { ColumnFiltersState } from "@tanstack/react-table";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useFilterOptions } from "hooks/table/api/useFilterOptions";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
@@ -12,13 +14,11 @@ import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/fo
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
+import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
 import DateInput from "ui/interaction/input/date-input";
+import { buildUrl } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { buildUrl } from "utils/client-utils";
-import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
-import { useFilterOptions } from "hooks/table/api/useFilterOptions";
-import { ColumnFiltersState } from "@tanstack/react-table";
 
 interface TableRibbonProps {
   path: string;
@@ -52,11 +52,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
-  const isBillingStage: boolean = props.lifecycleStage === "account" ||
-    props.lifecycleStage === "pricing" ||
-    props.lifecycleStage === "activity";
+  const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+    props.lifecycleStage === LifecycleStageMap.PRICING ||
+    props.lifecycleStage === LifecycleStageMap.ACTIVITY;
 
-  const shouldUseAccountFilter: boolean = props.lifecycleStage === "pricing";
+  const shouldUseAccountFilter: boolean = props.lifecycleStage === LifecycleStageMap.PRICING;
   const [selectedAccount, setSelectedAccount] = useState<string>("");
 
   const {
@@ -111,7 +111,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
-      {props.lifecycleStage !== "general" && !isBillingStage &&
+      {props.lifecycleStage !== LifecycleStageMap.GENERAL && !isBillingStage &&
         (!keycloakEnabled ||
           !permissionScheme ||
           permissionScheme.hasPermissions.registry) && (
@@ -226,9 +226,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             variant="outline"
             onClick={triggerRefresh}
           />
-          {(props.lifecycleStage == "scheduled" ||
-            props.lifecycleStage == "closed" ||
-            props.lifecycleStage == "activity") && (
+          {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+            props.lifecycleStage == LifecycleStageMap.CLOSED ||
+            props.lifecycleStage == LifecycleStageMap.ACTIVITY) && (
               <DateInput
                 mode="range"
                 selectedDate={props.selectedDate}
@@ -238,7 +238,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
         </div>
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
-          {props.lifecycleStage !== "pricing" && props.tableDescriptor.table
+          {props.lifecycleStage !== LifecycleStageMap.PRICING && props.tableDescriptor.table
             .getState()
             .columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
@@ -264,8 +264,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            (props.lifecycleStage == "pending" ||
-              props.lifecycleStage == "general" ||
+            (props.lifecycleStage == LifecycleStageMap.PENDING ||
+              props.lifecycleStage == LifecycleStageMap.GENERAL ||
               isBillingStage) && (
               <RedirectButton
                 leftIcon="add"
@@ -290,7 +290,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
         </div>
       </div>
-      {props.lifecycleStage === "pricing" && (
+      {props.lifecycleStage === LifecycleStageMap.PRICING && (
         <div className="flex justify-start">
           <div className="md:w-[300px]">
             <SearchableSimpleSelector

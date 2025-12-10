@@ -82,7 +82,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // For add form, get a blank template
       if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.SEARCH) {
         template = await fetch(
-          makeInternalRegistryAPIwithParams("form", props.entityType),
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType),
           {
             cache: "no-store",
             credentials: "same-origin",
@@ -94,7 +94,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       } else {
         // For edit and view, get template with values
         template = await fetch(
-          makeInternalRegistryAPIwithParams("form", props.entityType, id),
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType, id),
           {
             cache: "no-store",
             credentials: "same-origin",
@@ -115,7 +115,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
       }
 
-      if (props.formType == "add") {
+      if (props.formType == FormTypeMap.ADD) {
         const hasScheduleField: boolean = template.property.some(
           (field) =>
             (field as PropertyShape)?.class?.[ID_KEY] ===
@@ -129,7 +129,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       setFormTemplate({
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != "add"),
+        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD),
         property: parsePropertyShapeOrGroupList(initialState, template.property),
       });
       return initialState;
@@ -201,7 +201,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       case FormTypeMap.ADD: {
         // Add entity via API route
         const res = await fetch(
-          makeInternalRegistryAPIwithParams("instances", props.entityType),
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -215,7 +215,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For registry's primary entity, a draft lifecycle must also be generated
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -246,11 +246,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
         break;
       }
-      case "delete": {
+      case FormTypeMap.DELETE: {
         // Delete entity via API route
         const res = await fetch(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             formData[FORM_STATES.ID],
@@ -271,11 +271,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
         break;
       }
-      case "edit": {
+      case FormTypeMap.EDIT: {
         // Update entity via API route
         const res = await fetch(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             formData.id
@@ -292,7 +292,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -308,7 +308,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case "search": {
+      case FormTypeMap.SEARCH: {
         Object.keys(formData).forEach((field) => {
           if (
             Object.prototype.hasOwnProperty.call(formData, `min ${field}`) &&
@@ -325,7 +325,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         const res = await fetch(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             "search"
@@ -383,7 +383,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (!pendingResponse?.error) {
       setTimeout(() => {
         // Close search modal on success
-        if (props.formType === "search") {
+        if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
@@ -449,7 +449,7 @@ export function renderFormField(
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
-    formType === "view" || formType === "delete";
+    formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE;
 
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
@@ -472,7 +472,7 @@ export function renderFormField(
       return;
     }
     const disableId: boolean =
-      formType === "edit" && fieldProp.name[VALUE_KEY] === FORM_STATES.ID
+      formType === FormTypeMap.EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID
         ? true
         : disableAllInputs;
     // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
@@ -523,7 +523,7 @@ export function renderFormField(
         );
       }
       if (
-        formType === "search" &&
+        formType === FormTypeMap.SEARCH &&
         fieldProp.class[ID_KEY] ===
         "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {

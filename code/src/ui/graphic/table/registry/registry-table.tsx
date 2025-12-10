@@ -19,9 +19,9 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { PermissionScheme } from "types/auth";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -73,7 +73,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
   );
-  const allowMultipleSelection: boolean = props.lifecycleStage !== "general";
+  const allowMultipleSelection: boolean = props.lifecycleStage !== LifecycleStageMap.GENERAL;
 
   const onRowClick = (row: FieldValues) => {
     if (isLoading) return;
@@ -83,10 +83,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         ? getId(row.id)
         : getId(row.iri);
     if (
-      props.lifecycleStage === "tasks" ||
-      props.lifecycleStage === "outstanding" ||
-      props.lifecycleStage === "scheduled" ||
-      props.lifecycleStage === "closed"
+      props.lifecycleStage === LifecycleStageMap.TASKS ||
+      props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+      props.lifecycleStage === LifecycleStageMap.SCHEDULED ||
+      props.lifecycleStage === LifecycleStageMap.CLOSED
     ) {
 
       // Determine the appropriate task route based on status and permissions
@@ -97,7 +97,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           permissionScheme.hasPermissions.operation) &&
         ((row.status as string).toLowerCase() === "new" ||
           ((row.status as string).toLowerCase() === "assigned" &&
-            props.lifecycleStage === "scheduled"))
+            props.lifecycleStage === LifecycleStageMap.SCHEDULED))
       ) {
         taskRoute = Routes.REGISTRY_TASK_DISPATCH;
       } else if (
@@ -142,14 +142,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           contract: contractIds,
           remarks: `${contractIds.length} contract(s) approved successfully!`,
         };
-        apiUrl = makeInternalRegistryAPIwithParams("event", "service", "commence");
+        apiUrl = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "commence");
         method = "POST";
         break;
       case "resubmit":
         reqBody = {
           contract: contractIds,
         };
-        apiUrl = makeInternalRegistryAPIwithParams("event", "draft", "reset");
+        apiUrl = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "draft", "reset");
         method = "PUT";
         break;
       default:
@@ -182,7 +182,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   };
 
   if (
-    props.lifecycleStage === "pricing" &&
+    props.lifecycleStage === LifecycleStageMap.PRICING &&
     (!props.tableDescriptor.table.getState().columnFilters ||
       props.tableDescriptor.table.getState().columnFilters.length === 0)
   ) {
