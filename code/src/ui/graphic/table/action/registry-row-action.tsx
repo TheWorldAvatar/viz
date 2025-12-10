@@ -227,7 +227,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.sales) &&
-                isSubmissionOrGeneralPage && (
+                isSubmissionOrGeneralPage && props.lifecycleStage !== "active" && props.lifecycleStage !== "archive" && (
                   <Button
                     variant="ghost"
                     leftIcon="edit"
@@ -248,7 +248,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.sales) &&
-                isSubmissionOrGeneralPage && (
+                isSubmissionOrGeneralPage && props.lifecycleStage !== "active" && props.lifecycleStage !== "archive" && (
                   <Button
                     variant="ghost"
                     leftIcon="delete"

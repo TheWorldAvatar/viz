@@ -105,8 +105,10 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     // Build payload according to API specification
     const payload = {
+      type: props.entityType,
       contract: contractId,
-      remarks: formData.remarks || formData[FORM_STATES.REMARKS] || "",
+      remarks: formData[FORM_STATES.REMARKS] || "",
+      "special remarks": formData[FORM_STATES.SPECIAL_REMARKS] || "",
     };
 
     const res = await fetch(
