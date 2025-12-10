@@ -61,7 +61,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   permissionScheme?.hasPermissions.pendingRegistry) && (
                     <div className="sm:w-auto">
                       <RedirectButton
-                        label={"Jobs"}
+                        label={dict.nav.title.jobs}
                         leftIcon="local_shipping"
                         hasMobileIcon={false}
                         url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
@@ -74,7 +74,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   )}
                 <div className="sm:w-auto">
                   <RedirectButton
-                    label={"Tasks"}
+                    label={dict.nav.title.tasks}
                     leftIcon="list_alt"
                     hasMobileIcon={false}
                     url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}

@@ -180,7 +180,9 @@
       "archive": "Archive",
       "outstanding": "Outstanding",
       "scheduled": "Scheduled",
-      "closed": "Closed"
+      "closed": "Closed",
+      "jobs": "Jobs",
+      "tasks": "Tasks"
     },
     "tooltip": {
       "home": "Return to landing page",
