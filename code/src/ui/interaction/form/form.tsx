@@ -1,4 +1,4 @@
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -67,7 +67,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
-  const searchParams: URLSearchParams = useSearchParams()
+
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
