@@ -49,7 +49,7 @@ export default function SearchableSimpleSelector(
     const selectOptions: OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>> =
         props.options.map((opt) => ({ label: opt, value: opt }));
 
-    // Find the selected option object
+
     const selectedOption = props.value
         ? { label: props.value, value: props.value }
         : null;
@@ -76,12 +76,12 @@ export default function SearchableSimpleSelector(
 
     return (
         <Select
+            styles={selectorStyles}
             options={selectOptions}
             value={selectedOption}
             onChange={handleChange}
             onInputChange={handleInputChange}
             inputValue={inputValue}
-            styles={selectorStyles}
             isLoading={props.isLoading}
             isClearable
             isSearchable
