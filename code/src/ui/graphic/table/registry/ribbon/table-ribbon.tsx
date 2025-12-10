@@ -77,7 +77,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   useEffect(() => {
     if (shouldUseAccountFilter) {
       setTriggerFetch(true);
-      if (!selectedAccount) {
+      if (!selectedAccount && accountOptions && accountOptions.length > 0) {
         setSelectedAccount(accountOptions[0]);
       }
     }
