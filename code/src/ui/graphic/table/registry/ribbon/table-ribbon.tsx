@@ -230,6 +230,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             props.lifecycleStage == "closed" ||
             props.lifecycleStage == "activity") && (
               <DateInput
+                mode="range"
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
                 disabledDates={getDisabledDates(props.lifecycleStage)}

@@ -2,6 +2,28 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.46.1
+
+### Changes
+
+- Updated the date-input component to allow for multiple date selection
+- New component - select-dates-input to display selected dates
+- Implemented a new schedule type - "Fixed Date Service". This is a aservice that will occur on fixed dates within the specified period. Users can select multiple dates from the date picker.
+- Bump min version of `VisBackend Agent` to `v1.22.0`
+
+## 5.46.0
+
+### Security
+
+- _Critical security update_ to NextJS. All users should update to this version
+
+## 5.45.5
+
+### Bug fixes
+
+- Fixed a bug where the sorting functionality was not working as expected, thus not returning the right sorting order.
+- Added datatype check for every column when sorting to ensure correct sorting behavior for different data types (e.g., datetime, date).
+
 ## 5.45.4
 
 ### Bug fixes
