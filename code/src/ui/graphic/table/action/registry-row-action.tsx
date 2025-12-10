@@ -118,7 +118,7 @@ export default function RegistryRowAction(
   };
 
   const isSubmissionOrGeneralPage: boolean =
-    props.lifecycleStage == "pending" || props.lifecycleStage == "general";
+    props.lifecycleStage == "pending" || props.lifecycleStage == "general" || props.lifecycleStage == "account" || props.lifecycleStage == "pricing";
 
   return (
     <div aria-label="Actions">
@@ -344,7 +344,7 @@ export default function RegistryRowAction(
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.draftTemplate) &&
-            props.lifecycleStage !== "general" && (
+            props.lifecycleStage !== "general" && props.lifecycleStage !== "account" && props.lifecycleStage !== "pricing" && (
               <DraftTemplateButton
                 rowId={[props.row.id]}
                 recordType={props.recordType}

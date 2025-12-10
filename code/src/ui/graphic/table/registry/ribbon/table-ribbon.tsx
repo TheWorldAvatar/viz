@@ -236,8 +236,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               />
             )}
         </div>
-        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-          {props.tableDescriptor.table
+        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
+          {props.lifecycleStage !== "pricing" && props.tableDescriptor.table
             .getState()
             .columnFilters?.some(
               (filter) => (filter?.value as string[])?.length > 0
