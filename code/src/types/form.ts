@@ -13,6 +13,7 @@ export const LifecycleStageMap = {
   ACTIVE: "active",
   ARCHIVE: "archive",
   TASKS: "tasks",
+  REPORT: "report",
   OUTSTANDING: "outstanding",
   SCHEDULED: "scheduled",
   CLOSED: "closed",
