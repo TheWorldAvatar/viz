@@ -16,10 +16,8 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { buildUrl } from "utils/client-utils";
-import PopoverActionButton from "ui/interaction/action/popover/popover-button";
-import SearchSelector from "ui/interaction/dropdown/search-selector";
+import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
 import { useFilterOptions } from "hooks/table/api/useFilterOptions";
-import LoadingSpinner from "ui/graphic/loader/spinner";
 import { ColumnFiltersState } from "@tanstack/react-table";
 
 interface TableRibbonProps {
@@ -59,43 +57,57 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.lifecycleStage === "activity";
 
   const shouldUseAccountFilter: boolean = props.lifecycleStage === "pricing";
-  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
 
   const {
     options: accountOptions,
-    search,
     isLoading: isLoadingAccounts,
-    showFilterDropdown,
     setSearch,
-    setShowFilterDropdown,
-    setTriggerFetch
+    setTriggerFetch,
   } = useFilterOptions(
     shouldUseAccountFilter ? props.accountType : "",
     "name",
     props.lifecycleStage,
     props.selectedDate,
-    selectedAccounts,
+    selectedAccount ? [selectedAccount] : [],
     shouldUseAccountFilter ? props.tableDescriptor.filters : [],
   );
 
-  const isActiveFilter: boolean = selectedAccounts.length > 0;
+  // Initialize filter: trigger fetch and auto-select first option
+  useEffect(() => {
+    if (shouldUseAccountFilter) {
+      setTriggerFetch(true);
+      if (!selectedAccount) {
+        setSelectedAccount(accountOptions[0]);
+      }
+    }
+  }, [accountOptions, shouldUseAccountFilter, setTriggerFetch, selectedAccount]);
 
   useEffect(() => {
     if (shouldUseAccountFilter && props.tableDescriptor?.table) {
+      try {
+        const tableState = props.tableDescriptor.table.getState();
+        // Ensure table state is initialized
+        if (!tableState || !tableState.columnFilters) return;
 
-      const currentFilters: ColumnFiltersState = props.tableDescriptor.table.getState().columnFilters;
-      // Filter by "client" field which links pricing models to accounts
-      const otherFilters: ColumnFiltersState = currentFilters.filter(f => f?.id !== props.accountType);
+        const currentFilters: ColumnFiltersState = Array.isArray(tableState.columnFilters) ? tableState.columnFilters : [];
+        // Filter by "client" field which links pricing models to accounts
+        const otherFilters: ColumnFiltersState = currentFilters.filter(f => f.id !== props.accountType);
 
-      if (selectedAccounts.length > 0) {
-        props.tableDescriptor.table.setColumnFilters([
-          ...otherFilters,
-          // column filter is expected in the format {id: string, value: unknown}
-          { id: props.accountType, value: selectedAccounts }
-        ]);
+        if (selectedAccount) {
+          props.tableDescriptor.table.setColumnFilters([
+            ...otherFilters,
+            // column filter is expected in the format {id: string, value: unknown}
+            { id: props.accountType, value: [selectedAccount] }
+          ]);
+        } else if (otherFilters.length !== currentFilters.length) {
+          props.tableDescriptor.table.setColumnFilters(otherFilters);
+        }
+      } catch (error) {
+        console.error("Error setting column filters:", error);
       }
     }
-  }, [selectedAccounts, shouldUseAccountFilter]);
+  }, [selectedAccount, shouldUseAccountFilter]);
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -280,35 +292,20 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       {props.lifecycleStage === "pricing" && (
         <div className="flex justify-start">
           <div className="md:w-[300px]">
-            <PopoverActionButton
-              placement="bottom-start"
-              rightIcon="filter_list"
-              variant={isActiveFilter ? "secondary" : "outline"}
-              tooltipText={dict.action.filter}
-              label="Billing Accounts"
-              isOpen={showFilterDropdown}
-              setIsOpen={setShowFilterDropdown}
-              onClick={(event) => {
-                event.stopPropagation();
-                setTriggerFetch(!showFilterDropdown);
-                setShowFilterDropdown(!showFilterDropdown);
+            <SearchableSimpleSelector
+              options={accountOptions}
+              value={selectedAccount}
+              onChange={(value) => {
+                setSelectedAccount(value);
+                props.tableDescriptor.table.resetRowSelection();
+                props.tableDescriptor.table.resetPageIndex();
               }}
-            >
-              <SearchSelector
-                searchString={search}
-                options={accountOptions}
-                label="Account"
-                initSelectedOptions={selectedAccounts}
-                showOptions={!isLoadingAccounts}
-                onSubmission={(selectedOptions: string[]) => {
-                  setSelectedAccounts(selectedOptions);
-                  props.tableDescriptor.table.resetRowSelection();
-                  props.tableDescriptor.table.resetPageIndex();
-                }}
-                setSearchString={setSearch}
-              />
-              {isLoadingAccounts && <LoadingSpinner isSmall={true} />}
-            </PopoverActionButton>
+              onSearchChange={(searchValue) => {
+                setSearch(searchValue);
+                setTriggerFetch(true);
+              }}
+              isLoading={isLoadingAccounts}
+            />
           </div>
         </div>
       )}
