@@ -5,6 +5,7 @@ import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { DateRange } from "react-day-picker";
 import { PermissionScheme } from "types/auth";
@@ -54,6 +55,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
+  const searchParams: URLSearchParams = useSearchParams();
 
   const { options, isLoading, selectedAccount, setSearch, handleUpdateAccount } = useAccountFilterOptions(
     props.accountType,
@@ -231,7 +233,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   buildUrl(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
-                    props.entityType
+                    `${props.entityType}${props.lifecycleStage === LifecycleStageMap.PRICING ?
+                      "?account=" + searchParams.get("account") : ""}`
                   )
                 }
               />

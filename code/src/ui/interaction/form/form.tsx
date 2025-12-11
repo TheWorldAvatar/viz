@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -67,7 +67,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
-
+  const searchParams: URLSearchParams = useSearchParams();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -80,7 +80,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // Retrieve template from APIs
       let template: FormTemplateType;
       // For add form, get a blank template
-      if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.SEARCH) {
+      if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.SEARCH ||
+        props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.ADD_PRICE) {
         template = await fetch(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType),
           {
@@ -235,6 +236,22 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         formData["type"] = props.entityType;
         const res = await fetch(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.ACCOUNT),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
+      case FormTypeMap.ADD_PRICE: {
+        formData["type"] = props.entityType;
+        formData["account"] = decodeURIComponent(searchParams.get("account"));
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

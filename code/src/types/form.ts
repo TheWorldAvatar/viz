@@ -26,6 +26,7 @@ export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStag
 export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",
+  ADD_PRICE: "addprice",
   DELETE: "delete",
   EDIT: "edit",
   VIEW: "view",

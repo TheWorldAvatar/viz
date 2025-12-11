@@ -312,7 +312,8 @@ export function getDefaultVal(
 ): boolean | number | string {
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
-    if (formType == FormTypeMap.ADD || formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.SEARCH || !defaultValue) {
+    if (formType == FormTypeMap.ADD || formType == FormTypeMap.SEARCH ||
+      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
@@ -713,6 +714,7 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
       return dict.action.view;
     case FormTypeMap.ADD:
     case FormTypeMap.ADD_BILL:
+    case FormTypeMap.ADD_PRICE:
       return dict.action.add;
     case FormTypeMap.EDIT:
       return dict.action.edit;
