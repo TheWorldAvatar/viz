@@ -10,55 +10,45 @@ import Select, {
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { selectorStyles } from "ui/css/selector-style";
-
-export type SelectOptionType = {
-    label: string;
-    value: string;
-};
+import { SelectOptionType } from "./simple-selector";
 
 interface SearchableSimpleSelectorProps {
     options: string[];
-    value: string;
+    initialValue: string;
     onChange: (_value: string) => void;
     onSearchChange: (_searchValue: string) => void;
     isLoading?: boolean;
-    noOptionMessage?: string;
-    placeholder?: string;
     isDisabled?: boolean;
 }
 
 /**
- * A searchable single-select dropdown that queries options dynamically as the user types.
- * Combines SimpleSelector's single-select behavior with SearchSelector's dynamic search functionality.
+ * A searchable single-select dropdown that queries options dynamically as the user types. Only one option is selectable at a time.
  *
  * @param {string[]} options The list of option strings to display.
- * @param {string} value The currently selected value.
+ * @param {string} initialValue The initial value.
  * @param onChange Function called when a selection is made.
  * @param onSearchChange Function called when the search input changes, to trigger dynamic option loading.
  * @param {boolean} isLoading Optional flag to show loading state.
- * @param {string} noOptionMessage Optional message when no options are available.
- * @param {string} placeholder Optional placeholder text.
  * @param {boolean} isDisabled Optional flag to disable the selector.
  */
 export default function SearchableSimpleSelector(
     props: Readonly<SearchableSimpleSelectorProps>
 ) {
     const dict: Dictionary = useDictionary();
+    const [selectedOption, setSelectedOption] = useState<SelectOptionType>(
+        { label: props.initialValue, value: props.initialValue }
+    );
     const [inputValue, setInputValue] = useState<string>("");
 
     const selectOptions: OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>> =
         props.options.map((opt) => ({ label: opt, value: opt }));
-
-
-    const selectedOption = props.value
-        ? { label: props.value, value: props.value }
-        : null;
 
     const handleChange = (
         newValue: SingleValue<SelectOptionType> | MultiValue<SelectOptionType>,
         _actionMeta: ActionMeta<SelectOptionType>
     ) => {
         const value: string = (newValue as SelectOptionType)?.value;
+        setSelectedOption(newValue as SelectOptionType);
         setInputValue("");
         props.onChange(value);
     };
@@ -83,11 +73,9 @@ export default function SearchableSimpleSelector(
             onInputChange={handleInputChange}
             inputValue={inputValue}
             isLoading={props.isLoading}
-            isClearable
             isSearchable
             isDisabled={props.isDisabled}
-            placeholder={props.placeholder || dict.action.search}
-            noOptionsMessage={() => props.noOptionMessage ?? ""}
+            noOptionsMessage={() => dict.message.noOptions}
         />
     );
 }

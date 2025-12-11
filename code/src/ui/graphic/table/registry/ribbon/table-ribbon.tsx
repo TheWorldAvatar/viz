@@ -1,12 +1,11 @@
 "use client";
 
-import { ColumnFiltersState } from "@tanstack/react-table";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
-import { useFilterOptions } from "hooks/table/api/useFilterOptions";
+import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DateRange } from "react-day-picker";
 import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
@@ -56,58 +55,13 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
 
-  const shouldUseAccountFilter: boolean = props.lifecycleStage === LifecycleStageMap.PRICING;
-  const [selectedAccount, setSelectedAccount] = useState<string>("");
-
-  const {
-    options: accountOptions,
-    isLoading: isLoadingAccounts,
-    setSearch,
-    setTriggerFetch,
-  } = useFilterOptions(
-    shouldUseAccountFilter ? props.accountType : "",
-    "name",
+  const { options, isLoading, selectedAccount, setSearch, handleUpdateAccount } = useAccountFilterOptions(
+    props.accountType,
     props.lifecycleStage,
+    props.tableDescriptor.table,
     props.selectedDate,
-    selectedAccount ? [selectedAccount] : [],
-    shouldUseAccountFilter ? props.tableDescriptor.filters : [],
-  );
-
-  // Initialize filter: trigger fetch and auto-select first option
-  useEffect(() => {
-    if (shouldUseAccountFilter) {
-      setTriggerFetch(true);
-      if (!selectedAccount && accountOptions && accountOptions.length > 0) {
-        setSelectedAccount(accountOptions[0]);
-      }
-    }
-  }, [accountOptions, shouldUseAccountFilter, setTriggerFetch, selectedAccount]);
-
-  useEffect(() => {
-    if (shouldUseAccountFilter && props.tableDescriptor?.table) {
-      try {
-        const tableState = props.tableDescriptor.table.getState();
-        // Ensure table state is initialized
-        if (!tableState || !tableState.columnFilters) return;
-
-        const currentFilters: ColumnFiltersState = Array.isArray(tableState.columnFilters) ? tableState.columnFilters : [];
-        // Filter by "client" field which links pricing models to accounts
-        const otherFilters: ColumnFiltersState = currentFilters.filter(f => f.id !== props.accountType);
-
-        if (selectedAccount) {
-          props.tableDescriptor.table.setColumnFilters([
-            ...otherFilters,
-            // column filter is expected in the format {id: string, value: unknown}
-            { id: props.accountType, value: [selectedAccount] }
-          ]);
-        } else if (otherFilters.length !== currentFilters.length) {
-          props.tableDescriptor.table.setColumnFilters(otherFilters);
-        }
-      } catch (error) {
-        console.error("Error setting column filters:", error);
-      }
-    }
-  }, [selectedAccount, shouldUseAccountFilter]);
+    props.tableDescriptor.filters,
+  )
 
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
@@ -290,22 +244,21 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
         </div>
       </div>
-      {props.lifecycleStage === LifecycleStageMap.PRICING && (
+      {props.lifecycleStage === LifecycleStageMap.PRICING && selectedAccount.length > 0 && (
         <div className="flex justify-start">
           <div className="md:w-[300px]">
             <SearchableSimpleSelector
-              options={accountOptions}
-              value={selectedAccount}
+              options={options}
+              initialValue={selectedAccount}
               onChange={(value) => {
-                setSelectedAccount(value);
+                handleUpdateAccount(value);
                 props.tableDescriptor.table.resetRowSelection();
                 props.tableDescriptor.table.resetPageIndex();
               }}
               onSearchChange={(searchValue) => {
                 setSearch(searchValue);
-                setTriggerFetch(true);
               }}
-              isLoading={isLoadingAccounts}
+              isLoading={isLoading}
             />
           </div>
         </div>
