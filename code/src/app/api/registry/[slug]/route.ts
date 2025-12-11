@@ -286,7 +286,7 @@ function makeExternalEndpoint(
         params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
       }
       if (lifecycle == "activity") {
-        return `${agentBaseApi}/report/task/count?type=${type}${params}${filters}`;
+        return `${agentBaseApi}/report/bill/count?type=${type}${params}${filters}`;
       }
       return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
     }
@@ -355,7 +355,7 @@ function makeExternalEndpoint(
         const endDate: string = searchParams.get("end_date");
         const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
         if (lifecycle == "activity") {
-          return `${agentBaseApi}/report/task/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
+          return `${agentBaseApi}/report/bill/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
         }
         return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}${filters}`;
       }
@@ -426,7 +426,7 @@ function makeExternalEndpoint(
       const sortBy: string = searchParams.get("sort_by");
       const filters: string = encodeFilters(searchParams.get("filters"));
       if (slug == "activity") {
-        return `${agentBaseApi}/report/task?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+        return `${agentBaseApi}/report/bill?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
       return `${agentBaseApi}/contracts/service/${slug}?type=${contractType}&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
