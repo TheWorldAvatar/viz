@@ -30,7 +30,7 @@ export function useAccountFilterOptions(
   table: Table<FieldValues>,
   allFilters: ColumnFilter[],
 ): FilterOptionsDescriptor {
-  const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.PRICING;
+  const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.PRICING || lifecycleStage === LifecycleStageMap.ACTIVITY;
 
   const router = useRouter();
   const pathName: string = usePathname();

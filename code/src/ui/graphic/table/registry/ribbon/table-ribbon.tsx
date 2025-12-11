@@ -246,7 +246,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
         </div>
       </div>
-      {props.lifecycleStage === LifecycleStageMap.PRICING && selectedAccount != null && (
+      {(props.lifecycleStage === LifecycleStageMap.PRICING || props.lifecycleStage === LifecycleStageMap.ACTIVITY) && selectedAccount != null && (
         <div className="flex justify-start">
           <div className="md:w-[300px]">
             <SearchableSimpleSelector
