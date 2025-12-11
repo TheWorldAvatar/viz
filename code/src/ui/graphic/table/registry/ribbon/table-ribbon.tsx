@@ -66,7 +66,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                         hasMobileIcon={false}
                         url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
                         variant={
-                          props.lifecycleStage == "pending" || props.lifecycleStage == "active" || props.lifecycleStage == "archive" ? "active" : "ghost"
+                          props.lifecycleStage == "pending" ||
+                            props.lifecycleStage == "active" ||
+                            props.lifecycleStage == "archive"
+                            ? "active"
+                            : "ghost"
                         }
                         className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                       />
@@ -79,7 +83,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     hasMobileIcon={false}
                     url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
                     variant={
-                      props.lifecycleStage == "outstanding" || props.lifecycleStage == "scheduled" || props.lifecycleStage == "closed" ? "active" : "ghost"
+                      props.lifecycleStage == "outstanding" ||
+                        props.lifecycleStage == "scheduled" ||
+                        props.lifecycleStage == "closed"
+                        ? "active"
+                        : "ghost"
                     }
                     className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                   />
@@ -87,8 +95,103 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               </div>
             </div>
           )}
-
-        <div className="flex gap-2 ">
+      </div>
+      {/* <div className="w-full  h-[1px] bg-border " /> */}
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap">
+        <div className="flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border overflow-hidden divide-x divide-border">
+          {props.lifecycleStage !== "general" &&
+            (props.lifecycleStage === "pending" ||
+              props.lifecycleStage === "active" ||
+              props.lifecycleStage === "archive") && (
+              <>
+                {(!keycloakEnabled ||
+                  permissionScheme?.hasPermissions.pendingRegistry) && (
+                    <RedirectButton
+                      label={dict.nav.title.pending}
+                      leftIcon="free_cancellation"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "pending" ? "active" : "ghost"
+                      }
+                      className="text-sm font-medium !rounded-none !border-0"
+                    />
+                  )}
+                {(!keycloakEnabled ||
+                  permissionScheme?.hasPermissions.pendingRegistry) && (
+                    <RedirectButton
+                      label={dict.nav.title.active}
+                      leftIcon="check_circle_outline"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "active" ? "active" : "ghost"
+                      }
+                      className="text-sm font-medium !rounded-none !border-0"
+                    />
+                  )}
+                {(!keycloakEnabled ||
+                  permissionScheme?.hasPermissions.pendingRegistry) && (
+                    <RedirectButton
+                      label={dict.nav.title.archive}
+                      leftIcon="archive_outlined"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == "archive" ? "active" : "ghost"
+                      }
+                      className="text-sm font-medium !rounded-none !border-0"
+                    />
+                  )}
+              </>
+            )}
+          {props.lifecycleStage !== "general" &&
+            (props.lifecycleStage === "outstanding" ||
+              props.lifecycleStage === "scheduled" ||
+              props.lifecycleStage === "closed") && (
+              <>
+                <RedirectButton
+                  label={dict.nav.title.outstanding}
+                  leftIcon="pending"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                  variant={
+                    props.lifecycleStage == "outstanding" ? "active" : "ghost"
+                  }
+                  className="text-sm font-medium !rounded-none !border-0 "
+                />
+                <RedirectButton
+                  label={dict.nav.title.scheduled}
+                  leftIcon="schedule"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+                  variant={
+                    props.lifecycleStage == "scheduled" ? "active" : "ghost"
+                  }
+                  className="text-sm font-medium !rounded-none !border-0 "
+                />
+                <RedirectButton
+                  label={dict.nav.title.closed}
+                  leftIcon="event_busy"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_TASK_CLOSED}`}
+                  variant={
+                    props.lifecycleStage == "closed" ? "active" : "ghost"
+                  }
+                  className="text-sm font-medium !rounded-none !border-0 "
+                />
+              </>
+            )}
+        </div>
+        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
+          {(props.lifecycleStage == "scheduled" ||
+            props.lifecycleStage == "closed") && (
+              <DateInput
+                selectedDate={props.selectedDate}
+                setSelectedDateRange={props.setSelectedDate}
+                disabledDates={getDisabledDates(props.lifecycleStage)}
+              />
+            )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
@@ -104,140 +207,34 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 url={`${Routes.REGISTRY_ADD}/${props.entityType}`}
               />
             )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.export) && (
-              <DownloadButton instances={props.instances} />
-            )}
-        </div>
-      </div>
-      {/* <div className="w-full  h-[1px] bg-border " /> */}
-      <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap border-b pb-2 border-border  ">
-        <div className="flex items-end !-ml-2 gap-3 md:gap-4">
-
-          {props.lifecycleStage !== "general" && (props.lifecycleStage === "pending" || props.lifecycleStage === "active" || props.lifecycleStage === "archive") && <>
-            {(!keycloakEnabled ||
-              permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.pending}
-                    leftIcon="free_cancellation"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "pending" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium "
-                  />
-                </div>
-              )}
-            {(!keycloakEnabled ||
-              permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.active}
-                    leftIcon="check_circle_outline"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "active" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium "
-                  />
-                </div>
-              )}
-            {(!keycloakEnabled ||
-              permissionScheme?.hasPermissions.pendingRegistry) && (
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.archive}
-                    leftIcon="archive_outlined"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == "archive" ? "active" : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                  />
-                </div>
-              )}
-          </>}
-          {props.lifecycleStage !== "general" && (props.lifecycleStage === "outstanding" || props.lifecycleStage === "scheduled" || props.lifecycleStage === "closed") && <>
-            <div className="sm:w-auto">
-              <RedirectButton
-                label={dict.nav.title.outstanding}
-                leftIcon="pending"
-                hasMobileIcon={false}
-                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
-                variant={
-                  props.lifecycleStage == "outstanding" ? "active" : "ghost"
-                }
-                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-              />
-            </div>
-            <div className="sm:w-auto">
-              <RedirectButton
-                label={dict.nav.title.scheduled}
-                leftIcon="schedule"
-                hasMobileIcon={false}
-                url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-                variant={
-                  props.lifecycleStage == "scheduled" ? "active" : "ghost"
-                }
-                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <RedirectButton
-                label={dict.nav.title.closed}
-                leftIcon="event_busy"
-                hasMobileIcon={false}
-                url={`${Routes.REGISTRY_TASK_CLOSED}`}
-                variant={
-                  props.lifecycleStage == "closed" ? "active" : "ghost"
-                }
-                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-              />
-            </div>
-          </>}
-
-        </div>
-        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
-
-          {(props.lifecycleStage == "scheduled" ||
-            props.lifecycleStage == "closed") && (
-              <DateInput
-                selectedDate={props.selectedDate}
-                setSelectedDateRange={props.setSelectedDate}
-                disabledDates={getDisabledDates(props.lifecycleStage)}
-              />
-            )}
           {props.instances.length > 0 && (
             <ColumnToggle
               columns={props.tableDescriptor.table.getAllLeafColumns()}
             />
           )}
-          {(
-            <Button
-              leftIcon="filter_list_off"
-              iconSize="medium"
-              className="mt-1"
-              disabled={props.tableDescriptor.table
-                .getState()
-                .columnFilters?.every(
-                  (filter) => (filter?.value as string[])?.length == 0
-                )}
-              size="icon"
-              onClick={() => {
-                props.tableDescriptor.table.resetColumnFilters()
-                props.tableDescriptor.table.resetRowSelection()
-              }}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          )}
           <Button
-
+            leftIcon="filter_list_off"
+            iconSize="medium"
+            className="mt-1"
+            disabled={props.tableDescriptor.table
+              .getState()
+              .columnFilters?.every(
+                (filter) => (filter?.value as string[])?.length == 0
+              )}
+            size="icon"
+            onClick={() => {
+              props.tableDescriptor.table.resetColumnFilters();
+              props.tableDescriptor.table.resetRowSelection();
+            }}
+            tooltipText={dict.action.clearAllFilters}
+            variant="destructive"
+          />
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.export) && (
+              <DownloadButton instances={props.instances} />
+            )}
+          <Button
             size="icon"
             leftIcon="cached"
             variant="outline"
@@ -262,7 +259,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 url={`${Routes.REGISTRY_EDIT}/pricing/${props.path}`}
               />
             )}
-
         </div>
       </div>
     </div>
