@@ -20,7 +20,7 @@ import RedirectButton from "../action/redirect/redirect-button";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
-import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
+import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { FormTemplate } from "./template/form-template";
 
@@ -99,12 +99,16 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     formData: FieldValues,
     action: "rescind" | "terminate"
   ) => {
-    // Add contract and date field
+    startLoading();
+    // Get contract ID from either the terminate form type or status data
+    const contractId = props.formType === "terminate" ? id : status?.data?.id;
+
     const payload = {
       ...formData,
-      [FORM_STATES.CONTRACT]: status?.data?.id,
-      [FORM_STATES.DATE]: new Date().toISOString().split("T")[0],
+      type: props.entityType,
+      contract: contractId,
     };
+
     const res = await fetch(
       makeInternalRegistryAPIwithParams("event", "archive", action),
       {
@@ -112,14 +116,21 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
         credentials: "same-origin",
-        body: JSON.stringify({ formData: payload }),
+        body: JSON.stringify(payload),
       }
     );
     const agentResponseBody: AgentResponseBody = await res.json();
+    stopLoading();
     toast(
       agentResponseBody?.data?.message || agentResponseBody?.error?.message,
       agentResponseBody?.error ? "error" : "success"
     );
+
+    if (!agentResponseBody?.error) {
+      setTimeout(() => {
+        router.back();
+      }, 1000);
+    }
   };
 
   // A hook that fetches the form template for executing an action
@@ -152,8 +163,10 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       getFormTemplate("archive", "rescind");
     } else if (isTerminateAction) {
       getFormTemplate("archive", "terminate");
+    } else if (props.formType === "terminate") {
+      getFormTemplate("archive", "terminate");
     }
-  }, [isRescindAction, isTerminateAction]);
+  }, [isRescindAction, isTerminateAction, props.formType]);
 
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -230,7 +243,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           .replace("_", " ")}`}</h1>
       </section>
       <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
-        {!(isRescindAction || isTerminateAction) &&
+        {!(isRescindAction || isTerminateAction || props.formType === "terminate") &&
           (refreshFlag ? (
             <FormSkeleton />
           ) : (
@@ -242,7 +255,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               isPrimaryEntity={props.isPrimaryEntity}
             />
           ))}
-        {formFields.length > 0 && (
+        {formFields && formFields.length > 0 && (
           <FormTemplate
             entityType={isRescindAction ? "rescission" : "termination"}
             formRef={formRef}

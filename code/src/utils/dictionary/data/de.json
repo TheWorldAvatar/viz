@@ -190,7 +190,8 @@
       "archive": "Archiv",
       "outstanding": "Offen",
       "scheduled": "Eingeplant",
-      "closed": "Abgeschlossen"
+      "jobs": "Stellenangebote",
+      "tasks": "Aufgaben"
     },
     "tooltip": {
       "home": "Zurück zur Startseite",

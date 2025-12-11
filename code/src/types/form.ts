@@ -36,7 +36,8 @@ export const FormTypeMap = {
   DISPATCH: "dispatch",
   COMPLETE: "complete",
   CANCEL: "cancel",
-  REPORT: "report"
+  REPORT: "report",
+  TERMINATE: "terminate",
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 

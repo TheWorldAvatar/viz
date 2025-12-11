@@ -119,7 +119,8 @@ export default function RegistryRowAction(
 
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
-    props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING;
+    props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
+    props.lifecycleStage == LifecycleStageMap.ACTIVE || props.lifecycleStage == LifecycleStageMap.ARCHIVE;
 
   return (
     <div aria-label="Actions">
@@ -154,15 +155,17 @@ export default function RegistryRowAction(
                 props.lifecycleStage === LifecycleStageMap.ACTIVE && (
                   <Button
                     variant="ghost"
-                    leftIcon="cancel"
+                    leftIcon="block"
                     size="md"
                     iconSize="medium"
                     className="w-full justify-start"
                     disabled={isLoading}
-                    label={dict.action.cancel}
+                    label={dict.action.terminate}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildUrl(Routes.REGISTRY_TASK_CANCEL, recordId));
+                      router.push(buildUrl(
+                        Routes.REGISTRY_TERMINATE, props.recordType, recordId
+                      ));
                     }}
                   />
                 )}
@@ -203,7 +206,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.sales) &&
-                isSubmissionOrGeneralPage && (
+                isSubmissionOrGeneralPage && props.lifecycleStage !== "active" && props.lifecycleStage !== "archive" && (
                   <Button
                     variant="ghost"
                     leftIcon="edit"
@@ -224,7 +227,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.sales) &&
-                isSubmissionOrGeneralPage && (
+                isSubmissionOrGeneralPage && props.lifecycleStage !== "active" && props.lifecycleStage !== "archive" && (
                   <Button
                     variant="ghost"
                     leftIcon="delete"
