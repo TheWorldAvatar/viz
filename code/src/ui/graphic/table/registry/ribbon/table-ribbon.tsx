@@ -61,17 +61,20 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.tableDescriptor.filters,
   )
 
+  const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
+    props.triggerRefresh();
+  };
+
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       <div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
-        {props.lifecycleStage !== LifecycleStageMap.GENERAL && !isBillingStage &&
+        {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
           (!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.registry) && (
+            !permissionScheme) && (
             <div className="bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border">
               <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-                {(!keycloakEnabled ||
-                  permissionScheme?.hasPermissions.pendingRegistry) && (
+                {(!isBillingStage && (!keycloakEnabled || (permissionScheme?.hasPermissions.pendingRegistry &&
+                  permissionScheme?.hasPermissions?.registry))) && (
                     <div className="sm:w-auto">
                       <RedirectButton
                         label={dict.nav.title.jobs}
@@ -79,7 +82,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                         hasMobileIcon={false}
                         url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
                         variant={
-                          props.lifecycleStage ==LifecycleStageMap.PENDING ||
+                          props.lifecycleStage == LifecycleStageMap.PENDING ||
                             props.lifecycleStage == LifecycleStageMap.ACTIVE ||
                             props.lifecycleStage == LifecycleStageMap.ARCHIVE
                             ? "active"
@@ -89,22 +92,63 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                       />
                     </div>
                   )}
-                <div className="sm:w-auto">
-                  <RedirectButton
-                    label={dict.nav.title.tasks}
-                    leftIcon="list_alt"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
-                    variant={
-                      props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                        props.lifecycleStage == LifecycleStageMap.CLOSED
-                        ? "active"
-                        : "ghost"
-                    }
-                    className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                  />
-                </div>
+                {(!isBillingStage && (!keycloakEnabled || permissionScheme?.hasPermissions?.registry)) && (
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.tasks}
+                      leftIcon="list_alt"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                      variant={
+                        props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                          props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                          props.lifecycleStage == LifecycleStageMap.CLOSED
+                          ? "active"
+                          : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                )}
+                {(isBillingStage) && (<>
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.accounts}
+                      leftIcon={"account_balance_wallet"}
+                      hasMobileIcon={false}
+                      url={Routes.BILLING_ACCOUNTS}
+                      variant={
+                        props.lifecycleStage === LifecycleStageMap.ACCOUNT ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.pricing}
+                      leftIcon={"account_balance_wallet"}
+                      hasMobileIcon={false}
+                      url={Routes.BILLING_PRICING_MODELS}
+                      variant={
+                        props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.activities}
+                      leftIcon={"account_balance_wallet"}
+                      hasMobileIcon={false}
+                      url={Routes.BILLING_ACTIVITY}
+                      variant={
+                        props.lifecycleStage === LifecycleStageMap.ACTIVITY ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                </>
+                )}
               </div>
             </div>
           )}
@@ -168,7 +212,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
                   variant={
-                    props.lifecycleStage == "outstanding" ? "active" : "ghost"
+                    props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
                   }
                   className="text-sm font-medium !rounded-none !border-0 "
                 />
@@ -178,7 +222,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
                   variant={
-                    props.lifecycleStage ==LifecycleStageMap.SCHEDULED ? "active" : "ghost"
+                    props.lifecycleStage == LifecycleStageMap.SCHEDULED ? "active" : "ghost"
                   }
                   className="text-sm font-medium !rounded-none !border-0 "
                 />
@@ -195,9 +239,29 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               </>
             )}
         </div>
-        <div className="flex items-end flex-wrap gap-2 mt-4 md:mt-1 lg:mt-0">
+        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
+          {(props.lifecycleStage === LifecycleStageMap.PRICING || props.lifecycleStage === LifecycleStageMap.ACTIVITY) && selectedAccount != null && (
+            <div className="flex justify-start">
+              <div className="md:w-[300px]">
+                <SearchableSimpleSelector
+                  options={options}
+                  initialValue={selectedAccount}
+                  onChange={(value) => {
+                    handleUpdateAccount(value);
+                    props.tableDescriptor.table.resetRowSelection();
+                    props.tableDescriptor.table.resetPageIndex();
+                  }}
+                  onSearchChange={(searchValue) => {
+                    setSearch(searchValue);
+                  }}
+                  isLoading={isLoading}
+                />
+              </div>
+            </div>
+          )}
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-            props.lifecycleStage == LifecycleStageMap.CLOSED) && (
+            props.lifecycleStage == LifecycleStageMap.CLOSED ||
+            props.lifecycleStage == LifecycleStageMap.ACTIVITY) && (
               <DateInput
                 mode="range"
                 selectedDate={props.selectedDate}
@@ -205,31 +269,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 disabledDates={getDisabledDates(props.lifecycleStage)}
               />
             )}
-        </div>
-        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
-          {props.lifecycleStage !== LifecycleStageMap.PRICING && props.tableDescriptor.table
-            .getState()
-            .columnFilters?.some(
-              (filter) => (filter?.value as string[])?.length > 0
-            ) && (
-              <Button
-                leftIcon="filter_list_off"
-                iconSize="medium"
-                className="mt-1"
-                size="icon"
-                onClick={() => {
-                  props.tableDescriptor.table.resetColumnFilters();
-                  props.tableDescriptor.table.resetRowSelection();
-                }}
-                tooltipText={dict.action.clearAllFilters}
-                variant="destructive"
-              />
-            )}
-          {props.instances.length > 0 && (
-            <ColumnToggle
-              columns={props.tableDescriptor.table.getAllLeafColumns()}
-            />
-          )}
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
@@ -253,27 +292,39 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 }
               />
             )}
+          {props.instances.length > 0 && (
+            <ColumnToggle
+              columns={props.tableDescriptor.table.getAllLeafColumns()}
+            />
+          )}
+          <Button
+            leftIcon="filter_list_off"
+            iconSize="medium"
+            className="mt-1"
+            disabled={props.tableDescriptor.filters.every(
+              (filter) => (filter?.value as string[])?.length == 0
+            )}
+            size="icon"
+            onClick={() => {
+              props.tableDescriptor.table.resetColumnFilters();
+              props.tableDescriptor.table.resetRowSelection();
+            }}
+            tooltipText={dict.action.clearAllFilters}
+            variant="destructive"
+          />
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.export) && (
+              <DownloadButton instances={props.instances} />
+            )}
+          <Button
+            size="icon"
+            leftIcon="cached"
+            variant="outline"
+            onClick={triggerRefresh}
+          />
         </div>
       </div>
-      {(props.lifecycleStage === LifecycleStageMap.PRICING || props.lifecycleStage === LifecycleStageMap.ACTIVITY) && selectedAccount != null && (
-        <div className="flex justify-start">
-          <div className="md:w-[300px]">
-            <SearchableSimpleSelector
-              options={options}
-              initialValue={selectedAccount}
-              onChange={(value) => {
-                handleUpdateAccount(value);
-                props.tableDescriptor.table.resetRowSelection();
-                props.tableDescriptor.table.resetPageIndex();
-              }}
-              onSearchChange={(searchValue) => {
-                setSearch(searchValue);
-              }}
-              isLoading={isLoading}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
