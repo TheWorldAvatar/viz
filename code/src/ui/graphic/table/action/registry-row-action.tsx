@@ -17,6 +17,8 @@ import Button from "ui/interaction/button";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import { buildUrl } from "utils/client-utils";
+import { closeDrawer, selectDrawerIsOpen } from "state/drawer-component-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -50,6 +52,8 @@ export default function RegistryRowAction(
     React.useState<boolean>(false);
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const isDrawerOpen = useSelector(selectDrawerIsOpen);
+  const dispatch = useDispatch();
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
