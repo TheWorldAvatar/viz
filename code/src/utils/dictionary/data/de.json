@@ -54,10 +54,12 @@
     "regularService": "Regelmäßiger Dienst",
     "alternateService": "Alternierender Dienst",
     "perpetualService": "Dauer Dienst",
+    "fixedService": "Festtermin-Service",
     "singleServiceDesc": "Ein einmaliger Dienst (oder Einzelauftrag), der zum angegebenen Datum stattfindet.",
     "regularServiceDesc": "Ein Dienst (oder Dauerauftrag), der regelmäßig nach dem Zeitplan innerhalb des angegebenen Zeitraums stattfindet.",
     "alternateServiceDesc": "Ein Dienst, der an jedem zweiten Tag innerhalb des angegebenen Zeitraums stattfindet.",
     "perpetualServiceDesc": "Ein Dienst, bei dem die Aufgaben sich endlos wiederholen, aber keinen festen Zeitplan haben.",
+    "fixedServiceDesc": "Ein Service, der zu festgelegten Terminen innerhalb des angegebenen Zeitraums stattfindet.",
     "repeatEvery": "Wiederholen alle",
     "week": "Woche",
     "startDate": "Startdatum",
@@ -81,7 +83,11 @@
     "searchStartTimeDesc": "Wählen Sie das Startdatum/die Startzeit für Ihre Suche.",
     "searchEndTimeDesc": "Wählen Sie das Enddatum/die Endzeit für Ihre Suche.",
     "min": "Min",
-    "max": "Max"
+    "max": "Max",
+    "selectDates": "Daten auswählen",
+    "selectDatesDesc": "Sie können mehrere einzelne Daten auswählen. Das Datumsfeld zeigt den Beginn und das Ende des ausgewählten Zeitraums an, während alle Daten innerhalb dieses Zeitraums darunter aufgelistet sind.",
+    "dateSelected": "ausgewähltes Datum",
+    "datesSelected": "ausgewählte Daten"
   },
   "map": {
     "title": {

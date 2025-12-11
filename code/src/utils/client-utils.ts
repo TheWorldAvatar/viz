@@ -176,6 +176,26 @@ export function extractResponseField(
 }
 
 /**
+ * Extract the target field as an array of Response Field Objects from the response.
+ * Returns an empty array if the field is not found or not an array.
+ *
+ * @param {RegistryFieldValues} response The response.
+ * @param {string} field The target field of interest.
+ */
+export function extractResponseFieldArray(
+  response: RegistryFieldValues,
+  field: string
+): SparqlResponseField[] {
+  if (Array.isArray(response[field])) {
+    return response[field];
+  } else if (response[field]) {
+    // If it's a single value, wrap it in an array
+    return [response[field]];
+  }
+  return [];
+}
+
+/**
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
@@ -320,4 +340,16 @@ export function isValidCoordinates(lng: number, lat: number): boolean {
     lat >= -90 &&
     lat <= 90
   );
+};
+
+
+
+/**
+ * Builds a URL by concatenating the provided arguments with '/' as a separator.
+ *
+ * @param args The parts of the URL to concatenate.
+ */
+
+export function buildUrl(...args: string[]): string {
+  return args.join("/");
 };

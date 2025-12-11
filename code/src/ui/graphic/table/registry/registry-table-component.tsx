@@ -6,14 +6,8 @@ import useOperationStatus from "hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import { useSelector } from "react-redux";
-import { selectDrawerIsOpen } from "state/drawer-component-slice";
 import { Dictionary } from "types/dictionary";
-import {
-  LifecycleStage,
-  RegistryTaskOption
-} from "types/form";
-import TaskModal from "ui/interaction/modal/task/task-modal";
+import { LifecycleStage } from "types/form";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
@@ -39,9 +33,7 @@ export default function RegistryTableComponent(
 ) {
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
-  const isTaskModalOpen: boolean = useSelector(selectDrawerIsOpen);
   const { refreshFlag, triggerRefresh } = useOperationStatus();
-  const [task, setTask] = useState<RegistryTaskOption>(null);
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
@@ -84,7 +76,6 @@ export default function RegistryTableComponent(
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
             selectedDate={selectedDate}
-            setTask={setTask}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}
           />
@@ -92,14 +83,6 @@ export default function RegistryTableComponent(
           <div className="text-lg ml-6">{dict.message.noResultFound}</div>
         )}
       </div>
-      {isTaskModalOpen && task && (
-        <TaskModal
-          entityType={props.entityType}
-          task={task}
-          setTask={setTask}
-          onSuccess={triggerRefresh}
-        />
-      )}
     </div>
   );
 }

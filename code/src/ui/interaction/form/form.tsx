@@ -19,7 +19,7 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { getAfterDelimiter } from "utils/client-utils";
+import { getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -101,6 +101,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           return body.data?.items?.[0] as FormTemplateType;
         });
       }
+
+      if (!template) {
+        return initialState;
+      }
+
       if (props.additionalFields) {
         props.additionalFields.forEach((field) =>
           template.property.push(field)
@@ -132,8 +137,27 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
     startLoading();
     let pendingResponse: AgentResponseBody;
-    // For perpetual service
-    if (formData[FORM_STATES.RECURRENCE] == null) {
+
+    // Check for fixed service (has entry_dates)
+    const entryDates: Date[] | undefined = formData[FORM_STATES.ENTRY_DATES];
+    if (entryDates?.length > 0) {
+      // Sort dates to find earliest and latest
+      const sortedDates: Date[] = [...entryDates].sort((a, b) => a.getTime() - b.getTime());
+
+      formData = {
+        ...formData,
+        "schedule entry": entryDates.map((date) => ({
+          "schedule entry date": getNormalizedDate(date),
+        })),
+        "start date": getNormalizedDate(sortedDates[0]),
+        "end date": getNormalizedDate(sortedDates.at(-1)),
+        recurrence: "",
+      };
+      // Remove the internal fields
+      delete formData[FORM_STATES.ENTRY_DATES];
+      delete formData[FORM_STATES.RECURRENCE];
+    } else if (formData[FORM_STATES.RECURRENCE] == null) {
+      // For perpetual service
       formData = {
         ...formData,
         recurrence: "",
@@ -167,6 +191,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
     // Remove form type state before sending to backend
     delete formData[FORM_STATES.FORM_TYPE];
+    // Ensure entry_dates is removed if not used
+    delete formData[FORM_STATES.ENTRY_DATES];
 
     switch (props.formType) {
       case "add": {
@@ -209,7 +235,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             "instances",
             props.entityType,
             "false",
-            formData[FORM_STATES.ID]
+            formData[FORM_STATES.ID],
+            null,
+            null,
+            null,
+            null,
+            null,
+            formData["branch_delete"]
           ),
           {
             method: "DELETE",

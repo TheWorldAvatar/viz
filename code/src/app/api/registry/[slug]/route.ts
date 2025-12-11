@@ -282,21 +282,26 @@ function makeExternalEndpoint(
       const requireLabel: string = searchParams.get("label");
       const identifier: string = searchParams.get("identifier");
       const subtype: string = searchParams.get("subtype");
+      const branchDelete: string = searchParams.get("branch_delete");
 
       let url: string = `${agentBaseApi}/${type}`;
+
       if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
         const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
-      }
-      if (identifier != "null") {
+      } else if (identifier != "null") {
         url += `/${identifier}`;
         if (subtype != "null") {
           url += `/${subtype}`;
         }
+        if (branchDelete && branchDelete != "null") {
+          url += `?branch_delete=${encodeURIComponent(branchDelete)}`;
+        }
       }
+
       return url;
     }
     case "event": {
@@ -378,6 +383,9 @@ function makeExternalEndpoint(
     case "tasks": {
       const contractType: string = searchParams.get("type");
       const idOrTimestamp: string = searchParams.get("idOrTimestamp");
+      if (contractType == "task") {
+        return `${agentBaseApi}/contracts/task/${idOrTimestamp}`;
+      }
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }

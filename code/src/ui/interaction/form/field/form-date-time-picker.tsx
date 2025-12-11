@@ -93,6 +93,7 @@ export default function FormDateTimePicker(
           )}
         >
           <DateInput
+            mode="single"
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             placement="bottom"
@@ -103,10 +104,9 @@ export default function FormDateTimePicker(
       ) : (
         <input
           id={props.field.fieldId}
-          className={`${styles["dtpicker"]} ${
-            props.options?.disabled &&
+          className={`${styles["dtpicker"]} ${props.options?.disabled &&
             styles["input-disabled"] + " " + styles["field-disabled"]
-          }`}
+            }`}
           type={inputType}
           readOnly={props.options?.disabled}
           aria-label={props.field.name[VALUE_KEY]}
