@@ -104,10 +104,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     const contractId = props.formType === "terminate" ? id : status?.data?.id;
 
     const payload = {
+      ...formData,
       type: props.entityType,
       contract: contractId,
-      remarks: formData[FORM_STATES.REMARKS] || "",
-      "special remarks": formData[FORM_STATES.SPECIAL_REMARKS] || "",
     };
 
     const res = await fetch(
