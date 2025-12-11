@@ -39,7 +39,6 @@ export const Paths: {
   REGISTRY_TASK_CANCEL: `${REGISTRY_TASK}/cancel`,
   REGISTRY_TASK_REPORT: `${REGISTRY_TASK}/report`,
   REGISTRY_TASK_VIEW: `${REGISTRY_TASK}/view`,
-
   HELP: "help",
 };
 

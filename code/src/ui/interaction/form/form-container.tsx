@@ -103,7 +103,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     // Get contract ID from either the terminate form type or status data
     const contractId = props.formType === "terminate" ? id : status?.data?.id;
 
-    // Build payload according to API specification
     const payload = {
       type: props.entityType,
       contract: contractId,
