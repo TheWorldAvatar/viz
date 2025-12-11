@@ -18,7 +18,7 @@ import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
-import { ENTITY_STATUS, FORM_STATES, translateFormType } from "./form-utils";
+import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
 import NavigationDrawer from "../drawer/navigation-drawer";
