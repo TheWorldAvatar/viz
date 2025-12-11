@@ -38,8 +38,8 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
   }, [selectedOptions]);
 
   return (
-    <div className="flex justify-end">
-      <div className="md:w-[300px] ">
+    <div className="flex justify-end w-full sm:w-auto">
+      <div className="w-full sm:w-[300px]">
         <MultivalueSelector
           title={dict.title.customiseCol}
           options={options}

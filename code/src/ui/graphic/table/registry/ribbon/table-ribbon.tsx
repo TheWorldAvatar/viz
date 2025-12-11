@@ -55,8 +55,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           (!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.registry) && (
-            <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 border border-border ">
-              <div className="flex flex-wrap items-center justify-between sm:gap-4 gap-1">
+            <div className="bg-ring w-full sm:max-w-fit rounded-lg p-2 sm:p-1.5 border border-border">
+              <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
                 {(!keycloakEnabled ||
                   permissionScheme?.hasPermissions.pendingRegistry) && (
                     <div className="sm:w-auto">
