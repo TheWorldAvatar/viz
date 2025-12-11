@@ -21,7 +21,7 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -34,6 +34,7 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
 import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
 import { toast } from "ui/interaction/action/toast/toast";
 import FormSkeleton from "./skeleton/form-skeleton";
 
@@ -83,8 +84,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.SEARCH ||
         props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.ADD_PRICE) {
         url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType);
-      } else if (props.formType == FormTypeMap.ASSIGN_PRICE) {
-        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, FormTypeMap.ASSIGN_PRICE, id);
+      } else if (props.formType == FormTypeMap.ASSIGN_PRICE || props.formType == FormTypeMap.ADD_INVOICE) {
+        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.formType, id);
       } else {
         // For edit and view, get template with values
         url =
@@ -256,6 +257,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
         break;
       }
+      case FormTypeMap.ADD_INVOICE: {
+        formData["event"] = decodeURIComponent(searchParams.get("event"));
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
       case FormTypeMap.ASSIGN_PRICE: {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
         const res = await fetch(
@@ -406,15 +422,24 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-      setTimeout(() => {
-        // Close search modal on success
-        if (props.formType === FormTypeMap.SEARCH) {
-          props.setShowSearchModalState(false);
-        } else {
-          // Redirect back for other types (add and edit) as users will want to see their changes
-          router.back();
-        }
-      }, 2000);
+      // For assign price only, move to the next step to gen invoice
+      if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, `${id}?event=${searchParams.get("event")}`))
+      } else {
+        setTimeout(() => {
+          // Close search modal on success
+          if (props.formType === FormTypeMap.SEARCH) {
+            props.setShowSearchModalState(false);
+          } else {
+            // Redirect back for other types (add and edit) as users will want to see their changes
+            router.back();
+            // Redirect twice for add invoice
+            if (props.formType === FormTypeMap.ADD_INVOICE) {
+              router.back();
+            }
+          }
+        }, 2000);
+      }
     }
   });
 

@@ -357,7 +357,7 @@ export default function RegistryRowAction(
                 disabled={isLoading}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
+                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(props.row.id)}?event=${encodeURIComponent(props.row.event_id)}`));
                 }}
               />
             )}
