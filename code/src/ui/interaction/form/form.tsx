@@ -78,34 +78,27 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         id: id,
       };
       // Retrieve template from APIs
-      let template: FormTemplateType;
+      let url: string;
       // For add form, get a blank template
       if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.SEARCH ||
         props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.ADD_PRICE) {
-        template = await fetch(
-          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        ).then(async (res) => {
-          const body: AgentResponseBody = await res.json();
-          return body.data?.items?.[0] as FormTemplateType;
-        });
+        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType);
+      } else if (props.formType == FormTypeMap.ASSIGN_PRICE) {
+        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, FormTypeMap.ASSIGN_PRICE, id);
       } else {
         // For edit and view, get template with values
-        template = await fetch(
-          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType, id),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        ).then(async (res) => {
-          const body: AgentResponseBody = await res.json();
-          return body.data?.items?.[0] as FormTemplateType;
-        });
+        url =
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType, id);
       }
-
+      const template: FormTemplateType = await fetch(url,
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      ).then(async (res) => {
+        const body: AgentResponseBody = await res.json();
+        return body.data?.items?.[0] as FormTemplateType;
+      });
       if (!template) {
         return initialState;
       }
@@ -254,6 +247,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
           {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
+      case FormTypeMap.ASSIGN_PRICE: {
+        formData["pricing"] = formData[props.entityType.replace("_", " ")];
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+          {
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             cache: "no-store",
             credentials: "same-origin",

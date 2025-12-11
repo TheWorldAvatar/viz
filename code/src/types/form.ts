@@ -27,6 +27,7 @@ export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",
   ADD_PRICE: "addprice",
+  ASSIGN_PRICE: "assignprice",
   DELETE: "delete",
   EDIT: "edit",
   VIEW: "view",

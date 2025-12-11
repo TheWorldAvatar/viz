@@ -118,7 +118,8 @@ export default function RegistryRowAction(
   };
 
   const isSubmissionOrGeneralPage: boolean =
-    props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL || props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING;
+    props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
+    props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING;
 
   return (
     <div aria-label="Actions">
@@ -280,6 +281,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
+                props.lifecycleStage !== LifecycleStageMap.ACTIVITY &&
                 props.row?.status?.toLowerCase() !== "issue" &&
                 props.row?.status?.toLowerCase() !== "cancelled" && (
                   <Button
@@ -343,8 +345,27 @@ export default function RegistryRowAction(
           )}
           {(!keycloakEnabled ||
             !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY && (
+              <Button
+                variant="ghost"
+                leftIcon="price_check"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.approve}
+                disabled={isLoading}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
+                }}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
             permissionScheme.hasPermissions.draftTemplate) &&
-            props.lifecycleStage !== LifecycleStageMap.GENERAL && props.lifecycleStage !== LifecycleStageMap.ACCOUNT && props.lifecycleStage !== LifecycleStageMap.PRICING && (
+            props.lifecycleStage !== LifecycleStageMap.GENERAL && props.lifecycleStage !== LifecycleStageMap.ACCOUNT &&
+            props.lifecycleStage !== LifecycleStageMap.PRICING && props.lifecycleStage !== LifecycleStageMap.ACTIVITY && (
               <DraftTemplateButton
                 rowId={[props.row.id]}
                 recordType={props.recordType}

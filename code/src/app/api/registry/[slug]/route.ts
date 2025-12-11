@@ -1,7 +1,7 @@
 import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
-import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { buildUrl } from "utils/client-utils";
 import { logColours } from "utils/logColours";
 
@@ -225,6 +225,9 @@ function makeExternalEndpoint(
       if (type == LifecycleStageMap.PRICING) {
         return buildUrl(agentBaseApi, "report", "account", "price");
       }
+      if (type == FormTypeMap.ASSIGN_PRICE) {
+        return buildUrl(agentBaseApi, "report", "transaction", "model");
+      }
       return "";
     }
     case InternalApiIdentifierMap.CONCEPT: {
@@ -367,7 +370,9 @@ function makeExternalEndpoint(
     case InternalApiIdentifierMap.FORM: {
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");
-
+      if (entityType == FormTypeMap.ASSIGN_PRICE) {
+        return buildUrl(agentBaseApi, "report", "transaction", "model", encodeURIComponent(identifier));
+      }
       let url: string = `${agentBaseApi}/form/${entityType}`;
       if (identifier != "null") {
         url += `/${encodeURIComponent(identifier)}`;

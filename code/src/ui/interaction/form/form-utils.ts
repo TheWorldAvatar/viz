@@ -717,6 +717,7 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
     case FormTypeMap.ADD_PRICE:
       return dict.action.add;
     case FormTypeMap.EDIT:
+    case FormTypeMap.ASSIGN_PRICE:
       return dict.action.edit;
     case FormTypeMap.DELETE:
       return dict.action.delete;
