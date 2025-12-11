@@ -184,7 +184,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={Routes.BILLING_ACCOUNTS}
                   variant={
-                    props.lifecycleStage === "account" ? "active" : "ghost"
+                    props.lifecycleStage === LifecycleStageMap.ACCOUNT ? "active" : "ghost"
                   }
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
@@ -196,7 +196,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={Routes.BILLING_PRICING_MODELS}
                   variant={
-                    props.lifecycleStage === "pricing" ? "active" : "ghost"
+                    props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
                   }
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
@@ -208,7 +208,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   hasMobileIcon={false}
                   url={Routes.BILLING_ACTIVITY}
                   variant={
-                    props.lifecycleStage === "activity" ? "active" : "ghost"
+                    props.lifecycleStage === LifecycleStageMap.ACTIVITY ? "active" : "ghost"
                   }
                   className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                 />
