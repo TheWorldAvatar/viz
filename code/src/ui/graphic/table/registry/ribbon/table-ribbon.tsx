@@ -96,7 +96,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           )}
       </div>
-      {/* <div className="w-full  h-[1px] bg-border " /> */}
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap">
         <div className="flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border overflow-hidden divide-x divide-border">
           {props.lifecycleStage !== "general" &&
@@ -183,7 +182,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               </>
             )}
         </div>
-        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0  ">
+        <div className="flex items-end flex-wrap gap-2 mt-4 md:mt-1 lg:mt-0">
           {(props.lifecycleStage == "scheduled" ||
             props.lifecycleStage == "closed") && (
               <DateInput
