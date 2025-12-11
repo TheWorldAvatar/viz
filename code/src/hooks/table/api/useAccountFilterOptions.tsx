@@ -1,17 +1,19 @@
 import { ColumnFilter, Table } from "@tanstack/react-table";
+import { useDebounce } from "hooks/useDebounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
-import { useFilterOptions } from "./useFilterOptions";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface FilterOptionsDescriptor {
-  options: string[];
+  options: SelectOptionType[];
   isLoading: boolean;
-  selectedAccount: string;
+  selectedAccount: SelectOptionType;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
-  handleUpdateAccount: (_newAccountName: string) => void;
+  handleUpdateAccount: (_newAccount: SelectOptionType) => void;
 }
 
 /**
@@ -20,14 +22,12 @@ export interface FilterOptionsDescriptor {
 * @param {string} accountType Type of account entity for rendering.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {Table<FieldValues>} table The table object containing data.
-* @param {DateRange} selectedDate The currently selected date.
 * @param {ColumnFilter[]} allFilters Filter state for the entire table.
 */
 export function useAccountFilterOptions(
   accountType: string,
   lifecycleStage: LifecycleStage,
   table: Table<FieldValues>,
-  selectedDate: DateRange,
   allFilters: ColumnFilter[],
 ): FilterOptionsDescriptor {
   const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.PRICING;
@@ -36,48 +36,61 @@ export function useAccountFilterOptions(
   const pathName: string = usePathname();
   const searchParams: URLSearchParams = useSearchParams();
 
-  const [selectedAccount, setSelectedAccount] = useState<string>(searchParams.get("account") ?? "");
-
-  const { options, isLoading, setSearch, setTriggerFetch } = useFilterOptions(
-    requireAccountFilter ? accountType : "",
-    "name",
-    lifecycleStage,
-    selectedDate,
-    selectedAccount ? [selectedAccount] : [],
-    requireAccountFilter ? allFilters : [],
-  );
+  const [selectedAccount, setSelectedAccount] = useState<SelectOptionType>(searchParams.size > 0 ? {
+    label: decodeURIComponent(searchParams.get("label")),
+    value: decodeURIComponent(searchParams.get("account")),
+  } : null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [options, setOptions] = useState<SelectOptionType[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const debouncedSearch: string = useDebounce<string>(search, 500);
 
   // A method to update the selected account on click in the selector
-  const handleUpdateAccount = (newAccountId: string) => {
+  const handleUpdateAccount = (newAccount: SelectOptionType) => {
     // First set the column filters in the table on click
     const otherFilters: ColumnFilter[] = allFilters.filter(f => f.id !== accountType);
     table.setColumnFilters([
       ...otherFilters,
       // column filter is expected in the format {id: string, value: unknown}
-      { id: accountType, value: [newAccountId] }
+      { id: accountType, value: [newAccount?.label] }
     ]);
     // Update the selected account state to propagate changes
-    setSelectedAccount(newAccountId);
+    setSelectedAccount(newAccount);
     // Update search params whenever selected account changes
     const params: URLSearchParams = new URLSearchParams(searchParams.toString());
-    params.set("account", newAccountId);
+    params.set("account", encodeURIComponent(newAccount.value));
+    params.set("label", encodeURIComponent(newAccount.label));
     router.push(`${pathName}?${params.toString()}`);
-
   };
 
-  // Always trigger an initial fetch
+  //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {
-    setTriggerFetch(true);
-  }, []);
+    const fetchData = async (): Promise<void> => {
+      setIsLoading(true);
+      try {
+        const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+          InternalApiIdentifierMap.FILTER,
+          LifecycleStageMap.ACCOUNT,
+          accountType,
+          debouncedSearch,
+        ));
+        const respOptions: SelectOptionType[] = res.data?.items as SelectOptionType[];
+        setOptions(respOptions);
+        // When no query params is available, set the first option as default selected account by pushing to the route
+        if (selectedAccount == null && respOptions?.length > 0) {
+          handleUpdateAccount(respOptions?.[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching instances", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  useEffect(() => {
-    // When no query params is available, set the first option as default selected account by pushing to the route
-    if (requireAccountFilter && selectedAccount.length === 0 && options?.length > 0) {
-      router.push("?account=" + encodeURIComponent(options[0]));
-      // Set selected account state to propagate changes before changing query params
-      setSelectedAccount(options[0]);
+    if (requireAccountFilter) {
+      fetchData();
     }
-  }, [options, requireAccountFilter]);
+  }, [debouncedSearch]);
 
   return {
     options,

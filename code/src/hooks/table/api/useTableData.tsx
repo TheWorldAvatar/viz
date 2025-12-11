@@ -19,7 +19,6 @@ export interface TableDataDescriptor {
 /**
 * A custom hook to retrieve the total row count.
 * 
-* @param {string} pathNameEnd End of the current path name.
 * @param {string} entityType Type of entity for rendering.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
@@ -30,7 +29,6 @@ export interface TableDataDescriptor {
 * @param { ColumnFilter[]} filters The current filters set.
 */
 export function useTableData(
-  pathNameEnd: string,
   entityType: string,
   sortParams: string,
   sorting: SortingState,
@@ -46,7 +44,7 @@ export function useTableData(
   >([]);
   const [data, setData] = useState<
     TableData
-  >(null);
+  >({ data: [], columns: [] });
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {

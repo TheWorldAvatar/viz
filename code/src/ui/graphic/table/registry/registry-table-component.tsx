@@ -40,7 +40,7 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
-  const tableDescriptor: TableDescriptor = useTable(pathNameEnd, props.entityType, refreshFlag, props.lifecycleStage, selectedDate);
+  const tableDescriptor: TableDescriptor = useTable(props.entityType, refreshFlag, props.lifecycleStage, selectedDate);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs

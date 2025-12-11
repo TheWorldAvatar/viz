@@ -59,7 +59,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.accountType,
     props.lifecycleStage,
     props.tableDescriptor.table,
-    props.selectedDate,
     props.tableDescriptor.filters,
   )
 
@@ -244,7 +243,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
         </div>
       </div>
-      {props.lifecycleStage === LifecycleStageMap.PRICING && selectedAccount.length > 0 && (
+      {props.lifecycleStage === LifecycleStageMap.PRICING && selectedAccount != null && (
         <div className="flex justify-start">
           <div className="md:w-[300px]">
             <SearchableSimpleSelector

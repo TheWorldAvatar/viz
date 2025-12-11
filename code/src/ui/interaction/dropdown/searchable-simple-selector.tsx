@@ -1,10 +1,8 @@
 import { useState } from "react";
 import Select, {
     ActionMeta,
-    GroupBase,
     MultiValue,
-    OptionsOrGroups,
-    SingleValue,
+    SingleValue
 } from "react-select";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -13,9 +11,9 @@ import { selectorStyles } from "ui/css/selector-style";
 import { SelectOptionType } from "./simple-selector";
 
 interface SearchableSimpleSelectorProps {
-    options: string[];
-    initialValue: string;
-    onChange: (_value: string) => void;
+    options: SelectOptionType[];
+    initialValue: SelectOptionType;
+    onChange: (_value: SelectOptionType) => void;
     onSearchChange: (_searchValue: string) => void;
     isLoading?: boolean;
     isDisabled?: boolean;
@@ -24,7 +22,7 @@ interface SearchableSimpleSelectorProps {
 /**
  * A searchable single-select dropdown that queries options dynamically as the user types. Only one option is selectable at a time.
  *
- * @param {string[]} options The list of option strings to display.
+ * @param {SelectOptionType[]} options The list of options to display.
  * @param {string} initialValue The initial value.
  * @param onChange Function called when a selection is made.
  * @param onSearchChange Function called when the search input changes, to trigger dynamic option loading.
@@ -35,20 +33,15 @@ export default function SearchableSimpleSelector(
     props: Readonly<SearchableSimpleSelectorProps>
 ) {
     const dict: Dictionary = useDictionary();
-    const [selectedOption, setSelectedOption] = useState<SelectOptionType>(
-        { label: props.initialValue, value: props.initialValue }
-    );
+    const [selectedOption, setSelectedOption] = useState<SelectOptionType>(props.initialValue);
     const [inputValue, setInputValue] = useState<string>("");
-
-    const selectOptions: OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>> =
-        props.options.map((opt) => ({ label: opt, value: opt }));
 
     const handleChange = (
         newValue: SingleValue<SelectOptionType> | MultiValue<SelectOptionType>,
         _actionMeta: ActionMeta<SelectOptionType>
     ) => {
-        const value: string = (newValue as SelectOptionType)?.value;
-        setSelectedOption(newValue as SelectOptionType);
+        const value: SelectOptionType = newValue as SelectOptionType;
+        setSelectedOption(value);
         setInputValue("");
         props.onChange(value);
     };
@@ -67,7 +60,7 @@ export default function SearchableSimpleSelector(
     return (
         <Select
             styles={selectorStyles}
-            options={selectOptions}
+            options={props.options}
             value={selectedOption}
             onChange={handleChange}
             onInputChange={handleInputChange}
