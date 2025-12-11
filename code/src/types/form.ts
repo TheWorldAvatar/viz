@@ -27,7 +27,8 @@ export type FormType =
   | "dispatch"
   | "complete"
   | "cancel"
-  | "report";
+  | "report"
+  | "terminate";
 
 export interface SparqlResponseField {
   value: string;

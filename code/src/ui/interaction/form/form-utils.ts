@@ -718,6 +718,8 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
       return dict.action.delete;
     case "search":
       return dict.action.search;
+    case "terminate":
+      return dict.action.terminate;
     default:
       break;
   }
