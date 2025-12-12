@@ -5,15 +5,21 @@ import type React from "react";
 import { Dictionary } from "types/dictionary";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
+import { FormTypeMap } from "types/form";
+import { buildUrl } from "utils/client-utils";
 
 interface FormQuickViewHeaderProps {
   id: string;
   title: string;
   selectedEntityId: string;
   entityType: string;
+  formType: string;
   isFormView: boolean;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  accountId?: string;
+  accountType?: string;
+  pricingType?: string;
 }
 
 /** 
@@ -27,6 +33,9 @@ interface FormQuickViewHeaderProps {
  * @param {boolean} isFormView - Indicates if the form type is view.
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
+ * @param {string} accountId Optionally indicates the account ID.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  **/
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
@@ -40,8 +49,14 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     entityType: string,
     entityId?: string
   ): string => {
-    const url: string = `../../${action}/${entityType}${entityId ? `/${entityId}` : ""}`;
-    return url;
+    if (action == "add" && props.formType == FormTypeMap.ASSIGN_PRICE) {
+      if (props.accountType == props.entityType) {
+        return buildUrl("/add", "account", props.entityType);
+      } else if (props.pricingType == props.entityType) {
+        return buildUrl("/add", "pricing", `${props.entityType}?account=${props.accountId}`);
+      }
+    }
+    return `/${action}/${entityType}${entityId ? `/${entityId}` : ""}`;
   };
 
   return (

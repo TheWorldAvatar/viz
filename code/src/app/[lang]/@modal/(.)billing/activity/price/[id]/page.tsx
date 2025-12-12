@@ -36,6 +36,8 @@ export default async function InterceptActivityPricingModelFormPage() {
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
       formType={FormTypeMap.ASSIGN_PRICE}
       isPrimaryEntity={false}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
     />
   );
 }

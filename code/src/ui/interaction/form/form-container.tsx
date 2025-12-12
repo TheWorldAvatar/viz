@@ -27,6 +27,8 @@ import { FormTemplate } from "./template/form-template";
 interface FormContainerComponentProps {
   entityType: string;
   formType: FormType;
+  accountType?: string;
+  pricingType?: string;
   isPrimaryEntity?: boolean;
 }
 
@@ -35,6 +37,8 @@ interface FormContainerComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as add, update, delete, and view.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function InterceptFormContainerComponent(
@@ -52,6 +56,8 @@ export function InterceptFormContainerComponent(
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as add, update, delete, and view.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function FormContainerComponent(
@@ -253,6 +259,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formType={props.formType}
               primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
+              accountType={props.accountType}
+              pricingType={props.pricingType}
             />
           ))}
         {formFields && formFields.length > 0 && (

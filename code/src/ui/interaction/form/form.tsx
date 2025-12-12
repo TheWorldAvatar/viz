@@ -44,6 +44,8 @@ interface FormComponentProps {
   entityType: string;
   id?: string;
   primaryInstance?: string;
+  accountType?: string;
+  pricingType?: string;
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
   setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -57,6 +59,8 @@ interface FormComponentProps {
  * @param {string} entityType The type of entity.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
@@ -455,7 +459,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               (node as PropertyShape).name[VALUE_KEY] === "id"
           ),
           form,
-          -1
+          -1,
+          props.accountType,
+          props.pricingType
         )}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && (
         <BranchFormSection
@@ -474,7 +480,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index)
+            renderFormField(props.entityType, field, form, index, props.accountType, props.pricingType)
           )}
     </form>
   );
@@ -490,12 +496,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * @param field      The configuration object defining the form field.
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  */
 export function renderFormField(
   entityType: string,
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
-  currentIndex: number
+  currentIndex: number,
+  accountType: string,
+  pricingType: string
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -589,6 +599,8 @@ export function renderFormField(
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           dependentProp={fieldProp}
           form={form}
+          accountType={accountType}
+          pricingType={pricingType}
         />
       );
     }
