@@ -154,6 +154,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
       </div>
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap">
+        { /* Remove overflow-hidden when in billing stages to allow dropdown to overflow */}
         <div className={`flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border divide-x divide-border ${isBillingStage ? '' : 'overflow-hidden '}`}>
           {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
             (props.lifecycleStage === LifecycleStageMap.PENDING ||
