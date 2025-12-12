@@ -1,16 +1,19 @@
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
+  BillingEntityTypes,
   FormTemplateType,
   FormType,
+  FormTypeMap,
   ID_KEY,
+  LifecycleStageMap,
   PROPERTY_GROUP_TYPE,
   PROPERTY_SHAPE_TYPE,
   PropertyGroup,
@@ -19,7 +22,7 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -32,6 +35,7 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 
 import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
 import { toast } from "ui/interaction/action/toast/toast";
 import FormSkeleton from "./skeleton/form-skeleton";
 
@@ -41,6 +45,8 @@ interface FormComponentProps {
   entityType: string;
   id?: string;
   primaryInstance?: string;
+  accountType?: string;
+  pricingType?: string;
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
   setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,6 +60,8 @@ interface FormComponentProps {
  * @param {string} entityType The type of entity.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
@@ -65,6 +73,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
+  const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
+  const searchParams: URLSearchParams = useSearchParams();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -75,33 +85,27 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         id: id,
       };
       // Retrieve template from APIs
-      let template: FormTemplateType;
+      let url: string;
       // For add form, get a blank template
-      if (props.formType == "add" || props.formType == "search") {
-        template = await fetch(
-          makeInternalRegistryAPIwithParams("form", props.entityType),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        ).then(async (res) => {
-          const body: AgentResponseBody = await res.json();
-          return body.data?.items?.[0] as FormTemplateType;
-        });
+      if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.SEARCH ||
+        props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.ADD_PRICE) {
+        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType);
+      } else if (props.formType == FormTypeMap.ASSIGN_PRICE || props.formType == FormTypeMap.ADD_INVOICE) {
+        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.formType, id);
       } else {
         // For edit and view, get template with values
-        template = await fetch(
-          makeInternalRegistryAPIwithParams("form", props.entityType, id),
-          {
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        ).then(async (res) => {
-          const body: AgentResponseBody = await res.json();
-          return body.data?.items?.[0] as FormTemplateType;
-        });
+        url =
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType, id);
       }
-
+      const template: FormTemplateType = await fetch(url,
+        {
+          cache: "no-store",
+          credentials: "same-origin",
+        }
+      ).then(async (res) => {
+        const body: AgentResponseBody = await res.json();
+        return body.data?.items?.[0] as FormTemplateType;
+      });
       if (!template) {
         return initialState;
       }
@@ -112,7 +116,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
       }
 
-      if (props.formType == "add") {
+      if (props.formType == FormTypeMap.ADD) {
         const hasScheduleField: boolean = template.property.some(
           (field) =>
             (field as PropertyShape)?.class?.[ID_KEY] ===
@@ -123,12 +127,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           initialState[FORM_STATES.RECURRENCE] = 0;
         }
       }
-
+      const billingParams: BillingEntityTypes = { account: props.accountType, pricing: props.pricingType };
       setFormTemplate({
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != "add"),
-        property: parsePropertyShapeOrGroupList(initialState, template.property),
+        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParams),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParams),
       });
+      setBillingParams(billingParams)
       return initialState;
     },
   });
@@ -195,10 +200,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     delete formData[FORM_STATES.ENTRY_DATES];
 
     switch (props.formType) {
-      case "add": {
+      case FormTypeMap.ADD: {
         // Add entity via API route
         const res = await fetch(
-          makeInternalRegistryAPIwithParams("instances", props.entityType),
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -212,7 +217,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For registry's primary entity, a draft lifecycle must also be generated
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -225,14 +230,92 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             }
           );
           pendingResponse = await draftRes.json();
+          if (draftRes.ok && formData[billingParams.pricing.replace("_", " ")]) {
+            formData["pricing"] = formData[billingParams.pricing.replace("_", " ")];
+            const pricingRes = await fetch(
+              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                cache: "no-store",
+                credentials: "same-origin",
+                body: JSON.stringify({
+                  contract: pendingResponse.data?.id,
+                  ...formData,
+                }),
+              }
+            );
+            pendingResponse = await pricingRes.json();
+          }
         }
         break;
       }
-      case "delete": {
+      case FormTypeMap.ADD_BILL: {
+        formData["type"] = props.entityType;
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.ACCOUNT),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
+      case FormTypeMap.ADD_PRICE: {
+        formData["type"] = props.entityType;
+        formData["account"] = decodeURIComponent(searchParams.get("account"));
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
+      case FormTypeMap.ADD_INVOICE: {
+        formData["event"] = decodeURIComponent(searchParams.get("event"));
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
+      case FormTypeMap.ASSIGN_PRICE: {
+        formData["pricing"] = formData[props.entityType.replace("_", " ")];
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            credentials: "same-origin",
+            body: JSON.stringify({ ...formData }),
+          }
+        );
+        pendingResponse = await res.json();
+        break;
+      }
+      case FormTypeMap.DELETE: {
         // Delete entity via API route
         const res = await fetch(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             formData[FORM_STATES.ID],
@@ -253,11 +336,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         pendingResponse = await res.json();
         break;
       }
-      case "edit": {
+      case FormTypeMap.EDIT: {
         // Update entity via API route
         const res = await fetch(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             formData.id
@@ -274,7 +357,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         if (props.isPrimaryEntity && res.ok) {
           const draftRes = await fetch(
-            makeInternalRegistryAPIwithParams("instances", "contracts/draft"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -290,7 +373,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case "search": {
+      case FormTypeMap.SEARCH: {
         Object.keys(formData).forEach((field) => {
           if (
             Object.prototype.hasOwnProperty.call(formData, `min ${field}`) &&
@@ -307,7 +390,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
         const res = await fetch(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             "search"
@@ -363,15 +446,24 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-      setTimeout(() => {
-        // Close search modal on success
-        if (props.formType === "search") {
-          props.setShowSearchModalState(false);
-        } else {
-          // Redirect back for other types (add and edit) as users will want to see their changes
-          router.back();
-        }
-      }, 2000);
+      // For assign price only, move to the next step to gen invoice
+      if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, `${id}?event=${searchParams.get("event")}`))
+      } else {
+        setTimeout(() => {
+          // Close search modal on success
+          if (props.formType === FormTypeMap.SEARCH) {
+            props.setShowSearchModalState(false);
+          } else {
+            // Redirect back for other types (add and edit) as users will want to see their changes
+            router.back();
+            // Redirect twice for add invoice
+            if (props.formType === FormTypeMap.ADD_INVOICE) {
+              router.back();
+            }
+          }
+        }, 2000);
+      }
     }
   });
 
@@ -387,13 +479,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               (node as PropertyShape).name[VALUE_KEY] === "id"
           ),
           form,
-          -1
+          -1,
+          billingParams.account,
+          billingParams.pricing
         )}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
           node={formTemplate.node}
           form={form}
+          accountType={billingParams.account}
+          pricingType={billingParams.pricing}
         />
       )}
       {!form.formState.isLoading &&
@@ -406,7 +502,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index)
+            renderFormField(props.entityType, field, form, index, billingParams.account, billingParams.pricing)
           )}
     </form>
   );
@@ -422,16 +518,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * @param field      The configuration object defining the form field.
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  */
 export function renderFormField(
   entityType: string,
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
-  currentIndex: number
+  currentIndex: number,
+  accountType: string,
+  pricingType: string
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
-    formType === "view" || formType === "delete";
+    formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE;
 
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
@@ -445,6 +545,8 @@ export function renderFormField(
         options={{
           disabled: disableAllInputs,
         }}
+        accountType={accountType}
+        pricingType={pricingType}
       />
     );
   } else {
@@ -454,7 +556,7 @@ export function renderFormField(
       return;
     }
     const disableId: boolean =
-      formType === "edit" && fieldProp.name[VALUE_KEY] === FORM_STATES.ID
+      formType === FormTypeMap.EDIT && fieldProp.name[VALUE_KEY] === FORM_STATES.ID
         ? true
         : disableAllInputs;
     // Use form array when multiple values is possible for the same property ie no max count or at least more than 1 value
@@ -473,6 +575,8 @@ export function renderFormField(
           options={{
             disabled: disableAllInputs,
           }}
+          accountType={accountType}
+          pricingType={pricingType}
         />
       );
     }
@@ -505,7 +609,7 @@ export function renderFormField(
         );
       }
       if (
-        formType === "search" &&
+        formType === FormTypeMap.SEARCH &&
         fieldProp.class[ID_KEY] ===
         "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
       ) {
@@ -521,6 +625,8 @@ export function renderFormField(
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           dependentProp={fieldProp}
           form={form}
+          accountType={accountType}
+          pricingType={pricingType}
         />
       );
     }

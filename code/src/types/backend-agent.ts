@@ -12,23 +12,26 @@ export type AgentResponseBody = {
   };
 };
 
-export type InternalApiIdentifier =
-  | "address"
-  | "concept"
-  | "contracts"
-  | "contract_status"
-  | "count"
-  | "event"
-  | "filter"
-  | "form"
-  | "geocode_postal"
-  | "geocode_address"
-  | "geocode_city"
-  | "geodecode"
-  | "instances"
-  | "schedule"
-  | "tasks"
-  | "task"
-  | "outstanding"
-  | "scheduled"
-  | "closed";
+export const InternalApiIdentifierMap = {
+  ADDRESS: "address",
+  ACTIVITY: "activity",
+  BILL: "bill",
+  CONCEPT: "concept",
+  CONTRACTS: "contracts",
+  CONTRACT_STATUS: "contract_status",
+  COUNT: "count",
+  EVENT: "event",
+  FILTER: "filter",
+  FORM: "form",
+  GEOCODE_POSTAL: "geocode_postal",
+  GEOCODE_ADDRESS: "geocode_address",
+  GEOCODE_CITY: "geocode_city",
+  GEODECODE: "geodecode",
+  INSTANCES: "instances",
+  SCHEDULE: "schedule",
+  TASKS: "tasks",
+  OUTSTANDING: "outstanding",
+  SCHEDULED: "scheduled",
+  CLOSED: "closed",
+} as const;
+export type InternalApiIdentifier = typeof InternalApiIdentifierMap[keyof typeof InternalApiIdentifierMap];

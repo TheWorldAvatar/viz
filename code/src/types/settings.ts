@@ -17,10 +17,11 @@ export type UISettings = {
     'dashboard': boolean;
     'help': boolean;
     'registry': boolean;
+    'billing': boolean;
   },
   links?: NavBarItemSettings[],
   resources?: {
-    [key: 'scenario' | 'registry' | 'dashboard' | string]: {
+    [key: 'scenario' | 'registry' | 'dashboard' | "billing" | string]: {
       url: string;
       data?: string;
       paths?: ResourcesPathSettings[];
@@ -30,6 +31,7 @@ export type UISettings = {
 
 export interface ResourcesPathSettings {
   type: string;
+  key?: string;
   icon?: string;
 }
 

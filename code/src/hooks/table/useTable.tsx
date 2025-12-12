@@ -18,10 +18,10 @@ import { LifecycleStage, RegistryFieldValues } from "types/form";
 import {
   genSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
+import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
 import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
-import { toast } from "ui/interaction/action/toast/toast";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -33,22 +33,19 @@ export interface TableDescriptor {
   apiPagination: PaginationState,
   totalRows: number;
   filters: ColumnFilter[];
+  setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
   sortParams: string;
 }
-
-
-
 
 /**
 * A custom hook to retrieve table data into functionalities for the registry table to function.
 *
-* @param {string} pathNameEnd End of the current path name.
 * @param {string} entityType Type of entity for rendering.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 */
-export function useTable(pathNameEnd: string, entityType: string, refreshFlag: boolean, lifecycleStage: LifecycleStage, selectedDate: DateRange): TableDescriptor {
+export function useTable(entityType: string, refreshFlag: boolean, lifecycleStage: LifecycleStage, selectedDate: DateRange): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
@@ -56,7 +53,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const { isLoading, tableData, initialInstances } = useTableData(pathNameEnd, entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
+  const { isLoading, tableData, initialInstances } = useTableData(entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -124,6 +121,7 @@ export function useTable(pathNameEnd: string, entityType: string, refreshFlag: b
     apiPagination,
     totalRows: rowCounts.total,
     filters: columnFilters,
+    setFilters: setColumnFilters,
     sortParams,
   };
 }

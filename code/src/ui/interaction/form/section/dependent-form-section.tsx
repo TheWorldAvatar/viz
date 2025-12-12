@@ -19,6 +19,7 @@ import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   extractResponseField,
   getAfterDelimiter,
+  getId,
   parseStringsForUrls,
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
@@ -32,6 +33,8 @@ import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
   form: UseFormReturn;
+  accountType?: string;
+  pricingType?: string;
 }
 
 /**
@@ -39,6 +42,8 @@ interface DependentFormSectionProps {
  *
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  */
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
@@ -263,9 +268,13 @@ export function DependentFormSection(
             title={dict.title.quickView}
             selectedEntityId={selectedEntityId}
             entityType={queryEntityType}
+            formType={formType}
             isFormView={formType == "view"}
             isOpen={isQuickViewOpen}
             setIsOpen={setIsQuickViewOpen}
+            accountId={getId(props.form.getValues(props.accountType))}
+            accountType={props.accountType}
+            pricingType={props.pricingType}
           />
           {currentOption &&
             isQuickViewOpen &&

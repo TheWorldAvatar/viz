@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.47.0
+
+### Changes
+
+- Added billing functionality
+- Bump min version of `VisBackend Agent` to `v1.25.0`
+
 ## 5.46.2
 
 ### Changes
@@ -183,7 +190,7 @@
 
 ### Changes
 
-- Exclude "service_location" column from being displayed in the registry table 
+- Exclude "service_location" column from being displayed in the registry table
 
 ## 5.42.5
 

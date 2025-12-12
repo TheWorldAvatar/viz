@@ -10,23 +10,25 @@ import useOperationStatus from "hooks/useOperationStatus";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FORM_IDENTIFIER, FormType, PropertyShape } from "types/form";
+import { FORM_IDENTIFIER, FormType, FormTypeMap, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
-import Button from "../button";
-import { ENTITY_STATUS, translateFormType } from "./form-utils";
-import { FormTemplate } from "./template/form-template";
 import { toast } from "../action/toast/toast";
+import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
+import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { FormTemplate } from "./template/form-template";
 
 interface FormContainerComponentProps {
   entityType: string;
   formType: FormType;
+  accountType?: string;
+  pricingType?: string;
   isPrimaryEntity?: boolean;
 }
 
@@ -35,6 +37,8 @@ interface FormContainerComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as add, update, delete, and view.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function InterceptFormContainerComponent(
@@ -52,6 +56,8 @@ export function InterceptFormContainerComponent(
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as add, update, delete, and view.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function FormContainerComponent(
@@ -222,9 +228,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     if (
       props.isPrimaryEntity &&
       !status &&
-      (props.formType === "view" ||
-        props.formType === "delete" ||
-        props.formType === "edit")
+      (props.formType === FormTypeMap.VIEW ||
+        props.formType === FormTypeMap.DELETE ||
+        props.formType === FormTypeMap.EDIT)
     ) {
       getContractStatus();
     }
@@ -253,6 +259,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               formType={props.formType}
               primaryInstance={status?.data?.id}
               isPrimaryEntity={props.isPrimaryEntity}
+              accountType={props.accountType}
+              pricingType={props.pricingType}
             />
           ))}
         {formFields && formFields.length > 0 && (
@@ -280,7 +288,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Rescind Button
@@ -295,7 +303,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.operation) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
               <Button // Terminate Button
@@ -309,7 +317,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
                 leftIcon="done_outline"
@@ -323,7 +331,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Edit button
@@ -338,7 +346,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.formType === "view" &&
+            props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <RedirectButton // Delete button
@@ -351,7 +359,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="secondary"
               />
             )}
-          {props.formType != "view" && (
+          {props.formType != FormTypeMap.VIEW && (
             <Button
               leftIcon="send"
               label={dict.action.submit}

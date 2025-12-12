@@ -24,6 +24,8 @@ interface OptionBasedFormSectionProps {
   entityType: string;
   node: NodeShape[];
   form: UseFormReturn;
+  accountType?: string;
+  pricingType?: string;
 }
 /**
  * This component renders a branch form section that displays different form fields based on the selected branch option
@@ -32,6 +34,8 @@ interface OptionBasedFormSectionProps {
  * @param {string} entityType The type of entity.
  * @param {NodeShape[]} node A list containing the potential form field configurations available.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {string} accountType Optionally indicates the type of account.
+ * @param {string} pricingType Optionally indicates the type of pricing.
  */
 export default function BranchFormSection(
   props: Readonly<OptionBasedFormSectionProps>
@@ -146,7 +150,7 @@ export default function BranchFormSection(
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
         : selectedModel?.property.map((field, index) => {
-          return renderFormField(props.entityType, field, props.form, index);
+          return renderFormField(props.entityType, field, props.form, index, props.accountType, props.pricingType);
         })}
     </>
   );

@@ -6,6 +6,7 @@ export const Modules: {
   MAP: "map",
   DASHBOARD: "dashboard",
   REGISTRY: "registry",
+  BILLING: "billing",
   HELP: "help",
 };
 
@@ -26,6 +27,11 @@ export const Paths: {
   MAP: "map",
   DASHBOARD: "analytics",
   REGISTRY: "view",
+  BILLING_ACCOUNTS: "billing/account",
+  BILLING_PRICING_MODELS: "billing/pricing",
+  BILLING_ACTIVITY: "billing/activity",
+  BILLING_ACTIVITY_PRICE: "billing/activity/price",
+  BILLING_ACTIVITY_TRANSACTION: "billing/activity/transaction",
   REGISTRY_TASK_OUTSTANDING: `${REGISTRY_TASK}/outstanding`,
   REGISTRY_TASK_SCHEDULED: `${REGISTRY_TASK}/scheduled`,
   REGISTRY_TASK_CLOSED: `${REGISTRY_TASK}/closed`,
@@ -50,6 +56,11 @@ export const Routes: {
   MAP: `${ASSET_PREFIX}/${Paths.MAP}`,
   DASHBOARD: `${ASSET_PREFIX}/${Paths.DASHBOARD}`,
   REGISTRY: `${ASSET_PREFIX}/${Paths.REGISTRY}`,
+  BILLING_ACCOUNTS: `${ASSET_PREFIX}/${Paths.BILLING_ACCOUNTS}`,
+  BILLING_PRICING_MODELS: `${ASSET_PREFIX}/${Paths.BILLING_PRICING_MODELS}`,
+  BILLING_ACTIVITY: `${ASSET_PREFIX}/${Paths.BILLING_ACTIVITY}`,
+  BILLING_ACTIVITY_PRICE: `${ASSET_PREFIX}/${Paths.BILLING_ACTIVITY_PRICE}`,
+  BILLING_ACTIVITY_TRANSACTION: `${ASSET_PREFIX}/${Paths.BILLING_ACTIVITY_TRANSACTION}`,
   REGISTRY_TASK: `${ASSET_PREFIX}/${REGISTRY_TASK}`,
   REGISTRY_GENERAL: `${ASSET_PREFIX}/${REGISTRY_GENERAL}`,
   REGISTRY_TASK_OUTSTANDING: `${ASSET_PREFIX}/${Paths.REGISTRY_TASK_OUTSTANDING}`,
@@ -74,5 +85,6 @@ export const PageTitles: {
   MAP: "Explore",
   DASHBOARD: "Analytics",
   REGISTRY: "Registry",
+  BILLING: "Billing",
   HELP: "Help",
 };
