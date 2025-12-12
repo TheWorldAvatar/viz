@@ -26,9 +26,11 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function InterceptActivityPricingModelFormPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+
   if (!uiSettings.modules.billing) {
     redirect(Routes.HOME);
   }
+
   return (
     <InterceptFormContainerComponent
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}

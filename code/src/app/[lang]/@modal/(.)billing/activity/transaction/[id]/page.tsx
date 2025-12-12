@@ -25,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function InterceptAddInvoiceFormPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+
   if (!uiSettings.modules.billing) {
     redirect(Routes.HOME);
   }

@@ -25,9 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function AddInvoiceFormPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+
   if (!uiSettings.modules.billing) {
     redirect(Routes.HOME);
   }
+
   return (
     <FormContainerComponent
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}

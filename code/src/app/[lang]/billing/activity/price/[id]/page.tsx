@@ -7,12 +7,6 @@ import { FormTypeMap, LifecycleStageMap } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import { FormContainerComponent } from 'ui/interaction/form/form-container';
 
-interface ActivityPricingModelFormPageProps {
-  params: Promise<{
-    id: string
-  }>
-}
-
 /**
  * Set page metadata.
  * 
@@ -31,9 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function ActivityPricingModelFormPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+
   if (!uiSettings.modules.billing) {
     redirect(Routes.HOME);
   }
+
   return (
     <FormContainerComponent
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
