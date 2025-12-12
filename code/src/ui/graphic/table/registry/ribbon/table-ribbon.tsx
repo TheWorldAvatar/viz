@@ -154,7 +154,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
       </div>
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap">
-        <div className="flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border overflow-hidden divide-x divide-border">
+        <div className={`flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border divide-x divide-border ${isBillingStage ? '' : 'overflow-hidden '}`}>
           {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
             (props.lifecycleStage === LifecycleStageMap.PENDING ||
               props.lifecycleStage === LifecycleStageMap.ACTIVE ||
@@ -238,8 +238,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </>
             )}
-        </div>
-        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage === LifecycleStageMap.PRICING || props.lifecycleStage === LifecycleStageMap.ACTIVITY) && selectedAccount != null && (
             <div className="flex justify-start">
               <div className="md:w-[300px]">
@@ -259,6 +257,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               </div>
             </div>
           )}
+        </div>
+        <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
             props.lifecycleStage == LifecycleStageMap.CLOSED ||
             props.lifecycleStage == LifecycleStageMap.ACTIVITY) && (
