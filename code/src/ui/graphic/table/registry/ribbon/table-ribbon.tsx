@@ -274,7 +274,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             permissionScheme.hasPermissions.sales) &&
             (props.lifecycleStage == LifecycleStageMap.PENDING ||
               props.lifecycleStage == LifecycleStageMap.GENERAL ||
-              isBillingStage) && (
+              props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+              props.lifecycleStage === LifecycleStageMap.PRICING) && (
               <RedirectButton
                 leftIcon="add"
                 size="icon"
