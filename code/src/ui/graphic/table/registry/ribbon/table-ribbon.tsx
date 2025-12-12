@@ -135,7 +135,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                       className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                     />
                   </div>
-                  <div className="sm:w-auto">
+                  <div className="col-span-2 sm:col-span-1 sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.activities}
                       leftIcon={"receipt_long"}
@@ -240,7 +240,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
           {(props.lifecycleStage === LifecycleStageMap.PRICING || props.lifecycleStage === LifecycleStageMap.ACTIVITY) && selectedAccount != null && (
             <div className="flex justify-start">
-              <div className="md:w-[300px]">
+              <div className="w-full md:w-[300px]">
                 <SearchableSimpleSelector
                   options={options}
                   initialValue={selectedAccount}
