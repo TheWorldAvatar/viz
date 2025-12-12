@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.47.1
+
+### Bug Fixes
+
+- Added optional chaining to billingTypes in form utils that was causing errors when billingTypes was undefined
+
 ## 5.47.0
 
 ### Changes
