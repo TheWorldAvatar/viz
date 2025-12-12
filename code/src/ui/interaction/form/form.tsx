@@ -230,6 +230,23 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             }
           );
           pendingResponse = await draftRes.json();
+          if (draftRes.ok && formData[billingParams.pricing.replace("_", " ")]) {
+            formData["pricing"] = formData[billingParams.pricing.replace("_", " ")];
+            const pricingRes = await fetch(
+              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                cache: "no-store",
+                credentials: "same-origin",
+                body: JSON.stringify({
+                  contract: pendingResponse.data?.id,
+                  ...formData,
+                }),
+              }
+            );
+            pendingResponse = await pricingRes.json();
+          }
         }
         break;
       }
