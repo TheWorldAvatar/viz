@@ -18,10 +18,10 @@ import { LifecycleStage, RegistryFieldValues } from "types/form";
 import {
   genSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
+import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
 import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
-import { toast } from "ui/interaction/action/toast/toast";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -33,6 +33,7 @@ export interface TableDescriptor {
   apiPagination: PaginationState,
   totalRows: number;
   filters: ColumnFilter[];
+  setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
   sortParams: string;
 }
 
@@ -120,6 +121,7 @@ export function useTable(entityType: string, refreshFlag: boolean, lifecycleStag
     apiPagination,
     totalRows: rowCounts.total,
     filters: columnFilters,
+    setFilters: setColumnFilters,
     sortParams,
   };
 }

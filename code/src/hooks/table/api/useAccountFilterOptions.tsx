@@ -1,8 +1,7 @@
-import { ColumnFilter, Table } from "@tanstack/react-table";
+import { ColumnFilter } from "@tanstack/react-table";
 import { useDebounce } from "hooks/useDebounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
@@ -21,14 +20,14 @@ export interface FilterOptionsDescriptor {
 * 
 * @param {string} accountType Type of account entity for rendering.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {Table<FieldValues>} table The table object containing data.
 * @param {ColumnFilter[]} allFilters Filter state for the entire table.
+* @param {React.Dispatch<React.SetStateAction<ColumnFilter[]>>} setFilters Update the filter state.
 */
 export function useAccountFilterOptions(
   accountType: string,
   lifecycleStage: LifecycleStage,
-  table: Table<FieldValues>,
   allFilters: ColumnFilter[],
+  setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
 ): FilterOptionsDescriptor {
   const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.PRICING || lifecycleStage === LifecycleStageMap.ACTIVITY;
 
@@ -49,7 +48,7 @@ export function useAccountFilterOptions(
   const handleUpdateAccount = (newAccount: SelectOptionType) => {
     // First set the column filters in the table on click
     const otherFilters: ColumnFilter[] = allFilters.filter(f => f.id !== accountType);
-    table.setColumnFilters([
+    setFilters([
       ...otherFilters,
       // column filter is expected in the format {id: string, value: unknown}
       { id: accountType, value: [newAccount?.label] }
@@ -62,6 +61,13 @@ export function useAccountFilterOptions(
     params.set("label", encodeURIComponent(newAccount.label));
     router.push(`${pathName}?${params.toString()}`);
   };
+
+  // On first render, set filters and all other actions to update the account
+  useEffect(() => {
+    if (requireAccountFilter && selectedAccount != null) {
+      handleUpdateAccount(selectedAccount);
+    }
+  }, []);
 
   //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {

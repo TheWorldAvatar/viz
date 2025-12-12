@@ -57,8 +57,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const { options, isLoading, selectedAccount, setSearch, handleUpdateAccount } = useAccountFilterOptions(
     props.accountType,
     props.lifecycleStage,
-    props.tableDescriptor.table,
     props.tableDescriptor.filters,
+    props.tableDescriptor.setFilters,
   )
 
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
