@@ -126,7 +126,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   <div className="sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.pricing}
-                      leftIcon={"account_balance_wallet"}
+                      leftIcon={"price_change"}
                       hasMobileIcon={false}
                       url={Routes.BILLING_PRICING_MODELS}
                       variant={
@@ -138,7 +138,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   <div className="sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.activities}
-                      leftIcon={"account_balance_wallet"}
+                      leftIcon={"receipt_long"}
                       hasMobileIcon={false}
                       url={Routes.BILLING_ACTIVITY}
                       variant={
