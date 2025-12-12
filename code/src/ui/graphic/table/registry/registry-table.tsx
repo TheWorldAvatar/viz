@@ -36,7 +36,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import TableSkeleton from "../skeleton/table-skeleton";
+
 
 interface RegistryTableProps {
   recordType: string;
@@ -183,13 +183,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-  if (
-    props.lifecycleStage === LifecycleStageMap.PRICING &&
-    (!props.tableDescriptor.table.getState().columnFilters ||
-      props.tableDescriptor.table.getState().columnFilters.length === 0)
-  ) {
-    return <TableSkeleton />;
-  }
 
   return (
     <>
