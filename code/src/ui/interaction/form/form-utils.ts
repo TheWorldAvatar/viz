@@ -105,9 +105,9 @@ export function parsePropertyShapeOrGroupList(
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
-        if (billingTypes.account.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+        if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.account = fieldId;
-        } else if (billingTypes.pricing.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+        } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.pricing = fieldId;
         }
         return initFormField(updatedProp, initialState, fieldId);
