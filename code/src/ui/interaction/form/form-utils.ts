@@ -5,6 +5,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
 import {
+  BillingEntityTypes,
   FormTemplateType,
   FormType,
   FormTypeMap,
@@ -71,10 +72,12 @@ export const ENTITY_STATUS: Record<string, string> = {
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
+ * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
+  billingTypes: BillingEntityTypes = { account: "", pricing: "" },
 ): PropertyShapeOrGroup[] {
   return fields.map((field) => {
     // Properties as part of a group
@@ -102,6 +105,11 @@ export function parsePropertyShapeOrGroupList(
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        if (billingTypes.account == updatedProp.name[VALUE_KEY]) {
+          billingTypes.account = fieldId;
+        } else if (billingTypes.pricing == updatedProp.name[VALUE_KEY]) {
+          billingTypes.pricing = fieldId;
+        }
         return initFormField(updatedProp, initialState, fieldId);
       });
       // Update the property group with updated properties
@@ -143,11 +151,13 @@ export function parsePropertyShapeOrGroupList(
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
  * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
+ * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  */
 export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
   reqMatching: boolean,
+  billingTypes: BillingEntityTypes = { account: "", pricing: "" },
 ): NodeShape[] {
   // Early termination
   if (nodeShapes.length === 0) {
@@ -158,7 +168,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes);
     nodeStates.push(nodeState);
     results.push({
       ...shape,

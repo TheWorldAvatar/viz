@@ -8,6 +8,7 @@ import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
+  BillingEntityTypes,
   FormTemplateType,
   FormType,
   FormTypeMap,
@@ -72,6 +73,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
+  const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const searchParams: URLSearchParams = useSearchParams();
 
   // Sets the default value with the requested function call
@@ -125,12 +127,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           initialState[FORM_STATES.RECURRENCE] = 0;
         }
       }
-
+      const billingParams: BillingEntityTypes = { account: props.accountType, pricing: props.pricingType };
       setFormTemplate({
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD),
-        property: parsePropertyShapeOrGroupList(initialState, template.property),
+        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParams),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParams),
       });
+      setBillingParams(billingParams)
       return initialState;
     },
   });
@@ -460,14 +463,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           ),
           form,
           -1,
-          props.accountType,
-          props.pricingType
+          billingParams.account,
+          billingParams.pricing
         )}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
           node={formTemplate.node}
           form={form}
+          accountType={billingParams.account}
+          pricingType={billingParams.pricing}
         />
       )}
       {!form.formState.isLoading &&
@@ -480,7 +485,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, props.accountType, props.pricingType)
+            renderFormField(props.entityType, field, form, index, billingParams.account, billingParams.pricing)
           )}
     </form>
   );
@@ -523,6 +528,8 @@ export function renderFormField(
         options={{
           disabled: disableAllInputs,
         }}
+        accountType={accountType}
+        pricingType={pricingType}
       />
     );
   } else {
@@ -551,6 +558,8 @@ export function renderFormField(
           options={{
             disabled: disableAllInputs,
           }}
+          accountType={accountType}
+          pricingType={pricingType}
         />
       );
     }

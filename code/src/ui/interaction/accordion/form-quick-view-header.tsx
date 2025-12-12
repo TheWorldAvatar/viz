@@ -3,10 +3,9 @@
 import { useDictionary } from "hooks/useDictionary";
 import type React from "react";
 import { Dictionary } from "types/dictionary";
+import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
-import { FormTypeMap } from "types/form";
-import { buildUrl } from "utils/client-utils";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -49,12 +48,10 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     entityType: string,
     entityId?: string
   ): string => {
-    if (action == "add" && props.formType == FormTypeMap.ASSIGN_PRICE) {
-      if (props.accountType == props.entityType) {
-        return buildUrl("/add", "account", props.entityType);
-      } else if (props.pricingType == props.entityType) {
-        return buildUrl("/add", "pricing", `${props.entityType}?account=${props.accountId}`);
-      }
+    if (action == "add" && props.accountType == props.entityType) {
+      return buildUrl("/add", "account", props.entityType);
+    } else if (action == "add" && props.pricingType == props.entityType) {
+      return buildUrl("/add", "pricing", `${props.entityType}?account=${props.accountId}`);
     }
     return `/${action}/${entityType}${entityId ? `/${entityId}` : ""}`;
   };

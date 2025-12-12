@@ -79,6 +79,11 @@ export type FormTemplateType = {
   property: PropertyShapeOrGroup[];
 };
 
+export type BillingEntityTypes = {
+  account: string;
+  pricing: string;
+};
+
 export interface NodeShape {
   label: JsonLdLiteral;
   comment: JsonLdLiteral;
