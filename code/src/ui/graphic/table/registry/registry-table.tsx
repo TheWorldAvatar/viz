@@ -111,6 +111,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
       router.push(buildUrl(taskRoute, recordId));
+    } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(row.id)}?event=${encodeURIComponent(row.event_id)}`));
     } else {
       const registryRoute: string =
         !keycloakEnabled ||
