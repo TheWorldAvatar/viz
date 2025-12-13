@@ -69,8 +69,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       <div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
         {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
-          (!keycloakEnabled ||
-            !permissionScheme) && (
+          (
             <div className="bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border">
               <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
                 {(!isBillingStage && (!keycloakEnabled || (permissionScheme?.hasPermissions.pendingRegistry &&
