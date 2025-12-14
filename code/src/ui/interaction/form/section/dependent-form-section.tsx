@@ -271,7 +271,7 @@ export function DependentFormSection(
             isFormView={formType == "view"}
             isOpen={isQuickViewOpen}
             setIsOpen={setIsQuickViewOpen}
-            accountId={getId(props.form.getValues(props.billingStore.accountField))}
+            accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
             accountType={props.billingStore?.account}
             pricingType={props.billingStore?.pricing}
           />
