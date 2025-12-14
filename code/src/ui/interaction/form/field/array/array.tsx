@@ -3,7 +3,7 @@ import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, PropertyShape } from "types/form";
+import { BillingEntityTypes, FormFieldOptions, PropertyShape } from "types/form";
 import Button from "ui/interaction/button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
 import { genEmptyArrayRow } from "../../form-utils";
@@ -15,8 +15,7 @@ export interface FormArrayProps {
   maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
-  accountType?: string;
-  pricingType?: string;
+  billingStore?: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 
@@ -29,8 +28,7 @@ export interface FormArrayProps {
  * @param {number} maxSize The maximum size of the array.
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {string} accountType Optionally indicates the type of account.
- * @param {string} pricingType Optionally indicates the type of pricing.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
@@ -117,8 +115,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                       fieldId: fieldId,
                     }}
                     form={props.form}
-                    accountType={props.accountType}
-                    pricingType={props.pricingType}
+                    billingStore={props.billingStore}
                   />
                 )}
                 {!config.class && (

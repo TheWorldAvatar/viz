@@ -127,13 +127,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           initialState[FORM_STATES.RECURRENCE] = 0;
         }
       }
-      const billingParams: BillingEntityTypes = { account: props.accountType, pricing: props.pricingType };
+      const billingParamsStore: BillingEntityTypes = {
+        account: props.accountType,
+        accountField: props.accountType,
+        pricing: props.pricingType,
+        pricingField: props.pricingType
+      };
       setFormTemplate({
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParams),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParams),
+        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore),
       });
-      setBillingParams(billingParams)
+      setBillingParams(billingParamsStore)
       return initialState;
     },
   });
@@ -480,16 +485,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           ),
           form,
           -1,
-          billingParams.account,
-          billingParams.pricing
+          billingParams
         )}
       {!form.formState.isLoading && formTemplate.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
           node={formTemplate.node}
           form={form}
-          accountType={billingParams.account}
-          pricingType={billingParams.pricing}
+          billingStore={billingParams}
         />
       )}
       {!form.formState.isLoading &&
@@ -502,7 +505,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams.account, billingParams.pricing)
+            renderFormField(props.entityType, field, form, index, billingParams)
           )}
     </form>
   );
@@ -518,16 +521,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * @param field      The configuration object defining the form field.
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
- * @param {string} accountType Optionally indicates the type of account.
- * @param {string} pricingType Optionally indicates the type of pricing.
+ * @param {BillingEntityTypes} billingParams Optionally indicates the type of account and pricing.
  */
 export function renderFormField(
   entityType: string,
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
   currentIndex: number,
-  accountType: string,
-  pricingType: string
+  billingParams: BillingEntityTypes,
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -545,8 +546,7 @@ export function renderFormField(
         options={{
           disabled: disableAllInputs,
         }}
-        accountType={accountType}
-        pricingType={pricingType}
+        billingStore={billingParams}
       />
     );
   } else {
@@ -575,8 +575,7 @@ export function renderFormField(
           options={{
             disabled: disableAllInputs,
           }}
-          accountType={accountType}
-          pricingType={pricingType}
+          billingStore={billingParams}
         />
       );
     }
@@ -625,8 +624,7 @@ export function renderFormField(
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           dependentProp={fieldProp}
           form={form}
-          accountType={accountType}
-          pricingType={pricingType}
+          billingStore={billingParams}
         />
       );
     }

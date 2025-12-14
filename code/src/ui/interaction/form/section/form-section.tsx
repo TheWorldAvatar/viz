@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 
-import { FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
+import { BillingEntityTypes, FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
 import FormArray from "../field/array/array";
 import { renderFormField } from "../form";
@@ -9,8 +9,7 @@ interface FormSectionProps {
   entityType: string;
   group: PropertyGroup;
   form: UseFormReturn;
-  accountType?: string;
-  pricingType?: string;
+  billingStore?: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 /**
@@ -19,8 +18,7 @@ interface FormSectionProps {
  * @param {string} entityType The type of entity.
  * @param {PropertyGroup} group Fieldset group model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {string} accountType Optionally indicates the type of account.
- * @param {string} pricingType Optionally indicates the type of pricing.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
@@ -43,7 +41,7 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
           />
         ) : (
           props.group.property.map((field, index) =>
-            renderFormField(props.entityType, field, props.form, index, props.accountType, props.pricingType)
+            renderFormField(props.entityType, field, props.form, index, props.billingStore)
           )
         )}
       </div>
