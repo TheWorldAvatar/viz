@@ -77,7 +77,7 @@ export const ENTITY_STATUS: Record<string, string> = {
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
-  billingTypes: BillingEntityTypes = { account: "", pricing: "" },
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): PropertyShapeOrGroup[] {
   return fields.map((field) => {
     // Properties as part of a group
@@ -105,10 +105,11 @@ export function parsePropertyShapeOrGroupList(
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        // Replace account or pricing field with the field ID so that we can still retrieve the old values
         if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
-          billingTypes.account = fieldId;
+          billingTypes.accountField = fieldId;
         } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
-          billingTypes.pricing = fieldId;
+          billingTypes.pricingField = fieldId;
         }
         return initFormField(updatedProp, initialState, fieldId);
       });
@@ -157,7 +158,7 @@ export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
   reqMatching: boolean,
-  billingTypes: BillingEntityTypes = { account: "", pricing: "" },
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): NodeShape[] {
   // Early termination
   if (nodeShapes.length === 0) {

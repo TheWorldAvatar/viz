@@ -7,6 +7,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { AgentResponseBody } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
+  BillingEntityTypes,
   defaultSearchOption,
   ID_KEY,
   PropertyShape,
@@ -33,8 +34,7 @@ import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
   form: UseFormReturn;
-  accountType?: string;
-  pricingType?: string;
+  billingStore?: BillingEntityTypes;
 }
 
 /**
@@ -42,8 +42,7 @@ interface DependentFormSectionProps {
  *
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {string} accountType Optionally indicates the type of account.
- * @param {string} pricingType Optionally indicates the type of pricing.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  */
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
@@ -272,9 +271,9 @@ export function DependentFormSection(
             isFormView={formType == "view"}
             isOpen={isQuickViewOpen}
             setIsOpen={setIsQuickViewOpen}
-            accountId={getId(props.form.getValues(props.accountType))}
-            accountType={props.accountType}
-            pricingType={props.pricingType}
+            accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
+            accountType={props.billingStore?.account}
+            pricingType={props.billingStore?.pricing}
           />
           {currentOption &&
             isQuickViewOpen &&

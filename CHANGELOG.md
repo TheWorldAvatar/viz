@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.47.3
+
+### Bug Fixes
+
+- Fixed incorrect redirect to add, delete, edit forms
+
 ## 5.47.2
 
 ### Bug Fixes

@@ -6,6 +6,7 @@ import { Dictionary } from "types/dictionary";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
+import { Routes } from "io/config/routes";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -49,11 +50,13 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     entityId?: string
   ): string => {
     if (action == "add" && props.accountType == props.entityType) {
-      return buildUrl("/add", "account", props.entityType);
+      return buildUrl(Routes.REGISTRY_ADD, "account", props.entityType);
     } else if (action == "add" && props.pricingType == props.entityType) {
-      return buildUrl("/add", "pricing", `${props.entityType}?account=${props.accountId}`);
+      return buildUrl(Routes.REGISTRY_ADD, "pricing", `${props.entityType}?account=${props.accountId}`);
     }
-    return `/${action}/${entityType}${entityId ? `/${entityId}` : ""}`;
+    return buildUrl(action == "add" ? Routes.REGISTRY_ADD :
+      action == "edit" ? Routes.REGISTRY_EDIT : Routes.REGISTRY_DELETE,
+      `${entityType}${entityId ? `/${entityId}` : ""}`);
   };
 
   return (

@@ -81,7 +81,9 @@ export type FormTemplateType = {
 
 export type BillingEntityTypes = {
   account: string;
+  accountField: string;
   pricing: string;
+  pricingField: string;
 };
 
 export interface NodeShape {
