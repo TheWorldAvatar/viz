@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.47.4
+
+### Bug Fixes
+
+- Fixed calendar input issue on Safari browser where clicking outside the date picker would not close the date picker
+
 ## 5.47.3
 
 ### Bug Fixes
