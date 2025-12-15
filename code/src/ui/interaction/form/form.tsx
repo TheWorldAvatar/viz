@@ -215,12 +215,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               ...formData,
             }));
           if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            formData["pricing"] = formData[billingParams.pricingField];
             pendingResponse = await queryInternalApi(
               makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
               "PUT",
               JSON.stringify({
                 ...formData,
+                pricing: formData[billingParams.pricingField],
                 contract: pendingResponse.data?.id,
               }));
           }
@@ -293,6 +293,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               ...formData,
               contract: props.primaryInstance,
             }));
+          if (!pendingResponse.error && formData[billingParams.pricingField]) {
+            pendingResponse = await queryInternalApi(
+              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+              "PUT",
+              JSON.stringify({
+                ...formData,
+                pricing: formData[billingParams.pricingField],
+                contract: pendingResponse.data?.id,
+              }));
+          }
         }
         break;
       }
