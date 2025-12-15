@@ -235,8 +235,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             }
           );
           pendingResponse = await draftRes.json();
-          if (draftRes.ok && formData[billingParams.pricing.replace("_", " ")]) {
-            formData["pricing"] = formData[billingParams.pricing.replace("_", " ")];
+          if (draftRes.ok && formData[billingParams.pricingField]) {
+            formData["pricing"] = formData[billingParams.pricingField];
             const pricingRes = await fetch(
               makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
               {
