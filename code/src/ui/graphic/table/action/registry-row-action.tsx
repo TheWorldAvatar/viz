@@ -15,7 +15,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { buildUrl } from "utils/client-utils";
 
 interface RegistryRowActionProps {
@@ -80,19 +80,12 @@ export default function RegistryRowAction(
 
   const submitPendingActions = async (
     url: string,
-    method: string,
+    method: "POST" | "PUT",
     body: string
   ): Promise<void> => {
     startLoading();
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "same-origin",
-      body,
-    });
+    const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body    );
     setIsActionMenuOpen(false);
-    const customAgentResponse: AgentResponseBody = await res.json();
     stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,

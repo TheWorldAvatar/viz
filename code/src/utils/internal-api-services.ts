@@ -1,5 +1,6 @@
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
+import { HTTP_METHOD } from "next/dist/server/web/http";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
@@ -148,9 +149,22 @@ export function makeInternalRegistryAPIwithParams(
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
 }
 
-export async function queryInternalApi(url: string): Promise<AgentResponseBody> {
-  const activeRes = await fetch(url,
-    { cache: "no-store", credentials: "same-origin" }
-  );
-  return await activeRes.json();
+export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">, body?: string): Promise<AgentResponseBody> {
+  let requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
+  if (method == "DELETE") {
+    requestParams = {
+      ...requestParams,
+      method: method.toString(),
+      headers: { "Content-Type": "application/json" },
+    };
+  } else if (method == "PUT" || method == "POST") {
+    requestParams = {
+      ...requestParams,
+      method: method.toString(),
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    };
+  }
+  const res = await fetch(url, requestParams);
+  return await res.json();
 }

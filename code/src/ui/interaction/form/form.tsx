@@ -23,7 +23,7 @@ import {
   VALUE_KEY,
 } from "types/form";
 import { buildUrl, getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
 import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
@@ -97,15 +97,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         url =
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType, id);
       }
-      const template: FormTemplateType = await fetch(url,
-        {
-          cache: "no-store",
-          credentials: "same-origin",
-        }
-      ).then(async (res) => {
-        const body: AgentResponseBody = await res.json();
-        return body.data?.items?.[0] as FormTemplateType;
-      });
+      const body: AgentResponseBody = await queryInternalApi(url);
+      const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
       if (!template) {
         return initialState;
       }
@@ -207,174 +200,99 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     switch (props.formType) {
       case FormTypeMap.ADD: {
         // Add entity via API route
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
 
         // For registry's primary entity, a draft lifecycle must also be generated
-        if (props.isPrimaryEntity && res.ok) {
-          const draftRes = await fetch(
+        if (props.isPrimaryEntity && !pendingResponse.error) {
+          pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              cache: "no-store",
-              credentials: "same-origin",
-              body: JSON.stringify({
-                contract: pendingResponse.data?.id,
-                ...formData,
-              }),
-            }
-          );
-          pendingResponse = await draftRes.json();
-          if (draftRes.ok && formData[billingParams.pricingField]) {
+            "POST",
+            JSON.stringify({
+              contract: pendingResponse.data?.id,
+              ...formData,
+            }));
+          if (!pendingResponse.error && formData[billingParams.pricingField]) {
             formData["pricing"] = formData[billingParams.pricingField];
-            const pricingRes = await fetch(
+            pendingResponse = await queryInternalApi(
               makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                cache: "no-store",
-                credentials: "same-origin",
-                body: JSON.stringify({
-                  contract: pendingResponse.data?.id,
-                  ...formData,
-                }),
-              }
-            );
-            pendingResponse = await pricingRes.json();
+              "PUT",
+              JSON.stringify({
+                ...formData,
+                contract: pendingResponse.data?.id,
+              }));
           }
         }
         break;
       }
       case FormTypeMap.ADD_BILL: {
         formData["type"] = props.entityType;
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.ACCOUNT),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.ADD_PRICE: {
         formData["type"] = props.entityType;
         formData["account"] = decodeURIComponent(searchParams.get("account"));
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.ADD_INVOICE: {
         formData["event"] = decodeURIComponent(searchParams.get("event"));
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.ASSIGN_PRICE: {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "PUT",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.DELETE: {
         // Delete entity via API route
-        const res = await fetch(
-          makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INSTANCES,
-            props.entityType,
-            "false",
-            formData[FORM_STATES.ID],
-            null,
-            null,
-            null,
-            null,
-            null,
-            formData["branch_delete"]
-          ),
-          {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        );
-        pendingResponse = await res.json();
+        pendingResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(
+          InternalApiIdentifierMap.INSTANCES,
+          props.entityType,
+          "false",
+          formData[FORM_STATES.ID],
+          null,
+          null,
+          null,
+          null,
+          null,
+          formData["branch_delete"]
+        ), "DELETE");
         break;
       }
       case FormTypeMap.EDIT: {
         // Update entity via API route
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             formData.id
-          ),
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify(formData),
-          }
-        );
-        pendingResponse = await res.json();
-
-        if (props.isPrimaryEntity && res.ok) {
-          const draftRes = await fetch(
+          ), "PUT", JSON.stringify(formData));
+        if (props.isPrimaryEntity && !pendingResponse.error) {
+          pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
-            {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              cache: "no-store",
-              credentials: "same-origin",
-              body: JSON.stringify({
-                ...formData,
-                contract: props.primaryInstance,
-              }),
-            }
-          );
-          pendingResponse = await draftRes.json();
+            "PUT",
+            JSON.stringify({
+              ...formData,
+              contract: props.primaryInstance,
+            }));
         }
         break;
       }
@@ -392,27 +310,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             };
           }
         });
-
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             "search"
-          ),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({
-              ...formData,
-            }),
-          }
-        );
-        pendingResponse = await res.json();
+          ), "POST", JSON.stringify(formData));
 
-        if (res.ok) {
+        if (!pendingResponse.error) {
           if (pendingResponse.data?.items?.length === 0) {
             pendingResponse.data.message = dict.message.noMatchFeature;
           } else {

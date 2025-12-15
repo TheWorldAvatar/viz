@@ -29,13 +29,14 @@ import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
 import { getId, buildUrl } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import { HTTP_METHOD } from "next/dist/server/web/http";
 
 
 interface RegistryTableProps {
@@ -136,7 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
     let reqBody: JsonObject;
     let apiUrl: string;
-    let method: string;
+    let method: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">;
 
     switch (action) {
       case "approve":
@@ -158,18 +159,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         throw new Error("Invalid action");
     }
     startLoading();
-    const res = await fetch(
-      apiUrl,
-      {
-        method,
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify(reqBody),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
+    const responseBody: AgentResponseBody = await queryInternalApi(apiUrl, method, JSON.stringify(reqBody));
     stopLoading();
     toast(
       responseBody?.data?.message || responseBody?.error?.message,

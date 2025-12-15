@@ -2,10 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { GroupBase, OptionsOrGroups } from "react-select";
 
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import {
   defaultSearchOption,
   FormFieldOptions,
+  FormTypeMap,
   ID_KEY,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,
@@ -19,7 +20,7 @@ import {
   getMatchingConcept,
   parseConcepts,
 } from "ui/interaction/form/form-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormSelector from "./form-selector";
 
 interface OntologyConceptSelectorProps {
@@ -68,19 +69,15 @@ export default function OntologyConceptSelector(
           (subClass) => subClass[ID_KEY]
         );
         const conceptsArrays: OntologyConcept[][] = await Promise.all(
-          conceptTypes.map((conceptType) =>
-            fetch(makeInternalRegistryAPIwithParams("concept", conceptType), {
-              cache: "no-store",
-              credentials: "same-origin",
-            }).then(async (response) => {
-              if (!response.ok) {
-                throw new Error(
-                  `Failed to fetch available types for ${conceptType}`
-                );
-              }
-              const resBody: AgentResponseBody = await response.json();
-              return resBody.data?.items as OntologyConcept[];
-            })
+          conceptTypes.map(async (conceptType) => {
+            const resBody: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONCEPT, conceptType));
+            if (resBody.error) {
+              throw new Error(
+                `Failed to fetch available types for ${conceptType}`
+              );
+            }
+            return resBody.data?.items as OntologyConcept[];
+          }
           )
         );
         const concepts: OntologyConcept[] = conceptsArrays.flat();
@@ -88,7 +85,7 @@ export default function OntologyConceptSelector(
           let firstOption: string = props.form.getValues(props.field.fieldId);
 
           // Add the default search option only if this is the search form
-          if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
+          if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
           }
@@ -107,8 +104,8 @@ export default function OntologyConceptSelector(
             sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
           props.form.setValue(
             props.field.fieldId,
-            currentFormType === "add"
-            // For add forms, default to default value if available, else, return undefined
+            currentFormType === FormTypeMap.ADD
+              // For add forms, default to default value if available, else, return undefined
               ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
               // For every other form type, extract the parent option if available, else, default to base
               : sortedConceptMappings[firstRootOption?.type.value]

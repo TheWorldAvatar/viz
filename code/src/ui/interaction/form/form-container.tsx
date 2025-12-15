@@ -8,14 +8,14 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { PermissionScheme } from "types/auth";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, FormTypeMap, PropertyShape } from "types/form";
 import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import RedirectButton from "../action/redirect/redirect-button";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
@@ -115,17 +115,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       contract: contractId,
     };
 
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "archive", action),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify(payload),
-      }
+    const agentResponseBody: AgentResponseBody = await queryInternalApi(
+      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "archive", action),
+      "POST",
+      JSON.stringify(payload)
     );
-    const agentResponseBody: AgentResponseBody = await res.json();
     stopLoading();
     toast(
       agentResponseBody?.data?.message || agentResponseBody?.error?.message,
@@ -146,19 +140,13 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       lifecycleStage: string,
       eventType: string
     ): Promise<void> => {
-      const res = await fetch(
-        makeInternalRegistryAPIwithParams(
-          "event",
+      const responseBody: AgentResponseBody = await queryInternalApi(
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT,
           lifecycleStage,
           eventType,
           FORM_IDENTIFIER
-        ),
-        {
-          cache: "no-store",
-          credentials: "same-origin",
-        }
+        )
       );
-      const responseBody: AgentResponseBody = await res.json();
       const template: PropertyShape[] = (
         responseBody.data?.items as Record<string, unknown>[]
       )?.[0]?.property as PropertyShape[];
@@ -181,17 +169,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       contract: id,
       remarks: "Contract has been approved successfully!",
     };
-    const res = await fetch(
-      makeInternalRegistryAPIwithParams("event", "service", "commence"),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify({ ...reqBody }),
-      }
+    const customAgentResponse: AgentResponseBody = await queryInternalApi(
+      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "commence"),
+      "POST",
+      JSON.stringify(reqBody)
     );
-    const customAgentResponse: AgentResponseBody = await res.json();
     stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
@@ -214,14 +196,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   useEffect(() => {
     // Declare an async function that retrieves the contract status for a view page
     const getContractStatus = async (): Promise<void> => {
-      const res = await fetch(
-        makeInternalRegistryAPIwithParams("contract_status", id),
-        {
-          cache: "no-store",
-          credentials: "same-origin",
-        }
+      const resBody: AgentResponseBody = await queryInternalApi(
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONTRACT_STATUS, id)
       );
-      const resBody: AgentResponseBody = await res.json();
       setStatus(resBody);
     };
 
