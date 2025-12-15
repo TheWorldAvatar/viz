@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { FormTypeMap } from 'types/form';
+import { FormTypeMap, LifecycleStageMap } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import { InterceptFormContainerComponent } from 'ui/interaction/form/form-container';
 
@@ -37,6 +37,8 @@ export default async function InterceptAddCustomerAccountPricingPlanFormPage(pro
       entityType={decodedType}
       formType={FormTypeMap.ADD_PRICE}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
     />
   );
 }

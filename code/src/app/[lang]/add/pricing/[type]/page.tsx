@@ -4,7 +4,7 @@ import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { NavBarItemSettings, UISettings } from 'types/settings';
 import { FormContainerComponent } from 'ui/interaction/form/form-container';
-import { FormTypeMap } from 'types/form';
+import { FormTypeMap, LifecycleStageMap } from 'types/form';
 
 interface AddFormPageProps {
   params: Promise<{
@@ -37,6 +37,8 @@ export default async function AddCustomerAccountPricingPlanFormPage(props: Reado
       entityType={decodedType}
       formType={FormTypeMap.ADD_PRICE}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
     />
   );
 }

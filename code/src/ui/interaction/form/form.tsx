@@ -22,7 +22,7 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { buildUrl, getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -237,7 +237,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormTypeMap.ADD_PRICE: {
         formData["type"] = props.entityType;
-        formData["account"] = decodeURIComponent(searchParams.get("account"));
+        formData["account"] = decodeURIComponent(getId(formData[billingParams.accountField]));
         pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
           "POST",

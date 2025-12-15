@@ -29,7 +29,7 @@ export function useAccountFilterOptions(
   allFilters: ColumnFilter[],
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
 ): FilterOptionsDescriptor {
-  const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.PRICING || lifecycleStage === LifecycleStageMap.ACTIVITY;
+  const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.ACTIVITY;
 
   const router = useRouter();
   const pathName: string = usePathname();
