@@ -117,7 +117,7 @@ export default function RegistryRowAction(
     browserStorageManager.set(EVENT_KEY, props.row.event_id)
     setIsActionMenuOpen(false);
     if (body.data.message == "true") {
-      router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.id)))
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id)))
     } else {
       router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
     }
