@@ -120,7 +120,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       browserStorageManager.set(EVENT_KEY, row.event_id)
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
       const body: AgentResponseBody = await queryInternalApi(url);
-      if (body.data.message == "true") {
+      if (row[dict.title.billingStatus] != "pendingApproval") {
+        router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+      } else if (body.data.message == "true") {
         router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id)))
       } else {
         router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(row.id)));

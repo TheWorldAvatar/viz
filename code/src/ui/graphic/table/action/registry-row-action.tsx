@@ -355,7 +355,8 @@ export default function RegistryRowAction(
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY && (
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "pendingApproval" && (
               <Button
                 variant="ghost"
                 leftIcon="price_check"
