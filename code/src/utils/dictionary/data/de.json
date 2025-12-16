@@ -230,6 +230,7 @@
     "pendingExecution": "Ausstehende Ausführung",
     "readyForPayment": "Bereit zur Zahlung",
     "pendingApproval": "Ausstehende Genehmigung",
+    "nonBillable": "Nicht abrechnungsfähig",
     "quickView": "Schnellansicht",
     "scheduleType": "Art des Zeitplans",
     "searchPeriod": "Suchzeitraum",

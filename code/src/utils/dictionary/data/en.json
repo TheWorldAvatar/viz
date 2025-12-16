@@ -230,6 +230,7 @@
     "pendingExecution": "pending execution",
     "readyForPayment": "Ready for payment",
     "pendingApproval": "Pending approval",
+    "nonBillable": "Non-billable",
     "quickView": "Quick view",
     "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
