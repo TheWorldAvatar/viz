@@ -14,10 +14,12 @@ import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
+import { HTTP_METHOD } from "next/dist/server/web/http";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -28,7 +30,8 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
-import { getId, buildUrl } from "utils/client-utils";
+import { buildUrl, getId } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
@@ -36,7 +39,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { HTTP_METHOD } from "next/dist/server/web/http";
 
 
 interface RegistryTableProps {
@@ -113,7 +115,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       }
       router.push(buildUrl(taskRoute, recordId));
     } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
-      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(row.id)}?event=${encodeURIComponent(row.event_id)}`));
+      browserStorageManager.set(EVENT_KEY, row.event_id)
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(row.id)}`));
     } else {
       const registryRoute: string =
         !keycloakEnabled ||

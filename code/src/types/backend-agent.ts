@@ -1,3 +1,5 @@
+import { EVENT_KEY } from "utils/constants";
+
 export type AgentResponseBody = {
   apiVersion: string;
   data?: {
@@ -20,7 +22,7 @@ export const InternalApiIdentifierMap = {
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",
   COUNT: "count",
-  EVENT: "event",
+  EVENT: EVENT_KEY,
   FILTER: "filter",
   FORM: "form",
   GEOCODE_POSTAL: "geocode_postal",

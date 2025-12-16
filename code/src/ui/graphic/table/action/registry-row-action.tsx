@@ -17,6 +17,8 @@ import Button from "ui/interaction/button";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { buildUrl } from "utils/client-utils";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { EVENT_KEY } from "utils/constants";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -353,7 +355,8 @@ export default function RegistryRowAction(
                 disabled={isLoading}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(props.row.id)}?event=${encodeURIComponent(props.row.event_id)}`));
+                  browserStorageManager.set(EVENT_KEY, props.row.event_id)
+                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(props.row.id)}`));
                 }}
               />
             )}

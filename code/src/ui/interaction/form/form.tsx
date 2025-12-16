@@ -1,4 +1,4 @@
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -36,7 +36,9 @@ import FormSection from "./section/form-section";
 
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { toast } from "ui/interaction/action/toast/toast";
+import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormComponentProps {
@@ -74,7 +76,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const searchParams: URLSearchParams = useSearchParams();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -245,11 +246,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case FormTypeMap.ADD_INVOICE: {
-        formData["event"] = decodeURIComponent(searchParams.get("event"));
         pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
           "POST",
-          JSON.stringify(formData));
+          JSON.stringify({
+            ...formData,
+            event: browserStorageManager.get(EVENT_KEY)
+          }));
         break;
       }
       case FormTypeMap.ASSIGN_PRICE: {
@@ -369,7 +372,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (!pendingResponse?.error) {
       // For assign price only, move to the next step to gen invoice
       if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, `${id}?event=${searchParams.get("event")}`))
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, id))
       } else {
         setTimeout(() => {
           // Close search modal on success
