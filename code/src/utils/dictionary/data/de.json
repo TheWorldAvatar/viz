@@ -192,6 +192,7 @@
       "archive": "Archiv",
       "outstanding": "Offen",
       "scheduled": "Eingeplant",
+      "closed": "Geschlossen",
       "jobs": "Stellenangebote",
       "tasks": "Aufgaben"
     },
