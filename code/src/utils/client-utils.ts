@@ -89,6 +89,9 @@ export function setSelectedFeature(
  * @param {string} str input string.
  */
 export function parseWordsForLabels(str: string): string {
+  if (str == "N/A") {
+    return str;
+  }
   if (isValidIRI(str)) {
     return getAfterDelimiter(str, "/");
   }
