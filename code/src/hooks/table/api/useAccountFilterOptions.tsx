@@ -1,7 +1,7 @@
 import { ColumnFilter } from "@tanstack/react-table";
 import { useDebounce } from "hooks/useDebounce";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
@@ -29,16 +29,7 @@ export function useAccountFilterOptions(
   allFilters: ColumnFilter[],
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
 ): FilterOptionsDescriptor {
-  const requireAccountFilter: boolean = lifecycleStage === LifecycleStageMap.ACTIVITY;
-
-  const router = useRouter();
-  const pathName: string = usePathname();
-  const searchParams: URLSearchParams = useSearchParams();
-
-  const [selectedAccount, setSelectedAccount] = useState<SelectOptionType>(searchParams.size > 0 ? {
-    label: decodeURIComponent(searchParams.get("label")),
-    value: decodeURIComponent(searchParams.get("account")),
-  } : null);
+  const [selectedAccount, setSelectedAccount] = useState<SelectOptionType>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<SelectOptionType[]>([]);
   const [search, setSearch] = useState<string>("");
@@ -55,16 +46,13 @@ export function useAccountFilterOptions(
     ]);
     // Update the selected account state to propagate changes
     setSelectedAccount(newAccount);
-    // Update search params whenever selected account changes
-    const params: URLSearchParams = new URLSearchParams(searchParams.toString());
-    params.set("account", encodeURIComponent(newAccount.value));
-    params.set("label", encodeURIComponent(newAccount.label));
-    router.push(`${pathName}?${params.toString()}`);
+    // Update local storage whenever selected account changes
+    browserStorageManager.set(accountType, newAccount.value)
   };
 
   // On first render, set filters and all other actions to update the account
   useEffect(() => {
-    if (requireAccountFilter && selectedAccount != null) {
+    if (lifecycleStage === LifecycleStageMap.ACTIVITY && selectedAccount != null) {
       handleUpdateAccount(selectedAccount);
     }
   }, []);
@@ -82,9 +70,17 @@ export function useAccountFilterOptions(
         ));
         const respOptions: SelectOptionType[] = res.data?.items as SelectOptionType[];
         setOptions(respOptions);
-        // When no query params is available, set the first option as default selected account by pushing to the route
+        // When no account is set
         if (selectedAccount == null && respOptions?.length > 0) {
-          handleUpdateAccount(respOptions?.[0]);
+          // Set first option only as default if account ID is not given
+          if (browserStorageManager.get(accountType) == null) {
+            handleUpdateAccount(respOptions?.[0]);
+          } else {
+            // Set to the target option based on the account id
+            const accountId: string = browserStorageManager.get(accountType);
+            handleUpdateAccount(respOptions?.find(option => option.value == accountId));
+          }
+
         }
       } catch (error) {
         console.error("Error fetching instances", error);
@@ -93,7 +89,7 @@ export function useAccountFilterOptions(
       }
     };
 
-    if (requireAccountFilter) {
+    if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
       fetchData();
     }
   }, [debouncedSearch]);
