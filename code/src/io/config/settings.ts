@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { JsonObject } from 'types/json';
-import { MapSettings, UISettings } from 'types/settings';
+import { MapSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
 import { logColours } from 'utils/logColours';
 
 /**
@@ -20,11 +20,13 @@ export default class SettingsStore {
   private static readonly UI_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
   private static readonly DATA_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/data-settings.json");
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
+  private static readonly TABLE_ORDER_FILE: string = path.join(process.cwd(), "public/config/table-column-order.json");
 
   // Cached settings
   private static UI_SETTINGS: UISettings | null = null;
   private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
+  private static TABLE_ORDER_SETTINGS: TableColumnOrderSettings | null = null;
 
 
   /**
@@ -58,6 +60,16 @@ export default class SettingsStore {
   }
 
   /**
+   * Retrieves table column order settings from `SettingsStore` class
+   */
+  public static getTableColumnOrderSettings(): TableColumnOrderSettings {
+    if (!this.TABLE_ORDER_SETTINGS) {
+      this.readTableColumnOrderSettings();
+    }
+    return this.TABLE_ORDER_SETTINGS;
+  }
+
+  /**
    * Reads the initialisation settings.
    */
   public static readUISettings(): void {
@@ -75,6 +87,15 @@ export default class SettingsStore {
   public static readMapSettings(): void {
     const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
     this.MAP_SETTINGS = JSON.parse(settings);
+  }
+
+  /**
+   * Reads the table order settings file and sets it to SettingsStore private field.
+   */
+  public static readTableColumnOrderSettings(): void {
+    const settings: string = this.readFile(this.TABLE_ORDER_FILE);
+    const jsonifiedSettings: TableColumnOrderSettings = JSON.parse(settings);
+    this.TABLE_ORDER_SETTINGS = jsonifiedSettings;
   }
 
   public static async getRegistryURL(): Promise<string> {

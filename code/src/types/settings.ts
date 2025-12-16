@@ -29,6 +29,9 @@ export type UISettings = {
   }
 }
 
+export type TableColumnOrderSettings = Record<string, string[]>;
+
+
 export interface ResourcesPathSettings {
   type: string;
   key?: string;
@@ -109,3 +112,4 @@ type FillLegend = {
 }
 
 export type MapboxCredentials = { username: string, token: string }
+
