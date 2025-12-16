@@ -118,6 +118,7 @@ export function useTableData(
           parsedData.columns,
           tableOrderConfig,
           entityType,
+          lifecycleStage,
           dict.title,
         );
         setData({

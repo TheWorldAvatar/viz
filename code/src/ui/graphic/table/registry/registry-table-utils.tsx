@@ -17,7 +17,6 @@ import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATETIME, XSD_DATE } from "utils/constants";
 
-
 export type TableData = {
   data: FieldValues[];
   columns: ColumnDef<FieldValues>[];
@@ -151,10 +150,11 @@ export function applyConfiguredColumnOrder(
   columns: ColumnDef<FieldValues>[],
   config: TableColumnOrderSettings | null,
   entityType: string,
+  lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): ColumnDef<FieldValues>[] {
   if (!config) return columns;
-  const configuredOrder: string[] | undefined = config[entityType];
+  const configuredOrder: string[] | undefined = config[entityType] || config[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   const configuredKeys: string[] = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
