@@ -216,12 +216,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   return (
     <>
       <section
-        className={`flex justify-between items-center text-nowrap text-foreground p-1 mt-5 mb-0.5  shrink-0`}
+        className={`flex justify-between items-center text-foreground p-1 mt-5 mb-0.5  shrink-0`}
       >
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
-        ).toUpperCase()} ${parseWordsForLabels(props.entityType)
+        ).toUpperCase()} ${props.formType == FormTypeMap.ADD_INVOICE ? "" : parseWordsForLabels(props.entityType)
           .toUpperCase()
           .replace("_", " ")}`}</h1>
       </section>

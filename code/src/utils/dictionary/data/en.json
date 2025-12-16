@@ -2,6 +2,8 @@
   "lang": "en",
   "action": {
     "add": "Add",
+    "addAdjustment": "Add adjustments",
+    "assign": "Assign",
     "applyFilter": "Apply filter",
     "addItem": "add {replace}",
     "delete": "Delete",
