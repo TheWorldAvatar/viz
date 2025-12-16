@@ -127,8 +127,6 @@ export function useTable(
     getRowId: (row, index) => row.id + index,
   });
 
-
-
   return {
     isLoading,
     table,

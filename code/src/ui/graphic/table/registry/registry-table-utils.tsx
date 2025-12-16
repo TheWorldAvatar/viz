@@ -11,6 +11,7 @@ import {
   RegistryFieldValues,
   SparqlResponseField
 } from "types/form";
+import { TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
@@ -135,6 +136,60 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   }
   return results;
 }
+
+
+/**
+ * Applies the configured column order to the given columns.
+ *
+ * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
+ * @param {TableColumnOrderSettings | null} config Configuration for table column order.
+ * @param {string} entityType Type of entity for rendering.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+
+export function applyConfiguredColumnOrder(
+  columns: ColumnDef<FieldValues>[],
+  config: TableColumnOrderSettings | null,
+  entityType: string,
+  titleDict: Record<string, string>,
+): ColumnDef<FieldValues>[] {
+  if (!config) return columns;
+  const configuredOrder: string[] | undefined = config[entityType];
+  if (!configuredOrder || configuredOrder.length === 0) return columns;
+
+  const configuredKeys: string[] = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
+
+  const byAccessorKey: Map<string, ColumnDef<FieldValues>> = new Map();
+  const remaining: ColumnDef<FieldValues>[] = [];
+  for (const col of columns) {
+    // The key of the row object to use when extracting the value for the column. (From TanStack Table docs)
+    const accessorKey = (col as { accessorKey?: string }).accessorKey;
+    if (accessorKey) {
+      byAccessorKey.set(accessorKey, col);
+    }
+  }
+
+  const ordered: ColumnDef<FieldValues>[] = [];
+  const used: Set<string> = new Set();
+  for (const key of configuredKeys) {
+    const col: ColumnDef<FieldValues> | undefined = byAccessorKey.get(key);
+    if (col) {
+      ordered.push(col);
+      used.add(key);
+    }
+  }
+
+  for (const col of columns) {
+    const accessorKey = (col as { accessorKey?: string }).accessorKey;
+    // This ensures columns not in the config are still shown, after the ordered ones.
+    if (!accessorKey || !used.has(accessorKey)) {
+      remaining.push(col);
+    }
+  }
+
+  return [...ordered, ...remaining];
+}
+
 
 
 /**
