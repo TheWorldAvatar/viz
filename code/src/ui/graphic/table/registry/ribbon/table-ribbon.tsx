@@ -304,7 +304,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             )}
             size="icon"
             onClick={() => {
-              props.tableDescriptor.table.resetColumnFilters();
+              if (props.lifecycleStage == LifecycleStageMap.ACTIVITY) {
+                props.tableDescriptor.table.setColumnFilters([props.tableDescriptor.filters.find(filter => filter.id == props.accountType)]);
+              } else {
+                props.tableDescriptor.table.resetColumnFilters();
+              }
               props.tableDescriptor.table.resetRowSelection();
             }}
             tooltipText={dict.action.clearAllFilters}
