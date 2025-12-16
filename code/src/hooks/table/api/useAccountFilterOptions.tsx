@@ -48,6 +48,7 @@ export function useAccountFilterOptions(
     setSelectedAccount(newAccount);
     // Update local storage whenever selected account changes
     browserStorageManager.set(accountType, newAccount.value)
+    browserStorageManager.set(LifecycleStageMap.ACCOUNT, newAccount.label)
   };
 
   // On first render, set filters and all other actions to update the account
@@ -62,25 +63,19 @@ export function useAccountFilterOptions(
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
+        const searchVal: string = selectedAccount == null && browserStorageManager.get(LifecycleStageMap.ACCOUNT) != null ?
+          browserStorageManager.get(LifecycleStageMap.ACCOUNT) : debouncedSearch;
         const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
           InternalApiIdentifierMap.FILTER,
           LifecycleStageMap.ACCOUNT,
           accountType,
-          debouncedSearch,
+          searchVal,
         ));
         const respOptions: SelectOptionType[] = res.data?.items as SelectOptionType[];
         setOptions(respOptions);
-        // When no account is set
+        // When no account is set, set first option as default
         if (selectedAccount == null && respOptions?.length > 0) {
-          // Set first option only as default if account ID is not given
-          if (browserStorageManager.get(accountType) == null) {
-            handleUpdateAccount(respOptions?.[0]);
-          } else {
-            // Set to the target option based on the account id
-            const accountId: string = browserStorageManager.get(accountType);
-            handleUpdateAccount(respOptions?.find(option => option.value == accountId));
-          }
-
+          handleUpdateAccount(respOptions?.[0]);
         }
       } catch (error) {
         console.error("Error fetching instances", error);
