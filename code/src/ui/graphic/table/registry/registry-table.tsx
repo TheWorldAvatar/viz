@@ -43,6 +43,7 @@ import TableRow from "../row/table-row";
 
 interface RegistryTableProps {
   recordType: string;
+  accountType: string;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
   tableDescriptor: TableDescriptor;
@@ -53,6 +54,7 @@ interface RegistryTableProps {
  * This component renders a registry of table based on the inputs using TanStack Table.
  *
  * @param {string} recordType The type of the record.
+ * @param {string} accountType The type of account for billing capabilities.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
@@ -281,6 +283,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   lifecycleStage={props.lifecycleStage}
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
+                                  disableFilter={header.id == props.accountType}
                                 />
                               );
                             })}
