@@ -381,10 +381,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           } else {
             // Redirect back for other types (add and edit) as users will want to see their changes
             router.back();
-            // Redirect twice for add invoice
-            if (props.formType === FormTypeMap.ADD_INVOICE) {
-              router.back();
-            }
           }
         }, 2000);
       }
