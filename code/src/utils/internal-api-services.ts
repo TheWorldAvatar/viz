@@ -21,6 +21,7 @@ export function makeInternalRegistryAPIwithParams(
     case InternalApiIdentifierMap.BILL:
       searchParams = new URLSearchParams({
         type: params[0],
+        id: params[1] ?? null,
       });
       break;
     case InternalApiIdentifierMap.CONCEPT:

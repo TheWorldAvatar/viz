@@ -23,7 +23,7 @@ import { browserStorageManager } from "state/browser-storage-manager";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -78,7 +78,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   );
   const allowMultipleSelection: boolean = props.lifecycleStage !== LifecycleStageMap.GENERAL;
 
-  const onRowClick = (row: FieldValues) => {
+  const onRowClick = async (row: FieldValues) => {
     if (isLoading) return;
     const recordId: string = row.event_id
       ? getId(row.event_id)
@@ -116,7 +116,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       router.push(buildUrl(taskRoute, recordId));
     } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
       browserStorageManager.set(EVENT_KEY, row.event_id)
-      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(row.id)}`));
+      const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
+      const body: AgentResponseBody = await queryInternalApi(url);
+      if (body.data.message == "true") {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.id)))
+      } else {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(row.id)));
+      }
     } else {
       const registryRoute: string =
         !keycloakEnabled ||

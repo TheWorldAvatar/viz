@@ -229,6 +229,10 @@ function makeExternalEndpoint(
         return buildUrl(agentBaseApi, "report", "transaction", "invoice");
       }
       if (type == FormTypeMap.ASSIGN_PRICE) {
+        if (searchParams.get("id") != null) {
+          const id: string = searchParams.get("id");
+          return buildUrl(agentBaseApi, "report", "transaction", "contract", encodeURIComponent(id));
+        }
         return buildUrl(agentBaseApi, "report", "transaction", "model");
       }
       return "";

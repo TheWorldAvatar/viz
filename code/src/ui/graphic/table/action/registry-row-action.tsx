@@ -5,20 +5,19 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { buildUrl } from "utils/client-utils";
-import { browserStorageManager } from "state/browser-storage-manager";
+import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -86,7 +85,7 @@ export default function RegistryRowAction(
     body: string
   ): Promise<void> => {
     startLoading();
-    const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body    );
+    const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body);
     setIsActionMenuOpen(false);
     stopLoading();
     toast(
@@ -109,6 +108,18 @@ export default function RegistryRowAction(
     } else {
       // Move to the view modal page for the specific record
       router.push(buildUrl(Routes.REGISTRY, props.recordType, recordId));
+    }
+  };
+
+  const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
+    const body: AgentResponseBody = await queryInternalApi(url);
+    browserStorageManager.set(EVENT_KEY, props.row.event_id)
+    setIsActionMenuOpen(false);
+    if (body.data.message == "true") {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.id)))
+    } else {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
     }
   };
 
@@ -353,11 +364,7 @@ export default function RegistryRowAction(
                 className="w-full justify-start"
                 label={dict.action.approve}
                 disabled={isLoading}
-                onClick={() => {
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.set(EVENT_KEY, props.row.event_id)
-                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(props.row.id)}`));
-                }}
+                onClick={onGenInvoice}
               />
             )}
           {(!keycloakEnabled ||
