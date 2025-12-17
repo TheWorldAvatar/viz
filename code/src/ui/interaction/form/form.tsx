@@ -393,7 +393,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       {!form.formState.isLoading &&
         renderFormField(
           props.entityType,
-          formTemplate.property.find(
+          formTemplate?.property.find(
             (node) =>
               node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
               (node as PropertyShape).name[VALUE_KEY] === "id"
@@ -402,16 +402,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           -1,
           billingParams
         )}
-      {!form.formState.isLoading && formTemplate.node?.length > 0 && (
+      {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
-          node={formTemplate.node}
+          node={formTemplate?.node}
           form={form}
           billingStore={billingParams}
         />
       )}
       {!form.formState.isLoading &&
-        formTemplate.property
+        formTemplate?.property
           .filter(
             (node) =>
               !(
