@@ -153,43 +153,31 @@ export function applyConfiguredColumnOrder(
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): ColumnDef<FieldValues>[] {
-  if (!config) return columns;
   const configuredOrder: string[] | undefined = config[entityType] || config[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
-  const configuredKeys: string[] = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
-
-  const byAccessorKey: Map<string, ColumnDef<FieldValues>> = new Map();
-  const remaining: ColumnDef<FieldValues>[] = [];
-  for (const col of columns) {
-    // The key of the row object to use when extracting the value for the column. (From TanStack Table docs)
-    const accessorKey = (col as { accessorKey?: string }).accessorKey;
-    if (accessorKey) {
-      byAccessorKey.set(accessorKey, col);
-    }
+  if (columns.length !== configuredOrder.length) {
+    console.warn("Configured column order does not match the number of columns available.");
   }
 
-  const ordered: ColumnDef<FieldValues>[] = [];
-  const used: Set<string> = new Set();
-  for (const key of configuredKeys) {
-    const col: ColumnDef<FieldValues> | undefined = byAccessorKey.get(key);
-    if (col) {
-      ordered.push(col);
-      used.add(key);
-    }
+  let configuredKeys: string[];
+  if (lifecycleStage !== "general" && lifecycleStage !== "account" && lifecycleStage !== "pricing") {
+    configuredKeys = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
+  }
+  else {
+    configuredKeys = configuredOrder;
   }
 
-  for (const col of columns) {
-    const accessorKey = (col as { accessorKey?: string }).accessorKey;
-    // This ensures columns not in the config are still shown, after the ordered ones.
-    if (!accessorKey || !used.has(accessorKey)) {
-      remaining.push(col);
-    }
-  }
+  const orderMap: Map<string, number> = new Map(configuredKeys.map((id, index) => [id, index]));
 
-  return [...ordered, ...remaining];
+  return columns.sort((a, b) => {
+    const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
+    const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
+    const indexA: number = orderMap.get(accessorKeyA ?? "") ?? Infinity; // Use Infinity if id isn't in order array
+    const indexB: number = orderMap.get(accessorKeyB ?? "") ?? Infinity;
+    return indexA - indexB;
+  });
 }
-
 
 
 /**

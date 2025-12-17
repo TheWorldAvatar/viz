@@ -63,7 +63,7 @@ export default class SettingsStore {
    * Retrieves table column order settings from `SettingsStore` class
    */
   public static getTableColumnOrderSettings(): TableColumnOrderSettings {
-    if (!this.TABLE_ORDER_SETTINGS) {
+    if (!this.TABLE_ORDER_SETTINGS || Object.keys(this.TABLE_ORDER_SETTINGS).length === 0) {
       this.readTableColumnOrderSettings();
     }
     return this.TABLE_ORDER_SETTINGS;
