@@ -93,9 +93,22 @@ export default class SettingsStore {
    * Reads the table order settings file and sets it to SettingsStore private field.
    */
   public static readTableColumnOrderSettings(): void {
-    const settings: string = this.readFile(this.TABLE_ORDER_FILE);
-    const jsonifiedSettings: TableColumnOrderSettings = JSON.parse(settings);
-    this.TABLE_ORDER_SETTINGS = jsonifiedSettings;
+    try {
+      const settings: string = this.readFile(this.TABLE_ORDER_FILE);
+      const jsonifiedSettings: TableColumnOrderSettings = JSON.parse(settings);
+      this.TABLE_ORDER_SETTINGS = jsonifiedSettings;
+    } catch (error) {
+      // Check for File Not Found/Missing
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        console.warn("Table column order settings file not detected. Using default column order.");
+        // Check for Invalid JSON (Parsing Error)
+      } else if (error instanceof SyntaxError) {
+        console.error("ERROR: Settings file found but contains invalid JSON. Using default column order.", error);
+        // Other unexpected file I/O errors (e.g., permission denied)
+      } else {
+        console.error("An unexpected error occurred while reading settings file. Using default column order:", error);
+      }
+    }
   }
 
   public static async getRegistryURL(): Promise<string> {
