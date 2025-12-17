@@ -8,6 +8,7 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   SparqlResponseField
 } from "types/form";
@@ -161,7 +162,7 @@ export function applyConfiguredColumnOrder(
   }
 
   let configuredKeys: string[];
-  if (lifecycleStage !== "general" && lifecycleStage !== "account" && lifecycleStage !== "pricing") {
+  if (lifecycleStage !== LifecycleStageMap.GENERAL && lifecycleStage !== LifecycleStageMap.ACCOUNT && lifecycleStage !== LifecycleStageMap.PRICING) {
     configuredKeys = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
   }
   else {
