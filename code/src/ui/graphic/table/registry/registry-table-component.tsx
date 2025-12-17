@@ -22,7 +22,7 @@ interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
-  tableColumnOrder?: TableColumnOrderSettings;
+  tableColumnOrder: TableColumnOrderSettings;
 }
 
 /**
@@ -47,7 +47,7 @@ export default function RegistryTableComponent(
     refreshFlag,
     props.lifecycleStage,
     selectedDate,
-    props.tableColumnOrder ?? null,
+    props.tableColumnOrder,
   );
 
   useEffect(() => {

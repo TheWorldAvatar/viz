@@ -45,14 +45,14 @@ export interface TableDescriptor {
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
-* @param {TableColumnOrderSettings | null} tableColumnOrderConfig Configuration for table column order.
+* @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
 */
 export function useTable(
   entityType: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
-  tableColumnOrder: TableColumnOrderSettings | null = null,
+  tableColumnOrder: TableColumnOrderSettings,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);

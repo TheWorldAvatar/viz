@@ -26,7 +26,7 @@ export default class SettingsStore {
   private static UI_SETTINGS: UISettings | null = null;
   private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
-  private static TABLE_ORDER_SETTINGS: TableColumnOrderSettings | null = null;
+  private static TABLE_ORDER_SETTINGS: TableColumnOrderSettings = {};
 
 
   /**

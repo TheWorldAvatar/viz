@@ -141,14 +141,14 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
  * Applies the configured column order to the given columns.
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
- * @param {TableColumnOrderSettings | null} config Configuration for table column order.
+ * @param {TableColumnOrderSettings} config Configuration for table column order.
  * @param {string} entityType Type of entity for rendering.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 
 export function applyConfiguredColumnOrder(
   columns: ColumnDef<FieldValues>[],
-  config: TableColumnOrderSettings | null,
+  config: TableColumnOrderSettings,
   entityType: string,
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,

@@ -29,7 +29,7 @@ export interface TableDataDescriptor {
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
-* @param {TableColumnOrderSettings | null} tableOrderConfig Configuration for table column order.
+* @param {TableColumnOrderSettings} tableOrderConfig Configuration for table column order.
 */
 export function useTableData(
   entityType: string,
@@ -40,7 +40,7 @@ export function useTableData(
   selectedDate: DateRange,
   apiPagination: PaginationState,
   filters: ColumnFilter[],
-  tableOrderConfig: TableColumnOrderSettings | null,
+  tableOrderConfig: TableColumnOrderSettings
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
