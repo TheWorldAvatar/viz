@@ -299,9 +299,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             leftIcon="filter_list_off"
             iconSize="medium"
             className="mt-1"
-            disabled={props.tableDescriptor.filters.every(
-              (filter) => (filter?.value as string[])?.length == 0
-            )}
+            disabled={props.tableDescriptor.filters.filter(
+              filter => props.lifecycleStage !== LifecycleStageMap.ACTIVITY || filter?.id !== props.accountType
+            ).every((filter) => (filter?.value as string[])?.length == 0)}
             size="icon"
             onClick={() => {
               if (props.lifecycleStage == LifecycleStageMap.ACTIVITY) {
