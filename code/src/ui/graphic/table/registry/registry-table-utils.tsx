@@ -153,7 +153,7 @@ export function applyConfiguredColumnOrder(
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): ColumnDef<FieldValues>[] {
-  const configuredOrder: string[] | undefined = config[entityType] || config[lifecycleStage];
+  const configuredOrder: string[] = config[entityType] || config[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   if (columns.length !== configuredOrder.length) {
