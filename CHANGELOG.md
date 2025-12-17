@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.47.5
+
+### Changes
+
+- Added table column order settings to allow customisation of default column order in registry and billing tables via `config/table-column-order.json` file
+- Updated registry table component to apply custom column order based on entity type and lifecycle stage
+- Updated config.md file to document new table column order settings
+
 ## 5.47.4
 
 ### Bug Fixes
