@@ -8,14 +8,15 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   SparqlResponseField
 } from "types/form";
+import { TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATETIME, XSD_DATE } from "utils/constants";
-
 
 export type TableData = {
   data: FieldValues[];
@@ -134,6 +135,49 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
     }
   }
   return results;
+}
+
+
+/**
+ * Applies the configured column order to the given columns.
+ *
+ * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
+ * @param {TableColumnOrderSettings} config Configuration for table column order.
+ * @param {string} entityType Type of entity for rendering.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+
+export function applyConfiguredColumnOrder(
+  columns: ColumnDef<FieldValues>[],
+  config: TableColumnOrderSettings,
+  entityType: string,
+  lifecycleStage: LifecycleStage,
+  titleDict: Record<string, string>,
+): ColumnDef<FieldValues>[] {
+  const configuredOrder: string[] = config[entityType] || config[lifecycleStage];
+  if (!configuredOrder || configuredOrder.length === 0) return columns;
+
+  if (columns.length !== configuredOrder.length) {
+    console.warn("Configured column order does not match the number of columns available.");
+  }
+
+  let configuredKeys: string[];
+  if (lifecycleStage !== LifecycleStageMap.GENERAL && lifecycleStage !== LifecycleStageMap.ACCOUNT && lifecycleStage !== LifecycleStageMap.PRICING) {
+    configuredKeys = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
+  }
+  else {
+    configuredKeys = configuredOrder;
+  }
+
+  const orderMap: Map<string, number> = new Map(configuredKeys.map((id, index) => [id, index]));
+
+  return columns.sort((a, b) => {
+    const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
+    const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
+    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
+    return indexA - indexB;
+  });
 }
 
 

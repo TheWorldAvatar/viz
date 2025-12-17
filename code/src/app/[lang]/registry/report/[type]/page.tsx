@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 
 /**
@@ -26,11 +26,13 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default function RegistryReportPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={'report'}
+        tableColumnOrder={tableColumnOrderSettings}
       />
     );
   } else {

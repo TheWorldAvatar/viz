@@ -22,6 +22,7 @@ import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
 import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
+import { TableColumnOrderSettings } from "types/settings";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -44,8 +45,15 @@ export interface TableDescriptor {
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
+* @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
 */
-export function useTable(entityType: string, refreshFlag: boolean, lifecycleStage: LifecycleStage, selectedDate: DateRange): TableDescriptor {
+export function useTable(
+  entityType: string,
+  refreshFlag: boolean,
+  lifecycleStage: LifecycleStage,
+  selectedDate: DateRange,
+  tableColumnOrder: TableColumnOrderSettings,
+): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
@@ -53,7 +61,17 @@ export function useTable(entityType: string, refreshFlag: boolean, lifecycleStag
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const { isLoading, tableData, initialInstances } = useTableData(entityType, sortParams, sorting, refreshFlag, lifecycleStage, selectedDate, apiPagination, columnFilters);
+  const { isLoading, tableData, initialInstances } = useTableData(
+    entityType,
+    sortParams,
+    sorting,
+    refreshFlag,
+    lifecycleStage,
+    selectedDate,
+    apiPagination,
+    columnFilters,
+    tableColumnOrder,
+  );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -108,8 +126,6 @@ export function useTable(entityType: string, refreshFlag: boolean, lifecycleStag
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row, index) => row.id + index,
   });
-
-
 
   return {
     isLoading,
