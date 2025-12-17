@@ -173,8 +173,8 @@ export function applyConfiguredColumnOrder(
   return columns.sort((a, b) => {
     const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
     const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-    const indexA: number = orderMap.get(accessorKeyA ?? "") ?? Infinity; // Use Infinity if id isn't in order array
-    const indexB: number = orderMap.get(accessorKeyB ?? "") ?? Infinity;
+    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
     return indexA - indexB;
   });
 }
