@@ -13,6 +13,7 @@
     "close": "Close",
     "refresh": "Refresh",
     "backTo": "back to {replace}s",
+    "excludeFromBilling": "Exclude from billing",
     "export": "Export",
     "upload": "Upload file",
     "overview": "overview",

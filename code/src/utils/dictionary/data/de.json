@@ -13,6 +13,7 @@
     "close": "Schließen",
     "refresh": "Aktualisieren",
     "backTo": "Zurück zur {replace}",
+    "excludeFromBilling": "Von der Abrechnung ausschließen",
     "export": "Exportieren",
     "upload": "Datei hochladen",
     "overview": "Auftragsübersicht",
