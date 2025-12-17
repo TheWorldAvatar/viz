@@ -18,6 +18,7 @@ import Button from "ui/interaction/button";
 import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import BillingModal from "ui/interaction/modal/billing-modal";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -51,6 +52,7 @@ export default function RegistryRowAction(
     React.useState<boolean>(false);
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -184,7 +186,6 @@ export default function RegistryRowAction(
                     }}
                   />
                 )}
-
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
@@ -395,6 +396,26 @@ export default function RegistryRowAction(
             )}
           {(!keycloakEnabled ||
             !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY && (
+              <Button
+                variant="ghost"
+                leftIcon="monetization_on"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label="View Billing Breakdown"
+                disabled={isLoading}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsActionMenuOpen(false);
+                  setIsOpenBillingModal(true);
+                }}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
             permissionScheme.hasPermissions.draftTemplate) &&
             props.lifecycleStage !== LifecycleStageMap.GENERAL && props.lifecycleStage !== LifecycleStageMap.ACCOUNT &&
             props.lifecycleStage !== LifecycleStageMap.PRICING && props.lifecycleStage !== LifecycleStageMap.ACTIVITY && (
@@ -406,6 +427,10 @@ export default function RegistryRowAction(
             )}
         </div>
       </PopoverActionButton>
+      <BillingModal
+        isOpen={isOpenBillingModal}
+        setIsOpen={setIsOpenBillingModal}
+      />
     </div>
   );
 }
