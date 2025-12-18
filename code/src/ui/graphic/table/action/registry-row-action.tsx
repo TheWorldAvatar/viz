@@ -397,14 +397,15 @@ export default function RegistryRowAction(
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY && (
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "readyForPayment" && (
               <Button
                 variant="ghost"
                 leftIcon="monetization_on"
                 size="md"
                 iconSize="medium"
                 className="w-full justify-start"
-                label="View Billing Breakdown"
+                label={dict.action.viewServiceCost}
                 disabled={isLoading}
                 onClick={(e) => {
                   e.preventDefault();
