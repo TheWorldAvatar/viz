@@ -15,10 +15,10 @@ import DraftTemplateButton from "ui/interaction/action/draft-template/draft-temp
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import BillingModal from "ui/interaction/modal/billing-modal";
 import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import BillingModal from "ui/interaction/modal/billing-modal";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -428,10 +428,12 @@ export default function RegistryRowAction(
             )}
         </div>
       </PopoverActionButton>
-      <BillingModal
+      {props.lifecycleStage === LifecycleStageMap.ACTIVITY && isOpenBillingModal && <BillingModal
+        id={recordId}
+        date={props.row.date}
         isOpen={isOpenBillingModal}
         setIsOpen={setIsOpenBillingModal}
-      />
+      />}
     </div>
   );
 }
