@@ -211,6 +211,7 @@
   "title": {
     "actions": "Aktionen",
     "allCol": "Alle anzeigen",
+    "amount": "Betrag",
     "blank": "(leer)",
     "billingStatus": "Abrechnungsstatus",
     "customiseCol": "Spalten ein-/ausblenden",
@@ -226,6 +227,7 @@
     "cancelled": "Abgebrochen",
     "completed": "Abgeschlossen",
     "issue": "Problem",
+    "item": "Artikel",
     "rescinded": "Aufgehoben",
     "terminated": "Beendet",
     "pendingDispatch": "Ausstehende Zuweisung",
@@ -234,11 +236,14 @@
     "pendingApproval": "Ausstehende Genehmigung",
     "nonBillable": "Nicht abrechnungsfähig",
     "quickView": "Schnellansicht",
+    "serviceCharge": "Servicegebühren",
+    "serviceCostBreakdown": "Aufschlüsselung der Servicekosten",
     "scheduleType": "Art des Zeitplans",
     "searchPeriod": "Suchzeitraum",
     "searchCriteria": "SUCHKRITERIEN",
     "status": "Status",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
+    "total": "insgesamt",
     "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
     "loading": "Laden"
   }
