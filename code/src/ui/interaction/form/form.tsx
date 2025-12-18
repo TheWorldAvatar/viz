@@ -37,6 +37,7 @@ import FormSection from "./section/form-section";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { browserStorageManager } from "state/browser-storage-manager";
+import { closeDrawer } from "state/drawer-component-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
@@ -373,6 +374,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // For assign price only, move to the next step to gen invoice
       if (props.formType === FormTypeMap.ASSIGN_PRICE) {
         router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, id))
+      } else if (props.formType === FormTypeMap.ADD_INVOICE) {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY))
       } else {
         setTimeout(() => {
           // Close search modal on success
@@ -384,6 +387,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           }
         }, 2000);
       }
+      // always close drawer with a timeout
+      setTimeout(() => {
+        dispatch(closeDrawer());
+      }, 2000);
     }
   });
 
