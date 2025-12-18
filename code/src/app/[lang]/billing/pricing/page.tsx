@@ -3,7 +3,7 @@ import SettingsStore from "io/config/settings";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { LifecycleStageMap } from "types/form";
-import { NavBarItemSettings, UISettings } from "types/settings";
+import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from "types/settings";
 import RegistryTableComponent from "ui/graphic/table/registry/registry-table-component";
 
 /**
@@ -21,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function PricingModelsPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
 
   if (!uiSettings.modules.billing) {
     redirect(Routes.HOME);
@@ -31,6 +32,7 @@ export default function PricingModelsPage() {
       entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
       accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
       lifecycleStage={LifecycleStageMap.PRICING}
+      tableColumnOrder={tableColumnOrderSettings}
     />
   );
 }

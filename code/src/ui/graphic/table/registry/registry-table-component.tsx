@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { TableColumnOrderSettings } from "types/settings";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
@@ -21,6 +22,7 @@ interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
+  tableColumnOrder: TableColumnOrderSettings;
 }
 
 /**
@@ -40,7 +42,13 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
-  const tableDescriptor: TableDescriptor = useTable(props.entityType, refreshFlag, props.lifecycleStage, selectedDate);
+  const tableDescriptor: TableDescriptor = useTable(
+    props.entityType,
+    refreshFlag,
+    props.lifecycleStage,
+    selectedDate,
+    props.tableColumnOrder,
+  );
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs

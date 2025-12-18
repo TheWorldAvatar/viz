@@ -1,4 +1,4 @@
-import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
+import { ColumnDef, ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -6,15 +6,17 @@ import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
+import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData, applyConfiguredColumnOrder } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { TableColumnOrderSettings } from "types/settings";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
   tableData: TableData;
   initialInstances: RegistryFieldValues[];
 }
+
 
 /**
 * A custom hook to retrieve the total row count.
@@ -27,6 +29,7 @@ export interface TableDataDescriptor {
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
+* @param {TableColumnOrderSettings} tableOrderConfig Configuration for table column order.
 */
 export function useTableData(
   entityType: string,
@@ -36,7 +39,9 @@ export function useTableData(
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   apiPagination: PaginationState,
-  filters: ColumnFilter[]): TableDataDescriptor {
+  filters: ColumnFilter[],
+  tableOrderConfig: TableColumnOrderSettings
+): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [initialInstances, setInitialInstances] = useState<
@@ -109,8 +114,16 @@ export function useTableData(
 
         setInitialInstances(instances);
         const parsedData: TableData = parseDataForTable(instances, dict.title);
+        const orderedColumns: ColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
+          parsedData.columns,
+          tableOrderConfig,
+          entityType,
+          lifecycleStage,
+          dict.title,
+        );
         setData({
           ...parsedData,
+          columns: orderedColumns,
           data: parsedData.data.sort((a: FieldValues, b: FieldValues): number => {
             for (const sort of sorting) {
               const field: string = sort.id;
@@ -141,7 +154,7 @@ export function useTableData(
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType]);
 
   return {
     isLoading,

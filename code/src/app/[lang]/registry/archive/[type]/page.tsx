@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 
 interface ArchiveRegistryPageProps {
@@ -32,12 +32,14 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistryPageProps>) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
   const resolvedParams = await props.params
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={decodeURIComponent(resolvedParams.type)}
         lifecycleStage={'archive'}
+        tableColumnOrder={tableColumnOrderSettings}
       />
     );
   } else {

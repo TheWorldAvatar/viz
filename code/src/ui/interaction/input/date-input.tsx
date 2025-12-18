@@ -137,11 +137,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
             >
               calendar_month
             </Icon>
-            <input
+            <button
               id={id}
               type="button"
-              value={displayedDateValues}
-              readOnly
               className={
                 props.mode === "single" || props.mode === "multiple"
                   ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${props.disabled
@@ -156,7 +154,10 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   }  rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400  dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
               }
               {...popover.getReferenceProps()}
-            />
+              disabled={props.disabled}
+            >
+              {displayedDateValues}
+            </button>
           </div>
         </div>
       )}
