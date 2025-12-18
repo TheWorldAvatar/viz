@@ -227,29 +227,17 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     let response: AgentResponseBody;
     if (isPost) {
-      const res = await fetch(
+      response = await queryInternalApi(
         makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-          credentials: "same-origin",
-          body: JSON.stringify(formData),
-        }
+        "POST",
+        JSON.stringify(formData)
       );
-      response = await res.json();
     } else {
-      const res = await fetch(
+      response = await queryInternalApi(
         makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-          credentials: "same-origin",
-          body: JSON.stringify(formData),
-        }
+        "PUT",
+        JSON.stringify(formData)
       );
-      response = await res.json();
     }
     return response;
   };

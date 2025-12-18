@@ -5,7 +5,6 @@ import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
-import { useSearchParams } from "next/navigation";
 import React from "react";
 import { DateRange } from "react-day-picker";
 import { PermissionScheme } from "types/auth";
@@ -52,7 +51,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
-  const searchParams: URLSearchParams = useSearchParams();
 
   const { options, isLoading, selectedAccount, setSearch, handleUpdateAccount } = useAccountFilterOptions(
     props.accountType,
@@ -238,7 +236,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </>
             )}
-          {(props.lifecycleStage === LifecycleStageMap.PRICING || props.lifecycleStage === LifecycleStageMap.ACTIVITY) && selectedAccount != null && (
+          {props.lifecycleStage === LifecycleStageMap.ACTIVITY && selectedAccount != null && (
             <div className="flex justify-start">
               <div className="w-full md:w-[300px]">
                 <SearchableSimpleSelector
@@ -287,8 +285,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   buildUrl(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
-                    `${props.entityType}${props.lifecycleStage === LifecycleStageMap.PRICING ?
-                      "?account=" + searchParams.get("account") : ""}`
+                    props.entityType
                   )
                 }
               />
@@ -302,12 +299,16 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             leftIcon="filter_list_off"
             iconSize="medium"
             className="mt-1"
-            disabled={props.tableDescriptor.filters.every(
-              (filter) => (filter?.value as string[])?.length == 0
-            )}
+            disabled={props.tableDescriptor.filters.filter(
+              filter => props.lifecycleStage !== LifecycleStageMap.ACTIVITY || filter?.id !== props.accountType
+            ).every((filter) => (filter?.value as string[])?.length == 0)}
             size="icon"
             onClick={() => {
-              props.tableDescriptor.table.resetColumnFilters();
+              if (props.lifecycleStage == LifecycleStageMap.ACTIVITY) {
+                props.tableDescriptor.table.setColumnFilters([props.tableDescriptor.filters.find(filter => filter.id == props.accountType)]);
+              } else {
+                props.tableDescriptor.table.resetColumnFilters();
+              }
               props.tableDescriptor.table.resetRowSelection();
             }}
             tooltipText={dict.action.clearAllFilters}

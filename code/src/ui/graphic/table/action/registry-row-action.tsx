@@ -5,18 +5,20 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { buildUrl } from "utils/client-utils";
+import BillingModal from "ui/interaction/modal/billing-modal";
+import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -50,6 +52,7 @@ export default function RegistryRowAction(
     React.useState<boolean>(false);
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -80,19 +83,12 @@ export default function RegistryRowAction(
 
   const submitPendingActions = async (
     url: string,
-    method: string,
+    method: "POST" | "PUT",
     body: string
   ): Promise<void> => {
     startLoading();
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "same-origin",
-      body,
-    });
+    const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body);
     setIsActionMenuOpen(false);
-    const customAgentResponse: AgentResponseBody = await res.json();
     stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
@@ -115,6 +111,27 @@ export default function RegistryRowAction(
       // Move to the view modal page for the specific record
       router.push(buildUrl(Routes.REGISTRY, props.recordType, recordId));
     }
+  };
+
+  const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
+    const body: AgentResponseBody = await queryInternalApi(url);
+    browserStorageManager.set(EVENT_KEY, props.row.event_id)
+    setIsActionMenuOpen(false);
+    if (body.data.message == "true") {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id)))
+    } else {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
+    }
+  };
+
+  const onExcludeBilling: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    setIsActionMenuOpen(false);
+    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.EXCLUDE_INVOICE);
+    submitPendingActions(url, "POST", JSON.stringify({
+      id: getId(props.row.event_id),
+      event: props.row.event_id,
+    }));
   };
 
   const isSubmissionOrGeneralPage: boolean =
@@ -169,7 +186,6 @@ export default function RegistryRowAction(
                     }}
                   />
                 )}
-
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
@@ -349,7 +365,8 @@ export default function RegistryRowAction(
           {(!keycloakEnabled ||
             !permissionScheme ||
             permissionScheme.hasPermissions.sales) &&
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY && (
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "pendingApproval" && (
               <Button
                 variant="ghost"
                 leftIcon="price_check"
@@ -358,9 +375,43 @@ export default function RegistryRowAction(
                 className="w-full justify-start"
                 label={dict.action.approve}
                 disabled={isLoading}
-                onClick={() => {
+                onClick={onGenInvoice}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "pendingApproval" && (
+              <Button
+                variant="ghost"
+                leftIcon="money_off"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.excludeFromBilling}
+                disabled={isLoading}
+                onClick={onExcludeBilling}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "readyForPayment" && (
+              <Button
+                variant="ghost"
+                leftIcon="monetization_on"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.viewServiceCost}
+                disabled={isLoading}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   setIsActionMenuOpen(false);
-                  router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(props.row.id)}?event=${encodeURIComponent(props.row.event_id)}`));
+                  setIsOpenBillingModal(true);
                 }}
               />
             )}
@@ -377,6 +428,12 @@ export default function RegistryRowAction(
             )}
         </div>
       </PopoverActionButton>
+      {props.lifecycleStage === LifecycleStageMap.ACTIVITY && isOpenBillingModal && <BillingModal
+        id={recordId}
+        date={props.row.date}
+        isOpen={isOpenBillingModal}
+        setIsOpen={setIsOpenBillingModal}
+      />}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
+import { browserStorageManager } from "state/browser-storage-manager";
 import {
   BillingEntityTypes,
   FormTemplateType,
@@ -23,7 +24,7 @@ import {
   RegistryFieldValues,
   SparqlResponseField,
   TYPE_KEY,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
 import { extractResponseField, getAfterDelimiter } from "utils/client-utils";
 
@@ -294,6 +295,10 @@ function initFormField(
     // If no default value is available for id, value will default to the id
     if (field.name[VALUE_KEY] == "id" && !defaultVal) {
       defaultVal = outputState.id;
+    }
+    // For a form to assign price, there is a customer account stored that should be defaulted to
+    if (outputState["formType"] == FormTypeMap.ASSIGN_PRICE && !!browserStorageManager.get(field.name[VALUE_KEY])) {
+      defaultVal = browserStorageManager.get(field.name[VALUE_KEY]);
     }
     outputState[fieldId] = getDefaultVal(
       fieldId,
@@ -726,11 +731,13 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
     case FormTypeMap.ADD:
     case FormTypeMap.ADD_BILL:
     case FormTypeMap.ADD_PRICE:
-    case FormTypeMap.ADD_INVOICE:
       return dict.action.add;
+    case FormTypeMap.ADD_INVOICE:
+      return dict.action.addAdjustment;
     case FormTypeMap.EDIT:
-    case FormTypeMap.ASSIGN_PRICE:
       return dict.action.edit;
+    case FormTypeMap.ASSIGN_PRICE:
+      return dict.action.assign;
     case FormTypeMap.DELETE:
       return dict.action.delete;
     case FormTypeMap.SEARCH:

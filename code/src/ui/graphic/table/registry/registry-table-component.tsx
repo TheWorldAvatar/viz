@@ -92,6 +92,7 @@ export default function RegistryTableComponent(
             selectedDate={selectedDate}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}
+            accountType={props.accountType}
           />
         ) : (
           <div className="text-lg ml-6">{dict.message.noResultFound}</div>

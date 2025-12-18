@@ -118,7 +118,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
             return formatValueByDataType(value, dataType);
           }
 
-          if (col.toLowerCase() === "status") {
+          if (col.toLowerCase() === "status" || col === titleDict.billingStatus) {
             return <StatusComponent status={value} />;
           }
 
@@ -218,6 +218,10 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
       delete outputRow[field];
       outputRow[titleDict.scheduleType] = currentVal;
       return titleDict.scheduleType;
+    case "billingstatus":
+      delete outputRow[field];
+      outputRow[titleDict.billingStatus] = currentVal;
+      return titleDict.billingStatus;
     case "status":
       delete outputRow[field];
       outputRow[titleDict.status] = currentVal;
@@ -265,6 +269,8 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
       return "lastModified";
     case titleDict.scheduleType.toLowerCase():
       return "scheduleType";
+    case titleDict.billingStatus.toLowerCase():
+      return "billingStatus";
     case titleDict.status.toLowerCase():
       return "status";
     default:

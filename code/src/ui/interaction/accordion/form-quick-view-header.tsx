@@ -52,7 +52,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     if (action == "add" && props.accountType == props.entityType) {
       return buildUrl(Routes.REGISTRY_ADD, "account", props.entityType);
     } else if (action == "add" && props.pricingType == props.entityType) {
-      return buildUrl(Routes.REGISTRY_ADD, "pricing", `${props.entityType}?account=${props.accountId}`);
+      return buildUrl(Routes.REGISTRY_ADD, "pricing", props.entityType);
     }
     return buildUrl(action == "add" ? Routes.REGISTRY_ADD :
       action == "edit" ? Routes.REGISTRY_EDIT : Routes.REGISTRY_DELETE,

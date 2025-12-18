@@ -1,4 +1,4 @@
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -22,8 +22,8 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { buildUrl, getAfterDelimiter, getNormalizedDate } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
 import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
@@ -36,7 +36,10 @@ import FormSection from "./section/form-section";
 
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { closeDrawer } from "state/drawer-component-slice";
 import { toast } from "ui/interaction/action/toast/toast";
+import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormComponentProps {
@@ -74,7 +77,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const searchParams: URLSearchParams = useSearchParams();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -97,15 +99,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         url =
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType, id);
       }
-      const template: FormTemplateType = await fetch(url,
-        {
-          cache: "no-store",
-          credentials: "same-origin",
-        }
-      ).then(async (res) => {
-        const body: AgentResponseBody = await res.json();
-        return body.data?.items?.[0] as FormTemplateType;
-      });
+      const body: AgentResponseBody = await queryInternalApi(url);
+      const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
       if (!template) {
         return initialState;
       }
@@ -207,174 +202,111 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     switch (props.formType) {
       case FormTypeMap.ADD: {
         // Add entity via API route
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
 
         // For registry's primary entity, a draft lifecycle must also be generated
-        if (props.isPrimaryEntity && res.ok) {
-          const draftRes = await fetch(
+        if (props.isPrimaryEntity && !pendingResponse.error) {
+          pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              cache: "no-store",
-              credentials: "same-origin",
-              body: JSON.stringify({
-                contract: pendingResponse.data?.id,
-                ...formData,
-              }),
-            }
-          );
-          pendingResponse = await draftRes.json();
-          if (draftRes.ok && formData[billingParams.pricing.replace("_", " ")]) {
-            formData["pricing"] = formData[billingParams.pricing.replace("_", " ")];
-            const pricingRes = await fetch(
+            "POST",
+            JSON.stringify({
+              contract: pendingResponse.data?.id,
+              ...formData,
+            }));
+          if (!pendingResponse.error && formData[billingParams.pricingField]) {
+            pendingResponse = await queryInternalApi(
               makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                cache: "no-store",
-                credentials: "same-origin",
-                body: JSON.stringify({
-                  contract: pendingResponse.data?.id,
-                  ...formData,
-                }),
-              }
-            );
-            pendingResponse = await pricingRes.json();
+              "PUT",
+              JSON.stringify({
+                ...formData,
+                pricing: formData[billingParams.pricingField],
+                contract: pendingResponse.data?.id,
+              }));
           }
         }
         break;
       }
       case FormTypeMap.ADD_BILL: {
         formData["type"] = props.entityType;
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.ACCOUNT),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.ADD_PRICE: {
         formData["type"] = props.entityType;
-        formData["account"] = decodeURIComponent(searchParams.get("account"));
-        const res = await fetch(
+        formData["account"] = decodeURIComponent(getId(formData[billingParams.accountField]));
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.ADD_INVOICE: {
-        formData["event"] = decodeURIComponent(searchParams.get("event"));
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "POST",
+          JSON.stringify({
+            ...formData,
+            event: browserStorageManager.get(EVENT_KEY)
+          }));
         break;
       }
       case FormTypeMap.ASSIGN_PRICE: {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({ ...formData }),
-          }
-        );
-        pendingResponse = await res.json();
+          "PUT",
+          JSON.stringify(formData));
         break;
       }
       case FormTypeMap.DELETE: {
         // Delete entity via API route
-        const res = await fetch(
-          makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INSTANCES,
-            props.entityType,
-            "false",
-            formData[FORM_STATES.ID],
-            null,
-            null,
-            null,
-            null,
-            null,
-            formData["branch_delete"]
-          ),
-          {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-          }
-        );
-        pendingResponse = await res.json();
+        pendingResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(
+          InternalApiIdentifierMap.INSTANCES,
+          props.entityType,
+          "false",
+          formData[FORM_STATES.ID],
+          null,
+          null,
+          null,
+          null,
+          null,
+          formData["branch_delete"]
+        ), "DELETE");
         break;
       }
       case FormTypeMap.EDIT: {
         // Update entity via API route
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             formData.id
-          ),
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify(formData),
-          }
-        );
-        pendingResponse = await res.json();
-
-        if (props.isPrimaryEntity && res.ok) {
-          const draftRes = await fetch(
+          ), "PUT", JSON.stringify(formData));
+        if (props.isPrimaryEntity && !pendingResponse.error) {
+          pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
-            {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              cache: "no-store",
-              credentials: "same-origin",
-              body: JSON.stringify({
+            "PUT",
+            JSON.stringify({
+              ...formData,
+              contract: props.primaryInstance,
+            }));
+          if (!pendingResponse.error && formData[billingParams.pricingField]) {
+            pendingResponse = await queryInternalApi(
+              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+              "PUT",
+              JSON.stringify({
                 ...formData,
-                contract: props.primaryInstance,
-              }),
-            }
-          );
-          pendingResponse = await draftRes.json();
+                pricing: formData[billingParams.pricingField],
+                contract: pendingResponse.data?.id,
+              }));
+          }
         }
         break;
       }
@@ -392,27 +324,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             };
           }
         });
-
-        const res = await fetch(
+        pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             props.entityType,
             "false",
             "search"
-          ),
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-            credentials: "same-origin",
-            body: JSON.stringify({
-              ...formData,
-            }),
-          }
-        );
-        pendingResponse = await res.json();
+          ), "POST", JSON.stringify(formData));
 
-        if (res.ok) {
+        if (!pendingResponse.error) {
           if (pendingResponse.data?.items?.length === 0) {
             pendingResponse.data.message = dict.message.noMatchFeature;
           } else {
@@ -453,7 +373,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (!pendingResponse?.error) {
       // For assign price only, move to the next step to gen invoice
       if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, `${id}?event=${searchParams.get("event")}`))
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, id))
+      } else if (props.formType === FormTypeMap.ADD_INVOICE) {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY))
       } else {
         setTimeout(() => {
           // Close search modal on success
@@ -462,13 +384,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           } else {
             // Redirect back for other types (add and edit) as users will want to see their changes
             router.back();
-            // Redirect twice for add invoice
-            if (props.formType === FormTypeMap.ADD_INVOICE) {
-              router.back();
-            }
           }
         }, 2000);
       }
+      // always close drawer with a timeout
+      setTimeout(() => {
+        dispatch(closeDrawer());
+      }, 2000);
     }
   });
 
@@ -478,7 +400,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       {!form.formState.isLoading &&
         renderFormField(
           props.entityType,
-          formTemplate.property.find(
+          formTemplate?.property.find(
             (node) =>
               node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
               (node as PropertyShape).name[VALUE_KEY] === "id"
@@ -487,16 +409,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           -1,
           billingParams
         )}
-      {!form.formState.isLoading && formTemplate.node?.length > 0 && (
+      {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
-          node={formTemplate.node}
+          node={formTemplate?.node}
           form={form}
           billingStore={billingParams}
         />
       )}
       {!form.formState.isLoading &&
-        formTemplate.property
+        formTemplate?.property
           .filter(
             (node) =>
               !(

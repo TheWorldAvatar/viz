@@ -31,6 +31,7 @@ export const FormTypeMap = {
   ASSIGN_PRICE: "assignprice",
   DELETE: "delete",
   EDIT: "edit",
+  EXCLUDE_INVOICE: "nonbillable",
   VIEW: "view",
   SEARCH: "search",
   DISPATCH: "dispatch",
