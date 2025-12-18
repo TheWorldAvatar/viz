@@ -56,22 +56,22 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                 <div>
                     <div className="flex items-center justify-between mt-4 bg-ring p-2.5 rounded-sm">
                         <p className="font-bold text-foreground">{dict.title.item}</p>
-                        <p className="text-muted-foreground">{dict.title.amount}</p>
+                        <p className="text-foreground">{dict.title.amount}</p>
                     </div>
                     {costDetails != null && !isLoading ? (
-                        <div className="flex flex-col max-h-[60vh]">
+                        <div className="flex flex-col max-h-[40vh] md:max-h-[50vh] lg:max-h-[60vh]">
                             <div className="flex-1 overflow-y-auto pr-2">
                                 {/* Base service cost */}
                                 <div className="flex p-2 justify-between mt-2">
                                     <p className="text-md max-w-sm font-bold">{dict.title.serviceCharge}</p>
-                                    <p className="text-muted-foreground">${costDetails?.amount}</p>
+                                    <p className="text-foreground">${costDetails?.amount}</p>
                                 </div>
 
                                 {/* Additional charges */}
                                 {costDetails?.charge?.map((charge, index) => (
                                     <div key={index} className="flex p-2 justify-between">
-                                        <p className="text-sm w-58 md:w-md text-gray-600 dark:text-gray-300">{charge?.description}</p>
-                                        <p className="text-green-600 dark:text-green-700">+ ${charge?.amount}</p>
+                                        <p className="text-sm text-pretty w-58 md:w-md text-gray-600 dark:text-gray-300">{charge?.description}</p>
+                                        <p className="text-gray-600 dark:text-gray-300">+ ${charge?.amount}</p>
                                     </div>
                                 ))}
 
@@ -79,7 +79,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                                 {costDetails?.discount?.map((discount, index) => (
                                     <div key={index} className="flex p-2 justify-between">
                                         <p className="text-sm w-58 md:w-md text-gray-600 dark:text-gray-300">{discount?.description}</p>
-                                        <p className="text-red-600 dark:text-red-700">- ${discount?.amount}</p>
+                                        <p className="text-gray-600 dark:text-gray-300">- ${discount?.amount}</p>
                                     </div>
                                 ))}
                             </div>
