@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.49.1
+
+### Bug Fix
+
+- Fixed the wrong ID given for adjustments after assigning pricing model
+- Fixed the display of service price and total
+
 ## 5.49.0
 
 - NextJS security patch CVE-2025-55184 and CVE-2025-55183

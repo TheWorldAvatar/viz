@@ -371,26 +371,22 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-      // For assign price only, move to the next step to gen invoice
-      if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, id))
-      } else if (props.formType === FormTypeMap.ADD_INVOICE) {
-        router.push(buildUrl(Routes.BILLING_ACTIVITY))
-      } else {
-        setTimeout(() => {
-          // Close search modal on success
-          if (props.formType === FormTypeMap.SEARCH) {
-            props.setShowSearchModalState(false);
-          } else {
-            // Redirect back for other types (add and edit) as users will want to see their changes
-            router.back();
-          }
-        }, 2000);
-      }
-      // always close drawer with a timeout
       setTimeout(() => {
+        // always close drawer with a timeout
         dispatch(closeDrawer());
-      }, 2000);
+        // For assign price only, move to the next step to gen invoice
+        if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+          router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))
+        } else if (props.formType === FormTypeMap.ADD_INVOICE) {
+          router.push(buildUrl(Routes.BILLING_ACTIVITY))
+          // Close search modal on success
+        } else if (props.formType === FormTypeMap.SEARCH) {
+          props.setShowSearchModalState(false);
+        } else {
+          // Redirect back for other types (add and edit) as users will want to see their changes
+          router.back();
+        }
+      }, 1000);
     }
   });
 

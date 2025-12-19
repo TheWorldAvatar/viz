@@ -64,7 +64,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                                 {/* Base service cost */}
                                 <div className="flex p-2 justify-between mt-2">
                                     <p className="text-md max-w-sm font-bold">{dict.title.serviceCharge}</p>
-                                    <p className="text-foreground">${costDetails?.amount}</p>
+                                    <p className="text-foreground">${costDetails?.price}</p>
                                 </div>
 
                                 {/* Additional charges */}
@@ -86,7 +86,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
 
                             <div className="flex items-center justify-end gap-10 mt-2 p-2 border-t border-border">
                                 <p>{dict.title.total}</p>
-                                <p className="font-bold">${costDetails?.price}</p>
+                                <p className="font-bold">${costDetails?.amount}</p>
                             </div>
                         </div>
                     ) : (
