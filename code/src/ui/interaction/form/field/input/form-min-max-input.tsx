@@ -1,5 +1,3 @@
-import fieldStyles from "../field.module.css";
-import styles from "./input.module.css";
 
 import { FieldError, UseFormReturn } from "react-hook-form";
 
@@ -29,19 +27,21 @@ export default function FormInputMinMaxField(
   const originalField: string = props.field.fieldId;
   const minFieldId: string = "min " + originalField;
   const maxFieldId: string = "max " + originalField;
+  const inputFieldStyles: string = "text-foreground w-full h-[1.8rem] p-5 my-2 rounded-lg border border-border bg-muted text-sm";
+
   return (
     <FormInputContainer
       field={props.field}
       error={props.form.formState.errors[originalField] as FieldError}
       labelStyles={props.options?.labelStyle}
     >
-      <div className={styles["min-max-container"]}>
+      <div className={"flex flex-col justify-between"}>
         <div>
           <label
             className={props.options?.labelStyle.join(" ")}
             htmlFor={minFieldId}
           >
-            <span className={fieldStyles["field-text"]}>{dict.form.min}:</span>
+            <p className={"text-gray-600 text-sm"}>{dict.form.min}:</p>
           </label>
           <NumericInputField
             field={{
@@ -49,16 +49,15 @@ export default function FormInputMinMaxField(
               fieldId: minFieldId,
             }}
             form={props.form}
-            options={{ inputStyle: [styles["min-max-input-value"]] }}
+            options={{ inputStyle: [inputFieldStyles] }}
           />
         </div>
-        <div className={styles["min-max-divider"]}></div>
         <div>
           <label
             className={props.options?.labelStyle.join(" ")}
             htmlFor={maxFieldId}
           >
-            <span className={fieldStyles["field-text"]}>{dict.form.max}:</span>
+            <p className={"text-gray-600 text-sm"}>{dict.form.max}:</p>
           </label>
           <NumericInputField
             field={{
@@ -66,7 +65,7 @@ export default function FormInputMinMaxField(
               fieldId: maxFieldId,
             }}
             form={props.form}
-            options={{ inputStyle: [styles["min-max-input-value"]] }}
+            options={{ inputStyle: [inputFieldStyles] }}
           />
         </div>
       </div>
