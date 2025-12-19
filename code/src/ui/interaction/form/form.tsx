@@ -376,7 +376,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         dispatch(closeDrawer());
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-          router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, id))
+          router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))
         } else if (props.formType === FormTypeMap.ADD_INVOICE) {
           router.push(buildUrl(Routes.BILLING_ACTIVITY))
           // Close search modal on success
