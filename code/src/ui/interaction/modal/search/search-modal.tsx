@@ -1,5 +1,4 @@
 "use client";
-import styles from "./search.modal.module.css";
 
 import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
@@ -7,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { useDictionary } from "hooks/useDictionary";
 import { setFilterFeatureIris } from "state/map-feature-slice";
 import { Dictionary } from "types/dictionary";
+import { FormTypeMap } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
@@ -47,20 +47,20 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
       setIsOpen={props.setShowState}
       className="h-[90vh] w-[90vw]"
     >
-      <h1>{dict.title.searchCriteria}</h1>
-      <section className={styles["section-contents"]}>
+      <h1 className="text-xl font-bold">{dict.title.searchCriteria}</h1>
+      <section className={"overflow-y-auto overflow-x-hidden md:p-3 p-1 h-[60vh] max-h-[60vh]"}>
         <FormComponent
           formRef={formRef}
           entityType={props.id}
-          formType={"search"}
+          formType={FormTypeMap.SEARCH}
           setShowSearchModalState={props.setShowState}
         />
       </section>
-      <section className={styles["section-footer"]}>
+      <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
         )}
-        <div className={styles["footer-button-row"]}>
+        <div className="flex flex-wrap gap-2.5 2xl:gap-2">
           <Button
             leftIcon="search"
             label={dict.action.search}
