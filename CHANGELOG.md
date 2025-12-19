@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.49.2
+
+### Bug Fix
+
+- Fixed the search modal functionality and design
+
 ## 5.49.1
 
 ### Bug Fix
