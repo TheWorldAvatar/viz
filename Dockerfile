@@ -12,10 +12,10 @@
 
 # ---- Base Image ----
 FROM node:25.2-slim AS base
-RUN corepack enable
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 WORKDIR /twa
 RUN mkdir .public_hash
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 COPY ./code/package.json  ./
 
 # ---- Production Image ----
@@ -26,5 +26,5 @@ COPY ./code ./
 COPY check-build-start.sh /twa/check-build-start.sh
 RUN chmod +x /twa/check-build-start.sh
 EXPOSE 3000
-ENV HOSTNAME "0.0.0.0"
+ENV HOSTNAME=0.0.0.0
 CMD [ "/twa/check-build-start.sh" ]
