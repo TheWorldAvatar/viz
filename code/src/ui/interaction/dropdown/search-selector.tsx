@@ -93,7 +93,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           <SelectOption
             key={option + index}
             option={props.label === "status" ? dict.title[option.toLowerCase()] : option}
-            labelComponent={props.label === "status" ? <StatusComponent status={option} /> : null}
+            labelComponent={props.label === "status" || props.label === dict.title.billingStatus ? <StatusComponent status={option} /> : null}
             initialChecked={selectedOptions.includes(option)}
             onClick={() => {
               if (selectedOptions.includes(option)) {

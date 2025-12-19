@@ -7,28 +7,40 @@ export const PROPERTY_SHAPE_TYPE = "PropertyShape";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
 
-export type LifecycleStage =
-  | "general"
-  | "pending"
-  | "active"
-  | "archive"
-  | "report"
-  | "tasks"
-  | "outstanding"
-  | "scheduled"
-  | "closed";
+export const LifecycleStageMap = {
+  GENERAL: "general",
+  PENDING: "pending",
+  ACTIVE: "active",
+  ARCHIVE: "archive",
+  TASKS: "tasks",
+  REPORT: "report",
+  OUTSTANDING: "outstanding",
+  SCHEDULED: "scheduled",
+  CLOSED: "closed",
+  ACCOUNT: "account",
+  ACTIVITY: "activity",
+  PRICING: "pricing",
+} as const;
+export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
 
-export type FormType =
-  | "add"
-  | "delete"
-  | "edit"
-  | "view"
-  | "search"
-  | "dispatch"
-  | "complete"
-  | "cancel"
-  | "report"
-  | "terminate";
+export const FormTypeMap = {
+  ADD: "add",
+  ADD_BILL: "addbill",
+  ADD_PRICE: "addprice",
+  ADD_INVOICE: "addinvoice",
+  ASSIGN_PRICE: "assignprice",
+  DELETE: "delete",
+  EDIT: "edit",
+  EXCLUDE_INVOICE: "nonbillable",
+  VIEW: "view",
+  SEARCH: "search",
+  DISPATCH: "dispatch",
+  COMPLETE: "complete",
+  CANCEL: "cancel",
+  REPORT: "report",
+  TERMINATE: "terminate",
+} as const;
+export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 
 export interface SparqlResponseField {
   value: string;
@@ -66,6 +78,13 @@ export type FormTemplateType = {
   "@context": Record<string, string>;
   node: NodeShape[];
   property: PropertyShapeOrGroup[];
+};
+
+export type BillingEntityTypes = {
+  account: string;
+  accountField: string;
+  pricing: string;
+  pricingField: string;
 };
 
 export interface NodeShape {

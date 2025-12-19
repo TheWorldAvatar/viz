@@ -3,9 +3,9 @@ import { useDebounce } from "hooks/useDebounce";
 import { useDictionary } from "hooks/useDictionary";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { parseColumnFiltersIntoUrlParams, parseTranslatedFieldToOriginal } from "ui/graphic/table/registry/registry-table-utils";
 import { getAfterDelimiter, getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
@@ -56,11 +56,12 @@ export function useFilterOptions(
         // Fetch service tasks for a specific contract
         let url: string;
         if (
-          lifecycleStage == "scheduled" ||
-          lifecycleStage == "closed"
+          lifecycleStage == LifecycleStageMap.SCHEDULED ||
+          lifecycleStage == LifecycleStageMap.CLOSED ||
+          lifecycleStage == LifecycleStageMap.ACTIVITY
         ) {
           url = makeInternalRegistryAPIwithParams(
-            "filter",
+            InternalApiIdentifierMap.FILTER,
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
             debouncedSearch,
@@ -70,13 +71,18 @@ export function useFilterOptions(
             getUTCDate(selectedDate.to).getTime().toString(),
           );
         } else {
+          let parsedStage: string = lifecycleStage;
+          if (lifecycleStage == LifecycleStageMap.ACCOUNT ||
+            lifecycleStage == LifecycleStageMap.PRICING) {
+            parsedStage = LifecycleStageMap.GENERAL;
+          }
           url = makeInternalRegistryAPIwithParams(
-            "filter",
+            InternalApiIdentifierMap.FILTER,
             entityType,
             parseTranslatedFieldToOriginal(field, dict.title),
             debouncedSearch,
             filterParams,
-            lifecycleStage,
+            parsedStage,
           );
         }
         const res: AgentResponseBody = await queryInternalApi(url);

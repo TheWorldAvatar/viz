@@ -4,9 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
+import { browserStorageManager } from "state/browser-storage-manager";
 import {
+  BillingEntityTypes,
   FormTemplateType,
   FormType,
+  FormTypeMap,
   ID_KEY,
   NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
@@ -21,7 +24,7 @@ import {
   RegistryFieldValues,
   SparqlResponseField,
   TYPE_KEY,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
 import { extractResponseField, getAfterDelimiter } from "utils/client-utils";
 
@@ -70,10 +73,12 @@ export const ENTITY_STATUS: Record<string, string> = {
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
+ * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): PropertyShapeOrGroup[] {
   return fields.map((field) => {
     // Properties as part of a group
@@ -101,6 +106,12 @@ export function parsePropertyShapeOrGroupList(
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        // Replace account or pricing field with the field ID so that we can still retrieve the old values
+        if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+          billingTypes.accountField = fieldId;
+        } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+          billingTypes.pricingField = fieldId;
+        }
         return initFormField(updatedProp, initialState, fieldId);
       });
       // Update the property group with updated properties
@@ -142,11 +153,13 @@ export function parsePropertyShapeOrGroupList(
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
  * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
+ * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  */
 export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
   reqMatching: boolean,
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): NodeShape[] {
   // Early termination
   if (nodeShapes.length === 0) {
@@ -157,7 +170,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes);
     nodeStates.push(nodeState);
     results.push({
       ...shape,
@@ -283,6 +296,10 @@ function initFormField(
     if (field.name[VALUE_KEY] == "id" && !defaultVal) {
       defaultVal = outputState.id;
     }
+    // For a form to assign price, there is a customer account stored that should be defaulted to
+    if (outputState["formType"] == FormTypeMap.ASSIGN_PRICE && !!browserStorageManager.get(field.name[VALUE_KEY])) {
+      defaultVal = browserStorageManager.get(field.name[VALUE_KEY]);
+    }
     outputState[fieldId] = getDefaultVal(
       fieldId,
       defaultVal,
@@ -311,7 +328,8 @@ export function getDefaultVal(
 ): boolean | number | string {
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
-    if (formType == "add" || formType == "search" || !defaultValue) {
+    if (formType == FormTypeMap.ADD || formType == FormTypeMap.SEARCH ||
+      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
@@ -708,15 +726,21 @@ export function findMatchingDropdownOptionValue(
  */
 export function translateFormType(input: FormType, dict: Dictionary): string {
   switch (input) {
-    case "view":
+    case FormTypeMap.VIEW:
       return dict.action.view;
-    case "add":
+    case FormTypeMap.ADD:
+    case FormTypeMap.ADD_BILL:
+    case FormTypeMap.ADD_PRICE:
       return dict.action.add;
-    case "edit":
+    case FormTypeMap.ADD_INVOICE:
+      return dict.action.addAdjustment;
+    case FormTypeMap.EDIT:
       return dict.action.edit;
-    case "delete":
+    case FormTypeMap.ASSIGN_PRICE:
+      return dict.action.assign;
+    case FormTypeMap.DELETE:
       return dict.action.delete;
-    case "search":
+    case FormTypeMap.SEARCH:
       return dict.action.search;
     case "terminate":
       return dict.action.terminate;

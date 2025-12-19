@@ -4,6 +4,7 @@ import { FieldValues, UseFormReturn } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import {
+  BillingEntityTypes,
   NodeShape,
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
@@ -20,10 +21,11 @@ import { renderFormField } from "../form";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "../form-utils";
 import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 
-interface OptionBasedFormSectionProps {
+interface BranchFormSectionProps {
   entityType: string;
   node: NodeShape[];
   form: UseFormReturn;
+  billingStore?: BillingEntityTypes;
 }
 /**
  * This component renders a branch form section that displays different form fields based on the selected branch option
@@ -32,9 +34,10 @@ interface OptionBasedFormSectionProps {
  * @param {string} entityType The type of entity.
  * @param {NodeShape[]} node A list containing the potential form field configurations available.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  */
 export default function BranchFormSection(
-  props: Readonly<OptionBasedFormSectionProps>
+  props: Readonly<BranchFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
   const [isSwitching, setIsSwitching] = useState<boolean>(true);
@@ -146,7 +149,7 @@ export default function BranchFormSection(
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
         : selectedModel?.property.map((field, index) => {
-          return renderFormField(props.entityType, field, props.form, index);
+          return renderFormField(props.entityType, field, props.form, index, props.billingStore);
         })}
     </>
   );

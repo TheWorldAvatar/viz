@@ -5,18 +5,20 @@ import { Routes } from "io/config/routes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { PermissionScheme } from "types/auth";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
-import { buildUrl } from "utils/client-utils";
+import BillingModal from "ui/interaction/modal/billing-modal";
+import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -50,6 +52,7 @@ export default function RegistryRowAction(
     React.useState<boolean>(false);
 
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
@@ -57,7 +60,7 @@ export default function RegistryRowAction(
       remarks: "Contract has been approved successfully!",
     };
     const url: string = makeInternalRegistryAPIwithParams(
-      "event",
+      InternalApiIdentifierMap.EVENT,
       "service",
       "commence"
     );
@@ -71,7 +74,7 @@ export default function RegistryRowAction(
       contract: recordId,
     };
     const url: string = makeInternalRegistryAPIwithParams(
-      "event",
+      InternalApiIdentifierMap.EVENT,
       "draft",
       "reset"
     );
@@ -80,19 +83,12 @@ export default function RegistryRowAction(
 
   const submitPendingActions = async (
     url: string,
-    method: string,
+    method: "POST" | "PUT",
     body: string
   ): Promise<void> => {
     startLoading();
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "same-origin",
-      body,
-    });
+    const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body);
     setIsActionMenuOpen(false);
-    const customAgentResponse: AgentResponseBody = await res.json();
     stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
@@ -104,11 +100,10 @@ export default function RegistryRowAction(
 
   const handleClickView = (): void => {
     if (
-      props.lifecycleStage == "tasks" ||
-      props.lifecycleStage == "report" ||
-      props.lifecycleStage == "outstanding" ||
-      props.lifecycleStage == "scheduled" ||
-      props.lifecycleStage == "closed"
+      props.lifecycleStage == LifecycleStageMap.TASKS ||
+      props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+      props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+      props.lifecycleStage == LifecycleStageMap.CLOSED
     ) {
       // Navigate to task view modal route
       router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
@@ -118,8 +113,31 @@ export default function RegistryRowAction(
     }
   };
 
+  const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
+    const body: AgentResponseBody = await queryInternalApi(url);
+    browserStorageManager.set(EVENT_KEY, props.row.event_id)
+    setIsActionMenuOpen(false);
+    if (body.data.message == "true") {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id)))
+    } else {
+      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
+    }
+  };
+
+  const onExcludeBilling: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    setIsActionMenuOpen(false);
+    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.EXCLUDE_INVOICE);
+    submitPendingActions(url, "POST", JSON.stringify({
+      id: getId(props.row.event_id),
+      event: props.row.event_id,
+    }));
+  };
+
   const isSubmissionOrGeneralPage: boolean =
-    props.lifecycleStage == "pending" || props.lifecycleStage == "general" || props.lifecycleStage == "active" || props.lifecycleStage == "archive";
+    props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
+    props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
+    props.lifecycleStage == LifecycleStageMap.ACTIVE || props.lifecycleStage == LifecycleStageMap.ARCHIVE;
 
   return (
     <div aria-label="Actions">
@@ -151,7 +169,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === "active" && (
+                props.lifecycleStage === LifecycleStageMap.ACTIVE && (
                   <Button
                     variant="ghost"
                     leftIcon="block"
@@ -168,11 +186,10 @@ export default function RegistryRowAction(
                     }}
                   />
                 )}
-
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === "pending" && (
+                props.lifecycleStage === LifecycleStageMap.PENDING && (
                   <Button
                     variant="ghost"
                     leftIcon="done_outline"
@@ -188,7 +205,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.sales) &&
-                props.lifecycleStage === "pending" &&
+                props.lifecycleStage === LifecycleStageMap.PENDING &&
                 props.row?.status?.toLowerCase() === "amended" && (
                   <Button
                     variant="ghost"
@@ -262,8 +279,8 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.completeTask) &&
-                (props.lifecycleStage === "outstanding" ||
-                  props.lifecycleStage === "closed") &&
+                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+                  props.lifecycleStage === LifecycleStageMap.CLOSED) &&
                 (props.row?.status?.toLowerCase() === "assigned" ||
                   props.row?.status?.toLowerCase() === "completed") && (
                   <Button
@@ -283,6 +300,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
+                props.lifecycleStage !== LifecycleStageMap.ACTIVITY &&
                 props.row?.status?.toLowerCase() !== "issue" &&
                 props.row?.status?.toLowerCase() !== "cancelled" && (
                   <Button
@@ -302,8 +320,8 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                (props.lifecycleStage === "outstanding" ||
-                  props.lifecycleStage === "scheduled") &&
+                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+                  props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
                 compareDates(props.row?.date, true) &&
                 (props.row?.status?.toLowerCase() === "new" ||
                   props.row?.status?.toLowerCase() === "assigned") && (
@@ -324,7 +342,7 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.reportTask) &&
-                props.lifecycleStage === "outstanding" &&
+                props.lifecycleStage === LifecycleStageMap.OUTSTANDING &&
                 compareDates(props.row?.date, false) &&
                 (props.row?.status?.toLowerCase() === "new" ||
                   props.row?.status?.toLowerCase() === "assigned") && (
@@ -346,8 +364,62 @@ export default function RegistryRowAction(
           )}
           {(!keycloakEnabled ||
             !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "pendingApproval" && (
+              <Button
+                variant="ghost"
+                leftIcon="price_check"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.approve}
+                disabled={isLoading}
+                onClick={onGenInvoice}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "pendingApproval" && (
+              <Button
+                variant="ghost"
+                leftIcon="money_off"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.excludeFromBilling}
+                disabled={isLoading}
+                onClick={onExcludeBilling}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
+            permissionScheme.hasPermissions.sales) &&
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
+            props.row[dict.title.billingStatus] == "readyForPayment" && (
+              <Button
+                variant="ghost"
+                leftIcon="monetization_on"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                label={dict.action.viewServiceCost}
+                disabled={isLoading}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsActionMenuOpen(false);
+                  setIsOpenBillingModal(true);
+                }}
+              />
+            )}
+          {(!keycloakEnabled ||
+            !permissionScheme ||
             permissionScheme.hasPermissions.draftTemplate) &&
-            props.lifecycleStage !== "general" && (
+            props.lifecycleStage !== LifecycleStageMap.GENERAL && props.lifecycleStage !== LifecycleStageMap.ACCOUNT &&
+            props.lifecycleStage !== LifecycleStageMap.PRICING && props.lifecycleStage !== LifecycleStageMap.ACTIVITY && (
               <DraftTemplateButton
                 rowId={[props.row.id]}
                 recordType={props.recordType}
@@ -356,6 +428,12 @@ export default function RegistryRowAction(
             )}
         </div>
       </PopoverActionButton>
+      {props.lifecycleStage === LifecycleStageMap.ACTIVITY && isOpenBillingModal && <BillingModal
+        id={recordId}
+        date={props.row.date}
+        isOpen={isOpenBillingModal}
+        setIsOpen={setIsOpenBillingModal}
+      />}
     </div>
   );
 }

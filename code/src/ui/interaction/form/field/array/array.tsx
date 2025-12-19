@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 
-import { FormFieldOptions, PropertyShape } from "types/form";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
+import { BillingEntityTypes, FormFieldOptions, PropertyShape } from "types/form";
+import Button from "ui/interaction/button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
 import { genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
-import Button from "ui/interaction/button";
-import { Dictionary } from "types/dictionary";
-import { useDictionary } from "hooks/useDictionary";
 
 export interface FormArrayProps {
   fieldId: string;
@@ -15,6 +15,7 @@ export interface FormArrayProps {
   maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
+  billingStore?: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 
@@ -27,6 +28,7 @@ export interface FormArrayProps {
  * @param {number} maxSize The maximum size of the array.
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
@@ -83,9 +85,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
           {Array.from({ length: fields.length }, (_, index) => (
             <button
               key={index}
-              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-border rounded-sm ${
-                index === currentIndex ? "bg-primary " : ""
-              }`}
+              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-border rounded-sm ${index === currentIndex ? "bg-primary " : ""
+                }`}
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
                 setCurrentIndex(index);
@@ -114,6 +115,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                       fieldId: fieldId,
                     }}
                     form={props.form}
+                    billingStore={props.billingStore}
                   />
                 )}
                 {!config.class && (
