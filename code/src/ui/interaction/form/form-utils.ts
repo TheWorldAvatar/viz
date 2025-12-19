@@ -865,3 +865,31 @@ export function updateLatLong(
   form.setValue(FORM_STATES.LONGITUDE, longitude);
   form.setValue(field, `POINT(${longitude} ${latitude})`);
 }
+
+/**
+ * Generates the default select option from dictionary.
+ *
+ * @param {Dictionary} dict The dictionary mappings.
+ */
+export function genDefaultSelectOption(dict: Dictionary): OntologyConcept {
+  return {
+    type: {
+      value: "",
+      type: "literal",
+      dataType: "http://www.w3.org/2001/XMLSchema#string",
+      lang: "",
+    },
+    label: {
+      value: dict.action.selectAll,
+      type: "literal",
+      dataType: "http://www.w3.org/2001/XMLSchema#string",
+      lang: "",
+    },
+    description: {
+      value: "This option allows you to select all available criteria at once.",
+      type: "literal",
+      dataType: "http://www.w3.org/2001/XMLSchema#string",
+      lang: "",
+    },
+  };
+}

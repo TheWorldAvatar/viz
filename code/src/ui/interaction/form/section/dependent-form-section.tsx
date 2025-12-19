@@ -8,9 +8,9 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import {
   BillingEntityTypes,
-  defaultSearchOption,
   FormTypeMap,
   ID_KEY,
+  OntologyConcept,
   PropertyShape,
   RegistryFieldValues,
   SparqlResponseField,
@@ -26,7 +26,7 @@ import {
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
-import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
+import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } from "../form-utils";
 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
@@ -180,6 +180,7 @@ export function DependentFormSection(
           }
         }
       }
+      const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
       // Search form should always target default value
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
         defaultId = defaultSearchOption.type.value;

@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { GroupBase, OptionsOrGroups } from "react-select";
 
+import { useDictionary } from "hooks/useDictionary";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
 import {
-  defaultSearchOption,
   FormFieldOptions,
   FormTypeMap,
   ID_KEY,
@@ -17,6 +18,7 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   FORM_STATES,
+  genDefaultSelectOption,
   getMatchingConcept,
   parseConcepts,
 } from "ui/interaction/form/form-utils";
@@ -39,6 +41,7 @@ interface OntologyConceptSelectorProps {
 export default function OntologyConceptSelector(
   props: Readonly<OntologyConceptSelectorProps>
 ) {
+  const dict: Dictionary = useDictionary();
   const control: Control = props.form.control;
   const currentOption: string = useWatch<FieldValues>({
     control,
@@ -86,6 +89,7 @@ export default function OntologyConceptSelector(
 
           // Add the default search option only if this is the search form
           if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
+            const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
           }
