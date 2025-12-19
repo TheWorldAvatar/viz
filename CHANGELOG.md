@@ -2,6 +2,10 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.48.2
+
+- NextJS security patch CVE-2025-55184 and CVE-2025-55183
+
 ## 5.48.1
 
 ### Bug Fix
@@ -82,7 +86,7 @@
 
 ### Security
 
-- _Critical security update_ to NextJS. All users should update to this version
+- _Critical security update_ to NextJS. All users should update to this version. Patch for react2Shell
 
 ## 5.45.5
 
