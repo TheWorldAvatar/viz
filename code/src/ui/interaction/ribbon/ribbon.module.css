@@ -5,7 +5,7 @@
   flex-direction: row;
 
   padding-left: 1rem;
-  z-index: 1;
+  z-index: 100;
   pointer-events: all;
 
   background-color: var(--background-tertiary);

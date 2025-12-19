@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.48.1
+
+### Bug Fix
+
+- CSS rendering of ribbon dropdowns
+
 ## 5.48.0
 
 ### Changes
