@@ -2,11 +2,24 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
-## 5.47.6
+## 5.48.1
 
 ### Bug Fix
 
 - CSS rendering of ribbon dropdowns
+
+## 5.48.0
+
+### Changes
+
+- Refactor HTTP requests to a reusable method
+- Refactor search params to a session storage
+- Fixed pricing models not being assigned when adding or editing a contract
+- Fixed funky account filter interactions
+- Fixed open previous forms that should not appear
+- Integrated with billing status and bill detail breakdown
+- Disable filter for account type in billing activity page
+- Bump min version of `VisBackend Agent` to `v1.27.1`
 
 ## 5.47.5
 

@@ -14,22 +14,25 @@ import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
+import { HTTP_METHOD } from "next/dist/server/web/http";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
-import { getId, buildUrl } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { buildUrl, getId } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import HeaderCell from "../cell/header-cell";
@@ -40,6 +43,7 @@ import TableRow from "../row/table-row";
 
 interface RegistryTableProps {
   recordType: string;
+  accountType: string;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
   tableDescriptor: TableDescriptor;
@@ -50,6 +54,7 @@ interface RegistryTableProps {
  * This component renders a registry of table based on the inputs using TanStack Table.
  *
  * @param {string} recordType The type of the record.
+ * @param {string} accountType The type of account for billing capabilities.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
@@ -75,7 +80,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   );
   const allowMultipleSelection: boolean = props.lifecycleStage !== LifecycleStageMap.GENERAL;
 
-  const onRowClick = (row: FieldValues) => {
+  const onRowClick = async (row: FieldValues) => {
     if (isLoading) return;
     const recordId: string = row.event_id
       ? getId(row.event_id)
@@ -112,7 +117,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       }
       router.push(buildUrl(taskRoute, recordId));
     } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
-      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, `${getId(row.id)}?event=${encodeURIComponent(row.event_id)}`));
+      browserStorageManager.set(EVENT_KEY, row.event_id)
+      const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
+      const body: AgentResponseBody = await queryInternalApi(url);
+      if (row[dict.title.billingStatus] != "pendingApproval") {
+        router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+      } else if (body.data.message == "true") {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id)))
+      } else {
+        router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(row.id)));
+      }
     } else {
       const registryRoute: string =
         !keycloakEnabled ||
@@ -136,7 +150,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
     let reqBody: JsonObject;
     let apiUrl: string;
-    let method: string;
+    let method: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">;
 
     switch (action) {
       case "approve":
@@ -158,18 +172,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         throw new Error("Invalid action");
     }
     startLoading();
-    const res = await fetch(
-      apiUrl,
-      {
-        method,
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        credentials: "same-origin",
-        body: JSON.stringify(reqBody),
-      }
-    );
-
-    const responseBody: AgentResponseBody = await res.json();
+    const responseBody: AgentResponseBody = await queryInternalApi(apiUrl, method, JSON.stringify(reqBody));
     stopLoading();
     toast(
       responseBody?.data?.message || responseBody?.error?.message,
@@ -282,6 +285,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   lifecycleStage={props.lifecycleStage}
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
+                                  disableFilter={header.id == props.accountType}
                                 />
                               );
                             })}

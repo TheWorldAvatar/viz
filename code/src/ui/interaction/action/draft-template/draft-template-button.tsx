@@ -2,11 +2,11 @@
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import React, { useState } from "react";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { JsonObject } from "types/json";
 import Button from "ui/interaction/button";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../toast/toast";
 
 interface DraftTemplateButtonProps {
@@ -37,18 +37,11 @@ export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonP
         };
 
         startLoading();
-        const res = await fetch(
-            makeInternalRegistryAPIwithParams("event", "draft", "copy"),
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                cache: "no-store",
-                credentials: "same-origin",
-                body: JSON.stringify(reqBody),
-            }
+        const responseBody: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "draft", "copy"),
+            "POST",
+            JSON.stringify(reqBody)
         );
-
-        const responseBody: AgentResponseBody = await res.json();
         stopLoading();
         toast(
             responseBody?.data?.message || responseBody?.error?.message,

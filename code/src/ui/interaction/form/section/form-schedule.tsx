@@ -4,7 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, FormType, RegistryFieldValues } from "types/form";
+import { FormFieldOptions, FormType, FormTypeMap, RegistryFieldValues } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import DateInput from "ui/interaction/input/date-input";
@@ -62,7 +62,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const perpetualService: string = dict.form.perpetualService;
   const fixedService: string = dict.form.fixedService;
   const isDisabledOption: { disabled: boolean } = {
-    disabled: formType == "view" || formType == "delete",
+    disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fixedDates, setFixedDates] = useState<Date[]>([new Date()]);
@@ -87,7 +87,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       let defaultTimeSlotEnd: string = "23:59";
 
       // Fetch existing values and update them according
-      if (formType != "add" && formType != "search") {
+      if (formType != FormTypeMap.ADD && formType != FormTypeMap.SEARCH) {
         const fields: RegistryFieldValues = await fetch(
           makeInternalRegistryAPIwithParams(
             "schedule",
@@ -268,7 +268,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   handleServiceChange(selectedOption?.value);
                 }
               }}
-              isDisabled={formType == "view" || formType == "delete"}
+              isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
             />
           </div>
           {selectedServiceOption === fixedService && (
@@ -283,13 +283,13 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 mode="multiple"
                 selectedDate={fixedDates}
                 setSelectedDates={handleFixedDatesChange}
-                disabled={formType === "view" || formType === "delete"}
+                disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
               />
               {fixedDates.length > 0 && (
                 <SelectedDatesDisplay
                   dates={fixedDates}
                   onDatesChange={handleFixedDatesChange}
-                  disabled={formType === "view" || formType === "delete"}
+                  disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
                 />
               )}
             </div>
@@ -337,7 +337,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
                     }`}
                   step={"1"}
-                  readOnly={formType == "view" || formType == "delete"}
+                  readOnly={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
                   aria-label={FORM_STATES.RECURRENCE}
                   {...props.form.register(FORM_STATES.RECURRENCE)}
                 />

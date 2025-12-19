@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 import { Address } from "types/address";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { PropertyShape } from "types/form";
 import { updateLatLong } from "ui/interaction/form/form-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface GeocodingActions {
   hasNoAddressFound: boolean;
@@ -37,11 +37,7 @@ export function useGeocode(
    * @param {string} url the url for execution.
    */
   async function fetchCoordinatesFromUrl(url: string): Promise<boolean> {
-    const res: AgentResponseBody = await fetch(url, {
-      cache: "no-store",
-      credentials: "same-origin",
-    }).then((response) => response.json());
-
+    const res: AgentResponseBody = await queryInternalApi(url);
     const coordinates: number[] = (
       res.data?.items as Record<string, unknown>[]
     )?.[0]?.coordinates as number[];
@@ -60,13 +56,9 @@ export function useGeocode(
    */
   async function fetchAddress(data: FieldValues): Promise<boolean> {
     // Start search
-    const results: AgentResponseBody = await fetch(
-      makeInternalRegistryAPIwithParams("address", data[postalCode]),
-      {
-        cache: "no-store",
-        credentials: "same-origin",
-      }
-    ).then((response) => response.json());
+    const results: AgentResponseBody = await queryInternalApi(
+      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.ADDRESS, data[postalCode]),
+    );
     // If there is no address found
     if (!results.data?.items) {
       setHasNoAddressFound(true);
@@ -103,9 +95,9 @@ export function useGeocode(
   async function getCoordinatesByAddress(block: string, street: string, city: string, country: string): Promise<void> {
     const internalApiPaths: string[] = [
       // First, search by block (if available) and street name
-      makeInternalRegistryAPIwithParams("geocode_address", block, street),
+      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.GEOCODE_ADDRESS, block, street),
       // If no coordinates are found, search for any coordinate in the same city and country
-      makeInternalRegistryAPIwithParams("geocode_city", city, country),
+      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.GEOCODE_CITY, city, country),
     ];
 
     for (const url of internalApiPaths) {
@@ -123,7 +115,7 @@ export function useGeocode(
     setAddresses([]);
     setHasNoAddressFound(false);
 
-    const geocodeByPostalCodeUrl: string = makeInternalRegistryAPIwithParams("geocode_postal", formValues[postalCode]);
+    const geocodeByPostalCodeUrl: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.GEOCODE_POSTAL, formValues[postalCode]);
     const hasCoordinates = await fetchCoordinatesFromUrl(geocodeByPostalCodeUrl);
     if (hasCoordinates) {
       setShowAddressOptions(false);
