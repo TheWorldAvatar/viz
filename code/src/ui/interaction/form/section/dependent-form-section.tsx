@@ -257,7 +257,7 @@ export function DependentFormSection(
               ],
             }}
           />
-          <FormQuickViewHeader
+          {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
             id={id}
             title={dict.title.quickView}
             selectedEntityId={selectedEntityId}
@@ -269,7 +269,7 @@ export function DependentFormSection(
             accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
             accountType={props.billingStore?.account}
             pricingType={props.billingStore?.pricing}
-          />
+          />}
           {currentOption &&
             isQuickViewOpen &&
             (isQuickViewLoading ? (
