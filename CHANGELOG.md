@@ -2,11 +2,91 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.48.2
+
+- NextJS security patch CVE-2025-55184 and CVE-2025-55183
+
+## 5.48.1
+
+### Bug Fix
+
+- CSS rendering of ribbon dropdowns
+
+## 5.48.0
+
+### Changes
+
+- Refactor HTTP requests to a reusable method
+- Refactor search params to a session storage
+- Fixed pricing models not being assigned when adding or editing a contract
+- Fixed funky account filter interactions
+- Fixed open previous forms that should not appear
+- Integrated with billing status and bill detail breakdown
+- Disable filter for account type in billing activity page
+- Bump min version of `VisBackend Agent` to `v1.27.1`
+
+## 5.47.5
+
+### Changes
+
+- Added table column order settings to allow customisation of default column order in registry and billing tables via `config/table-column-order.json` file
+- Updated registry table component to apply custom column order based on entity type and lifecycle stage
+- Updated config.md file to document new table column order settings
+
+## 5.47.4
+
+### Bug Fixes
+
+- Fixed calendar input issue on Safari browser where clicking outside the date picker would not close the date picker
+
+## 5.47.3
+
+### Bug Fixes
+
+- Fixed incorrect redirect to add, delete, edit forms
+
+## 5.47.2
+
+### Bug Fixes
+
+- Fixed missing ribbon when keycloak is enabled
+
+## 5.47.1
+
+### Bug Fixes
+
+- Added optional chaining to billingTypes in form utils that was causing errors when billingTypes was undefined
+
+## 5.47.0
+
+### Changes
+
+- Added billing functionality
+- Bump min version of `VisBackend Agent` to `v1.25.0`
+
+## 5.46.2
+
+### Changes
+
+- Implemented archive and active pages for the jobs
+- Implemented the terminate contract functinality
+- Updated the layout of the Table ribbon
+- Bump min version of `VisBackend Agent` to `v1.24.0`
+
+## 5.46.1
+
+### Changes
+
+- Updated the date-input component to allow for multiple date selection
+- New component - select-dates-input to display selected dates
+- Implemented a new schedule type - "Fixed Date Service". This is a aservice that will occur on fixed dates within the specified period. Users can select multiple dates from the date picker.
+- Bump min version of `VisBackend Agent` to `v1.22.0`
+
 ## 5.46.0
 
 ### Security
 
-- _Critical security update_ to NextJS. All users should update to this version
+- _Critical security update_ to NextJS. All users should update to this version. Patch for react2Shell
 
 ## 5.45.5
 
@@ -165,7 +245,7 @@
 
 ### Changes
 
-- Exclude "service_location" column from being displayed in the registry table 
+- Exclude "service_location" column from being displayed in the registry table
 
 ## 5.42.5
 

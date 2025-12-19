@@ -143,6 +143,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
             {props.type === "date" && (
               <div className="relative w-fit">
                 <DateInput
+                  mode="range"
                   selectedDate={selectedDate}
                   setSelectedDateRange={setSelectedDate}
                   placement="bottom"

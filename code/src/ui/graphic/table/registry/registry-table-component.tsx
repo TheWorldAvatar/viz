@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
+import { TableColumnOrderSettings } from "types/settings";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
@@ -20,6 +21,8 @@ import TableRibbon from "./ribbon/table-ribbon";
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
+  accountType?: string;
+  tableColumnOrder: TableColumnOrderSettings;
 }
 
 /**
@@ -27,6 +30,7 @@ interface RegistryTableComponentProps {
  *
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
@@ -38,7 +42,13 @@ export default function RegistryTableComponent(
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
-  const tableDescriptor: TableDescriptor = useTable(pathNameEnd, props.entityType, refreshFlag, props.lifecycleStage, selectedDate);
+  const tableDescriptor: TableDescriptor = useTable(
+    props.entityType,
+    refreshFlag,
+    props.lifecycleStage,
+    selectedDate,
+    props.tableColumnOrder,
+  );
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
@@ -52,10 +62,13 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 md:p-4 h-dvh">
+    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 h-dvh">
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
-          {parseWordsForLabels(props.entityType)}
+          {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+            props.lifecycleStage === LifecycleStageMap.PRICING ||
+            props.lifecycleStage === LifecycleStageMap.ACTIVITY ? dict.nav.title.billing
+            : parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
           path={pathNameEnd}
@@ -66,6 +79,7 @@ export default function RegistryTableComponent(
           instances={tableDescriptor.initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
+          accountType={props.accountType}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
@@ -78,6 +92,7 @@ export default function RegistryTableComponent(
             selectedDate={selectedDate}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}
+            accountType={props.accountType}
           />
         ) : (
           <div className="text-lg ml-6">{dict.message.noResultFound}</div>

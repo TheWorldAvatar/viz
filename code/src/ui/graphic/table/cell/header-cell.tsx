@@ -10,8 +10,8 @@ import { LifecycleStage } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
-import TableCell from "./table-cell";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import TableCell from "./table-cell";
 
 interface HeaderCellProps {
   type: string;
@@ -19,6 +19,7 @@ interface HeaderCellProps {
   header: Header<FieldValues, unknown>;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
+  disableFilter: boolean;
   filters: ColumnFilter[];
 }
 
@@ -30,6 +31,7 @@ interface HeaderCellProps {
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
+ * @param {boolean} disableFilter Disables the filters when set to true.
  * @param {ColumnFilter[]} filters Filter state for the entire table.
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
@@ -93,7 +95,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 }[props.header.column.getIsSorted() as string] ?? null}
               </div>
             </Tooltip>
-            <PopoverActionButton
+            {!props.disableFilter && <PopoverActionButton
               placement="bottom-start"
               leftIcon="filter_list"
               variant={isActiveFilter ? "secondary" : "ghost"}
@@ -123,6 +125,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               />
               {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
+            }
           </div>
         </div>
       )}

@@ -20,6 +20,7 @@ The uploaded content provided by the deploying developer should match the direct
         - [Dataset: Defining a group](#dataset-defining-a-group)
         - [Dataset: Defining a source](#dataset-defining-a-source)
         - [Dataset: Defining a layer](#dataset-defining-a-layer)
+    - [1.3 Table Column Order](#13-table-column-order)
   - [2. Assets](#2-assets)
   - [3. Optional Pages](#3-optional-pages)
     - [3.1 Fields](#31-fields)
@@ -32,6 +33,7 @@ The platform requires the following [JSON](https://en.wikipedia.org/wiki/JSON) c
 - [`ui-settings.json`](#11-ui-settings): UI configuration settings; **[MANDATORY]**.
 - [`data-settings.json`](#121-general-settings): Specifies the urls of datasets for mapping the data sources and layers; **[OPTIONAL]**
 - [`map-settings.json`](#122-map-data-settings): Non-data specific configuration for maps; **[OPTIONAL]**
+- [`table-column-order.json`](#13-table-column-order): Custom column ordering for tables by entity type or lifecycle stage; **[OPTIONAL]**
 
 ### 1.1 UI Settings
 
@@ -45,15 +47,16 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `dashboard`: REQUIRED. Displays the dashboard page if enabled
   - `help`: REQUIRED. Displays help page if enabled
   - `registry`: REQUIRED. Displays the registry page if enabled
+  - `billing`: REQUIRED. Displays the billing page if enabled
 - `links`: optional configuration for adding or updating redirect links on the landing page. This configuration can overwrite the defaults for the map, dashboard, and help modules. It requires an `ARRAY` of the following JSON format:
-  - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, `registry`, and `registry-submission` accordingly.
+  - `url`: REQUIRED. The url is either targeted at either an external or internal link. For internal link usage, please input `map`, `dashboard`, `help`, `registry`, and `billing` accordingly.
   - `title`: REQUIRED. Thumbnail title on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `caption`: REQUIRED. Thumbnail caption on the navigation bar. Optional for only internal links, which defaults to the default if not set.
   - `icon`: REQUIRED. The displayed icon on the navigation bar. This uses an icon from the `Material Icon` pack, often in the format `multi_word_name`. Optional for only internal links, which defaults to the default if not set.
   - `permission`: OPTIONAL. This sets the permission required in order to view this thumbnail action IF authentication is enabled.
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
 - `resources`: optional configuration for additional resources. They follow the following format
-  - `resourceName`: indicates the type of resource required - dashboard, scenario
+  - `resourceName`: indicates the type of resource required - dashboard, scenario, registry, billing
     - `url`: REQUIRED. url of the resource
     - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
     - `paths`: optional array of strings to denote the names of the registry resources
@@ -65,10 +68,16 @@ Note that resources are optional and their configuration options can differ from
   - `url`: This is a required field that specifies the URL from which the scenarios and their settings can be retrieved. In this example, the URL points to a stack deployed on theworldavatar.io platform.
   - `data`: This required field indicates the target dataset that should be accessible to the user from the central stack. In the given example, the data field is set to "water", indicating that the scenario contains information only on water assets and not power nor telecoms etc.
 - Registry: Activate the `registry` page based on the backend resource indicated in the `url` parameter. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). Note that this will require at least one of the `data` or `paths` property to be valid.
-  - `url`: The registry agent endpoint (close it with /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
+  - `url`: The registry agent endpoint (close it without /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
+    - `icon`: Optional parameter to display an icon from the icon library.
+- Billing: Activate the `billing` page based on the backend resource indicated in the `url` parameter. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). 
+  - `url`: The registry agent endpoint (close it without /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
+  - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
+    - `type`: Must be either `account`, `pricing`, or `activity`
+    - `key`: The entity type of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
 
 Below is an example of the contents for a valid `ui-settings.json` file with additional comments explaining each entry. The format of the file should be consistent whether implementing mapbox or cesium maps.
@@ -383,6 +392,25 @@ Instructions:
 > Mapbox properties
 
 1. Filters: Developers may add a filter for the entire layer by adding [Mapbox Expressions](https://docs.mapbox.com/style-spec/reference/expressions/) to the `filter` key, which is found at the root level of the layer specification. This is especially relevant for layers with searchable parameters and they should display only a subset of feature by default
+
+### 1.3 Table Column Order
+
+The `config/table-column-order.json` file is optional and can be used to override the default column order for  registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views(`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `activity`, `pricing`).
+
+- Any columns not listed remain available and will fall back to the platform's default ordering.
+- You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.
+- Only existing column names will be rendered. If you include a column ID that does not exist for that table, it will be ignored (and will not be shown).
+
+Example `table-column-order.json`:
+
+```json
+{
+  "bin": ["bin_type", "name", "id"],
+  "driver": ["name", "id", "start", "last_name", "end", "plate_number", "truck_type"],
+  "outstanding": ["client" , "status"],
+  "scheduled": ["status" , "client" , "driver"]
+}
+```
 
 ## 2. Assets
 

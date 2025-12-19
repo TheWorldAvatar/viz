@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { LifecycleStage } from 'types/form';
-import { NavBarItemSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from 'utils/client-utils';
 
@@ -34,6 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
   const resolvedParams = await props.params;
   const decodedType: string = decodeURIComponent(resolvedParams.type);
   if (uiSettings.modules.registry) {
@@ -50,6 +51,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
       <RegistryTableComponent
         entityType={decodedType}
         lifecycleStage={lifecycleStage}
+        tableColumnOrder={tableColumnOrderSettings}
       />
     );
   } else {

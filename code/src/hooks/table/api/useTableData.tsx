@@ -1,14 +1,15 @@
-import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
+import { ColumnDef, ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
-import { getUTCDate, parseWordsForLabels } from "utils/client-utils";
+import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
+import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData, applyConfiguredColumnOrder } from "ui/graphic/table/registry/registry-table-utils";
+import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { TableColumnOrderSettings } from "types/settings";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
@@ -16,10 +17,10 @@ export interface TableDataDescriptor {
   initialInstances: RegistryFieldValues[];
 }
 
+
 /**
 * A custom hook to retrieve the total row count.
 * 
-* @param {string} pathNameEnd End of the current path name.
 * @param {string} entityType Type of entity for rendering.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
@@ -28,9 +29,9 @@ export interface TableDataDescriptor {
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
+* @param {TableColumnOrderSettings} tableOrderConfig Configuration for table column order.
 */
 export function useTableData(
-  pathNameEnd: string,
   entityType: string,
   sortParams: string,
   sorting: SortingState,
@@ -38,7 +39,9 @@ export function useTableData(
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   apiPagination: PaginationState,
-  filters: ColumnFilter[]): TableDataDescriptor {
+  filters: ColumnFilter[],
+  tableOrderConfig: TableColumnOrderSettings
+): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [initialInstances, setInitialInstances] = useState<
@@ -46,7 +49,7 @@ export function useTableData(
   >([]);
   const [data, setData] = useState<
     TableData
-  >(null);
+  >({ data: [], columns: [] });
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
@@ -55,116 +58,72 @@ export function useTableData(
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       try {
         let instances: RegistryFieldValues[] = [];
-        if (lifecycleStage === "report") {
-          if (pathNameEnd === entityType) {
-            // Fetch active contracts
-            const activeResBody: AgentResponseBody = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(
-                "contracts",
-                "active",
-                entityType,
-                apiPagination.pageIndex.toString(),
-                apiPagination.pageSize.toString(),
-                sortParams,
-                filterParams,
-              ));
-            let activeInstances =
-              (activeResBody.data.items as RegistryFieldValues[]) ?? [];
-            activeInstances = activeInstances.map(
-              (contract: RegistryFieldValues) => ({
-                status: {
-                  value: parseWordsForLabels("active"),
-                  type: "literal",
-                  dataType: "http://www.w3.org/2001/XMLSchema#string",
-                  lang: "",
-                },
-                ...contract,
-              })
-            );
-
-            // Fetch archived contracts
-            const archivedResponseBody: AgentResponseBody = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(
-                "contracts",
-                "archive",
-                entityType,
-                apiPagination.pageIndex.toString(),
-                apiPagination.pageSize.toString(),
-                sortParams,
-                filterParams,
-              ));
-            const archivedInstances: RegistryFieldValues[] =
-              (archivedResponseBody.data.items as RegistryFieldValues[]) ?? [];
-            instances = activeInstances.concat(archivedInstances);
-          } else {
-            // Fetch service tasks for a specific contract
-            const res: AgentResponseBody = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(
-                "tasks",
-                entityType,
-                pathNameEnd,
-                apiPagination.pageIndex.toString(),
-                apiPagination.pageSize.toString(),
-                sortParams,
-                filterParams,
-              ));
-            instances = (res.data?.items as RegistryFieldValues[]) ?? [];
-          }
+        let url: string;
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.OUTSTANDING,
+            entityType,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (
+          lifecycleStage == LifecycleStageMap.SCHEDULED ||
+          lifecycleStage == LifecycleStageMap.CLOSED ||
+          lifecycleStage == LifecycleStageMap.ACTIVITY
+        ) {
+          url = makeInternalRegistryAPIwithParams(
+            lifecycleStage,
+            entityType,
+            getUTCDate(selectedDate.from).getTime().toString(),
+            getUTCDate(selectedDate.to).getTime().toString(),
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (
+          lifecycleStage == LifecycleStageMap.GENERAL ||
+          lifecycleStage == LifecycleStageMap.ACCOUNT ||
+          lifecycleStage == LifecycleStageMap.PRICING) {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.INSTANCES,
+            entityType,
+            "true",
+            null,
+            null,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
         } else {
-          let url: string;
-          if (lifecycleStage == "outstanding") {
-            url = makeInternalRegistryAPIwithParams(
-              "outstanding",
-              entityType,
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          } else if (
-            lifecycleStage == "scheduled" ||
-            lifecycleStage == "closed"
-          ) {
-            url = makeInternalRegistryAPIwithParams(
-              lifecycleStage == "scheduled" ? "scheduled" : "closed",
-              entityType,
-              getUTCDate(selectedDate.from).getTime().toString(),
-              getUTCDate(selectedDate.to).getTime().toString(),
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          } else if (lifecycleStage == "general") {
-            url = makeInternalRegistryAPIwithParams(
-              "instances",
-              entityType,
-              "true",
-              null,
-              null,
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          } else {
-            url = makeInternalRegistryAPIwithParams(
-              "contracts",
-              lifecycleStage.toString(),
-              entityType,
-              apiPagination.pageIndex.toString(),
-              apiPagination.pageSize.toString(),
-              sortParams,
-              filterParams,
-            );
-          }
-          const res: AgentResponseBody = await queryInternalApi(url);
-          instances = (res.data?.items as RegistryFieldValues[]) ?? [];
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.CONTRACTS,
+            lifecycleStage.toString(),
+            entityType,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
         }
+        const res: AgentResponseBody = await queryInternalApi(url);
+        instances = (res.data?.items as RegistryFieldValues[]) ?? [];
+
         setInitialInstances(instances);
         const parsedData: TableData = parseDataForTable(instances, dict.title);
+        const orderedColumns: ColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
+          parsedData.columns,
+          tableOrderConfig,
+          entityType,
+          lifecycleStage,
+          dict.title,
+        );
         setData({
           ...parsedData,
+          columns: orderedColumns,
           data: parsedData.data.sort((a: FieldValues, b: FieldValues): number => {
             for (const sort of sorting) {
               const field: string = sort.id;
@@ -195,7 +154,7 @@ export function useTableData(
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType]);
 
   return {
     isLoading,

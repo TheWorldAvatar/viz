@@ -89,6 +89,9 @@ export function setSelectedFeature(
  * @param {string} str input string.
  */
 export function parseWordsForLabels(str: string): string {
+  if (str == "N/A") {
+    return str;
+  }
   if (isValidIRI(str)) {
     return getAfterDelimiter(str, "/");
   }
@@ -173,6 +176,26 @@ export function extractResponseField(
   } else {
     return response[field];
   }
+}
+
+/**
+ * Extract the target field as an array of Response Field Objects from the response.
+ * Returns an empty array if the field is not found or not an array.
+ *
+ * @param {RegistryFieldValues} response The response.
+ * @param {string} field The target field of interest.
+ */
+export function extractResponseFieldArray(
+  response: RegistryFieldValues,
+  field: string
+): SparqlResponseField[] {
+  if (Array.isArray(response[field])) {
+    return response[field];
+  } else if (response[field]) {
+    // If it's a single value, wrap it in an array
+    return [response[field]];
+  }
+  return [];
 }
 
 /**

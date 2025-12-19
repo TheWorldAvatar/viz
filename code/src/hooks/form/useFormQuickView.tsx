@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useId, useState } from 'react';
-import { AgentResponseBody } from 'types/backend-agent';
+import { AgentResponseBody, InternalApiIdentifierMap } from 'types/backend-agent';
 import { FormTemplateType, QuickViewGroupings } from 'types/form';
 import { parseFormTemplateForQuickViewGroupings } from 'ui/interaction/form/form-utils';
 import { getAfterDelimiter } from 'utils/client-utils';
-import { makeInternalRegistryAPIwithParams } from 'utils/internal-api-services';
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from 'utils/internal-api-services';
 
 export interface FormQuickViewState {
     id: string;
@@ -36,16 +36,10 @@ export function useFormQuickView(
         const fetchData = async () => {
             try {
                 setIsQuickViewLoading(true);
-                const template: FormTemplateType = await fetch(
-                    makeInternalRegistryAPIwithParams("form", entityType, selectedEntityId),
-                    {
-                        cache: "no-store",
-                        credentials: "same-origin",
-                    }
-                ).then(async (res) => {
-                    const body: AgentResponseBody = await res.json();
-                    return body.data?.items?.[0] as FormTemplateType;
-                });
+                const body: AgentResponseBody = await queryInternalApi(
+                    makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, entityType, selectedEntityId)
+                );
+                const template: FormTemplateType = body.data?.items?.[0] as FormTemplateType;
                 const quickViewGroups: QuickViewGroupings = parseFormTemplateForQuickViewGroupings(template);
                 setQuickViewGroups(quickViewGroups)
             } catch (error) {

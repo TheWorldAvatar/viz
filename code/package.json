@@ -1,6 +1,6 @@
 {
   "name": "viz",
-  "version": "5.46.0",
+  "version": "5.48.2",
   "private": true,
   "type": "module",
   "engines": {
@@ -57,7 +57,7 @@
     "material-symbols": "^0.34.1",
     "moment": "^2.30.1",
     "negotiator": "^1.0.0",
-    "next": "^15.4.8",
+    "next": "^15.4.9",
     "postcss": "^8.5.3",
     "react": "^19.1.0",
     "react-confetti": "^6.4.0",
