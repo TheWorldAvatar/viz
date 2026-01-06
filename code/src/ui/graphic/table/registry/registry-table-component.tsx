@@ -3,8 +3,8 @@
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
@@ -41,6 +41,8 @@ export default function RegistryTableComponent(
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
   const dispatch = useDispatch();
+  const router = useRouter();
+
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
@@ -58,6 +60,7 @@ export default function RegistryTableComponent(
     const handleHistoryChange = () => {
       triggerRefresh();
       dispatch(closeDrawer());
+      router.replace(window.location.pathname);
     };
     window.addEventListener("popstate", handleHistoryChange);
     return () => {
