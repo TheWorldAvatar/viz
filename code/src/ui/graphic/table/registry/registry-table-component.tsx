@@ -3,8 +3,8 @@
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
-import { usePathname, useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
@@ -17,8 +17,7 @@ import {
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import { useDispatch } from "react-redux";
-import { closeDrawer } from "state/drawer-component-slice";
+
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -40,8 +39,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
-  const dispatch = useDispatch();
-  const router = useRouter();
+  ;
 
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
@@ -59,8 +57,6 @@ export default function RegistryTableComponent(
     // Trigger refresh when back navigation occurs
     const handleHistoryChange = () => {
       triggerRefresh();
-      dispatch(closeDrawer());
-      router.replace(window.location.pathname);
     };
     window.addEventListener("popstate", handleHistoryChange);
     return () => {
