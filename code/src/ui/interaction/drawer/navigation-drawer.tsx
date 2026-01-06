@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { closeDrawer, openDrawer } from "state/drawer-component-slice";
+import { openDrawer } from "state/drawer-component-slice";
 import Drawer from "./drawer";
 
 interface NavigationDrawerProps {

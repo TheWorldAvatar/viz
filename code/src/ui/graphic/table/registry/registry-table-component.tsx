@@ -17,6 +17,8 @@ import {
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import { useDispatch } from "react-redux";
+import { closeDrawer } from "state/drawer-component-slice";
 
 interface RegistryTableComponentProps {
   entityType: string;
@@ -38,6 +40,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
+  const dispatch = useDispatch();
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
@@ -54,6 +57,7 @@ export default function RegistryTableComponent(
     // Trigger refresh when back navigation occurs
     const handleHistoryChange = () => {
       triggerRefresh();
+      dispatch(closeDrawer());
     };
     window.addEventListener("popstate", handleHistoryChange);
     return () => {
