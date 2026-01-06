@@ -23,7 +23,6 @@ export default function NavigationDrawer(
   });
 
   return <Drawer onClose={() => {
-    dispatch(closeDrawer());
     router.back()
   }}>{props.children}</Drawer>;
 }
