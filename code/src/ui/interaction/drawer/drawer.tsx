@@ -5,17 +5,15 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 
 import { useDialog } from "hooks/float/useDialog";
-import {
-  closeDrawer,
-  selectDrawerIsOpen,
-  setDrawerOpen,
-} from "state/drawer-component-slice";
+
 import Button from "../button";
 
 interface DrawerProps {
+  isExternalOpen?: boolean;
+  setIsExternalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   onClose?: () => void;
   children: React.ReactNode;
 }
@@ -25,16 +23,12 @@ interface DrawerProps {
  * This component is entirely controlled by Redux state.
  *
  * @param onClose Optional function to be executed on close.
+ * @param isExternalOpen Optional external control for the open state.
+ * @param setIsExternalOpen Optional external setter for the open state.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const dispatch = useDispatch();
-  const isOpen: boolean = useSelector(selectDrawerIsOpen);
-
-  const setOpen: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
-    dispatch(setDrawerOpen(value as boolean));
-  };
-
-  const dialog = useDialog(isOpen, setOpen, false);
+  const [isOpen, setIsOpen] = useState(false);
+  const dialog = useDialog(props.isExternalOpen ?? isOpen, props.setIsExternalOpen ?? setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
@@ -95,7 +89,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
                     onClick={() => {
-                      dispatch(closeDrawer());
+                      setIsOpen(false);
                       // If there are additional close functions to execute
                       if (props.onClose) {
                         props.onClose();

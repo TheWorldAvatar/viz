@@ -37,7 +37,6 @@ import FormSection from "./section/form-section";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { closeDrawer } from "state/drawer-component-slice";
 import { toast } from "ui/interaction/action/toast/toast";
 import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
@@ -373,7 +372,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (!pendingResponse?.error) {
       setTimeout(() => {
         // always close drawer with a timeout
-        dispatch(closeDrawer());
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
           router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))

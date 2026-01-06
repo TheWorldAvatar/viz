@@ -8,7 +8,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import { useDispatch } from "react-redux";
-import { closeDrawer } from "state/drawer-component-slice";
+
 
 export type NavBarItemType = "default" | "file" | "date";
 
@@ -49,7 +49,6 @@ export function NavBarItem(
     event.preventDefault();
     props.setIsOpen?.(false);
     router.push(props.url);
-    dispatch(closeDrawer());
   };
 
   return (
@@ -61,19 +60,17 @@ export function NavBarItem(
       placement={"left"}
     >
       <div
-        className={`${
-          props.isMobile
-            ? "gap-4"
-            : props.isMenuExpanded
+        className={`${props.isMobile
+          ? "gap-4"
+          : props.isMenuExpanded
             ? "mt-4 w-full max-w-full gap-2"
             : "mt-4 w-16 rounded-md"
-        } flex h-fit cursor-pointer items-center  p-1.5  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
+          } flex h-fit cursor-pointer items-center  p-1.5  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
         onClick={props.handleClick ?? handleClick}
       >
         <div
-          className={`${
-            props.isMobile ? "" : "w-18"
-          } flex items-center justify-center`}
+          className={`${props.isMobile ? "" : "w-18"
+            } flex items-center justify-center`}
         >
           <Icon
             sx={{
@@ -87,9 +84,8 @@ export function NavBarItem(
         </div>
         <div className="flex flex-1 flex-col">
           <h3
-            className={`text-foreground text-base font-bold  ${
-              props.isMenuExpanded ? "" : "hidden"
-            }`}
+            className={`text-foreground text-base font-bold  ${props.isMenuExpanded ? "" : "hidden"
+              }`}
           >
             {props.title}
           </h3>
