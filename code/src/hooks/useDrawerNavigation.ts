@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
-import { selectDrawerOpenCount } from "state/drawer-signal-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { resetDrawerCount, selectDrawerOpenCount, triggerDrawerClose } from "state/drawer-signal-slice";
 
 const DRAWER_CLOSE_DELAY = 350; // Slightly longer than drawer closing animation (300ms)
 
@@ -12,12 +12,22 @@ const DRAWER_CLOSE_DELAY = 350; // Slightly longer than drawer closing animation
  */
 export function useDrawerNavigation() {
     const router = useRouter();
+    const dispatch = useDispatch();
     const drawerOpenCount = useSelector(selectDrawerOpenCount);
+
+    // Function to go back in history and close the drawer
+    const goBackAndCloseDrawer = (time: number = 100) => {
+        setTimeout(() => {
+            dispatch(triggerDrawerClose());
+            dispatch(resetDrawerCount());
+        }, time)
+        router.back();
+    };
 
     const navigateToDrawer = useCallback((targetUrl: string) => {
         if (drawerOpenCount >= 1) {
             // A drawer has already been opened - go back first, then navigate
-            router.back();
+            goBackAndCloseDrawer();
             setTimeout(() => {
                 router.push(targetUrl);
             }, DRAWER_CLOSE_DELAY);
@@ -27,5 +37,5 @@ export function useDrawerNavigation() {
         }
     }, [drawerOpenCount, router]);
 
-    return { navigateToDrawer, drawerOpenCount };
+    return { navigateToDrawer, drawerOpenCount, goBackAndCloseDrawer };
 }

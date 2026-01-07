@@ -1,9 +1,8 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -71,11 +70,11 @@ export function FormContainerComponent(
 }
 
 function FormContents(props: Readonly<FormContainerComponentProps>) {
-  const router = useRouter();
+
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { navigateToDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, goBackAndCloseDrawer } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
@@ -129,7 +128,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     if (!agentResponseBody?.error) {
       setTimeout(() => {
-        router.back();
+        goBackAndCloseDrawer();
+
       }, 1000);
     }
   };
@@ -183,7 +183,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {
-        router.back();
+        goBackAndCloseDrawer();
       }, 1000);
     }
   };

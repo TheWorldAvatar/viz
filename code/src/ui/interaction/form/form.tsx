@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -33,14 +33,12 @@ import FormGeocoder from "./section/form-geocoder";
 import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
-
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { toast } from "ui/interaction/action/toast/toast";
 import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { triggerDrawerClose, resetDrawerCount } from "state/drawer-signal-slice";
 import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface FormComponentProps {
@@ -72,13 +70,12 @@ interface FormComponentProps {
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
-  const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const { navigateToDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, goBackAndCloseDrawer } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -374,9 +371,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     );
     if (!pendingResponse?.error) {
       setTimeout(() => {
-        // always close drawer with a timeout
-        dispatch(triggerDrawerClose());
-        dispatch(resetDrawerCount());
+
+
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
           navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))
@@ -387,7 +383,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           props.setShowSearchModalState(false);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
-          router.back();
+          goBackAndCloseDrawer();
         }
       }, 1000);
     }

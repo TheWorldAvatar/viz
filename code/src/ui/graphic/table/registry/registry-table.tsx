@@ -16,7 +16,7 @@ import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -63,7 +63,7 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
-  const router = useRouter();
+
   const { navigateToDrawer } = useDrawerNavigation();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
@@ -137,12 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           permissionScheme.hasPermissions.sales
           ? Routes.REGISTRY_EDIT
           : Routes.REGISTRY;
-      // REGISTRY_EDIT is a drawer, REGISTRY is a page
-      if (registryRoute === Routes.REGISTRY_EDIT) {
-        navigateToDrawer(buildUrl(registryRoute, props.recordType, recordId));
-      } else {
-        router.push(buildUrl(registryRoute, props.recordType, recordId));
-      }
+      navigateToDrawer(buildUrl(registryRoute, props.recordType, recordId));
     }
   };
 

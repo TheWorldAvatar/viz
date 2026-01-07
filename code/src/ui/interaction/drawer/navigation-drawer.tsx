@@ -1,8 +1,9 @@
-import { useRouter } from "next/navigation";
+
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { incrementDrawerCount, resetDrawerCount, selectCloseSignal } from "state/drawer-signal-slice";
+import { incrementDrawerCount, selectCloseSignal } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface NavigationDrawerProps {
   children: React.ReactNode;
@@ -15,12 +16,15 @@ interface NavigationDrawerProps {
 export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
 ) {
-  const router = useRouter();
+
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   const closeSignal = useSelector(selectCloseSignal);
   const initialCloseSignalRef = useRef<number>(closeSignal);
+  const { goBackAndCloseDrawer } = useDrawerNavigation();
+
+
 
   // Increment drawer count when mounted
   useEffect(() => {
@@ -39,8 +43,7 @@ export default function NavigationDrawer(
       isExternalOpen={isOpen}
       setIsExternalOpen={setIsOpen}
       onClose={() => {
-        dispatch(resetDrawerCount());
-        router.back();
+        goBackAndCloseDrawer();
       }}
     >
       {props.children}
