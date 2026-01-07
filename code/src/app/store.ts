@@ -3,6 +3,7 @@ import { featureInfoAgentApi } from "state/api/fia-api";
 import loadingReducer from "state/loading-slice";
 import contextMenuReducer from "state/context-menu-slice";
 import dimensionSliderSlice from "state/dimension-slider-slice";
+import drawerSignalReducer from "state/drawer-signal-slice";
 import floatingPanelReducer from "state/floating-panel-slice";
 import mapFeatureReducer from "state/map-feature-slice";
 import ribbonComponentReducer from "state/ribbon-component-slice";
@@ -11,6 +12,7 @@ import ribbonComponentReducer from "state/ribbon-component-slice";
 export const reduxStore = configureStore({
   reducer: {
     contextMenu: contextMenuReducer,
+    drawerSignal: drawerSignalReducer,
     ribbonComponents: ribbonComponentReducer,
     floatingPanel: floatingPanelReducer,
     mapFeature: mapFeatureReducer,

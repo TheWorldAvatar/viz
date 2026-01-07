@@ -1,7 +1,8 @@
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectCloseSignal } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
-
 
 interface NavigationDrawerProps {
   children: React.ReactNode;
@@ -15,13 +16,30 @@ export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
 ) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
+  // Listen for global close signal from Redux
+  const closeSignal = useSelector(selectCloseSignal);
+  const initialCloseSignalRef = useRef<number>(closeSignal);
+
+  // Close drawer when global close signal is triggered
   useEffect(() => {
-    setIsOpen(true);
-  });
+    if (closeSignal !== initialCloseSignalRef.current) {
+      setIsOpen(false);
+    }
+  }, [closeSignal]);
 
-  return <Drawer isExternalOpen={isOpen} setIsExternalOpen={setIsOpen} onClose={() => {
-    router.back()
-  }}>{props.children}</Drawer>;
+  return (
+    <Drawer
+      isExternalOpen={isOpen}
+      setIsExternalOpen={setIsOpen}
+      onClose={() => {
+        // Only navigate back when user clicks X button
+        // Don't dispatch signal here as it would conflict with navigation
+        router.back();
+      }}
+    >
+      {props.children}
+    </Drawer>
+  );
 }

@@ -8,6 +8,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import { useDispatch } from "react-redux";
+import { triggerDrawerClose } from "state/drawer-signal-slice";
 
 
 export type NavBarItemType = "default" | "file" | "date";
@@ -48,6 +49,7 @@ export function NavBarItem(
   ): void => {
     event.preventDefault();
     props.setIsOpen?.(false);
+    dispatch(triggerDrawerClose());
     router.push(props.url);
   };
 
