@@ -5,7 +5,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Button from "../../button";
 import FormQuickViewFields from "./form-quick-view-fields";
-import RedirectButton from "ui/interaction/action/redirect/redirect-button";
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface FormQuickViewExpandableProps {
   entity: string;
@@ -24,6 +24,7 @@ export default function FormQuickViewExpandable(
   props: Readonly<FormQuickViewExpandableProps>
 ) {
   const dict: Dictionary = useDictionary();
+  const { navigateToDrawer } = useDrawerNavigation();
 
   const {
     quickViewGroups,
@@ -41,7 +42,7 @@ export default function FormQuickViewExpandable(
         </h4>
         <div className="flex-1 text-sm sm:text-base text-foreground flex gap-2">
           {props.nestedLevel === 3 ? (
-            <RedirectButton
+            <Button
               type="button"
               size="icon"
               tooltipText={
@@ -49,7 +50,7 @@ export default function FormQuickViewExpandable(
               }
               iconSize="small"
               leftIcon="open_in_new"
-              url={`../../view/${props.entityType}/${selectedEntityId}`}
+              onClick={() => navigateToDrawer(`../../view/${props.entityType}/${selectedEntityId}`)}
               variant="outline"
               loading={isQuickViewLoading}
             />
@@ -73,11 +74,10 @@ export default function FormQuickViewExpandable(
       </div>
       {isQuickViewOpen && !isQuickViewLoading && (
         <div
-          className={`mt-2 rounded-lg px-2 ${
-            props.nestedLevel % 2 === 0
-              ? "bg-muted shadow-md "
-              : "bg-background shadow-md "
-          }`}
+          className={`mt-2 rounded-lg px-2 ${props.nestedLevel % 2 === 0
+            ? "bg-muted shadow-md "
+            : "bg-background shadow-md "
+            }`}
         >
           <FormQuickViewFields
             quickViewGroups={quickViewGroups}

@@ -16,13 +16,13 @@ import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import RedirectButton from "../action/redirect/redirect-button";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
 import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { FormTemplate } from "./template/form-template";
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -75,6 +75,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const { navigateToDrawer } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
@@ -311,12 +312,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <RedirectButton // Edit button
+              <Button // Edit button
                 leftIcon="edit"
                 label={dict.action.edit}
                 disabled={isLoading}
                 tooltipText={dict.action.edit}
-                url={`../../edit/${props.entityType}/${id}`}
+                onClick={() => navigateToDrawer(`../../edit/${props.entityType}/${id}`)}
                 variant="secondary"
               />
             )}
@@ -326,13 +327,13 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <RedirectButton // Delete button
+              <Button // Delete button
                 leftIcon="delete"
                 iconSize="medium"
                 label={dict.action.delete}
                 disabled={isLoading}
                 tooltipText={dict.action.delete}
-                url={`../../delete/${props.entityType}/${id}`}
+                onClick={() => navigateToDrawer(`../../delete/${props.entityType}/${id}`)}
                 variant="secondary"
               />
             )}

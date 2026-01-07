@@ -12,6 +12,7 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { TableDescriptor } from "hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";
@@ -63,6 +64,7 @@ interface RegistryTableProps {
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
+  const { navigateToDrawer } = useDrawerNavigation();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
@@ -115,17 +117,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
-      router.push(buildUrl(taskRoute, recordId));
+      navigateToDrawer(buildUrl(taskRoute, recordId));
     } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
       browserStorageManager.set(EVENT_KEY, row.event_id)
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
       const body: AgentResponseBody = await queryInternalApi(url);
       if (row[dict.title.billingStatus] != "pendingApproval") {
-        router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+        navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
       } else if (body.data.message == "true") {
-        router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id)))
+        navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id)))
       } else {
-        router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(row.id)));
+        navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(row.id)));
       }
     } else {
       const registryRoute: string =
@@ -135,7 +137,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           permissionScheme.hasPermissions.sales
           ? Routes.REGISTRY_EDIT
           : Routes.REGISTRY;
-      router.push(buildUrl(registryRoute, props.recordType, recordId));
+      // REGISTRY_EDIT is a drawer, REGISTRY is a page
+      if (registryRoute === Routes.REGISTRY_EDIT) {
+        navigateToDrawer(buildUrl(registryRoute, props.recordType, recordId));
+      } else {
+        router.push(buildUrl(registryRoute, props.recordType, recordId));
+      }
     }
   };
 

@@ -40,7 +40,8 @@ import { browserStorageManager } from "state/browser-storage-manager";
 import { toast } from "ui/interaction/action/toast/toast";
 import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { triggerDrawerClose } from "state/drawer-signal-slice";
+import { triggerDrawerClose, resetDrawerCount } from "state/drawer-signal-slice";
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -77,6 +78,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
+  const { navigateToDrawer } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -374,11 +376,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       setTimeout(() => {
         // always close drawer with a timeout
         dispatch(triggerDrawerClose());
+        dispatch(resetDrawerCount());
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-          router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))
+          navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))
         } else if (props.formType === FormTypeMap.ADD_INVOICE) {
-          router.push(buildUrl(Routes.BILLING_ACTIVITY))
+          navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY))
           // Close search modal on success
         } else if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);

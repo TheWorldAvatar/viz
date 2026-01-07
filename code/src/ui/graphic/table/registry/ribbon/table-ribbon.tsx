@@ -18,6 +18,7 @@ import DateInput from "ui/interaction/input/date-input";
 import { buildUrl } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface TableRibbonProps {
   path: string;
@@ -48,6 +49,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const { navigateToDrawer } = useDrawerNavigation();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
@@ -274,20 +276,20 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               props.lifecycleStage == LifecycleStageMap.GENERAL ||
               props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
               props.lifecycleStage === LifecycleStageMap.PRICING) && (
-              <RedirectButton
+              <Button
                 leftIcon="add"
                 size="icon"
                 tooltipText={dict.action.addItem.replace(
                   "{replace}",
                   props.entityType.replace("_", " ")
                 )}
-                url={
-                  buildUrl(Routes.REGISTRY_ADD,
+                onClick={() => {
+                  navigateToDrawer(buildUrl(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
                     props.entityType
-                  )
-                }
+                  ))
+                }}
               />
             )}
           {props.instances.length > 0 && (

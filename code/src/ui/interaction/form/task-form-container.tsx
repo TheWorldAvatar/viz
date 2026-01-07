@@ -31,7 +31,7 @@ import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { buildUrl, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-
+import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -81,6 +81,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
+  const { navigateToDrawer } = useDrawerNavigation();
 
   const id: string = getAfterDelimiter(pathname, "/");
 
@@ -244,7 +245,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    router.push(buildUrl(Routes.REGISTRY_TASK, action, id));
+    navigateToDrawer(buildUrl(Routes.REGISTRY_TASK, action, id));
   };
 
   return (

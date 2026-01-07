@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
 import Button, { ButtonProps } from "ui/interaction/button";
-import { triggerDrawerClose } from "state/drawer-signal-slice";
+import { triggerDrawerClose, resetDrawerCount } from "state/drawer-signal-slice";
 
 
 interface RedirectButtonProps extends ButtonProps {
@@ -29,6 +29,7 @@ export default function RedirectButton({
     event.preventDefault();
     router.push(url);
     dispatch(triggerDrawerClose());
+    dispatch(resetDrawerCount());
   };
   return <Button {...rest} onClick={handleClick} />;
 }
