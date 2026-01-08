@@ -49,6 +49,7 @@ The recommended way to develop viz is to work in the `devcontainer` configured i
 - `MAPBOX_USERNAME` environment variable
 - `MAPBOX_API_KEY` environment variable
 - `KEYCLOAK` optional environment variable to set up an authorisation server if required; See [authorisation server](#4-authorisation) for more details
+- `REDIS` optional environment variable to set up the REDIS endpoint; Defaults to `localhost:6379`; Usually requires local IP (`191.xx.xxx.xxx`) or `host.docker.internal` for standalone containers or `<stack-name>-redis:6379` for the stack deployment.
 
 3) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
 4) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
@@ -82,6 +83,7 @@ To view the example configuration, simply run `docker compose up` in this direct
 For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Deploy/stacks/dynamic/stack-manager), please spin up the stack with the `visualisation` service as documented [here](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Deploy/stacks/dynamic/stack-manager#example---including-a-visualisation). The key steps are as follows:
 
 1. The `mapbox_username` and `mapbox_api_key` are available as Docker secrets
+  - `redis_password` only if redis is required
 2. Copy the [custom visualisation service config](./example/vip.json) to the `stack-manager/inputs/config/services` directory
 3. In the stack config file, `visualisation` is included as part of the `services` `includes` list
 4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
@@ -93,29 +95,31 @@ For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAva
 > For typical self-hosted TWA deployment, `ASSET_PREFIX` must contain both the top level nginx path, and the stack level nginx path. e.g. if the app is deployed in a stack at `theworldavatar.io/demos/app`, then `ASSET_PREFIX` should be set to `demos/app/visualisation` to account for the `visualisation` path added by the stack level nginx.
 
 5. Specify the directory holding the configuration files that should be mapped to a volume called `webspace` or your preference
-6. . Populate this directory with your require visualisation configuration files
+6. Populate this directory with your require visualisation configuration files
 7. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables at `docker-compose.yml` if required.
 8. Start the stack as per usual
 
 > Custom Service
 
-At the moment, the `visualisation` service defaults to the [Visualisation Framework](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/web/twa-vis-framework). To deploy the TWA ViP, please set up a custom service. A minimal example is available in the [tutorial](./example/vip.json).
+At the moment, the `visualisation` service defaults to the [Visualisation Framework](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/web/twa-vis-framework). To deploy the TWA ViP, please set up a custom service. A minimal example is available in the [tutorial](./viz.json).
 
 ## 4 Authorisation
 
-To secure your viz app with a Keycloak authentication server, set the relevant environment variables in the [local node environment file](.code/.env.local) or the relevant compose file in this directory. If running in a stack, the variables will be set in the service spec file. The relevant variables are:
+To secure your viz app with a Keycloak authentication server, set the relevant environment variables in the [local node environment file](.code/.env.local) or the relevant compose file in [this directory](./auth). If running in a stack, the variables will be set in the service spec file. The relevant variables are:
 
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
+REDIS=<stack-name>-redis:6379 ## stack deployment with REDIS
 PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see
 ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
 ```
 
-alternatively, in the docker `docker-compose.yml` or `docker-compose.dev.yml`
+alternatively, in the docker `docker-compose.yml`
 
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
+REDIS=<stack-name>-redis:6379 ## stack deployment with REDIS
 PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged in to see
 ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE: viz:protected ## (optional) the role required for the above list
