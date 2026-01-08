@@ -49,7 +49,7 @@ The recommended way to develop viz is to work in the `devcontainer` configured i
 - `MAPBOX_USERNAME` environment variable
 - `MAPBOX_API_KEY` environment variable
 - `KEYCLOAK` optional environment variable to set up an authorisation server if required; See [authorisation server](#4-authorisation) for more details
-- `REDIS` optional environment variable to set up the REDIS endpoint; Defaults to `localhost:6379`; Usually requires local IP (`191.xx.xxx.xxx`) or `host.docker.internal` for standalone containers or `<stack-name>-redis:6379` for the stack deployment.
+- `REDIS_SOCKET_ADDRESS` optional environment variable to set up the REDIS endpoint; Defaults to `localhost:6379`; Usually requires local IP (`191.xx.xxx.xxx`) or `host.docker.internal` for standalone containers or `<stack-name>-redis:6379` for the stack deployment.
 
 3) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
 4) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
@@ -109,7 +109,7 @@ To secure your viz app with a Keycloak authentication server, set the relevant e
 
 ```sh
 KEYCLOAK=true|false ## whether or not to use kc authentication on the server
-REDIS=<stack-name>-redis:6379 ## stack deployment with REDIS
+REDIS_SOCKET_ADDRESS=<stack-name>-redis:6379 ## stack deployment with REDIS
 PROTECTED_PAGES=/page,/otherpage ## (optional) pages that a user must be logged in to see
 ROLE_PROTECTED_PAGES=/role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE=viz:protected ## the role required for the above list
@@ -119,7 +119,7 @@ alternatively, in the docker `docker-compose.yml`
 
 ```yml
 KEYCLOAK: true|false ## whether or not to use kc authentication on the server
-REDIS=<stack-name>-redis:6379 ## stack deployment with REDIS
+REDIS_SOCKET_ADDRESS: <stack-name>-redis:6379 ## stack deployment with REDIS
 PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged in to see
 ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE: viz:protected ## (optional) the role required for the above list

@@ -34,7 +34,7 @@ const colourYellow = "\x1b[33m";
 if (process.env.PORT) { console.info('port specified in environment variable: ', colourGreen, process.env.PORT, colourReset); }
 const port = process.env.PORT || 3000;
 const keycloakEnabled = process.env.KEYCLOAK === 'true';
-const redisUrl = process.env.REDIS || "localhost:6379";
+const redisSocketAddress = process.env.REDIS_SOCKET_ADDRESS || "localhost:6379";
 
 if (process.env.ASSET_PREFIX) { console.info('Resource and Asset Prefix: ', colourGreen, process.env.ASSET_PREFIX, colourReset); }
 
@@ -61,10 +61,10 @@ nextApp.prepare().then(async () => {
 
         if (!dev) {
             let redisClient;
-            console.info(`development mode is:`, colourGreen, dev, colourReset, `-> connecting to redis session store at`, colourGreen, `${redisUrl}`, colourReset);
+            console.info(`development mode is:`, colourGreen, dev, colourReset, `-> connecting to redis session store at`, colourGreen, `${redisSocketAddress}`, colourReset);
             try {
                 redisClient = createClient({
-                    url: `redis://${redisUrl}`,
+                    url: `redis://${redisSocketAddress}`,
                     password: getDockerSecret("redis_password"),
                 });
             } catch (error) {
@@ -176,7 +176,7 @@ async function connectRedis(client) {
         await client.connect();
         console.info(colourGreen, "Successfully connected to Redis");
     } catch (error) {
-        console.info(colourRed, "Unable to connect to Redis at", colourGreen, `${redisUrl}`, colourReset)
+        console.info(colourRed, "Unable to connect to Redis at", colourGreen, `${redisSocketAddress}`, colourReset)
         console.error(error);
         throw error;
     }

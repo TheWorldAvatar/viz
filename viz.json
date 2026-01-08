@@ -14,7 +14,7 @@
         ],
         "Env": [
           "KEYCLOAK=false",
-          "REDIS=<STACK>-redis:6379",
+          "REDIS_SOCKET_ADDRESS=<STACK>-redis:6379",
           "PROTECTED_PAGES=/page,/otherpage",
           "ROLE_PROTECTED_PAGES=/role,/protected,/pages",
           "ROLE=viz:protected",
