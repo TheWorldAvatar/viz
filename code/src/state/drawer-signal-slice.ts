@@ -25,7 +25,9 @@ const drawerSignalSlice = createSlice({
          * The NavigationDrawer listens to closeSignal changes and closes when it changes.
          */
         triggerDrawerClose: (state) => {
+          if(state.drawerOpenCount > 0){
             state.closeSignal = true;
+          }
         },
           /**
          * Resets the close signal back to false after a drawer has closed.
