@@ -21,7 +21,6 @@ export default function NavigationDrawer(
 ) {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
-
   const closeSignal = useSelector(selectCloseSignal);
   const { goBackAndCloseDrawer } = useDrawerNavigation();
 

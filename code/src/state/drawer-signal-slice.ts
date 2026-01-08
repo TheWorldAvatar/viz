@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface DrawerSignalState {
-    // Toggled each time a close is requested - drawer listens for changes
+    // Signal to trigger drawer close
     closeSignal: boolean;
     // Tracks how many drawers have been opened in this navigation session
     drawerOpenCount: number;
@@ -27,6 +27,13 @@ const drawerSignalSlice = createSlice({
         triggerDrawerClose: (state) => {
             state.closeSignal = true;
         },
+          /**
+         * Resets the close signal back to false after a drawer has closed.
+         * Should only be called internally by NavigationDrawer.
+         */
+        resetCloseSignal: (state) => {
+            state.closeSignal = false;
+        },
         /**
          * Called when a drawer opens - increments the count
          */
@@ -39,13 +46,7 @@ const drawerSignalSlice = createSlice({
         resetDrawerCount: (state) => {
             state.drawerOpenCount = 0;
         },
-        /**
-         * Resets the close signal back to false after a drawer has closed.
-         * Should only be called internally by NavigationDrawer.
-         */
-        resetCloseSignal: (state) => {
-            state.closeSignal = false;
-        },
+      
     },
 });
 
