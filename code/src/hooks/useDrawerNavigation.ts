@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetDrawerCount, selectDrawerOpenCount, triggerDrawerClose } from "state/drawer-signal-slice";
 
@@ -24,7 +23,7 @@ export function useDrawerNavigation() {
         router.back();
     };
 
-    const navigateToDrawer = useCallback((targetUrl: string) => {
+    const navigateToDrawer = (targetUrl: string) => {
         if (drawerOpenCount >= 1) {
             // A drawer has already been opened - go back first, then navigate
             goBackAndCloseDrawer();
@@ -35,7 +34,7 @@ export function useDrawerNavigation() {
             // No drawer opened yet - navigate directly
             router.push(targetUrl);
         }
-    }, [drawerOpenCount, router]);
+    };
 
     return { navigateToDrawer, drawerOpenCount, goBackAndCloseDrawer };
 }
