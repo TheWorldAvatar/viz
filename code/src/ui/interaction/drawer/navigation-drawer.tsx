@@ -4,6 +4,7 @@ import {
   incrementDrawerCount,
   resetCloseSignal,
   selectCloseSignal,
+  selectDrawerOpenCount
 } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
 import { useDrawerNavigation } from "hooks/useDrawerNavigation";
@@ -22,12 +23,20 @@ export default function NavigationDrawer(
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
   const closeSignal = useSelector(selectCloseSignal);
+  const  drawerOpenCount = useSelector(selectDrawerOpenCount);
   const { goBackAndCloseDrawer } = useDrawerNavigation();
+
 
   // Increment drawer count when mounted
   useEffect(() => {
     dispatch(incrementDrawerCount());
   }, [dispatch]);
+
+  useEffect(() => {
+    if(drawerOpenCount > 0 && !isOpen){
+      setIsOpen(true);
+    }
+  })
 
   // Close drawer when global close signal is triggered
   useEffect(() => {
@@ -35,6 +44,7 @@ export default function NavigationDrawer(
       setIsOpen(false);
       // Reset signal so next drawer can detect it
       dispatch(resetCloseSignal());
+    
     }
   }, [closeSignal, dispatch]);
 

@@ -49,9 +49,9 @@ export function NavBarItem(
   ): void => {
     event.preventDefault();
     props.setIsOpen?.(false);
+    router.push(props.url);
     dispatch(triggerDrawerClose());
     dispatch(resetDrawerCount());
-    router.push(props.url);
   };
 
   return (
