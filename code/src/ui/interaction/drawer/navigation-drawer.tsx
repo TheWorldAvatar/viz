@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { incrementDrawerCount, selectCloseSignal } from "state/drawer-signal-slice";
+import {
+  incrementDrawerCount,
+  resetCloseSignal,
+  selectCloseSignal,
+} from "state/drawer-signal-slice";
 import Drawer from "./drawer";
 import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
@@ -19,7 +23,6 @@ export default function NavigationDrawer(
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   const closeSignal = useSelector(selectCloseSignal);
-  const initialCloseSignalRef = useRef<boolean>(closeSignal);
   const { goBackAndCloseDrawer } = useDrawerNavigation();
 
   // Increment drawer count when mounted
@@ -29,10 +32,12 @@ export default function NavigationDrawer(
 
   // Close drawer when global close signal is triggered
   useEffect(() => {
-    if (closeSignal !== initialCloseSignalRef.current) {
+    if (closeSignal) {
       setIsOpen(false);
+      // Reset signal so next drawer can detect it
+      dispatch(resetCloseSignal());
     }
-  }, [closeSignal]);
+  }, [closeSignal, dispatch]);
 
   return (
     <Drawer

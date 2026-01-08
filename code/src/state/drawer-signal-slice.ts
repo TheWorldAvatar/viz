@@ -4,7 +4,7 @@ interface DrawerSignalState {
     // Toggled each time a close is requested - drawer listens for changes
     closeSignal: boolean;
     // Tracks how many drawers have been opened in this navigation session
-     drawerOpenCount: number;
+    drawerOpenCount: number;
 }
 
 const initialState: DrawerSignalState = {
@@ -17,32 +17,39 @@ const initialState: DrawerSignalState = {
  * Tracks how many drawers have been opened so we can handle sequential drawer navigation properly.
  */
 const drawerSignalSlice = createSlice({
-  name: "drawerSignal",
-  initialState,
-  reducers: {
-    /**
-     * Dispatch this action to trigger drawer close from anywhere.
-     * The NavigationDrawer listens to closeSignal changes and closes when it changes.
-     */
-    triggerDrawerClose: (state) => {
-      state.closeSignal = !state.closeSignal;
+    name: "drawerSignal",
+    initialState,
+    reducers: {
+        /**
+         * Dispatch this action to trigger drawer close from anywhere.
+         * The NavigationDrawer listens to closeSignal changes and closes when it changes.
+         */
+        triggerDrawerClose: (state) => {
+            state.closeSignal = true;
+        },
+        /**
+         * Called when a drawer opens - increments the count
+         */
+        incrementDrawerCount: (state) => {
+            state.drawerOpenCount += 1;
+        },
+        /**
+         * Resets the drawer count back to 0 (called when navigating away from drawers)
+         */
+        resetDrawerCount: (state) => {
+            state.drawerOpenCount = 0;
+        },
+        /**
+         * Resets the close signal back to false after a drawer has closed.
+         * Should only be called internally by NavigationDrawer.
+         */
+        resetCloseSignal: (state) => {
+            state.closeSignal = false;
+        },
     },
-    /**
-     * Called when a drawer opens - increments the count
-     */
-    incrementDrawerCount: (state) => {
-      state.drawerOpenCount += 1;
-    },
-    /**
-     * Resets the drawer count back to 0 (called when navigating away from drawers)
-     */
-    resetDrawerCount: (state) => {
-      state.drawerOpenCount = 0;
-    },
-  },
 });
 
-export const { triggerDrawerClose, incrementDrawerCount, resetDrawerCount } = drawerSignalSlice.actions;
+export const { triggerDrawerClose, incrementDrawerCount, resetDrawerCount, resetCloseSignal } = drawerSignalSlice.actions;
 export const selectCloseSignal = (state: { drawerSignal: DrawerSignalState }) => state.drawerSignal.closeSignal;
 export const selectDrawerOpenCount = (state: { drawerSignal: DrawerSignalState }) => state.drawerSignal.drawerOpenCount;
 export default drawerSignalSlice.reducer;
