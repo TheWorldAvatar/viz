@@ -21,6 +21,8 @@ import { RedisStore } from 'connect-redis';
 import session, { MemoryStore } from 'express-session';
 import Keycloak from 'keycloak-connect';
 import { createClient } from "redis";
+import path from "path";
+import { readFileSync } from "fs";
 
 const colourReset = "\x1b[0m";
 const colourRed = "\x1b[31m";
@@ -32,8 +34,7 @@ const colourYellow = "\x1b[33m";
 if (process.env.PORT) { console.info('port specified in environment variable: ', colourGreen, process.env.PORT, colourReset); }
 const port = process.env.PORT || 3000;
 const keycloakEnabled = process.env.KEYCLOAK === 'true';
-const redisHost = process.env.REDIS_HOST || 'localhost';
-const redisPort = process.env.REDIS_PORT || 6379;
+const redisUrl = process.env.REDIS || "localhost:6379";
 
 if (process.env.ASSET_PREFIX) { console.info('Resource and Asset Prefix: ', colourGreen, process.env.ASSET_PREFIX, colourReset); }
 
@@ -60,16 +61,14 @@ nextApp.prepare().then(async () => {
 
         if (!dev) {
             let redisClient;
-            console.info(`development mode is:`, colourGreen, dev, colourReset, `-> connecting to redis session store at`, colourGreen, `${redisHost}:${redisPort}`, colourReset);
+            console.info(`development mode is:`, colourGreen, dev, colourReset, `-> connecting to redis session store at`, colourGreen, `${redisUrl}`, colourReset);
             try {
                 redisClient = createClient({
-                    socket: {
-                        host: redisHost,
-                        port: redisPort
-                    }
+                    url: `redis://${redisUrl}`,
+                    password: getDockerSecret("redis_password"),
                 });
             } catch (error) {
-                console.info('Error while creating Redis Client, please ensure that Redis is running and the host is specified as an environment variable if this viz app is in a Docker container');
+                console.info('Error while creating Redis Client, please ensure that Redis is running, the url is specified as an environment variable, and the redis_password is set');
                 console.error(error);
             }
             await connectRedis(redisClient);
@@ -177,8 +176,18 @@ async function connectRedis(client) {
         await client.connect();
         console.info(colourGreen, "Successfully connected to Redis");
     } catch (error) {
-        console.info(colourRed, "Unable to connect to Redis at", colourGreen, `${redisHost}:${redisPort}`, colourReset)
+        console.info(colourRed, "Unable to connect to Redis at", colourGreen, `${redisUrl}`, colourReset)
         console.error(error);
+        throw error;
+    }
+}
+
+function getDockerSecret(secretName) {
+    try {
+        const secretPath = path.join("/run/secrets", secretName);
+        return readFileSync(secretPath, "utf8").trim();
+    } catch (error) {
+        console.error(`Could not find secret: ${secretName}!`);
         throw error;
     }
 }
