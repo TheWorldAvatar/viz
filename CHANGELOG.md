@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.50.0
+
+### Changes
+
+- Changed how developers can set configuration for an authenticated Redis store to work with keycloak
+- Bump min version of `VisBackend Agent` to `v1.29.0`
+
 ## 5.49.2
 
 ### Bug Fix
