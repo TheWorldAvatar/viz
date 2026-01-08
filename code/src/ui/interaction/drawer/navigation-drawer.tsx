@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { incrementDrawerCount, selectCloseSignal } from "state/drawer-signal-slice";
@@ -16,15 +15,12 @@ interface NavigationDrawerProps {
 export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
 ) {
-
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   const closeSignal = useSelector(selectCloseSignal);
-  const initialCloseSignalRef = useRef<number>(closeSignal);
+  const initialCloseSignalRef = useRef<boolean>(closeSignal);
   const { goBackAndCloseDrawer } = useDrawerNavigation();
-
-
 
   // Increment drawer count when mounted
   useEffect(() => {
