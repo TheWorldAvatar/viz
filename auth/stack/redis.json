@@ -1,0 +1,27 @@
+{
+  "ServiceSpec": {
+    "Name": "redis",
+    "TaskTemplate": {
+      "ContainerSpec": {
+        "Image": "redis:8",
+        "Command": [
+          "sh",
+          "-c",
+          "redis-server --requirepass \"$(cat /run/secrets/redis_password)\""
+        ],
+        "Mounts": [
+          {
+            "Type": "volume",
+            "Source": "redis-data",
+            "Target": "/data"
+          }
+        ],
+        "Secrets": [
+          {
+            "SecretName": "redis_password"
+          }
+        ]
+      }
+    }
+  }
+}
