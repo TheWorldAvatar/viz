@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import React from "react";
 
 import { Icon } from "@mui/material";
@@ -38,7 +37,6 @@ export interface NavBarItemProps {
 export function NavBarItem(
   props: Readonly<NavBarItemProps>
 ): React.ReactElement {
-  const router = useRouter();
   const dict: Dictionary = useDictionary();
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (
@@ -46,7 +44,8 @@ export function NavBarItem(
   ): void => {
     event.preventDefault();
     props.setIsOpen?.(false);
-    router.push(props.url);
+    // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
+    window.location.href = props.url;
   };
 
   return (

@@ -2,13 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ReduxState } from "app/store";
 
 interface DrawerSignalState {
-    // Signal to trigger drawer close
-    closeSignal: boolean;
     isAnyDrawerOpen: boolean;
 }
 
 const initialState: DrawerSignalState = {
-    closeSignal: false,
     isAnyDrawerOpen: false,
 };
 
@@ -19,16 +16,12 @@ const drawerSignalSlice = createSlice({
     name: "drawerSignal",
     initialState,
     reducers: {
-        setCloseSignal: (state, action: PayloadAction<boolean>) => {
-            state.closeSignal = action.payload;
-        },
         setIsAnyDrawerOpen: (state, action: PayloadAction<boolean>) => {
             state.isAnyDrawerOpen = action.payload;
         }
     },
 });
 
-export const { setCloseSignal, setIsAnyDrawerOpen } = drawerSignalSlice.actions;
-export const selectCloseSignal = (state: ReduxState) => state.drawerSignal.closeSignal;
+export const { setIsAnyDrawerOpen } = drawerSignalSlice.actions;
 export const selectIsAnyDrawerOpen = (state: ReduxState) => state.drawerSignal.isAnyDrawerOpen;
 export default drawerSignalSlice.reducer;

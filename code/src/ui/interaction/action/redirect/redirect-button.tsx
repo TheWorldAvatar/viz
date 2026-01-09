@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import React from "react";
 import Button, { ButtonProps } from "ui/interaction/button";
 
@@ -18,13 +17,12 @@ export default function RedirectButton({
   url,
   ...rest
 }: Readonly<RedirectButtonProps>) {
-  const router = useRouter();
-
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
     event.preventDefault();
-    router.push(url);
+    // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
+    window.location.href = url;
   };
   return <Button {...rest} onClick={handleClick} />;
 }

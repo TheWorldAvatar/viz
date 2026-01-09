@@ -17,7 +17,7 @@ export default function NavigationDrawer(
 ) {
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
   const router = useRouter();
-  const { resetDrawerOpenFlag } = useDrawer(setIsOpen);
+  const { resetDrawerOpenFlag } = useDrawer();
 
   return (
     <Drawer

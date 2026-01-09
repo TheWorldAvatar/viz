@@ -43,6 +43,7 @@ interface FormContainerComponentProps {
 export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
+  console.log(props)
   return (
     <NavigationDrawer>
       <FormContents {...props} />
