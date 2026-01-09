@@ -7,8 +7,6 @@ import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
-import { useDispatch } from "react-redux";
-import { triggerDrawerClose, resetDrawerCount } from "state/drawer-signal-slice";
 
 
 export type NavBarItemType = "default" | "file" | "date";
@@ -42,7 +40,6 @@ export function NavBarItem(
 ): React.ReactElement {
   const router = useRouter();
   const dict: Dictionary = useDictionary();
-  const dispatch = useDispatch();
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (
     event: React.MouseEvent<HTMLDivElement>
@@ -50,8 +47,6 @@ export function NavBarItem(
     event.preventDefault();
     props.setIsOpen?.(false);
     router.push(props.url);
-    dispatch(triggerDrawerClose());
-    dispatch(resetDrawerCount());
   };
 
   return (

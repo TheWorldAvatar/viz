@@ -31,7 +31,7 @@ import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { buildUrl, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -80,7 +80,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
-  const { goBackAndCloseDrawer, navigateToDrawer } = useDrawerNavigation();
+  const { routeBack, navigateToDrawer } = useDrawerNavigation();
 
   const id: string = getAfterDelimiter(pathname, "/");
 
@@ -208,7 +208,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     if (response && !response?.error) {
       setTimeout(() => {
-        goBackAndCloseDrawer();
+        routeBack();
       }, 1000);
     }
   };

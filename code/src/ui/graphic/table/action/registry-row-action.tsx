@@ -1,6 +1,6 @@
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDictionary } from "hooks/useDictionary";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import React from "react";

@@ -18,7 +18,7 @@ import DateInput from "ui/interaction/input/date-input";
 import { buildUrl } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
 interface TableRibbonProps {
   path: string;

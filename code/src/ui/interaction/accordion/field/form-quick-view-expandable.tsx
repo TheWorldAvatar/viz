@@ -5,7 +5,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Button from "../../button";
 import FormQuickViewFields from "./form-quick-view-fields";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
 interface FormQuickViewExpandableProps {
   entity: string;

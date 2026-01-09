@@ -12,7 +12,7 @@ import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { TableDescriptor } from "hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";

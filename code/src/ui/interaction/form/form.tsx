@@ -3,7 +3,11 @@ import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
+import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -22,7 +26,9 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
+import { toast } from "ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -33,13 +39,7 @@ import FormGeocoder from "./section/form-geocoder";
 import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
-import useOperationStatus from "hooks/useOperationStatus";
-import { Routes } from "io/config/routes";
-import { browserStorageManager } from "state/browser-storage-manager";
-import { toast } from "ui/interaction/action/toast/toast";
-import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -75,7 +75,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const { navigateToDrawer, goBackAndCloseDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, routeBack } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -383,7 +383,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           props.setShowSearchModalState(false);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
-          goBackAndCloseDrawer();
+          routeBack();
         }
       }, 1000);
     }

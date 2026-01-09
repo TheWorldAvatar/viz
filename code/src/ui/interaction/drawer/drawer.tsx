@@ -27,7 +27,7 @@ interface DrawerProps {
  * @param setIsExternalOpen Optional external setter for the open state.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(props.isExternalOpen ?? false);
   const dialog = useDialog(props.isExternalOpen ?? isOpen, props.setIsExternalOpen ?? setIsOpen, false);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,

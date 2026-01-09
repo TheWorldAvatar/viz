@@ -21,7 +21,8 @@ import NavigationDrawer from "../drawer/navigation-drawer";
 import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { FormTemplate } from "./template/form-template";
-import { useDrawerNavigation } from "hooks/useDrawerNavigation";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import { Router } from "express";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -74,7 +75,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const dict: Dictionary = useDictionary();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { navigateToDrawer, goBackAndCloseDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, routeBack } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
@@ -128,8 +129,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     if (!agentResponseBody?.error) {
       setTimeout(() => {
-        goBackAndCloseDrawer();
-
+        routeBack();
       }, 1000);
     }
   };
@@ -183,7 +183,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {
-        goBackAndCloseDrawer();
+        routeBack();
       }, 1000);
     }
   };
