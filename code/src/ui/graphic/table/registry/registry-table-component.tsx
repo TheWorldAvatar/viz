@@ -39,8 +39,6 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
-  ;
-
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
