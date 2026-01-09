@@ -2,12 +2,8 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { resetDrawerCount, selectDrawerOpenCount, triggerDrawerClose } from "state/drawer-signal-slice";
 
-const DRAWER_CLOSE_DELAY = 350; // Slightly longer than drawer closing animation (300ms)
-
 /**
- * Hook for navigating to drawer/modal routes with proper sequential handling.
- * If a drawer has already been opened (count >= 1), it will go back first before navigating to the new route.
- * If no drawer has been opened yet (count === 0), it navigates directly.
+ * A custom hook to provide drawer navigation functionality.
  */
 export function useDrawerNavigation() {
     const router = useRouter();
@@ -23,15 +19,17 @@ export function useDrawerNavigation() {
         router.back();
     };
 
+    /**
+     * Function to navigate to a Intercept route that opens a drawer.
+     *
+     * @param targetUrl New route
+     */
     const navigateToDrawer = (targetUrl: string) => {
+        // If any drawers are opened, replace current drawer
         if (drawerOpenCount >= 1) {
-            // A drawer has already been opened - go back first, then navigate
-            goBackAndCloseDrawer();
-            setTimeout(() => {
-                router.push(targetUrl);
-            }, DRAWER_CLOSE_DELAY);
+            router.replace(targetUrl);
         } else {
-            // No drawer opened yet - navigate directly
+            // If no drawers are opened, directly open new route
             router.push(targetUrl);
         }
     };
