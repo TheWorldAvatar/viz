@@ -1,12 +1,12 @@
 "use client";
 
+import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import { useDictionary } from "hooks/useDictionary";
+import useOperationStatus from "hooks/useOperationStatus";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
-import { useDictionary } from "hooks/useDictionary";
-import useOperationStatus from "hooks/useOperationStatus";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -16,7 +16,6 @@ import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import RedirectButton from "../action/redirect/redirect-button";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
@@ -44,6 +43,7 @@ interface FormContainerComponentProps {
 export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
+  console.log(props)
   return (
     <NavigationDrawer>
       <FormContents {...props} />
@@ -71,10 +71,11 @@ export function FormContainerComponent(
 }
 
 function FormContents(props: Readonly<FormContainerComponentProps>) {
-  const router = useRouter();
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
+  const { navigateToDrawer } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
@@ -311,12 +312,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <RedirectButton // Edit button
+              <Button // Edit button
                 leftIcon="edit"
                 label={dict.action.edit}
                 disabled={isLoading}
                 tooltipText={dict.action.edit}
-                url={`../../edit/${props.entityType}/${id}`}
+                onClick={() => navigateToDrawer(`../../edit/${props.entityType}/${id}`)}
                 variant="secondary"
               />
             )}
@@ -326,13 +327,13 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
-              <RedirectButton // Delete button
+              <Button // Delete button
                 leftIcon="delete"
                 iconSize="medium"
                 label={dict.action.delete}
                 disabled={isLoading}
                 tooltipText={dict.action.delete}
-                url={`../../delete/${props.entityType}/${id}`}
+                onClick={() => navigateToDrawer(`../../delete/${props.entityType}/${id}`)}
                 variant="secondary"
               />
             )}
