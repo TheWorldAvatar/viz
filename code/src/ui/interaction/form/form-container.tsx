@@ -1,11 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -21,7 +22,6 @@ import NavigationDrawer from "../drawer/navigation-drawer";
 import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { FormTemplate } from "./template/form-template";
-import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -71,11 +71,11 @@ export function FormContainerComponent(
 }
 
 function FormContents(props: Readonly<FormContainerComponentProps>) {
-
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { navigateToDrawer, routeBack } = useDrawerNavigation();
+  const { navigateToDrawer } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
@@ -129,7 +129,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     if (!agentResponseBody?.error) {
       setTimeout(() => {
-        routeBack();
+        router.back();
       }, 1000);
     }
   };
@@ -183,7 +183,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     if (!customAgentResponse?.error) {
       setTimeout(() => {
-        routeBack();
+        router.back();
       }, 1000);
     }
   };

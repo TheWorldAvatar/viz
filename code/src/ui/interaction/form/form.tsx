@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -72,10 +72,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const { navigateToDrawer, routeBack } = useDrawerNavigation();
+  const { navigateToDrawer } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -383,7 +384,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           props.setShowSearchModalState(false);
         } else {
           // Redirect back for other types (add and edit) as users will want to see their changes
-          routeBack();
+          router.back();
         }
       }, 1000);
     }

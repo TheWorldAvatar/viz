@@ -10,11 +10,6 @@ export function useDrawerNavigation() {
     const router = useRouter();
     const isAnyDrawerOpen: boolean = useSelector(selectIsAnyDrawerOpen);
 
-    // Function to go back in history
-    const routeBack = () => {
-        router.back();
-    };
-
     /**
      * Function to navigate to a Intercept route that opens a drawer.
      *
@@ -31,5 +26,5 @@ export function useDrawerNavigation() {
         }
     };
 
-    return { navigateToDrawer, routeBack };
+    return { navigateToDrawer };
 }

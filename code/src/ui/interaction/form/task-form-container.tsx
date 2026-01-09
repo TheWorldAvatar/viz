@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
@@ -79,8 +79,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
-  const { routeBack, navigateToDrawer } = useDrawerNavigation();
+  const { navigateToDrawer } = useDrawerNavigation();
 
   const id: string = getAfterDelimiter(pathname, "/");
 
@@ -208,7 +209,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     if (response && !response?.error) {
       setTimeout(() => {
-        routeBack();
+        router.back();
       }, 1000);
     }
   };
