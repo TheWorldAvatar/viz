@@ -9,10 +9,10 @@ import {
 } from "@dnd-kit/sortable";
 import { flexRender } from "@tanstack/react-table";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { TableDescriptor } from "hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
-import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";
@@ -31,7 +31,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
-import { buildUrl, getId } from "utils/client-utils";
+import { getId } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
@@ -117,17 +117,17 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
-      navigateToDrawer(buildUrl(taskRoute, recordId));
+      navigateToDrawer(taskRoute, recordId);
     } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
       browserStorageManager.set(EVENT_KEY, row.event_id)
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
       const body: AgentResponseBody = await queryInternalApi(url);
       if (row[dict.title.billingStatus] != "pendingApproval") {
-        navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+        navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
       } else if (body.data.message == "true") {
-        navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id)))
+        navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id));
       } else {
-        navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(row.id)));
+        navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
       }
     } else {
       const registryRoute: string =
@@ -137,7 +137,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           permissionScheme.hasPermissions.sales
           ? Routes.REGISTRY_EDIT
           : Routes.REGISTRY;
-      navigateToDrawer(buildUrl(registryRoute, props.recordType, recordId));
+      navigateToDrawer(registryRoute, props.recordType, recordId);
     }
   };
 

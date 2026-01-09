@@ -1,6 +1,6 @@
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
-import { useDictionary } from "hooks/useDictionary";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import React from "react";
@@ -107,10 +107,10 @@ export default function RegistryRowAction(
       props.lifecycleStage == LifecycleStageMap.CLOSED
     ) {
       // Navigate to task view modal route (drawer)
-      navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+      navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
     } else {
       // Move to the view page for the specific record (not a drawer)
-      navigateToDrawer(buildUrl(Routes.REGISTRY, props.recordType, recordId));
+      navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
     }
   };
 
@@ -120,9 +120,9 @@ export default function RegistryRowAction(
     browserStorageManager.set(EVENT_KEY, props.row.event_id)
     setIsActionMenuOpen(false);
     if (body.data.message == "true") {
-      navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id)))
+      navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id))
     } else {
-      navigateToDrawer(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
+      navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id));
     }
   };
 
@@ -181,9 +181,7 @@ export default function RegistryRowAction(
                     label={dict.action.terminate}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(buildUrl(
-                        Routes.REGISTRY_TERMINATE, props.recordType, recordId
-                      ));
+                      navigateToDrawer(Routes.REGISTRY_TERMINATE, props.recordType, recordId);
                     }}
                   />
                 )}
@@ -274,7 +272,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+                  navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
               {(!keycloakEnabled ||
@@ -294,7 +292,7 @@ export default function RegistryRowAction(
                     label={dict.action.complete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_COMPLETE, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                     }}
                   />
                 )}
@@ -314,7 +312,7 @@ export default function RegistryRowAction(
                     label={dict.action.dispatch}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_DISPATCH, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                     }}
                   />
                 )}
@@ -336,7 +334,7 @@ export default function RegistryRowAction(
                     label={dict.action.cancel}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_CANCEL, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
                     }}
                   />
                 )}
@@ -357,7 +355,7 @@ export default function RegistryRowAction(
                     disabled={isLoading}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(buildUrl(Routes.REGISTRY_TASK_REPORT, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
                     }}
                   />
                 )}

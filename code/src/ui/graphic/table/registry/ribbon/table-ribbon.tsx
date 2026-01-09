@@ -1,6 +1,7 @@
 "use client";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
@@ -15,10 +16,8 @@ import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
 import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
 import DateInput from "ui/interaction/input/date-input";
-import { buildUrl } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
 interface TableRibbonProps {
   path: string;
@@ -284,11 +283,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 onClick={() => {
-                  navigateToDrawer(buildUrl(Routes.REGISTRY_ADD,
+                  navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
                     props.entityType
-                  ))
+                  )
                 }}
               />
             )}

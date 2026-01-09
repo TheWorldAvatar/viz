@@ -29,7 +29,7 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { buildUrl, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
@@ -244,7 +244,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    navigateToDrawer(buildUrl(Routes.REGISTRY_TASK, action, id));
+    navigateToDrawer(Routes.REGISTRY_TASK, action, id);
   };
 
   return (
