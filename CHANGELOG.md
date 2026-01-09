@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.51.0
+
+### Changes
+
+- Display data in the table cells as they are, without any processing
+
 ## 5.50.0
 
 ### Changes

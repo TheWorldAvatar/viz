@@ -16,7 +16,7 @@ import { TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { parseWordsForLabels } from "utils/client-utils";
-import { XSD_DATETIME, XSD_DATE } from "utils/constants";
+import { XSD_DATE, XSD_DATETIME } from "utils/constants";
 
 export type TableData = {
   data: FieldValues[];
@@ -123,7 +123,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           }
 
           return (
-            <ExpandableTextCell text={parseWordsForLabels(value)} maxLengthText={80} />
+            <ExpandableTextCell text={value} maxLengthText={80} />
           );
         },
         filterFn: multiSelectFilter,
