@@ -29,11 +29,20 @@ export function useAccountFilterOptions(
   allFilters: ColumnFilter[],
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
 ): FilterOptionsDescriptor {
-  const [selectedAccount, setSelectedAccount] = useState<SelectOptionType>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<SelectOptionType[]>([]);
   const [search, setSearch] = useState<string>("");
   const debouncedSearch: string = useDebounce<string>(search, 500);
+  const [selectedAccount, setSelectedAccount] = useState<SelectOptionType>(() => {
+    if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
+      const storedAccountLabel = browserStorageManager.get(LifecycleStageMap.ACCOUNT);
+      const storedAccountValue = browserStorageManager.get(accountType);
+      if (storedAccountLabel && storedAccountValue) {
+        return { label: storedAccountLabel, value: storedAccountValue };
+      }
+    }
+    return null;
+  });
 
   // A method to update the selected account on click in the selector
   const handleUpdateAccount = (newAccount: SelectOptionType) => {
@@ -63,13 +72,11 @@ export function useAccountFilterOptions(
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const searchVal: string = selectedAccount == null && browserStorageManager.get(LifecycleStageMap.ACCOUNT) != null ?
-          browserStorageManager.get(LifecycleStageMap.ACCOUNT) : debouncedSearch;
         const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
           InternalApiIdentifierMap.FILTER,
           LifecycleStageMap.ACCOUNT,
           accountType,
-          searchVal,
+          debouncedSearch
         ));
         const respOptions: SelectOptionType[] = res.data?.items as SelectOptionType[];
         setOptions(respOptions);
