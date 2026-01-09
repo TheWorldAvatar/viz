@@ -77,7 +77,6 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       </Button>}
       {!props.isFormView && <div className="flex gap-2">
         <RedirectButton
-          closeModal={false}
           leftIcon="add"
           size="icon"
           iconSize="small"
@@ -86,7 +85,6 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           variant="outline"
         />
         {props.selectedEntityId && <RedirectButton
-          closeModal={false}
           leftIcon="edit"
           size="icon"
           iconSize="small"
@@ -99,7 +97,6 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           variant="outline"
         />}
         {props.selectedEntityId && <RedirectButton
-          closeModal={false}
           leftIcon="delete"
           size="icon"
           iconSize="small"
