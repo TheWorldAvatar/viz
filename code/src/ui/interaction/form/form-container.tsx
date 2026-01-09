@@ -22,7 +22,6 @@ import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { FormTemplate } from "./template/form-template";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
-import { Router } from "express";
 
 interface FormContainerComponentProps {
   entityType: string;
