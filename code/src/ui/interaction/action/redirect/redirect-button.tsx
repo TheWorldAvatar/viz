@@ -9,6 +9,7 @@ import { triggerDrawerClose, resetDrawerCount } from "state/drawer-signal-slice"
 
 interface RedirectButtonProps extends ButtonProps {
   url: string;
+  closeModal?: boolean;
 }
 
 /**
@@ -18,6 +19,7 @@ interface RedirectButtonProps extends ButtonProps {
  */
 export default function RedirectButton({
   url,
+  closeModal = true,
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
@@ -27,9 +29,11 @@ export default function RedirectButton({
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
     event.preventDefault();
+    if (closeModal) {
+      dispatch(triggerDrawerClose());
+      dispatch(resetDrawerCount());
+    }
     router.push(url);
-    dispatch(triggerDrawerClose());
-    dispatch(resetDrawerCount());
   };
   return <Button {...rest} onClick={handleClick} />;
 }
