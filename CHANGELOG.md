@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.51.2
+
+### Bug Fixes
+
+- Fixed all navigation and open/close state issues with the drawer modal
+
 ## 5.51.1
 
 ### Bug Fixes
