@@ -1,8 +1,11 @@
-import { InternalApiIdentifier } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
+import { HTTP_METHOD } from "next/dist/server/web/http";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
+export const BRANCH_ADD = "branch_add";
+export const BRANCH_DELETE = "branch_delete";
 
 export function makeInternalRegistryAPIwithParams(
   internalIdentifier: InternalApiIdentifier,
@@ -10,100 +13,159 @@ export function makeInternalRegistryAPIwithParams(
 ): string {
   let searchParams: URLSearchParams;
   switch (internalIdentifier) {
-    case "address":
+    case InternalApiIdentifierMap.ADDRESS:
       searchParams = new URLSearchParams({
         postal_code: params[0],
       });
       break;
-    case "concept":
+    case InternalApiIdentifierMap.BILL:
+      searchParams = new URLSearchParams({
+        type: params[0],
+        id: params[1] ?? null,
+      });
+      break;
+    case InternalApiIdentifierMap.CONCEPT:
       searchParams = new URLSearchParams({
         uri: params[0],
       });
       break;
-    case "contracts":
+    case InternalApiIdentifierMap.CONTRACTS:
       searchParams = new URLSearchParams({
         stage: params[0],
         type: params[1],
+        page: params[2],
+        limit: params[3],
+        sort_by: params[4],
+        filters: params[5],
       });
       break;
-    case "contract_status":
+    case InternalApiIdentifierMap.CONTRACT_STATUS:
       searchParams = new URLSearchParams({
         id: params[0],
       });
       break;
-    case "instances":
+    case InternalApiIdentifierMap.COUNT:
+      searchParams = new URLSearchParams({
+        type: params[0],
+        filters: params[1] ?? "",
+        lifecycle: params[2] ?? null,
+        start_date: params[3] ?? null,
+        end_date: params[4] ?? null,
+      });
+      break;
+    case InternalApiIdentifierMap.INSTANCES:
       searchParams = new URLSearchParams({
         type: params[0],
         label: params[1] ?? null,
         identifier: params[2] ?? null,
         subtype: params[3] ?? null,
+        page: params[4] ?? null,
+        limit: params[5] ?? null,
+        sort_by: params[6] ?? null,
+        filters: params[7] ?? "",
+        branch_delete: params[8] ?? null,
       });
       break;
-    case "event":
+    case InternalApiIdentifierMap.EVENT:
       searchParams = new URLSearchParams({
         stage: params[0],
         type: params[1],
         identifier: params[2] ?? null,
       });
       break;
-    case "form":
+    case InternalApiIdentifierMap.FILTER:
+      searchParams = new URLSearchParams({
+        type: params[0],
+        field: params[1],
+        search: params[2] ?? null,
+        filters: params[3] ?? "",
+        lifecycle: params[4] ?? null,
+        start_date: params[5] ?? null,
+        end_date: params[6] ?? null,
+      });
+      break;
+    case InternalApiIdentifierMap.FORM:
       searchParams = new URLSearchParams({
         type: parseStringsForUrls(params[0]),
         identifier: params[1] ?? null,
       });
       break;
-    case "geocode_address":
+    case InternalApiIdentifierMap.GEOCODE_ADDRESS:
       searchParams = new URLSearchParams({
         block: params[0] ?? null,
         street: params[1] ?? null,
       });
       break;
-    case "geocode_postal":
+    case InternalApiIdentifierMap.GEOCODE_POSTAL:
       searchParams = new URLSearchParams({
         postalCode: params[0] ?? null,
       });
       break;
-    case "geocode_city":
+    case InternalApiIdentifierMap.GEOCODE_CITY:
       searchParams = new URLSearchParams({
         city: params[0] ?? null,
         country: params[1] ?? null,
       });
       break;
-    case "geodecode":
+    case InternalApiIdentifierMap.GEODECODE:
       searchParams = new URLSearchParams({
         iri: params[0],
       });
       break;
-    case "schedule":
+    case InternalApiIdentifierMap.SCHEDULE:
       searchParams = new URLSearchParams({
         id: params[0],
       });
       break;
-    case "tasks":
+    case InternalApiIdentifierMap.TASKS:
       searchParams = new URLSearchParams({
-        type: params[0],
-        idOrTimestamp: params[1],
+        type: params[0] ?? null,
+        idOrTimestamp: params[1] ?? null,
+        filters: params[2] ?? null,
       });
       break;
-    case "outstanding":
+    case InternalApiIdentifierMap.OUTSTANDING:
       searchParams = new URLSearchParams({
         type: params[0],
+        page: params[1],
+        limit: params[2],
+        sort_by: params[3],
+        filters: params[4],
       });
       break;
-    case "scheduled":
+    case InternalApiIdentifierMap.ACTIVITY:
+    case InternalApiIdentifierMap.SCHEDULED:
+    case InternalApiIdentifierMap.CLOSED:
       searchParams = new URLSearchParams({
         type: params[0],
         start_date: params[1],
         end_date: params[2],
-      });
-      break;
-    case "closed":
-      searchParams = new URLSearchParams({
-        type: params[0],
-        start_date: params[1],
-        end_date: params[2],
+        page: params[3],
+        limit: params[4],
+        sort_by: params[5],
+        filters: params[6],
       });
       break;
   }
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
+}
+
+export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">, body?: string): Promise<AgentResponseBody> {
+  let requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
+  if (method == "DELETE") {
+    requestParams = {
+      ...requestParams,
+      method: method.toString(),
+      headers: { "Content-Type": "application/json" },
+    };
+  } else if (method == "PUT" || method == "POST") {
+    requestParams = {
+      ...requestParams,
+      method: method.toString(),
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    };
+  }
+  const res = await fetch(url, requestParams);
+  return await res.json();
 }

@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 
 import { DataParser } from "io/data/data-parser";
 import { DataStore } from "io/data/data-store";
+import { DateRange } from "react-day-picker";
 import {
   MapFeaturePayload,
   clearFeatures,
@@ -12,13 +13,14 @@ import {
   setProperties,
   setStack,
 } from "state/map-feature-slice";
+import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   RegistryFieldValues,
   SparqlResponseField,
 } from "types/form";
 import { JsonObject } from "types/json";
-import { DateRange } from "react-day-picker";
+import { ToastConfig, ToastType } from "types/toast";
 import { Map } from "mapbox-gl";
 import { DataLayer } from 'io/data/data-layer';
 
@@ -108,6 +110,9 @@ export function highlightFeature(selectedFeature: MapFeaturePayload, map: Map, d
  * @param {string} str input string.
  */
 export function parseWordsForLabels(str: string): string {
+  if (str == "N/A") {
+    return str;
+  }
   if (isValidIRI(str)) {
     return getAfterDelimiter(str, "/");
   }
@@ -194,25 +199,50 @@ export function extractResponseField(
   }
 }
 
+/**
+ * Extract the target field as an array of Response Field Objects from the response.
+ * Returns an empty array if the field is not found or not an array.
+ *
+ * @param {RegistryFieldValues} response The response.
+ * @param {string} field The target field of interest.
+ */
+export function extractResponseFieldArray(
+  response: RegistryFieldValues,
+  field: string
+): SparqlResponseField[] {
+  if (Array.isArray(response[field])) {
+    return response[field];
+  } else if (response[field]) {
+    // If it's a single value, wrap it in an array
+    return [response[field]];
+  }
+  return [];
+}
 
 /**
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
  */
-export function getInitialDateFromLifecycleStage(lifecycleStage: LifecycleStage): DateRange {
+export function getInitialDateFromLifecycleStage(
+  lifecycleStage: LifecycleStage
+): DateRange {
   // For closed and other stages: start with today
   const initialDate: Date = new Date();
 
   if (lifecycleStage === "scheduled") {
-    // For scheduled: start with tomorrow since today and past are disabled
+    // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
+    const fourWeeksFromInitialDate: Date = new Date();
     initialDate.setDate(initialDate.getDate() + 1);
+    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
+    return { from: initialDate, to: fourWeeksFromInitialDate };
   }
-
   return { from: initialDate, to: initialDate };
 }
 
 /**
+
+=======
   * Compares the target and reference date to verify if they are before or after each other. Note that this function returns true if they are equivalent.
   *
   * @param {string} targetDate The target date for comparison.
@@ -223,6 +253,7 @@ export function compareDates(
   targetDate: string,
   isAfter: boolean,
   refDate?: string,
+
 ): boolean {
   const targetDateObject = new Date(targetDate);
   // Defaults to today if reference date is not provided
@@ -236,3 +267,113 @@ export function compareDates(
   }
   return targetDateObject <= refDateObject;
 }
+
+/**
+ * Get initial date ie today.
+ */
+export function getInitialDate(): DateRange {
+  const currentDate: Date = new Date();
+  return {
+    from: currentDate,
+    to: currentDate,
+  }
+}
+
+/**
+  * Get the UTC date from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
+export function getUTCDate(date: Date): Date {
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
+  );
+}
+
+/**
+  * Get the normalized date format in yyyy-mm-dd from the date input.
+  * 
+  * @param {Date} date The target date.
+  */
+export function getNormalizedDate(date: Date): string {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+}
+
+/**
+ * Get the configuration for a toast notification.
+ *
+ * @param type The type of toast .
+ * @param dict The dictionary containing localized strings.
+ */
+export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
+  switch (type) {
+    case "default":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "info",
+      };
+    case "success":
+      return {
+        bg: "bg-status-success-bg",
+        border: "border-green-200",
+        text: "text-status-success-text",
+        icon: "check_circle",
+        title: dict.title.success,
+      };
+    case "error":
+      return {
+        bg: "bg-status-error-bg",
+        border: "border-red-200",
+        text: "text-status-error-text",
+        icon: "error",
+        title: dict.title.error,
+      };
+    case "loading":
+      return {
+        bg: "bg-muted",
+        border: "border-border",
+        text: "text-foreground",
+        icon: "hourglass_bottom",
+        title: dict.title.loading,
+        animate: "animate-spin",
+      };
+    default:
+      throw new Error(`Unsupported toast type: ${type}`);
+  }
+}
+
+
+/**
+ * Validates whether the provided longitude and latitude are within acceptable ranges for Mapbox.
+ *
+ * @param lng The longitude value.
+ * @param lat The latitude value.
+ */
+export function isValidCoordinates(lng: number, lat: number): boolean {
+  return (
+    !isNaN(lng) &&
+    !isNaN(lat) &&
+    lng >= -180 &&
+    lng <= 180 &&
+    lat >= -90 &&
+    lat <= 90
+  );
+};
+
+
+
+/**
+ * Builds a URL by concatenating the provided arguments with '/' as a separator.
+ *
+ * @param args The parts of the URL to concatenate.
+ */
+
+export function buildUrl(...args: string[]): string {
+  return args.join("/");
+};

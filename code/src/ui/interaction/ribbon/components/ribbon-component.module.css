@@ -75,7 +75,7 @@
     position: absolute;
     top: 100%;
     left: 0;
-    z-index: 2;
+    z-index: 1000;
     margin-top: 10px;
     flex-grow: 1;
     width: fit-content;

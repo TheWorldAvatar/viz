@@ -1,10 +1,17 @@
 import { FieldValues, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
+import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
+
+import { browserStorageManager } from "state/browser-storage-manager";
 import {
+  BillingEntityTypes,
+  FormTemplateType,
   FormType,
+  FormTypeMap,
   ID_KEY,
+  NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,
   OntologyConceptMappings,
@@ -12,10 +19,12 @@ import {
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
+  QuickViewFields,
+  QuickViewGroupings,
   RegistryFieldValues,
   SparqlResponseField,
   TYPE_KEY,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
 import { extractResponseField, getAfterDelimiter } from "utils/client-utils";
 
@@ -26,7 +35,10 @@ export const FORM_STATES: Record<string, string> = {
   CONTRACT: "contract",
   ORDER: "order",
   REMARKS: "remarks",
-  RECURRENCE: "recurrence",
+  RECURRENCE: "recurrences",
+  ENTRY_DATES: "entry_date",
+  SCHEDULE_ENTRY: "schedule entry",
+  SCHEDULE_ENTRY_DATE: "schedule entry date",
   MON: "monday",
   TUES: "tuesday",
   WED: "wednesday",
@@ -61,10 +73,12 @@ export const ENTITY_STATUS: Record<string, string> = {
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
+ * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
-  fields: PropertyShapeOrGroup[]
+  fields: PropertyShapeOrGroup[],
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): PropertyShapeOrGroup[] {
   return fields.map((field) => {
     // Properties as part of a group
@@ -92,6 +106,12 @@ export function parsePropertyShapeOrGroupList(
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
         const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        // Replace account or pricing field with the field ID so that we can still retrieve the old values
+        if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+          billingTypes.accountField = fieldId;
+        } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+          billingTypes.pricingField = fieldId;
+        }
         return initFormField(updatedProp, initialState, fieldId);
       });
       // Update the property group with updated properties
@@ -121,11 +141,91 @@ export function parsePropertyShapeOrGroupList(
       return initFormField(
         fieldShape,
         initialState,
-        fieldShape.name[VALUE_KEY]
+        fieldShape.name[VALUE_KEY],
       );
     }
   });
 }
+
+/**
+ * Parses the branches into a format compliant with the viz as well as initialise the initial state.
+ *
+ * @param {FieldValues} initialState The initial state to store any field configuration.
+ * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
+ * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
+ * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
+ */
+export function parseBranches(
+  initialState: FieldValues,
+  nodeShapes: NodeShape[],
+  reqMatching: boolean,
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
+): NodeShape[] {
+  // Early termination
+  if (nodeShapes.length === 0) {
+    return nodeShapes;
+  }
+  // Iterate to find and store any default values in these node states
+  const nodeStates: FieldValues[] = [];
+  const results: NodeShape[] = [];
+  nodeShapes.forEach((shape) => {
+    const nodeState: FieldValues = {};
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes);
+    nodeStates.push(nodeState);
+    results.push({
+      ...shape,
+      property: parsedShapeProperties,
+    });
+  });
+  // Find the best matched node states with non-empty values and null values
+  let nodeWithMostNonEmpty: NodeShape = results[0];
+  let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
+  if (reqMatching) {
+    let maxNonEmptyCount: number = 0;
+    let minNullCount: number = 0;
+    nodeStates.forEach((nodeState, index) => {
+      let currentNonEmptyCount: number = 0;
+      let currentNullCount: number = 0;
+      for (const nodeField in nodeState) {
+        if (Object.hasOwn(nodeState, nodeField)) {
+          const fieldVal = nodeState[nodeField];
+          // If field value is undefined, increment null count
+          if (!fieldVal) {
+            currentNullCount++;
+          }
+          // Increment the counter when it is non-empty
+          // Field arrays are stored as group.index.field in react-hook-form
+          if (
+            typeof fieldVal === "string" &&
+            fieldVal.length > 0 &&
+            fieldVal != "-0.01"
+          ) {
+            currentNonEmptyCount++;
+          }
+        }
+      }
+      // When the current number of non-empty fields exceeds the existing maximum,
+      // the best match node will be updated accordingly
+      if (currentNonEmptyCount > maxNonEmptyCount) {
+        nodeWithMostNonEmpty = results[index];
+        nodeStateWithMostNonEmpty = nodeState;
+        maxNonEmptyCount = currentNonEmptyCount;
+        minNullCount = currentNullCount;
+        // But when the fields are equivalent in matching fields (as branches may have the same fields), 
+        // we will use what is missing based on null values to find the best match
+      } else if (currentNonEmptyCount == maxNonEmptyCount && currentNullCount < minNullCount) {
+        nodeWithMostNonEmpty = results[index];
+        nodeStateWithMostNonEmpty = nodeState;
+        minNullCount = currentNullCount;
+      }
+    });
+  }
+  for (const field in nodeStateWithMostNonEmpty) {
+    initialState[field] = nodeStateWithMostNonEmpty[field];
+  }
+  return [nodeWithMostNonEmpty, ...results.filter(node => node != nodeWithMostNonEmpty)];
+}
+
 
 /**
  * Initialises a form field based on the property shape. This function will retrieve the default value
@@ -196,6 +296,10 @@ function initFormField(
     if (field.name[VALUE_KEY] == "id" && !defaultVal) {
       defaultVal = outputState.id;
     }
+    // For a form to assign price, there is a customer account stored that should be defaulted to
+    if (outputState["formType"] == FormTypeMap.ASSIGN_PRICE && !!browserStorageManager.get(field.name[VALUE_KEY])) {
+      defaultVal = browserStorageManager.get(field.name[VALUE_KEY]);
+    }
     outputState[fieldId] = getDefaultVal(
       fieldId,
       defaultVal,
@@ -220,11 +324,12 @@ function initFormField(
 export function getDefaultVal(
   field: string,
   defaultValue: string,
-  formType: FormType
+  formType: FormType,
 ): boolean | number | string {
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
-    if (formType == "add" || formType == "search" || !defaultValue) {
+    if (formType == FormTypeMap.ADD || formType == FormTypeMap.SEARCH ||
+      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
@@ -232,6 +337,9 @@ export function getDefaultVal(
   }
 
   if (field == FORM_STATES.RECURRENCE) {
+    if (!defaultValue) {
+      return null;
+    }
     if (defaultValue === "P1D") {
       return 0;
     }
@@ -263,9 +371,8 @@ export function getDefaultVal(
     // Default value can be null, and should return false if null
     return !!defaultValue;
   }
-
-  // Returns the default value if passed, or else, nothing
-  return defaultValue ?? "";
+  // Returns the default value if passed, or else, empty string
+  return defaultValue ? defaultValue : "";
 }
 
 /**
@@ -327,6 +434,7 @@ export function getRegisterOptions(
   formType: string
 ): RegisterOptions {
   const options: RegisterOptions = {};
+  const dict: Dictionary = useDictionary();
 
   // The field is required if this is currently not the search form and SHACL defines them as optional
   // Also required for start and end search period
@@ -337,19 +445,25 @@ export function getRegisterOptions(
     field.fieldId == FORM_STATES.START_TIME_PERIOD ||
     field.fieldId == FORM_STATES.END_TIME_PERIOD
   ) {
-    options.required = "Required";
+    options.required = dict.message.required;
   }
 
   // For numerical values which must have least meet the min inclusive target
   if (field.minInclusive) {
     options.min = {
       value: Number(field.minInclusive[VALUE_KEY]),
-      message: `Please enter a number that is ${field.minInclusive[VALUE_KEY]} or greater!`,
+      message: dict.message.minInclusive.replace(
+        "{replace}",
+        field.minInclusive[VALUE_KEY]
+      ),
     };
   } else if (field.minExclusive) {
     options.min = {
       value: Number(field.minExclusive[VALUE_KEY]) + 0.1,
-      message: `Please enter a number greater than ${field.minExclusive[VALUE_KEY]}!`,
+      message: dict.message.minExclusive.replace(
+        "{replace}",
+        field.minExclusive[VALUE_KEY]
+      ),
     };
   }
 
@@ -357,25 +471,37 @@ export function getRegisterOptions(
   if (field.maxInclusive) {
     options.max = {
       value: Number(field.maxInclusive[VALUE_KEY]),
-      message: `Please enter a number that is ${field.maxInclusive[VALUE_KEY]} or smaller!`,
+      message: dict.message.maxInclusive.replace(
+        "{replace}",
+        field.maxInclusive[VALUE_KEY]
+      ),
     };
   } else if (field.maxExclusive) {
     options.max = {
       value: Number(field.maxExclusive[VALUE_KEY]) + 0.1,
-      message: `Please enter a number less than  ${field.maxExclusive[VALUE_KEY]}!`,
+      message: dict.message.maxExclusive.replace(
+        "{replace}",
+        field.maxExclusive[VALUE_KEY]
+      ),
     };
   }
 
   if (field.minLength) {
     options.minLength = {
       value: Number(field.minLength[VALUE_KEY]),
-      message: `Input requires at least ${field.minLength[VALUE_KEY]} letters!`,
+      message: dict.message.minLength.replace(
+        "{replace}",
+        field.minLength[VALUE_KEY]
+      ),
     };
   }
   if (field.maxLength) {
     options.maxLength = {
       value: Number(field.maxLength[VALUE_KEY]),
-      message: `Input has exceeded maximum length of ${field.maxLength[VALUE_KEY]} letters!`,
+      message: dict.message.maxLength.replace(
+        "{replace}",
+        field.maxLength[VALUE_KEY]
+      ),
     };
   }
 
@@ -384,13 +510,30 @@ export function getRegisterOptions(
     // Change message if only digits are allowed
     const msg: string =
       field.pattern[VALUE_KEY] === "^\\d+$"
-        ? `Only numerical inputs are allowed!`
-        : `This field must follow the pattern ${field.pattern[VALUE_KEY]}`;
+        ? `${dict.message.numericalValuesOnly}`
+        : `${dict.message.patternFollowed.replace(
+          "{replace}",
+          field.pattern[VALUE_KEY]
+        )}`;
     options.pattern = {
       value: new RegExp(field.pattern[VALUE_KEY]),
       message: msg,
     };
   }
+
+  // Validate that the input is a number for decimal and integer types
+  if (field.datatype === "integer") {
+    options.pattern = {
+      value: /^-?\d+$/,
+      message: dict.message.numericalValuesOnly,
+    };
+  } else if (field.datatype === "decimal") {
+    options.pattern = {
+      value: /^-?\d*\.?\d+$/,
+      message: dict.message.numericalValuesOnly,
+    };
+  }
+
   return options;
 }
 
@@ -583,19 +726,112 @@ export function findMatchingDropdownOptionValue(
  */
 export function translateFormType(input: FormType, dict: Dictionary): string {
   switch (input) {
-    case "view":
+    case FormTypeMap.VIEW:
       return dict.action.view;
-    case "add":
+    case FormTypeMap.ADD:
+    case FormTypeMap.ADD_BILL:
+    case FormTypeMap.ADD_PRICE:
       return dict.action.add;
-    case "edit":
+    case FormTypeMap.ADD_INVOICE:
+      return dict.action.addAdjustment;
+    case FormTypeMap.EDIT:
       return dict.action.edit;
-    case "delete":
+    case FormTypeMap.ASSIGN_PRICE:
+      return dict.action.assign;
+    case FormTypeMap.DELETE:
       return dict.action.delete;
-    case "search":
+    case FormTypeMap.SEARCH:
       return dict.action.search;
+    case "terminate":
+      return dict.action.terminate;
     default:
       break;
   }
+}
+
+/**
+ * Parses the form template into quick view groupings for easy access.
+ *
+ * @param {FormTemplateType} template The form template input.
+ */
+export function parseFormTemplateForQuickViewGroupings(
+  template: FormTemplateType
+): QuickViewGroupings {
+  let quickViewGroups: QuickViewGroupings = { default: {} };
+  template.property.map((field) => {
+    // Properties as part of a group
+    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+      const fieldset: PropertyGroup = field as PropertyGroup;
+      const groupName: string = fieldset.label[VALUE_KEY];
+      fieldset.property.map((fieldProp) => {
+        quickViewGroups = parseQuickViewFields(
+          fieldProp.name[VALUE_KEY],
+          fieldProp.class?.[ID_KEY],
+          groupName,
+          fieldProp.defaultValue,
+          quickViewGroups
+        );
+      });
+    } else {
+      const fieldShape: PropertyShape = field as PropertyShape;
+      const fieldName: string = fieldShape.name[VALUE_KEY];
+      if (fieldName != "id") {
+        quickViewGroups = parseQuickViewFields(
+          fieldName,
+          fieldShape.class?.[ID_KEY],
+          "default",
+          fieldShape.defaultValue,
+          quickViewGroups
+        );
+      }
+    }
+  });
+  return quickViewGroups;
+}
+
+/**
+ * Parses quick view fields based on the input parameters.
+ *
+ * @param {string} fieldName Name of the field.
+ * @param {string} fieldClass The class of the field if available.
+ * @param {string} groupName Name of the associated group. Default is default
+ * @param {SparqlResponseField | SparqlResponseField[]} fieldValue Value for the field.
+ * @param {QuickViewGroupings} output Stores the parsing results.
+ */
+function parseQuickViewFields(
+  fieldName: string,
+  fieldClass: string,
+  groupName: string,
+  fieldValue: SparqlResponseField | SparqlResponseField[],
+  output: QuickViewGroupings
+): QuickViewGroupings {
+  if (fieldValue) {
+    // Always return array of fields
+    let parsedFieldValues: SparqlResponseField[] = Array.isArray(fieldValue)
+      ? fieldValue
+      : [fieldValue];
+    if (
+      fieldClass ===
+      "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
+    ) {
+      parsedFieldValues = parsedFieldValues.map((fieldVal) => {
+        return {
+          ...fieldVal,
+          type: "mapUri",
+        };
+      });
+    }
+    const fields: QuickViewFields = {
+      // Append previous fields in the same group
+      ...output[groupName],
+      [fieldName]: parsedFieldValues,
+    };
+    output = {
+      ...output,
+      [groupName]: fields,
+    };
+  }
+  return output;
 }
 
 /**
@@ -617,13 +853,43 @@ export function genEmptyArrayRow(fieldConfigs: PropertyShape[]): FieldValues {
  * @param {string} field The location field ID.
  * @param {string} latitude The latitude value.
  * @param {string} longitude The longitude value.
-  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
-export function updateLatLong(field: string, latitude: string, longitude: string, form: UseFormReturn): void {
+export function updateLatLong(
+  field: string,
+  latitude: string,
+  longitude: string,
+  form: UseFormReturn
+): void {
   form.setValue(FORM_STATES.LATITUDE, latitude);
   form.setValue(FORM_STATES.LONGITUDE, longitude);
-  form.setValue(
-    field,
-    `POINT(${longitude}, ${latitude})`
-  );
+  form.setValue(field, `POINT(${longitude} ${latitude})`);
+}
+
+/**
+ * Generates the default select option from dictionary.
+ *
+ * @param {Dictionary} dict The dictionary mappings.
+ */
+export function genDefaultSelectOption(dict: Dictionary): OntologyConcept {
+  return {
+    type: {
+      value: "",
+      type: "literal",
+      dataType: "http://www.w3.org/2001/XMLSchema#string",
+      lang: "",
+    },
+    label: {
+      value: dict.action.selectAll,
+      type: "literal",
+      dataType: "http://www.w3.org/2001/XMLSchema#string",
+      lang: "",
+    },
+    description: {
+      value: "This option allows you to select all available criteria at once.",
+      type: "literal",
+      dataType: "http://www.w3.org/2001/XMLSchema#string",
+      lang: "",
+    },
+  };
 }

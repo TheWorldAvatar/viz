@@ -1,34 +1,41 @@
 import fieldStyles from "../field/field.module.css";
 
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
-  defaultSearchOption,
+  BillingEntityTypes,
+  FormTypeMap,
   ID_KEY,
+  OntologyConcept,
   PropertyShape,
   RegistryFieldValues,
   SparqlResponseField,
   VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOption } from "ui/interaction/dropdown/simple-selector";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   extractResponseField,
   getAfterDelimiter,
+  getId,
   parseStringsForUrls,
 } from "utils/client-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormSelector from "../field/input/form-selector";
-import { findMatchingDropdownOptionValue, FORM_STATES } from "../form-utils";
+import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } from "../form-utils";
+
+import { useFormQuickView } from "hooks/form/useFormQuickView";
+import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
+import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
   form: UseFormReturn;
+  billingStore?: BillingEntityTypes;
 }
 
 /**
@@ -36,11 +43,11 @@ interface DependentFormSectionProps {
  *
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  */
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
-  const pathName: string = usePathname();
   const dict: Dictionary = useDictionary();
 
   const label: string = props.dependentProp.name[VALUE_KEY];
@@ -48,7 +55,7 @@ export function DependentFormSection(
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const control: Control = props.form.control;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [selectElements, setSelectElements] = useState<SelectOption[]>([]);
+  const [selectElements, setSelectElements] = useState<SelectOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -59,6 +66,15 @@ export function DependentFormSection(
     control,
     name: props.dependentProp.fieldId,
   });
+
+  const {
+    id,
+    selectedEntityId,
+    quickViewGroups,
+    isQuickViewLoading,
+    isQuickViewOpen,
+    setIsQuickViewOpen,
+  } = useFormQuickView(currentOption, queryEntityType);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -74,30 +90,27 @@ export function DependentFormSection(
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
-          entities = await fetch(
+          const responseEntity: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(
-              "instances",
+              InternalApiIdentifierMap.INSTANCES,
               field.dependentOn.label,
               "false",
               getAfterDelimiter(currentParentOption, "/"),
               entityType
-            ),
-            { cache: "no-store", credentials: "same-origin" }
-          ).then(async (res) => {
-            const responseEntity: AgentResponseBody = await res.json();
-            return responseEntity.data?.items as RegistryFieldValues[] ?? [];
-          });
-        }
+            )
+          );
+          entities = responseEntity.data?.items as RegistryFieldValues[] ?? [];
+        };
         // If there is no valid parent option, there should be no entity
       } else if (
-        (formType === "view" || formType === "delete") &&
+        (formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE) &&
         field.defaultValue
       ) {
         // Retrieve only one entity to reduce query times as users cannot edit anything in view or delete mode
         // Note that the default value can be a null if the field is optional
-        entities = await fetch(
+        const responseEntity: AgentResponseBody = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
-            "instances",
+            InternalApiIdentifierMap.INSTANCES,
             entityType,
             "false",
             getAfterDelimiter(
@@ -106,27 +119,29 @@ export function DependentFormSection(
                 : field.defaultValue?.value,
               "/"
             )
-          ),
-          { cache: "no-store", credentials: "same-origin" }
-        ).then(async (response) => {
-          const responseEntity: AgentResponseBody = await response.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
-        });
+          )
+        );
+        entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
       } else {
-        entities = await fetch(
-          makeInternalRegistryAPIwithParams("instances", entityType),
-          { cache: "no-store", credentials: "same-origin" }
-        ).then(async (res) => {
-          const responseEntity: AgentResponseBody = await res.json();
-          return responseEntity.data?.items as RegistryFieldValues[] ?? [];
-        });
+        const responseEntity: AgentResponseBody = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.INSTANCES,
+            entityType,
+          )
+        );
+        entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
       }
 
       // By default, id is empty
-      let defaultId: string = "";
+      let defaultId: string = undefined;
+      const currentFormType: string = form.getValues(FORM_STATES.FORM_TYPE);
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        if (props.dependentProp?.minCount?.[VALUE_KEY] != "0") {
+        if (
+          // Only consider auto-selection for non-add forms (view/edit/search) so that add forms force explicit user action
+          currentFormType !== FormTypeMap.ADD &&
+          props.dependentProp?.minCount?.[VALUE_KEY] != "0"
+        ) {
           // Set the id to the first possible option when this is not optional
           // Optional fields should default to empty string
           defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
@@ -136,31 +151,44 @@ export function DependentFormSection(
         // Existing value must take precedence
         if (fieldValue && fieldValue.length > 0) {
           const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
-          const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+          const result: string = findMatchingDropdownOptionValue(
+            defaultValueId,
+            entities
+          );
           if (result != null) {
             defaultId = result;
           }
         } else if (props.dependentProp?.defaultValue) {
-          const defaults: SparqlResponseField | SparqlResponseField[] = props.dependentProp?.defaultValue
+          const defaults: SparqlResponseField | SparqlResponseField[] =
+            props.dependentProp?.defaultValue;
           // If this is not an array or the array's first item is not null
           if (!(Array.isArray(defaults) && defaults[0] == null)) {
-            const defaultField: SparqlResponseField = Array.isArray(defaults) ? defaults[0] : defaults;
-            const defaultValueId: string = getAfterDelimiter(defaultField.value, "/");
-            const result: string = findMatchingDropdownOptionValue(defaultValueId, entities);
+            const defaultField: SparqlResponseField = Array.isArray(defaults)
+              ? defaults[0]
+              : defaults;
+            const defaultValueId: string = getAfterDelimiter(
+              defaultField.value,
+              "/"
+            );
+            const result: string = findMatchingDropdownOptionValue(
+              defaultValueId,
+              entities
+            );
             if (result != null) {
               defaultId = result;
             }
           }
         }
       }
+      const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
       // Search form should always target default value
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
         defaultId = defaultSearchOption.type.value;
       }
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
 
-      const formFields: SelectOption[] = [];
+      const formFields: SelectOptionType[] = [];
 
       // Retrieve and set the display field accordingly
       if (entities.length > 0) {
@@ -176,7 +204,7 @@ export function DependentFormSection(
           );
         }
         entities.forEach((entity) => {
-          const formOption: SelectOption = {
+          const formOption: SelectOptionType = {
             value: extractResponseField(entity, FORM_STATES.IRI)?.value,
             label: extractResponseField(entity, displayField)?.value,
           };
@@ -188,7 +216,7 @@ export function DependentFormSection(
         return a.label.localeCompare(b.label);
       });
       // Add the default search option only if this is the search form
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === "search") {
+      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
         // Default option should only use empty string "" as the value
         formFields.unshift({
           label: defaultSearchOption.label.value,
@@ -205,76 +233,55 @@ export function DependentFormSection(
     }
   }, [currentParentOption]);
 
-  // An event handler to generate the url to reach the required add form
-  const genAddSubEntityUrl = (entityType: string): string => {
-    let url: string = `../add/${entityType}`;
-    if (formType != "add" || pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    return url;
-  };
-
-  // An event handler that will navigate to the required view form when clicked
-  const openViewSubEntityModal: React.MouseEventHandler<HTMLButtonElement> = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    let url: string = `../view/${queryEntityType}/${getAfterDelimiter(
-      currentOption,
-      "/"
-    )}`;
-    // Other form types will have an extra path for the entity id, except for ADD, and if it includes registry
-    if (formType != "add" || pathName.includes("registry")) {
-      url = `../${url}`;
-    }
-    window.open(url, "_blank");
-  };
-
-  // The div should only be displayed if it either does not have parent elements (no dependentOn property) or
-  // the parent element has been queried and selected
-  if (
-    !props.dependentProp.dependentOn ||
-    (currentParentOption && parentField != "")
-  ) {
-    return (
-      <div className="rounded-lg  my-4">
-        {isFetching && (
-          <div className="mr-2">
-            <LoadingSpinner isSmall={true} />
-          </div>
-        )}
-        {!isFetching && (
-          <div className="flex flex-col w-full gap-2">
-            <FormSelector
-              selectOptions={selectElements}
-              field={props.dependentProp}
-              form={props.form}
-              redirectOptions={{
-                addUrl:
-                  formType != "view" &&
-                    formType != "delete" &&
-                    formType != "search"
-                    ? genAddSubEntityUrl(queryEntityType)
-                    : undefined,
-                view:
-                  !isFetching &&
-                    formType != "search" &&
-                    selectElements.length > 0
-                    ? openViewSubEntityModal
-                    : undefined,
-              }}
-              noOptionMessage={dict.message.noInstances}
-              options={{
-                disabled: formType == "view" || formType == "delete",
-                labelStyle: [
-                  fieldStyles["form-input-label-add"],
-                  fieldStyles["form-input-label"],
-                ],
-              }}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
+  return (
+    <div className="rounded-lg my-4">
+      {isFetching && (
+        <div className="mr-2">
+          <LoadingSpinner isSmall={true} />
+        </div>
+      )}
+      {!isFetching && (
+        <div className="flex flex-col w-full gap-2">
+          <FormSelector
+            selectOptions={selectElements}
+            field={props.dependentProp}
+            form={props.form}
+            noOptionMessage={dict.message.noInstances}
+            options={{
+              disabled:
+                formType == FormTypeMap.VIEW ||
+                formType == FormTypeMap.DELETE ||
+                currentParentOption === "",
+              labelStyle: [
+                fieldStyles["form-input-label-add"],
+                fieldStyles["form-input-label"],
+              ],
+            }}
+          />
+          {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
+            id={id}
+            title={dict.title.quickView}
+            selectedEntityId={selectedEntityId}
+            entityType={queryEntityType}
+            formType={formType}
+            isFormView={formType == FormTypeMap.VIEW}
+            isOpen={isQuickViewOpen}
+            setIsOpen={setIsQuickViewOpen}
+            accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
+            accountType={props.billingStore?.account}
+            pricingType={props.billingStore?.pricing}
+          />}
+          {currentOption &&
+            isQuickViewOpen &&
+            (isQuickViewLoading ? (
+              <div className="flex justify-center p-4">
+                <LoadingSpinner isSmall={true} />
+              </div>
+            ) : (
+              <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />
+            ))}
+        </div>
+      )}
+    </div>
+  );
 }

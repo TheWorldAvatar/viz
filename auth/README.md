@@ -1,26 +1,25 @@
 # Authorisation Server Config
 
-This authorisation stack contains Keycloak for role and access management to an application, a redis-like store for fast in memory session management of your web app, and a database to store the Keycloak data (now including sesions for persistent user sessions through redeployment).
+This authorisation stack contains Keycloak for role and access management to an application, a redis store for fast in memory session management of your web app, and a database to store the Keycloak data (now including sessions for persistent user sessions through redeployment).
 
-There are two keycloak servers in this file, a development and production server with sensible config as tested within the TWA framework. 
-In general, the dev server should be used first to test client interaction, and to set up configuration settings in the keycloak UI to be exported and used to set the production server.
-Production server requires some extra configuration of TLS, database integration, session store management, hosting (nginx or relevant proxy management). 
-The purpose of this compose project is to take care of most of this, however you will need to specify the location of the auth server.
-Refer to the [keycloak guides](https://www.keycloak.org/guides) for detailed guidance on server administration and securing apps.
+There are two types of server deployments stored in separate files -  a development and production server with sensible config as tested within the TWA framework. In general, the dev server should be used first to test client interaction, and to set up configuration settings in the keycloak UI to be exported and used to set the production server. The purpose of the compose files are to take care of most of this, however you will need to specify the location of the auth server. Refer to the [keycloak guides](https://www.keycloak.org/guides) for detailed guidance on server administration and securing apps.
 
-- Use the compose file to spin up this auth stack.
-- Create a .env file in this directory and specify the admin usernames and passwords in the compose file. These are:
-    - `KEYCLOAK_BOOTSTRAP_ADMIN` default is set to `admin`
-    - `KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD`, default is `theworldavatar`
+- Before deployment, create a .env file in this directory and specify the admin usernames and passwords following the compose file. Common variables for both servers:
+  - `KEYCLOAK_BOOTSTRAP_ADMIN` default is set to `admin`
+  - `KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD`, default is `theworldavatar`
 
 > [!NOTE]  
 > Since Keycloak 26.0 these have changed, and will be prompted to change in the UI after spinning up. 
 > This dispenses with the need to have sensitive admin login stored as an environment variable.
 
-- `POSTGRES_PASSWORD`, default `theworldavatar`
-- `PGADMIN_LOGIN_EMAIL` default: `user@example.com`
+The development server is stored in the `compose.dev.yml` file and can be deployed using `docker compose -f './compose.dev.yml' up -d` in this directory.
+
+The production server is stored in the `compose.yml` file and can be deployed using `docker compose up -d` in this directory. This server requires some extra configuration of TLS, database integration, session store management, hosting (nginx or relevant proxy management). Read sections [2](#2-database), [3](#3-pgadmin), and [4](#4-redis) for the additional details.
+
+- Note that the production build will also require the following additional variables:
+  - `POSTGRES_PASSWORD`, default `theworldavatar`
+  - `PGADMIN_LOGIN_EMAIL` default: `user@example.com`
   - **N.B** you can also create a `postgres-password` file in this directory, uncomment the POSTGRES_PASSWORD_FILE line in the `compose` file and set the postgres password via a docker secret, but this is probably pointless since Keycloak does not support docker secrets so must be passed in as an environment variable anyway. This will be updated if keycloak adds secret support.
-  - Run `docker compose up` in this directory.
 
 ## Table of Contents
 
@@ -29,7 +28,7 @@ Refer to the [keycloak guides](https://www.keycloak.org/guides) for detailed gui
   - [1. Keycloak container](#1-keycloak-container)
   - [2. Database](#2-database)
   - [3. PGAdmin](#3-pgadmin)
-  - [4. Dragonfly](#4-dragonfly)
+  - [4. Redis](#4-redis)
   - [5. Roles](#5-roles)
  
 ## 1. Keycloak container
@@ -56,21 +55,29 @@ This should not require any further configuration.
 
 ## 3. PGAdmin
 
-A PGAdmin container is included as a part of this stack, mainly for debug purposes.
+The PGAdmin container is optional and can be excluded as it is mainly intended for debug purposes. Uncomment if you require this.
 You can use it to check if realms and users are being correctly stored in postgres. 
 You will need to add your postgres server using the host `postgres` (visible inside the docker network), and database 'keycloak'.
 
 You can also connect to this via adminer if you prefer, by starting an adminer container and connecting to the database on port `5432` which is forwarded to the server host by default (`localhost:5432`). 
 This assumes you do not have another database forwarding to localhost.
 
-## 4. Dragonfly
+## 4. Redis
 
-Dragonfly is a fork of redis.
-The store is in place to store and cache sessions.
- This will run at port `6379` but you will need to specify the host of the machine running it for a viz app inside a docker container to work. 
- This, like the keycloak server url in your `keycloak.json` will likely need to be the local IP (191.xx.xxx.xxx) or host.docker.internal sometimes works.
+The store is in place to store and cache user sessions specific to the viz. Users can choose to deploy the redis as a separate container or as part of the stack (see `./stack/redis.json` for a custom stack service). 
 
-This will default to localhost if the node server is running on the bare metal.
+### 4.1 Standalone container
+
+1. Uncomment the redis service and volume in the `compose.yml`
+2. Change the password in redis.conf
+3. Start the compose project
+4. If successful, the redis container will run at port `6379`
+
+### 4.2 Stack deployment
+
+1. Put the `./stack/redis.json` into the custom service directory of your stack-manager directory
+2. Add a password secret to the stack called `redis_password`
+3. Start the stack as per usual
 
 ## 5. Roles
 

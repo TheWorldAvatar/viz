@@ -1,6 +1,8 @@
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 
+export type ScreenType = "mobile" | "tablet" | "desktop";
+
 /**
  * Interface of default settings for landing page.
  */
@@ -15,10 +17,11 @@ export type UISettings = {
     'dashboard': boolean;
     'help': boolean;
     'registry': boolean;
+    'billing': boolean;
   },
   links?: NavBarItemSettings[],
   resources?: {
-    [key: 'scenario' | 'registry' | 'dashboard' | string]: {
+    [key: 'scenario' | 'registry' | 'dashboard' | "billing" | string]: {
       url: string;
       data?: string;
       paths?: ResourcesPathSettings[];
@@ -26,8 +29,12 @@ export type UISettings = {
   }
 }
 
+export type TableColumnOrderSettings = Record<string, string[]>;
+
+
 export interface ResourcesPathSettings {
   type: string;
+  key?: string;
   icon?: string;
 }
 
@@ -105,3 +112,4 @@ type FillLegend = {
 }
 
 export type MapboxCredentials = { username: string, token: string }
+

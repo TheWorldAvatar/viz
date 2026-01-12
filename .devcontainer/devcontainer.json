@@ -28,7 +28,8 @@
 				"ms-vscode.js-debug-nightly",
 				"DavidAnson.vscode-markdownlint",
 				"bradlc.vscode-tailwindcss",
-				"redhat.vscode-yaml"
+				"redhat.vscode-yaml",
+				"GitHub.copilot"
 			]
 		}
 	}

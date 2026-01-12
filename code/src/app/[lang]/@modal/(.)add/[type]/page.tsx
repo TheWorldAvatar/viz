@@ -2,8 +2,9 @@ import { Metadata } from 'next';
 
 import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
+import { FormTypeMap, LifecycleStageMap } from 'types/form';
 import { NavBarItemSettings, UISettings } from 'types/settings';
-import FormContainerComponent from 'ui/interaction/form/form-container';
+import { InterceptFormContainerComponent } from 'ui/interaction/form/form-container';
 
 interface InterceptAddFormPageProps {
   params: Promise<{
@@ -32,11 +33,12 @@ export default async function InterceptAddFormPage(props: Readonly<InterceptAddF
   const uiSettings: UISettings = SettingsStore.getUISettings();
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <FormContainerComponent
+    <InterceptFormContainerComponent
       entityType={decodedType}
-      formType={'add'}
+      formType={FormTypeMap.ADD}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
-      isModal={true}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
     />
   );
 }

@@ -16,11 +16,13 @@
 import express from "express";
 import next from "next";
 
-import session, { MemoryStore } from 'express-session';
-import { createClient } from "redis"
-import { RedisStore } from 'connect-redis';
-import Keycloak from 'keycloak-connect';
 import axios from 'axios';
+import { RedisStore } from 'connect-redis';
+import session, { MemoryStore } from 'express-session';
+import Keycloak from 'keycloak-connect';
+import { createClient } from "redis";
+import path from "path";
+import { readFileSync } from "fs";
 
 const colourReset = "\x1b[0m";
 const colourRed = "\x1b[31m";
@@ -32,8 +34,7 @@ const colourYellow = "\x1b[33m";
 if (process.env.PORT) { console.info('port specified in environment variable: ', colourGreen, process.env.PORT, colourReset); }
 const port = process.env.PORT || 3000;
 const keycloakEnabled = process.env.KEYCLOAK === 'true';
-const redisHost = process.env.REDIS_HOST || 'localhost';
-const redisPort = process.env.REDIS_PORT || 6379;
+const redisSocketAddress = process.env.REDIS_SOCKET_ADDRESS || "localhost:6379";
 
 if (process.env.ASSET_PREFIX) { console.info('Resource and Asset Prefix: ', colourGreen, process.env.ASSET_PREFIX, colourReset); }
 
@@ -48,7 +49,7 @@ const handle = nextApp.getRequestHandler();
 let store;
 
 // Prepare the Next.js application and then start the Express server
-nextApp.prepare().then(() => {
+nextApp.prepare().then(async () => {
     const expressServer = express();
 
     if (keycloakEnabled) { // do keycloak auth stuff if env var is set
@@ -60,24 +61,23 @@ nextApp.prepare().then(() => {
 
         if (!dev) {
             let redisClient;
-            console.info(`development mode is:`, colourGreen, dev, colourReset, `-> connecting to redis session store at`, colourGreen, `${redisHost}:${redisPort}`, colourReset);
+            console.info(`development mode is:`, colourGreen, dev, colourReset, `-> connecting to redis session store at`, colourGreen, `${redisSocketAddress}`, colourReset);
             try {
                 redisClient = createClient({
-                    socket: {
-                        host: redisHost,
-                        port: redisPort
-                    }
+                    url: `redis://${redisSocketAddress}`,
+                    password: getDockerSecret("redis_password"),
                 });
             } catch (error) {
-                console.info('Error while creating Redis Client, please ensure that Redis is running and the host is specified as an environment variable if this viz app is in a Docker container');
+                console.info('Error while creating Redis Client, please ensure that Redis is running, the url is specified as an environment variable, and the redis_password is set');
                 console.error(error);
             }
-            redisClient.connect().catch('Error while creating Redis Client, please ensure that Redis is running and the host is specified as an environment variable if this viz app is in a Docker container', console.error);
+            await connectRedis(redisClient);
             store = new RedisStore({
                 client: redisClient,
                 prefix: "redis",
                 ttl: undefined,
             });
+
         } else {
             store = new MemoryStore(); // use in-memory store for session data in dev mode
             console.info(`development mode is:`, dev ? colourYellow : colourRed, dev, colourReset, `-> using in-memory session store (express-session MemoryStore())`);
@@ -170,3 +170,24 @@ nextApp.prepare().then(() => {
         console.info('Running at', colourGreen, `http://localhost:${port}${colourReset}`, `(on host / inside container). Development mode :${dev ? colourYellow : colourGreen}`, dev, colourReset);
     });
 });
+
+async function connectRedis(client) {
+    try {
+        await client.connect();
+        console.info(colourGreen, "Successfully connected to Redis");
+    } catch (error) {
+        console.info(colourRed, "Unable to connect to Redis at", colourGreen, `${redisSocketAddress}`, colourReset)
+        console.error(error);
+        throw error;
+    }
+}
+
+function getDockerSecret(secretName) {
+    try {
+        const secretPath = path.join("/run/secrets", secretName);
+        return readFileSync(secretPath, "utf8").trim();
+    } catch (error) {
+        console.error(`Could not find secret: ${secretName}!`);
+        throw error;
+    }
+}

@@ -1,0 +1,11 @@
+import { redirect } from 'next/navigation';
+
+import { Routes } from 'io/config/routes';
+
+/**
+ * Redirects back to home page if visited.
+ * 
+ */
+export default function InaccessibleAddAccountPricingPage() {
+    redirect(Routes.HOME);
+}

@@ -3,7 +3,8 @@ import { Metadata } from 'next';
 import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { NavBarItemSettings, UISettings } from 'types/settings';
-import FormContainerComponent from 'ui/interaction/form/form-container';
+import { FormContainerComponent } from 'ui/interaction/form/form-container';
+import { LifecycleStageMap } from 'types/form';
 
 interface EditFormPageProps {
   params: Promise<{
@@ -38,8 +39,9 @@ export default async function EditFormPage(props: Readonly<EditFormPageProps>) {
     <FormContainerComponent
       entityType={decodedType}
       formType={'edit'}
-      isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}  
-      isModal={false}
+      isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
     />
   );
 }

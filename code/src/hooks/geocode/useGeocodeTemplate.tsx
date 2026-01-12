@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { FormTemplateType, PROPERTY_GROUP_TYPE, PROPERTY_SHAPE_TYPE, PropertyGroup, PropertyShape, TYPE_KEY, VALUE_KEY } from "types/form";
 import { FORM_STATES, updateLatLong } from "ui/interaction/form/form-utils";
-import { makeInternalRegistryAPIwithParams } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { ExistingCoordinatesDescriptor, useExistingLocationCoordinates } from "./useExistingLocationCoordinates";
 
 export interface GeocodeTemplateDescriptor {
@@ -38,16 +38,10 @@ export function useGeocodeTemplate(
     const getAddressShapes = async (
       locationIdentifier: string
     ): Promise<void> => {
-      const res = await fetch(
-        makeInternalRegistryAPIwithParams("form", locationIdentifier),
-        {
-          cache: "no-store",
-          credentials: "same-origin",
-        }
+      const resBody: AgentResponseBody = await queryInternalApi(
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, locationIdentifier)
       );
-      const resBody: AgentResponseBody = await res.json();
-      const template: FormTemplateType = resBody?.data
-        ?.items?.[0] as FormTemplateType;
+      const template: FormTemplateType = resBody?.data?.items?.[0] as FormTemplateType;
 
       // Retrieve and store the default coordinates set via the geopoint if available
       const geopointShape: PropertyShape = template.property.find(
