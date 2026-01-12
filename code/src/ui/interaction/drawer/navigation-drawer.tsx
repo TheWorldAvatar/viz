@@ -1,7 +1,8 @@
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import { useDispatch } from "react-redux";
-import { closeDrawer, openDrawer } from "state/drawer-component-slice";
+import { setIsAnyDrawerOpen } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
 
 interface NavigationDrawerProps {
@@ -10,20 +11,35 @@ interface NavigationDrawerProps {
 
 /**
  * A drawer component that slides in from the right edge of the screen to display additional content without interrupting the main view.
- * This drawer component is a variant that will navigate back in the browser history on close.
+ * This drawer component is a variant that will affect the browser history stack.
  */
 export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
 ) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
+  // Function to reset the open drawer flag
+  const resetDrawerOpenFlag = () => {
+    dispatch(setIsAnyDrawerOpen(false));
+  };
+
+  // Set drawer open state to true for first render of drawer
   useEffect(() => {
-    dispatch(openDrawer());
-  });
+    dispatch(setIsAnyDrawerOpen(true));
+  }, []);
 
-  return <Drawer onClose={() => {
-    dispatch(closeDrawer());
-    router.back()
-  }}>{props.children}</Drawer>;
+  return (
+    <Drawer
+      isExternalOpen={isOpen}
+      setIsExternalOpen={setIsOpen}
+      onClose={() => {
+        resetDrawerOpenFlag();
+        router.back();
+      }}
+    >
+      {props.children}
+    </Drawer>
+  );
 }

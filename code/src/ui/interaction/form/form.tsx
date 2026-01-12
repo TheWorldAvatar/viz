@@ -3,7 +3,11 @@ import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
+import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { setFilterFeatureIris, setFilterTimes } from "state/map-feature-slice";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -22,7 +26,9 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
+import { toast } from "ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -33,13 +39,6 @@ import FormGeocoder from "./section/form-geocoder";
 import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
-
-import useOperationStatus from "hooks/useOperationStatus";
-import { Routes } from "io/config/routes";
-import { browserStorageManager } from "state/browser-storage-manager";
-import { closeDrawer } from "state/drawer-component-slice";
-import { toast } from "ui/interaction/action/toast/toast";
-import { EVENT_KEY } from "utils/constants";
 import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormComponentProps {
@@ -71,12 +70,13 @@ interface FormComponentProps {
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
-  const router = useRouter();
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
+  const { handleDrawerClose } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -371,14 +371,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-      setTimeout(() => {
-        // always close drawer with a timeout
-        dispatch(closeDrawer());
+      handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-          router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY))))
+          router.replace(
+            buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY)))
+          );
         } else if (props.formType === FormTypeMap.ADD_INVOICE) {
-          router.push(buildUrl(Routes.BILLING_ACTIVITY))
+          // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
+          window.location.href = Routes.BILLING_ACTIVITY;
           // Close search modal on success
         } else if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);
@@ -386,7 +387,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
         }
-      }, 1000);
+      });
     }
   });
 

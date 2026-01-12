@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -29,9 +30,8 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { buildUrl, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -75,12 +75,13 @@ export function TaskFormContainerComponent(
  * Fetches task data from the URL ID and handles task operations.
  */
 function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
-  const router = useRouter();
   const pathname = usePathname();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
+  const router = useRouter();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
+  const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
   const id: string = getAfterDelimiter(pathname, "/");
 
@@ -207,9 +208,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     );
 
     if (response && !response?.error) {
-      setTimeout(() => {
+      handleDrawerClose(() => {
         router.back();
-      }, 2000);
+      });
     }
   };
 
@@ -244,7 +245,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    router.push(buildUrl(Routes.REGISTRY_TASK, action, id));
+    navigateToDrawer(Routes.REGISTRY_TASK, action, id);
   };
 
   return (
