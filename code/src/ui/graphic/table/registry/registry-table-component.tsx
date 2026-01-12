@@ -18,6 +18,7 @@ import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
 
+
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;

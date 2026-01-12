@@ -1,8 +1,8 @@
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
@@ -16,7 +16,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import BillingModal from "ui/interaction/modal/billing-modal";
-import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -38,7 +38,8 @@ interface RegistryRowActionProps {
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
-  const router = useRouter();
+
+  const { navigateToDrawer } = useDrawerNavigation();
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
     : props.row.id
@@ -105,11 +106,11 @@ export default function RegistryRowAction(
       props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
       props.lifecycleStage == LifecycleStageMap.CLOSED
     ) {
-      // Navigate to task view modal route
-      router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+      // Navigate to task view modal route (drawer)
+      navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
     } else {
-      // Move to the view modal page for the specific record
-      router.push(buildUrl(Routes.REGISTRY, props.recordType, recordId));
+      // Move to the view page for the specific record (not a drawer)
+      navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
     }
   };
 
@@ -119,9 +120,9 @@ export default function RegistryRowAction(
     browserStorageManager.set(EVENT_KEY, props.row.event_id)
     setIsActionMenuOpen(false);
     if (body.data.message == "true") {
-      router.push(buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id)))
+      navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id))
     } else {
-      router.push(buildUrl(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id)));
+      navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id));
     }
   };
 
@@ -180,9 +181,7 @@ export default function RegistryRowAction(
                     label={dict.action.terminate}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildUrl(
-                        Routes.REGISTRY_TERMINATE, props.recordType, recordId
-                      ));
+                      navigateToDrawer(Routes.REGISTRY_TERMINATE, props.recordType, recordId);
                     }}
                   />
                 )}
@@ -233,9 +232,7 @@ export default function RegistryRowAction(
                     label={dict.action.edit}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(
-                        buildUrl(Routes.REGISTRY_EDIT, props.recordType, recordId)
-                      );
+                      navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                     }}
                   />
                 )}
@@ -254,9 +251,7 @@ export default function RegistryRowAction(
                     label={dict.action.delete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(
-                        buildUrl(Routes.REGISTRY_DELETE, props.recordType, recordId)
-                      );
+                      navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                     }}
                   />
                 )}
@@ -273,7 +268,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  router.push(buildUrl(Routes.REGISTRY_TASK_VIEW, recordId));
+                  navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
               {(!keycloakEnabled ||
@@ -293,7 +288,7 @@ export default function RegistryRowAction(
                     label={dict.action.complete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildUrl(Routes.REGISTRY_TASK_COMPLETE, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                     }}
                   />
                 )}
@@ -313,7 +308,7 @@ export default function RegistryRowAction(
                     label={dict.action.dispatch}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildUrl(Routes.REGISTRY_TASK_DISPATCH, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                     }}
                   />
                 )}
@@ -335,7 +330,7 @@ export default function RegistryRowAction(
                     label={dict.action.cancel}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildUrl(Routes.REGISTRY_TASK_CANCEL, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
                     }}
                   />
                 )}
@@ -356,7 +351,7 @@ export default function RegistryRowAction(
                     disabled={isLoading}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      router.push(buildUrl(Routes.REGISTRY_TASK_REPORT, recordId));
+                      navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
                     }}
                   />
                 )}

@@ -8,6 +8,7 @@ import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
 import { Routes } from "io/config/routes";
 
+
 interface FormQuickViewHeaderProps {
   id: string;
   title: string;
@@ -81,6 +82,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           iconSize="small"
           tooltipText={dict.action.add}
           url={genSubEntityUrl("add", props.entityType)}
+          softRedirect={true}
           variant="outline"
         />
         {props.selectedEntityId && <RedirectButton
@@ -93,6 +95,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             props.entityType,
             props.selectedEntityId
           )}
+          softRedirect={true}
           variant="outline"
         />}
         {props.selectedEntityId && <RedirectButton
@@ -105,6 +108,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             props.entityType,
             props.selectedEntityId
           )}
+          softRedirect={true}
           variant="outline"
         />}
       </div>}
