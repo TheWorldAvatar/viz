@@ -76,7 +76,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const { navigateToDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -371,9 +371,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-      setTimeout(() => {
-
-
+      handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
           navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY)))
@@ -386,7 +384,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
         }
-      }, 1000);
+      });
     }
   });
 

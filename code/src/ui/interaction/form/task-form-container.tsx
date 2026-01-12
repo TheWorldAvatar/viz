@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -31,7 +32,6 @@ import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -81,7 +81,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
-  const { navigateToDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
   const id: string = getAfterDelimiter(pathname, "/");
 
@@ -208,9 +208,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     );
 
     if (response && !response?.error) {
-      setTimeout(() => {
+      handleDrawerClose(() => {
         router.back();
-      }, 1000);
+      });
     }
   };
 

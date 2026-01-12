@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { selectIsAnyDrawerOpen } from "state/drawer-signal-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "redux";
+import { selectIsAnyDrawerOpen, setIsAnyDrawerOpen } from "state/drawer-signal-slice";
 import { buildUrl } from "utils/client-utils";
 
 /**
@@ -9,6 +10,7 @@ import { buildUrl } from "utils/client-utils";
 export function useDrawerNavigation() {
     const router = useRouter();
     const isAnyDrawerOpen: boolean = useSelector(selectIsAnyDrawerOpen);
+    const dispatch: Dispatch = useDispatch();
 
     /**
      * Function to navigate to a Intercept route that opens a drawer.
@@ -26,5 +28,21 @@ export function useDrawerNavigation() {
         }
     };
 
-    return { navigateToDrawer };
+    /**
+     * Function to handle how the drawer closes on successful execution of buttons in the drawer.
+     *
+     * @param callback The callback function to execute after closing the drawer.
+     */
+    const handleDrawerClose = (callback: () => void) => {
+        // Executes the callback after a short delay
+        setTimeout(() => {
+            callback();
+        }, 1000);
+        // Reset drawer flag slightly after the callback execution
+        setTimeout(() => {
+            dispatch(setIsAnyDrawerOpen(false));
+        }, 1100);
+    };
+
+    return { navigateToDrawer, handleDrawerClose };
 }

@@ -74,7 +74,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const router = useRouter();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
-  const { navigateToDrawer } = useDrawerNavigation();
+  const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
   const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
@@ -127,9 +127,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
 
     if (!agentResponseBody?.error) {
-      setTimeout(() => {
+      handleDrawerClose(() => {
         router.back();
-      }, 1000);
+      });
     }
   };
 
@@ -181,9 +181,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     );
 
     if (!customAgentResponse?.error) {
-      setTimeout(() => {
+      handleDrawerClose(() => {
         router.back();
-      }, 1000);
+      });
     }
   };
 
