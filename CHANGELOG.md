@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.51.1
+
+### Bug Fixes
+
+- Fixed the issue with the dropdown menu in the billing activity not showing all options
+
 ## 5.51.0
 
 ### Changes
