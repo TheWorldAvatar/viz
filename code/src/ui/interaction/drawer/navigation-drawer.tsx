@@ -1,7 +1,8 @@
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useDrawer } from "hooks/drawer/useDrawer";
+import { useDispatch } from "react-redux";
+import { setIsAnyDrawerOpen } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
 
 interface NavigationDrawerProps {
@@ -15,9 +16,19 @@ interface NavigationDrawerProps {
 export default function NavigationDrawer(
   props: Readonly<NavigationDrawerProps>
 ) {
-  const [isOpen, setIsOpen] = useState(true); // Start as true immediately
   const router = useRouter();
-  const { resetDrawerOpenFlag } = useDrawer();
+  const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(true); // Start as true immediately
+
+  // Function to reset the open drawer flag
+  const resetDrawerOpenFlag = () => {
+    dispatch(setIsAnyDrawerOpen(false));
+  };
+
+  // Set drawer open state to true for first render of drawer
+  useEffect(() => {
+    dispatch(setIsAnyDrawerOpen(true));
+  }, []);
 
   return (
     <Drawer
