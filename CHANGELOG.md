@@ -2,6 +2,25 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.51.1
+
+### Bug Fixes
+
+- Fixed the issue with the dropdown menu in the billing activity not showing all options
+
+## 5.51.0
+
+### Changes
+
+- Display data in the table cells as they are, without any processing
+
+## 5.50.0
+
+### Changes
+
+- Changed how developers can set configuration for an authenticated Redis store to work with keycloak
+- Bump min version of `VisBackend Agent` to `v1.29.0`
+
 ## 5.49.2
 
 ### Bug Fix

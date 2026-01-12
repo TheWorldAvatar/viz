@@ -1,0 +1,23 @@
+services:
+  keycloak-dev:
+    restart: always
+    container_name: "keycloak-dev-server"
+    image: keycloak/keycloak:26.0
+    ports:
+      - "8080:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}    
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-theworldavatar}
+      KC_LOG: console,file
+      KC_LOG_LEVEL: info
+      KC_LOG_CONSOLE_COLOR: true
+      KC_LOG_FILE_DIR: /log/keycloak.log
+    command: start-dev --import-realm
+    volumes:
+      - ./realm:/opt/keycloak/data/import:ro # the realm to import
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+    driver: bridge
