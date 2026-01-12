@@ -140,6 +140,7 @@ export function DependentFormSection(
         if (
           // Only consider auto-selection for non-add forms (view/edit/search) so that add forms force explicit user action
           currentFormType !== FormTypeMap.ADD &&
+          currentFormType !== FormTypeMap.ADD_PRICE &&
           props.dependentProp?.minCount?.[VALUE_KEY] != "0"
         ) {
           // Set the id to the first possible option when this is not optional
