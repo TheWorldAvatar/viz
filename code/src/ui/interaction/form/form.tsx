@@ -27,7 +27,7 @@ import {
   VALUE_KEY,
 } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
-import { getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
@@ -76,7 +76,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-  const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
+  const { handleDrawerClose } = useDrawerNavigation();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -374,9 +374,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
-          navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY)))
+          router.replace(
+            buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY)))
+          );
         } else if (props.formType === FormTypeMap.ADD_INVOICE) {
-          navigateToDrawer(Routes.BILLING_ACTIVITY)
+          // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
+          window.location.href = Routes.BILLING_ACTIVITY;
           // Close search modal on success
         } else if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);
