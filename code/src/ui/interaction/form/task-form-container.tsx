@@ -38,6 +38,7 @@ import ExternalRedirectButton from "../action/redirect/external-redirect-button"
 interface TaskFormContainerComponentProps {
   entityType: string;
   formType: FormType;
+  attachmentUrlPrefix?: string;
 }
 
 /**
@@ -45,6 +46,7 @@ interface TaskFormContainerComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
+ * @param {string} attachmentUrlPrefix Optional URL prefix to be appended that serves as the base for attachment URLs.
  */
 export function InterceptTaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
@@ -61,6 +63,7 @@ export function InterceptTaskFormContainerComponent(
  *
  * @param {string} entityType The type of entity.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
+ * @param {string} attachmentUrlPrefix Optional URL prefix to be appended that serves as the base for attachment URLs.
  */
 export function TaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
@@ -97,7 +100,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const { task } = useTaskData(id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-  const { attachmentUrl, hasAttachment } = useAttachmentCheck("PLACEHOLDER", task?.contract);
+  const { attachmentUrl, hasAttachment } = useAttachmentCheck(props.attachmentUrlPrefix, task?.contract);
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(

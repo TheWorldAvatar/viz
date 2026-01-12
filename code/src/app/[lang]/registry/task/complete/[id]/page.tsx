@@ -30,6 +30,7 @@ export default async function CompleteFormPage() {
         <TaskFormContainerComponent
             entityType={entityType}
             formType={"complete"}
+            attachmentUrlPrefix={uiSettings?.resources?.["registry-attachment"]?.url ?? ""}
         />
     );
 }

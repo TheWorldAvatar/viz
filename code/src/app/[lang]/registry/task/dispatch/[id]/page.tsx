@@ -30,6 +30,7 @@ export default async function DispatchFormPage() {
         <TaskFormContainerComponent
             entityType={entityType}
             formType={"dispatch"}
+            attachmentUrlPrefix={uiSettings?.resources?.["registry-attachment"]?.url ?? ""}
         />
     );
 }

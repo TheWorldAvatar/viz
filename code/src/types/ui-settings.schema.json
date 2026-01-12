@@ -128,6 +128,18 @@
                     ],
                     "additionalProperties": false
                 },
+                "registry-attachment": {
+                    "type": "object",
+                    "properties": {
+                        "url": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "url"
+                    ],
+                    "additionalProperties": false
+                },
                 "billing": {
                     "type": "object",
                     "properties": {

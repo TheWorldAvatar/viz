@@ -25,10 +25,10 @@ export function useAttachmentCheck(
         const checkUrlExists = async (): Promise<void> => {
             const url: string = buildUrl(domainUrl, contract, "");
             const hasUrl: boolean = await urlExists(url);
-            setAttachmentUrl(url);
             setHasAttachment(hasUrl);
+            setAttachmentUrl(url);
         };
-        if (!!contract && contract != "") {
+        if (domainUrl && contract && contract != "") {
             checkUrlExists();
         }
     }, [contract]);
