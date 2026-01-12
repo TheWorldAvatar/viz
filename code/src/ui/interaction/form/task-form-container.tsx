@@ -7,6 +7,7 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
+import { useAttachmentCheck } from "hooks/form/useAttachmentCheck";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
@@ -32,6 +33,7 @@ import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import ExternalRedirectButton from "../action/redirect/external-redirect-button";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -95,6 +97,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const { task } = useTaskData(id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { attachmentUrl, hasAttachment } = useAttachmentCheck("PLACEHOLDER", task?.contract);
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -308,15 +311,24 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
       {/* Footer */}
       <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4">
-        {!formRef.current?.formState?.isSubmitting && (
-          <Button
-            leftIcon="cached"
-            disabled={isFetching || isLoading}
+        <div className="flex gap-2.5">
+          {!formRef.current?.formState?.isSubmitting && (
+            <Button
+              leftIcon="cached"
+              disabled={isFetching || isLoading}
+              variant="outline"
+              size="icon"
+              onClick={triggerRefresh}
+            />
+          )}
+          {hasAttachment && <ExternalRedirectButton
+            leftIcon="attach_file"
             variant="outline"
             size="icon"
-            onClick={triggerRefresh}
-          />
-        )}
+            url={attachmentUrl}
+            tooltipText={dict.action.viewAttachment}
+          />}
+        </div>
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
         )}
