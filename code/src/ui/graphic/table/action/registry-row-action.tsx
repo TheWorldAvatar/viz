@@ -16,7 +16,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import BillingModal from "ui/interaction/modal/billing-modal";
-import { buildUrl, compareDates, getId, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -232,9 +232,7 @@ export default function RegistryRowAction(
                     label={dict.action.edit}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(
-                        buildUrl(Routes.REGISTRY_EDIT, props.recordType, recordId)
-                      );
+                      navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                     }}
                   />
                 )}
@@ -253,9 +251,7 @@ export default function RegistryRowAction(
                     label={dict.action.delete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
-                      navigateToDrawer(
-                        buildUrl(Routes.REGISTRY_DELETE, props.recordType, recordId)
-                      );
+                      navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                     }}
                   />
                 )}
