@@ -47,7 +47,7 @@ export interface TableDescriptor {
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
-* @param {string} accountType Optional value to indicate the type of account for billing capabilities.
+* @param {string} accountType Value that indicates the type of account for billing capabilities.
 */
 export function useTable(
   entityType: string,
@@ -55,7 +55,7 @@ export function useTable(
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   tableColumnOrder: TableColumnOrderSettings,
-  accountType?: string,
+  accountType: string,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
