@@ -21,7 +21,7 @@ export type UISettings = {
   },
   links?: NavBarItemSettings[],
   resources?: {
-    [key: 'scenario' | 'registry' | 'dashboard' | "billing" | string]: {
+    [key: 'scenario' | 'registry' | 'registry-attachment' | 'dashboard' | "billing" | string]: {
       url: string;
       data?: string;
       paths?: ResourcesPathSettings[];
