@@ -1,6 +1,7 @@
 "use client";
 
 import Button, { ButtonProps } from "ui/interaction/button";
+import { getSafeUrl } from "utils/internal-api-services";
 
 interface ExternalRedirectButtonProps extends ButtonProps {
   url: string;
@@ -15,7 +16,12 @@ export default function ExternalRedirectButton({
   url,
   ...rest
 }: Readonly<ExternalRedirectButtonProps>) {
-  return <a target="_blank" href={url} rel="noopener noreferrer">
+  const safeHref: string | null = getSafeUrl(url);
+  if (!safeHref) {
+    // If the URL is not considered safe, render a non-link button
+    return <Button {...rest} />;
+  }
+  return <a target="_blank" href={safeHref} rel="noopener noreferrer">
     <Button {...rest} />
   </a>;
 }

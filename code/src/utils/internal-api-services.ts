@@ -1,6 +1,6 @@
+import { HTTP_METHOD } from "next/dist/server/web/http";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
-import { HTTP_METHOD } from "next/dist/server/web/http";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
@@ -175,4 +175,26 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);
   return await res.json();
+}
+
+/**
+ * Safely derive an URL that can be used in href.
+ * Returns null if the URL is invalid or uses an unsafe protocol.
+ */
+export function getSafeUrl(rawUrl: string): string | null {
+  if (!rawUrl || typeof rawUrl !== "string") {
+    return null;
+  }
+
+  try {
+    const url: URL = new URL(rawUrl);
+    const protocol: string = url.protocol.toLowerCase();
+    if (protocol !== "http:" && protocol !== "https:") {
+      return null;
+    }
+
+    return url.toString();
+  } catch {
+    return null;
+  }
 }
