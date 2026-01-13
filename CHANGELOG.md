@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.52.1
+
+### Bug Fixes
+
+- Fixed an issue with the billing activity page showing table data for all accounts instead of the selected account from the dropdown
+
 ## 5.52.0
 
 ### Changes
