@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { LifecycleStageMap } from "types/form";
 
 export interface DependentFilterOptionsDescriptor {
     options: SelectOptionType[];
@@ -32,7 +33,7 @@ export function useDependentFilterOptions(
                 const res: AgentResponseBody = await queryInternalApi(
                     makeInternalRegistryAPIwithParams(
                         InternalApiIdentifierMap.FILTER,
-                        "general",
+                        LifecycleStageMap.GENERAL,
                         entityType,
                         debouncedSearch,
                     )
