@@ -18,8 +18,9 @@ export default function ExternalRedirectButton({
 }: Readonly<ExternalRedirectButtonProps>) {
   const safeHref: string | null = getSafeUrl(url);
   if (!safeHref) {
-    // If the URL is not considered safe, render a non-link button
-    return <Button {...rest} />;
+    // If the URL is not considered safe, warn and do nothing
+    console.warn("Unsafe URL blocked!")
+    return <></>;
   }
   return <a target="_blank" href={safeHref} rel="noopener noreferrer">
     <Button {...rest} />
