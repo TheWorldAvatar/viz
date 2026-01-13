@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.52.2
+
+### Changes
+
+- Forced explicit user selection for the pricing account when you add a new pricing model to avoid confusion
+
 ## 5.52.1
 
 ### Bug Fixes

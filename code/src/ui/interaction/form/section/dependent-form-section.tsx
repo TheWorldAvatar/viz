@@ -138,8 +138,9 @@ export function DependentFormSection(
       // Only update the id if there are any entities
       if (entities.length > 0) {
         if (
-          // Only consider auto-selection for non-add forms (view/edit/search) so that add forms force explicit user action
+          // Only consider auto-selection for non-add and non-add price forms (view/edit/delete/search) so that add forms force explicit user action
           currentFormType !== FormTypeMap.ADD &&
+          currentFormType !== FormTypeMap.ADD_PRICE &&
           props.dependentProp?.minCount?.[VALUE_KEY] != "0"
         ) {
           // Set the id to the first possible option when this is not optional
