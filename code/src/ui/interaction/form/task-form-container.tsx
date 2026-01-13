@@ -374,7 +374,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 rightIcon="more_vert"
                 variant="outline"
                 label={dict.title.actions}
-                tooltipText={dict.title.actions}
                 className="mr-2"
                 isOpen={isActionMenuOpen}
                 setIsOpen={setIsActionMenuOpen}
