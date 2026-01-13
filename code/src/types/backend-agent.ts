@@ -37,3 +37,8 @@ export const InternalApiIdentifierMap = {
   CLOSED: "closed",
 } as const;
 export type InternalApiIdentifier = typeof InternalApiIdentifierMap[keyof typeof InternalApiIdentifierMap];
+
+export type UrlExistsResponse = {
+  url: string;
+  exists: boolean;
+};

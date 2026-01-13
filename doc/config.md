@@ -73,6 +73,8 @@ Note that resources are optional and their configuration options can differ from
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
+- Registry attachments: Requires the `registry` page. Enables the viz to display the attachments in the file directly in the task pages.
+  - `url`: The domain url that is a prefix to the directory of individual contract files. Eg if the files are stored at `https://example.org/id1/`, the domain url is `https://example.org`.
 - Billing: Activate the `billing` page based on the backend resource indicated in the `url` parameter. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). 
   - `url`: The registry agent endpoint (close it without /), which should be able to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](form.md).
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
@@ -117,6 +119,9 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "url": "http://sample.org/agent/", // Edit registry agent's API here
       "data": "type", // Specify only the type to reach the registry page of interest
       "paths": ["resource one", "resource two"] // Specify the resource names on the backend
+    },
+    "registry-attachment": {
+      "url": "http://sample.org/file/", // Edit redirect link to registry attachments here
     },
     "scenario": {
       "url": "https://theworldavatar.io/demos/credo-ofwat/central/CentralStackAgent", // Edit scenario url here

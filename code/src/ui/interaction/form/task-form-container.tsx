@@ -7,6 +7,7 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
+import { useAttachmentCheck } from "hooks/form/useAttachmentCheck";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
@@ -32,6 +33,8 @@ import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import PopoverActionButton from "../action/popover/popover-button";
+import ExternalRedirectButton from "../action/redirect/external-redirect-button";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -91,10 +94,12 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
+  const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
   const { task } = useTaskData(id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { attachmentUrl, hasAttachment } = useAttachmentCheck(task?.contract);
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -308,92 +313,30 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
       {/* Footer */}
       <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4">
-        {!formRef.current?.formState?.isSubmitting && (
-          <Button
-            leftIcon="cached"
-            disabled={isFetching || isLoading}
+        <div className="flex gap-2.5">
+          {!formRef.current?.formState?.isSubmitting && (
+            <Button
+              leftIcon="cached"
+              disabled={isFetching || isLoading}
+              variant="outline"
+              size="icon"
+              onClick={triggerRefresh}
+            />
+          )}
+          {hasAttachment && <ExternalRedirectButton
+            leftIcon="attach_file"
             variant="outline"
             size="icon"
-            onClick={triggerRefresh}
-          />
-        )}
+            url={attachmentUrl}
+            tooltipText={dict.action.viewAttachment}
+          />}
+        </div>
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
         )}
 
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
-
-          {/* Complete button - shown when viewing and status is assigned/completed */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.completeTask) &&
-            (task?.status?.toLowerCase() === "assigned" ||
-              task?.status?.toLowerCase() === "completed") &&
-            props.formType === FormTypeMap.VIEW && (
-              <Button
-                leftIcon="done_outline"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.complete}
-                onClick={() => navigateToTaskAction("complete")}
-              />
-            )}
-
-          {/* Dispatch button - shown when viewing and status is not issue/cancelled */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            task?.status?.toLowerCase() !== "issue" &&
-            task?.status?.toLowerCase() !== "cancelled" &&
-            props.formType === FormTypeMap.VIEW && (
-              <Button
-                leftIcon="assignment"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.dispatch}
-                onClick={() => navigateToTaskAction("dispatch")}
-              />
-            )}
-
-          {/* Cancel button - shown when viewing and status is new/assigned */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
-            (task?.status?.toLowerCase() === "new" ||
-              task?.status?.toLowerCase() === "assigned") &&
-            props.formType === FormTypeMap.VIEW && (
-              <Button
-                variant="secondary"
-                leftIcon="cancel"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.cancel}
-                onClick={() => navigateToTaskAction("cancel")}
-              />
-            )}
-
-          {/* Report button - shown when viewing and status is new/assigned */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.reportTask) &&
-            (task?.status?.toLowerCase() === "new" ||
-              task?.status?.toLowerCase() === "assigned") &&
-            props.formType === FormTypeMap.VIEW && (
-              <Button
-                variant="secondary"
-                leftIcon="report"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.report}
-                onClick={() => navigateToTaskAction("report")}
-              />
-            )}
-
           {/* Submit button - shown for non-view task types */}
           {(!keycloakEnabled ||
             !permissionScheme ||
@@ -420,43 +363,121 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 }}
               />
             )}
-
-          {/* Submit and Duplicate button - shown for complete task type */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.completeAndDuplicateTask) &&
-            props.formType === FormTypeMap.COMPLETE &&
-            task?.scheduleType !== dict.form.perpetualService && (
-              <Button
-                leftIcon="schedule_send"
-                variant="secondary"
-                disabled={isLoading}
-                label={dict.action.submitAndDuplicate}
-                tooltipText={dict.action.submitAndDuplicate}
-                onClick={() => {
-                  setIsSubmitting(true);
-                  setIsDuplicate(true);
-                }}
-              />
-            )}
-
-          {/* Save button - shown for complete task type */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.saveTask) &&
-            props.formType === FormTypeMap.COMPLETE && (
-              <Button
-                leftIcon="save"
-                variant="secondary"
-                disabled={isLoading}
-                label={dict.action.save}
-                tooltipText={dict.action.save}
-                onClick={() => {
-                  setIsSubmitting(true);
-                  setIsSaving(true);
-                }}
-              />
-            )}
+          {(props.formType === FormTypeMap.VIEW || props.formType === FormTypeMap.COMPLETE) &&
+            <div aria-label="More actions">
+              <PopoverActionButton
+                placement="top"
+                rightIcon="more_vert"
+                variant="outline"
+                label={dict.title.actions}
+                className="mr-2"
+                isOpen={isActionMenuOpen}
+                setIsOpen={setIsActionMenuOpen}
+              >
+                {/* Complete button - shown when viewing and status is assigned/completed */}
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.completeTask) &&
+                  (task?.status?.toLowerCase() === "assigned" ||
+                    task?.status?.toLowerCase() === "completed") &&
+                  props.formType === FormTypeMap.VIEW && (
+                    <Button
+                      leftIcon="done_outline"
+                      size="md"
+                      iconSize="medium"
+                      className="w-full justify-start"
+                      label={dict.action.complete}
+                      onClick={() => navigateToTaskAction("complete")}
+                    />
+                  )}
+                {/* Dispatch button - shown when viewing and status is not issue/cancelled */}
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.operation) &&
+                  task?.status?.toLowerCase() !== "issue" &&
+                  task?.status?.toLowerCase() !== "cancelled" &&
+                  props.formType === FormTypeMap.VIEW && (
+                    <Button
+                      leftIcon="assignment"
+                      size="md"
+                      iconSize="medium"
+                      className="w-full justify-start"
+                      label={dict.action.dispatch}
+                      onClick={() => navigateToTaskAction("dispatch")}
+                    />
+                  )}
+                {/* Cancel button - shown when viewing and status is new/assigned */}
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.operation) &&
+                  (task?.status?.toLowerCase() === "new" ||
+                    task?.status?.toLowerCase() === "assigned") &&
+                  props.formType === FormTypeMap.VIEW && (
+                    <Button
+                      variant="secondary"
+                      leftIcon="cancel"
+                      size="md"
+                      iconSize="medium"
+                      className="w-full justify-start"
+                      label={dict.action.cancel}
+                      onClick={() => navigateToTaskAction("cancel")}
+                    />
+                  )}
+                {/* Report button - shown when viewing and status is new/assigned */}
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.reportTask) &&
+                  (task?.status?.toLowerCase() === "new" ||
+                    task?.status?.toLowerCase() === "assigned") &&
+                  props.formType === FormTypeMap.VIEW && (
+                    <Button
+                      variant="secondary"
+                      leftIcon="report"
+                      size="md"
+                      iconSize="medium"
+                      className="w-full justify-start"
+                      label={dict.action.report}
+                      onClick={() => navigateToTaskAction("report")}
+                    />
+                  )}
+                {/* Submit and Duplicate button - shown for complete task type */}
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.completeAndDuplicateTask) &&
+                  props.formType === FormTypeMap.COMPLETE &&
+                  task?.scheduleType !== dict.form.perpetualService && (
+                    <Button
+                      leftIcon="schedule_send"
+                      variant="secondary"
+                      disabled={isLoading}
+                      label={dict.action.submitAndDuplicate}
+                      tooltipText={dict.action.submitAndDuplicate}
+                      onClick={() => {
+                        setIsSubmitting(true);
+                        setIsDuplicate(true);
+                      }}
+                    />
+                  )}
+                {/* Save button - shown for complete task type */}
+                {(!keycloakEnabled ||
+                  !permissionScheme ||
+                  permissionScheme.hasPermissions.saveTask) &&
+                  props.formType === FormTypeMap.COMPLETE && (
+                    <Button
+                      leftIcon="save"
+                      variant="secondary"
+                      disabled={isLoading}
+                      label={dict.action.save}
+                      tooltipText={dict.action.save}
+                      onClick={() => {
+                        setIsSubmitting(true);
+                        setIsSaving(true);
+                      }}
+                    />
+                  )}
+              </PopoverActionButton>
+            </div>
+          }
         </div>
       </section>
     </>

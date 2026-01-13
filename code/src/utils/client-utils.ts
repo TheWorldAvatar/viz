@@ -140,7 +140,7 @@ export function isValidIRI(iri: string): boolean {
  * @param {string} delimiter delimiter of interest.
  */
 export function getAfterDelimiter(str: string, delimiter: string): string {
-  return str.includes(delimiter) ? str.split(delimiter).pop() : str;
+  return str?.includes(delimiter) ? str.split(delimiter).pop() : str;
 }
 
 /**
