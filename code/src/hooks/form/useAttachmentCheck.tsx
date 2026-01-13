@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { UrlExistsResponse } from 'types/backend-agent';
-import { registryAttachmentUrlExists } from 'utils/server-actions';
+import { queryRegistryAttachmentAPI } from 'utils/internal-api-services';
 
 export interface UrlAttachmentState {
     attachmentUrl: string;
@@ -21,7 +21,7 @@ export function useAttachmentCheck(
 
     useEffect(() => {
         const checkUrlExists = async (): Promise<void> => {
-            const response: UrlExistsResponse = await registryAttachmentUrlExists(contract);
+            const response: UrlExistsResponse = await queryRegistryAttachmentAPI(contract);
             if (response != null) {
                 setHasAttachment(response.exists);
                 setAttachmentUrl(response.url);

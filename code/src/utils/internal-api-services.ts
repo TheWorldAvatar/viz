@@ -1,4 +1,4 @@
-import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
 import { HTTP_METHOD } from "next/dist/server/web/http";
 
@@ -166,6 +166,13 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
       body: body,
     };
   }
+  const res = await fetch(url, requestParams);
+  return await res.json();
+}
+
+export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlExistsResponse> {
+  const url: string = `${prefixedRegistryURL}attachment/${contract}`
+  const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);
   return await res.json();
 }
