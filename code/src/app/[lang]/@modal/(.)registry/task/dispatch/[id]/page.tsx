@@ -30,7 +30,6 @@ export default async function InterceptDispatchTaskPage() {
         <InterceptTaskFormContainerComponent
             entityType={entityType}
             formType={"dispatch"}
-            attachmentUrlPrefix={uiSettings?.resources?.["registry-attachment"]?.url ?? ""}
         />
     );
 }

@@ -30,7 +30,6 @@ export default async function ViewFormPage() {
         <TaskFormContainerComponent
             entityType={entityType}
             formType={"view"}
-            attachmentUrlPrefix={uiSettings?.resources?.["registry-attachment"]?.url ?? ""}
         />
     );
 }
