@@ -160,7 +160,6 @@ export function applyConfiguredColumnOrder(
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  // Config has backend field names, create orderMap with them (lastModified, scheduleType, etc.)
   const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [translateLifecycleFields(id, titleDict), index]));
 
   return columns.sort((a, b) => {
@@ -169,7 +168,7 @@ export function applyConfiguredColumnOrder(
     const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
     const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
     return indexA - indexB;
-  })
+  });
 }
 
 /**
