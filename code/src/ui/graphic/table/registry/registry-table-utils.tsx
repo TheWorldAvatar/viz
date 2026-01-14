@@ -8,7 +8,6 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
-  LifecycleStageMap,
   RegistryFieldValues,
   SparqlResponseField
 } from "types/form";
@@ -161,15 +160,7 @@ export function applyConfiguredColumnOrder(
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  let configuredKeys: string[];
-  if (lifecycleStage !== LifecycleStageMap.GENERAL && lifecycleStage !== LifecycleStageMap.ACCOUNT && lifecycleStage !== LifecycleStageMap.PRICING) {
-    configuredKeys = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
-  }
-  else {
-    configuredKeys = configuredOrder;
-  }
-
-  const orderMap: Map<string, number> = new Map(configuredKeys.map((id, index) => [id, index]));
+  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [translateLifecycleFields(id, titleDict), index]));
 
   return columns.sort((a, b) => {
     const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
@@ -179,7 +170,6 @@ export function applyConfiguredColumnOrder(
     return indexA - indexB;
   });
 }
-
 
 /**
  * Formats a datetime/date/time value for display based on its dataType.
@@ -225,6 +215,27 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
     case "status":
       delete outputRow[field];
       outputRow[titleDict.status] = currentVal;
+      return titleDict.status;
+    default:
+      return field;
+  }
+}
+
+/**
+ * Parses the lifecycle field to their translations.
+ *
+ * @param {string} field Name of field from backend to be translated.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function translateLifecycleFields(field: string, titleDict: Record<string, string>): string {
+  switch (field.toLowerCase()) {
+    case "lastmodified":
+      return titleDict.lastModified;
+    case "scheduletype":
+      return titleDict.scheduleType;
+    case "billingstatus":
+      return titleDict.billingStatus;
+    case "status":
       return titleDict.status;
     default:
       return field;
