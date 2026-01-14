@@ -161,22 +161,16 @@ export function applyConfiguredColumnOrder(
   }
 
   // Config has backend field names, create orderMap with them (lastModified, scheduleType, etc.)
-  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [id, index]));
+  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [translateLifecycleFields(id, titleDict), index]));
 
   return columns.sort((a, b) => {
-    // Convert column accessorKey (translated) back to backend name for comparison
     const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
     const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-
-    const backendKeyA: string = parseTranslatedFieldToOriginal(accessorKeyA, titleDict);
-    const backendKeyB: string = parseTranslatedFieldToOriginal(accessorKeyB, titleDict);
-
-    const indexA: number = orderMap.get(backendKeyA) ?? Infinity;
-    const indexB: number = orderMap.get(backendKeyB) ?? Infinity;
+    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
     return indexA - indexB;
-  });
+  })
 }
-
 
 /**
  * Formats a datetime/date/time value for display based on its dataType.
@@ -222,6 +216,27 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
     case "status":
       delete outputRow[field];
       outputRow[titleDict.status] = currentVal;
+      return titleDict.status;
+    default:
+      return field;
+  }
+}
+
+/**
+ * Parses the lifecycle field to their translations.
+ *
+ * @param {string} field Name of field from backend to be translated.
+ * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ */
+export function translateLifecycleFields(field: string, titleDict: Record<string, string>): string {
+  switch (field.toLowerCase()) {
+    case "lastmodified":
+      return titleDict.lastModified;
+    case "scheduletype":
+      return titleDict.scheduleType;
+    case "billingstatus":
+      return titleDict.billingStatus;
+    case "status":
       return titleDict.status;
     default:
       return field;
