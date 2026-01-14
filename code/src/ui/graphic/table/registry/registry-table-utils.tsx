@@ -8,7 +8,6 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
-  LifecycleStageMap,
   RegistryFieldValues,
   SparqlResponseField
 } from "types/form";
@@ -161,21 +160,19 @@ export function applyConfiguredColumnOrder(
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  let configuredKeys: string[];
-  if (lifecycleStage !== LifecycleStageMap.GENERAL && lifecycleStage !== LifecycleStageMap.ACCOUNT && lifecycleStage !== LifecycleStageMap.PRICING) {
-    configuredKeys = configuredOrder.map((key) => parseTranslatedFieldToOriginal(key, titleDict));
-  }
-  else {
-    configuredKeys = configuredOrder;
-  }
-
-  const orderMap: Map<string, number> = new Map(configuredKeys.map((id, index) => [id, index]));
+  // Config has backend field names, create orderMap with them (lastModified, scheduleType, etc.)
+  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [id, index]));
 
   return columns.sort((a, b) => {
+    // Convert column accessorKey (translated) back to backend name for comparison
     const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
     const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
-    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
+
+    const backendKeyA: string = parseTranslatedFieldToOriginal(accessorKeyA, titleDict);
+    const backendKeyB: string = parseTranslatedFieldToOriginal(accessorKeyB, titleDict);
+
+    const indexA: number = orderMap.get(backendKeyA) ?? Infinity;
+    const indexB: number = orderMap.get(backendKeyB) ?? Infinity;
     return indexA - indexB;
   });
 }
