@@ -30,7 +30,7 @@ import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
-import FormSelector from "../field/input/form-selector";
+import DependantFormSelector from "../field/input/dependant-form-selector";
 import { useDebounce } from "hooks/useDebounce";
 
 
@@ -265,7 +265,7 @@ export function DependentFormSection(
       )}
       {!isFetching && (
         <div className="flex flex-col w-full gap-2">
-          <FormSelector
+          <DependantFormSelector
             selectOptions={selectElements}
             field={props.dependentProp}
             form={props.form}
@@ -280,7 +280,6 @@ export function DependentFormSection(
                 fieldStyles["form-input-label"],
               ],
             }}
-            dependentForm={true}
             isLoading={isFetching}
             onSearchChange={setSearch}
           />

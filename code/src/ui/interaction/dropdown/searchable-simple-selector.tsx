@@ -17,6 +17,7 @@ interface SearchableSimpleSelectorProps {
     onSearchChange: (_searchValue: string) => void;
     isLoading?: boolean;
     isDisabled?: boolean;
+    noOptionMessage?: string;
 }
 
 /**
@@ -68,7 +69,11 @@ export default function SearchableSimpleSelector(
             isLoading={props.isLoading}
             isSearchable
             isDisabled={props.isDisabled}
-            noOptionsMessage={() => dict.message.noOptions}
+            noOptionsMessage={
+                props.noOptionMessage
+                    ? () => props.noOptionMessage
+                    : () => dict.message.noOptions
+            }
         />
     );
 }

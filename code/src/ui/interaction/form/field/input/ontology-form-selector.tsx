@@ -12,7 +12,6 @@ import SimpleSelector, {
 } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../form-input-container";
 import { getRegisterOptions } from "../../form-utils";
-import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
 
 interface FormSelectorProps {
   selectOptions: OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>;
@@ -21,9 +20,6 @@ interface FormSelectorProps {
   selectedOption?: OntologyConcept;
   noOptionMessage?: string;
   options?: FormFieldOptions;
-  dependentForm?: boolean;
-  isLoading?: boolean;
-  onSearchChange?: (_search: string) => void;
 }
 
 /**
@@ -37,7 +33,7 @@ interface FormSelectorProps {
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
-export default function FormSelector(props: Readonly<FormSelectorProps>) {
+export default function OntologyFormSelector(props: Readonly<FormSelectorProps>) {
   const formType: string = props.form.getValues("formType");
   const registerOptions = getRegisterOptions(props.field, formType);
 
@@ -54,22 +50,6 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
         defaultValue={props.form.getValues(props.field.fieldId)}
         rules={registerOptions}
         render={({ field: { value, onChange } }) => {
-          if (props.dependentForm) {
-            return (
-              <SearchableSimpleSelector
-                options={props.selectOptions as SelectOptionType[]}
-                onChange={(selectedOption) => {
-                  onChange((selectedOption as SelectOptionType).value);
-                }}
-                onSearchChange={(searchValue) => {
-                  props.onSearchChange?.(searchValue);
-                }}
-                isLoading={props.isLoading}
-                isDisabled={props.options?.disabled}
-
-              />
-            );
-          }
           return (
             <SimpleSelector
               options={props.selectOptions}
