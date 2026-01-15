@@ -200,14 +200,16 @@ export function DependentFormSection(
         } else if (fields.includes("street")) {
           displayField = "street";
         } else {
-          displayField = Object.keys(fields).find(
+          displayField = fields.find(
             (key) => key != "id" && key != "iri"
           );
         }
-        entities.forEach((entity) => {
+        entities.forEach((entity: RegistryFieldValues) => {
+          const extractedValue = extractResponseField(entity, FORM_STATES.IRI);
+          const extractedLabel = extractResponseField(entity, displayField);
           const formOption: SelectOptionType = {
-            value: extractResponseField(entity, FORM_STATES.IRI)?.value,
-            label: extractResponseField(entity, displayField)?.value,
+            value: extractedValue?.value ?? (entity as any)?.value ?? "",
+            label: extractedLabel?.value ?? (entity as any)?.[displayField] ?? "",
           };
           formFields.push(formOption);
         });
