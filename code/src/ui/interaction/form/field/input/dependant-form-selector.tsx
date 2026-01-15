@@ -21,7 +21,6 @@ interface FormSelectorProps {
     selectedOption?: OntologyConcept;
     noOptionMessage?: string;
     options?: FormFieldOptions;
-    dependentForm?: boolean;
     isLoading?: boolean;
     onSearchChange?: (_search: string) => void;
 }
