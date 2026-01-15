@@ -313,8 +313,14 @@ function makeExternalEndpoint(
       const identifier: string = searchParams.get("identifier");
       const subtype: string = searchParams.get("subtype");
       const branchDelete: string = searchParams.get("branch_delete");
+      const search: string = searchParams.get("search");
 
       let url: string = `${agentBaseApi}/${type}`;
+
+      if (search && search != "null") {
+        url += `?search=${encodeURIComponent(search)}`;
+        return url;
+      }
 
       if (requireLabel === "true") {
         const page: string = searchParams.get("page");
@@ -325,7 +331,7 @@ function makeExternalEndpoint(
       } else if (identifier != "null") {
         url += `/${identifier}`;
         if (subtype != "null") {
-          url += `/${subtype}`;
+          url += `/${subtype}?search=${encodeURIComponent(search)}`;
         }
         if (branchDelete && branchDelete != "null") {
           url += `?branch_delete=${encodeURIComponent(branchDelete)}`;
