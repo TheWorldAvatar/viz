@@ -25,12 +25,14 @@ import {
   parseStringsForUrls,
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } from "../form-utils";
 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
+import FormSelector from "../field/input/form-selector";
+import { useDebounce } from "hooks/useDebounce";
+
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -57,6 +59,8 @@ export function DependentFormSection(
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [selectElements, setSelectElements] = useState<SelectOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
+  const [search, setSearch] = useState<string>("");
+  const debouncedSearch: string = useDebounce<string>(search, 500);
 
   const currentParentOption: string = useWatch<FieldValues>({
     control,
@@ -123,10 +127,20 @@ export function DependentFormSection(
         );
         entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
       } else {
+        // If there is a search term, use it; otherwise, fetch initial results
         const responseEntity: AgentResponseBody = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             entityType,
+            "false",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            debouncedSearch ? debouncedSearch : null
           )
         );
         entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
@@ -234,7 +248,7 @@ export function DependentFormSection(
     if (parentField !== "" || currentParentOption !== null) {
       getDependencies(queryEntityType, props.dependentProp, props.form);
     }
-  }, [currentParentOption]);
+  }, [currentParentOption, debouncedSearch]);
 
   return (
     <div className="rounded-lg my-4">
@@ -260,6 +274,9 @@ export function DependentFormSection(
                 fieldStyles["form-input-label"],
               ],
             }}
+            dependentForm={true}
+            isLoading={isFetching}
+            onSearchChange={setSearch}
           />
           {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
             id={id}

@@ -12,7 +12,7 @@ import { SelectOptionType } from "./simple-selector";
 
 interface SearchableSimpleSelectorProps {
     options: SelectOptionType[];
-    initialValue: SelectOptionType;
+    initialValue?: SelectOptionType;
     onChange: (_value: SelectOptionType) => void;
     onSearchChange: (_searchValue: string) => void;
     isLoading?: boolean;

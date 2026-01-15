@@ -12,6 +12,7 @@ import SimpleSelector, {
 } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../form-input-container";
 import { getRegisterOptions } from "../../form-utils";
+import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
 
 interface FormSelectorProps {
   selectOptions: OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>;
@@ -20,6 +21,9 @@ interface FormSelectorProps {
   selectedOption?: OntologyConcept;
   noOptionMessage?: string;
   options?: FormFieldOptions;
+  dependentForm?: boolean;
+  isLoading?: boolean;
+  onSearchChange?: (_search: string) => void;
 }
 
 /**
@@ -50,6 +54,22 @@ export default function FormSelector(props: Readonly<FormSelectorProps>) {
         defaultValue={props.form.getValues(props.field.fieldId)}
         rules={registerOptions}
         render={({ field: { value, onChange } }) => {
+          if (props.dependentForm) {
+            return (
+              <SearchableSimpleSelector
+                options={props.selectOptions as SelectOptionType[]}
+                onChange={(selectedOption) => {
+                  onChange((selectedOption as SelectOptionType).value);
+                }}
+                onSearchChange={(searchValue) => {
+                  props.onSearchChange?.(searchValue);
+                }}
+                isLoading={props.isLoading}
+                isDisabled={props.options?.disabled}
+
+              />
+            );
+          }
           return (
             <SimpleSelector
               options={props.selectOptions}
