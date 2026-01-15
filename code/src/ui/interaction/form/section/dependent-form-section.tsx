@@ -100,7 +100,13 @@ export function DependentFormSection(
               field.dependentOn.label,
               "false",
               getAfterDelimiter(currentParentOption, "/"),
-              entityType
+              entityType,
+              null,
+              null,
+              null,
+              null,
+              null,
+              debouncedSearch ? debouncedSearch : null
             )
           );
           entities = responseEntity.data?.items as RegistryFieldValues[] ?? [];
