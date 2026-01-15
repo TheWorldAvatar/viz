@@ -27,7 +27,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
 
     return (
         <div>
-            <div className="text-foreground whitespace-pre-wrap w-[500px] lg:w-[600px] break-words">
+            <div className="text-foreground whitespace-pre-wrap w-fit">
                 {isExpanded ? props.text : `${props.text.substring(0, maxLengthText)}...`}
             </div>
             <Button
