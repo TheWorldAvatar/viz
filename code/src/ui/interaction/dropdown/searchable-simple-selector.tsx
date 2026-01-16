@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Select, {
     ActionMeta,
     MultiValue,
@@ -18,6 +18,7 @@ interface SearchableSimpleSelectorProps {
     isLoading?: boolean;
     isDisabled?: boolean;
     noOptionMessage?: string;
+    reqNotApplicableOption?: boolean;
 }
 
 /**
@@ -29,13 +30,41 @@ interface SearchableSimpleSelectorProps {
  * @param onSearchChange Function called when the search input changes, to trigger dynamic option loading.
  * @param {boolean} isLoading Optional flag to show loading state.
  * @param {boolean} isDisabled Optional flag to disable the selector.
+ * @param {boolean} reqNotApplicableOption Optional parameter to enable the not applicable option. Defaults to false.
  */
 export default function SearchableSimpleSelector(
     props: Readonly<SearchableSimpleSelectorProps>
 ) {
     const dict: Dictionary = useDictionary();
-    const [selectedOption, setSelectedOption] = useState<SelectOptionType>(props.initialValue);
     const [inputValue, setInputValue] = useState<string>("");
+    const hasInitializedNA = useRef(false);
+    const naOption: SelectOptionType = { value: "", label: dict.message.na };
+
+    const [selectedOption, setSelectedOption] = useState<SelectOptionType>(() => {
+        // If NA option is required and no initial value, use NA option
+        if (props.reqNotApplicableOption) {
+            return naOption;
+        }
+        return props.initialValue;
+    });
+
+    // Add NA option at the start if required
+    const parsedOptions: SelectOptionType[] = props.reqNotApplicableOption
+        ? [naOption, ...props.options]
+        : props.options;
+
+
+    useEffect(() => {
+        if (
+            !hasInitializedNA.current &&
+            props.reqNotApplicableOption &&
+            (!props.initialValue || props.initialValue.value === "")
+        ) {
+            hasInitializedNA.current = true;
+            setSelectedOption(naOption);
+            props.onChange(naOption);
+        }
+    }, [props.reqNotApplicableOption, props.initialValue, naOption]);
 
     const handleChange = (
         newValue: SingleValue<SelectOptionType> | MultiValue<SelectOptionType>,
@@ -61,7 +90,7 @@ export default function SearchableSimpleSelector(
     return (
         <Select
             styles={selectorStyles}
-            options={props.options}
+            options={parsedOptions}
             value={selectedOption}
             onChange={handleChange}
             onInputChange={handleInputChange}

@@ -1,11 +1,10 @@
 import { Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { GroupBase, OptionsOrGroups } from "react-select";
-
 import {
     FormFieldOptions,
     OntologyConcept,
     PropertyShape,
-
+    VALUE_KEY,
 } from "types/form";
 import {
     SelectOptionType,
@@ -65,6 +64,7 @@ export default function DependantFormSelector(props: Readonly<FormSelectorProps>
                             isLoading={props.isLoading}
                             isDisabled={props.options?.disabled}
                             noOptionMessage={props.noOptionMessage}
+                            reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
                         />
                     );
                 }}
