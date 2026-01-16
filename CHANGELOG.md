@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.52.4
+
+### Changes
+
+- All IRI values are now displayed as IDs in the registry table
+
 ## 5.52.3
 
 ### Bug fixes

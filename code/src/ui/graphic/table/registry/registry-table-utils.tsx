@@ -14,8 +14,9 @@ import {
 import { TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { parseWordsForLabels } from "utils/client-utils";
+import { isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { getAfterDelimiter} from "utils/client-utils";
 
 export type TableData = {
   data: FieldValues[];
@@ -115,6 +116,10 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           // Format datetime/date columns for display
           if (isDateTimeColumn) {
             return formatValueByDataType(value, dataType);
+          }
+
+          if(isValidIRI(value)) {
+            return getAfterDelimiter(value, "/");
           }
 
           if (col.toLowerCase() === "status" || col === titleDict.billingStatus) {
