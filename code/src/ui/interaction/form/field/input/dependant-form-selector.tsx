@@ -22,6 +22,7 @@ interface FormSelectorProps {
     options?: FormFieldOptions;
     isLoading?: boolean;
     onSearchChange?: (_search: string) => void;
+    parentValue?: string;
 }
 
 /**
@@ -34,6 +35,9 @@ interface FormSelectorProps {
  * @param redirectOptions Optional redirect options for adding a new entity or viewing an existing entity.
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {FormFieldOptions} options Configuration options for the field.
+ * @param {boolean} isLoading Optional flag to indicate if the options are being loaded.
+ * @param {function} onSearchChange Optional function called when the search input changes.
+ * @param {string} parentValue Optional parent field value to use as key for resetting component.
  */
 export default function DependantFormSelector(props: Readonly<FormSelectorProps>) {
     const formType: string = props.form.getValues("formType");
@@ -51,9 +55,10 @@ export default function DependantFormSelector(props: Readonly<FormSelectorProps>
                 control={props.form.control}
                 defaultValue={props.form.getValues(props.field.fieldId)}
                 rules={registerOptions}
-                render={({ field: { value, onChange } }) => {
+                render={({ field: { onChange } }) => {
                     return (
                         <SearchableSimpleSelector
+                            key={props.parentValue || props.field.fieldId} // Reset component when parent changes
                             options={props.selectOptions as SelectOptionType[]}
                             onChange={(selectedOption) => {
                                 onChange((selectedOption as SelectOptionType).value);

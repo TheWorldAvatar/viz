@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import Select, {
-    ActionMeta,
     MultiValue,
     SingleValue
 } from "react-select";
@@ -12,8 +11,8 @@ import { SelectOptionType } from "./simple-selector";
 
 interface SearchableSimpleSelectorProps {
     options: SelectOptionType[];
-    initialValue?: SelectOptionType;
-    onChange: (_value: SelectOptionType) => void;
+    initialValue?: SelectOptionType | null;
+    onChange: (_value: SelectOptionType | null) => void;
     onSearchChange: (_searchValue: string) => void;
     isLoading?: boolean;
     isDisabled?: boolean;
@@ -38,14 +37,13 @@ export default function SearchableSimpleSelector(
     const dict: Dictionary = useDictionary();
     const [inputValue, setInputValue] = useState<string>("");
     const hasInitializedNA = useRef(false);
-    const naOption: SelectOptionType = { value: "", label: dict.message.na };
-
-    const [selectedOption, setSelectedOption] = useState<SelectOptionType>(() => {
-        // If NA option is required and no initial value, use NA option
+    const naOption: SelectOptionType = { value: "", label: dict.message.na }
+    const [selectedOption, setSelectedOption] = useState<SelectOptionType | null>(() => {
+        // If NA option is required, use NA option
         if (props.reqNotApplicableOption) {
             return naOption;
         }
-        return props.initialValue;
+        return props.initialValue || null;
     });
 
     // Add NA option at the start if required
@@ -68,7 +66,6 @@ export default function SearchableSimpleSelector(
 
     const handleChange = (
         newValue: SingleValue<SelectOptionType> | MultiValue<SelectOptionType>,
-        _actionMeta: ActionMeta<SelectOptionType>
     ) => {
         const value: SelectOptionType = newValue as SelectOptionType;
         setSelectedOption(value);
@@ -98,11 +95,7 @@ export default function SearchableSimpleSelector(
             isLoading={props.isLoading}
             isSearchable
             isDisabled={props.isDisabled}
-            noOptionsMessage={
-                props.noOptionMessage
-                    ? () => props.noOptionMessage
-                    : () => dict.message.noOptions
-            }
+            noOptionsMessage={props.noOptionMessage ? () => props.noOptionMessage : () => dict.message.noOptions}
         />
     );
 }

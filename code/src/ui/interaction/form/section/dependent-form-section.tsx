@@ -1,6 +1,6 @@
 import fieldStyles from "../field/field.module.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -61,6 +61,8 @@ export function DependentFormSection(
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
   const [search, setSearch] = useState<string>("");
   const debouncedSearch: string = useDebounce<string>(search, 500);
+  const isInitialLoad = useRef<boolean>(true);
+  const previousParentOption = useRef<string | null>(null);
 
   const currentParentOption: string = useWatch<FieldValues>({
     control,
@@ -79,6 +81,20 @@ export function DependentFormSection(
     isQuickViewOpen,
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
+
+  // Reset dependent field when parent changes (but not on initial load)
+  useEffect(() => {
+    if (
+      parentField !== "" &&
+      previousParentOption.current !== null &&
+      previousParentOption.current !== currentParentOption
+    ) {
+      // Parent changed - reset the dependent field to null
+      props.form.setValue(props.dependentProp.fieldId, "");
+      setSearch("");
+    }
+    previousParentOption.current = currentParentOption;
+  }, [currentParentOption, parentField, props.dependentProp.fieldId, props.form]);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -249,6 +265,7 @@ export function DependentFormSection(
       // Update select options
       setSelectElements(formFields);
       setIsFetching(false);
+      isInitialLoad.current = false;
     };
 
     if (parentField !== "" || currentParentOption !== null) {
@@ -258,12 +275,12 @@ export function DependentFormSection(
 
   return (
     <div className="rounded-lg my-4">
-      {isFetching && (
+      {isInitialLoad.current && isFetching && (
         <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
-      {!isFetching && (
+      {(!isInitialLoad.current || !isFetching) && (
         <div className="flex flex-col w-full gap-2">
           <DependantFormSelector
             selectOptions={selectElements}
@@ -282,6 +299,7 @@ export function DependentFormSection(
             }}
             isLoading={isFetching}
             onSearchChange={setSearch}
+            parentValue={currentParentOption}
           />
           {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
             id={id}
