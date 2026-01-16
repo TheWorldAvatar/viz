@@ -219,6 +219,7 @@
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
     "lastModified": "Zuletzt Geändert",
+    "history": "Geschichte",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "active": "Aktiv",
@@ -246,6 +247,7 @@
     "status": "Status",
     "success": "Erfolgreich (Übermittlung war erfolgreich)",
     "total": "insgesamt",
+    "user": "Benutzer",
     "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
     "loading": "Laden"
   }

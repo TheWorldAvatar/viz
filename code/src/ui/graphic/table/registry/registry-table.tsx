@@ -40,6 +40,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import HistoryModal from "ui/interaction/modal/history-modal";
 
 
 interface RegistryTableProps {
@@ -68,6 +69,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
+  const [historyId, setHistoryId] = useState<string>("");
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -316,6 +319,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     row={row.original}
                                     triggerRefresh={props.triggerRefresh}
                                   />
+                                  <Button
+                                    leftIcon="history"
+                                    size="icon"
+                                    variant="ghost"
+                                    tooltipText={dict.title.history}
+                                    onClick={() => {
+                                      setHistoryId(row.original.id as string);
+                                      setIsOpenHistoryModal(true);
+                                    }}
+                                  />
                                   {allowMultipleSelection && (
                                     <Checkbox
                                       aria-label={row.id}
@@ -360,6 +373,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           {dict.message.noVisibleColumns}
         </div>
       )}
+      {isOpenHistoryModal && historyId != "" && <HistoryModal
+        id={historyId}
+        entityType={props.recordType}
+        isOpen={isOpenHistoryModal}
+        setIsOpen={setIsOpenHistoryModal}
+      />}
     </>
   );
 }

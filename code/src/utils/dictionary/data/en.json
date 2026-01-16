@@ -219,6 +219,7 @@
     "customiseCol": "Show/Hide Columns",
     "description": "Description",
     "lastModified": "Last modified",
+    "history": "History",
     "available": "available",
     "unavailable": "unavailable",
     "active": "active",
@@ -243,9 +244,10 @@
     "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
-    "total": "Total",
     "status": "status",
     "success": "Success",
+    "total": "Total",
+    "user": "User",
     "error": "Error",
     "loading": "Loading"
   }
