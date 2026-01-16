@@ -317,11 +317,6 @@ function makeExternalEndpoint(
 
       let url: string = `${agentBaseApi}/${type}`;
 
-      if (search && search != "null") {
-        url += `?search=${encodeURIComponent(search)}`;
-        return url;
-      }
-
       if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
@@ -333,11 +328,19 @@ function makeExternalEndpoint(
         if (subtype != "null") {
           url += `/${subtype}`;
         }
-        if (branchDelete && branchDelete != "null") {
+        // Add query parameters for subtype case: {parent}/{id}/{type}?search={search}
+        if (search && search != "null") {
+          url += `?search=${encodeURIComponent(search)}`;
+          if (branchDelete && branchDelete != "null") {
+            url += `&branch_delete=${encodeURIComponent(branchDelete)}`;
+          }
+        } else if (branchDelete && branchDelete != "null") {
           url += `?branch_delete=${encodeURIComponent(branchDelete)}`;
         }
+      } else if (search && search != "null") {
+        // If no identifier/subtype, search can be used directly on type
+        url += `?search=${encodeURIComponent(search)}`;
       }
-
       return url;
     }
     case InternalApiIdentifierMap.EVENT: {
