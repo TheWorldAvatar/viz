@@ -61,11 +61,8 @@ export function DependentFormSection(
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
   const [search, setSearch] = useState<string>("");
   const debouncedSearch: string = useDebounce<string>(search, 500);
+  const isInitialLoad = useRef<boolean>(true);
   const previousParentOption = useRef<string | null>(null);
-
-  // Determine if it's initial load: no elements loaded yet
-  const isInitialLoad = selectElements.length === 0;
-
 
   const currentParentOption: string = useWatch<FieldValues>({
     control,
@@ -268,6 +265,7 @@ export function DependentFormSection(
       // Update select options
       setSelectElements(formFields);
       setIsFetching(false);
+      isInitialLoad.current = false;
     };
 
     if (parentField !== "" || currentParentOption !== null) {
@@ -277,12 +275,12 @@ export function DependentFormSection(
 
   return (
     <div className="rounded-lg my-4">
-      {isInitialLoad && isFetching && (
+      {isInitialLoad.current && isFetching && (
         <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
-      {(!isInitialLoad || !isFetching) && (
+      {(!isInitialLoad.current || !isFetching) && (
         <div className="flex flex-col w-full gap-2">
           <DependantFormSelector
             selectOptions={selectElements}
