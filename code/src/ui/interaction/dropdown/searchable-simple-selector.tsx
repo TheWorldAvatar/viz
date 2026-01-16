@@ -29,6 +29,7 @@ interface SearchableSimpleSelectorProps {
  * @param onSearchChange Function called when the search input changes, to trigger dynamic option loading.
  * @param {boolean} isLoading Optional flag to show loading state.
  * @param {boolean} isDisabled Optional flag to disable the selector.
+ * @param {string} noOptionMessage Optional message to display when no options are available.
  * @param {boolean} reqNotApplicableOption Optional parameter to enable the not applicable option. Defaults to false.
  */
 export default function SearchableSimpleSelector(
