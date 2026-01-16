@@ -29,6 +29,7 @@ export const InternalApiIdentifierMap = {
   GEOCODE_ADDRESS: "geocode_address",
   GEOCODE_CITY: "geocode_city",
   GEODECODE: "geodecode",
+  HISTORY: "history",
   INSTANCES: "instances",
   SCHEDULE: "schedule",
   TASKS: "tasks",
