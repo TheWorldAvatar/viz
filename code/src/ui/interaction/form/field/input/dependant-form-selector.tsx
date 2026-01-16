@@ -58,7 +58,7 @@ export default function DependantFormSelector(props: Readonly<FormSelectorProps>
                 render={({ field: { onChange } }) => {
                     return (
                         <SearchableSimpleSelector
-                            key={props.parentValue || props.field.fieldId} // Reset component when parent changes
+                            key={props.parentValue ?? props.field.fieldId}  // Reset component when parent changes (fallback to fieldId if parentValue is undefined)
                             options={props.selectOptions as SelectOptionType[]}
                             onChange={(selectedOption) => {
                                 onChange((selectedOption as SelectOptionType).value);
