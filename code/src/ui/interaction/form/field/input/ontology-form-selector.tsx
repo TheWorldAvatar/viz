@@ -33,7 +33,7 @@ interface FormSelectorProps {
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
-export default function FormSelector(props: Readonly<FormSelectorProps>) {
+export default function OntologyFormSelector(props: Readonly<FormSelectorProps>) {
   const formType: string = props.form.getValues("formType");
   const registerOptions = getRegisterOptions(props.field, formType);
 

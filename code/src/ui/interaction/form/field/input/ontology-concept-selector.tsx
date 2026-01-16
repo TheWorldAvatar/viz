@@ -23,7 +23,7 @@ import {
   parseConcepts,
 } from "ui/interaction/form/form-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import FormSelector from "./form-selector";
+import OntologyFormSelector from "./ontology-form-selector";
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -172,7 +172,7 @@ export default function OntologyConceptSelector(
   }
   if (conceptMappings[ONTOLOGY_CONCEPT_ROOT] && options.length > 0) {
     return (
-      <FormSelector
+      <OntologyFormSelector
         selectOptions={options}
         field={props.field}
         form={props.form}

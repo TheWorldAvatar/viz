@@ -1,6 +1,6 @@
 import fieldStyles from "../field/field.module.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -25,12 +25,14 @@ import {
   parseStringsForUrls,
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import FormSelector from "../field/input/form-selector";
 import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } from "../form-utils";
 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
+import DependantFormSelector from "../field/input/dependant-form-selector";
+import { useDebounce } from "hooks/useDebounce";
+
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -57,6 +59,10 @@ export function DependentFormSection(
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [selectElements, setSelectElements] = useState<SelectOptionType[]>([]);
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
+  const [search, setSearch] = useState<string>("");
+  const debouncedSearch: string = useDebounce<string>(search, 500);
+  const isInitialLoad = useRef<boolean>(true);
+  const previousParentOption = useRef<string | null>(null);
 
   const currentParentOption: string = useWatch<FieldValues>({
     control,
@@ -75,6 +81,20 @@ export function DependentFormSection(
     isQuickViewOpen,
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
+
+  // Reset dependent field when parent changes (but not on initial load)
+  useEffect(() => {
+    if (
+      parentField !== "" &&
+      previousParentOption.current !== null &&
+      previousParentOption.current !== currentParentOption
+    ) {
+      // Parent changed - reset the dependent field to null
+      props.form.setValue(props.dependentProp.fieldId, "");
+      setSearch("");
+    }
+    previousParentOption.current = currentParentOption;
+  }, [currentParentOption, parentField, props.dependentProp.fieldId, props.form]);
 
   // A hook that fetches the list of dependent entities for the dropdown selector
   // If parent options are available, the list will be refetched on parent option change
@@ -96,7 +116,13 @@ export function DependentFormSection(
               field.dependentOn.label,
               "false",
               getAfterDelimiter(currentParentOption, "/"),
-              entityType
+              entityType,
+              null,
+              null,
+              null,
+              null,
+              null,
+              debouncedSearch ? debouncedSearch : null
             )
           );
           entities = responseEntity.data?.items as RegistryFieldValues[] ?? [];
@@ -123,10 +149,20 @@ export function DependentFormSection(
         );
         entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
       } else {
+        // If there is a search term, use it; otherwise, fetch initial results
         const responseEntity: AgentResponseBody = await queryInternalApi(
           makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             entityType,
+            "false",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            debouncedSearch ? debouncedSearch : null
           )
         );
         entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
@@ -200,14 +236,16 @@ export function DependentFormSection(
         } else if (fields.includes("street")) {
           displayField = "street";
         } else {
-          displayField = Object.keys(fields).find(
+          displayField = fields.find(
             (key) => key != "id" && key != "iri"
           );
         }
-        entities.forEach((entity) => {
+        entities.forEach((entity: RegistryFieldValues) => {
+          const extractedValue = extractResponseField(entity, FORM_STATES.IRI);
+          const extractedLabel = extractResponseField(entity, displayField);
           const formOption: SelectOptionType = {
-            value: extractResponseField(entity, FORM_STATES.IRI)?.value,
-            label: extractResponseField(entity, displayField)?.value,
+            value: extractedValue?.value ?? (entity as any)?.value ?? "",
+            label: extractedLabel?.value ?? (entity as any)?.[displayField] ?? "",
           };
           formFields.push(formOption);
         });
@@ -227,23 +265,24 @@ export function DependentFormSection(
       // Update select options
       setSelectElements(formFields);
       setIsFetching(false);
+      isInitialLoad.current = false;
     };
 
     if (parentField !== "" || currentParentOption !== null) {
       getDependencies(queryEntityType, props.dependentProp, props.form);
     }
-  }, [currentParentOption]);
+  }, [currentParentOption, debouncedSearch]);
 
   return (
     <div className="rounded-lg my-4">
-      {isFetching && (
+      {isInitialLoad.current && isFetching && (
         <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
-      {!isFetching && (
+      {(!isInitialLoad.current || !isFetching) && (
         <div className="flex flex-col w-full gap-2">
-          <FormSelector
+          <DependantFormSelector
             selectOptions={selectElements}
             field={props.dependentProp}
             form={props.form}
@@ -258,6 +297,9 @@ export function DependentFormSection(
                 fieldStyles["form-input-label"],
               ],
             }}
+            isLoading={isFetching}
+            onSearchChange={setSearch}
+            parentValue={currentParentOption}
           />
           {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
             id={id}
