@@ -1,4 +1,5 @@
 import { EVENT_KEY } from "utils/constants";
+import { SparqlResponseField } from "./form";
 
 export type AgentResponseBody = {
   apiVersion: string;
@@ -12,6 +13,11 @@ export type AgentResponseBody = {
     code: number;
     message: string;
   };
+};
+export type HistoryDetails = {
+  message: SparqlResponseField;
+  timestamp: SparqlResponseField;
+  user: SparqlResponseField;
 };
 
 export const InternalApiIdentifierMap = {
@@ -29,6 +35,7 @@ export const InternalApiIdentifierMap = {
   GEOCODE_ADDRESS: "geocode_address",
   GEOCODE_CITY: "geocode_city",
   GEODECODE: "geodecode",
+  HISTORY: "history",
   INSTANCES: "instances",
   SCHEDULE: "schedule",
   TASKS: "tasks",

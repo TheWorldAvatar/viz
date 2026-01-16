@@ -182,7 +182,7 @@ export function applyConfiguredColumnOrder(
  * @param {string} value The raw value from the backend.
  * @param {string} dataType The XSD dataType from the backend.
  */
-function formatValueByDataType(value: string, dataType: string): string {
+export function formatValueByDataType(value: string, dataType: string): string {
   switch (dataType) {
     case XSD_DATETIME:
       return new Date(value).toLocaleString();
