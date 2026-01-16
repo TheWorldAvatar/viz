@@ -29,7 +29,6 @@ export async function GET(
   const { slug } = await params;
   const { searchParams } = new URL(req.url);
   const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
-  console.log("GENERATED URL", url)
 
   if (!url) {
     return NextResponse.json(
@@ -333,9 +332,6 @@ function makeExternalEndpoint(
         url += `/${identifier}`;
         if (subtype != "null") {
           url += `/${subtype}`;
-          if (search && search != "null") {
-            url += `?search=${encodeURIComponent(search)}`;
-          }
         }
         if (branchDelete && branchDelete != "null") {
           url += `?branch_delete=${encodeURIComponent(branchDelete)}`;
