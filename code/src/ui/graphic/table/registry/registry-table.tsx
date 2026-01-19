@@ -31,7 +31,8 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
-import { getId } from "utils/client-utils";
+import HistoryModal from "ui/interaction/modal/history-modal";
+import { getAfterDelimiter, getId } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
@@ -40,7 +41,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import HistoryModal from "ui/interaction/modal/history-modal";
 
 
 interface RegistryTableProps {
@@ -325,7 +325,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     variant="ghost"
                                     tooltipText={dict.title.history}
                                     onClick={() => {
-                                      setHistoryId(row.original.id as string);
+                                      if (props.lifecycleStage == LifecycleStageMap.ACTIVITY ||
+                                        props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                                        props.lifecycleStage == LifecycleStageMap.CLOSED) {
+                                        setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
+                                      } else {
+                                        setHistoryId(row.original.id as string);
+                                      }
                                       setIsOpenHistoryModal(true);
                                     }}
                                   />
@@ -376,6 +383,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       {isOpenHistoryModal && historyId != "" && <HistoryModal
         id={historyId}
         entityType={props.recordType}
+        lifecycleStage={props.lifecycleStage}
         isOpen={isOpenHistoryModal}
         setIsOpen={setIsOpenHistoryModal}
       />}

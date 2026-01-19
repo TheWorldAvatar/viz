@@ -2,6 +2,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { AgentResponseBody, HistoryDetails, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
+import { LifecycleStage, LifecycleStageMap } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { formatValueByDataType } from "ui/graphic/table/registry/registry-table-utils";
 import { XSD_DATETIME } from "utils/constants";
@@ -11,6 +12,7 @@ import Modal from "./modal";
 interface HistoryModalProps {
     id: string;
     entityType: string;
+    lifecycleStage: LifecycleStage;
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -20,6 +22,7 @@ interface HistoryModalProps {
  *
  * @param {string} id - The identifier for the entity.
  * @param {string} entityType - The type of entity being viewed.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {boolean} isOpen Indicates if modal should be initially open.
  * @param  setIsOpen Sets the isOpen parameter.
  */
@@ -35,7 +38,11 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
             const url: string = makeInternalRegistryAPIwithParams(
                 InternalApiIdentifierMap.HISTORY,
                 props.id,
-                props.entityType,
+                props.lifecycleStage == LifecycleStageMap.ACTIVITY ? "bill" :
+                    props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                        props.lifecycleStage == LifecycleStageMap.CLOSED ? "task" :
+                        props.entityType,
             );
             const res: AgentResponseBody = await queryInternalApi(url);
             setHistoryDetails(res.data.items as HistoryDetails[]);
