@@ -168,7 +168,10 @@
     "patternFollowed": "This field must follow the pattern {replace}!",
     "processingRequest": "Processing request...",
     "maxFilters": "You can't apply more than 3 filters at a time.",
-    "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers."
+    "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers.",
+    "modifications": "Track all the modifications made to this resource",
+    "entry": "entry",
+    "entries": "entries"
   },
   "nav": {
     "caption": {
