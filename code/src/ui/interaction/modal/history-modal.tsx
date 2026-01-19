@@ -60,9 +60,9 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                         <table className="w-full table-auto border-collapse">
                             <thead>
                                 <tr className="text-left text-sm text-foreground">
-                                    <th className="sticky top-0 bg-ring z-10 border-b border-border p-2">{dict.action.date}</th>
-                                    <th className="sticky top-0 bg-ring z-10 border-b border-border p-2">{dict.title.user}</th>
-                                    <th className="sticky top-0 bg-ring z-10 border-b border-border p-2">{dict.title.actions}</th>
+                                    <th className="sticky top-0 bg-ring z-10 border-b border-border/50 p-2">{dict.action.date}</th>
+                                    <th className="sticky top-0 bg-ring z-10 border-b border-border/50 p-2">{dict.title.user}</th>
+                                    <th className="sticky top-0 bg-ring z-10 border-b border-border/50 p-2">{dict.title.actions}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
@@ -74,7 +74,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                                     </tr>
                                 )) :
                                     <tr>
-                                        <td colSpan={3} className="p-2 ">{dict.message.noEntries}</td>
+                                        <td colSpan={3} className="p-2">{dict.message.noEntries}</td>
                                     </tr>
                                 }
                             </tbody>
