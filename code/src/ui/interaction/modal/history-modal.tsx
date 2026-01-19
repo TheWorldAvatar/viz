@@ -54,19 +54,18 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
 
     return (
         <Modal className="!w-full md:!max-w-2xl lg:!max-w-4xl !h-auto  !min-h-[60vh] max-h-[60vh] md:!min-h-[70vh] md:!max-h-[70vh] !rounded-xl !shadow-xl !border !border-border p-4" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
-            <div className="flex flex-col my-auto w-full mt-10">
-                <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col my-auto w-full mt-8 md:mt-6">
+                <div className="flex justify-between items-center mb-4 md:mb-0">
                     <div>
                         <h1 className="text-base md:text-lg font-semibold">{dict.title.history}</h1>
                     </div>
                     <p className="text-sm md:text-base">{historyDetails.length} {historyDetails.length > 1 || historyDetails.length === 0 ? dict.message.entries : dict.message.entry}</p>
                 </div>
                 {!isLoading && (
-
                     <div className="mt-2 w-full overflow-y-auto max-h-[42vh] md:max-h-[60vh] border rounded-lg border-border/50">
                         <table className="w-full table-auto border-collapse">
                             <thead>
-                                <tr className="text-left text-sm text-foreground">
+                                <tr className="text-left text-base text-foreground">
                                     <th className="sticky top-0 bg-ring z-10 border-b border-border/50 p-2">{dict.action.date}</th>
                                     <th className="sticky top-0 bg-ring z-10 border-b border-border/50 p-2">{dict.title.user}</th>
                                     <th className="sticky top-0 bg-ring z-10 border-b border-border/50 p-2">{dict.title.actions}</th>
@@ -74,7 +73,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                             </thead>
                             <tbody className="divide-y divide-border/50">
                                 {historyDetails.length > 0 ? historyDetails.map((history, index) => (
-                                    <tr key={index} className="text-sm text-muted-foreground hover:bg-muted/30 ">
+                                    <tr key={index} className="text-base text-muted-foreground hover:bg-muted/30 ">
                                         <td className="py-3 px-2">{formatValueByDataType(history?.timestamp?.value, XSD_DATETIME)}</td>
                                         <td className="py-3 px-2">{history?.user?.value ?? "-"}</td>
                                         <td className="py-3 px-2">{history?.message?.value}</td>
