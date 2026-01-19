@@ -51,13 +51,12 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <h1 className="text-base md:text-lg font-semibold">{dict.title.history}</h1>
-                        <h2 className="text-sm md:text-base text-foreground">{dict.message.modifications}</h2>
                     </div>
                     <p className="text-sm md:text-base">{historyDetails.length} {historyDetails.length > 1 || historyDetails.length === 0 ? dict.message.entries : dict.message.entry}</p>
                 </div>
                 {!isLoading && (
 
-                    <div className="mt-2 w-full overflow-y-auto max-h-[37vh] md:max-h-[55vh] border rounded-lg border-border/50">
+                    <div className="mt-2 w-full overflow-y-auto max-h-[42vh] md:max-h-[60vh] border rounded-lg border-border/50">
                         <table className="w-full table-auto border-collapse">
                             <thead>
                                 <tr className="text-left text-sm text-foreground">
@@ -67,13 +66,17 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
-                                {historyDetails.map((history, index) => (
+                                {historyDetails.length > 0 ? historyDetails.map((history, index) => (
                                     <tr key={index} className="text-sm text-muted-foreground hover:bg-muted/30 ">
                                         <td className="py-3 px-2">{formatValueByDataType(history?.timestamp?.value, XSD_DATETIME)}</td>
                                         <td className="py-3 px-2">{history?.user?.value ?? "-"}</td>
                                         <td className="py-3 px-2">{history?.message?.value}</td>
                                     </tr>
-                                ))}
+                                )) :
+                                    <tr>
+                                        <td colSpan={3} className="p-2 ">{dict.message.noEntries}</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>

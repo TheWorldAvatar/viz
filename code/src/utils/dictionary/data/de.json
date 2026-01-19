@@ -169,9 +169,9 @@
     "processingRequest": "Bearbeitung der Anfrage...",
     "maxFilters": "Sie können nicht mehr als 3 Filter gleichzeitig anwenden.",
     "sort": "Klicken Sie auf eine Spaltenüberschrift, um aufsteigend oder absteigend zu sortieren. Um nach mehreren Spalten zu sortieren, halten Sie die Umschalttaste auf Ihrer Tastatur gedrückt und klicken Sie auf weitere Überschriften.",
-    "modifications": "Verfolgen Sie alle Änderungen, die an dieser Ressource vorgenommen wurden.",
     "entry": "Eintrag",
-    "entries": "Einträge"
+    "entries": "Einträge",
+    "noEntries": "Keine Einträge"
   },
   "nav": {
     "caption": {
