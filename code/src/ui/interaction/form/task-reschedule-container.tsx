@@ -67,7 +67,7 @@ function TaskFormContents() {
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
-  const unixTimeStampSelectedDate = selectedDate.getTime();
+  const unixTimeStampSelectedDate = Math.floor(selectedDate.getTime() / 1000);
 
   useEffect(() => {
     if (task?.date) {
