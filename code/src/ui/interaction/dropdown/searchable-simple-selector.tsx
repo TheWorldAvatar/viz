@@ -11,7 +11,7 @@ import { SelectOptionType } from "./simple-selector";
 
 interface SearchableSimpleSelectorProps {
     options: SelectOptionType[];
-    initialValue?: SelectOptionType | null;
+    initialValue: SelectOptionType;
     onChange: (_value: SelectOptionType | null) => void;
     onSearchChange: (_searchValue: string) => void;
     isLoading?: boolean;
@@ -24,7 +24,7 @@ interface SearchableSimpleSelectorProps {
  * A searchable single-select dropdown that queries options dynamically as the user types. Only one option is selectable at a time.
  *
  * @param {SelectOptionType[]} options The list of options to display.
- * @param {string} initialValue The initial value.
+ * @param {SelectOptionType} initialValue The initial value.
  * @param onChange Function called when a selection is made.
  * @param onSearchChange Function called when the search input changes, to trigger dynamic option loading.
  * @param {boolean} isLoading Optional flag to show loading state.

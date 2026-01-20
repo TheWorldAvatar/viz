@@ -12,27 +12,24 @@ import {
   ID_KEY,
   OntologyConcept,
   PropertyShape,
-  RegistryFieldValues,
   SparqlResponseField,
-  VALUE_KEY,
+  VALUE_KEY
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
-  extractResponseField,
   getAfterDelimiter,
   getId,
-  parseStringsForUrls,
+  parseStringsForUrls
 } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } from "../form-utils";
 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
+import { useDebounce } from "hooks/useDebounce";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
 import DependantFormSelector from "../field/input/dependant-form-selector";
-import { useDebounce } from "hooks/useDebounce";
-
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -61,7 +58,6 @@ export function DependentFormSection(
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
   const [search, setSearch] = useState<string>("");
   const debouncedSearch: string = useDebounce<string>(search, 500);
-  const isInitialLoad = useRef<boolean>(true);
   const previousParentOption = useRef<string | null>(null);
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -106,7 +102,7 @@ export function DependentFormSection(
       form: UseFormReturn
     ) => {
       setIsFetching(true);
-      let entities: RegistryFieldValues[] = [];
+      let entities: SelectOptionType[] = [];
       // If there is supposed to be a parent element, retrieve the data associated with the selected parent option
       if (field.dependentOn) {
         if (currentParentOption) {
@@ -122,10 +118,10 @@ export function DependentFormSection(
               null,
               null,
               null,
-              debouncedSearch ? debouncedSearch : null
+              debouncedSearch ?? null
             )
           );
-          entities = responseEntity.data?.items as RegistryFieldValues[] ?? [];
+          entities = responseEntity.data?.items as SelectOptionType[] ?? [];
         };
         // If there is no valid parent option, there should be no entity
       } else if (
@@ -147,7 +143,11 @@ export function DependentFormSection(
             )
           )
         );
-        entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
+        const results: Record<string, SparqlResponseField>[] = responseEntity.data?.items as Record<string, SparqlResponseField>[];
+        entities = results?.length > 0 ? [{
+          label: results[0].name.value,
+          value: results[0].iri.value
+        }] : [];
       } else {
         // If there is a search term, use it; otherwise, fetch initial results
         const responseEntity: AgentResponseBody = await queryInternalApi(
@@ -162,10 +162,10 @@ export function DependentFormSection(
             null,
             null,
             null,
-            debouncedSearch ? debouncedSearch : null
+            debouncedSearch ?? null
           )
         );
-        entities = (responseEntity.data?.items as RegistryFieldValues[]) ?? [];
+        entities = (responseEntity.data?.items as SelectOptionType[]) ?? [];
       }
 
       // By default, id is empty
@@ -181,7 +181,7 @@ export function DependentFormSection(
         ) {
           // Set the id to the first possible option when this is not optional
           // Optional fields should default to empty string
-          defaultId = extractResponseField(entities[0], FORM_STATES.IRI)?.value;
+          defaultId = entities[0].value;
         }
         const fieldValue = props.form.getValues(field.fieldId);
         // Find best matching value if there is an existing or default value;
@@ -225,47 +225,21 @@ export function DependentFormSection(
       // Set the form value to the default value if available, else, default to the first option
       form.setValue(field.fieldId, defaultId);
 
-      const formFields: SelectOptionType[] = [];
-
-      // Retrieve and set the display field accordingly
-      if (entities.length > 0) {
-        const fields: string[] = Object.keys(entities[0]);
-        let displayField: string;
-        if (fields.includes("name")) {
-          displayField = "name";
-        } else if (fields.includes("street")) {
-          displayField = "street";
-        } else {
-          displayField = fields.find(
-            (key) => key != "id" && key != "iri"
-          );
-        }
-        entities.forEach((entity: RegistryFieldValues) => {
-          const extractedValue = extractResponseField(entity, FORM_STATES.IRI);
-          const extractedLabel = extractResponseField(entity, displayField);
-          const formOption: SelectOptionType = {
-            value: extractedValue?.value ?? (entity as any)?.value ?? "",
-            label: extractedLabel?.value ?? (entity as any)?.[displayField] ?? "",
-          };
-          formFields.push(formOption);
-        });
-      }
       // Sort the fields by the labels
-      formFields.sort((a, b) => {
+      entities.sort((a, b) => {
         return a.label.localeCompare(b.label);
       });
       // Add the default search option only if this is the search form
       if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
         // Default option should only use empty string "" as the value
-        formFields.unshift({
+        entities.unshift({
           label: defaultSearchOption.label.value,
           value: defaultSearchOption.type.value,
         });
       }
       // Update select options
-      setSelectElements(formFields);
+      setSelectElements(entities);
       setIsFetching(false);
-      isInitialLoad.current = false;
     };
 
     if (parentField !== "" || currentParentOption !== null) {
@@ -275,12 +249,12 @@ export function DependentFormSection(
 
   return (
     <div className="rounded-lg my-4">
-      {isInitialLoad.current && isFetching && (
+      {isFetching && (
         <div className="mr-2">
           <LoadingSpinner isSmall={true} />
         </div>
       )}
-      {(!isInitialLoad.current || !isFetching) && (
+      {!isFetching && (
         <div className="flex flex-col w-full gap-2">
           <DependantFormSelector
             selectOptions={selectElements}
@@ -297,7 +271,6 @@ export function DependentFormSection(
                 fieldStyles["form-input-label"],
               ],
             }}
-            isLoading={isFetching}
             onSearchChange={setSearch}
             parentValue={currentParentOption}
           />

@@ -21,12 +21,12 @@ import {
   PropertyShapeOrGroup,
   QuickViewFields,
   QuickViewGroupings,
-  RegistryFieldValues,
   SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY
 } from "types/form";
-import { extractResponseField, getAfterDelimiter } from "utils/client-utils";
+import { getAfterDelimiter } from "utils/client-utils";
+import { SelectOptionType } from "../dropdown/simple-selector";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -703,17 +703,17 @@ export function getMatchingConcept(
  */
 export function findMatchingDropdownOptionValue(
   defaultValue: string,
-  entities: RegistryFieldValues[]
+  entities: SelectOptionType[]
 ): string {
-  const matchingEntity: RegistryFieldValues = entities.find(
+  const matchingEntity: SelectOptionType = entities.find(
     (entity) =>
       getAfterDelimiter(
-        extractResponseField(entity, FORM_STATES.ID)?.value,
+        entity.value,
         "/"
       ) === defaultValue
   );
   if (matchingEntity) {
-    return extractResponseField(matchingEntity, FORM_STATES.IRI)?.value;
+    return matchingEntity.value;
   }
   return null;
 }
