@@ -53,7 +53,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
     }, []);
 
     return (
-        <Modal className="!w-full md:!max-w-2xl lg:!max-w-4xl !h-auto !min-h-[60vh] max-h-[60vh] md:!min-h-[70vh] md:!max-h-[70vh] !rounded-xl !shadow-xl !border !border-border p-4" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+        <Modal className="w-full md:max-w-2xl lg:max-w-4xl h-auto min-h-[60vh] max-h-[60vh] md:max-h-[70vh] rounded-xl shadow-xl border border-border p-4" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
             <div className="flex flex-col my-auto w-full mt-8">
                 <div className="flex justify-between items-center mb-4 md:mb-0">
                     <div>
