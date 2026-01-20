@@ -27,6 +27,7 @@ import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } 
 
 import { useFormQuickView } from "hooks/form/useFormQuickView";
 import { useDebounce } from "hooks/useDebounce";
+import useRefresh from "hooks/useRefresh";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
 import DependentFormSelector from "../field/input/dependent-form-selector";
@@ -59,6 +60,7 @@ export function DependentFormSection(
   const parentField: string = props.dependentProp.dependentOn?.[ID_KEY] ?? "";
   const [search, setSearch] = useState<string>("");
   const debouncedSearch: string = useDebounce<string>(search, 500);
+  const { refreshFlag, triggerRefresh } = useRefresh(100);
   const previousParentOption = useRef<string | null>(null);
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -89,6 +91,8 @@ export function DependentFormSection(
       // Parent changed - reset the dependent field to null
       props.form.setValue(props.dependentProp.fieldId, "");
       setSearch("");
+      // Trigger a refresh for field when parent field has changed
+      triggerRefresh();
     }
     previousParentOption.current = currentParentOption;
   }, [currentParentOption, parentField, props.dependentProp.fieldId, props.form]);
@@ -171,7 +175,9 @@ export function DependentFormSection(
 
       const naOption: SelectOptionType = { value: "", label: dict.message.na }
       // By default, id is empty if optional, else its undefined
-      let defaultId: string = isSectionOptional ? naOption.value : undefined;
+      let defaultId: string = props.form.getValues(field.fieldId) == "" ?
+        isSectionOptional ? naOption.value : undefined :
+        props.form.getValues(field.fieldId);
       const currentFormType: string = form.getValues(FORM_STATES.FORM_TYPE);
 
       // Only update the id if there are any entities
@@ -245,6 +251,8 @@ export function DependentFormSection(
       }
       // Update select options
       setSelectElements(entities);
+      // The form selector component must be rerendered so that the existing values are selected
+      triggerRefresh();
       setIsFetching(false);
     };
 
@@ -271,6 +279,7 @@ export function DependentFormSection(
             ],
           }}
           isLoading={isFetching}
+          refresh={refreshFlag}
           onSearchChange={setSearch}
         />
         {formType != FormTypeMap.SEARCH && <FormQuickViewHeader

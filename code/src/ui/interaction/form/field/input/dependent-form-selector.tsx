@@ -15,6 +15,7 @@ interface FormSelectorProps {
     field: PropertyShape;
     form: UseFormReturn;
     isLoading: boolean;
+    refresh: boolean;
     noOptionMessage?: string;
     options?: FormFieldOptions;
     onSearchChange?: (_search: string) => void;
@@ -27,6 +28,7 @@ interface FormSelectorProps {
  * @param {PropertyShape} field The field name that will be assigned to the form state.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {boolean} isLoading Flag to show loading state.
+ * @param {boolean} refresh Flag to refresh options.
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {FormFieldOptions} options Configuration options for the field.
  * @param {function} onSearchChange Optional function called when the search input changes.
@@ -48,7 +50,7 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
                 render={({ field: { onChange } }) => {
                     return (
                         <SearchableSimpleSelector
-                            key={props.field.fieldId}
+                            key={props.refresh && props.field.fieldId}
                             options={props.selectOptions}
                             initialValue={props.selectOptions.find(option => option.value == props.form.getValues(props.field.fieldId))}
                             onChange={(selectedOption: SelectOptionType) => {
