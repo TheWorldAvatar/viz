@@ -49,6 +49,7 @@ export function DependentFormSection(
 ) {
   const dict: Dictionary = useDictionary();
 
+  const isSectionOptional: boolean = props.dependentProp.minCount?.[VALUE_KEY] === "0";
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -168,19 +169,21 @@ export function DependentFormSection(
         entities = (responseEntity.data?.items as SelectOptionType[]) ?? [];
       }
 
-      // By default, id is empty
-      let defaultId: string = undefined;
+      const naOption: SelectOptionType = { value: "", label: dict.message.na }
+      // By default, id is empty if optional, else its undefined
+      let defaultId: string = isSectionOptional ? naOption.value : undefined;
       const currentFormType: string = form.getValues(FORM_STATES.FORM_TYPE);
+
       // Only update the id if there are any entities
       if (entities.length > 0) {
         if (
           // Only consider auto-selection for non-add and non-add price forms (view/edit/delete/search) so that add forms force explicit user action
           currentFormType !== FormTypeMap.ADD &&
           currentFormType !== FormTypeMap.ADD_PRICE &&
-          props.dependentProp?.minCount?.[VALUE_KEY] != "0"
+          // Such forms may include dispatch and complete and should default to NA without initial value
+          !isSectionOptional
         ) {
-          // Set the id to the first possible option when this is not optional
-          // Optional fields should default to empty string
+          // Set the id to the first possible option
           defaultId = entities[0].value;
         }
         const fieldValue = props.form.getValues(field.fieldId);
@@ -219,7 +222,7 @@ export function DependentFormSection(
       }
       const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
       // Search form should always target default value
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
+      if (formType === FormTypeMap.SEARCH) {
         defaultId = defaultSearchOption.type.value;
       }
       // Set the form value to the default value if available, else, default to the first option
@@ -230,12 +233,15 @@ export function DependentFormSection(
         return a.label.localeCompare(b.label);
       });
       // Add the default search option only if this is the search form
-      if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
+      if (formType === FormTypeMap.SEARCH) {
         // Default option should only use empty string "" as the value
         entities.unshift({
           label: defaultSearchOption.label.value,
           value: defaultSearchOption.type.value,
         });
+        // Add the NA option at the start if this section can be optional
+      } else if (isSectionOptional) {
+        entities.unshift(naOption);
       }
       // Update select options
       setSelectElements(entities);

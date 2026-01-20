@@ -1,8 +1,7 @@
 import { Controller, FieldError, UseFormReturn } from "react-hook-form";
 import {
     FormFieldOptions,
-    PropertyShape,
-    VALUE_KEY
+    PropertyShape
 } from "types/form";
 import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
 import {
@@ -58,7 +57,6 @@ export default function DependentFormSelector(props: Readonly<FormSelectorProps>
                             }}
                             isDisabled={props.options?.disabled}
                             noOptionMessage={props.noOptionMessage}
-                            reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
                         />
                     );
                 }}
