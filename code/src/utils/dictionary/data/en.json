@@ -172,7 +172,10 @@
     "patternFollowed": "This field must follow the pattern {replace}!",
     "processingRequest": "Processing request...",
     "maxFilters": "You can't apply more than 3 filters at a time.",
-    "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers."
+    "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers.",
+    "entry": "{replace} entry",
+    "entries": "{replace} entries",
+    "noEntries": "No entries"
   },
   "nav": {
     "caption": {
@@ -223,6 +226,7 @@
     "customiseCol": "Show/Hide Columns",
     "description": "Description",
     "lastModified": "Last modified",
+    "history": "History",
     "available": "available",
     "unavailable": "unavailable",
     "active": "active",
@@ -247,9 +251,10 @@
     "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
-    "total": "Total",
     "status": "status",
     "success": "Success",
+    "total": "Total",
+    "user": "User",
     "error": "Error",
     "loading": "Loading"
   }

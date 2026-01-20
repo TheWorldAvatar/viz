@@ -42,7 +42,7 @@ export default function Modal(props: Readonly<ModalProps>) {
       {dialog.open && (
         <FloatingPortal>
           <FloatingOverlay
-            className="flex justify-center items-center z-[999] bg-inverse-primary backdrop-blur-xs"
+            className="flex justify-center items-center z-[999] bg-inverse-primary"
             lockScroll
           >
             <FloatingFocusManager context={dialog.context}>
