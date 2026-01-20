@@ -18,7 +18,6 @@ interface FormSelectorProps {
     noOptionMessage?: string;
     options?: FormFieldOptions;
     onSearchChange?: (_search: string) => void;
-    parentValue?: string;
 }
 
 /**
@@ -30,7 +29,6 @@ interface FormSelectorProps {
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {FormFieldOptions} options Configuration options for the field.
  * @param {function} onSearchChange Optional function called when the search input changes.
- * @param {string} parentValue Optional parent field value to use as key for resetting component.
  */
 export default function DependantFormSelector(props: Readonly<FormSelectorProps>) {
     const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -49,7 +47,7 @@ export default function DependantFormSelector(props: Readonly<FormSelectorProps>
                 render={({ field: { onChange } }) => {
                     return (
                         <SearchableSimpleSelector
-                            key={props.parentValue ?? props.field.fieldId}  // Reset component when parent changes (fallback to fieldId if parentValue is undefined)
+                            key={props.field.fieldId}
                             options={props.selectOptions}
                             initialValue={props.selectOptions.find(option => option.value == props.form.getValues(props.field.fieldId))}
                             onChange={(selectedOption: SelectOptionType) => {

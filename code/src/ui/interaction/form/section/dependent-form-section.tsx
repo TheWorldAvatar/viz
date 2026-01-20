@@ -271,7 +271,6 @@ export function DependentFormSection(
               ],
             }}
             onSearchChange={setSearch}
-            parentValue={currentParentOption}
           />
           {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
             id={id}
