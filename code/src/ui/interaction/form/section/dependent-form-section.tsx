@@ -266,8 +266,7 @@ export function DependentFormSection(
                 formType == FormTypeMap.VIEW ||
                 formType == FormTypeMap.DELETE ||
                 currentParentOption === "",
-              labelStyle: [
-                fieldStyles["form-input-label-add"],
+              labelStyle: ["flex flex-row items-center",
                 fieldStyles["form-input-label"],
               ],
             }}
