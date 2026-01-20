@@ -38,6 +38,7 @@
     "cancel": "Stornieren",
     "report": "Bericht",
     "submit": "Einreichen",
+    "reschedule": "Neu terminieren",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",
     "draftTemplate": "Entwurf Vorlage",
     "save": "Speichern",
@@ -92,7 +93,9 @@
     "selectDates": "Daten auswählen",
     "selectDatesDesc": "Sie können mehrere einzelne Daten auswählen. Das Datumsfeld zeigt den Beginn und das Ende des ausgewählten Zeitraums an, während alle Daten innerhalb dieses Zeitraums darunter aufgelistet sind.",
     "dateSelected": "ausgewähltes Datum",
-    "datesSelected": "ausgewählte Daten"
+    "datesSelected": "ausgewählte Daten",
+    "rescheduleDate": "Termin verschieben",
+    "rescheduleDateDesc": "Der neue Termin für die Fertigstellung der Dienstleistung."
   },
   "map": {
     "title": {
@@ -133,6 +136,7 @@
     "dispatchInstruction": "Weisen Sie die Ressourcen für den geplanten Dienst am {date} zu",
     "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes (oder Auftrags) am {date} an",
     "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
+    "rescheduleInstruction": "Die Ressourcen für den einzelnen Dienst neu planen am",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
