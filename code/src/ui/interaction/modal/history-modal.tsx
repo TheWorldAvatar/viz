@@ -4,7 +4,7 @@ import { AgentResponseBody, HistoryDetails, InternalApiIdentifierMap } from "typ
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { formatValueByDataType } from "ui/graphic/table/registry/registry-table-utils";
-import { XSD_DATETIME } from "utils/constants";
+import { REPLACE_DICT_KEY, XSD_DATETIME } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import Modal from "./modal";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
@@ -28,6 +28,7 @@ interface HistoryModalProps {
  */
 export default function HistoryModal(props: Readonly<HistoryModalProps>) {
     const dict: Dictionary = useDictionary();
+    const [dictEntryMessage, setDictEntryMessage] = useState<string>("");
     const [historyDetails, setHistoryDetails] = useState<HistoryDetails[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -45,7 +46,11 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                         props.entityType,
             );
             const res: AgentResponseBody = await queryInternalApi(url);
-            setHistoryDetails(res.data.items as HistoryDetails[]);
+            const details: HistoryDetails[] = res.data.items as HistoryDetails[];
+
+            setHistoryDetails(details);
+            setDictEntryMessage(details.length == 0 ? dict.message.noEntries :
+                details.length > 1 ? dict.message.entries : dict.message.entry);
             setIsLoading(false);
         };
 
@@ -56,10 +61,10 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
         <Modal className="w-full md:max-w-2xl lg:max-w-4xl h-auto min-h-[60vh] max-h-[60vh] md:max-h-[70vh] rounded-xl shadow-xl border border-border p-4" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
             <div className="flex flex-col my-auto w-full mt-8">
                 <div className="flex justify-between items-center mb-4 md:mb-0">
-                    <div>
-                        <h1 className="text-lg font-semibold">{dict.title.history}</h1>
-                    </div>
-                    <p className="text-base">{historyDetails.length} {historyDetails.length > 1 || historyDetails.length === 0 ? dict.message.entries : dict.message.entry}</p>
+                    <h1 className="text-lg font-semibold">{dict.title.history}</h1>
+                    {!isLoading && <p className="text-base">
+                        {dictEntryMessage.replace(REPLACE_DICT_KEY, historyDetails?.length.toString())}
+                    </p>}
                 </div>
                 {!isLoading && (
                     <div className="mt-1 md:mt-4 lg:mt-6 w-full overflow-y-auto max-h-[42vh] md:max-h-[50vh] border rounded-lg border-border/50">

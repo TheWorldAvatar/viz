@@ -169,8 +169,8 @@
     "processingRequest": "Processing request...",
     "maxFilters": "You can't apply more than 3 filters at a time.",
     "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers.",
-    "entry": "entry",
-    "entries": "entries",
+    "entry": "{replace} entry",
+    "entries": "{replace} entries",
     "noEntries": "No entries"
   },
   "nav": {
