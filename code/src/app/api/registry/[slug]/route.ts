@@ -416,6 +416,11 @@ function makeExternalEndpoint(
       const iri: string = searchParams.get("iri");
       return `${agentBaseApi}/location?iri=${encodeURIComponent(iri)}`;
     }
+    case InternalApiIdentifierMap.HISTORY: {
+      const id: string = searchParams.get("id");
+      const type: string = searchParams.get("type");
+      return `${agentBaseApi}/changes/${type}/${id}`;
+    }
     case InternalApiIdentifierMap.SCHEDULE: {
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/schedule/${id}`;

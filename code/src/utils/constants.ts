@@ -3,3 +3,4 @@ export const XSD_DATE = "http://www.w3.org/2001/XMLSchema#date";
 export const XSD_TIME = "http://www.w3.org/2001/XMLSchema#time";
 
 export const EVENT_KEY = "event";
+export const REPLACE_DICT_KEY = "{replace}";
