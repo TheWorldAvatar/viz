@@ -14,8 +14,9 @@ import {
 import { TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { parseWordsForLabels } from "utils/client-utils";
+import { isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { getAfterDelimiter} from "utils/client-utils";
 
 export type TableData = {
   data: FieldValues[];
@@ -117,6 +118,10 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
             return formatValueByDataType(value, dataType);
           }
 
+          if(isValidIRI(value)) {
+            return getAfterDelimiter(value, "/");
+          }
+
           if (col.toLowerCase() === "status" || col === titleDict.billingStatus) {
             return <StatusComponent status={value} />;
           }
@@ -177,7 +182,7 @@ export function applyConfiguredColumnOrder(
  * @param {string} value The raw value from the backend.
  * @param {string} dataType The XSD dataType from the backend.
  */
-function formatValueByDataType(value: string, dataType: string): string {
+export function formatValueByDataType(value: string, dataType: string): string {
   switch (dataType) {
     case XSD_DATETIME:
       return new Date(value).toLocaleString();

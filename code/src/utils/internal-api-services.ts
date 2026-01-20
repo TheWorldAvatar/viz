@@ -113,6 +113,12 @@ export function makeInternalRegistryAPIwithParams(
         iri: params[0],
       });
       break;
+    case InternalApiIdentifierMap.HISTORY:
+      searchParams = new URLSearchParams({
+        id: params[0],
+        type: params[1],
+      });
+      break;
     case InternalApiIdentifierMap.SCHEDULE:
       searchParams = new URLSearchParams({
         id: params[0],
