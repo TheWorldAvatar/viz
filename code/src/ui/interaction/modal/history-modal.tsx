@@ -53,7 +53,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
     }, []);
 
     return (
-        <Modal className="!w-full md:!max-w-2xl lg:!max-w-4xl !h-auto  !min-h-[60vh] max-h-[60vh] md:!min-h-[70vh] md:!max-h-[70vh] !rounded-xl !shadow-xl !border !border-border p-4" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+        <Modal className="!w-full md:!max-w-2xl lg:!max-w-4xl !h-auto !min-h-[60vh] max-h-[60vh] md:!min-h-[70vh] md:!max-h-[70vh] !rounded-xl !shadow-xl !border !border-border p-4" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
             <div className="flex flex-col my-auto w-full mt-8">
                 <div className="flex justify-between items-center mb-4 md:mb-0">
                     <div>
@@ -62,7 +62,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                     <p className="text-base">{historyDetails.length} {historyDetails.length > 1 || historyDetails.length === 0 ? dict.message.entries : dict.message.entry}</p>
                 </div>
                 {!isLoading && (
-                    <div className="mt-1 md:mt-4 lg:mt-6 w-full overflow-y-auto max-h-[42vh] md:max-h-[60vh] border rounded-lg border-border/50">
+                    <div className="mt-1 md:mt-4 lg:mt-6 w-full overflow-y-auto max-h-[42vh] md:max-h-[50vh] border rounded-lg border-border/50">
                         <table className="w-full table-auto border-collapse">
                             <thead>
                                 <tr className="text-left text-base text-foreground">
