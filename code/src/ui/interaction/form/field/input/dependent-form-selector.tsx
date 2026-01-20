@@ -30,7 +30,7 @@ interface FormSelectorProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  * @param {function} onSearchChange Optional function called when the search input changes.
  */
-export default function DependantFormSelector(props: Readonly<FormSelectorProps>) {
+export default function DependentFormSelector(props: Readonly<FormSelectorProps>) {
     const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
     const registerOptions = getRegisterOptions(props.field, formType);
     return (

@@ -29,7 +29,7 @@ import { useFormQuickView } from "hooks/form/useFormQuickView";
 import { useDebounce } from "hooks/useDebounce";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
-import DependantFormSelector from "../field/input/dependant-form-selector";
+import DependentFormSelector from "../field/input/dependent-form-selector";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -256,7 +256,7 @@ export function DependentFormSection(
       )}
       {!isFetching && (
         <div className="flex flex-col w-full gap-2">
-          <DependantFormSelector
+          <DependentFormSelector
             selectOptions={selectElements}
             field={props.dependentProp}
             form={props.form}
