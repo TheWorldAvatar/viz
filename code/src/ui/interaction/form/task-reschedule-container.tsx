@@ -4,12 +4,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Icon } from "@mui/material";
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
-import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
@@ -22,7 +20,7 @@ import Tooltip from "../tooltip/tooltip";
 import { toast } from "../action/toast/toast";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
-
+import { JsonObject } from "types/json";
 
 
 /**
@@ -53,21 +51,16 @@ export function TaskRescheduleComponent() {
  */
 function TaskFormContents() {
   const pathname = usePathname();
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { handleDrawerClose } = useDrawerNavigation();
   const id: string = getAfterDelimiter(pathname, "/");
 
   // State for form data
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const { handleDrawerClose } = useDrawerNavigation();
   const { task } = useTaskData(id, setIsFetching);
-  const initialDate = task?.date ? new Date(task.date) : new Date();
-  const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
+  const [selectedDate, setSelectedDate] = useState<Date>(task?.date ? new Date(task.date) : new Date());
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-
-  const unixTimeStampSelectedDate = Math.floor(selectedDate.getTime() / 1000);
 
   useEffect(() => {
     if (task?.date) {
@@ -79,14 +72,16 @@ function TaskFormContents() {
   const taskSubmitAction = async (
     contract: string,
     date: string,
-    rescheduledDate: number
   ) => {
     startLoading();
 
-    const formData = {
+    // For rescheduling, we send the new date as a UNIX timestamp in seconds, so we convert it here.
+    // getTIme() returns milliseconds, so we divide by 1000 and round down to get seconds.
+    // The backend expects the reschedule date in this format.
+    const formData: JsonObject = {
       contract,
       date,
-      "reschedule date": rescheduledDate
+      "reschedule date": Math.floor(selectedDate.getTime() / 1000)
     };
 
     const response: AgentResponseBody = await queryInternalApi(
@@ -125,12 +120,11 @@ function TaskFormContents() {
           </h2>
         )}
       </section>
-
       {/* Scrollable Content */}
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {task?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {`${dict.message.rescheduleInstruction} ${task.date}:`}
+            {`${dict.message.rescheduleInstruction.replace("{replace}", task.date)}:`}
           </p>
         )}
         {(isFetching || refreshFlag) && <FormSkeleton />}
@@ -172,24 +166,18 @@ function TaskFormContents() {
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
           {/* Submit button */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            (permissionScheme.hasPermissions.operation
-            )) && (
-              <Button
-                leftIcon="send"
-                label={dict.action.submit}
-                tooltipText={dict.action.submit}
-                disabled={isLoading || isFetching}
-                onClick={() => {
-                  taskSubmitAction(
-                    task.contract,
-                    task.date,
-                    unixTimeStampSelectedDate
-                  );
-                }}
-              />
-            )}
+          <Button
+            leftIcon="send"
+            label={dict.action.submit}
+            tooltipText={dict.action.submit}
+            disabled={isLoading || isFetching}
+            onClick={() => {
+              taskSubmitAction(
+                task.contract,
+                task.date,
+              );
+            }}
+          />
         </div>
       </section >
     </>

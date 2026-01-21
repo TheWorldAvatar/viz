@@ -95,7 +95,7 @@
     "dateSelected": "date selected",
     "datesSelected": "dates selected",
     "rescheduleDate": "Reschedule Date",
-    "rescheduleDateDesc": "The new date for the service to be completed."
+    "rescheduleDateDesc": "Select a new date for your service"
   },
   "map": {
     "title": {
@@ -136,7 +136,7 @@
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
     "reportInstruction": "Report an issue with the service on {date}. \n Please include the reason in your report:",
-    "rescheduleInstruction": "Reschedule the resources for the single service on",
+    "rescheduleInstruction": "Request a change to a previously scheduled service on {replace}",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
