@@ -25,17 +25,12 @@ const formPersistenceSlice = createSlice({
         setFormPersistenceEnabled: (state, action: PayloadAction<boolean>) => {
             state.enabled = action.payload;
         },
+        /**
+         * Sets whether form data should be cleared.
+         */
         setClearFormData: (state, action: PayloadAction<boolean>) => {
             state.clearFormData = action.payload;
         }
-        // Completely clears the memory for a specific form
-        // clearFormData: (state, action: PayloadAction<string>) => {
-        //     state.saveInMemory = false;
-        // },
-        // // Resets all form memory
-        // resetAllForms: (state) => {
-        //     state.saveInMemory = false;
-        // },
     },
 })
 
