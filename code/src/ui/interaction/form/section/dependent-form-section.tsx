@@ -178,20 +178,9 @@ export function DependentFormSection(
       let defaultId: string = props.form.getValues(field.fieldId) == "" ?
         isSectionOptional ? naOption.value : undefined :
         props.form.getValues(field.fieldId);
-      const currentFormType: string = form.getValues(FORM_STATES.FORM_TYPE);
 
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        if (
-          // Only consider auto-selection for non-add and non-add price forms (view/edit/delete/search) so that add forms force explicit user action
-          currentFormType !== FormTypeMap.ADD &&
-          currentFormType !== FormTypeMap.ADD_PRICE &&
-          // Such forms may include dispatch and complete and should default to NA without initial value
-          !isSectionOptional
-        ) {
-          // Set the id to the first possible option
-          defaultId = entities[0].value;
-        }
         const fieldValue = props.form.getValues(field.fieldId);
         // Find best matching value if there is an existing or default value;
         // Existing value must take precedence
@@ -251,8 +240,11 @@ export function DependentFormSection(
       }
       // Update select options
       setSelectElements(entities);
-      // The form selector component must be rerendered so that the existing values are selected
-      triggerRefresh();
+      // Rerender the form selector component to select existing values
+      // DO NOT rerender if user only wishes to search
+      if (debouncedSearch == "") {
+        triggerRefresh();
+      }
       setIsFetching(false);
     };
 
