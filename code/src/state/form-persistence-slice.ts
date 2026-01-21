@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ReduxState } from "app/store";
 
+
 interface FormPersistenceState {
     enabled: boolean;
+    clearFormData: boolean;
 }
 
 const initialState: FormPersistenceState = {
     enabled: false,
+    clearFormData: false,
 };
 
 /**
@@ -22,6 +25,9 @@ const formPersistenceSlice = createSlice({
         setFormPersistenceEnabled: (state, action: PayloadAction<boolean>) => {
             state.enabled = action.payload;
         },
+        setClearFormData: (state, action: PayloadAction<boolean>) => {
+            state.clearFormData = action.payload;
+        }
         // Completely clears the memory for a specific form
         // clearFormData: (state, action: PayloadAction<string>) => {
         //     state.saveInMemory = false;
@@ -34,6 +40,7 @@ const formPersistenceSlice = createSlice({
 })
 
 
-export const { setFormPersistenceEnabled } = formPersistenceSlice.actions;
+export const { setFormPersistenceEnabled, setClearFormData } = formPersistenceSlice.actions;
 export const selectFormPersistenceEnabled = (state: ReduxState) => state.formPersistence.enabled;
+export const selectClearFormData = (state: ReduxState) => state.formPersistence.clearFormData;
 export default formPersistenceSlice.reducer;
