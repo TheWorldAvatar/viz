@@ -1,5 +1,5 @@
 import { usePathname, useRouter } from "next/navigation";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
@@ -40,6 +40,8 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { useSelector } from "react-redux";
+import { selectFormPersistenceEnabled } from "state/form-persistence-slice";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -77,6 +79,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
+  const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -137,6 +140,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       return initialState;
     },
   });
+
+  useEffect(() => {
+    if (formPersistenceEnabled) {
+      const values = form.getValues()
+      Object.entries(values).forEach(([key, value]) => {
+        browserStorageManager.set(key, JSON.stringify(value));
+      });
+    }
+  }, [formPersistenceEnabled, form.getValues()]);
+
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {

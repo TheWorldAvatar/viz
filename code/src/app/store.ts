@@ -7,6 +7,7 @@ import drawerSignalReducer from "state/drawer-signal-slice";
 import floatingPanelReducer from "state/floating-panel-slice";
 import mapFeatureReducer from "state/map-feature-slice";
 import ribbonComponentReducer from "state/ribbon-component-slice";
+import formPersistenceReducer from "state/form-persistence-slice";
 
 // Initialise and export store
 export const reduxStore = configureStore({
@@ -17,6 +18,7 @@ export const reduxStore = configureStore({
     floatingPanel: floatingPanelReducer,
     mapFeature: mapFeatureReducer,
     dimensionSlider: dimensionSliderSlice,
+    formPersistence: formPersistenceReducer,
     loading: loadingReducer,
     [featureInfoAgentApi.reducerPath]: featureInfoAgentApi.reducer,
   },

@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import Button, { ButtonProps } from "ui/interaction/button";
+import { setFormPersistenceEnabled } from "state/form-persistence-slice";
+import { useDispatch } from "react-redux";
 
 
 interface RedirectButtonProps extends ButtonProps {
@@ -22,6 +24,8 @@ export default function RedirectButton({
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
@@ -29,6 +33,8 @@ export default function RedirectButton({
     if (softRedirect) {
       // Use soft redirect to allow parallel routes to function
       router.push(url);
+      // Indicate that form data should be saved in memory
+      dispatch(setFormPersistenceEnabled(true));
     } else {
       // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
       window.location.href = url;
