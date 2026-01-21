@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.53.1
+
+### Changes
+
+- Reduce the column width in the tables so the users can see more columns without having to scroll
+
 ## 5.53.0
 
 ### Changes
