@@ -143,7 +143,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   useEffect(() => {
     if (formPersistenceEnabled) {
-      const values = form.getValues()
+      const values: Record<string, string> = form.getValues()
       Object.entries(values).forEach(([key, value]) => {
         // Only save non-empty values
         if (value !== undefined && value !== "") {
@@ -151,7 +151,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
       });
     }
-  }, [formPersistenceEnabled, form.getValues()]);
+  }, [formPersistenceEnabled]);
 
 
   // A function to initiate the form submission process
