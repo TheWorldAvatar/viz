@@ -1,5 +1,4 @@
 import { ColumnFilter } from "@tanstack/react-table";
-import { useDebounce } from "hooks/useDebounce";
 import React, { useEffect, useState } from "react";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
@@ -8,11 +7,9 @@ import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface FilterOptionsDescriptor {
-  options: SelectOptionType[];
-  isLoading: boolean;
   selectedAccount: SelectOptionType;
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
   handleUpdateAccount: (_newAccount: SelectOptionType) => void;
+  getAccountFilterOptions: (_inputValue: string) => Promise<SelectOptionType[]>;
 }
 
 /**
@@ -29,10 +26,6 @@ export function useAccountFilterOptions(
   allFilters: ColumnFilter[],
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
 ): FilterOptionsDescriptor {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [options, setOptions] = useState<SelectOptionType[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const debouncedSearch: string = useDebounce<string>(search, 500);
   const [selectedAccount, setSelectedAccount] = useState<SelectOptionType>(() => {
     if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
       const storedAccountLabel = browserStorageManager.get(LifecycleStageMap.ACCOUNT);
@@ -60,47 +53,43 @@ export function useAccountFilterOptions(
     browserStorageManager.set(LifecycleStageMap.ACCOUNT, newAccount.label)
   };
 
-  // On first render, set filters and all other actions to update the account
-  useEffect(() => {
-    if (lifecycleStage === LifecycleStageMap.ACTIVITY && selectedAccount != null) {
-      handleUpdateAccount(selectedAccount);
+  // A method to retrieve account filter options from the backend
+  const getAccountFilterOptions = async (inputValue: string): Promise<SelectOptionType[]> => {
+    try {
+      const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+        InternalApiIdentifierMap.FILTER,
+        LifecycleStageMap.ACCOUNT,
+        accountType,
+        inputValue
+      ));
+      return res.data?.items as SelectOptionType[];
+    } catch (error) {
+      console.error("Error fetching instances", error);
     }
-  }, []);
+  };
 
-  //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {
-    const fetchData = async (): Promise<void> => {
-      setIsLoading(true);
-      try {
-        const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-          InternalApiIdentifierMap.FILTER,
-          LifecycleStageMap.ACCOUNT,
-          accountType,
-          debouncedSearch
-        ));
-        const respOptions: SelectOptionType[] = res.data?.items as SelectOptionType[];
-        setOptions(respOptions);
-        // When no account is set, set first option as default
-        if (selectedAccount == null && respOptions?.length > 0) {
-          handleUpdateAccount(respOptions?.[0]);
+    // On first render, set filters and all other actions to update the account
+    const init = async () => {
+      let currentAccount: SelectOptionType = selectedAccount;
+      // When no any account is found in session storage, get the options and set the first option into session storage
+      if (currentAccount == null) {
+        const options: SelectOptionType[] = await getAccountFilterOptions("");
+        if (options?.length > 0) {
+          currentAccount = options[0];
         }
-      } catch (error) {
-        console.error("Error fetching instances", error);
-      } finally {
-        setIsLoading(false);
       }
+      handleUpdateAccount(currentAccount);
     };
 
     if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
-      fetchData();
+      init();
     }
-  }, [debouncedSearch]);
+  }, []);
 
   return {
-    options,
-    isLoading,
     selectedAccount,
-    setSearch,
     handleUpdateAccount,
+    getAccountFilterOptions,
   };
 }
