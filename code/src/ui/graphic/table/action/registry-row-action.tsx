@@ -315,9 +315,8 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage !== LifecycleStageMap.ACTIVITY &&
-                props.row?.status?.toLowerCase() !== "issue" &&
-                props.row?.status?.toLowerCase() !== "cancelled" && props.row[dict.title.scheduleType] == dict.form.singleService && (
+                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING || props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
+                props.row[dict.title.scheduleType] == dict.form.singleService && (
                   <Button
                     variant="ghost"
                     leftIcon="schedule"

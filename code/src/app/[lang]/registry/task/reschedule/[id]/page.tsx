@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Displays the form page for rescheduling a task.
  */
-export default async function RescheduleFormPage() {
+export default async function RescheduleTaskPage() {
     return (
         <TaskRescheduleComponent />
     );
