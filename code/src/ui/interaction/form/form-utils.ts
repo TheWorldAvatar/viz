@@ -25,7 +25,6 @@ import {
   TYPE_KEY,
   VALUE_KEY
 } from "types/form";
-import { getAfterDelimiter } from "utils/client-utils";
 import { SelectOptionType } from "../dropdown/simple-selector";
 import { REPLACE_DICT_KEY } from "utils/constants";
 
