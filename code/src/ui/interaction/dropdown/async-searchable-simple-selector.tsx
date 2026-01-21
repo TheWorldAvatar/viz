@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     MultiValue,
     SingleValue,
@@ -33,6 +33,11 @@ export default function AsyncSearchableSimpleSelector(
 ) {
     const dict: Dictionary = useDictionary();
     const [selectedOption, setSelectedOption] = useState<SelectOptionType>(props.initialValue);
+
+    // If initial value changes, update the selected option as well
+    useEffect(() => {
+        setSelectedOption(props.initialValue);
+    }, [props.initialValue]);
 
     const handleChange = (
         newValue: SingleValue<SelectOptionType> | MultiValue<SelectOptionType>,
