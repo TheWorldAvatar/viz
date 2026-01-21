@@ -707,12 +707,7 @@ export function findMatchingDropdownOptionValue(
   entities: SelectOptionType[]
 ): string {
   const matchingEntity: SelectOptionType = entities.find(
-    (entity) =>
-      getAfterDelimiter(
-        entity.value,
-        "/"
-      ) === defaultValue
-  );
+    (entity) => entity.value === defaultValue);
   if (matchingEntity) {
     return matchingEntity.value;
   }

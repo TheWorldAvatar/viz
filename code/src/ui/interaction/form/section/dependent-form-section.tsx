@@ -175,21 +175,17 @@ export function DependentFormSection(
 
       const naOption: SelectOptionType = { value: "", label: dict.message.na }
       // By default, id is empty if optional, else its undefined
-      let defaultId: string = props.form.getValues(field.fieldId) == "" ?
+      const fieldValue = props.form.getValues(field.fieldId);
+      let defaultId: string = fieldValue == "" ?
         isSectionOptional ? naOption.value : undefined :
-        props.form.getValues(field.fieldId);
+        fieldValue;
 
       // Only update the id if there are any entities
       if (entities.length > 0) {
-        const fieldValue = props.form.getValues(field.fieldId);
         // Find best matching value if there is an existing or default value;
         // Existing value must take precedence
         if (fieldValue && fieldValue.length > 0) {
-          const defaultValueId: string = getAfterDelimiter(fieldValue, "/");
-          const result: string = findMatchingDropdownOptionValue(
-            defaultValueId,
-            entities
-          );
+          const result: string = findMatchingDropdownOptionValue(fieldValue, entities);
           if (result != null) {
             defaultId = result;
           }
@@ -201,14 +197,7 @@ export function DependentFormSection(
             const defaultField: SparqlResponseField = Array.isArray(defaults)
               ? defaults[0]
               : defaults;
-            const defaultValueId: string = getAfterDelimiter(
-              defaultField.value,
-              "/"
-            );
-            const result: string = findMatchingDropdownOptionValue(
-              defaultValueId,
-              entities
-            );
+            const result: string = findMatchingDropdownOptionValue(defaultField?.value, entities);
             if (result != null) {
               defaultId = result;
             }
