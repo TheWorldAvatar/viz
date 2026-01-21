@@ -182,13 +182,11 @@ export function DependentFormSection(
 
       // Only update the id if there are any entities
       if (entities.length > 0) {
+        let matchingExistingOptionValue: string = null;
         // Find best matching value if there is an existing or default value;
         // Existing value must take precedence
         if (fieldValue && fieldValue.length > 0) {
-          const result: string = findMatchingDropdownOptionValue(fieldValue, entities);
-          if (result != null) {
-            defaultId = result;
-          }
+          matchingExistingOptionValue = findMatchingDropdownOptionValue(fieldValue, entities);
         } else if (props.dependentProp?.defaultValue) {
           const defaults: SparqlResponseField | SparqlResponseField[] =
             props.dependentProp?.defaultValue;
@@ -197,13 +195,35 @@ export function DependentFormSection(
             const defaultField: SparqlResponseField = Array.isArray(defaults)
               ? defaults[0]
               : defaults;
-            const result: string = findMatchingDropdownOptionValue(defaultField?.value, entities);
-            if (result != null) {
-              defaultId = result;
-            }
+            matchingExistingOptionValue = findMatchingDropdownOptionValue(defaultField?.value, entities);
           }
         }
+
+        // Check if a pre-existing or default option exists in the first 21 options
+        // If not, retrieve and append the existing option to the list
+        if (matchingExistingOptionValue == null) {
+          const responseEntity: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(
+              InternalApiIdentifierMap.INSTANCES,
+              entityType,
+              "false",
+              getAfterDelimiter(defaultId, "/")
+            )
+          );
+          // Only append the existing option if it exists
+          const results: Record<string, SparqlResponseField>[] = responseEntity.data?.items as Record<string, SparqlResponseField>[];
+          if (results?.length > 0) {
+            entities.push({
+              label: results[0].name.value,
+              value: results[0].iri.value
+            });
+          }
+          // If it does exist, update default ID to the matching option value
+        } else {
+          defaultId = matchingExistingOptionValue;
+        }
       }
+
       const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
       // Search form should always target default value
       if (formType === FormTypeMap.SEARCH) {
