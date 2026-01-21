@@ -145,7 +145,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (formPersistenceEnabled) {
       const values = form.getValues()
       Object.entries(values).forEach(([key, value]) => {
-        browserStorageManager.set(key, JSON.stringify(value));
+        // Only save non-empty values
+        if (value !== undefined && value !== "") {
+          browserStorageManager.set(key, JSON.stringify(value));
+        }
       });
     }
   }, [formPersistenceEnabled, form.getValues()]);
