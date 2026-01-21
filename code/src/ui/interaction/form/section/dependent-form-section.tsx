@@ -199,9 +199,11 @@ export function DependentFormSection(
           }
         }
 
-        // Check if a pre-existing or default option exists in the first 21 options
-        // If not, retrieve and append the existing option to the list
-        if (matchingExistingOptionValue == null) {
+        // If a pre-existing or default option match does exist in the first 21 options, update default ID to the matching option value
+        if (matchingExistingOptionValue != null) {
+          defaultId = matchingExistingOptionValue;
+          // If there is no match and no default ID, retrieve and append the existing option to the list
+        } else if (matchingExistingOptionValue == null && defaultId != undefined) {
           const responseEntity: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(
               InternalApiIdentifierMap.INSTANCES,
@@ -218,9 +220,6 @@ export function DependentFormSection(
               value: results[0].iri.value
             });
           }
-          // If it does exist, update default ID to the matching option value
-        } else {
-          defaultId = matchingExistingOptionValue;
         }
       }
 
