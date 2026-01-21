@@ -81,6 +81,30 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
 
+
+  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
+    const storedValues: FieldValues = { ...initialState };
+
+    Object.keys(initialState).forEach((key) => {
+      const storedValue = browserStorageManager.get(key);
+      if (storedValue) {
+        try {
+          storedValues[key] = JSON.parse(storedValue);
+        } catch (error) {
+          console.error(`Error parsing stored value for ${key}:`, error);
+        }
+      }
+    });
+
+    return storedValues;
+  };
+
+  const clearStoredFormValues = (fieldNames: string[]) => {
+    fieldNames.forEach((key) => {
+      browserStorageManager.remove(key);
+    });
+  };
+
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
     defaultValues: async (): Promise<FieldValues> => {
@@ -137,6 +161,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore),
       });
       setBillingParams(billingParamsStore)
+
+      if (formPersistenceEnabled) {
+        const storedState = loadStoredFormValues(initialState);
+        return storedState;
+      }
+
       return initialState;
     },
   });
@@ -381,12 +411,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
+
     stopLoading();
     toast(
       pendingResponse?.data?.message || pendingResponse?.error?.message,
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
+
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
