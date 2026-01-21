@@ -31,7 +31,8 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
-import { getId } from "utils/client-utils";
+import HistoryModal from "ui/interaction/modal/history-modal";
+import { getAfterDelimiter, getId } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
@@ -68,6 +69,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
+  const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
+  const [historyId, setHistoryId] = useState<string>("");
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -316,6 +319,23 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     row={row.original}
                                     triggerRefresh={props.triggerRefresh}
                                   />
+                                  <Button
+                                    leftIcon="history"
+                                    size="icon"
+                                    variant="ghost"
+                                    tooltipText={dict.title.history}
+                                    onClick={() => {
+                                      if (props.lifecycleStage == LifecycleStageMap.ACTIVITY ||
+                                        props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                                        props.lifecycleStage == LifecycleStageMap.CLOSED) {
+                                        setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
+                                      } else {
+                                        setHistoryId(row.original.id as string);
+                                      }
+                                      setIsOpenHistoryModal(true);
+                                    }}
+                                  />
                                   {allowMultipleSelection && (
                                     <Checkbox
                                       aria-label={row.id}
@@ -360,6 +380,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           {dict.message.noVisibleColumns}
         </div>
       )}
+      {isOpenHistoryModal && historyId != "" && <HistoryModal
+        id={historyId}
+        entityType={props.recordType}
+        lifecycleStage={props.lifecycleStage}
+        isOpen={isOpenHistoryModal}
+        setIsOpen={setIsOpenHistoryModal}
+      />}
     </>
   );
 }

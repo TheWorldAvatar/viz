@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.53.0
+
+### Changes
+
+- Added views of changelog history in registry
+- Bump min version of `VisBackend Agent` from `v1.29.0` to `v1.31.0`
+
+## 5.52.4
+
+### Changes
+
+- All IRI values are now displayed as IDs in the registry table
+
 ## 5.52.3
 
 ### Bug fixes
