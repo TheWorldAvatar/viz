@@ -286,7 +286,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 onClick={() => {
-                  dispatch(setClearFormData(true));
+                  //dispatch(setClearFormData(true));
                   dispatch(setFormPersistenceEnabled(false));
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||

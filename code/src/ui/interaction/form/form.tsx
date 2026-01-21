@@ -41,7 +41,8 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { useSelector } from "react-redux";
-import { selectFormPersistenceEnabled } from "state/form-persistence-slice";
+import { selectFormPersistenceEnabled, selectClearFormData, setClearFormData } from "state/form-persistence-slice";
+
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -85,14 +86,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
 
-    Object.keys(initialState).forEach((key) => {
+
+    browserStorageManager.keys().forEach((key) => {
       const storedValue = browserStorageManager.get(key);
-      if (storedValue) {
-        try {
-          storedValues[key] = JSON.parse(storedValue);
-        } catch (error) {
-          console.error(`Error parsing stored value for ${key}:`, error);
-        }
+      if (storedValue !== null) {
+        storedValues[key] = storedValue;
       }
     });
 
@@ -177,14 +175,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       Object.entries(values).forEach(([key, value]) => {
         // Only save non-empty values
         if (value !== undefined && value !== "") {
-          browserStorageManager.set(key, JSON.stringify(value));
+          browserStorageManager.set(key, value);
         }
       });
     }
   }, [formPersistenceEnabled]);
 
 
-  // A function to initiate the form submission process
+  // // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
     startLoading();
     let pendingResponse: AgentResponseBody;

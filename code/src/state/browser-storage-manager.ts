@@ -43,6 +43,16 @@ class BrowserStorageManager {
     }
   }
 
+  public keys(): string[] {
+    try {
+      return Object.keys(this.storage);
+    } catch (error) {
+      console.error("Error reading sessionStorage keys:", error);
+      return [];
+    }
+  }
+
+
   /**
  * Removes a specific item from storage by key.
  * 
