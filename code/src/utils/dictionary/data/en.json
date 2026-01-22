@@ -38,6 +38,7 @@
     "cancel": "Cancel",
     "report": "Report",
     "submit": "Submit",
+    "reschedule": "Reschedule",
     "submitAndDuplicate": "Submit and duplicate",
     "draftTemplate": "Draft template",
     "save": "Save",
@@ -92,7 +93,9 @@
     "selectDates": "Select Dates",
     "selectDatesDesc": "You can select multiple individual dates. The date field displays the start and end of your selected range, while every date covered within that range is listed below.",
     "dateSelected": "date selected",
-    "datesSelected": "dates selected"
+    "datesSelected": "dates selected",
+    "rescheduleDate": "Reschedule Date",
+    "rescheduleDateDesc": "Select a new date for your service"
   },
   "map": {
     "title": {
@@ -133,6 +136,7 @@
     "dispatchInstruction": "Dispatch the resources for the scheduled service on",
     "cancelInstruction": "Please provide a reason for the cancellation of the scheduled service on",
     "reportInstruction": "Report an issue with the service on {date}. \n Please include the reason in your report:",
+    "rescheduleInstruction": "Request a change to a previously scheduled service on {replace}",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",

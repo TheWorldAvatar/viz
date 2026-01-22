@@ -246,7 +246,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         <>
           <div className="flex flex-col w-full gap-4">
             <label
-              className="text-lg font-bold flex gap-4"
+              className="text-lg font-bold flex gap-2"
               htmlFor="select-input"
             >
               {parseWordsForLabels(dict.title.scheduleType)}

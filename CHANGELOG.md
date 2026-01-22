@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.54.0
+
+### Changes
+
+- Added reschedule tasks capability
+- Bump min version of `VisBackend Agent` from `v1.31.0` to `v1.32.0`
+
 ## 5.53.1
 
 ### Changes
