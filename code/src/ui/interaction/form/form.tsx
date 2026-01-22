@@ -82,28 +82,26 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
 
+
   // Form identifier to track which form the stored values belong to
   const FORM_IDENTIFIER_KEY = "__form_identifier__";
   const currentFormIdentifier = `${props.entityType}_${props.formType}_${id}`;
 
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
-    
-    console.info("STORED VALUES", storedValues);
     // Fields that should never be loaded from storage (always use from initialState)
     const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-    
     browserStorageManager.keys().forEach((key) => {
       // Skip the identifier key and excluded fields
       if (key === FORM_IDENTIFIER_KEY || excludedFields.includes(key)) {
         return;
       }
       const storedValue = browserStorageManager.get(key);
+
       if (storedValue !== null) {
         storedValues[key] = storedValue;
       }
     });
-
     return storedValues;
   };
 
@@ -170,68 +168,22 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       });
       setBillingParams(billingParamsStore)
 
-      if (formPersistenceEnabled) {
-        const storedState = loadStoredFormValues(initialState);
-        return storedState;
-      }
-
-      return initialState;
+      const storedState = loadStoredFormValues(initialState);
+      return storedState;
     },
   });
 
-  // Subscribe to form changes and save with debounce
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const formRef = useRef(form);
-  formRef.current = form;
-
   useEffect(() => {
-    if (!formPersistenceEnabled) {
-      return;
+    if (formPersistenceEnabled) {
+      const values: FieldValues = form.getValues();
+      browserStorageManager.set(FORM_IDENTIFIER_KEY, currentFormIdentifier);
+      const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== "" && !excludedFields.includes(key)) {
+          browserStorageManager.set(key, value);
+        }
+      });
     }
-
-    const currentForm = formRef.current;
-
-    // Subscribe to form value changes using watch callback
-    const subscription = currentForm.watch(() => {
-      // Clear previous timeout for debouncing
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-
-      // Debounce the save operation
-      saveTimeoutRef.current = setTimeout(() => {
-        const values: Record<string, string> = currentForm.getValues();
-        console.info("SAVING VALUES", values);
-        browserStorageManager.set(FORM_IDENTIFIER_KEY, currentFormIdentifier);
-        // Fields that should never be saved (form-specific, not user input)
-        const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-        Object.entries(values).forEach(([key, value]) => {
-          // Only save non-empty values, and exclude form-specific fields
-          if (value !== "" && !excludedFields.includes(key)) {
-            browserStorageManager.set(key, value);
-          }
-        });
-      }, 300);
-    });
-
-    // Initial save when persistence is first enabled
-    const values: Record<string, string> = currentForm.getValues();
-    console.info("INITIAL SAVE", values);
-    browserStorageManager.set(FORM_IDENTIFIER_KEY, currentFormIdentifier);
-    // Fields that should never be saved (form-specific, not user input)
-    const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-    Object.entries(values).forEach(([key, value]) => {
-      if (value !== "" && !excludedFields.includes(key)) {
-        browserStorageManager.set(key, value);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
   }, [formPersistenceEnabled]);
 
 
