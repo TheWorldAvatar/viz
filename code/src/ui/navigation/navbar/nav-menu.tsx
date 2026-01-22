@@ -3,11 +3,10 @@
 import React, { useRef, useState } from "react";
 
 import { Icon } from "@mui/material";
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
 import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
-import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -105,9 +104,8 @@ function NavMenuContents(
   props: Readonly<NavMenuContentsProps>
 ): React.ReactElement {
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
   const dict: Dictionary = useDictionary();
-  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const isPermitted = usePermissionGuard();
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
   const [navMenuWidthClass, setNavMenuWidthClass] = useState<string>(
     "w-[16vw] xl:w-[18vw] 2xl:w-[16vw]"
@@ -272,15 +270,12 @@ function NavMenuContents(
 
       {props.settings.modules.registry &&
         props.settings.resources?.registry?.data &&
-        (!keycloakEnabled ||
-          permissionScheme?.hasPermissions.registry ||
-          permissionScheme?.hasPermissions.pendingRegistry) && (
+        (isPermitted("registry") || isPermitted("pendingRegistry")) && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}
             url={
-              !keycloakEnabled ||
-                permissionScheme?.hasPermissions.pendingRegistry
+              isPermitted("pendingRegistry")
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
                 : Routes.REGISTRY_TASK_OUTSTANDING
             }
@@ -326,9 +321,8 @@ function NavMenuContents(
           ].includes(externalLink.url) &&
           // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
           // IF there is a permission set with authentication enabled, check if the user has the specified permission
-          (!keycloakEnabled ||
-            !externalLink?.permission ||
-            permissionScheme?.hasPermissions[externalLink.permission])
+          !externalLink?.permission ||
+          isPermitted(externalLink.permission)
         ) {
           return (
             <NavBarItem

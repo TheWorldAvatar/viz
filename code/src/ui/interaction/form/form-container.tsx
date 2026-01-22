@@ -1,13 +1,12 @@
 "use client";
 
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FORM_IDENTIFIER, FormType, FormTypeMap, PropertyShape } from "types/form";
@@ -72,8 +71,7 @@ export function FormContainerComponent(
 function FormContents(props: Readonly<FormContainerComponentProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const isPermitted = usePermissionGuard();
   const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
@@ -262,9 +260,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
+          {isPermitted("operation") &&
             props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -277,9 +273,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 onClick={genBooleanClickHandler(setIsRescindAction)}
               />
             )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.operation) &&
+          {isPermitted("operation") &&
             props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE &&
             !(isRescindAction || isTerminateAction) && (
@@ -291,9 +285,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 onClick={genBooleanClickHandler(setIsTerminateAction)}
               />
             )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
+          {isPermitted("sales") &&
             props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
@@ -305,9 +297,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 onClick={onApproval}
               />
             )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
+          {isPermitted("sales") &&
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -320,9 +310,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="secondary"
               />
             )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
+          {isPermitted("sales") &&
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
