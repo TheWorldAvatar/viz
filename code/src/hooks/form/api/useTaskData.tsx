@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { RegistryTaskOption, SparqlResponseField } from "types/form";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -26,10 +26,11 @@ export function useTaskData(
             setIsFetching(true);
             try {
                 const resBody: AgentResponseBody = await queryInternalApi(
-                    makeInternalRegistryAPIwithParams("tasks", "task", id)
+                    makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", id)
                 );
                 const itemData: Record<string, SparqlResponseField> = resBody.data?.items?.[0] as Record<string, SparqlResponseField>;
                 const item: RegistryTaskOption = {
+                    id: id,
                     contract: itemData.contract.value,
                     status: itemData.status.value,
                     date: itemData.date.value,

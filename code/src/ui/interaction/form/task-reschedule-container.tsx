@@ -69,18 +69,14 @@ function TaskFormContents() {
   }, [task?.date]);
 
 
-  const taskSubmitAction = async (
-    contract: string,
-    date: string,
-  ) => {
+  const taskSubmitAction = async () => {
     startLoading();
 
     // For rescheduling, we send the new date as a UNIX timestamp in seconds, so we convert it here.
     // getTIme() returns milliseconds, so we divide by 1000 and round down to get seconds.
     // The backend expects the reschedule date in this format.
     const formData: JsonObject = {
-      contract,
-      date,
+      id: task?.id,
       "reschedule date": Math.floor(selectedDate.getTime() / 1000)
     };
 
@@ -171,12 +167,7 @@ function TaskFormContents() {
             label={dict.action.submit}
             tooltipText={dict.action.submit}
             disabled={isLoading || isFetching}
-            onClick={() => {
-              taskSubmitAction(
-                task.contract,
-                task.date,
-              );
-            }}
+            onClick={() => taskSubmitAction()}
           />
         </div>
       </section >
