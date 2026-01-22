@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 interface RedirectButtonProps extends ButtonProps {
   url: string;
   softRedirect?: boolean;
+  saveFormDataInMemory?: boolean;
 }
 
 /**
@@ -17,10 +18,12 @@ interface RedirectButtonProps extends ButtonProps {
  *
  * @param {string} url The redirect target url.
  * @param {boolean} softRedirect Performs a soft redirect using router.push().
+ * @param {boolean} saveFormDataInMemory Saves form data in memory.
  */
 export default function RedirectButton({
   url,
   softRedirect = false,
+  saveFormDataInMemory = false,
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
@@ -33,8 +36,14 @@ export default function RedirectButton({
     if (softRedirect) {
       // Use soft redirect to allow parallel routes to function
       router.push(url);
-      // Indicate that form data should be saved in memory
+    } else if(saveFormDataInMemory) {
+      // Use soft redirect to allow parallel routes to function and save form data in memory
+      router.push(url);
       dispatch(setFormPersistenceEnabled(true));
+      // Clear the form data save flag after 300ms
+      setTimeout(() => {
+        dispatch(setFormPersistenceEnabled(false));
+      }, 300);
     } else {
       // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
       window.location.href = url;

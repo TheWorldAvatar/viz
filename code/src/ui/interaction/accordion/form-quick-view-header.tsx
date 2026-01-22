@@ -82,7 +82,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           iconSize="small"
           tooltipText={dict.action.add}
           url={genSubEntityUrl("add", props.entityType)}
-          softRedirect={true}
+          saveFormDataInMemory={true}
           variant="outline"
         />
         {props.selectedEntityId && <RedirectButton
@@ -95,7 +95,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             props.entityType,
             props.selectedEntityId
           )}
-          softRedirect={true}
+          saveFormDataInMemory={true}
           variant="outline"
         />}
         {props.selectedEntityId && <RedirectButton
@@ -108,7 +108,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             props.entityType,
             props.selectedEntityId
           )}
-          softRedirect={true}
+          saveFormDataInMemory={true}
           variant="outline"
         />}
       </div>}
