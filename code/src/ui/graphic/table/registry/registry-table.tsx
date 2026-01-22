@@ -8,7 +8,6 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 import { flexRender } from "@tanstack/react-table";
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { TableDescriptor } from "hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
@@ -17,11 +16,11 @@ import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";
 
+import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
@@ -66,8 +65,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
 
   const { navigateToDrawer } = useDrawerNavigation();
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const isPermitted = usePermissionGuard();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
   const [historyId, setHistoryId] = useState<string>("");
@@ -101,20 +99,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
       // Determine the appropriate task route based on status and permissions
       let taskRoute: string;
-      if (
-        (!keycloakEnabled ||
-          !permissionScheme ||
-          permissionScheme.hasPermissions.operation) &&
-        ((row.status as string).toLowerCase() === "new" ||
-          ((row.status as string).toLowerCase() === "assigned" &&
+      if (isPermitted("operation") &&
+        ((row[dict.title.status] as string).toLowerCase() === "new" ||
+          ((row[dict.title.status] as string).toLowerCase() === "assigned" &&
             props.lifecycleStage === LifecycleStageMap.SCHEDULED))
       ) {
         taskRoute = Routes.REGISTRY_TASK_DISPATCH;
-      } else if (
-        (!keycloakEnabled ||
-          !permissionScheme ||
-          permissionScheme.hasPermissions.completeTask) &&
-        (row.status as string).toLowerCase() === "assigned"
+      } else if (isPermitted("completeTask") &&
+        (row[dict.title.status] as string).toLowerCase() === "assigned"
       ) {
         taskRoute = Routes.REGISTRY_TASK_COMPLETE;
       } else {
@@ -133,13 +125,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
       }
     } else {
-      const registryRoute: string =
-        !keycloakEnabled ||
-          !permissionScheme ||
-          permissionScheme.hasPermissions.operation ||
-          permissionScheme.hasPermissions.sales
-          ? Routes.REGISTRY_EDIT
-          : Routes.REGISTRY;
+      const registryRoute: string = isPermitted("operation") || isPermitted("sales")
+        ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);
     }
   };
@@ -252,17 +239,14 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                           )}
                                         </>
                                       )}
-                                      {(!keycloakEnabled ||
-                                        !permissionScheme ||
-                                        permissionScheme.hasPermissions
-                                          .draftTemplate) && (
-                                          <DraftTemplateButton
-                                            rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
-                                            recordType={props.recordType}
-                                            triggerRefresh={props.triggerRefresh}
-                                            resetRowSelection={props.tableDescriptor.table.resetRowSelection}
-                                          />
-                                        )}
+                                      {isPermitted("draftTemplate") && (
+                                        <DraftTemplateButton
+                                          rowId={props.tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
+                                          recordType={props.recordType}
+                                          triggerRefresh={props.triggerRefresh}
+                                          resetRowSelection={props.tableDescriptor.table.resetRowSelection}
+                                        />
+                                      )}
                                     </div>
                                   </PopoverActionButton>
                                 )}
