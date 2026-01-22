@@ -64,7 +64,7 @@ export function makeInternalRegistryAPIwithParams(
         sort_by: params[6] ?? null,
         filters: params[7] ?? "",
         branch_delete: params[8] ?? null,
-        search: params[9] ?? null,
+        search: params[9] ?? "",
       });
       break;
     case InternalApiIdentifierMap.EVENT:
