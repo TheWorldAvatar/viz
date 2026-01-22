@@ -4,20 +4,17 @@ import { usePermissionScheme } from 'hooks/auth/usePermissionScheme';
 import { BUTTON_POLICIES, ButtonActionType, ButtonPolicy, PermissionScheme } from 'types/auth';
 import { BillingStatus, LifecycleStage, RegistryStatus } from 'types/form';
 
-export interface FilterOptionsDescriptor {
-    isActionAllowed: (_action: ButtonActionType) => boolean;
-}
-
 /**
  * A custom hook to support authorisation checks to render components.
  * 
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {RegistryStatus} status The current task status.
+ * @param {RegistryStatus} status The status for the current row.
+ * @param {BillingStatus} billingStatus The status for the current row's billing mode.
  */
 export function usePermissionGuard(
     lifecycleStage: LifecycleStage,
     status: RegistryStatus,
-    billingStatus: BillingStatus) {
+    billingStatus: BillingStatus): (_action: ButtonActionType) => boolean {
     const keycloakEnabled: boolean = process.env.KEYCLOAK === "true";
     const permissionScheme: PermissionScheme = usePermissionScheme();
 
@@ -38,7 +35,5 @@ export function usePermissionGuard(
         return hasPermission && isValidStage && isValidStatus && isValidBillingStatus;
     };
 
-    return {
-        isActionAllowed,
-    };
+    return isActionAllowed;
 }
