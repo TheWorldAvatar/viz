@@ -1,4 +1,4 @@
-import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
+import { useRegistryRowPermissionGuard } from "hooks/auth/useRegistryRowPermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -44,7 +44,7 @@ export default function RegistryRowAction(
       ? getId(props.row.id)
       : getId(props.row.iri);
   const dict: Dictionary = useDictionary();
-  const isActionAllowed = usePermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase(), props.row[dict.title.billingStatus]);
+  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase(), props.row[dict.title.billingStatus]);
 
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
