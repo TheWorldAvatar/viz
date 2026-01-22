@@ -85,8 +85,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
-
-
     browserStorageManager.keys().forEach((key) => {
       const storedValue = browserStorageManager.get(key);
       if (storedValue !== null) {
@@ -174,7 +172,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const values: Record<string, string> = form.getValues()
       Object.entries(values).forEach(([key, value]) => {
         // Only save non-empty values
-        if (value !== undefined && value !== "") {
+        if (value !== "") {
           browserStorageManager.set(key, value);
         }
       });
