@@ -18,6 +18,8 @@ import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { useDispatch } from "react-redux";
+import {  setClearStoredFormData } from "state/form-persistence-slice";
 
 interface TableRibbonProps {
   path: string;
@@ -46,6 +48,7 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
+  const dispatch = useDispatch();
   const keycloakEnabled = process.env.KEYCLOAK === "true";
   const permissionScheme: PermissionScheme = usePermissionScheme();
   const { navigateToDrawer } = useDrawerNavigation();
@@ -283,6 +286,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 onClick={() => {
+                  dispatch(setClearStoredFormData(true));
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),

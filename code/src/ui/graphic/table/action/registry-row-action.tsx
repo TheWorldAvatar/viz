@@ -19,6 +19,9 @@ import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { useDispatch } from "react-redux";
+import {  setClearStoredFormData } from "state/form-persistence-slice";
+
 
 interface RegistryRowActionProps {
   recordType: string;
@@ -38,7 +41,7 @@ interface RegistryRowActionProps {
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
-
+  const dispatch = useDispatch();
   const { navigateToDrawer } = useDrawerNavigation();
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -232,6 +235,7 @@ export default function RegistryRowAction(
                     label={dict.action.edit}
                     onClick={() => {
                       setIsActionMenuOpen(false);
+                      dispatch(setClearStoredFormData(true));
                       navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                     }}
                   />
@@ -251,6 +255,7 @@ export default function RegistryRowAction(
                     label={dict.action.delete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
+                      dispatch(setClearStoredFormData(true));
                       navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                     }}
                   />

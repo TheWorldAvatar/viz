@@ -41,7 +41,7 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { useSelector } from "react-redux";
-import { selectFormPersistenceEnabled, selectClearFormData, setClearFormData } from "state/form-persistence-slice";
+import { selectFormPersistenceEnabled, selectClearStoredFormData, setClearStoredFormData } from "state/form-persistence-slice";
 
 
 interface FormComponentProps {
@@ -81,21 +81,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
-
-
-  // Form identifier to track which form the stored values belong to
-  const FORM_IDENTIFIER_KEY = "__form_identifier__";
-  const currentFormIdentifier = `${props.entityType}_${props.formType}_${id}`;
+  const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
 
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
     // Fields that should never be loaded from storage (always use from initialState)
     const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
     browserStorageManager.keys().forEach((key) => {
-      // Skip the identifier key and excluded fields
-      if (key === FORM_IDENTIFIER_KEY || excludedFields.includes(key)) {
+      // Skip the excluded fields
+      if (excludedFields.includes(key)) {
         return;
       }
+      
       const storedValue = browserStorageManager.get(key);
 
       if (storedValue !== null) {
@@ -103,12 +100,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
     });
     return storedValues;
-  };
-
-  const clearStoredFormValues = (fieldNames: string[]) => {
-    fieldNames.forEach((key) => {
-      browserStorageManager.remove(key);
-    });
   };
 
   // Sets the default value with the requested function call
@@ -176,7 +167,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   useEffect(() => {
     if (formPersistenceEnabled) {
       const values: FieldValues = form.getValues();
-      browserStorageManager.set(FORM_IDENTIFIER_KEY, currentFormIdentifier);
       const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
       Object.entries(values).forEach(([key, value]) => {
         if (value !== "" && !excludedFields.includes(key)) {
@@ -185,6 +175,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       });
     }
   }, [formPersistenceEnabled]);
+
+
+  useEffect(() => {
+    if (clearStoredFormData) {
+      const allStoredFormKeys = browserStorageManager.keys();
+      allStoredFormKeys.forEach((storedFormKey) => {
+        browserStorageManager.remove(storedFormKey);
+      });
+      dispatch(setClearStoredFormData(false));
+    }
+  }, [clearStoredFormData]);
 
 
   // // A function to initiate the form submission process

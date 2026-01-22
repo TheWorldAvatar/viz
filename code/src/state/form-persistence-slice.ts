@@ -4,16 +4,16 @@ import { ReduxState } from "app/store";
 
 interface FormPersistenceState {
     enabled: boolean;
-    clearFormData: boolean;
+    clearStoredFormData: boolean;
 }
 
 const initialState: FormPersistenceState = {
     enabled: false,
-    clearFormData: false,
+    clearStoredFormData: false,
 };
 
 /**
- * Redux slice for persisting arbitrary form input values across the application.
+ * Redux slice for persisting form input values across the application.
  */
 const formPersistenceSlice = createSlice({
     name: "formPersistence",
@@ -28,14 +28,14 @@ const formPersistenceSlice = createSlice({
         /**
          * Sets whether form data should be cleared.
          */
-        setClearFormData: (state, action: PayloadAction<boolean>) => {
-            state.clearFormData = action.payload;
+        setClearStoredFormData: (state, action: PayloadAction<boolean>) => {
+            state.clearStoredFormData = action.payload;
         }
     },
 })
 
 
-export const { setFormPersistenceEnabled, setClearFormData } = formPersistenceSlice.actions;
+export const { setFormPersistenceEnabled, setClearStoredFormData } = formPersistenceSlice.actions;
 export const selectFormPersistenceEnabled = (state: ReduxState) => state.formPersistence.enabled;
-export const selectClearFormData = (state: ReduxState) => state.formPersistence.clearFormData;
+export const selectClearStoredFormData = (state: ReduxState) => state.formPersistence.clearStoredFormData;
 export default formPersistenceSlice.reducer;
