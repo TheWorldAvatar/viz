@@ -42,6 +42,20 @@ export const FormTypeMap = {
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 
+export const RegistryStatusMap = {
+  AMENDED: "amended",
+  ASSIGNED: "assigned",
+  COMPLETED: "completed",
+  NEW: "new",
+} as const;
+export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
+
+export const BillingStatusMap = {
+  PENDING_APPROVAL: "pendingApproval",
+  READY: "readyForPayment",
+} as const;
+export type BillingStatus = typeof BillingStatusMap[keyof typeof BillingStatusMap];
+
 export interface SparqlResponseField {
   value: string;
   type: string;
