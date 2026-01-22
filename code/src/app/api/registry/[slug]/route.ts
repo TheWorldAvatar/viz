@@ -313,25 +313,34 @@ function makeExternalEndpoint(
       const identifier: string = searchParams.get("identifier");
       const subtype: string = searchParams.get("subtype");
       const branchDelete: string = searchParams.get("branch_delete");
+      const search: string = searchParams.get("search");
 
       let url: string = `${agentBaseApi}/${type}`;
-
+      // For getting registry table backend
       if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
         const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+        // 
       } else if (identifier != "null") {
         url += `/${identifier}`;
+        // For a subtype route, search field can be added
         if (subtype != "null") {
-          url += `/${subtype}`;
+          const urlParams: URLSearchParams = new URLSearchParams({ search });
+          url += `/${subtype}?${urlParams.toString()}`;
+          // For a delete route with identifier, branch_delete should be the only one present
+        } else if (branchDelete && branchDelete != "null") {
+          const urlParams: URLSearchParams = new URLSearchParams({ branchDelete });
+          url += `?${urlParams.toString()}`;
         }
-        if (branchDelete && branchDelete != "null") {
-          url += `?branch_delete=${encodeURIComponent(branchDelete)}`;
-        }
+        // Add query parameters for subtype case: {parent}/{id}/{type}?search={search}
+      } else if (search && search != "") {
+        // If no identifier/subtype, search can be used directly on type
+        const urlParams: URLSearchParams = new URLSearchParams({ search });
+        url += `?${urlParams.toString()}`;
       }
-
       return url;
     }
     case InternalApiIdentifierMap.EVENT: {

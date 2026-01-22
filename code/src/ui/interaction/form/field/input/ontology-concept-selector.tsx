@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { Control, Controller, FieldError, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { GroupBase, OptionsOrGroups } from "react-select";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -13,17 +13,19 @@ import {
   OntologyConcept,
   OntologyConceptMappings,
   PropertyShape,
+  VALUE_KEY,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
   FORM_STATES,
   genDefaultSelectOption,
   getMatchingConcept,
+  getRegisterOptions,
   parseConcepts,
 } from "ui/interaction/form/form-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import FormSelector from "./form-selector";
+import FormInputContainer from "../form-input-container";
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -47,11 +49,10 @@ export default function OntologyConceptSelector(
     control,
     name: props.field.fieldId,
   });
-
+  const registerOptions = getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE));
   const effectRan = useRef(false);
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [conceptMappings, setConceptMappings] =
-    useState<OntologyConceptMappings>({});
+  const [conceptMappings, setConceptMappings] = useState<OntologyConceptMappings>({});
   const [options, setOptions] = useState<
     OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>
   >([]);
@@ -172,13 +173,32 @@ export default function OntologyConceptSelector(
   }
   if (conceptMappings[ONTOLOGY_CONCEPT_ROOT] && options.length > 0) {
     return (
-      <FormSelector
-        selectOptions={options}
+      <FormInputContainer
         field={props.field}
-        form={props.form}
+        error={props.form.formState.errors[props.field.fieldId] as FieldError}
+        labelStyles={props.options?.labelStyle}
         selectedOption={selectedOption}
-        options={props.options}
-      />
+      >
+        <Controller
+          name={props.field.fieldId}
+          control={props.form.control}
+          defaultValue={props.form.getValues(props.field.fieldId)}
+          rules={registerOptions}
+          render={({ field: { value, onChange } }) => {
+            return (
+              <SimpleSelector
+                options={options}
+                defaultVal={value}
+                onChange={(selectedOption) => {
+                  onChange((selectedOption as SelectOptionType).value);
+                }}
+                isDisabled={props.options?.disabled}
+                reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
+              />
+            );
+          }}
+        />
+      </FormInputContainer>
     );
   }
 }

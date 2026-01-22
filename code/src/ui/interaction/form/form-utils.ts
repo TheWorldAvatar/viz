@@ -21,12 +21,12 @@ import {
   PropertyShapeOrGroup,
   QuickViewFields,
   QuickViewGroupings,
-  RegistryFieldValues,
   SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY
 } from "types/form";
-import { extractResponseField, getAfterDelimiter } from "utils/client-utils";
+import { SelectOptionType } from "../dropdown/simple-selector";
+import { REPLACE_DICT_KEY } from "utils/constants";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -453,7 +453,7 @@ export function getRegisterOptions(
     options.min = {
       value: Number(field.minInclusive[VALUE_KEY]),
       message: dict.message.minInclusive.replace(
-        "{replace}",
+        REPLACE_DICT_KEY,
         field.minInclusive[VALUE_KEY]
       ),
     };
@@ -461,7 +461,7 @@ export function getRegisterOptions(
     options.min = {
       value: Number(field.minExclusive[VALUE_KEY]) + 0.1,
       message: dict.message.minExclusive.replace(
-        "{replace}",
+        REPLACE_DICT_KEY,
         field.minExclusive[VALUE_KEY]
       ),
     };
@@ -472,7 +472,7 @@ export function getRegisterOptions(
     options.max = {
       value: Number(field.maxInclusive[VALUE_KEY]),
       message: dict.message.maxInclusive.replace(
-        "{replace}",
+        REPLACE_DICT_KEY,
         field.maxInclusive[VALUE_KEY]
       ),
     };
@@ -480,7 +480,7 @@ export function getRegisterOptions(
     options.max = {
       value: Number(field.maxExclusive[VALUE_KEY]) + 0.1,
       message: dict.message.maxExclusive.replace(
-        "{replace}",
+        REPLACE_DICT_KEY,
         field.maxExclusive[VALUE_KEY]
       ),
     };
@@ -490,7 +490,7 @@ export function getRegisterOptions(
     options.minLength = {
       value: Number(field.minLength[VALUE_KEY]),
       message: dict.message.minLength.replace(
-        "{replace}",
+        REPLACE_DICT_KEY,
         field.minLength[VALUE_KEY]
       ),
     };
@@ -499,7 +499,7 @@ export function getRegisterOptions(
     options.maxLength = {
       value: Number(field.maxLength[VALUE_KEY]),
       message: dict.message.maxLength.replace(
-        "{replace}",
+        REPLACE_DICT_KEY,
         field.maxLength[VALUE_KEY]
       ),
     };
@@ -512,7 +512,7 @@ export function getRegisterOptions(
       field.pattern[VALUE_KEY] === "^\\d+$"
         ? `${dict.message.numericalValuesOnly}`
         : `${dict.message.patternFollowed.replace(
-          "{replace}",
+          REPLACE_DICT_KEY,
           field.pattern[VALUE_KEY]
         )}`;
     options.pattern = {
@@ -703,17 +703,12 @@ export function getMatchingConcept(
  */
 export function findMatchingDropdownOptionValue(
   defaultValue: string,
-  entities: RegistryFieldValues[]
+  entities: SelectOptionType[]
 ): string {
-  const matchingEntity: RegistryFieldValues = entities.find(
-    (entity) =>
-      getAfterDelimiter(
-        extractResponseField(entity, FORM_STATES.ID)?.value,
-        "/"
-      ) === defaultValue
-  );
+  const matchingEntity: SelectOptionType = entities.find(
+    (entity) => entity.value === defaultValue);
   if (matchingEntity) {
-    return extractResponseField(matchingEntity, FORM_STATES.IRI)?.value;
+    return matchingEntity.value;
   }
   return null;
 }
