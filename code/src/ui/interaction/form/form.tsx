@@ -89,22 +89,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
     
-    // Check if stored values belong to a different form
-    const storedFormIdentifier = browserStorageManager.get(FORM_IDENTIFIER_KEY);
-    if (storedFormIdentifier !== currentFormIdentifier) {
-      // Clear all stored values if this is a different form
-      browserStorageManager.keys().forEach((key) => {
-        // Don't clear the identifier key itself
-        if (key !== FORM_IDENTIFIER_KEY) {
-          browserStorageManager.remove(key);
-        }
-      });
-      // Store the new form identifier
-      browserStorageManager.set(FORM_IDENTIFIER_KEY, currentFormIdentifier);
-      // Return initialState without any stored values (especially not id from previous form)
-      return storedValues;
-    }
-
     console.info("STORED VALUES", storedValues);
     // Fields that should never be loaded from storage (always use from initialState)
     const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
