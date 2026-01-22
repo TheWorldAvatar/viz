@@ -1,5 +1,5 @@
 import { usePathname, useRouter } from "next/navigation";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 

@@ -48,6 +48,12 @@ class BrowserStorageManager {
     }
   }
 
+
+  /**
+   * Retrieves all keys from the storage.
+   * 
+   * @returns An array of all keys in the storage.
+   */
   public keys(): string[] {
     try {
       return Object.keys(this.storage);
@@ -56,7 +62,6 @@ class BrowserStorageManager {
       return [];
     }
   }
-
 
   /**
  * Removes a specific item from storage by key.
