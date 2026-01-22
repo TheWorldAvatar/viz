@@ -43,7 +43,7 @@ export default function FormDateTimePicker(
   let inputType: string;
   if (props.field.datatype === dateType) {
     inputType = dateType;
-    formatLabel = "DD/MM/YYYY";
+    formatLabel = "YYYY/MM/DD";
   } else if (props.field.datatype === timeType) {
     inputType = timeType;
     formatLabel = "HH:MM";
