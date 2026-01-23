@@ -2,6 +2,21 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.55.0
+
+### Changes
+
+- Change behaviour of dependent form dropdown to adopt pagination and search parameters
+- Improve behaviour of the account filter dropdown on the billing activity page
+- Bump min version of `VisBackend Agent` from `v1.32.0` to `v1.33.0`
+
+## 5.54.0
+
+### Changes
+
+- Added reschedule tasks capability
+- Bump min version of `VisBackend Agent` from `v1.31.0` to `v1.32.0`
+
 ## 5.53.1
 
 ### Changes

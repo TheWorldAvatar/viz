@@ -14,7 +14,7 @@ import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/fo
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
-import SearchableSimpleSelector from "ui/interaction/dropdown/searchable-simple-selector";
+import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
@@ -56,7 +56,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
 
-  const { options, isLoading, selectedAccount, setSearch, handleUpdateAccount } = useAccountFilterOptions(
+  const { selectedAccount, handleUpdateAccount, getAccountFilterOptions } = useAccountFilterOptions(
     props.accountType,
     props.lifecycleStage,
     props.tableDescriptor.filters,
@@ -243,18 +243,14 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {props.lifecycleStage === LifecycleStageMap.ACTIVITY && selectedAccount != null && (
             <div className="flex justify-start">
               <div className="w-full md:w-[300px]">
-                <SearchableSimpleSelector
-                  options={options}
+                <AsyncSearchableSimpleSelector
+                  options={getAccountFilterOptions}
                   initialValue={selectedAccount}
                   onChange={(value) => {
                     handleUpdateAccount(value);
                     props.tableDescriptor.table.resetRowSelection();
                     props.tableDescriptor.table.resetPageIndex();
                   }}
-                  onSearchChange={(searchValue) => {
-                    setSearch(searchValue);
-                  }}
-                  isLoading={isLoading}
                 />
               </div>
             </div>

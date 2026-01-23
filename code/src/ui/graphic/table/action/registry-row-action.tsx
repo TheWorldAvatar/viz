@@ -320,6 +320,25 @@ export default function RegistryRowAction(
               {(!keycloakEnabled ||
                 !permissionScheme ||
                 permissionScheme.hasPermissions.operation) &&
+                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING || props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
+                props.row[dict.title.scheduleType] == dict.form.singleService && (
+                  <Button
+                    variant="ghost"
+                    leftIcon="schedule"
+                    size="md"
+                    iconSize="medium"
+                    className="w-full justify-start"
+                    disabled={isLoading}
+                    label={dict.action.reschedule}
+                    onClick={() => {
+                      setIsActionMenuOpen(false);
+                      navigateToDrawer(Routes.REGISTRY_TASK_RESCHEDULE, recordId);
+                    }}
+                  />
+                )}
+              {(!keycloakEnabled ||
+                !permissionScheme ||
+                permissionScheme.hasPermissions.operation) &&
                 (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
                   props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
                 compareDates(props.row?.date, true) &&
