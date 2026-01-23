@@ -23,7 +23,7 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -100,13 +100,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       // Determine the appropriate task route based on status and permissions
       let taskRoute: string;
       if (isPermitted("operation") &&
-        ((row[dict.title.status] as string).toLowerCase() === "new" ||
-          ((row[dict.title.status] as string).toLowerCase() === "assigned" &&
+        ((row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.NEW ||
+          ((row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.ASSIGNED &&
             props.lifecycleStage === LifecycleStageMap.SCHEDULED))
       ) {
         taskRoute = Routes.REGISTRY_TASK_DISPATCH;
       } else if (isPermitted("completeTask") &&
-        (row[dict.title.status] as string).toLowerCase() === "assigned"
+        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.ASSIGNED
       ) {
         taskRoute = Routes.REGISTRY_TASK_COMPLETE;
       } else {

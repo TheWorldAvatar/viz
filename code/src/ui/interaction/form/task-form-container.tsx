@@ -19,6 +19,7 @@ import {
   FormType,
   FormTypeMap,
   PropertyShapeOrGroup,
+  RegistryStatusMap,
   RegistryTaskType,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -103,7 +104,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const getPrevEventOccurrenceEnum = useCallback(
     (currentStatus: string): number => {
       // Enum should be 0 for order received at pending dispatch state
-      if (currentStatus === "new") {
+      if (currentStatus === RegistryStatusMap.NEW) {
         return 0;
       } else {
         // Enum will be 1 as there is already a dispatch event instantiated
@@ -368,8 +369,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               >
                 {/* Complete button - shown when viewing and status is assigned/completed */}
                 {isPermitted("completeTask") &&
-                  (task?.status?.toLowerCase() === "assigned" ||
-                    task?.status?.toLowerCase() === "completed") &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.COMPLETED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon="done_outline"
@@ -396,8 +397,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   )}
                 {/* Cancel button - shown when viewing and status is new/assigned */}
                 {isPermitted("operation") &&
-                  (task?.status?.toLowerCase() === "new" ||
-                    task?.status?.toLowerCase() === "assigned") &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
@@ -411,8 +412,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   )}
                 {/* Report button - shown when viewing and status is new/assigned */}
                 {isPermitted("reportTask") &&
-                  (task?.status?.toLowerCase() === "new" ||
-                    task?.status?.toLowerCase() === "assigned") &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
