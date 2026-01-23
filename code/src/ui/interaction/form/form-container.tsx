@@ -4,23 +4,21 @@ import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { FieldValues, SubmitHandler } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FORM_IDENTIFIER, FormType, FormTypeMap, PropertyShape } from "types/form";
+import { FormType, FormTypeMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
-import { genBooleanClickHandler } from "utils/event-handler";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
 import NavigationDrawer from "../drawer/navigation-drawer";
 import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { FormTemplate } from "./template/form-template";
 
 interface FormContainerComponentProps {
   entityType: string;
@@ -75,90 +73,12 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
   const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-  const [isRescindAction, setIsRescindAction] = useState<boolean>(false);
-  const [isTerminateAction, setIsTerminateAction] = useState<boolean>(false);
+
   const [status, setStatus] = useState<AgentResponseBody>(null);
-  const [formFields, setFormFields] = useState<PropertyShape[]>([]);
   const formRef: React.RefObject<HTMLFormElement> =
     useRef<HTMLFormElement>(null);
 
   const id: string = getAfterDelimiter(usePathname(), "/");
-
-  // Rescind the target contract
-  const rescindContract: SubmitHandler<FieldValues> = async (
-    formData: FieldValues
-  ) => {
-    await rescindOrTerminateAction(formData, "rescind");
-  };
-
-  // Terminate the target contract
-  const terminateContract: SubmitHandler<FieldValues> = async (
-    formData: FieldValues
-  ) => {
-    await rescindOrTerminateAction(formData, "terminate");
-  };
-
-  // Reusable action method to rescind or terminate the contract via internal proxy API route
-  const rescindOrTerminateAction = async (
-    formData: FieldValues,
-    action: "rescind" | "terminate"
-  ) => {
-    startLoading();
-    // Get contract ID from either the terminate form type or status data
-    const contractId = props.formType === "terminate" ? id : status?.data?.id;
-
-    const payload = {
-      ...formData,
-      type: props.entityType,
-      contract: contractId,
-    };
-
-    const agentResponseBody: AgentResponseBody = await queryInternalApi(
-      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "archive", action),
-      "POST",
-      JSON.stringify(payload)
-    );
-    stopLoading();
-    toast(
-      agentResponseBody?.data?.message || agentResponseBody?.error?.message,
-      agentResponseBody?.error ? "error" : "success"
-    );
-
-    if (!agentResponseBody?.error) {
-      handleDrawerClose(() => {
-        router.back();
-      });
-    }
-  };
-
-  // A hook that fetches the form template for executing an action
-  useEffect(() => {
-    // Declare an async function to retrieve the form template for executing the target action
-    const getFormTemplate = async (
-      lifecycleStage: string,
-      eventType: string
-    ): Promise<void> => {
-      const responseBody: AgentResponseBody = await queryInternalApi(
-        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT,
-          lifecycleStage,
-          eventType,
-          FORM_IDENTIFIER
-        )
-      );
-      const template: PropertyShape[] = (
-        responseBody.data?.items as Record<string, unknown>[]
-      )?.[0]?.property as PropertyShape[];
-      setFormFields(template);
-    };
-
-    if (isRescindAction) {
-      getFormTemplate("archive", "rescind");
-    } else if (isTerminateAction) {
-      getFormTemplate("archive", "terminate");
-    } else if (props.formType === "terminate") {
-      getFormTemplate("archive", "terminate");
-    }
-  }, [isRescindAction, isTerminateAction, props.formType]);
 
   // Action when approve button is clicked
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -224,28 +144,17 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           .replace("_", " ")}`}</h1>
       </section>
       <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
-        {!(isRescindAction || isTerminateAction || props.formType === "terminate") &&
-          (refreshFlag ? (
-            <FormSkeleton />
-          ) : (
-            <FormComponent
-              formRef={formRef}
-              entityType={props.entityType}
-              formType={props.formType}
-              primaryInstance={status?.data?.id}
-              isPrimaryEntity={props.isPrimaryEntity}
-              accountType={props.accountType}
-              pricingType={props.pricingType}
-            />
-          ))}
-        {formFields && formFields.length > 0 && (
-          <FormTemplate
-            entityType={isRescindAction ? "rescission" : "termination"}
+        {refreshFlag ? <FormSkeleton /> :
+          (<FormComponent
             formRef={formRef}
-            fields={formFields}
-            submitAction={isRescindAction ? rescindContract : terminateContract}
+            entityType={props.entityType}
+            formType={props.formType}
+            primaryInstance={status?.data?.id}
+            isPrimaryEntity={props.isPrimaryEntity}
+            accountType={props.accountType}
+            pricingType={props.pricingType}
           />
-        )}
+          )}
       </div>
 
       <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
@@ -262,27 +171,17 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
           {isPermitted("operation") &&
             props.formType === FormTypeMap.VIEW &&
-            status?.data?.message === ENTITY_STATUS.ACTIVE &&
-            !(isRescindAction || isTerminateAction) && (
-              <Button // Rescind Button
-                leftIcon="error"
-                label={dict.action.rescind}
+            status?.data?.message === ENTITY_STATUS.ACTIVE && (
+              <Button
                 variant="secondary"
+                leftIcon="block"
                 className="mr-2"
                 tooltipText={`${dict.action.rescind} ${props.entityType}`}
-                onClick={genBooleanClickHandler(setIsRescindAction)}
-              />
-            )}
-          {isPermitted("operation") &&
-            props.formType === FormTypeMap.VIEW &&
-            status?.data?.message === ENTITY_STATUS.ACTIVE &&
-            !(isRescindAction || isTerminateAction) && (
-              <Button // Terminate Button
-                leftIcon="cancel"
-                label={dict.action.cancel}
-                variant="secondary"
-                tooltipText={`${dict.action.cancel} ${props.entityType}`}
-                onClick={genBooleanClickHandler(setIsTerminateAction)}
+                disabled={isLoading}
+                label={dict.action.terminate}
+                onClick={() => {
+                  navigateToDrawer(Routes.REGISTRY_TERMINATE, props.entityType, id);
+                }}
               />
             )}
           {isPermitted("sales") &&
@@ -334,19 +233,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
               onClick={onSubmit}
             />
           )}
-          {isRescindAction ||
-            (isTerminateAction && (
-              <Button
-                // Remove the rescind and terminate action view back to original view if no response
-                leftIcon="first_page"
-                variant="secondary"
-                tooltipText={dict.action.cancel}
-                onClick={() => {
-                  setIsRescindAction(false);
-                  setIsTerminateAction(false);
-                }}
-              />
-            ))}
         </div>
       </section>
     </>
