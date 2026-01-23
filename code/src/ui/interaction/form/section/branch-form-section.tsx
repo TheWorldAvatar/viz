@@ -63,21 +63,42 @@ export default function BranchFormSection(
 
   useEffect(() => {
     if (props.node.length > 0) {
-      const initialNode: NodeShape = props.node[0];
-      setSelectedModel(initialNode);
-      setIsSwitching(false);
+
       const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+
+      // Check if there's a stored branch value
+      let storedBranchName: string | undefined;
+      if (formType === "delete") {
+        storedBranchName = props.form.getValues(BRANCH_DELETE);
+      } else if (formType === "edit") {
+        storedBranchName = props.form.getValues(BRANCH_ADD);
+      } else if (formType === "add") {
+        storedBranchName = props.form.getValues(BRANCH_ADD);
+      }
+
+      // Find the matching node for the stored branch, or default to first node
+      const matchingNode: NodeShape = storedBranchName
+        ? props.node.find((node) => node.label[VALUE_KEY] === storedBranchName)
+        : null;
+
+      const initialNode: NodeShape = matchingNode || props.node[0];
       const initialBranchName: string = initialNode.label[VALUE_KEY];
 
-      if (formType === "delete") {
-        props.form.setValue(BRANCH_DELETE, initialBranchName);
-      } else if (formType === "edit") {
-        // Set both values - branch_add for new, branch_delete for original
-        props.form.setValue(BRANCH_ADD, initialBranchName);
-        props.form.setValue(BRANCH_DELETE, initialBranchName);
-      } else if (formType === "add") {
-        // For add forms
-        props.form.setValue(BRANCH_ADD, initialBranchName);
+      setSelectedModel(initialNode);
+      setIsSwitching(false);
+
+      // Only set form values if there's no stored value
+      if (!storedBranchName) {
+        if (formType === "delete") {
+          props.form.setValue(BRANCH_DELETE, initialBranchName);
+        } else if (formType === "edit") {
+          // Set both values - branch_add for new, branch_delete for original
+          props.form.setValue(BRANCH_ADD, initialBranchName);
+          props.form.setValue(BRANCH_DELETE, initialBranchName);
+        } else if (formType === "add") {
+          // For add forms
+          props.form.setValue(BRANCH_ADD, initialBranchName);
+        }
       }
     }
   }, [props.node, props.form]);
