@@ -79,6 +79,19 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             : singleService
   );
 
+    // Sync fixedDates with form's entry_date values (loaded from storage)
+    useEffect(() => {
+      const formEntryDates = props.form.getValues(FORM_STATES.ENTRY_DATES);
+      if (Array.isArray(formEntryDates) && formEntryDates.length > 0) {
+        // Ensure all items are Date objects
+        const validDates = formEntryDates.filter((date) => date instanceof Date);
+        if (validDates.length > 0) {
+          setFixedDates(validDates);
+          setSelectedServiceOption(fixedService);
+        }
+      }
+    }, [props.form.formState.isLoading]);
+
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
       // Set defaults

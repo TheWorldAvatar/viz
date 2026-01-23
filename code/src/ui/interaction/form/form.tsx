@@ -27,7 +27,7 @@ import {
   VALUE_KEY,
 } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
-import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, getId, getNormalizedDate, getUTCDate } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
@@ -96,7 +96,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const storedValue = browserStorageManager.get(key);
 
       if (storedValue !== null) {
-        storedValues[key] = storedValue;
+        // Convert entry_dates from ISO strings to Date objects
+        // The date picker expects Date objects, not strings
+        if (key === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
+          const convertedDates = storedValue.map((dateString: string) => {
+            // Parse the ISO date string and normalize to date-only (time = 00:00:00)
+            const date = new Date(dateString);
+            return getUTCDate(date);
+          });
+          storedValues[key] = convertedDates;
+        } else {
+          storedValues[key] = storedValue;
+        }
       }
     });
     return storedValues;
