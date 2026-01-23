@@ -95,20 +95,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       
       const storedValue = browserStorageManager.get(key);
 
-      if (storedValue !== null) {
         // Convert entry_dates from ISO strings to Date objects
         // The date picker expects Date objects, not strings
-        if (key === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
-          const convertedDates = storedValue.map((dateString: string) => {
-            // Parse the ISO date string and normalize to date-only (time = 00:00:00)
-            const date = new Date(dateString);
-            return getUTCDate(date);
+      if (key === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
+        const convertedDates = storedValue.map((dateString: string) => {
+          // Parse the ISO date string and normalize to date-only (time = 00:00:00)
+          const date = new Date(dateString);
+          return getUTCDate(date);
           });
           storedValues[key] = convertedDates;
         } else {
           storedValues[key] = storedValue;
         }
-      }
     });
     return storedValues;
   };
