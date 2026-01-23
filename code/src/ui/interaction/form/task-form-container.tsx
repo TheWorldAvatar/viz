@@ -337,11 +337,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
           {/* Submit button - shown for non-view task types */}
-          {(isPermitted("completeTask") && props.formType === FormTypeMap.COMPLETE) ||
+          {((isPermitted("completeTask") && props.formType === FormTypeMap.COMPLETE) ||
             (isPermitted("reportTask") && props.formType === FormTypeMap.REPORT) ||
             (isPermitted("operation") && (
               props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.CANCEL)
-            ) && <Button
+            )) && <Button
               leftIcon="send"
               label={dict.action.submit}
               tooltipText={dict.action.submit}
