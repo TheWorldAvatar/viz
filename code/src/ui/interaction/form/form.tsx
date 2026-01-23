@@ -13,6 +13,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import {
   BillingEntityTypes,
+  FORM_IDENTIFIER,
   FormTemplateType,
   FormType,
   FormTypeMap,
@@ -127,6 +128,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType);
       } else if (props.formType == FormTypeMap.ASSIGN_PRICE || props.formType == FormTypeMap.ADD_INVOICE) {
         url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.formType, id);
+      } else if (props.formType == FormTypeMap.TERMINATE) {
+        url =
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT,
+            LifecycleStageMap.ARCHIVE,
+            props.formType,
+            FORM_IDENTIFIER);
       } else {
         // For edit and view, get template with values
         url =
@@ -367,6 +374,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               }));
           }
         }
+        break;
+      }
+      case FormTypeMap.TERMINATE: {
+        pendingResponse = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, LifecycleStageMap.ARCHIVE, props.formType),
+          "POST",
+          JSON.stringify({
+            ...formData,
+            type: props.entityType,
+            contract: id,
+          })
+        );
         break;
       }
       case FormTypeMap.SEARCH: {

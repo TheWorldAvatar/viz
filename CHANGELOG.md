@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.55.1
+
+### Changes
+
+- Created a permission guard hook for general usage
+- Created a guard hook specific to registry row action
+- Remove deprecated rescind and cancel button in view forms
+
+### Bug fixes
+
+- Fixed wrong conditions due to using untranslated status key
+- Fixed the conditional render of cancel and report buttons in the view form
+
 ## 5.55.0
 
 ### Changes

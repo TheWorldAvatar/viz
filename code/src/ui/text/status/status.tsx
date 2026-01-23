@@ -1,5 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
+import { RegistryStatusMap } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
 
 interface StatusComponentProps {
@@ -17,13 +18,13 @@ export function getTranslatedStatusLabel(
       return dict.title.unavailable;
     case "active":
       return dict.title.active;
-    case "assigned":
+    case RegistryStatusMap.ASSIGNED:
       return dict.title.assigned;
-    case "completed":
+    case RegistryStatusMap.COMPLETED:
       return dict.title.completed;
     case "cancelled":
       return dict.title.cancelled;
-    case "new":
+    case RegistryStatusMap.NEW:
       return dict.title.new;
     case "issue":
       return dict.title.issue;

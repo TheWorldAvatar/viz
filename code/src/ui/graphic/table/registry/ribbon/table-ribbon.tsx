@@ -1,6 +1,6 @@
 "use client";
 
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions";
 import { TableDescriptor } from "hooks/table/useTable";
@@ -8,7 +8,6 @@ import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { DateRange } from "react-day-picker";
-import { PermissionScheme } from "types/auth";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { DownloadButton } from "ui/interaction/action/download/download";
@@ -19,7 +18,7 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { useDispatch } from "react-redux";
-import {  setClearStoredFormData } from "state/form-persistence-slice";
+import { setClearStoredFormData } from "state/form-persistence-slice";
 
 interface TableRibbonProps {
   path: string;
@@ -49,8 +48,7 @@ interface TableRibbonProps {
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
   const dispatch = useDispatch();
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
@@ -74,26 +72,25 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           (
             <div className="bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border">
               <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-                {(!isBillingStage && (!keycloakEnabled || (permissionScheme?.hasPermissions.pendingRegistry &&
-                  permissionScheme?.hasPermissions?.registry))) && (
-                    <div className="sm:w-auto">
-                      <RedirectButton
-                        label={dict.nav.title.jobs}
-                        leftIcon="local_shipping"
-                        hasMobileIcon={false}
-                        url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                        variant={
-                          props.lifecycleStage == LifecycleStageMap.PENDING ||
-                            props.lifecycleStage == LifecycleStageMap.ACTIVE ||
-                            props.lifecycleStage == LifecycleStageMap.ARCHIVE
-                            ? "active"
-                            : "ghost"
-                        }
-                        className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                      />
-                    </div>
-                  )}
-                {(!isBillingStage && (!keycloakEnabled || permissionScheme?.hasPermissions?.registry)) && (
+                {(!isBillingStage && isPermitted("pendingRegistry") && isPermitted("registry")) && (
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.jobs}
+                      leftIcon="local_shipping"
+                      hasMobileIcon={false}
+                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                      variant={
+                        props.lifecycleStage == LifecycleStageMap.PENDING ||
+                          props.lifecycleStage == LifecycleStageMap.ACTIVE ||
+                          props.lifecycleStage == LifecycleStageMap.ARCHIVE
+                          ? "active"
+                          : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                )}
+                {(!isBillingStage && isPermitted("registry")) && (
                   <div className="sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.tasks}
@@ -162,45 +159,42 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               props.lifecycleStage === LifecycleStageMap.ACTIVE ||
               props.lifecycleStage === LifecycleStageMap.ARCHIVE) && (
               <>
-                {(!keycloakEnabled ||
-                  permissionScheme?.hasPermissions.pendingRegistry) && (
-                    <RedirectButton
-                      label={dict.nav.title.pending}
-                      leftIcon="free_cancellation"
-                      hasMobileIcon={false}
-                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                      variant={
-                        props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
-                      }
-                      className="text-sm font-medium !rounded-none !border-0"
-                    />
-                  )}
-                {(!keycloakEnabled ||
-                  permissionScheme?.hasPermissions.pendingRegistry) && (
-                    <RedirectButton
-                      label={dict.nav.title.active}
-                      leftIcon="check_circle_outline"
-                      hasMobileIcon={false}
-                      url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
-                      variant={
-                        props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
-                      }
-                      className="text-sm font-medium !rounded-none !border-0"
-                    />
-                  )}
-                {(!keycloakEnabled ||
-                  permissionScheme?.hasPermissions.pendingRegistry) && (
-                    <RedirectButton
-                      label={dict.nav.title.archive}
-                      leftIcon="archive_outlined"
-                      hasMobileIcon={false}
-                      url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
-                      variant={
-                        props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
-                      }
-                      className="text-sm font-medium !rounded-none !border-0"
-                    />
-                  )}
+                {isPermitted("pendingRegistry") && (
+                  <RedirectButton
+                    label={dict.nav.title.pending}
+                    leftIcon="free_cancellation"
+                    hasMobileIcon={false}
+                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                    variant={
+                      props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
+                    }
+                    className="text-sm font-medium !rounded-none !border-0"
+                  />
+                )}
+                {isPermitted("pendingRegistry") && (
+                  <RedirectButton
+                    label={dict.nav.title.active}
+                    leftIcon="check_circle_outline"
+                    hasMobileIcon={false}
+                    url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+                    variant={
+                      props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
+                    }
+                    className="text-sm font-medium !rounded-none !border-0"
+                  />
+                )}
+                {isPermitted("pendingRegistry") && (
+                  <RedirectButton
+                    label={dict.nav.title.archive}
+                    leftIcon="archive_outlined"
+                    hasMobileIcon={false}
+                    url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+                    variant={
+                      props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
+                    }
+                    className="text-sm font-medium !rounded-none !border-0"
+                  />
+                )}
               </>
             )}
           {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
@@ -267,9 +261,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 disabledDates={getDisabledDates(props.lifecycleStage)}
               />
             )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
+          {isPermitted("sales") &&
             (props.lifecycleStage == LifecycleStageMap.PENDING ||
               props.lifecycleStage == LifecycleStageMap.GENERAL ||
               props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
@@ -315,11 +307,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
           />
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.export) && (
-              <DownloadButton instances={props.instances} />
-            )}
+          {isPermitted("export") && <DownloadButton instances={props.instances} />}
           <Button
             size="icon"
             leftIcon="cached"
