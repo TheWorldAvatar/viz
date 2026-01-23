@@ -213,9 +213,12 @@ export function useDependentField(
         if (
             parentField !== "" &&
             previousParentOption.current !== undefined &&
+            previousParentOption.current !== null &&
             previousParentOption.current !== currentParentOption
         ) {
             // Parent changed - reset the dependent field to null
+            // Only reset if this is not the initial load (previousParentOption.current !== null)
+            // This prevents clearing stored values when the form first loads
             form.setValue(field?.fieldId, undefined);
             setSelectedOption(isSectionOptional ? naOption : null);
         }
