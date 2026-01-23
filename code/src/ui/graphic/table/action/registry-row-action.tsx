@@ -215,6 +215,7 @@ export default function RegistryRowAction(
                 label={dict.action.edit}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  dispatch(setClearStoredFormData(true));
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
@@ -228,6 +229,7 @@ export default function RegistryRowAction(
                 label={dict.action.delete}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  dispatch(setClearStoredFormData(true));
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -257,6 +259,7 @@ export default function RegistryRowAction(
                 label={dict.action.complete}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  dispatch(setClearStoredFormData(true));
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
@@ -270,6 +273,7 @@ export default function RegistryRowAction(
                 label={dict.action.dispatch}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  dispatch(setClearStoredFormData(true));
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}
