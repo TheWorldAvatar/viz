@@ -20,7 +20,7 @@ import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { useDispatch } from "react-redux";
-import {  setClearStoredFormData } from "state/form-persistence-slice";
+import { setClearStoredFormData } from "state/form-persistence-slice";
 
 
 interface RegistryRowActionProps {
@@ -293,6 +293,7 @@ export default function RegistryRowAction(
                     label={dict.action.complete}
                     onClick={() => {
                       setIsActionMenuOpen(false);
+                      dispatch(setClearStoredFormData(true));
                       navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                     }}
                   />
@@ -313,6 +314,7 @@ export default function RegistryRowAction(
                     label={dict.action.dispatch}
                     onClick={() => {
                       setIsActionMenuOpen(false);
+                      dispatch(setClearStoredFormData(true));
                       navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                     }}
                   />
