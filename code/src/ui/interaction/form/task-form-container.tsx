@@ -31,7 +31,7 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 import ExternalRedirectButton from "../action/redirect/external-redirect-button";
@@ -399,6 +399,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 {isPermitted("operation") &&
                   (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
                     task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
+                  compareDates(task?.date, true) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
@@ -414,6 +415,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 {isPermitted("reportTask") &&
                   (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
                     task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
+                  compareDates(task?.date, false) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
