@@ -247,6 +247,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  dispatch(setClearStoredFormData(true));
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />

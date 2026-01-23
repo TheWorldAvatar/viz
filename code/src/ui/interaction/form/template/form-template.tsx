@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { browserStorageManager } from 'state/browser-storage-manager';
+import { selectFormPersistenceEnabled, selectClearStoredFormData, setClearStoredFormData } from 'state/form-persistence-slice';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
-import { parsePropertyShapeOrGroupList } from '../form-utils';
+import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
 
 interface FormComponentProps {
   entityType: string;
@@ -22,7 +24,26 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
+  const dispatch = useDispatch();
+  const clearStoredFormData = useSelector(selectClearStoredFormData);
+  const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
+
+  // Load stored form values from session storage
+  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
+    const storedValues: FieldValues = { ...initialState };
+    // Fields that should never be loaded from storage (always use from initialState)
+    const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+    browserStorageManager.keys().forEach((key) => {
+      // Skip the excluded fields
+      if (excludedFields.includes(key)) {
+        return;
+      }
+      const storedValue = browserStorageManager.get(key);
+      storedValues[key] = storedValue;
+    });
+    return storedValues;
+  };
 
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
@@ -33,9 +54,36 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       };
       const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields);
       setFormFields(fields);
-      return initialState;
+
+      // Load stored values from session storage
+      const storedState = loadStoredFormValues(initialState);
+      return storedState;
     }
   });
+
+  // Save form values to session storage when form persistence is enabled
+  useEffect(() => {
+    if (formPersistenceEnabled) {
+      const values: FieldValues = form.getValues();
+      const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== "" && !excludedFields.includes(key)) {
+          browserStorageManager.set(key, value);
+        }
+      });
+    }
+  }, [formPersistenceEnabled]);
+
+
+  useEffect(() => {
+    if (clearStoredFormData) {
+      const allStoredFormKeys = browserStorageManager.keys();
+      allStoredFormKeys.forEach((storedFormKey) => {
+        browserStorageManager.remove(storedFormKey);
+      });
+      dispatch(setClearStoredFormData(false));
+    }
+  }, [clearStoredFormData]);
 
   return (
     <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
