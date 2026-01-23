@@ -1,4 +1,4 @@
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { useRegistryRowPermissionGuard } from "hooks/auth/useRegistryRowPermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -6,7 +6,6 @@ import { Routes } from "io/config/routes";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
@@ -38,17 +37,15 @@ interface RegistryRowActionProps {
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
-
   const { navigateToDrawer } = useDrawerNavigation();
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
     : props.row.id
       ? getId(props.row.id)
       : getId(props.row.iri);
-
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const permissionScheme: PermissionScheme = usePermissionScheme();
   const dict: Dictionary = useDictionary();
+  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase(), props.row[dict.title.billingStatus]);
+
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
@@ -167,94 +164,69 @@ export default function RegistryRowAction(
                   handleClickView();
                 }}
               />
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === LifecycleStageMap.ACTIVE && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="block"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.terminate}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_TERMINATE, props.recordType, recordId);
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage === LifecycleStageMap.PENDING && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="done_outline"
-                    disabled={isLoading}
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.approve}
-                    onClick={onApproval}
-                  />
-                )}
-
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.sales) &&
-                props.lifecycleStage === LifecycleStageMap.PENDING &&
-                props.row?.status?.toLowerCase() === "amended" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="published_with_changes"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.resubmit}
-                    onClick={onResubmissionForApproval}
-                  />
-                )}
-
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.sales) &&
-                isSubmissionOrGeneralPage && props.lifecycleStage !== "active" && props.lifecycleStage !== "archive" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="edit"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.edit}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
-                    }}
-                  />
-                )}
-
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.sales) &&
-                isSubmissionOrGeneralPage && props.lifecycleStage !== "active" && props.lifecycleStage !== "archive" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="delete"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.delete}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
-                    }}
-                  />
-                )}
+              {isActionAllowed("TERMINATE_CONTRACT") &&
+                <Button
+                  variant="ghost"
+                  leftIcon="block"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  disabled={isLoading}
+                  label={dict.action.terminate}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    navigateToDrawer(Routes.REGISTRY_TERMINATE, props.recordType, recordId);
+                  }}
+                />}
+              {isActionAllowed("APPROVE_CONTRACT") &&
+                <Button
+                  variant="ghost"
+                  leftIcon="done_outline"
+                  disabled={isLoading}
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.approve}
+                  onClick={onApproval}
+                />}
+              {isActionAllowed("RESUBMIT") &&
+                <Button
+                  variant="ghost"
+                  leftIcon="published_with_changes"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  disabled={isLoading}
+                  label={dict.action.resubmit}
+                  onClick={onResubmissionForApproval}
+                />
+              }
+              {isActionAllowed("EDIT") && <Button
+                variant="ghost"
+                leftIcon="edit"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                disabled={isLoading}
+                label={dict.action.edit}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
+                }}
+              />}
+              {isActionAllowed("DELETE") && <Button
+                variant="ghost"
+                leftIcon="delete"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                disabled={isLoading}
+                label={dict.action.delete}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
+                }}
+              />}
             </>
           )}
           {!isSubmissionOrGeneralPage && (
@@ -271,51 +243,33 @@ export default function RegistryRowAction(
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.completeTask) &&
-                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
-                  props.lifecycleStage === LifecycleStageMap.CLOSED) &&
-                (props.row?.status?.toLowerCase() === "assigned" ||
-                  props.row?.status?.toLowerCase() === "completed") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="done_outline"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.complete}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                props.lifecycleStage !== LifecycleStageMap.ACTIVITY &&
-                props.row?.status?.toLowerCase() !== "issue" &&
-                props.row?.status?.toLowerCase() !== "cancelled" && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="assignment"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.dispatch}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING || props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
+              {isActionAllowed("COMPLETE_TASK") && <Button
+                variant="ghost"
+                leftIcon="done_outline"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                disabled={isLoading}
+                label={dict.action.complete}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
+                }}
+              />}
+              {isActionAllowed("ASSIGN_TASK") && <Button
+                variant="ghost"
+                leftIcon="assignment"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                disabled={isLoading}
+                label={dict.action.dispatch}
+                onClick={() => {
+                  setIsActionMenuOpen(false);
+                  navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
+                }}
+              />}
+              {isActionAllowed("RESCHEDULE_TASK") &&
                 props.row[dict.title.scheduleType] == dict.form.singleService && (
                   <Button
                     variant="ghost"
@@ -331,115 +285,80 @@ export default function RegistryRowAction(
                     }}
                   />
                 )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.operation) &&
-                (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
-                  props.lifecycleStage === LifecycleStageMap.SCHEDULED) &&
-                compareDates(props.row?.date, true) &&
-                (props.row?.status?.toLowerCase() === "new" ||
-                  props.row?.status?.toLowerCase() === "assigned") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="cancel"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    disabled={isLoading}
-                    label={dict.action.cancel}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
-                    }}
-                  />
-                )}
-              {(!keycloakEnabled ||
-                !permissionScheme ||
-                permissionScheme.hasPermissions.reportTask) &&
-                props.lifecycleStage === LifecycleStageMap.OUTSTANDING &&
-                compareDates(props.row?.date, false) &&
-                (props.row?.status?.toLowerCase() === "new" ||
-                  props.row?.status?.toLowerCase() === "assigned") && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="report"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
-                    label={dict.action.report}
-                    disabled={isLoading}
-                    onClick={() => {
-                      setIsActionMenuOpen(false);
-                      navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
-                    }}
-                  />
-                )}
+              {isActionAllowed("CANCEL_TASK") && compareDates(props.row?.date, true) && (
+                <Button
+                  variant="ghost"
+                  leftIcon="cancel"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  disabled={isLoading}
+                  label={dict.action.cancel}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
+                  }}
+                />
+              )}
+              {isActionAllowed("REPORT_TASK") && compareDates(props.row?.date, false) && (
+                <Button
+                  variant="ghost"
+                  leftIcon="report"
+                  size="md"
+                  iconSize="medium"
+                  className="w-full justify-start"
+                  label={dict.action.report}
+                  disabled={isLoading}
+                  onClick={() => {
+                    setIsActionMenuOpen(false);
+                    navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
+                  }}
+                />
+              )}
             </>
           )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
-            props.row[dict.title.billingStatus] == "pendingApproval" && (
-              <Button
-                variant="ghost"
-                leftIcon="price_check"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.approve}
-                disabled={isLoading}
-                onClick={onGenInvoice}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
-            props.row[dict.title.billingStatus] == "pendingApproval" && (
-              <Button
-                variant="ghost"
-                leftIcon="money_off"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.excludeFromBilling}
-                disabled={isLoading}
-                onClick={onExcludeBilling}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.sales) &&
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY &&
-            props.row[dict.title.billingStatus] == "readyForPayment" && (
-              <Button
-                variant="ghost"
-                leftIcon="monetization_on"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                label={dict.action.viewServiceCost}
-                disabled={isLoading}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setIsActionMenuOpen(false);
-                  setIsOpenBillingModal(true);
-                }}
-              />
-            )}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            permissionScheme.hasPermissions.draftTemplate) &&
-            props.lifecycleStage !== LifecycleStageMap.GENERAL && props.lifecycleStage !== LifecycleStageMap.ACCOUNT &&
-            props.lifecycleStage !== LifecycleStageMap.PRICING && props.lifecycleStage !== LifecycleStageMap.ACTIVITY && (
-              <DraftTemplateButton
-                rowId={[props.row.id]}
-                recordType={props.recordType}
-                triggerRefresh={props.triggerRefresh}
-              />
-            )}
+          {isActionAllowed("BILL_PENDING") && < Button
+            variant="ghost"
+            leftIcon="price_check"
+            size="md"
+            iconSize="medium"
+            className="w-full justify-start"
+            label={dict.action.approve}
+            disabled={isLoading}
+            onClick={onGenInvoice}
+          />}
+          {isActionAllowed("BILL_PENDING") && <Button
+            variant="ghost"
+            leftIcon="money_off"
+            size="md"
+            iconSize="medium"
+            className="w-full justify-start"
+            label={dict.action.excludeFromBilling}
+            disabled={isLoading}
+            onClick={onExcludeBilling}
+          />}
+          {isActionAllowed("BILL_PAYMENT") && <Button
+            variant="ghost"
+            leftIcon="monetization_on"
+            size="md"
+            iconSize="medium"
+            className="w-full justify-start"
+            label={dict.action.viewServiceCost}
+            disabled={isLoading}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsActionMenuOpen(false);
+              setIsOpenBillingModal(true);
+            }}
+          />}
+          {isActionAllowed("DRAFT_TEMPLATE") &&
+            <DraftTemplateButton
+              rowId={[props.row.id]}
+              recordType={props.recordType}
+              triggerRefresh={props.triggerRefresh}
+            />
+          }
         </div>
       </PopoverActionButton>
       {props.lifecycleStage === LifecycleStageMap.ACTIVITY && isOpenBillingModal && <BillingModal

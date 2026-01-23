@@ -4,14 +4,13 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
-import { usePermissionScheme } from "hooks/auth/usePermissionScheme";
+import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
 import { useAttachmentCheck } from "hooks/form/useAttachmentCheck";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
-import { PermissionScheme } from "types/auth";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -20,6 +19,7 @@ import {
   FormType,
   FormTypeMap,
   PropertyShapeOrGroup,
+  RegistryStatusMap,
   RegistryTaskType,
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -31,7 +31,7 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 import ExternalRedirectButton from "../action/redirect/external-redirect-button";
@@ -79,8 +79,7 @@ export function TaskFormContainerComponent(
  */
 function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const pathname = usePathname();
-  const keycloakEnabled = process.env.KEYCLOAK === "true";
-  const permissionScheme: PermissionScheme = usePermissionScheme();
+  const isPermitted = usePermissionGuard();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
@@ -105,7 +104,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const getPrevEventOccurrenceEnum = useCallback(
     (currentStatus: string): number => {
       // Enum should be 0 for order received at pending dispatch state
-      if (currentStatus === "new") {
+      if (currentStatus === RegistryStatusMap.NEW) {
         return 0;
       } else {
         // Enum will be 1 as there is already a dispatch event instantiated
@@ -338,31 +337,25 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
           {/* Submit button - shown for non-view task types */}
-          {(!keycloakEnabled ||
-            !permissionScheme ||
-            (permissionScheme.hasPermissions.completeTask &&
-              props.formType === FormTypeMap.COMPLETE) ||
-            (permissionScheme.hasPermissions.reportTask &&
-              props.formType === FormTypeMap.REPORT) ||
-            (permissionScheme.hasPermissions.operation &&
-              (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.CANCEL))) &&
-            props.formType !== FormTypeMap.VIEW && (
-              <Button
-                leftIcon="send"
-                label={dict.action.submit}
-                tooltipText={dict.action.submit}
-                disabled={isLoading}
-                onClick={() => {
-                  if (
-                    props.formType === FormTypeMap.COMPLETE &&
-                    task?.scheduleType === dict.form.perpetualService
-                  ) {
-                    setIsDuplicate(true);
-                  }
-                  setIsSubmitting(true);
-                }}
-              />
-            )}
+          {((isPermitted("completeTask") && props.formType === FormTypeMap.COMPLETE) ||
+            (isPermitted("reportTask") && props.formType === FormTypeMap.REPORT) ||
+            (isPermitted("operation") && (
+              props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.CANCEL)
+            )) && <Button
+              leftIcon="send"
+              label={dict.action.submit}
+              tooltipText={dict.action.submit}
+              disabled={isLoading}
+              onClick={() => {
+                if (
+                  props.formType === FormTypeMap.COMPLETE &&
+                  task?.scheduleType === dict.form.perpetualService
+                ) {
+                  setIsDuplicate(true);
+                }
+                setIsSubmitting(true);
+              }}
+            />}
           {(props.formType === FormTypeMap.VIEW || props.formType === FormTypeMap.COMPLETE) &&
             <div aria-label="More actions">
               <PopoverActionButton
@@ -375,11 +368,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 setIsOpen={setIsActionMenuOpen}
               >
                 {/* Complete button - shown when viewing and status is assigned/completed */}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.completeTask) &&
-                  (task?.status?.toLowerCase() === "assigned" ||
-                    task?.status?.toLowerCase() === "completed") &&
+                {isPermitted("completeTask") &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.COMPLETED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon="done_outline"
@@ -391,9 +382,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     />
                   )}
                 {/* Dispatch button - shown when viewing and status is not issue/cancelled */}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.operation) &&
+                {isPermitted("operation") &&
                   task?.status?.toLowerCase() !== "issue" &&
                   task?.status?.toLowerCase() !== "cancelled" &&
                   props.formType === FormTypeMap.VIEW && (
@@ -407,11 +396,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     />
                   )}
                 {/* Cancel button - shown when viewing and status is new/assigned */}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.operation) &&
-                  (task?.status?.toLowerCase() === "new" ||
-                    task?.status?.toLowerCase() === "assigned") &&
+                {isPermitted("operation") &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
+                  compareDates(task?.date, true) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
@@ -424,11 +412,10 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     />
                   )}
                 {/* Report button - shown when viewing and status is new/assigned */}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.reportTask) &&
-                  (task?.status?.toLowerCase() === "new" ||
-                    task?.status?.toLowerCase() === "assigned") &&
+                {isPermitted("reportTask") &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
+                  compareDates(task?.date, false) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       variant="secondary"
@@ -441,9 +428,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     />
                   )}
                 {/* Submit and Duplicate button - shown for complete task type */}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.completeAndDuplicateTask) &&
+                {isPermitted("completeAndDuplicateTask") &&
                   props.formType === FormTypeMap.COMPLETE &&
                   task?.scheduleType !== dict.form.perpetualService && (
                     <Button
@@ -459,9 +444,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     />
                   )}
                 {/* Save button - shown for complete task type */}
-                {(!keycloakEnabled ||
-                  !permissionScheme ||
-                  permissionScheme.hasPermissions.saveTask) &&
+                {isPermitted("saveTask") &&
                   props.formType === FormTypeMap.COMPLETE && (
                     <Button
                       leftIcon="save"
