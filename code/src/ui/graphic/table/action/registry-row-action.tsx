@@ -165,6 +165,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  dispatch(setClearStoredFormData(true));
                   handleClickView();
                 }}
               />
