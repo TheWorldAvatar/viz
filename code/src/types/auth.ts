@@ -44,7 +44,7 @@ export interface ButtonPolicy {
 
 export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     APPROVE_CONTRACT: {
-        permission: "operation",
+        permission: "registryFullAccess",
         stage: [LifecycleStageMap.PENDING],
         status: [],
         billingStatus: [],
