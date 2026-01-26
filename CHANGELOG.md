@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.55.2
+
+### Bug Fixes
+
+- Fixed branch delete param that is send to the backend
+
 ## 5.55.1
 
 ### Changes
