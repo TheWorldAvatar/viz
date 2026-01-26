@@ -332,7 +332,8 @@ function makeExternalEndpoint(
           url += `/${subtype}?${urlParams.toString()}`;
           // For a delete route with identifier, branch_delete should be the only one present
         } else if (branchDelete && branchDelete != "null") {
-          const urlParams: URLSearchParams = new URLSearchParams({ branchDelete });
+          const urlParams: URLSearchParams = new URLSearchParams({ branch_delete: branchDelete });
+          console.log("URL Params:", urlParams.toString());
           url += `?${urlParams.toString()}`;
         }
         // Add query parameters for subtype case: {parent}/{id}/{type}?search={search}
