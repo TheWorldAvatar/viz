@@ -169,7 +169,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           />
         )}
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center ">
-          {isPermitted("operation") &&
+          {isPermitted("registryFullAccess") &&
             props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.ACTIVE && (
               <Button
@@ -184,7 +184,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 }}
               />
             )}
-          {isPermitted("sales") &&
+          {isPermitted("registryFullAccess") &&
             props.formType === FormTypeMap.VIEW &&
             status?.data?.message === ENTITY_STATUS.PENDING && (
               <Button // Approval button
@@ -196,7 +196,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 onClick={onApproval}
               />
             )}
-          {isPermitted("sales") &&
+          {isPermitted("edit") &&
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
@@ -209,7 +209,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                 variant="secondary"
               />
             )}
-          {isPermitted("sales") &&
+          {isPermitted("delete") &&
             props.formType === FormTypeMap.VIEW &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (

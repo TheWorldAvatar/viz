@@ -6,19 +6,18 @@ import { Routes } from "io/config/routes";
 import { HasPermissions, PermissionScheme } from "types/auth";
 
 const hasPermitionsInitial: HasPermissions = {
-  registry: false,
-  pendingRegistry: false,
-  allTasks: false,
-  invoice: false,
-  sales: false,
-  operation: false,
-  draftTemplate: false,
-  viewTask: false,
+  registryFullAccess: true,
   completeTask: false,
   completeAndDuplicateTask: false,
-  reportTask: false,
-  saveTask: false,
+  delete: false,
+  draftTemplate: false,
+  edit: false,
   export: false,
+  invoice: false,
+  operation: false,
+  reportTask: false,
+  rescheduleTask: false,
+  saveTask: false,
 };
 
 export function parsePermissions(roles: string[]): PermissionScheme {
@@ -30,41 +29,24 @@ export function parsePermissions(roles: string[]): PermissionScheme {
     return permissionScheme;
   }
 
-  // Access to different registry depends on roles
-  if (roles.includes("registry-navigation")) {
-    // Given access to all records in the registry
-    permissionScheme.hasPermissions.registry = true;
-    permissionScheme.hasPermissions.allTasks = true;
-  } else if (roles.includes("registry-navigation-restricted")) {
-    // Given access to only view outstanding tasks
-    permissionScheme.hasPermissions.registry = true;
-  }
-  // Given access to pending registry
-  if (roles.includes("registry-navigation-pending")) {
-    permissionScheme.hasPermissions.pendingRegistry = true;
-  }
-
   // Roles with access to only specific routes
   if (roles.includes("task-viewer")) {
-    permissionScheme.registryPageLink = Routes.REGISTRY_TASK_DATE;
-    permissionScheme.hasPermissions.completeTask = true;
-    permissionScheme.hasPermissions.viewTask = true;
-    permissionScheme.hasPermissions.reportTask = true;
+    permissionScheme.registryPageLink = Routes.REGISTRY_TASK_OUTSTANDING;
+    permissionScheme.hasPermissions.registryFullAccess = false;
+  }
+  if (roles.includes("operations")) {
+    permissionScheme.hasPermissions.operation = true;
   }
   if (roles.includes("finance")) {
-    permissionScheme.registryPageLink = Routes.REGISTRY_ACTIVE;
     permissionScheme.hasPermissions.invoice = true;
   }
 
   // General permissions
-  if (roles.includes("sales")) {
-    permissionScheme.hasPermissions.sales = true;
-  }
-  if (roles.includes("operations")) {
-    permissionScheme.hasPermissions.operation = true;
-    permissionScheme.hasPermissions.viewTask = true;
+  if (roles.includes("complete")) {
     permissionScheme.hasPermissions.completeTask = true;
-    permissionScheme.hasPermissions.reportTask = true;
+  }
+  if (roles.includes("delete")) {
+    permissionScheme.hasPermissions.delete = true;
   }
   if (roles.includes("draft-template")) {
     permissionScheme.hasPermissions.draftTemplate = true;
@@ -72,11 +54,20 @@ export function parsePermissions(roles: string[]): PermissionScheme {
   if (roles.includes("duplicate-complete")) {
     permissionScheme.hasPermissions.completeAndDuplicateTask = true;
   }
-  if (roles.includes("save")) {
-    permissionScheme.hasPermissions.saveTask = true;
+  if (roles.includes("edit")) {
+    permissionScheme.hasPermissions.edit = true;
   }
   if (roles.includes("export")) {
     permissionScheme.hasPermissions.export = true;
+  }
+  if (roles.includes("report")) {
+    permissionScheme.hasPermissions.reportTask = true;
+  }
+  if (roles.includes("reschedule")) {
+    permissionScheme.hasPermissions.rescheduleTask = true;
+  }
+  if (roles.includes("save")) {
+    permissionScheme.hasPermissions.saveTask = true;
   }
   return permissionScheme;
 }

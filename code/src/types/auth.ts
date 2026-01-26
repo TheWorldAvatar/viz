@@ -18,23 +18,19 @@ export type PermissionScheme = {
     hasPermissions: HasPermissions;
 }
 
-/**
- * A HasPermissions object containing user permissions to view and interact with certain components.
- */
 export type HasPermissions = {
-    registry: boolean;
-    pendingRegistry: boolean;
-    allTasks: boolean;
-    invoice: boolean;
-    sales: boolean;
-    operation: boolean;
-    draftTemplate: boolean;
-    viewTask: boolean;
+    registryFullAccess: boolean;
     completeTask: boolean;
     completeAndDuplicateTask: boolean;
-    reportTask: boolean;
-    saveTask: boolean;
+    delete: boolean;
+    draftTemplate: boolean;
+    edit: boolean;
     export: boolean;
+    invoice: boolean;
+    operation: boolean;
+    reportTask: boolean;
+    rescheduleTask: boolean;
+    saveTask: boolean;
 };
 
 export type PermissionType = keyof HasPermissions;
@@ -54,19 +50,19 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         billingStatus: [],
     },
     BILL_PAYMENT: {
-        permission: "sales",
+        permission: "invoice",
         stage: [LifecycleStageMap.ACTIVITY],
         status: [],
         billingStatus: [BillingStatusMap.READY],
     },
     BILL_PENDING: {
-        permission: "sales",
+        permission: "invoice",
         stage: [LifecycleStageMap.ACTIVITY],
         status: [],
         billingStatus: [BillingStatusMap.PENDING_APPROVAL],
     },
     DELETE: {
-        permission: "sales",
+        permission: "delete",
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.GENERAL, LifecycleStageMap.ACCOUNT, LifecycleStageMap.PRICING],
         status: [],
         billingStatus: [],
@@ -79,19 +75,19 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         billingStatus: [],
     },
     EDIT: {
-        permission: "sales",
+        permission: "edit",
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.GENERAL, LifecycleStageMap.ACCOUNT, LifecycleStageMap.PRICING],
         status: [],
         billingStatus: [],
     },
     RESUBMIT: {
-        permission: "sales",
+        permission: "registryFullAccess",
         stage: [],
         status: [RegistryStatusMap.AMENDED],
         billingStatus: [],
     },
     TERMINATE_CONTRACT: {
-        permission: "operation",
+        permission: "registryFullAccess",
         stage: [LifecycleStageMap.ACTIVE],
         status: [],
         billingStatus: [],
@@ -102,8 +98,8 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED],
         billingStatus: [],
     },
-    CANCEL_TASK: {
-        permission: "operation",
+    CANCEL_OR_REPORT_TASK: {
+        permission: "reportTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
         status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED],
         billingStatus: [],
@@ -114,14 +110,8 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         status: [RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED],
         billingStatus: [],
     },
-    REPORT_TASK: {
-        permission: "reportTask",
-        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
-        status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED],
-        billingStatus: [],
-    },
     RESCHEDULE_TASK: {
-        permission: "operation",
+        permission: "rescheduleTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
         status: [],
         billingStatus: [],

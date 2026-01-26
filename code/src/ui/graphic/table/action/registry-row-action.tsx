@@ -285,7 +285,7 @@ export default function RegistryRowAction(
                     }}
                   />
                 )}
-              {isActionAllowed("CANCEL_TASK") && compareDates(props.row?.date, true) && (
+              {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, true) && (
                 <Button
                   variant="ghost"
                   leftIcon="cancel"
@@ -300,7 +300,7 @@ export default function RegistryRowAction(
                   }}
                 />
               )}
-              {isActionAllowed("REPORT_TASK") && compareDates(props.row?.date, false) && (
+              {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, false) && (
                 <Button
                   variant="ghost"
                   leftIcon="report"

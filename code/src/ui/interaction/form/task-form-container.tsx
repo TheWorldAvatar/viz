@@ -337,11 +337,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">
           <div className="flex-grow" />
           {/* Submit button - shown for non-view task types */}
-          {((isPermitted("completeTask") && props.formType === FormTypeMap.COMPLETE) ||
-            (isPermitted("reportTask") && props.formType === FormTypeMap.REPORT) ||
-            (isPermitted("operation") && (
-              props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.CANCEL)
-            )) && <Button
+          {(props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.COMPLETE ||
+            props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT
+          ) && <Button
               leftIcon="send"
               label={dict.action.submit}
               tooltipText={dict.action.submit}
@@ -396,7 +394,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                     />
                   )}
                 {/* Cancel button - shown when viewing and status is new/assigned */}
-                {isPermitted("operation") &&
+                {isPermitted("reportTask") &&
                   (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
                     task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED) &&
                   compareDates(task?.date, true) &&
