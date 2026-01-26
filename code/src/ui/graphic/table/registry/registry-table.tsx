@@ -125,8 +125,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
       }
     } else {
-      const registryRoute: string = isPermitted("operation") || isPermitted("sales")
-        ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
+      const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);
     }
   };
