@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.0
+
+### Changes
+
+- Modified roles and their permissible workflows
+- Hide edit and delete button
+
+### Bug Fixes
+
+- Hide actions button in form when actions are all disabled
+
 ## 5.55.2
 
 ### Bug Fixes
