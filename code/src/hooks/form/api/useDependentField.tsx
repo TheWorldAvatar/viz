@@ -212,7 +212,7 @@ export function useDependentField(
     useEffect(() => {
         if (
             parentField !== "" &&
-            previousParentOption.current !== undefined &&
+            !!previousParentOption.current &&
             previousParentOption.current !== currentParentOption
         ) {
             // Parent changed - reset the dependent field to null
