@@ -11,6 +11,7 @@ import {
   FormType,
   FormTypeMap,
   ID_KEY,
+  LifecycleStageMap,
   NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,
@@ -297,8 +298,8 @@ function initFormField(
       defaultVal = outputState.id;
     }
     // For a form to assign price, there is a customer account stored that should be defaulted to
-    if (outputState["formType"] == FormTypeMap.ASSIGN_PRICE && !!browserStorageManager.get(field.name[VALUE_KEY])) {
-      defaultVal = browserStorageManager.get(field.name[VALUE_KEY]);
+    if (outputState["formType"] == FormTypeMap.ASSIGN_PRICE && !!browserStorageManager.get(LifecycleStageMap.ACCOUNT)) {
+      defaultVal = browserStorageManager.get(LifecycleStageMap.ACCOUNT);
     }
     outputState[fieldId] = getDefaultVal(
       fieldId,
