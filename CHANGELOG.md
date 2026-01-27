@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.2
+
+### Changes
+
+- Fixed reschedule date form submission
+- Only convert datetime in registry table
+- Bump min version of `VisBackend Agent` from `v1.33.0` to `v1.34.0`
+
 ## 5.56.1
 
 ### Bug Fixes
