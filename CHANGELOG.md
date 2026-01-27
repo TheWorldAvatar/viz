@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.1
+
+### Bug Fixes
+
+- Fixed dependent dropdown for array form fields to display the previously selected value
+
 ## 5.56.0
 
 ### Changes
