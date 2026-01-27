@@ -2,7 +2,6 @@
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
-import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
@@ -13,7 +12,6 @@ import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/fo
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
-import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
@@ -50,13 +48,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
-
-  const { selectedAccount, handleUpdateAccount, getAccountFilterOptions } = useAccountFilterOptions(
-    props.accountType,
-    props.lifecycleStage,
-    props.tableDescriptor.filters,
-    props.tableDescriptor.setFilters,
-  )
 
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
@@ -225,21 +216,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </>
             )}
-          {props.lifecycleStage === LifecycleStageMap.ACTIVITY && selectedAccount != null && (
-            <div className="flex justify-start">
-              <div className="w-full md:w-[300px]">
-                <AsyncSearchableSimpleSelector
-                  options={getAccountFilterOptions}
-                  initialValue={selectedAccount}
-                  onChange={(value) => {
-                    handleUpdateAccount(value);
-                    props.tableDescriptor.table.resetRowSelection();
-                    props.tableDescriptor.table.resetPageIndex();
-                  }}
-                />
-              </div>
-            </div>
-          )}
         </div>
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
