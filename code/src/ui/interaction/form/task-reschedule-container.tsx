@@ -14,7 +14,7 @@ import Button from "ui/interaction/button";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
 import DateInput from "../input/date-input";
 import Tooltip from "../tooltip/tooltip";
 import { toast } from "../action/toast/toast";
@@ -77,7 +77,7 @@ function TaskFormContents() {
     // The backend expects the reschedule date in this format.
     const formData: JsonObject = {
       id: task?.id,
-      "reschedule date": Math.floor(selectedDate.getTime() / 1000)
+      "reschedule date": getNormalizedDate(selectedDate),
     };
 
     const response: AgentResponseBody = await queryInternalApi(
