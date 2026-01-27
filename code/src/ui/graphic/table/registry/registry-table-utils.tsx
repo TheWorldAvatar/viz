@@ -177,10 +177,9 @@ export function applyConfiguredColumnOrder(
 }
 
 /**
- * Formats a datetime/date/time value for display based on its dataType.
+ * Formats a datetime value for display.
  *
  * @param {string} value The raw value from the backend.
- * @param {string} dataType The XSD dataType from the backend.
  */
 export function formatDatetimeValue(value: string): string {
   return new Date(value).toLocaleString();
