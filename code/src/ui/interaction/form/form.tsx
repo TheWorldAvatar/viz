@@ -189,6 +189,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const values: FieldValues = form.getValues();
       const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
       Object.entries(values).forEach(([key, value]) => {
+        // If the field ID has been translated, use the translated ID
+        // client details client -> client
+        if (key in trasnlatedFormFieldIds) {
+          key = trasnlatedFormFieldIds[key];
+        }
         if (value !== "" && !excludedFields.includes(key)) {
           browserStorageManager.set(key, value);
         }
