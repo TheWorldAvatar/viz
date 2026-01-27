@@ -79,6 +79,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const router = useRouter();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
+  const [trasnlatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
@@ -93,21 +94,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       if (excludedFields.includes(key)) {
         return;
       }
-      
       const storedValue = browserStorageManager.get(key);
 
-        // Convert entry_dates from ISO strings to Date objects
-        // The date picker expects Date objects, not strings
+      // Convert entry_dates from ISO strings to Date objects
+      // The date picker expects Date objects, not strings
       if (key === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
         const convertedDates = storedValue.map((dateString: string) => {
           // Parse the ISO date string and normalize to date-only (time = 00:00:00)
           const date = new Date(dateString);
           return getUTCDate(date);
-          });
-          storedValues[key] = convertedDates;
-        } else {
-          storedValues[key] = storedValue;
-        }
+        });
+        storedValues[key] = convertedDates;
+      } else {
+        storedValues[key] = storedValue;
+      }
     });
     return storedValues;
   };
@@ -120,6 +120,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
         id: id,
       };
+
+      const fieldIdMapping: Record<string, string> = {};
+
       // Retrieve template from APIs
       let url: string;
       // For add form, get a blank template
@@ -170,9 +173,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       };
       setFormTemplate({
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore),
+        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore, fieldIdMapping),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore, fieldIdMapping),
       });
+      setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
       const storedState = loadStoredFormValues(initialState);

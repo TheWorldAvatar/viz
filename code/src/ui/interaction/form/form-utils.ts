@@ -74,12 +74,17 @@ export const ENTITY_STATUS: Record<string, string> = {
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
+ * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
+ * Needed for form persistence, translating field IDs from dependant form section
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
+  fieldIdMapping?: Record<string, string>
 ): PropertyShapeOrGroup[] {
+  // Ensure fieldIdMapping is always an object
+  if (!fieldIdMapping) fieldIdMapping = {};
   return fields.map((field) => {
     // Properties as part of a group
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
@@ -95,6 +100,10 @@ export function parsePropertyShapeOrGroupList(
           !fieldset.maxCount ||
           (fieldset.maxCount && parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1)
         ) {
+
+          if (updatedProp.class && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && updatedProp.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+            fieldIdMapping[fieldset?.label?.[VALUE_KEY]] = fieldset?.label?.[VALUE_KEY]
+          }
           return initFormField(
             updatedProp,
             initialState,
@@ -111,6 +120,9 @@ export function parsePropertyShapeOrGroupList(
           billingTypes.accountField = fieldId;
         } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.pricingField = fieldId;
+        }
+        if (updatedProp.class && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && updatedProp.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+          fieldIdMapping[fieldId] = updatedProp.name[VALUE_KEY];
         }
         return initFormField(updatedProp, initialState, fieldId);
       });
@@ -129,6 +141,9 @@ export function parsePropertyShapeOrGroupList(
         !fieldShape.maxCount ||
         (fieldShape.maxCount && parseInt(fieldShape.maxCount?.[VALUE_KEY]) > 1)
       ) {
+        if (fieldShape.class && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && fieldShape.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+          fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
+        }
         return initFormField(
           fieldShape,
           initialState,
@@ -138,6 +153,9 @@ export function parsePropertyShapeOrGroupList(
         );
       }
       // For groupless properties, their field ID will be directly set without further parsing
+      if (fieldShape.class && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && fieldShape.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+        fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
+      }
       return initFormField(
         fieldShape,
         initialState,
@@ -154,13 +172,18 @@ export function parsePropertyShapeOrGroupList(
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
  * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
+ * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
+ * Needed for form persistence, translating field IDs from dependant form section.
  */
 export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
   reqMatching: boolean,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
+  fieldIdMapping?: Record<string, string>
 ): NodeShape[] {
+  // Ensure fieldIdMapping is always an object
+  if (!fieldIdMapping) fieldIdMapping = {};
   // Early termination
   if (nodeShapes.length === 0) {
     return nodeShapes;
@@ -170,7 +193,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes, fieldIdMapping);
     nodeStates.push(nodeState);
     results.push({
       ...shape,
@@ -390,21 +413,25 @@ function updateDependentProperty(
     let dependentFieldId: string;
     let dependentFieldName: string;
     for (const property of properties) {
+
       if (dependentFieldId) {
         break;
       }
       if (property[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
         const fieldset: PropertyGroup = property as PropertyGroup;
+
         const propertyLabel: string = fieldset.property.find(
           (fieldProperty: PropertyShape) =>
             dependentIri == fieldProperty[ID_KEY]
         )?.name[VALUE_KEY];
+
         if (propertyLabel) {
           dependentFieldId = `${fieldset.label[VALUE_KEY]} ${propertyLabel}`;
           dependentFieldName = propertyLabel;
         }
       } else {
         const fieldProperty: PropertyShape = property as PropertyShape;
+
         if (dependentIri == fieldProperty[ID_KEY]) {
           dependentFieldId = fieldProperty.name[VALUE_KEY];
           dependentFieldName = fieldProperty.name[VALUE_KEY];
