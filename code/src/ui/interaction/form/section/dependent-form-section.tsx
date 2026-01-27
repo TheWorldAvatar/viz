@@ -30,6 +30,7 @@ interface DependentFormSectionProps {
   dependentProp: PropertyShape;
   form: UseFormReturn;
   billingStore?: BillingEntityTypes;
+  isArray?: boolean;
 }
 
 /**
@@ -38,6 +39,7 @@ interface DependentFormSectionProps {
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
+ * @param {boolean} isArray Whether the field is an array.
  */
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
@@ -56,7 +58,7 @@ export function DependentFormSection(
     name: fieldName,
   });
 
-  const { selectedOption, currentParentOption, getFieldOptions } = useDependentField(props.dependentProp, props.form);
+  const { selectedOption, currentParentOption, getFieldOptions } = useDependentField(props.dependentProp, props.form, props.isArray);
   const {
     id,
     selectedEntityId,
