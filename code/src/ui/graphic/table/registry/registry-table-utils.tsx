@@ -16,7 +16,7 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATE, XSD_DATETIME } from "utils/constants";
-import { getAfterDelimiter} from "utils/client-utils";
+import { getAfterDelimiter } from "utils/client-utils";
 
 export type TableData = {
   data: FieldValues[];
@@ -105,7 +105,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         125
       );
       const dataType: string = columnDataTypes[col];
-      const isDateTimeColumn: boolean = dataType === XSD_DATETIME || dataType === XSD_DATE;
+      const isDateTimeColumn: boolean = dataType === XSD_DATETIME;
       results.columns.push({
         accessorKey: col,
         header: title,
@@ -115,10 +115,10 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
 
           // Format datetime/date columns for display
           if (isDateTimeColumn) {
-            return formatValueByDataType(value, dataType);
+            return formatDatetimeValue(value);
           }
 
-          if(isValidIRI(value)) {
+          if (isValidIRI(value)) {
             return getAfterDelimiter(value, "/");
           }
 
@@ -182,16 +182,8 @@ export function applyConfiguredColumnOrder(
  * @param {string} value The raw value from the backend.
  * @param {string} dataType The XSD dataType from the backend.
  */
-export function formatValueByDataType(value: string, dataType: string): string {
-  switch (dataType) {
-    case XSD_DATETIME:
-      return new Date(value).toLocaleString();
-    case XSD_DATE:
-      return new Date(value).toLocaleDateString();
-    default:
-      // For time or unknown types, return as is
-      return value;
-  }
+export function formatDatetimeValue(value: string): string {
+  return new Date(value).toLocaleString();
 }
 
 /**
