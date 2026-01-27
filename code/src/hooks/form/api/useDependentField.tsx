@@ -21,10 +21,12 @@ interface UseDependentFieldDescriptor {
  *
  * @param {PropertyShape} field The field's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {boolean} isArray Whether the field is an array.
  */
 export function useDependentField(
     field: PropertyShape,
-    form: UseFormReturn
+    form: UseFormReturn,
+    isArray: boolean,
 ): UseDependentFieldDescriptor {
     const dict: Dictionary = useDictionary();
     const naOption: SelectOptionType = { value: "", label: dict.message.na };
@@ -212,11 +214,15 @@ export function useDependentField(
     useEffect(() => {
         if (
             parentField !== "" &&
-            previousParentOption.current !== undefined &&
+            !!previousParentOption.current &&
             previousParentOption.current !== currentParentOption
         ) {
             // Parent changed - reset the dependent field to null
             form.setValue(field?.fieldId, undefined);
+            // Reset field for arrays
+            if (isArray) {
+                form.setValue(field?.group["@id"], undefined);
+            }
             setSelectedOption(isSectionOptional ? naOption : null);
         }
         previousParentOption.current = currentParentOption;

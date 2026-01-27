@@ -113,9 +113,11 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                     dependentProp={{
                       ...config,
                       fieldId: fieldId,
+                      group: { "@id": props.fieldId },
                     }}
                     form={props.form}
                     billingStore={props.billingStore}
+                    isArray={true}
                   />
                 )}
                 {!config.class && (
