@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.3
+
+### Bug Fixes
+
+- Fixed to remove duplicate custom default links
+- Exclude billing default links when customised
+
 ## 5.56.2
 
 ### Changes
