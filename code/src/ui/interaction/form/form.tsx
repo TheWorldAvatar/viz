@@ -119,8 +119,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
     // Load individually saved non-datatype fields
     browserStorageManager.keys().forEach((key) => {
-      // Skip excluded fields and the FORM_IDENTIFIER itself 
-      if (excludedFields.includes(key) || key === FORM_ENTITY_IDENTIFIER) {
+      // Skip excluded fields and the nested datatype identifier
+      if (excludedFields.includes(key) || key.startsWith('_form_')) {
         return;
       }
       const storedValue = browserStorageManager.get(key);
@@ -216,6 +216,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       return storedState;
     },
   });
+
+
   useEffect(() => {
     if (formPersistenceEnabled) {
       const values: FieldValues = form.getValues();
@@ -227,7 +229,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // client details client -> client
         const storageKey = translatedFormFieldIds[key] ?? key;
         // Skip excluded fields
-        if (excludedFields.includes(storageKey)) return;
+        if (excludedFields.includes(storageKey) || key.startsWith('_form_')) return;
         // Check if the field is a data type field
         if (dataTypeFields.includes(storageKey)) {
           dataTypeValues[storageKey] = value;
@@ -316,6 +318,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     delete formData[FORM_STATES.FORM_TYPE];
     // Ensure entry_dates is removed if not used
     delete formData[FORM_STATES.ENTRY_DATES];
+    // Remove form entity identifier data
+    delete formData[FORM_ENTITY_IDENTIFIER];
 
     switch (props.formType) {
       case FormTypeMap.ADD: {
@@ -502,7 +506,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
