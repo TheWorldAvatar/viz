@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.4
+
+### Changes
+
+- Removed account filters at the billing activities page
+
 ## 5.56.3
 
 ### Bug Fixes
