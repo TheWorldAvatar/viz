@@ -126,7 +126,8 @@ export default function RegistryRowAction(
         props.row[props.accountType]
       ));
       const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-      browserStorageManager.set(LifecycleStageMap.ACCOUNT, options[0]?.value);
+      // Set the account type in browser storage to match the values of the account type in the assign price form
+      browserStorageManager.set(props.accountType, options[0]?.value);
     } catch (error) {
       console.error("Error fetching instances", error);
     }
