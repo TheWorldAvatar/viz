@@ -87,7 +87,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
 
-
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
 
   const loadStoredFormValues = (initialState: FieldValues, translatedFormFieldIds: Record<string, string>): FieldValues => {
@@ -506,6 +505,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
+      const newIri = pendingResponse.data.id;
+      const formattedEntityType = props.entityType.toLowerCase().replaceAll('_', ' ');
+      browserStorageManager.set(formattedEntityType, newIri);
+
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
