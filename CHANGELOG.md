@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.5
+
+### Bug Fixes
+
+- Fixed to assign the right ID in the assign price form
+
 ## 5.56.4
 
 ### Changes
