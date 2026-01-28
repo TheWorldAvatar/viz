@@ -14,6 +14,7 @@ import DraftTemplateButton from "ui/interaction/action/draft-template/draft-temp
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
@@ -21,6 +22,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/inter
 
 interface RegistryRowActionProps {
   recordType: string;
+  accountType: string;
   lifecycleStage: LifecycleStage;
   row: FieldValues;
   triggerRefresh: () => void;
@@ -30,6 +32,7 @@ interface RegistryRowActionProps {
  * Renders the possible row actions for each row in the registry.
  *
  * @param {string} recordType The type of the record.
+ * @param {string} accountType The type of account for billing capabilities.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {FieldValues} row Row values.
  * @param triggerRefresh A function to refresh the table when required.
@@ -114,7 +117,19 @@ export default function RegistryRowAction(
   const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
     const body: AgentResponseBody = await queryInternalApi(url);
-    browserStorageManager.set(EVENT_KEY, props.row.event_id)
+    browserStorageManager.set(EVENT_KEY, props.row.event_id);
+    try {
+      const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+        InternalApiIdentifierMap.FILTER,
+        LifecycleStageMap.ACCOUNT,
+        props.accountType,
+        props.row[props.accountType]
+      ));
+      const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+      browserStorageManager.set(LifecycleStageMap.ACCOUNT, options[0]?.value);
+    } catch (error) {
+      console.error("Error fetching instances", error);
+    }
     setIsActionMenuOpen(false);
     if (body.data.message == "true") {
       navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id))

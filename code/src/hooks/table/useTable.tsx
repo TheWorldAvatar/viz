@@ -14,7 +14,8 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, RegistryFieldValues, LifecycleStageMap } from "types/form";
+import { LifecycleStage, RegistryFieldValues } from "types/form";
+import { TableColumnOrderSettings } from "types/settings";
 import {
   genSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
@@ -22,8 +23,6 @@ import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
 import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
-import { TableColumnOrderSettings } from "types/settings";
-import { browserStorageManager } from "state/browser-storage-manager";
 
 export interface TableDescriptor {
   isLoading: boolean;
@@ -47,7 +46,6 @@ export interface TableDescriptor {
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
-* @param {string} accountType Value that indicates the type of account for billing capabilities.
 */
 export function useTable(
   entityType: string,
@@ -55,21 +53,11 @@ export function useTable(
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   tableColumnOrder: TableColumnOrderSettings,
-  accountType: string,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
-    if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
-      const storedAccountLabel = browserStorageManager.get(LifecycleStageMap.ACCOUNT);
-      const storedAccountValue = browserStorageManager.get(accountType);
-      if (storedAccountLabel && storedAccountValue) {
-        return [{ id: accountType, value: [storedAccountLabel] }];
-      }
-    }
-    return [];
-  });
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);

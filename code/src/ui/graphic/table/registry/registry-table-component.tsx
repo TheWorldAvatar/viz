@@ -49,7 +49,6 @@ export default function RegistryTableComponent(
     props.lifecycleStage,
     selectedDate,
     props.tableColumnOrder,
-    props.accountType
   );
 
   useEffect(() => {

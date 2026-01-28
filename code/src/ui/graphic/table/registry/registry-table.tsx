@@ -298,6 +298,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   <DragActionHandle disabled={isLoading} id={row.id} />
                                   <RegistryRowAction
                                     recordType={props.recordType}
+                                    accountType={props.accountType}
                                     lifecycleStage={props.lifecycleStage}
                                     row={row.original}
                                     triggerRefresh={props.triggerRefresh}
