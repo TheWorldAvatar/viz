@@ -85,10 +85,18 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
 
-  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
+  const loadStoredFormValues = (initialState: FieldValues, trasnlatedFormFieldIds: Record<string, string>): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
     // Fields that should never be loaded from storage (always use from initialState)
     const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+
+    // Build reverse mapping
+    // client -> client details client
+    const reverseMapping: Record<string, string> = {};
+    Object.entries(trasnlatedFormFieldIds).forEach(([formKey, storageKey]) => {
+      reverseMapping[storageKey] = formKey;
+    });
+
     browserStorageManager.keys().forEach((key) => {
       // Skip the excluded fields
       if (excludedFields.includes(key)) {
@@ -96,17 +104,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       const storedValue = browserStorageManager.get(key);
 
+      // If its a translated field, map it back to the original form key
+      const formKey = reverseMapping[key] ?? key;
+
       // Convert entry_dates from ISO strings to Date objects
       // The date picker expects Date objects, not strings
-      if (key === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
-        const convertedDates = storedValue.map((dateString: string) => {
-          // Parse the ISO date string and normalize to date-only (time = 00:00:00)
-          const date = new Date(dateString);
-          return getUTCDate(date);
-        });
-        storedValues[key] = convertedDates;
+      if (formKey === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
+        storedValues[formKey] = storedValue.map((dateString: string) =>
+          getUTCDate(new Date(dateString))
+        );
       } else {
-        storedValues[key] = storedValue;
+        storedValues[formKey] = storedValue;
       }
     });
     return storedValues;
@@ -179,7 +187,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
-      const storedState = loadStoredFormValues(initialState);
+      const storedState = loadStoredFormValues(initialState, fieldIdMapping);
       return storedState;
     },
   });
