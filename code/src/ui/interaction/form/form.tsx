@@ -33,7 +33,7 @@ import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
-import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
+import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList, collectDataTypeFieldIds } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
 import { DependentFormSection } from "./section/dependent-form-section";
 import FormGeocoder from "./section/form-geocoder";
@@ -79,31 +79,51 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const router = useRouter();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
-  const [trasnlatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
+  const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
+  const [dataTypeFields, setDataTypeFields] = useState<string[]>([]);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
+
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
 
-  const loadStoredFormValues = (initialState: FieldValues, trasnlatedFormFieldIds: Record<string, string>): FieldValues => {
+
+  const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
+
+  const loadStoredFormValues = (initialState: FieldValues, translatedFormFieldIds: Record<string, string>): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
-    // Fields that should never be loaded from storage (always use from initialState)
     const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
 
     // Build reverse mapping
     // client -> client details client
     const reverseMapping: Record<string, string> = {};
-    Object.entries(trasnlatedFormFieldIds).forEach(([formKey, storageKey]) => {
+    Object.entries(translatedFormFieldIds).forEach(([formKey, storageKey]) => {
       reverseMapping[storageKey] = formKey;
     });
 
+    // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
+    const nestedDataRaw = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
+    if (nestedDataRaw) {
+      try {
+        const nestedValues = JSON.parse(nestedDataRaw);
+        Object.entries(nestedValues).forEach(([storageKey, value]) => {
+          const formKey = reverseMapping[storageKey] ?? storageKey;
+          if (!excludedFields.includes(storageKey)) {
+            storedValues[formKey] = value;
+          }
+        });
+      } catch (e) {
+        console.error("Failed to parse nested form data for identifier:", FORM_ENTITY_IDENTIFIER, e);
+      }
+    }
+
+    // Load individually saved non-datatype fields
     browserStorageManager.keys().forEach((key) => {
-      // Skip the excluded fields
-      if (excludedFields.includes(key)) {
+      // Skip excluded fields and the FORM_IDENTIFIER itself 
+      if (excludedFields.includes(key) || key === FORM_ENTITY_IDENTIFIER) {
         return;
       }
       const storedValue = browserStorageManager.get(key);
-
       // If its a translated field, map it back to the original form key
       const formKey = reverseMapping[key] ?? key;
 
@@ -173,17 +193,22 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           initialState[FORM_STATES.RECURRENCE] = 0;
         }
       }
+
       const billingParamsStore: BillingEntityTypes = {
         account: props.accountType,
         accountField: props.accountType,
         pricing: props.pricingType,
         pricingField: props.pricingType
       };
-      setFormTemplate({
+
+      const parsedTemplate = {
         ...template,
         node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore, fieldIdMapping),
         property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore, fieldIdMapping),
-      });
+      };
+
+      setFormTemplate(parsedTemplate);
+      setDataTypeFields(collectDataTypeFieldIds(parsedTemplate));
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
@@ -191,21 +216,31 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       return storedState;
     },
   });
-
   useEffect(() => {
     if (formPersistenceEnabled) {
       const values: FieldValues = form.getValues();
       const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+      const dataTypeValues: Record<string, string> = {};
+
       Object.entries(values).forEach(([key, value]) => {
         // If the field ID has been translated, use the translated ID
         // client details client -> client
-        if (key in trasnlatedFormFieldIds) {
-          key = trasnlatedFormFieldIds[key];
-        }
-        if (value !== "" && !excludedFields.includes(key)) {
-          browserStorageManager.set(key, value);
+        const storageKey = translatedFormFieldIds[key] ?? key;
+        // Skip excluded fields
+        if (excludedFields.includes(storageKey)) return;
+        // Check if the field is a data type field
+        if (dataTypeFields.includes(storageKey)) {
+          dataTypeValues[storageKey] = value;
+        } else {
+          // Save individual field
+          if (value !== "") {
+            browserStorageManager.set(storageKey, value);
+          }
         }
       });
+
+      // Save all data type fields under a single identifier
+      browserStorageManager.set(FORM_ENTITY_IDENTIFIER, JSON.stringify(dataTypeValues));
     }
   }, [formPersistenceEnabled]);
 

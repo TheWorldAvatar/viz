@@ -68,6 +68,62 @@ export const ENTITY_STATUS: Record<string, string> = {
   PENDING: "Pending",
 };
 
+
+
+/**
+ * Recursively extracts the `fieldId`s of all fields that have a `datatype` from a given list of `PropertyShapeOrGroup`.
+
+ * @param fields - An array of `PropertyShapeOrGroup` objects (can be shapes or groups).
+ * @param acc - An accumulator array that collects `fieldId`s. Used for recursion.
+ * 
+ * @returns An array of `fieldId`s for all properties that have a `datatype`.
+ */
+export function extractDataTypeFieldIds(
+  fields: PropertyShapeOrGroup[],
+  acc: string[]
+): string[] {
+  fields.forEach((field) => {
+    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+      // If the field is a group, recurse into its properties
+      const group = field as PropertyGroup;
+      extractDataTypeFieldIds(group.property, acc);
+    } else {
+      const shape = field as PropertyShape;
+      // Only include fields that have a datatype
+      if (shape.fieldId && shape.datatype) {
+        acc.push(shape.fieldId);
+      }
+    }
+  });
+  return acc;
+}
+
+/**
+ * Collects the `fieldId`s of all fields with a `datatype` from a full form template.
+ * This function handles both top-level properties and properties inside nodes (branches) of the template.
+ *
+ * @param template - The template containing properties and nodes.
+ * 
+ * @returns An array of `fieldId`s for all properties in the template that have a `datatype`.
+ */
+export function collectDataTypeFieldIds(
+  template: FormTemplateType
+): string[] {
+  const fieldIds: string[] = [];
+
+  // Extract from top-level properties
+  extractDataTypeFieldIds(template.property, fieldIds);
+
+  // Extract from nested node properties (if any)
+  template.node?.forEach((node) => {
+    extractDataTypeFieldIds(node.property, fieldIds);
+  });
+
+  return fieldIds;
+}
+
+
+
 /**
  * Parses a list of property shape or group into a format compliant with the viz.
  *
