@@ -40,6 +40,8 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import { setClearStoredFormData } from "state/form-persistence-slice";
+import { useDispatch } from "react-redux";
 
 
 interface RegistryTableProps {
@@ -63,7 +65,7 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
-
+  const dispatch = useDispatch();
   const { navigateToDrawer } = useDrawerNavigation();
   const isPermitted = usePermissionGuard();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
@@ -90,6 +92,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       : row.id
         ? getId(row.id)
         : getId(row.iri);
+    // Clear any stored form data when clicking on a row
+    dispatch(setClearStoredFormData(true));
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
