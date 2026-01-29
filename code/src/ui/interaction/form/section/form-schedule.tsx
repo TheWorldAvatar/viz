@@ -20,6 +20,7 @@ import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
 import SelectedDatesDisplay from "./selected-dates-display";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -79,21 +80,28 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             : singleService
   );
 
-    // Sync fixedDates with form's entry_date values (loaded from storage)
-    useEffect(() => {
-      const formEntryDates = props.form.getValues(FORM_STATES.ENTRY_DATES);
-      if (Array.isArray(formEntryDates) && formEntryDates.length > 0) {
-        // Ensure all items are Date objects
-        const validDates = formEntryDates.filter((date) => date instanceof Date);
-        if (validDates.length > 0) {
-          setFixedDates(validDates);
-          setSelectedServiceOption(fixedService);
-        }
+  // Sync fixedDates with form's entry_date values (loaded from storage)
+  useEffect(() => {
+    const formEntryDates = props.form.getValues(FORM_STATES.ENTRY_DATES);
+    if (Array.isArray(formEntryDates) && formEntryDates.length > 0) {
+      // Ensure all items are Date objects
+      const validDates = formEntryDates.filter((date) => date instanceof Date);
+      if (validDates.length > 0) {
+        setFixedDates(validDates);
+        setSelectedServiceOption(fixedService);
       }
-    }, [props.form.formState.isLoading]);
+    }
+  }, [props.form.formState.isLoading]);
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
+      // If there is data in the session storage for service schedule (recurrence), use that instead of fetching defaults
+      // This is to preverent loading default values in EDIT form, even if there are existing values stored in the session storage
+      if (browserStorageManager.get(FORM_STATES.RECURRENCE)) {
+        setIsLoading(false);
+        return;
+      }
+
       // Set defaults
       let recurrence: number = 0;
       let defaultTimeSlotStart: string = "00:00";
