@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
@@ -41,8 +41,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { useSelector } from "react-redux";
-import { selectFormPersistenceEnabled, selectClearStoredFormData, setClearStoredFormData } from "state/form-persistence-slice";
+import { selectFormPersistenceEnabled, selectClearStoredFormData, setClearStoredFormData, setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
 
 
 interface FormComponentProps {
@@ -86,6 +85,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
+  const openFormCount: number = useSelector(selectOpenFormCount);
 
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
 
@@ -508,6 +508,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const newIri = pendingResponse.data.id;
       const formattedEntityType = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
+      dispatch(setOpenFormCount(openFormCount - 1));
 
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice

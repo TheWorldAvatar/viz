@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import Button, { ButtonProps } from "ui/interaction/button";
-import { setFormPersistenceEnabled } from "state/form-persistence-slice";
-import { useDispatch } from "react-redux";
+import { setFormPersistenceEnabled, setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 
 interface RedirectButtonProps extends ButtonProps {
@@ -28,6 +28,7 @@ export default function RedirectButton({
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const openFormCount = useSelector(selectOpenFormCount);
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -36,9 +37,10 @@ export default function RedirectButton({
     if (softRedirect) {
       // Use soft redirect to allow parallel routes to function
       router.push(url);
-    } else if(saveFormDataInMemory) {
+    } else if (saveFormDataInMemory) {
       // Use soft redirect to allow parallel routes to function and save form data in memory
       router.push(url);
+      dispatch(setOpenFormCount(openFormCount + 1));
       dispatch(setFormPersistenceEnabled(true));
       // Clear the form data save flag after 300ms
       setTimeout(() => {

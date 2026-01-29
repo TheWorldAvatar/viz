@@ -1,9 +1,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsAnyDrawerOpen } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
+import { setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
 
 interface NavigationDrawerProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export default function NavigationDrawer(
 ) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const openFormCount = useSelector(selectOpenFormCount);
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   // Function to reset the open drawer flag
@@ -35,6 +37,7 @@ export default function NavigationDrawer(
       isExternalOpen={isOpen}
       setIsExternalOpen={setIsOpen}
       onClose={() => {
+        dispatch(setOpenFormCount(openFormCount - 1));
         resetDrawerOpenFlag();
         router.back();
       }}

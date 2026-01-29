@@ -25,6 +25,8 @@ import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header
 import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../field/form-input-container";
+import { useSelector } from "react-redux";
+import { selectOpenFormCount } from "state/form-persistence-slice";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -43,11 +45,10 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-
+  const openFormCount = useSelector(selectOpenFormCount);
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
-
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
 
   const control: Control = props.form.control;
@@ -65,6 +66,10 @@ export function DependentFormSection(
     isQuickViewOpen,
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
+
+  // Disables the dependent field when navigation occurs with a value to a new form.
+  // It doesnt disable dependent children. Only the parent.
+  const disableWhenDependentHasValueOnNavigation = !props.dependentProp?.dependentOn && openFormCount > 0 && !!currentOption;
 
   return (
     <div className="rounded-lg my-4">
@@ -90,10 +95,10 @@ export function DependentFormSection(
                   onChange={(option: SelectOptionType) => {
                     onChange(option.value);
                   }}
-                  isDisabled={formType == FormTypeMap.VIEW ||
-                    formType == FormTypeMap.DELETE ||
+                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE ||
                     // Disable if parent field has no value
-                    (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
+                    (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined) ||
+                    disableWhenDependentHasValueOnNavigation}
                   noOptionMessage={dict.message.noInstances}
                 />
               );
@@ -112,6 +117,7 @@ export function DependentFormSection(
           accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
           accountType={props.billingStore?.account}
           pricingType={props.billingStore?.pricing}
+          disableWhenDependentHasValueOnNavigation={disableWhenDependentHasValueOnNavigation}
         />}
         {currentOption &&
           isQuickViewOpen &&
