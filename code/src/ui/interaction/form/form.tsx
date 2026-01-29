@@ -24,6 +24,7 @@ import {
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
+  SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
@@ -363,6 +364,30 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
           "POST",
           JSON.stringify(formData));
+        // When adding price, fetch the relevant IRI based on the original entity type
+        if (!pendingResponse?.error) {
+          const priceModelResponse: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES,
+              props.entityType,
+              "false",
+              getAfterDelimiter(pendingResponse.data?.id, "/"),
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null),
+            "GET");
+          // Update the pending response with the correct IRI
+          pendingResponse = {
+            apiVersion: pendingResponse.apiVersion,
+            data: {
+              id: ((priceModelResponse.data.items[0] as Record<string, unknown>).iri as SparqlResponseField).value,
+              message: pendingResponse.data.message,
+            }
+          }
+        }
         break;
       }
       case FormTypeMap.ADD_INVOICE: {
