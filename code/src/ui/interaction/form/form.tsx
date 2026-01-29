@@ -234,9 +234,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           dataTypeValues[storageKey] = value;
         } else {
           // Save individual field
-          if (value !== "") {
-            browserStorageManager.set(storageKey, value);
-          }
+          browserStorageManager.set(storageKey, value);
         }
       });
 
