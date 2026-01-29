@@ -11,6 +11,7 @@ import {
   FormType,
   FormTypeMap,
   ID_KEY,
+  LifecycleStageMap,
   NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,

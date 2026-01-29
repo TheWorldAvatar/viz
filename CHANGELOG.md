@@ -2,6 +2,50 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.5
+
+### Bug Fixes
+
+- Fixed to assign the right ID in the assign price form
+
+## 5.56.4
+
+### Changes
+
+- Removed account filters at the billing activities page
+
+## 5.56.3
+
+### Bug Fixes
+
+- Fixed to remove duplicate custom default links
+- Exclude billing default links when customised
+
+## 5.56.2
+
+### Changes
+
+- Fixed reschedule date form submission
+- Only convert datetime in registry table
+- Bump min version of `VisBackend Agent` from `v1.33.0` to `v1.34.0`
+
+## 5.56.1
+
+### Bug Fixes
+
+- Fixed dependent dropdown for array form fields to display the previously selected value
+
+## 5.56.0
+
+### Changes
+
+- Modified roles and their permissible workflows
+- Hide edit and delete button
+
+### Bug Fixes
+
+- Hide actions button in form when actions are all disabled
+
 ## 5.55.2
 
 ### Bug Fixes

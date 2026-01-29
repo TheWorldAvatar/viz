@@ -237,7 +237,7 @@ function NavMenuContents(
           isMenuExpanded={isMenuExpanded}
         />
       )}
-      {props.settings?.modules?.billing && (
+      {props.settings?.modules?.billing && isPermitted("invoice") && (
         <NavBarItem
           title={billingLinkProps?.title ?? dict.nav.title.billing}
           icon="receipt_long"
@@ -269,13 +269,12 @@ function NavMenuContents(
       )}
 
       {props.settings.modules.registry &&
-        props.settings.resources?.registry?.data &&
-        (isPermitted("registry") || isPermitted("pendingRegistry")) && (
+        props.settings.resources?.registry?.data && (
           <NavBarItem
             title={registryLinkProps?.title ?? dict.nav.title.registry}
             icon={registryLinkProps?.icon ?? "table_chart"}
             url={
-              isPermitted("pendingRegistry")
+              isPermitted("registryFullAccess")
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
                 : Routes.REGISTRY_TASK_OUTSTANDING
             }
@@ -313,16 +312,11 @@ function NavMenuContents(
 
       {props.settings.links?.map((externalLink, index) => {
         if (
-          ![
-            Modules.DASHBOARD,
-            Modules.HELP,
-            Modules.MAP,
-            Modules.REGISTRY,
-          ].includes(externalLink.url) &&
+          !Object.values(Modules).includes(externalLink.url) &&
           // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
           // IF there is a permission set with authentication enabled, check if the user has the specified permission
-          !externalLink?.permission ||
-          isPermitted(externalLink.permission)
+          (!externalLink?.permission ||
+            isPermitted(externalLink.permission))
         ) {
           return (
             <NavBarItem

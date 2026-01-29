@@ -2,7 +2,6 @@
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
-import { useAccountFilterOptions } from "hooks/table/api/useAccountFilterOptions";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
@@ -13,7 +12,6 @@ import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/fo
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
-import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
@@ -54,13 +52,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
 
-  const { selectedAccount, handleUpdateAccount, getAccountFilterOptions } = useAccountFilterOptions(
-    props.accountType,
-    props.lifecycleStage,
-    props.tableDescriptor.filters,
-    props.tableDescriptor.setFilters,
-  )
-
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
   };
@@ -68,11 +59,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   return (
     <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
       <div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
-        {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
+        {props.lifecycleStage !== LifecycleStageMap.GENERAL && isPermitted("registryFullAccess") &&
           (
             <div className="bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border">
               <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-                {(!isBillingStage && isPermitted("pendingRegistry") && isPermitted("registry")) && (
+                {!isBillingStage && (
                   <div className="sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.jobs}
@@ -90,7 +81,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     />
                   </div>
                 )}
-                {(!isBillingStage && isPermitted("registry")) && (
+                {!isBillingStage && (
                   <div className="sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.tasks}
@@ -108,7 +99,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                     />
                   </div>
                 )}
-                {(isBillingStage) && (<>
+                {(isBillingStage) && isPermitted("invoice") && (<>
                   <div className="sm:w-auto">
                     <RedirectButton
                       label={dict.nav.title.accounts}
@@ -154,50 +145,44 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap">
         { /* Remove overflow-hidden when in billing stages to allow dropdown to overflow */}
         <div className={`flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border divide-x divide-border ${isBillingStage ? '' : 'overflow-hidden '}`}>
-          {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
+          {isPermitted("registryFullAccess") &&
             (props.lifecycleStage === LifecycleStageMap.PENDING ||
               props.lifecycleStage === LifecycleStageMap.ACTIVE ||
               props.lifecycleStage === LifecycleStageMap.ARCHIVE) && (
               <>
-                {isPermitted("pendingRegistry") && (
-                  <RedirectButton
-                    label={dict.nav.title.pending}
-                    leftIcon="free_cancellation"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
-                    }
-                    className="text-sm font-medium !rounded-none !border-0"
-                  />
-                )}
-                {isPermitted("pendingRegistry") && (
-                  <RedirectButton
-                    label={dict.nav.title.active}
-                    leftIcon="check_circle_outline"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
-                    }
-                    className="text-sm font-medium !rounded-none !border-0"
-                  />
-                )}
-                {isPermitted("pendingRegistry") && (
-                  <RedirectButton
-                    label={dict.nav.title.archive}
-                    leftIcon="archive_outlined"
-                    hasMobileIcon={false}
-                    url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
-                    variant={
-                      props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
-                    }
-                    className="text-sm font-medium !rounded-none !border-0"
-                  />
-                )}
+                <RedirectButton
+                  label={dict.nav.title.pending}
+                  leftIcon="free_cancellation"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                  variant={
+                    props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
+                  }
+                  className="text-sm font-medium !rounded-none !border-0"
+                />
+                <RedirectButton
+                  label={dict.nav.title.active}
+                  leftIcon="check_circle_outline"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+                  variant={
+                    props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
+                  }
+                  className="text-sm font-medium !rounded-none !border-0"
+                />
+                <RedirectButton
+                  label={dict.nav.title.archive}
+                  leftIcon="archive_outlined"
+                  hasMobileIcon={false}
+                  url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+                  variant={
+                    props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
+                  }
+                  className="text-sm font-medium !rounded-none !border-0"
+                />
               </>
             )}
-          {props.lifecycleStage !== LifecycleStageMap.GENERAL &&
+          {isPermitted("registryFullAccess") &&
             (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
               props.lifecycleStage === LifecycleStageMap.SCHEDULED ||
               props.lifecycleStage === LifecycleStageMap.CLOSED) && (
@@ -234,21 +219,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 />
               </>
             )}
-          {props.lifecycleStage === LifecycleStageMap.ACTIVITY && selectedAccount != null && (
-            <div className="flex justify-start">
-              <div className="w-full md:w-[300px]">
-                <AsyncSearchableSimpleSelector
-                  options={getAccountFilterOptions}
-                  initialValue={selectedAccount}
-                  onChange={(value) => {
-                    handleUpdateAccount(value);
-                    props.tableDescriptor.table.resetRowSelection();
-                    props.tableDescriptor.table.resetPageIndex();
-                  }}
-                />
-              </div>
-            </div>
-          )}
         </div>
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
@@ -261,11 +231,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 disabledDates={getDisabledDates(props.lifecycleStage)}
               />
             )}
-          {isPermitted("sales") &&
-            (props.lifecycleStage == LifecycleStageMap.PENDING ||
-              props.lifecycleStage == LifecycleStageMap.GENERAL ||
-              props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-              props.lifecycleStage === LifecycleStageMap.PRICING) && (
+          {(props.lifecycleStage == LifecycleStageMap.PENDING ||
+            props.lifecycleStage == LifecycleStageMap.GENERAL ||
+            props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+            props.lifecycleStage === LifecycleStageMap.PRICING) && (
               <Button
                 leftIcon="add"
                 size="icon"

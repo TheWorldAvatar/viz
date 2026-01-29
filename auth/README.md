@@ -83,8 +83,6 @@ The store is in place to store and cache user sessions specific to the viz. User
 
 The sample `realm.json` includes predefined client roles (in the `viz` client), which are mandatory for the `viz` platform to function correctly. These core roles must be present in any custom configuration. To support other backend services, it is recommended to leverage the predefined core roles. But if they are unsuitable for your application, users can define and incorporate additional custom roles. Below is a list of these core roles:
 
-1) admin: Grants unrestricted access to all features and functionalities.
-2) sales: Provides access to sales-related functionalities.
-3) finance: Provides access to finance-related functionalities.
-4) operations: Provides access to operation-related functionalities.
-5) task-viewer: Permits users to view, report on, and complete tasks only.
+1) finance: Provides access to finance-related functionalities.
+2) operations: Provides access to operation-related functionalities.
+3) task-viewer: Permits users to view and complete tasks only.

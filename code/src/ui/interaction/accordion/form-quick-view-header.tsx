@@ -1,12 +1,13 @@
 "use client";
 
+import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
+import { Routes } from "io/config/routes";
 import type React from "react";
 import { Dictionary } from "types/dictionary";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
-import { Routes } from "io/config/routes";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -41,6 +42,7 @@ interface FormQuickViewHeaderProps {
  **/
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
+  const isPermitted = usePermissionGuard();
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
   };
@@ -86,7 +88,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           saveFormDataInMemory={true}
           variant="outline"
         />
-        {props.selectedEntityId && <RedirectButton
+        {props.selectedEntityId && isPermitted("edit") && <RedirectButton
           leftIcon="edit"
           size="icon"
           iconSize="small"
@@ -99,7 +101,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           saveFormDataInMemory={true}
           variant="outline"
         />}
-        {props.selectedEntityId && <RedirectButton
+        {props.selectedEntityId && isPermitted("delete") && <RedirectButton
           leftIcon="delete"
           size="icon"
           iconSize="small"

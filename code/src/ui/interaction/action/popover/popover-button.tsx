@@ -1,12 +1,13 @@
 "use client";
 
-import { usePopover } from "hooks/float/usePopover";
-import Button, { ButtonProps } from "ui/interaction/button";
 import {
   FloatingPortal,
   Placement,
   useTransitionStyles,
 } from "@floating-ui/react";
+import { usePopover } from "hooks/float/usePopover";
+import React from "react";
+import Button, { ButtonProps } from "ui/interaction/button";
 
 interface PopoverActionButtonProps extends ButtonProps {
   children: React.ReactNode;
@@ -46,6 +47,10 @@ export default function PopoverActionButton({
   variant,
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
+  const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
+  if (validChildren.length === 0) {
+    return null;
+  }
   const popover = usePopover(placement, isOpen, setIsOpen);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
