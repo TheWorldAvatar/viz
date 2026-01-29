@@ -28,7 +28,7 @@ export default function RedirectButton({
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const openFormCount = useSelector(selectOpenFormCount);
+  const openFormCount: number = useSelector(selectOpenFormCount);
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement>

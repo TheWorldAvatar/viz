@@ -19,7 +19,7 @@ export default function NavigationDrawer(
 ) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const openFormCount = useSelector(selectOpenFormCount);
+  const openFormCount: number = useSelector(selectOpenFormCount);
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   // Function to reset the open drawer flag

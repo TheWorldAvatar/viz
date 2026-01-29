@@ -48,7 +48,7 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const openFormCount = useSelector(selectOpenFormCount);
+  const openFormCount: number = useSelector(selectOpenFormCount);
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -75,7 +75,7 @@ export function DependentFormSection(
 
   // Disables the dependent field when navigation occurs with a value to a new form.
   // It doesnt disable dependent children. Only the parent.
-  const disableWhenDependentHasValueOnNavigation = !props.dependentProp?.dependentOn && openFormCount > 0 && initialValueOnMount.current !== undefined && initialValueOnMount.current !== "";
+  const disableWhenDependentHasValueOnNavigation: boolean = !props.dependentProp?.dependentOn && openFormCount > 0 && initialValueOnMount.current !== undefined && initialValueOnMount.current !== "";
 
   return (
     <div className="rounded-lg my-4">

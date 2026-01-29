@@ -91,7 +91,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   const loadStoredFormValues = (initialState: FieldValues, translatedFormFieldIds: Record<string, string>): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
-    const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
 
     // Build reverse mapping
     // client -> client details client
@@ -101,10 +101,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     });
 
     // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
-    const nestedDataTypeFields = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
-    if (nestedDataTypeFields) {
+    const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
+    if (entityForm) {
       try {
-        const nestedValues = JSON.parse(nestedDataTypeFields);
+        const nestedValues = JSON.parse(entityForm);
         Object.entries(nestedValues).forEach(([storageKey, value]) => {
           const formKey = reverseMapping[storageKey] ?? storageKey;
           if (!excludedFields.includes(storageKey)) {
@@ -211,7 +211,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
-      const storedState = loadStoredFormValues(initialState, fieldIdMapping);
+      const storedState: FieldValues = loadStoredFormValues(initialState, fieldIdMapping);
       return storedState;
     },
   });
@@ -220,7 +220,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   useEffect(() => {
     if (formPersistenceEnabled) {
       const values: FieldValues = form.getValues();
-      const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+      const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
       const dataTypeValues: Record<string, string> = {};
 
       Object.entries(values).forEach(([key, value]) => {
@@ -246,7 +246,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   useEffect(() => {
     if (clearStoredFormData) {
-      const allStoredFormKeys = browserStorageManager.keys();
+      const allStoredFormKeys: string[] = browserStorageManager.keys();
       allStoredFormKeys.forEach((storedFormKey) => {
         browserStorageManager.remove(storedFormKey);
       });
@@ -503,8 +503,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
-      const newIri = pendingResponse.data.id;
-      const formattedEntityType = props.entityType.toLowerCase().replaceAll('_', ' ');
+      const newIri: string = pendingResponse.data.id;
+      const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
       dispatch(setOpenFormCount(openFormCount - 1));
 

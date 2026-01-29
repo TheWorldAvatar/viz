@@ -469,7 +469,6 @@ function updateDependentProperty(
     let dependentFieldId: string;
     let dependentFieldName: string;
     for (const property of properties) {
-
       if (dependentFieldId) {
         break;
       }
@@ -480,14 +479,12 @@ function updateDependentProperty(
           (fieldProperty: PropertyShape) =>
             dependentIri == fieldProperty[ID_KEY]
         )?.name[VALUE_KEY];
-
         if (propertyLabel) {
           dependentFieldId = `${fieldset.label[VALUE_KEY]} ${propertyLabel}`;
           dependentFieldName = propertyLabel;
         }
       } else {
         const fieldProperty: PropertyShape = property as PropertyShape;
-
         if (dependentIri == fieldProperty[ID_KEY]) {
           dependentFieldId = fieldProperty.name[VALUE_KEY];
           dependentFieldName = fieldProperty.name[VALUE_KEY];

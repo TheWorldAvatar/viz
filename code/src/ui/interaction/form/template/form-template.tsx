@@ -25,7 +25,7 @@ interface FormComponentProps {
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
-  const clearStoredFormData = useSelector(selectClearStoredFormData);
+  const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
@@ -33,7 +33,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
     // Fields that should never be loaded from storage (always use from initialState)
-    const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
     browserStorageManager.keys().forEach((key) => {
       // Skip the excluded fields
       if (excludedFields.includes(key)) {
@@ -56,7 +56,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       setFormFields(fields);
 
       // Load stored values from session storage
-      const storedState = loadStoredFormValues(initialState);
+      const storedState: FieldValues = loadStoredFormValues(initialState);
       return storedState;
     }
   });
@@ -65,7 +65,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
   useEffect(() => {
     if (formPersistenceEnabled) {
       const values: FieldValues = form.getValues();
-      const excludedFields = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+      const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
       Object.entries(values).forEach(([key, value]) => {
         if (value !== "" && !excludedFields.includes(key)) {
           browserStorageManager.set(key, value);
@@ -77,7 +77,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
 
   useEffect(() => {
     if (clearStoredFormData) {
-      const allStoredFormKeys = browserStorageManager.keys();
+      const allStoredFormKeys: string[] = browserStorageManager.keys();
       allStoredFormKeys.forEach((storedFormKey) => {
         browserStorageManager.remove(storedFormKey);
       });
