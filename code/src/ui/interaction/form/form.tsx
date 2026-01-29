@@ -101,10 +101,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     });
 
     // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
-    const nestedDataRaw = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
-    if (nestedDataRaw) {
+    const nestedDataTypeFields = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
+    if (nestedDataTypeFields) {
       try {
-        const nestedValues = JSON.parse(nestedDataRaw);
+        const nestedValues = JSON.parse(nestedDataTypeFields);
         Object.entries(nestedValues).forEach(([storageKey, value]) => {
           const formKey = reverseMapping[storageKey] ?? storageKey;
           if (!excludedFields.includes(storageKey)) {
