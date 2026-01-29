@@ -27,6 +27,7 @@ import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../field/form-input-container";
 import { useSelector } from "react-redux";
 import { selectOpenFormCount } from "state/form-persistence-slice";
+import { useRef } from "react";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -69,9 +70,12 @@ export function DependentFormSection(
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
 
+  // Store the initial value on mount to determine if navigation has occurred with an empty dependent field.
+  const initialValueOnMount = useRef<string | undefined>(currentOption);
+
   // Disables the dependent field when navigation occurs with a value to a new form.
   // It doesnt disable dependent children. Only the parent.
-  const disableWhenDependentHasValueOnNavigation = !props.dependentProp?.dependentOn && openFormCount > 0 && !!currentOption;
+  const disableWhenDependentHasValueOnNavigation = !props.dependentProp?.dependentOn && openFormCount > 0 && initialValueOnMount.current !== undefined && initialValueOnMount.current !== "";
 
   return (
     <div className="rounded-lg my-4">
