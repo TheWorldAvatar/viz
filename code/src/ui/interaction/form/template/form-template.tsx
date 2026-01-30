@@ -5,7 +5,6 @@ import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } fr
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
-import { getUTCDate } from 'utils/client-utils';
 
 interface FormComponentProps {
   entityType: string;
@@ -30,16 +29,8 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
 
 
   // Load stored form values from session storage
-  const loadStoredFormValues = (initialState: FieldValues, translatedFormFieldIds: Record<string, string>): FieldValues => {
-    const storedValues: FieldValues = { ...initialState };
+  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
     const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-
-    // Build reverse mapping
-    // client -> client details client
-    const reverseMapping: Record<string, string> = {};
-    Object.entries(translatedFormFieldIds).forEach(([formKey, storageKey]) => {
-      reverseMapping[storageKey] = formKey;
-    });
 
     // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
     const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
@@ -47,9 +38,8 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       try {
         const nestedValues = JSON.parse(entityForm);
         Object.entries(nestedValues).forEach(([storageKey, value]) => {
-          const formKey = reverseMapping[storageKey] ?? storageKey;
           if (!excludedFields.includes(storageKey)) {
-            storedValues[formKey] = value;
+            initialState[storageKey] = value;
           }
         });
       } catch (e) {
@@ -57,28 +47,9 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       }
     }
 
-    // Load individually saved non-datatype fields
-    browserStorageManager.keys().forEach((key) => {
-      // Skip excluded fields and the nested datatype identifier
-      if (excludedFields.includes(key) || key.startsWith('_form_')) {
-        return;
-      }
-      const storedValue = browserStorageManager.get(key);
-      // If its a translated field, map it back to the original form key
-      const formKey = reverseMapping[key] ?? key;
-
-      // Convert entry_dates from ISO strings to Date objects
-      // The date picker expects Date objects, not strings
-      if (formKey === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
-        storedValues[formKey] = storedValue.map((dateString: string) =>
-          getUTCDate(new Date(dateString))
-        );
-      } else {
-        storedValues[formKey] = storedValue;
-      }
-    });
-    return storedValues;
+    return initialState;
   };
+
 
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
@@ -95,7 +66,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       setTranslatedFormFieldIds(fieldIdMapping);
 
       // Load stored values from session storage
-      const storedState: FieldValues = loadStoredFormValues(initialState, fieldIdMapping);
+      const storedState: FieldValues = loadStoredFormValues(initialState);
       return storedState;
     }
   });

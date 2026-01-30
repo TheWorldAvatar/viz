@@ -26,6 +26,7 @@ import {
 } from "ui/interaction/form/form-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormInputContainer from "../form-input-container";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -105,10 +106,10 @@ export default function OntologyConceptSelector(
             FORM_STATES.FORM_TYPE
           );
 
-          const existingValue: string = props.form.getValues(props.field.fieldId);
+          const storedValue: string = browserStorageManager.get(props.field.name[VALUE_KEY]);
 
           // Only set a default value if there's no existing value (preserve stored values)
-          if (!existingValue) {
+          if (!storedValue) {
             // First option should be set if available, else the first parent value should be prioritised
             const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
             props.form.setValue(props.field.fieldId, currentFormType === FormTypeMap.ADD
@@ -120,6 +121,8 @@ export default function OntologyConceptSelector(
                   ?.value
                 : firstRootOption?.type?.value
             );
+          } else {
+            props.form.setValue(props.field.fieldId, storedValue);
           }
 
           // Parse the mappings to generate the format for select options
