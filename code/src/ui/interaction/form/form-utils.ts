@@ -236,7 +236,7 @@ export function parseBranches(
   nodeShapes: NodeShape[],
   reqMatching: boolean,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
-  fieldIdMapping?: Record<string, string>
+  fieldIdMapping: Record<string, string>
 ): NodeShape[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
