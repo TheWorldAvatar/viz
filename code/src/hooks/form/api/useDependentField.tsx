@@ -1,6 +1,7 @@
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -119,7 +120,8 @@ export function useDependentField(
                 }
 
                 // By default, id is empty if optional, else its undefined
-                let defaultId: string = currentOption == "" ?
+                const storedValue: string = browserStorageManager.get(label);
+                let defaultId: string = storedValue ?? currentOption == "" ?
                     isSectionOptional ? naOption.value : undefined :
                     currentOption;
 
@@ -128,8 +130,9 @@ export function useDependentField(
                     let matchingExistingOptionValue: string = null;
                     // Find best matching value if there is an existing or default value;
                     // Existing value must take precedence
-                    if (currentOption && currentOption.length > 0) {
-                        matchingExistingOptionValue = findMatchingDropdownOptionValue(currentOption, entities);
+                    if (storedValue || (currentOption && currentOption.length > 0)) {
+                        // Always prefer stored value over current option
+                        matchingExistingOptionValue = findMatchingDropdownOptionValue(storedValue ?? currentOption, entities);
                     } else if (field?.defaultValue) {
                         const defaults: SparqlResponseField | SparqlResponseField[] =
                             field?.defaultValue;
@@ -195,11 +198,15 @@ export function useDependentField(
         });
     };
     useEffect(() => {
-        // Update the current option if there is none on first render
+        // Update the current option if there is none on first render; 
+        // Note that when loading saved data from session storage, parent option takes time to change 
+        // and this value should be repopulated after the parent option has been selected
         const updateCurrentOption = async () => {
             const options: SelectOptionType[] = await getFieldOptions("");
             if (options?.length > 0) {
-                const initialOption: SelectOptionType = options.find(option => option?.value == form.getValues(field?.fieldId));
+                const storedValue: string = browserStorageManager.get(label);
+                const valueChecker: string = storedValue ?? form.getValues(field?.fieldId);
+                const initialOption: SelectOptionType = options.find(option => option?.value == valueChecker);
                 setSelectedOption(initialOption);
             }
         };
@@ -207,7 +214,7 @@ export function useDependentField(
         if (selectedOption == null) {
             updateCurrentOption();
         }
-    }, []);
+    }, [currentParentOption]);
 
     // Reset dependent child field when parent changes (but not on initial load)
     // Note that this should be combined with a debouncer as react hook form changes are not propagated immediately
