@@ -42,7 +42,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { selectFormPersistenceEnabled, selectClearStoredFormData, setClearStoredFormData, setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
+import { selectFormPersistenceEnabled, setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
 
 
 interface FormComponentProps {
@@ -85,7 +85,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   const { handleDrawerClose } = useDrawerNavigation();
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
-  const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
   const openFormCount: number = useSelector(selectOpenFormCount);
 
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
@@ -243,17 +242,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       browserStorageManager.set(FORM_ENTITY_IDENTIFIER, JSON.stringify(dataTypeValues));
     }
   }, [formPersistenceEnabled]);
-
-
-  useEffect(() => {
-    if (clearStoredFormData) {
-      const allStoredFormKeys: string[] = browserStorageManager.keys();
-      allStoredFormKeys.forEach((storedFormKey) => {
-        browserStorageManager.remove(storedFormKey);
-      });
-      dispatch(setClearStoredFormData(false));
-    }
-  }, [clearStoredFormData]);
 
 
   // // A function to initiate the form submission process

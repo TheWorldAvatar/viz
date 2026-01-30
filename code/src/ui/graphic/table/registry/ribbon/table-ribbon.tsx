@@ -16,7 +16,8 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { useDispatch } from "react-redux";
-import { setClearStoredFormData } from "state/form-persistence-slice";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { setOpenFormCount } from "state/form-persistence-slice";
 
 interface TableRibbonProps {
   path: string;
@@ -243,7 +244,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.entityType.replace("_", " ")
                 )}
                 onClick={() => {
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),

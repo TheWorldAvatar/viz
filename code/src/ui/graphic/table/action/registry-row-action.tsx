@@ -20,7 +20,8 @@ import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { useDispatch } from "react-redux";
-import { setClearStoredFormData } from "state/form-persistence-slice";
+import { setOpenFormCount } from "state/form-persistence-slice";
+
 
 
 interface RegistryRowActionProps {
@@ -181,7 +182,8 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   handleClickView();
                 }}
               />
@@ -232,7 +234,8 @@ export default function RegistryRowAction(
                 label={dict.action.edit}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
@@ -246,7 +249,8 @@ export default function RegistryRowAction(
                 label={dict.action.delete}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -263,7 +267,8 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
@@ -277,7 +282,8 @@ export default function RegistryRowAction(
                 label={dict.action.complete}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
@@ -291,7 +297,8 @@ export default function RegistryRowAction(
                 label={dict.action.dispatch}
                 onClick={() => {
                   setIsActionMenuOpen(false);
-                  dispatch(setClearStoredFormData(true));
+                  browserStorageManager.clear();
+                  dispatch(setOpenFormCount(0));
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}

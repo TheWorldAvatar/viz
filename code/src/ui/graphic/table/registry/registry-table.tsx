@@ -40,8 +40,8 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { setClearStoredFormData } from "state/form-persistence-slice";
 import { useDispatch } from "react-redux";
+import { setOpenFormCount } from "state/form-persistence-slice";
 
 
 interface RegistryTableProps {
@@ -93,7 +93,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         ? getId(row.id)
         : getId(row.iri);
     // Clear any stored form data when clicking on a row
-    dispatch(setClearStoredFormData(true));
+    browserStorageManager.clear();
+    dispatch(setOpenFormCount(0));
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||

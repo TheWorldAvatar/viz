@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { browserStorageManager } from 'state/browser-storage-manager';
-import { selectFormPersistenceEnabled, selectClearStoredFormData, setClearStoredFormData } from 'state/form-persistence-slice';
+import { selectFormPersistenceEnabled } from 'state/form-persistence-slice';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
@@ -24,8 +24,6 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
-  const dispatch = useDispatch();
-  const clearStoredFormData: boolean = useSelector(selectClearStoredFormData);
   const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
 
@@ -75,15 +73,6 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
   }, [formPersistenceEnabled]);
 
 
-  useEffect(() => {
-    if (clearStoredFormData) {
-      const allStoredFormKeys: string[] = browserStorageManager.keys();
-      allStoredFormKeys.forEach((storedFormKey) => {
-        browserStorageManager.remove(storedFormKey);
-      });
-      dispatch(setClearStoredFormData(false));
-    }
-  }, [clearStoredFormData]);
 
   return (
     <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
