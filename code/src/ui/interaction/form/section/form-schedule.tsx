@@ -12,6 +12,7 @@ import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   extractResponseField,
   extractResponseFieldArray,
+  getUTCDate,
   parseStringsForUrls,
   parseWordsForLabels,
 } from "utils/client-utils";
@@ -84,8 +85,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   useEffect(() => {
     const formEntryDates = props.form.getValues(FORM_STATES.ENTRY_DATES);
     if (Array.isArray(formEntryDates) && formEntryDates.length > 0) {
-      // Ensure all items are Date objects
-      const validDates = formEntryDates.filter((date) => date instanceof Date);
+      // Convert strings to UTC Date objects (storage saves as ISO strings)
+      const validDates: Date[] = formEntryDates.map((dateString: string) => getUTCDate(new Date(dateString)))
       if (validDates.length > 0) {
         setFixedDates(validDates);
         setSelectedServiceOption(fixedService);
