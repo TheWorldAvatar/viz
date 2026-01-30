@@ -92,7 +92,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         setSelectedServiceOption(fixedService);
       }
     }
-  }, [props.form.formState.isLoading]);
+  }, []);
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
