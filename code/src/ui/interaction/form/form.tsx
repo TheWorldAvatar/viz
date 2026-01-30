@@ -1,5 +1,5 @@
 import { usePathname, useRouter } from "next/navigation";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -34,7 +34,7 @@ import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
-import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList, collectDataTypeFieldIds } from "./form-utils";
+import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
 import { DependentFormSection } from "./section/dependent-form-section";
 import FormGeocoder from "./section/form-geocoder";
@@ -42,7 +42,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { selectFormPersistenceEnabled, setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
+import { setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
 
 
 interface FormComponentProps {
@@ -80,11 +80,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
-  const [dataTypeFields, setDataTypeFields] = useState<string[]>([]);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
-
   const { handleDrawerClose } = useDrawerNavigation();
-  const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const openFormCount: number = useSelector(selectOpenFormCount);
 
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
@@ -148,7 +145,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         id: id,
       };
 
-      const fieldIdMapping: Record<string, string> = {};
+      const fieldIdMapping: Record<string, string> = { formEntityType: FORM_ENTITY_IDENTIFIER };
 
       // Retrieve template from APIs
       let url: string;
@@ -203,11 +200,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const parsedTemplate = {
         ...template,
         node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore, fieldIdMapping),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore, fieldIdMapping),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore),
       };
 
       setFormTemplate(parsedTemplate);
-      setDataTypeFields(collectDataTypeFieldIds(parsedTemplate));
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
@@ -215,34 +211,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       return storedState;
     },
   });
-
-
-  useEffect(() => {
-    if (formPersistenceEnabled) {
-      const values: FieldValues = form.getValues();
-      const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-      const dataTypeValues: Record<string, string> = {};
-
-      Object.entries(values).forEach(([key, value]) => {
-        // If the field ID has been translated, use the translated ID
-        // client details client -> client
-        const storageKey = translatedFormFieldIds[key] ?? key;
-        // Skip excluded fields
-        if (excludedFields.includes(storageKey) || key.startsWith('_form_')) return;
-        // Check if the field is a data type field
-        if (dataTypeFields.includes(storageKey)) {
-          dataTypeValues[storageKey] = value;
-        } else {
-          // Save individual field
-          browserStorageManager.set(storageKey, value);
-        }
-      });
-
-      // Save all data type fields under a single identifier
-      browserStorageManager.set(FORM_ENTITY_IDENTIFIER, JSON.stringify(dataTypeValues));
-    }
-  }, [formPersistenceEnabled]);
-
 
   // // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
@@ -554,13 +522,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           ),
           form,
           -1,
-          billingParams
+          billingParams,
+          translatedFormFieldIds
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
           node={formTemplate?.node}
           form={form}
+          translatedFormFieldIds={translatedFormFieldIds}
           billingStore={billingParams}
         />
       )}
@@ -574,7 +544,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams)
+            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds)
           )}
     </form>
   );
@@ -591,6 +561,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
  * @param {BillingEntityTypes} billingParams Optionally indicates the type of account and pricing.
+ * @param translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  */
 export function renderFormField(
   entityType: string,
@@ -598,6 +569,7 @@ export function renderFormField(
   form: UseFormReturn,
   currentIndex: number,
   billingParams: BillingEntityTypes,
+  translatedFormFieldIds: Record<string, string>
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -612,10 +584,11 @@ export function renderFormField(
         entityType={entityType}
         group={fieldset}
         form={form}
+        translatedFormFieldIds={translatedFormFieldIds}
+        billingStore={billingParams}
         options={{
           disabled: disableAllInputs,
         }}
-        billingStore={billingParams}
       />
     );
   } else {
@@ -641,10 +614,11 @@ export function renderFormField(
           maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
           fieldConfigs={[fieldProp]}
           form={form}
+          translatedFormFieldIds={translatedFormFieldIds}
+          billingStore={billingParams}
           options={{
             disabled: disableAllInputs,
           }}
-          billingStore={billingParams}
         />
       );
     }
@@ -693,6 +667,7 @@ export function renderFormField(
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           dependentProp={fieldProp}
           form={form}
+          translatedFormFieldIds={translatedFormFieldIds}
           billingStore={billingParams}
         />
       );

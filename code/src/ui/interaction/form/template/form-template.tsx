@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
-import { useSelector } from 'react-redux';
 import { browserStorageManager } from 'state/browser-storage-manager';
-import { selectFormPersistenceEnabled } from 'state/form-persistence-slice';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
+import { getUTCDate } from 'utils/client-utils';
 
 interface FormComponentProps {
   entityType: string;
@@ -24,21 +23,59 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
-  const formPersistenceEnabled: boolean = useSelector(selectFormPersistenceEnabled);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
+  const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
+
+  const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
+
 
   // Load stored form values from session storage
-  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
+  const loadStoredFormValues = (initialState: FieldValues, translatedFormFieldIds: Record<string, string>): FieldValues => {
     const storedValues: FieldValues = { ...initialState };
-    // Fields that should never be loaded from storage (always use from initialState)
     const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+
+    // Build reverse mapping
+    // client -> client details client
+    const reverseMapping: Record<string, string> = {};
+    Object.entries(translatedFormFieldIds).forEach(([formKey, storageKey]) => {
+      reverseMapping[storageKey] = formKey;
+    });
+
+    // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
+    const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
+    if (entityForm) {
+      try {
+        const nestedValues = JSON.parse(entityForm);
+        Object.entries(nestedValues).forEach(([storageKey, value]) => {
+          const formKey = reverseMapping[storageKey] ?? storageKey;
+          if (!excludedFields.includes(storageKey)) {
+            storedValues[formKey] = value;
+          }
+        });
+      } catch (e) {
+        console.error("Failed to parse nested form data for identifier:", FORM_ENTITY_IDENTIFIER, e);
+      }
+    }
+
+    // Load individually saved non-datatype fields
     browserStorageManager.keys().forEach((key) => {
-      // Skip the excluded fields
-      if (excludedFields.includes(key)) {
+      // Skip excluded fields and the nested datatype identifier
+      if (excludedFields.includes(key) || key.startsWith('_form_')) {
         return;
       }
       const storedValue = browserStorageManager.get(key);
-      storedValues[key] = storedValue;
+      // If its a translated field, map it back to the original form key
+      const formKey = reverseMapping[key] ?? key;
+
+      // Convert entry_dates from ISO strings to Date objects
+      // The date picker expects Date objects, not strings
+      if (formKey === FORM_STATES.ENTRY_DATES && Array.isArray(storedValue)) {
+        storedValues[formKey] = storedValue.map((dateString: string) =>
+          getUTCDate(new Date(dateString))
+        );
+      } else {
+        storedValues[formKey] = storedValue;
+      }
     });
     return storedValues;
   };
@@ -50,29 +87,18 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       const initialState: FieldValues = {
         formType: 'edit', // DEFAULT TO EDIT TYPE
       };
-      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields);
+
+      const fieldIdMapping: Record<string, string> = { formEntityType: FORM_ENTITY_IDENTIFIER };
+
+      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
       setFormFields(fields);
+      setTranslatedFormFieldIds(fieldIdMapping);
 
       // Load stored values from session storage
-      const storedState: FieldValues = loadStoredFormValues(initialState);
+      const storedState: FieldValues = loadStoredFormValues(initialState, fieldIdMapping);
       return storedState;
     }
   });
-
-  // Save form values to session storage when form persistence is enabled
-  useEffect(() => {
-    if (formPersistenceEnabled) {
-      const values: FieldValues = form.getValues();
-      const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-      Object.entries(values).forEach(([key, value]) => {
-        if (value !== "" && !excludedFields.includes(key)) {
-          browserStorageManager.set(key, value);
-        }
-      });
-    }
-  }, [formPersistenceEnabled]);
-
-
 
   return (
     <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
@@ -80,7 +106,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         <LoadingSpinner isSmall={false} /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
           .map((formField, index) => {
-            return renderFormField(props.entityType, formField, form, index, { account: "", accountField: "", pricing: "", pricingField: "" })
+            return renderFormField(props.entityType, formField, form, index, { account: "", accountField: "", pricing: "", pricingField: "" }, translatedFormFieldIds)
           })}
     </form>
   );

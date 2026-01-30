@@ -25,6 +25,7 @@ interface BranchFormSectionProps {
   entityType: string;
   node: NodeShape[];
   form: UseFormReturn;
+  translatedFormFieldIds: Record<string, string>;
   billingStore?: BillingEntityTypes;
 }
 /**
@@ -34,6 +35,7 @@ interface BranchFormSectionProps {
  * @param {string} entityType The type of entity.
  * @param {NodeShape[]} node A list containing the potential form field configurations available.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {Record<string, string>} translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  */
 export default function BranchFormSection(
@@ -170,7 +172,7 @@ export default function BranchFormSection(
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
         : selectedModel?.property.map((field, index) => {
-          return renderFormField(props.entityType, field, props.form, index, props.billingStore);
+          return renderFormField(props.entityType, field, props.form, index, props.billingStore, props.translatedFormFieldIds);
         })}
     </>
   );

@@ -78,67 +78,15 @@ const EXCLUDED_CLASS_IDS: string[] = [
 
 /**
  * Checks if a field shape has a class that is not in the excluded list.
+ * Also it check if its an ontology concept selector (has 'in' property).
  * Returns true if the field should be included in the field ID mapping.
  * 
  * @param {PropertyShape} fieldShape The field shape to check.
  * @returns {boolean} True if the field has a class that is not excluded.
  */
 export function isFieldMappable(fieldShape: PropertyShape): boolean {
-  return fieldShape.class && !EXCLUDED_CLASS_IDS.includes(fieldShape.class[ID_KEY]);
+  return (fieldShape.class && !EXCLUDED_CLASS_IDS.includes(fieldShape.class[ID_KEY])) || !!fieldShape.in;
 }
-
-/**
- * Recursively extracts the `fieldId`s of all fields that have a `datatype` from a given list of `PropertyShapeOrGroup`.
-
- * @param fields - An array of `PropertyShapeOrGroup` objects (can be shapes or groups).
- * @param acc - An accumulator array that collects `fieldId`s. Used for recursion.
- * 
- * @returns An array of `fieldId`s for all properties that have a `datatype`.
- */
-export function extractDataTypeFieldIds(
-  fields: PropertyShapeOrGroup[],
-  acc: string[]
-): string[] {
-  fields.forEach((field) => {
-    if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
-      // If the field is a group, recurse into its properties
-      const group = field as PropertyGroup;
-      extractDataTypeFieldIds(group.property, acc);
-    } else {
-      const shape = field as PropertyShape;
-      // Only include fields that have a datatype
-      if (shape.fieldId && shape.datatype) {
-        acc.push(shape.fieldId);
-      }
-    }
-  });
-  return acc;
-}
-
-/**
- * Collects the `fieldId`s of all fields with a `datatype` from a full form template.
- * This function handles both top-level properties and properties inside nodes (branches) of the template.
- *
- * @param template - The template containing properties and nodes.
- * 
- * @returns An array of `fieldId`s for all properties in the template that have a `datatype`.
- */
-export function collectDataTypeFieldIds(
-  template: FormTemplateType
-): string[] {
-  const fieldIds: string[] = [];
-
-  // Extract from top-level properties
-  extractDataTypeFieldIds(template.property, fieldIds);
-
-  // Extract from nested node properties (if any)
-  template.node?.forEach((node) => {
-    extractDataTypeFieldIds(node.property, fieldIds);
-  });
-
-  return fieldIds;
-}
-
 
 
 /**
@@ -153,8 +101,8 @@ export function collectDataTypeFieldIds(
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
+  fieldIdMapping?: Record<string, string>,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
-  fieldIdMapping?: Record<string, string>
 ): PropertyShapeOrGroup[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
@@ -266,7 +214,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes, fieldIdMapping);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, fieldIdMapping, billingTypes);
     nodeStates.push(nodeState);
     results.push({
       ...shape,

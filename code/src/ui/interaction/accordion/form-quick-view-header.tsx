@@ -8,6 +8,11 @@ import { Dictionary } from "types/dictionary";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
+import { setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { FieldValues, UseFormReturn } from "react-hook-form";
+import { FORM_STATES } from "../form/form-utils";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -22,6 +27,8 @@ interface FormQuickViewHeaderProps {
   accountType?: string;
   pricingType?: string;
   disableWhenDependentHasValueOnNavigation: boolean;
+  form: UseFormReturn;
+  translatedFormFieldIds: Record<string, string>;
 }
 
 /** 
@@ -39,13 +46,45 @@ interface FormQuickViewHeaderProps {
  * @param {string} accountType Optionally indicates the type of account.
  * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {boolean} disableWhenDependentHasValueOnNavigation Hides action buttons when navigating with dependent value to a new form. It hides only buttons for the parent, not children.
+ * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {Record<string, string>} translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  **/
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
+  const dispatch = useDispatch();
+  const openFormCount: number = useSelector(selectOpenFormCount);
+
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
   };
+
+  // Handler for form persistence when redirecting
+  // Saves the current form state to the session storage
+  const handleFormPersistence = (): void => {
+    const values: FieldValues = props.form.getValues();
+    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+    const dataTypeValues: Record<string, string> = {};
+    dispatch(setOpenFormCount(openFormCount + 1));
+
+    Object.entries(values).forEach(([key, value]) => {
+      // If the field ID has been translated, use the translated ID
+      // client details client -> client
+      // Skip excluded fields
+      if (excludedFields.includes(key) || key.startsWith('_form_')) return;
+      // Check if the field is a data type field
+      if (props.translatedFormFieldIds && props.translatedFormFieldIds[key]) {
+        browserStorageManager.set(props.translatedFormFieldIds[key], value);
+      } else {
+        // Save individual field
+        dataTypeValues[key] = value;
+      }
+    });
+    // Save all data type fields under a single identifier
+    if (Object.keys(dataTypeValues).length) {
+      browserStorageManager.set(props.translatedFormFieldIds.formEntityType, JSON.stringify(dataTypeValues));
+    }
+  }
 
   // Generate URL for sub-entity actions (add, edit, delete)
   const genSubEntityUrl = (
@@ -85,8 +124,9 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
           iconSize="small"
           tooltipText={dict.action.add}
           url={genSubEntityUrl("add", props.entityType)}
-          saveFormDataInMemory={true}
+          softRedirect={true}
           variant="outline"
+          additionalAction={handleFormPersistence}
         />
         {props.selectedEntityId && isPermitted("edit") && <RedirectButton
           leftIcon="edit"
@@ -98,8 +138,9 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             props.entityType,
             props.selectedEntityId
           )}
-          saveFormDataInMemory={true}
+          softRedirect={true}
           variant="outline"
+          additionalAction={handleFormPersistence}
         />}
         {props.selectedEntityId && isPermitted("delete") && <RedirectButton
           leftIcon="delete"
@@ -111,8 +152,9 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             props.entityType,
             props.selectedEntityId
           )}
-          saveFormDataInMemory={true}
+          softRedirect={true}
           variant="outline"
+          additionalAction={handleFormPersistence}
         />}
       </div>}
     </div>

@@ -32,6 +32,7 @@ import { useRef } from "react";
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
   form: UseFormReturn;
+  translatedFormFieldIds: Record<string, string>;
   billingStore?: BillingEntityTypes;
   isArray?: boolean;
 }
@@ -41,6 +42,7 @@ interface DependentFormSectionProps {
  *
  * @param {PropertyShape} dependentProp The dependent property's SHACL restrictions.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {Record<string, string>} translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  * @param {boolean} isArray Whether the field is an array.
  */
@@ -124,6 +126,8 @@ export function DependentFormSection(
           accountType={props.billingStore?.account}
           pricingType={props.billingStore?.pricing}
           disableWhenDependentHasValueOnNavigation={disableWhenDependentHasValueOnNavigation}
+          form={props.form}
+          translatedFormFieldIds={props.translatedFormFieldIds}
         />}
         {currentOption &&
           isQuickViewOpen &&
