@@ -68,7 +68,24 @@ export const ENTITY_STATUS: Record<string, string> = {
   PENDING: "Pending",
 };
 
+// Class IDs that should be excluded from field ID mapping.
+// It a field includes one of these class IDs, it is not part of the dependent form section.
+const EXCLUDED_CLASS_IDS: string[] = [
+  "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule",
+  "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation",
+  "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries",
+];
 
+/**
+ * Checks if a field shape has a class that is not in the excluded list.
+ * Returns true if the field should be included in the field ID mapping.
+ * 
+ * @param {PropertyShape} fieldShape The field shape to check.
+ * @returns {boolean} True if the field has a class that is not excluded.
+ */
+export function isFieldMappable(fieldShape: PropertyShape): boolean {
+  return fieldShape.class && !EXCLUDED_CLASS_IDS.includes(fieldShape.class[ID_KEY]);
+}
 
 /**
  * Recursively extracts the `fieldId`s of all fields that have a `datatype` from a given list of `PropertyShapeOrGroup`.
@@ -157,7 +174,7 @@ export function parsePropertyShapeOrGroupList(
           (fieldset.maxCount && parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1)
         ) {
 
-          if (updatedProp.class && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && updatedProp.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+          if (isFieldMappable(updatedProp)) {
             fieldIdMapping[fieldset?.label?.[VALUE_KEY]] = fieldset?.label?.[VALUE_KEY]
           }
           return initFormField(
@@ -177,7 +194,7 @@ export function parsePropertyShapeOrGroupList(
         } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.pricingField = fieldId;
         }
-        if (updatedProp.class && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && updatedProp.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && updatedProp.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+        if (isFieldMappable(updatedProp)) {
           fieldIdMapping[fieldId] = updatedProp.name[VALUE_KEY];
         }
         return initFormField(updatedProp, initialState, fieldId);
@@ -197,7 +214,7 @@ export function parsePropertyShapeOrGroupList(
         !fieldShape.maxCount ||
         (fieldShape.maxCount && parseInt(fieldShape.maxCount?.[VALUE_KEY]) > 1)
       ) {
-        if (fieldShape.class && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && fieldShape.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+        if (isFieldMappable(fieldShape)) {
           fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
         }
         return initFormField(
@@ -209,7 +226,7 @@ export function parsePropertyShapeOrGroupList(
         );
       }
       // For groupless properties, their field ID will be directly set without further parsing
-      if (fieldShape.class && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" && fieldShape.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation" && fieldShape.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries") {
+      if (isFieldMappable(fieldShape)) {
         fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
       }
       return initFormField(
