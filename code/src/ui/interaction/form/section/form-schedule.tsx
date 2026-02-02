@@ -26,6 +26,7 @@ import { browserStorageManager } from "state/browser-storage-manager";
 interface FormScheduleProps {
   fieldId: string;
   form: UseFormReturn;
+  formEntityIdentifier: string;
   options?: FormFieldOptions;
 }
 
@@ -45,6 +46,7 @@ export const daysOfWeek: string[] = [
  * @param {string} fieldId Field name.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
+ * @param {string} formEntityIdentifier It returns the form entity identifier. (e.g., job, client , service_site)
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -98,9 +100,13 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
       // If there is data in the session storage for service schedule (recurrence), use that instead of fetching defaults
       // This is to preverent loading default values in EDIT form, even if there are existing values stored in the session storage
-      if (browserStorageManager.get(FORM_STATES.RECURRENCE)) {
-        setIsLoading(false);
-        return;
+      const storedValues = browserStorageManager.get(props.formEntityIdentifier);
+      if (storedValues) {
+        const parsed = JSON.parse(storedValues);
+        if (FORM_STATES.RECURRENCE in parsed) {
+          setIsLoading(false);
+          return;
+        }
       }
 
       // Set defaults
@@ -357,7 +363,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   type={"number"}
                   disabled={props.options?.disabled}
                   className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
-                    }`}
+                    } `}
                   step={"1"}
                   readOnly={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
                   aria-label={FORM_STATES.RECURRENCE}

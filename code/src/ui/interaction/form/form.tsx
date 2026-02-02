@@ -495,7 +495,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           form,
           -1,
           billingParams,
-          translatedFormFieldIds
+          translatedFormFieldIds,
+          FORM_ENTITY_IDENTIFIER
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
@@ -516,7 +517,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds)
+            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds, FORM_ENTITY_IDENTIFIER)
           )}
     </form>
   );
@@ -541,7 +542,8 @@ export function renderFormField(
   form: UseFormReturn,
   currentIndex: number,
   billingParams: BillingEntityTypes,
-  translatedFormFieldIds: Record<string, string>
+  translatedFormFieldIds: Record<string, string>,
+  formEntityIdentifier: string
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -607,6 +609,7 @@ export function renderFormField(
             options={{
               disabled: disableAllInputs,
             }}
+            formEntityIdentifier={formEntityIdentifier}
           />
         );
       }
