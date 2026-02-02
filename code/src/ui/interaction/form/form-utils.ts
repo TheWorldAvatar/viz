@@ -296,6 +296,17 @@ function initFormField(
     const minArraySize: number =
       Number.isNaN(minSize) || minSize != 0 ? 1 : minSize;
 
+    // If there is an array values stored in browser storage, retrieve it 
+    // and terminate early
+    const storedValue: string = browserStorageManager.get(fieldId);
+    if (storedValue) {
+      outputState[fieldId] = storedValue;
+      // Terminate early
+      return {
+        ...field,
+        fieldId: parsedFieldId,
+      };
+    }
     // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
       // If this is the first field item, initialise it as empty
