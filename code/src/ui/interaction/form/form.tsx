@@ -543,7 +543,7 @@ export function renderFormField(
   currentIndex: number,
   billingParams: BillingEntityTypes,
   translatedFormFieldIds: Record<string, string>,
-  formEntityIdentifier: string
+  formEntityIdentifier?: string
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
