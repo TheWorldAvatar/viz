@@ -26,7 +26,6 @@ interface FormQuickViewHeaderProps {
   accountId?: string;
   accountType?: string;
   pricingType?: string;
-  disableWhenDependentHasValueOnNavigation: boolean;
   form: UseFormReturn;
   translatedFormFieldIds: Record<string, string>;
 }
@@ -45,7 +44,6 @@ interface FormQuickViewHeaderProps {
  * @param {string} accountId Optionally indicates the account ID.
  * @param {string} accountType Optionally indicates the type of account.
  * @param {string} pricingType Optionally indicates the type of pricing.
- * @param {boolean} disableWhenDependentHasValueOnNavigation Hides action buttons when navigating with dependent value to a new form. It hides only buttons for the parent, not children.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {Record<string, string>} translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  **/
@@ -117,7 +115,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       >
         {props.title}
       </Button>}
-      {!props.isFormView && !props.disableWhenDependentHasValueOnNavigation && <div className="flex gap-2">
+      {!props.isFormView && <div className="flex gap-2">
         <RedirectButton
           leftIcon="add"
           size="icon"
