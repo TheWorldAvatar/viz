@@ -120,7 +120,7 @@ export function useDependentField(
                 }
 
                 // By default, id is empty if optional, else its undefined
-                const storedValue: string = browserStorageManager.get(label);
+                const storedValue: string = isArray ? undefined : browserStorageManager.get(label);
                 let defaultId: string = storedValue ?? currentOption == "" ?
                     isSectionOptional ? naOption.value : undefined :
                     currentOption;
@@ -204,7 +204,7 @@ export function useDependentField(
         const updateCurrentOption = async () => {
             const options: SelectOptionType[] = await getFieldOptions("");
             if (options?.length > 0) {
-                const storedValue: string = browserStorageManager.get(label);
+                const storedValue: string = isArray ? undefined : browserStorageManager.get(label);
                 const valueChecker: string = storedValue ?? form.getValues(field?.fieldId);
                 const initialOption: SelectOptionType = options.find(option => option?.value == valueChecker);
                 setSelectedOption(initialOption);
