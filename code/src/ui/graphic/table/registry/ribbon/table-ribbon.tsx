@@ -17,7 +17,7 @@ import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { useDispatch } from "react-redux";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { setOpenFormCount } from "state/form-persistence-slice";
+import { setOpenFormCount, setLockedFields } from "state/form-persistence-slice";
 
 interface TableRibbonProps {
   path: string;
@@ -246,6 +246,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 onClick={() => {
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),

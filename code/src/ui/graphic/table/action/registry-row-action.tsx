@@ -20,7 +20,7 @@ import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { useDispatch } from "react-redux";
-import { setOpenFormCount } from "state/form-persistence-slice";
+import { setOpenFormCount, setLockedFields } from "state/form-persistence-slice";
 
 
 
@@ -184,6 +184,7 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   handleClickView();
                 }}
               />
@@ -236,6 +237,7 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
@@ -251,6 +253,7 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -269,6 +272,7 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
@@ -284,6 +288,7 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
@@ -299,6 +304,7 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   dispatch(setOpenFormCount(0));
+                  dispatch(setLockedFields({}));
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}

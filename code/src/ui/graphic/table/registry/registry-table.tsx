@@ -41,7 +41,7 @@ import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
 import { useDispatch } from "react-redux";
-import { setOpenFormCount } from "state/form-persistence-slice";
+import { setOpenFormCount, setLockedFields } from "state/form-persistence-slice";
 
 
 interface RegistryTableProps {
@@ -95,6 +95,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     // Clear any stored form data when clicking on a row
     browserStorageManager.clear();
     dispatch(setOpenFormCount(0));
+    dispatch(setLockedFields({}));
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
