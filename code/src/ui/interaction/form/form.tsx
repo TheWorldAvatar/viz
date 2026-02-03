@@ -43,6 +43,7 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { setOpenFormCount, selectOpenFormCount, setLockedFields, selectLockedFields } from "state/form-persistence-slice";
+import { JsonObject } from "types/json";
 
 
 interface FormComponentProps {
@@ -95,7 +96,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
     if (entityForm) {
       try {
-        const nestedValues = JSON.parse(entityForm);
+        const nestedValues: JsonObject = JSON.parse(entityForm);
         Object.entries(nestedValues).forEach(([storageKey, value]) => {
           if (!excludedFields.includes(storageKey)) {
             initialState[storageKey] = value;
@@ -194,8 +195,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
-      const storedState: FieldValues = loadStoredFormValues(initialState);
-      return storedState;
+      return loadStoredFormValues(initialState);
     },
   });
 

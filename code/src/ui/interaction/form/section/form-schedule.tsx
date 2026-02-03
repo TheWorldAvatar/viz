@@ -85,7 +85,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   // Sync fixedDates with form's entry_date values (loaded from storage)
   useEffect(() => {
-    const formEntryDates = props.form.getValues(FORM_STATES.ENTRY_DATES);
+    const formEntryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
     if (Array.isArray(formEntryDates) && formEntryDates.length > 0) {
       // Convert strings to UTC Date objects (storage saves as ISO strings)
       const validDates: Date[] = formEntryDates.map((dateString: string) => getUTCDate(new Date(dateString)))
@@ -100,7 +100,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
       // If there is data in the session storage for service schedule (recurrence), use that instead of fetching defaults
       // This is to preverent loading default values in EDIT form, even if there are existing values stored in the session storage
-      const storedValues = browserStorageManager.get(props.formEntityIdentifier);
+      const storedValues: string | null = browserStorageManager.get(props.formEntityIdentifier);
       if (storedValues) {
         const parsed = JSON.parse(storedValues);
         if (FORM_STATES.RECURRENCE in parsed) {

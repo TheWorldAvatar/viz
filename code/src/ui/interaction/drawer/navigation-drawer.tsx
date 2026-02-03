@@ -38,10 +38,10 @@ export default function NavigationDrawer(
       isExternalOpen={isOpen}
       setIsExternalOpen={setIsOpen}
       onClose={() => {
-        const newOpenFormCount = openFormCount - 1;
+        const newOpenFormCount: number = openFormCount - 1;
         dispatch(setOpenFormCount(newOpenFormCount));
 
-        const updatedLockedFields = { ...lockedFields };
+        const updatedLockedFields: Record<string, number> = { ...lockedFields };
         Object.keys(updatedLockedFields).forEach((fieldName) => {
           if (newOpenFormCount < updatedLockedFields[fieldName]) {
             delete updatedLockedFields[fieldName];

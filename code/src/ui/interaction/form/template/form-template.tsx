@@ -7,6 +7,7 @@ import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
 import { selectLockedFields, selectOpenFormCount, setLockedFields } from 'state/form-persistence-slice';
 import { useSelector, useDispatch } from 'react-redux';
+import { JsonObject } from 'types/json';
 
 interface FormComponentProps {
   entityType: string;
@@ -41,7 +42,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
     const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
     if (entityForm) {
       try {
-        const nestedValues = JSON.parse(entityForm);
+        const nestedValues: JsonObject = JSON.parse(entityForm);
         Object.entries(nestedValues).forEach(([storageKey, value]) => {
           if (!excludedFields.includes(storageKey)) {
             initialState[storageKey] = value;
@@ -81,12 +82,13 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         dispatch(setLockedFields(tempLockedFields));
       }
 
+      delete initialState.lockField;
+
       setFormFields(fields);
       setTranslatedFormFieldIds(fieldIdMapping);
 
       // Load stored values from session storage
-      const storedState: FieldValues = loadStoredFormValues(initialState);
-      return storedState;
+      return loadStoredFormValues(initialState);
     }
   });
 
