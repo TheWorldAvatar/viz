@@ -160,13 +160,19 @@ export function useDependentField(
                         // Only append the existing option if it exists
                         const results: Record<string, SparqlResponseField>[] = responseEntity.data?.items as Record<string, SparqlResponseField>[];
                         if (results?.length > 0) {
-                            entities.push({
-                                label: results[0].name?.value,
-                                value: results[0].iri?.value
-                            });
+                            // The existing saved option's parent does not match the current parent option
+                            // reset to default NA or undefined dependending on whether it is optional
+                            if (parentField && results[0][field?.dependentOn?.label].value !== currentParentOption) {
+                                defaultId = isSectionOptional ? naOption.value : undefined;
+                                // Add the existing option if it should be shown
+                            } else {
+                                entities.push({
+                                    label: results[0].name?.value,
+                                    value: results[0].iri?.value
+                                });
+                            }
                         }
                     }
-
                 }
 
                 const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
@@ -203,8 +209,7 @@ export function useDependentField(
         const updateCurrentOption = async () => {
             const options: SelectOptionType[] = await getFieldOptions("");
             if (options?.length > 0) {
-                const storedValue: string = isArray ? undefined : browserStorageManager.get(label);
-                const valueChecker: string = storedValue ?? form.getValues(field?.fieldId);
+                const valueChecker: string = form.getValues(field?.fieldId);
                 const initialOption: SelectOptionType = options.find(option => option?.value == valueChecker);
                 setSelectedOption(initialOption);
             }
