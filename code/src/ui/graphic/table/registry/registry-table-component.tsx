@@ -80,7 +80,6 @@ export default function RegistryTableComponent(
           instances={tableDescriptor.initialInstances}
           triggerRefresh={triggerRefresh}
           tableDescriptor={tableDescriptor}
-          accountType={props.accountType}
         />
       </div>
       <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
