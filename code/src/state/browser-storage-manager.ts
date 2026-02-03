@@ -48,34 +48,6 @@ class BrowserStorageManager {
     }
   }
 
-
-  /**
-   * Retrieves all keys from the storage.
-   * 
-   * @returns An array of all keys in the storage.
-   */
-  public keys(): string[] {
-    try {
-      return Object.keys(this.storage);
-    } catch (error) {
-      console.error("Error reading sessionStorage keys:", error);
-      return [];
-    }
-  }
-
-  /**
- * Removes a specific item from storage by key.
- * 
- * @param key The key of the item to remove.
- */
-  public remove(key: string): void {
-    try {
-      this.storage.removeItem(key);
-    } catch (error) {
-      console.error(`Error removing key "${key}" from sessionStorage:`, error);
-    }
-  }
-
   /**
    * Clears all items from the storage. Use with caution.
    */

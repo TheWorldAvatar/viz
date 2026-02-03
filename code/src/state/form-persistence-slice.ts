@@ -2,13 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ReduxState } from "app/store";
 
 interface FormPersistenceState {
-    enabled: boolean;
     openFormCount: number;
     lockedFields: Record<string, number>;
 }
 
 const initialState: FormPersistenceState = {
-    enabled: false,
     openFormCount: 0,
     lockedFields: {},
 };
@@ -21,12 +19,6 @@ const formPersistenceSlice = createSlice({
     initialState,
     reducers: {
         /**
-           * Sets whether form data should be saved in memory (Session storage).
-        */
-        setFormPersistenceEnabled: (state, action: PayloadAction<boolean>) => {
-            state.enabled = action.payload;
-        },
-        /**
          * Sets the count of open forms that are persisting data.
         */
         setOpenFormCount: (state, action: PayloadAction<number>) => {
@@ -34,7 +26,7 @@ const formPersistenceSlice = createSlice({
         },
         /**
          * Sets the locked fields
-         * Locked fields are parents fields , that we need to keep trqack of
+         * Locked fields are parents fields , that we need to keep track of
          * in order to disable them when multiple forms are open
         */
         setLockedFields: (state, action: PayloadAction<Record<string, number>>) => {
@@ -44,8 +36,7 @@ const formPersistenceSlice = createSlice({
 })
 
 
-export const { setFormPersistenceEnabled, setOpenFormCount, setLockedFields } = formPersistenceSlice.actions;
-export const selectFormPersistenceEnabled = (state: ReduxState) => state.formPersistence.enabled;
+export const { setOpenFormCount, setLockedFields } = formPersistenceSlice.actions;
 export const selectOpenFormCount = (state: ReduxState) => state.formPersistence.openFormCount;
 export const selectLockedFields = (state: ReduxState) => state.formPersistence.lockedFields;
 export default formPersistenceSlice.reducer;
