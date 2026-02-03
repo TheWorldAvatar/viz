@@ -5,6 +5,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import {
   BillingEntityTypes,
+  FormTypeMap,
   NodeShape,
   PROPERTY_GROUP_TYPE,
   PropertyGroup,
@@ -70,9 +71,9 @@ export default function BranchFormSection(
 
       // Check if there's a stored branch value
       let storedBranchName: string | undefined;
-      if (formType === "edit") {
+      if (formType === FormTypeMap.DELETE) {
         storedBranchName = props.form.getValues(BRANCH_ADD);
-      } else if (formType === "add") {
+      } else if (formType === FormTypeMap.ADD) {
         storedBranchName = props.form.getValues(BRANCH_ADD);
       }
 
@@ -87,13 +88,13 @@ export default function BranchFormSection(
       setIsSwitching(false);
 
       // Only set form values if there's no stored value
-      if (formType === "delete") {
+      if (formType === FormTypeMap.DELETE) {
         props.form.setValue(BRANCH_DELETE, initialBranchName);
-      } else if (formType === "edit" && !storedBranchName) {
+      } else if (formType === FormTypeMap.EDIT && !storedBranchName) {
         // Set both values - branch_add for new, branch_delete for original
         props.form.setValue(BRANCH_ADD, initialBranchName);
         props.form.setValue(BRANCH_DELETE, initialBranchName);
-      } else if (formType === "add" && !storedBranchName) {
+      } else if (formType === FormTypeMap.ADD && !storedBranchName) {
         // For add forms
         props.form.setValue(BRANCH_ADD, initialBranchName);
       }
@@ -105,13 +106,13 @@ export default function BranchFormSection(
     const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
     const newBranchName: string = formOption.value;
 
-    if (formType === "edit") {
+    if (formType === FormTypeMap.EDIT) {
       //  branch_add is the new selection, branch_delete stays as original
       props.form.setValue(BRANCH_ADD, newBranchName);
       // branch_delete remains the original value (already set in useEffect)
-    } else if (formType === "delete") {
+    } else if (formType === FormTypeMap.DELETE) {
       props.form.setValue(BRANCH_DELETE, newBranchName);
-    } else if (formType === "add") {
+    } else if (formType === FormTypeMap.ADD) {
       props.form.setValue(BRANCH_ADD, newBranchName);
     }
 
