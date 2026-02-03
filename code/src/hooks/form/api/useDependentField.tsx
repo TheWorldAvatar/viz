@@ -121,10 +121,9 @@ export function useDependentField(
 
                 // By default, id is empty if optional, else its undefined
                 const storedValue: string = isArray ? undefined : browserStorageManager.get(label);
-                let defaultId: string = storedValue ?? currentOption == "" ?
+                let defaultId: string = storedValue ?? (currentOption == "" ?
                     isSectionOptional ? naOption.value : undefined :
-                    currentOption;
-
+                    currentOption);
                 // Only update the id if there are any entities
                 if (entities.length > 0) {
                     let matchingExistingOptionValue: string = null;
