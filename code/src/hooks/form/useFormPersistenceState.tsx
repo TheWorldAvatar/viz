@@ -6,7 +6,7 @@ import { setOpenFormCount, setLockedFields, selectOpenFormCount, selectLockedFie
 interface useFormPersistenceStateReturn {
     openFormCount: number;
     lockedFields: Record<string, number>;
-    clearFormState: () => void;
+    clearPersistedFormState: () => void;
     setOpenFormCountValue: (_value: number) => void;
     setLockedFieldsValue: (_value: Record<string, number>) => void;
 }
@@ -20,7 +20,7 @@ const useFormPersistenceState = (): useFormPersistenceStateReturn => {
     const openFormCount: number = useSelector(selectOpenFormCount);
     const lockedFields: Record<string, number> = useSelector(selectLockedFields);
 
-    const clearFormState = () => {
+    const clearPersistedFormState = () => {
         dispatch(setOpenFormCount(0));
         dispatch(setLockedFields({}));
     };
@@ -29,11 +29,12 @@ const useFormPersistenceState = (): useFormPersistenceStateReturn => {
         dispatch(setOpenFormCount(value));
     };
 
+
     const setLockedFieldsValue = (value: Record<string, number>) => {
         dispatch(setLockedFields(value));
     };
 
-    return { openFormCount, lockedFields, clearFormState, setOpenFormCountValue, setLockedFieldsValue };
+    return { openFormCount, lockedFields, clearPersistedFormState, setOpenFormCountValue, setLockedFieldsValue };
 };
 
 export default useFormPersistenceState;

@@ -65,7 +65,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const { navigateToDrawer } = useDrawerNavigation();
   const isPermitted = usePermissionGuard();
-  const { clearFormState } = useFormPersistenceState();
+  const { clearPersistedFormState } = useFormPersistenceState();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
   const [historyId, setHistoryId] = useState<string>("");
@@ -92,7 +92,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         : getId(row.iri);
     // Clear any stored form data when clicking on a row
     browserStorageManager.clear();
-    clearFormState();
+    clearPersistedFormState();
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||

@@ -42,7 +42,7 @@ interface RegistryRowActionProps {
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
-  const { clearFormState } = useFormPersistenceState();
+  const { clearPersistedFormState } = useFormPersistenceState();
   const { navigateToDrawer } = useDrawerNavigation();
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -181,7 +181,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   handleClickView();
                 }}
               />
@@ -233,7 +233,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
@@ -248,7 +248,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -266,7 +266,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
@@ -281,7 +281,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
@@ -296,7 +296,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}

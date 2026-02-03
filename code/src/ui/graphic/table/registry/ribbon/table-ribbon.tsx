@@ -45,7 +45,7 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
-  const { clearFormState } = useFormPersistenceState();
+  const { clearPersistedFormState } = useFormPersistenceState();
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
@@ -244,7 +244,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 )}
                 onClick={() => {
                   browserStorageManager.clear();
-                  clearFormState();
+                  clearPersistedFormState();
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
