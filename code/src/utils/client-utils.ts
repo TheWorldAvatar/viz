@@ -16,6 +16,7 @@ import {
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   SparqlResponseField,
 } from "types/form";
@@ -209,12 +210,19 @@ export function getInitialDateFromLifecycleStage(
   // For closed and other stages: start with today
   const initialDate: Date = new Date();
 
-  if (lifecycleStage === "scheduled") {
+  if (lifecycleStage === LifecycleStageMap.SCHEDULED) {
     // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
     const fourWeeksFromInitialDate: Date = new Date();
     initialDate.setDate(initialDate.getDate() + 1);
     fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
     return { from: initialDate, to: fourWeeksFromInitialDate };
+    // For billing activity, set the date range to the current month
+  } else if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
+    // Get the first day of the current month
+    const startOfMonth: Date = new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
+    // Get the last day of the current month by passing the 0th day of the next month
+    const endOfMonth: Date = new Date(initialDate.getFullYear(), initialDate.getMonth() + 1, 0);
+    return { from: startOfMonth, to: endOfMonth };
   }
   return { from: initialDate, to: initialDate };
 }
