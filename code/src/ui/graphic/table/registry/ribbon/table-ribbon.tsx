@@ -15,9 +15,8 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { useDispatch } from "react-redux";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { setOpenFormCount, setLockedFields } from "state/form-persistence-slice";
+import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface TableRibbonProps {
   path: string;
@@ -46,7 +45,7 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
-  const dispatch = useDispatch();
+  const { clearFormState } = useFormPersistenceState();
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
@@ -245,8 +244,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 )}
                 onClick={() => {
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),

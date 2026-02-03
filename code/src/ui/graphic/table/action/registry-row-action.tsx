@@ -2,6 +2,7 @@ import { useRegistryRowPermissionGuard } from "hooks/auth/useRegistryRowPermissi
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { FieldValues } from "react-hook-form";
@@ -19,9 +20,6 @@ import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { useDispatch } from "react-redux";
-import { setOpenFormCount, setLockedFields } from "state/form-persistence-slice";
-
 
 
 interface RegistryRowActionProps {
@@ -44,7 +42,7 @@ interface RegistryRowActionProps {
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
-  const dispatch = useDispatch();
+  const { clearFormState } = useFormPersistenceState();
   const { navigateToDrawer } = useDrawerNavigation();
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -183,8 +181,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   handleClickView();
                 }}
               />
@@ -236,8 +233,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
@@ -252,8 +248,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -271,8 +266,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
@@ -287,8 +281,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
@@ -303,8 +296,7 @@ export default function RegistryRowAction(
                 onClick={() => {
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
-                  dispatch(setOpenFormCount(0));
-                  dispatch(setLockedFields({}));
+                  clearFormState();
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}

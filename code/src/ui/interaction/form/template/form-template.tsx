@@ -5,9 +5,8 @@ import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } fr
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
-import { selectLockedFields, selectOpenFormCount, setLockedFields } from 'state/form-persistence-slice';
-import { useSelector, useDispatch } from 'react-redux';
 import { JsonObject } from 'types/json';
+import useFormPersistenceState from 'hooks/form/useFormPersistenceState';
 
 interface FormComponentProps {
   entityType: string;
@@ -25,14 +24,10 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
-  const dispatch = useDispatch();
-  const lockedFields: Record<string, number> = useSelector(selectLockedFields);
-  const openFormCount: number = useSelector(selectOpenFormCount);
+  const { lockedFields, openFormCount, setLockedFieldsValue } = useFormPersistenceState();
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
-
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
-
 
   // Load stored form values from session storage
   const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
@@ -72,14 +67,12 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
 
       if (initialState.lockField.length > 0) {
         const tempLockedFields: Record<string, number> = { ...lockedFields };
-
         initialState.lockField.forEach((field: string) => {
           if (tempLockedFields[field] == undefined) {
             tempLockedFields[field] = openFormCount;
           }
         });
-
-        dispatch(setLockedFields(tempLockedFields));
+        setLockedFieldsValue(tempLockedFields);
       }
 
       delete initialState.lockField;

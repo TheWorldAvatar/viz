@@ -25,9 +25,8 @@ import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header
 import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../field/form-input-container";
-import { useSelector } from "react-redux";
-import { selectOpenFormCount, selectLockedFields } from "state/form-persistence-slice";
 import { browserStorageManager } from "state/browser-storage-manager";
+import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -50,8 +49,7 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const openFormCount: number = useSelector(selectOpenFormCount);
-  const lockedFields: Record<string, number> = useSelector(selectLockedFields);
+  const { openFormCount, lockedFields } = useFormPersistenceState();
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _

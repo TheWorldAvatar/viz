@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
@@ -42,8 +42,8 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { setOpenFormCount, selectOpenFormCount, setLockedFields, selectLockedFields } from "state/form-persistence-slice";
 import { JsonObject } from "types/json";
+import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 
 interface FormComponentProps {
@@ -78,9 +78,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
+  const { openFormCount, setOpenFormCountValue, lockedFields, setLockedFieldsValue } = useFormPersistenceState();
   const { startLoading, stopLoading } = useOperationStatus();
-  const lockedFields: Record<string, number> = useSelector(selectLockedFields);
-  const openFormCount: number = useSelector(selectOpenFormCount);
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
@@ -186,7 +185,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             tempLockedFields[field] = openFormCount;
           }
         });
-        dispatch(setLockedFields(tempLockedFields));
+        setLockedFieldsValue(tempLockedFields);
       }
 
       delete initialState.lockField;
@@ -474,7 +473,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
-      dispatch(setOpenFormCount(openFormCount - 1));
+      setOpenFormCountValue(openFormCount - 1);
 
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
