@@ -60,6 +60,7 @@ export const FORM_STATES: Record<string, string> = {
   UNIT_RATE: "rate ($)",
   UNIT_LOWER_BOUND: "from (unit)",
   UNIT_UPPER_BOUND: "to (unit)",
+  LOCK_FIELD: "lockField",
 };
 
 export const ENTITY_STATUS: Record<string, string> = {
@@ -106,16 +107,27 @@ export function parsePropertyShapeOrGroupList(
 ): PropertyShapeOrGroup[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
+
+  // Initialize lockField array to collect dependentOn labels
+  if (!initialState.lockField) {
+    initialState.lockField = [];
+  }
+
   return fields.map((field) => {
     // Properties as part of a group
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
       const fieldset: PropertyGroup = field as PropertyGroup;
+
       const properties: PropertyShape[] = fieldset.property.map((fieldProp) => {
         // Iterate after filtering the property so that non-array fields are not parsed
         const updatedProp: PropertyShape = updateDependentProperty(
           fieldProp,
           fields
         );
+        // Collect dependentOn label into lockField array
+        if (updatedProp.dependentOn?.label && !initialState.lockField.includes(updatedProp.dependentOn.label)) {
+          initialState.lockField.push(updatedProp.dependentOn.label);
+        }
         // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
         if (
           !fieldset.maxCount ||
@@ -157,6 +169,10 @@ export function parsePropertyShapeOrGroupList(
         field as PropertyShape,
         fields
       );
+      // Collect dependentOn label into lockField array
+      if (fieldShape.dependentOn?.label && !initialState.lockField.includes(fieldShape.dependentOn.label)) {
+        initialState.lockField.push(fieldShape.dependentOn.label);
+      }
       // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
       if (
         !fieldShape.maxCount ||

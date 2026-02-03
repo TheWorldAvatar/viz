@@ -115,6 +115,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const initialState: FieldValues = {
         formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
         id: id,
+        lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
       const fieldIdMapping: Record<string, string> = { formEntityType: FORM_ENTITY_IDENTIFIER };
@@ -174,7 +175,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore, fieldIdMapping),
         property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore),
       };
-
+      // AFTER PARSING THE INITIAL STAE IN PARSEpROPERTYsHAPE , PASS IT TO REDUX
+      // DELETE THE LOCKS KEY IN THE INITAL STATE
       setFormTemplate(parsedTemplate);
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
