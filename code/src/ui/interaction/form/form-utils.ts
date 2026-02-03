@@ -60,7 +60,6 @@ export const FORM_STATES: Record<string, string> = {
   UNIT_RATE: "rate ($)",
   UNIT_LOWER_BOUND: "from (unit)",
   UNIT_UPPER_BOUND: "to (unit)",
-  LOCK_FIELD: "lockField",
 };
 
 export const ENTITY_STATUS: Record<string, string> = {
@@ -107,11 +106,6 @@ export function parsePropertyShapeOrGroupList(
 ): PropertyShapeOrGroup[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
-
-  // Initialize lockField array to collect dependentOn labels
-  if (!initialState.lockField) {
-    initialState.lockField = [];
-  }
 
   return fields.map((field) => {
     // Properties as part of a group
@@ -217,7 +211,7 @@ export function parseBranches(
   nodeShapes: NodeShape[],
   reqMatching: boolean,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
-  fieldIdMapping: Record<string, string>
+  fieldIdMapping: Record<string, string>,
 ): NodeShape[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
