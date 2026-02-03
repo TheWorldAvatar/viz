@@ -4,11 +4,13 @@ import { ReduxState } from "app/store";
 interface FormPersistenceState {
     enabled: boolean;
     openFormCount: number;
+    lockedFields: Record<string, number>;
 }
 
 const initialState: FormPersistenceState = {
     enabled: false,
     openFormCount: 0,
+    lockedFields: {},
 };
 
 /**
@@ -30,11 +32,20 @@ const formPersistenceSlice = createSlice({
         setOpenFormCount: (state, action: PayloadAction<number>) => {
             state.openFormCount = action.payload;
         },
+        /**
+         * Sets the locked fields
+         * Locked fields are parents fields , that we need to keep trqack of
+         * in order to disable them when multiple forms are open
+        */
+        setLockedFields: (state, action: PayloadAction<Record<string, number>>) => {
+            state.lockedFields = action.payload;
+        }
     },
 })
 
 
-export const { setFormPersistenceEnabled, setOpenFormCount } = formPersistenceSlice.actions;
+export const { setFormPersistenceEnabled, setOpenFormCount, setLockedFields } = formPersistenceSlice.actions;
 export const selectFormPersistenceEnabled = (state: ReduxState) => state.formPersistence.enabled;
 export const selectOpenFormCount = (state: ReduxState) => state.formPersistence.openFormCount;
+export const selectLockedFields = (state: ReduxState) => state.formPersistence.lockedFields;
 export default formPersistenceSlice.reducer;

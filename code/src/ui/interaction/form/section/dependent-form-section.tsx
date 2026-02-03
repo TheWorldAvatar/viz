@@ -26,7 +26,8 @@ import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searcha
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../field/form-input-container";
 import { useSelector } from "react-redux";
-import { selectOpenFormCount } from "state/form-persistence-slice";
+import { selectOpenFormCount, selectLockedFields } from "state/form-persistence-slice";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -50,6 +51,7 @@ export function DependentFormSection(
 ) {
   const dict: Dictionary = useDictionary();
   const openFormCount: number = useSelector(selectOpenFormCount);
+  const lockedFields: Record<string, number> = useSelector(selectLockedFields);
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -71,6 +73,7 @@ export function DependentFormSection(
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
 
+  const disableIfLocked: boolean = fieldName in lockedFields && browserStorageManager.get(fieldName) !== undefined && lockedFields[fieldName] < openFormCount;
 
   return (
     <div className="rounded-lg my-4">
@@ -96,7 +99,7 @@ export function DependentFormSection(
                   onChange={(option: SelectOptionType) => {
                     onChange(option.value);
                   }}
-                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE ||
+                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disableIfLocked ||
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
                   noOptionMessage={dict.message.noInstances}
@@ -119,6 +122,7 @@ export function DependentFormSection(
           pricingType={props.billingStore?.pricing}
           form={props.form}
           translatedFormFieldIds={props.translatedFormFieldIds}
+          disableIfLocked={disableIfLocked}
         />}
         {currentOption &&
           isQuickViewOpen &&

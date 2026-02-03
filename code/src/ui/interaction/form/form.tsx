@@ -42,7 +42,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { setOpenFormCount, selectOpenFormCount } from "state/form-persistence-slice";
+import { setOpenFormCount, selectOpenFormCount, setLockedFields, selectLockedFields } from "state/form-persistence-slice";
 
 
 interface FormComponentProps {
@@ -78,11 +78,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const { startLoading, stopLoading } = useOperationStatus();
+  const lockedFields: Record<string, number> = useSelector(selectLockedFields);
+  const openFormCount: number = useSelector(selectOpenFormCount);
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
-  const openFormCount: number = useSelector(selectOpenFormCount);
 
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
 
@@ -175,8 +176,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore, fieldIdMapping),
         property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore),
       };
-      // AFTER PARSING THE INITIAL STAE IN PARSEpROPERTYsHAPE , PASS IT TO REDUX
-      // DELETE THE LOCKS KEY IN THE INITAL STATE
+
+      if (initialState.lockField.length > 0) {
+        const tempLockedFields: Record<string, number> = { ...lockedFields };
+
+        initialState.lockField.forEach((field: string) => {
+          if (tempLockedFields[field] == undefined) {
+            tempLockedFields[field] = openFormCount;
+          }
+        });
+        dispatch(setLockedFields(tempLockedFields));
+      }
+
+      delete initialState.lockField;
+
       setFormTemplate(parsedTemplate);
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)

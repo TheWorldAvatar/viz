@@ -5,6 +5,8 @@ import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } fr
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
+import { selectLockedFields, selectOpenFormCount, setLockedFields } from 'state/form-persistence-slice';
+import { useSelector, useDispatch } from 'react-redux';
 
 interface FormComponentProps {
   entityType: string;
@@ -22,6 +24,9 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
+  const dispatch = useDispatch();
+  const lockedFields: Record<string, number> = useSelector(selectLockedFields);
+  const openFormCount: number = useSelector(selectOpenFormCount);
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
 
@@ -57,11 +62,25 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
         formType: 'edit', // DEFAULT TO EDIT TYPE
+        lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
       const fieldIdMapping: Record<string, string> = { formEntityType: FORM_ENTITY_IDENTIFIER };
 
       const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
+
+      if (initialState.lockField.length > 0) {
+        const tempLockedFields: Record<string, number> = { ...lockedFields };
+
+        initialState.lockField.forEach((field: string) => {
+          if (tempLockedFields[field] == undefined) {
+            tempLockedFields[field] = openFormCount;
+          }
+        });
+
+        dispatch(setLockedFields(tempLockedFields));
+      }
+
       setFormFields(fields);
       setTranslatedFormFieldIds(fieldIdMapping);
 
