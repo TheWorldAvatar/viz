@@ -1,6 +1,5 @@
 export type ServiceCostDetails = {
     amount: string;
-    price: string;
     charge: InvoiceLine[];
     discount: InvoiceLine[];
 };
