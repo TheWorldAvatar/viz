@@ -149,7 +149,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     : ""
                   }`
                   : `h-10  ${(props.selectedDate as DateRange)?.to
-                    ? "w-72 pr-10 pl-4"
+                    ? "w-fit pr-11 pl-4"
                     : "w-24"
                   } rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400 dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
               }
