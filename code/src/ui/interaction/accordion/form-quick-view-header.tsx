@@ -8,6 +8,7 @@ import { Dictionary } from "types/dictionary";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
+import { FormTypeMap } from "types/form";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -15,7 +16,6 @@ interface FormQuickViewHeaderProps {
   selectedEntityId: string;
   entityType: string;
   formType: string;
-  isFormView: boolean;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   accountId?: string;
@@ -31,7 +31,6 @@ interface FormQuickViewHeaderProps {
  * @param {string} title - The label for the trigger button.
  * @param {string} selectedEntityId - The currently selected entity's id.
  * @param {string} entityType - The type of entities.
- * @param {boolean} isFormView - Indicates if the form type is view.
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
  * @param {string} accountId Optionally indicates the account ID.
@@ -76,7 +75,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       >
         {props.title}
       </Button>}
-      {!props.isFormView && <div className="flex gap-2">
+      {props.formType !== FormTypeMap.VIEW && props.formType !== FormTypeMap.DELETE && <div className="flex gap-2">
         <RedirectButton
           leftIcon="add"
           size="icon"
