@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
@@ -18,9 +18,9 @@ import SimpleSelector, {
   SelectOptionType,
 } from "ui/interaction/dropdown/simple-selector";
 import { parseWordsForLabels } from "utils/client-utils";
+import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 import { renderFormField } from "../form";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "../form-utils";
-import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 
 interface BranchFormSectionProps {
   entityType: string;
@@ -43,9 +43,13 @@ export default function BranchFormSection(
   props: Readonly<BranchFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const [isSwitching, setIsSwitching] = useState<boolean>(true);
+  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const [isSwitching, setIsSwitching] = useState<boolean>(false);
   // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] = useState<NodeShape>(null);
+  const [selectedModel, setSelectedModel] = useState<NodeShape>(formType == FormTypeMap.VIEW ? props.node[0] :
+    props.node.find((node) =>
+      node.label[VALUE_KEY] === props.form.getValues(formType == FormTypeMap.DELETE ? BRANCH_DELETE : BRANCH_ADD))
+  );
 
   // Declare a function to transform node shape to a form option
   const convertNodeShapeToFormOption = useCallback(
@@ -63,43 +67,6 @@ export default function BranchFormSection(
       props.node.map((nodeShape) => convertNodeShapeToFormOption(nodeShape)),
     []
   );
-
-  useEffect(() => {
-    if (props.node.length > 0) {
-
-      const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
-
-      // Check if there's a stored branch value
-      let storedBranchName: string | undefined;
-      if (formType === FormTypeMap.DELETE) {
-        storedBranchName = props.form.getValues(BRANCH_ADD);
-      } else if (formType === FormTypeMap.ADD) {
-        storedBranchName = props.form.getValues(BRANCH_ADD);
-      }
-
-      // Find the matching node for the stored branch, or default to first node
-      const initialNode: NodeShape = storedBranchName
-        ? props.node.find((node) => node.label[VALUE_KEY] === storedBranchName)
-        : props.node[0];
-
-      const initialBranchName: string = initialNode.label[VALUE_KEY];
-
-      setSelectedModel(initialNode);
-      setIsSwitching(false);
-
-      // Only set form values if there's no stored value
-      if (formType === FormTypeMap.DELETE) {
-        props.form.setValue(BRANCH_DELETE, initialBranchName);
-      } else if (formType === FormTypeMap.EDIT && !storedBranchName) {
-        // Set both values - branch_add for new, branch_delete for original
-        props.form.setValue(BRANCH_ADD, initialBranchName);
-        props.form.setValue(BRANCH_DELETE, initialBranchName);
-      } else if (formType === FormTypeMap.ADD && !storedBranchName) {
-        // For add forms
-        props.form.setValue(BRANCH_ADD, initialBranchName);
-      }
-    }
-  }, [props.node, props.form]);
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOptionType) => {

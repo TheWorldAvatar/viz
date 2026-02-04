@@ -27,6 +27,7 @@ import {
 } from "types/form";
 import { SelectOptionType } from "../dropdown/simple-selector";
 import { REPLACE_DICT_KEY } from "utils/constants";
+import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -201,21 +202,15 @@ export function parsePropertyShapeOrGroupList(
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
- * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
- * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
- * Needed for form persistence, translating field IDs from dependant form section.
+ * @param {Record<string, string>} fieldIdMapping Stores the mapping between translated and original field IDs.
  */
 export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
-  reqMatching: boolean,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
   fieldIdMapping: Record<string, string>,
 ): NodeShape[] {
-  // Ensure fieldIdMapping is always an object
-  if (!fieldIdMapping) fieldIdMapping = {};
-  // Early termination
   if (nodeShapes.length === 0) {
     return nodeShapes;
   }
@@ -234,7 +229,7 @@ export function parseBranches(
   // Find the best matched node states with non-empty values and null values
   let nodeWithMostNonEmpty: NodeShape = results[0];
   let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
-  if (reqMatching) {
+  if (initialState.formType != FormTypeMap.ADD) {
     let maxNonEmptyCount: number = 0;
     let minNullCount: number = 0;
     nodeStates.forEach((nodeState, index) => {
@@ -273,6 +268,16 @@ export function parseBranches(
         minNullCount = currentNullCount;
       }
     });
+  }
+  // Initalise branch fields based on the best matched node state and the form type
+  if (initialState.formType === FormTypeMap.DELETE) {
+    initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
+  } else if (initialState.formType === FormTypeMap.EDIT) {
+    // Set both values - branch_add for new, branch_delete for original
+    initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
+    initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
+  } else if (initialState.formType === FormTypeMap.ADD) {
+    initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
   }
   for (const field in nodeStateWithMostNonEmpty) {
     initialState[field] = nodeStateWithMostNonEmpty[field];

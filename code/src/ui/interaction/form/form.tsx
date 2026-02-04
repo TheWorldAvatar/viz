@@ -149,7 +149,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       const parsedTemplate = {
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore, fieldIdMapping),
+        node: parseBranches(initialState, template.node, billingParamsStore, fieldIdMapping),
         property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore),
       };
 
