@@ -360,7 +360,7 @@ export default function RegistryRowAction(
               size="md"
               iconSize="medium"
               className="w-full justify-start"
-              label="Edit adjustments"
+              label={dict.action.editAdjustment}
               disabled={isLoading}
               onClick={onGenInvoice}
             />}

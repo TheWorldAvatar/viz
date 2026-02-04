@@ -3,6 +3,7 @@
   "action": {
     "add": "Add",
     "addAdjustment": "Add adjustments",
+    "editAdjustment": "Edit adjustments",
     "assign": "Assign",
     "applyFilter": "Apply filter",
     "addItem": "add {replace}",

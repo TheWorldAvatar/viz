@@ -3,6 +3,7 @@
   "action": {
     "add": "Hinzufügen",
     "addAdjustment": "Anpassungen hinzufügen",
+    "editAdjustment": "Anpassungen bearbeiten",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
     "addItem": "{replace} hinzufügen",
