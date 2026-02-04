@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.57.0
+
+### Changes
+
+- Revise bill breakdown to work with changes in backend
+- Enable use of <b> tags based on backend
+- Bump min version of `VisBackend Agent` from `v1.34.0` to `v1.37.0`
+
 ## 5.56.7
 
 ### Changes
