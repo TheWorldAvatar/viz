@@ -61,12 +61,6 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                     {costDetails != null && !isLoading ? (
                         <div className="flex flex-col max-h-[40vh] md:max-h-[50vh] lg:max-h-[60vh]">
                             <div className="flex-1 overflow-y-auto pr-2">
-                                {/* Base service cost */}
-                                <div className="flex p-2 justify-between mt-2">
-                                    <p className="text-md max-w-sm font-bold">{dict.title.serviceCharge}</p>
-                                    <p className="text-foreground">${costDetails?.price}</p>
-                                </div>
-
                                 {/* Additional charges */}
                                 {costDetails?.charge?.map((charge, index) => (
                                     <div key={index} className="flex p-2 justify-between">
