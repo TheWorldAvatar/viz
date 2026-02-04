@@ -29,7 +29,6 @@ import {
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
-import { JsonObject } from "types/json";
 import { toast } from "ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
@@ -75,39 +74,16 @@ interface FormComponentProps {
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
+  const formSessionId: string = `_form_${props.entityType}`;
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { decrementFormCount, addFrozenFields } = useFormSession();
+  const { decrementFormCount, addFrozenFields, loadPreviousSession } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
-
-  const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
-
-  // Load stored form values from session storage
-  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
-    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-
-    // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
-    const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
-    if (entityForm) {
-      try {
-        const nestedValues: JsonObject = JSON.parse(entityForm);
-        Object.entries(nestedValues).forEach(([storageKey, value]) => {
-          if (!excludedFields.includes(storageKey)) {
-            initialState[storageKey] = value;
-          }
-        });
-      } catch (e) {
-        console.error("Failed to parse nested form data for identifier:", FORM_ENTITY_IDENTIFIER, e);
-      }
-    }
-
-    return initialState;
-  };
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -119,7 +95,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
-      const fieldIdMapping: Record<string, string> = { formEntityType: FORM_ENTITY_IDENTIFIER };
+      const fieldIdMapping: Record<string, string> = { formEntityType: formSessionId };
 
       // Retrieve template from APIs
       let url: string;
@@ -187,7 +163,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       setTranslatedFormFieldIds(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
-      return loadStoredFormValues(initialState);
+      return loadPreviousSession(formSessionId, initialState);
     },
   });
 
@@ -252,7 +228,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     // Ensure entry_dates is removed if not used
     delete formData[FORM_STATES.ENTRY_DATES];
     // Remove form entity identifier data
-    delete formData[FORM_ENTITY_IDENTIFIER];
+    delete formData[formSessionId];
 
     switch (props.formType) {
       case FormTypeMap.ADD: {
@@ -503,7 +479,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           -1,
           billingParams,
           translatedFormFieldIds,
-          FORM_ENTITY_IDENTIFIER
+          formSessionId
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
@@ -524,7 +500,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds, FORM_ENTITY_IDENTIFIER)
+            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds, formSessionId)
           )}
     </form>
   );

@@ -1,12 +1,10 @@
 import useFormSession from 'hooks/form/useFormSession';
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
-import { browserStorageManager } from 'state/browser-storage-manager';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
-import { JsonObject } from 'types/json';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
-import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
+import { parsePropertyShapeOrGroupList } from '../form-utils';
 
 interface FormComponentProps {
   entityType: string;
@@ -24,33 +22,10 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
-  const { addFrozenFields } = useFormSession();
+  const formSessionId: string = `_form_${props.entityType}`;
+  const { addFrozenFields, loadPreviousSession } = useFormSession();
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
-  const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
-
-  // Load stored form values from session storage
-  const loadStoredFormValues = (initialState: FieldValues): FieldValues => {
-    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-
-    // Load the nested "datatype" fields from the FORM_ENTITY_IDENTIFIER
-    const entityForm: string = browserStorageManager.get(FORM_ENTITY_IDENTIFIER);
-    if (entityForm) {
-      try {
-        const nestedValues: JsonObject = JSON.parse(entityForm);
-        Object.entries(nestedValues).forEach(([storageKey, value]) => {
-          if (!excludedFields.includes(storageKey)) {
-            initialState[storageKey] = value;
-          }
-        });
-      } catch (e) {
-        console.error("Failed to parse nested form data for identifier:", FORM_ENTITY_IDENTIFIER, e);
-      }
-    }
-
-    return initialState;
-  };
-
 
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
@@ -61,7 +36,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
-      const fieldIdMapping: Record<string, string> = { formEntityType: FORM_ENTITY_IDENTIFIER };
+      const fieldIdMapping: Record<string, string> = { formEntityType: formSessionId };
 
       const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
 
@@ -74,8 +49,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       setFormFields(fields);
       setTranslatedFormFieldIds(fieldIdMapping);
 
-      // Load stored values from session storage
-      return loadStoredFormValues(initialState);
+      return loadPreviousSession(formSessionId, initialState);
     }
   });
 
