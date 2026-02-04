@@ -79,7 +79,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     });
     // Save all data type fields under a single identifier
     if (Object.keys(dataTypeValues).length) {
-      browserStorageManager.set(props.translatedFormFieldIds.formEntityType, JSON.stringify(dataTypeValues));
+      browserStorageManager.set(props.translatedFormFieldIds.formSessionId, JSON.stringify(dataTypeValues));
     }
   }
 

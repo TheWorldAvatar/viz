@@ -36,8 +36,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
-      const fieldIdMapping: Record<string, string> = { formEntityType: formSessionId };
-
+      const fieldIdMapping: Record<string, string> = { formSessionId };
       const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
 
       if (initialState.lockField.length > 0) {

@@ -95,7 +95,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
-      const fieldIdMapping: Record<string, string> = { formEntityType: formSessionId };
+      const fieldIdMapping: Record<string, string> = { formSessionId };
 
       // Retrieve template from APIs
       let url: string;
@@ -227,8 +227,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     delete formData[FORM_STATES.FORM_TYPE];
     // Ensure entry_dates is removed if not used
     delete formData[FORM_STATES.ENTRY_DATES];
-    // Remove form entity identifier data
-    delete formData[formSessionId];
 
     switch (props.formType) {
       case FormTypeMap.ADD: {
@@ -478,8 +476,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           form,
           -1,
           billingParams,
-          translatedFormFieldIds,
-          formSessionId
+          translatedFormFieldIds
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
@@ -500,7 +497,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds, formSessionId)
+            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds)
           )}
     </form>
   );
@@ -526,7 +523,6 @@ export function renderFormField(
   currentIndex: number,
   billingParams: BillingEntityTypes,
   translatedFormFieldIds: Record<string, string>,
-  formEntityIdentifier?: string
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -592,7 +588,7 @@ export function renderFormField(
             options={{
               disabled: disableAllInputs,
             }}
-            formEntityIdentifier={formEntityIdentifier}
+            formEntityIdentifier={translatedFormFieldIds.formSessionId}
           />
         );
       }
