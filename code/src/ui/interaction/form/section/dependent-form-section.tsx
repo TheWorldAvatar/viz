@@ -112,7 +112,6 @@ export function DependentFormSection(
           selectedEntityId={selectedEntityId}
           entityType={queryEntityType}
           formType={formType}
-          isFormView={formType == FormTypeMap.VIEW}
           isOpen={isQuickViewOpen}
           setIsOpen={setIsQuickViewOpen}
           accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
