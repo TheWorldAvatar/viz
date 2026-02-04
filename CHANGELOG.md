@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.56.7
+
+### Changes
+
+- Set billing cycle to the current month date range by default
+
 ## 5.56.6
 
 ### Bug Fixes
