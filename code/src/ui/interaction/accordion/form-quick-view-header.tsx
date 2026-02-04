@@ -27,7 +27,7 @@ interface FormQuickViewHeaderProps {
   pricingType?: string;
   form: UseFormReturn;
   translatedFormFieldIds: Record<string, string>;
-  disableIfLocked?: boolean;
+  disableActions?: boolean;
 }
 
 /** 
@@ -45,7 +45,7 @@ interface FormQuickViewHeaderProps {
  * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {Record<string, string>} translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
- * @param {boolean} disableIfLocked Whether to disable action buttons if the form field is locked.
+ * @param {boolean} disableActions Disable action buttons if true.
  **/
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
@@ -114,46 +114,47 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       >
         {props.title}
       </Button>}
-      {props.formType !== FormTypeMap.VIEW && props.formType !== FormTypeMap.DELETE && !props.disableIfLocked && <div className="flex gap-2">
-        <RedirectButton
-          leftIcon="add"
-          size="icon"
-          iconSize="small"
-          tooltipText={dict.action.add}
-          url={genSubEntityUrl("add", props.entityType)}
-          softRedirect={true}
-          variant="outline"
-          additionalAction={handleFormPersistence}
-        />
-        {props.selectedEntityId && isPermitted("edit") && <RedirectButton
-          leftIcon="edit"
-          size="icon"
-          iconSize="small"
-          tooltipText={dict.action.edit}
-          url={genSubEntityUrl(
-            "edit",
-            props.entityType,
-            props.selectedEntityId
-          )}
-          softRedirect={true}
-          variant="outline"
-          additionalAction={handleFormPersistence}
-        />}
-        {props.selectedEntityId && isPermitted("delete") && <RedirectButton
-          leftIcon="delete"
-          size="icon"
-          iconSize="small"
-          tooltipText={dict.action.delete}
-          url={genSubEntityUrl(
-            "delete",
-            props.entityType,
-            props.selectedEntityId
-          )}
-          softRedirect={true}
-          variant="outline"
-          additionalAction={handleFormPersistence}
-        />}
-      </div>}
+      {props.formType !== FormTypeMap.VIEW && props.formType !== FormTypeMap.DELETE && !props.disableActions &&
+        <div className="flex gap-2">
+          <RedirectButton
+            leftIcon="add"
+            size="icon"
+            iconSize="small"
+            tooltipText={dict.action.add}
+            url={genSubEntityUrl("add", props.entityType)}
+            softRedirect={true}
+            variant="outline"
+            additionalAction={handleFormPersistence}
+          />
+          {props.selectedEntityId && isPermitted("edit") && <RedirectButton
+            leftIcon="edit"
+            size="icon"
+            iconSize="small"
+            tooltipText={dict.action.edit}
+            url={genSubEntityUrl(
+              "edit",
+              props.entityType,
+              props.selectedEntityId
+            )}
+            softRedirect={true}
+            variant="outline"
+            additionalAction={handleFormPersistence}
+          />}
+          {props.selectedEntityId && isPermitted("delete") && <RedirectButton
+            leftIcon="delete"
+            size="icon"
+            iconSize="small"
+            tooltipText={dict.action.delete}
+            url={genSubEntityUrl(
+              "delete",
+              props.entityType,
+              props.selectedEntityId
+            )}
+            softRedirect={true}
+            variant="outline"
+            additionalAction={handleFormPersistence}
+          />}
+        </div>}
     </div>
   );
 }

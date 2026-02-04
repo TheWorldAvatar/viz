@@ -119,7 +119,7 @@ export function DependentFormSection(
           pricingType={props.billingStore?.pricing}
           form={props.form}
           translatedFormFieldIds={props.translatedFormFieldIds}
-          disableIfLocked={disable}
+          disableActions={disable}
         />}
         {currentOption &&
           isQuickViewOpen &&
