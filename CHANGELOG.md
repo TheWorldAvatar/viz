@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.57.2
+
+### Changes
+
+- Removed the redirect buttons (add,delete,edit) from DELETE forms
+
 ## 5.57.1
 
 ### Bug Fixes
