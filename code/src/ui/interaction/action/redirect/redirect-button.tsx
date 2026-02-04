@@ -30,16 +30,16 @@ export default function RedirectButton({
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
     event.preventDefault();
+    if (additionalAction) {
+      additionalAction();
+    }
+
     if (softRedirect) {
       // Use soft redirect to allow parallel routes to function
       router.push(url);
     } else {
       // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
       window.location.href = url;
-    }
-
-    if (additionalAction) {
-      additionalAction();
     }
   };
   return <Button {...rest} onClick={handleClick} />;
