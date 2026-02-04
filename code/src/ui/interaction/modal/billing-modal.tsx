@@ -62,12 +62,23 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                         <div className="flex flex-col max-h-[40vh] md:max-h-[50vh] lg:max-h-[60vh]">
                             <div className="flex-1 overflow-y-auto pr-2">
                                 {/* Additional charges */}
-                                {costDetails?.charge?.map((charge, index) => (
-                                    <div key={index} className="flex p-2 justify-between">
-                                        <p className="text-sm text-pretty w-58 md:w-md text-gray-600 dark:text-gray-300">{charge?.description}</p>
-                                        <p className="text-gray-600 dark:text-gray-300">+ ${charge?.amount}</p>
-                                    </div>
-                                ))}
+                                {costDetails?.charge?.map((charge, index) => {
+                                    const chargeDescriptionParts: string[] = charge?.description?.split(/(<b>.*?<\/b>)/g) || [];
+                                    return (
+                                        <div key={index} className="flex p-2 justify-between">
+                                            <p className="text-sm text-pretty w-58 md:w-md text-gray-600 dark:text-gray-300">{
+                                                chargeDescriptionParts.map((part, index) => {
+                                                    if (part.startsWith("<b>") && part.endsWith("</b>")) {
+                                                        // Remove the literal <b> and </b> tags to get the raw text
+                                                        return <b key={index}>{part.replace(/<\/?b>/g, "")}</b>;
+                                                    }
+                                                    // Return as plain text without any b tags
+                                                    return part;
+                                                })}                                            </p>
+                                            <p className="text-gray-600 dark:text-gray-300">+ ${charge?.amount}</p>
+                                        </div>
+                                    )
+                                })}
 
                                 {/* Discounts */}
                                 {costDetails?.discount?.map((discount, index) => (
