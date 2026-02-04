@@ -170,6 +170,8 @@ export default function FloatingPanelContainer(
                   setActiveTab: setActiveInfoTab,
                 }}
                 features={availableFeatures}
+                map={props.map}
+                dataStore={props.dataStore}
               />}
           </div>
 
