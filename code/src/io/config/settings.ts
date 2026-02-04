@@ -73,20 +73,28 @@ export default class SettingsStore {
    * Reads the initialisation settings.
    */
   public static readUISettings(): void {
-    const settings: string = this.readFile(this.UI_SETTINGS_FILE);
-    const jsonifiedSettings: UISettings = JSON.parse(settings);
-    if (jsonifiedSettings.modules.dashboard && !jsonifiedSettings.resources?.dashboard?.url) {
-      console.warn(`${logColours.Yellow}modules.dashboard${logColours.Reset} module set to true but ${logColours.Yellow}resources.dashboard.url${logColours.Reset} is empty`);
+    try {
+      const settings: string = this.readFile(this.UI_SETTINGS_FILE);
+      const jsonifiedSettings: UISettings = JSON.parse(settings);
+      if (jsonifiedSettings.modules.dashboard && !jsonifiedSettings.resources?.dashboard?.url) {
+        console.warn(`${logColours.Yellow}modules.dashboard${logColours.Reset} module set to true but ${logColours.Yellow}resources.dashboard.url${logColours.Reset} is empty`);
+      }
+      this.UI_SETTINGS = jsonifiedSettings;
+    } catch (error) {
+      console.error("ERROR: Unable to read UI settings file:", this.UI_SETTINGS_FILE, error);
     }
-    this.UI_SETTINGS = jsonifiedSettings;
   }
 
   /**
    * Reads the map settings file and sets the string version to SettingsStore private field
   */
   public static readMapSettings(): void {
-    const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
-    this.MAP_SETTINGS = JSON.parse(settings);
+    try {
+      const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
+      this.MAP_SETTINGS = JSON.parse(settings);
+    } catch (error) {
+      console.error("ERROR: Unable to read map settings file:", this.MAP_SETTINGS_FILE, error);
+    }
   }
 
   /**
@@ -130,25 +138,33 @@ export default class SettingsStore {
 
       // Array of promises to fetch data from each dataset
       const dataPromises: Promise<JsonObject>[] = (datasets.map(async dataset => {
-        let jsonData: JsonObject;
-        // Local datasets will start with /, and must have public appended
-        if (dataset.startsWith("/")) {
-          jsonData = JSON.parse(this.readFile("public" + dataset));
-        } else {
-          // For remote datasets, fetch the json
-          const res = await fetch(dataset);
-          if (res.ok) {
-            jsonData = await res.json();
-          }
-        }
-        return jsonData;
+        return await SettingsStore.loadLocalOrRemoteData(dataset);
       }));
 
       // Wait for all promises to resolve, filter out null values, and stringify the resulting array
       const data: JsonObject[] = (await Promise.all(dataPromises)).filter(Boolean);
       this.MAP_DATA_SETTINGS = JSON.stringify(data);
     } catch (error) {
-      console.error("No local data files detected:", error);
+      console.error("Error reading map data settings:", error);
+    }
+  }
+
+  private static async loadLocalOrRemoteData(dataset: string) {
+    try {
+      let jsonData: JsonObject;
+      // Local datasets will start with /, and must have public appended
+      if (dataset.startsWith("/")) {
+        jsonData = JSON.parse(this.readFile("public" + dataset));
+      } else {
+        // For remote datasets, fetch the json
+        const res = await fetch(dataset);
+        if (res.ok) {
+          jsonData = await res.json();
+        }
+      }
+      return jsonData;
+    } catch (error) {
+      console.error("ERROR: Unable to load dataset:", dataset, error);
     }
   }
 
