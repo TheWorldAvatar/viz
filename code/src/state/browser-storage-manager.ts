@@ -9,6 +9,13 @@ class BrowserStorageManager {
   }
 
   /**
+   * Checks if the storage is empty.
+   */
+  public empty(): boolean {
+    return this.storage.length== 0;
+  }
+
+  /**
    * Retrieves an item from the storage, parsing it from JSON.
    * 
    * @param key The key of the item to retrieve.

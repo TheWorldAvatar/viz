@@ -26,7 +26,6 @@ import { browserStorageManager } from "state/browser-storage-manager";
 interface FormScheduleProps {
   fieldId: string;
   form: UseFormReturn;
-  formEntityIdentifier: string;
   options?: FormFieldOptions;
 }
 
@@ -46,7 +45,6 @@ export const daysOfWeek: string[] = [
  * @param {string} fieldId Field name.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {FormFieldOptions} options Configuration options for the field.
- * @param {string} formEntityIdentifier It returns the form entity identifier. (e.g., job, client , service_site)
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
@@ -98,24 +96,18 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      // If there is data in the session storage for service schedule (recurrence), use that instead of fetching defaults
-      // This is to preverent loading default values in EDIT form, even if there are existing values stored in the session storage
-      const storedValues: string | null = browserStorageManager.get(props.formEntityIdentifier);
-      if (storedValues) {
-        const parsed = JSON.parse(storedValues);
-        if (FORM_STATES.RECURRENCE in parsed) {
-          setIsLoading(false);
-          return;
-        }
+      // If there is data in the session storage, do not fetch defaults for EDIT, VIEW, and DELETE forms
+      if (!browserStorageManager.empty()) {
+        setIsLoading(false);
+        return;
       }
-
-      // Set defaults
-      let recurrence: number = 0;
-      let defaultTimeSlotStart: string = "00:00";
-      let defaultTimeSlotEnd: string = "23:59";
-
       // Fetch existing values and update them according
       if (formType != FormTypeMap.ADD && formType != FormTypeMap.SEARCH) {
+        // defaults
+        let recurrence: number = 0;
+        let defaultTimeSlotStart: string = "00:00";
+        let defaultTimeSlotEnd: string = "23:59";
+
         const fields: RegistryFieldValues = await fetch(
           makeInternalRegistryAPIwithParams(
             "schedule",
@@ -205,12 +197,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             )
           );
         });
+        props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
+        props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
+        props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
       }
-
-      props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
-      props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
-      props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
-
       setIsLoading(false);
     };
 

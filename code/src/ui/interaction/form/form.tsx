@@ -128,18 +128,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
       }
 
-      if (props.formType == FormTypeMap.ADD) {
-        const hasScheduleField: boolean = template.property.some(
-          (field) =>
-            (field as PropertyShape)?.class?.[ID_KEY] ===
-            "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
-        );
-
-        if (hasScheduleField) {
-          initialState[FORM_STATES.RECURRENCE] = 0;
-        }
-      }
-
       const billingParamsStore: BillingEntityTypes = {
         account: props.accountType,
         accountField: props.accountType,
@@ -587,7 +575,6 @@ export function renderFormField(
             options={{
               disabled: disableAllInputs,
             }}
-            formEntityIdentifier={translatedFormFieldIds.formSessionId}
           />
         );
       }

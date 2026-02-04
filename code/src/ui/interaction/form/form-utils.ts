@@ -358,6 +358,12 @@ function initFormField(
       outputState[fieldId][currentIndex][parsedFieldId] = "";
     }
     currentIndex++; // increment the counter
+  } else if (field.class?.[ID_KEY] ===
+    "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" &&
+    outputState.formType == FormTypeMap.ADD) {
+    outputState[FORM_STATES.RECURRENCE] = 0;
+    outputState[FORM_STATES.TIME_SLOT_START] = "00:00";
+    outputState[FORM_STATES.TIME_SLOT_END] = "23:59";
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue)
       ? field.defaultValue?.value
