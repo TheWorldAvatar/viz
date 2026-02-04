@@ -20,13 +20,13 @@ import { FORM_STATES, getRegisterOptions } from "../form-utils";
 
 import { useDependentField } from "hooks/form/api/useDependentField";
 import { useFormQuickView } from "hooks/form/useFormQuickView";
+import useFormSession from "hooks/form/useFormSession";
+import { browserStorageManager } from "state/browser-storage-manager";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
 import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import FormInputContainer from "../field/form-input-container";
-import { browserStorageManager } from "state/browser-storage-manager";
-import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -49,7 +49,7 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { openFormCount, lockedFields } = useFormPersistenceState();
+  const { formCount, frozenFields } = useFormSession();
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -71,7 +71,7 @@ export function DependentFormSection(
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
 
-  const disableIfLocked: boolean = fieldName in lockedFields && browserStorageManager.get(fieldName) !== undefined && lockedFields[fieldName] < openFormCount;
+  const disable: boolean = fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount;
 
   return (
     <div className="rounded-lg my-4">
@@ -97,7 +97,7 @@ export function DependentFormSection(
                   onChange={(option: SelectOptionType) => {
                     onChange(option.value);
                   }}
-                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disableIfLocked ||
+                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
                   noOptionMessage={dict.message.noInstances}
@@ -120,7 +120,7 @@ export function DependentFormSection(
           pricingType={props.billingStore?.pricing}
           form={props.form}
           translatedFormFieldIds={props.translatedFormFieldIds}
-          disableIfLocked={disableIfLocked}
+          disableIfLocked={disable}
         />}
         {currentOption &&
           isQuickViewOpen &&

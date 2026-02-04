@@ -17,6 +17,7 @@ import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
+import useFormSession from "hooks/form/useFormSession";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -40,7 +41,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface RegistryTableProps {
   recordType: string;
@@ -65,7 +65,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const { navigateToDrawer } = useDrawerNavigation();
   const isPermitted = usePermissionGuard();
-  const { clearPersistedFormState } = useFormPersistenceState();
+  const { resetFormSession } = useFormSession();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
   const [historyId, setHistoryId] = useState<string>("");
@@ -92,7 +92,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         : getId(row.iri);
     // Clear any stored form data when clicking on a row
     browserStorageManager.clear();
-    clearPersistedFormState();
+    resetFormSession();
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||

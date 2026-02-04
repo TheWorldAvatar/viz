@@ -2,11 +2,13 @@
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import useFormSession from "hooks/form/useFormSession";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { DateRange } from "react-day-picker";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { DownloadButton } from "ui/interaction/action/download/download";
@@ -15,8 +17,6 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { browserStorageManager } from "state/browser-storage-manager";
-import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface TableRibbonProps {
   path: string;
@@ -43,7 +43,7 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
-  const { clearPersistedFormState } = useFormPersistenceState();
+  const { resetFormSession } = useFormSession();
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
@@ -242,7 +242,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 )}
                 onClick={() => {
                   browserStorageManager.clear();
-                  clearPersistedFormState();
+                  resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_ADD,
                     ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
                       props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),

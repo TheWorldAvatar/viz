@@ -1,17 +1,17 @@
 "use client";
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
+import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import type React from "react";
+import { FieldValues, UseFormReturn } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { Dictionary } from "types/dictionary";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
-import { FieldValues, UseFormReturn } from "react-hook-form";
 import { FORM_STATES } from "../form/form-utils";
-import { browserStorageManager } from "state/browser-storage-manager";
-import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -51,7 +51,7 @@ interface FormQuickViewHeaderProps {
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
-  const { setOpenFormCountValue, openFormCount } = useFormPersistenceState();
+  const { incrementFormCount } = useFormSession();
 
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
@@ -63,7 +63,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     const values: FieldValues = props.form.getValues();
     const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
     const dataTypeValues: Record<string, string> = {};
-    setOpenFormCountValue(openFormCount + 1);
+    incrementFormCount();
 
     Object.entries(values).forEach(([key, value]) => {
       // If the field ID has been translated, use the translated ID

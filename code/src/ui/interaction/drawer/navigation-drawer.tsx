@@ -1,10 +1,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import useFormSession from "hooks/form/useFormSession";
 import { useDispatch } from "react-redux";
 import { setIsAnyDrawerOpen } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
-import useFormPersistenceState from "hooks/form/useFormPersistenceState";
 
 interface NavigationDrawerProps {
   children: React.ReactNode;
@@ -19,7 +19,7 @@ export default function NavigationDrawer(
 ) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { openFormCount, setOpenFormCountValue, lockedFields, setLockedFieldsValue } = useFormPersistenceState();
+  const { handleFormClose } = useFormSession();
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   // Function to reset the open drawer flag
@@ -37,17 +37,7 @@ export default function NavigationDrawer(
       isExternalOpen={isOpen}
       setIsExternalOpen={setIsOpen}
       onClose={() => {
-        const newOpenFormCount: number = openFormCount - 1;
-        setOpenFormCountValue(newOpenFormCount);
-
-        const updatedLockedFields: Record<string, number> = { ...lockedFields };
-        Object.keys(updatedLockedFields).forEach((fieldName) => {
-          if (newOpenFormCount < updatedLockedFields[fieldName]) {
-            delete updatedLockedFields[fieldName];
-          }
-        });
-        setLockedFieldsValue(updatedLockedFields);
-
+        handleFormClose();
         resetDrawerOpenFlag();
         router.back();
       }}

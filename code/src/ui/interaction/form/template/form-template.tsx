@@ -1,12 +1,12 @@
+import useFormSession from 'hooks/form/useFormSession';
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 import { browserStorageManager } from 'state/browser-storage-manager';
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
+import { JsonObject } from 'types/json';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { FORM_STATES, parsePropertyShapeOrGroupList } from '../form-utils';
-import { JsonObject } from 'types/json';
-import useFormPersistenceState from 'hooks/form/useFormPersistenceState';
 
 interface FormComponentProps {
   entityType: string;
@@ -24,7 +24,7 @@ interface FormComponentProps {
  * @param {SubmitHandler<FieldValues>} submitAction Action to be taken when submitting the form.
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
-  const { lockedFields, openFormCount, setLockedFieldsValue } = useFormPersistenceState();
+  const { addFrozenFields } = useFormSession();
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
   const FORM_ENTITY_IDENTIFIER: string = `_form_${props.entityType}`;
@@ -66,13 +66,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
 
       if (initialState.lockField.length > 0) {
-        const tempLockedFields: Record<string, number> = { ...lockedFields };
-        initialState.lockField.forEach((field: string) => {
-          if (tempLockedFields[field] == undefined) {
-            tempLockedFields[field] = openFormCount;
-          }
-        });
-        setLockedFieldsValue(tempLockedFields);
+        addFrozenFields(initialState.lockField);
       }
 
       delete initialState.lockField;
