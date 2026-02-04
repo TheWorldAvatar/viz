@@ -3,6 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 
 import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, FormType, FormTypeMap, RegistryFieldValues } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -21,7 +22,6 @@ import FormCheckboxField from "../field/form-checkbox-field";
 import FormFieldComponent from "../field/form-field";
 import { FORM_STATES, getDefaultVal } from "../form-utils";
 import SelectedDatesDisplay from "./selected-dates-display";
-import { browserStorageManager } from "state/browser-storage-manager";
 
 interface FormScheduleProps {
   fieldId: string;
@@ -47,7 +47,6 @@ export const daysOfWeek: string[] = [
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
-  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
   const dict: Dictionary = useDictionary();
   const daysOfWeekLabel: string[] = [
     dict.form.sun,
@@ -63,11 +62,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const alternateService: string = dict.form.alternateService;
   const perpetualService: string = dict.form.perpetualService;
   const fixedService: string = dict.form.fixedService;
+  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fixedDates, setFixedDates] = useState<Date[]>([new Date()]);
+  const [fixedDates, setFixedDates] = useState<Date[]>(entryDates?.length > 0
+    ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString))) : [new Date()]);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.ENTRY_DATES)?.length > 0
@@ -80,19 +82,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             ? alternateService
             : singleService
   );
-
-  // Sync fixedDates with form's entry_date values (loaded from storage)
-  useEffect(() => {
-    const formEntryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
-    if (Array.isArray(formEntryDates) && formEntryDates.length > 0) {
-      // Convert strings to UTC Date objects (storage saves as ISO strings)
-      const validDates: Date[] = formEntryDates.map((dateString: string) => getUTCDate(new Date(dateString)))
-      if (validDates.length > 0) {
-        setFixedDates(validDates);
-        setSelectedServiceOption(fixedService);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {

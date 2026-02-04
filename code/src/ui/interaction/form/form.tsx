@@ -176,7 +176,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         recurrence: "",
       };
       // Remove the internal fields
-      delete formData[FORM_STATES.ENTRY_DATES];
       delete formData[FORM_STATES.RECURRENCE];
     } else if (formData[FORM_STATES.RECURRENCE] == null) {
       // For perpetual service
