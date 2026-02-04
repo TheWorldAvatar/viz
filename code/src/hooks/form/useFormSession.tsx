@@ -10,7 +10,6 @@ interface useFormSessionReturn {
     formCount: number;
     frozenFields: Record<string, number>;
     incrementFormCount: () => void;
-    decrementFormCount: () => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
     resetFormSession: () => void;
@@ -28,9 +27,6 @@ const useFormSession = (): useFormSessionReturn => {
 
     const incrementFormCount = (): void => {
         dispatch(setFormCount(formCount + 1));
-    };
-    const decrementFormCount = (): void => {
-        dispatch(setFormCount(formCount - 1));
     };
 
     /** Adds the frozen fields if they are not already present in the state
@@ -57,14 +53,13 @@ const useFormSession = (): useFormSessionReturn => {
      */
     const handleFormClose = (): void => {
         const updatedFrozenFields: Record<string, number> = { ...frozenFields };
-        // Redux cannot update form count and read it in one operation
         const newFormCount: number = formCount - 1;
         Object.keys(updatedFrozenFields).forEach((fieldName) => {
             if (newFormCount < updatedFrozenFields[fieldName]) {
                 delete updatedFrozenFields[fieldName];
             }
         });
-        decrementFormCount();
+        dispatch(setFormCount(newFormCount));
         dispatch(setFrozenFields(updatedFrozenFields));
     };
 
@@ -98,7 +93,6 @@ const useFormSession = (): useFormSessionReturn => {
         frozenFields,
         resetFormSession,
         incrementFormCount,
-        decrementFormCount,
         addFrozenFields,
         handleFormClose,
         loadPreviousSession,

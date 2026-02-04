@@ -78,7 +78,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { decrementFormCount, addFrozenFields, loadPreviousSession } = useFormSession();
+  const { addFrozenFields, loadPreviousSession, handleFormClose } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
@@ -440,8 +440,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
-      decrementFormCount();
-
+      handleFormClose();
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
