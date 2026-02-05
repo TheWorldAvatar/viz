@@ -159,14 +159,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     let pendingResponse: AgentResponseBody;
 
     // Check for fixed service (has entry_dates)
-    const entryDates: Date[] | undefined = formData[FORM_STATES.ENTRY_DATES];
+    const entryDates: string[] | undefined = formData[FORM_STATES.ENTRY_DATES];
     if (entryDates?.length > 0) {
       // Sort dates to find earliest and latest
-      const sortedDates: Date[] = [...entryDates].sort((a, b) => a.getTime() - b.getTime());
+      const sortedDates: Date[] = [...entryDates].map((date) => new Date(date))
+        .sort((a, b) => a.getTime() - b.getTime());
 
       formData = {
         ...formData,
-        "schedule entry": entryDates.map((date) => ({
+        "schedule entry": sortedDates.map((date) => ({
           "schedule entry date": getNormalizedDate(date),
         })),
         "start date": getNormalizedDate(sortedDates[0]),
