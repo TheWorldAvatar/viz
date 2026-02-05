@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.58.1
+
+### Changes
+
+- Added a new prop to the expandable text cell component to allow overriding the text expansion behavior, enabling the display of the full text regardless of its length when the flag is set to true.
+
 ## 5.58.0
 
 ### Changes
