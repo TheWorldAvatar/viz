@@ -41,6 +41,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 interface RegistryTableProps {
   recordType: string;
@@ -119,6 +120,19 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       browserStorageManager.set(EVENT_KEY, row.event_id)
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
       const body: AgentResponseBody = await queryInternalApi(url);
+      try {
+        const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+          InternalApiIdentifierMap.FILTER,
+          LifecycleStageMap.ACCOUNT,
+          props.accountType,
+          row[props.accountType]
+        ));
+        const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+        // Set the account type in browser storage to match the values of the account type in the assign price form
+        browserStorageManager.set(props.accountType, options[0]?.value);
+      } catch (error) {
+        console.error("Error fetching instances", error);
+      }
       if (row[dict.title.billingStatus] != "pendingApproval") {
         navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
       } else if (body.data.message == "true") {
