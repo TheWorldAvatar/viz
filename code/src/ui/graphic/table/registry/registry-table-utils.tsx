@@ -127,7 +127,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
           }
 
           return (
-            <ExpandableTextCell tableColumns={results.columns} text={value} maxLengthText={25} />
+            <ExpandableTextCell overrideTextExpansion={results.columns.length <= 2} text={value} maxLengthText={25} />
           );
         },
         filterFn: multiSelectFilter,

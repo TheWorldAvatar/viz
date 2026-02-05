@@ -1,14 +1,12 @@
-import { ColumnDef } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useState } from "react";
-import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import Button from "ui/interaction/button";
 
 interface ExpandableTextCellProps {
     text: string;
     maxLengthText?: number;
-    tableColumns: ColumnDef<FieldValues>[];
+    overrideTextExpansion: boolean;
 }
 
 /**
@@ -17,14 +15,14 @@ interface ExpandableTextCellProps {
  *
  * @param {string} text The full text content.
  * @param {number} maxLengthText (Optional) The maximum text length before truncation.
- * @param {ColumnDef<FieldValues>[]} tableColumns The columns in the table.
+ * @param {boolean} overrideTextExpansion Flag to override text expansion behavior.
  */
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const maxLengthText: number = props.maxLengthText ?? 100;
     const dict: Dictionary = useDictionary();
 
-    if (props.text.length <= maxLengthText || props.tableColumns.length <= 2) {
+    if (props.text.length <= maxLengthText || props.overrideTextExpansion) {
         return <div className="text-foreground">{props.text}</div>;
     }
 
