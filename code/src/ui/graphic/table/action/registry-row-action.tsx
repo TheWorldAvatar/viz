@@ -1,6 +1,5 @@
 import { useRegistryRowPermissionGuard } from "hooks/auth/useRegistryRowPermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
-import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
@@ -117,6 +116,8 @@ export default function RegistryRowAction(
   };
 
   const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    browserStorageManager.clear();
+    resetFormSession();
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
     const body: AgentResponseBody = await queryInternalApi(url);
     browserStorageManager.set(EVENT_KEY, props.row.event_id);
