@@ -89,21 +89,18 @@ const useFormSession = (): useFormSessionReturn => {
     }
 
 
-    /** Loads the previous form session for the current form.
+    /** Loads the previous form session for non-dropdowns for the current form.
      * 
      * @param {FieldValues} initialState  The initial state for the form.
      */
     const loadPreviousSession = (initialState: FieldValues): FieldValues => {
         // Load the values stored in the form ID, usually for input fields, branch names
-        const entityForm: string = browserStorageManager.get(formSession.id);
-        if (entityForm) {
+        const previousSessionData: string = browserStorageManager.get(formSession.id);
+        if (previousSessionData) {
             try {
-                const nestedValues: FieldValues = JSON.parse(entityForm);
-                Object.entries(nestedValues).forEach(([storageKey, value]) => {
-                    if (!excludedFields.includes(storageKey)) {
-                        initialState[storageKey] = value;
-                    }
-                });
+                // Override the initial state with the saved values from the previous session
+                const overrides: FieldValues = JSON.parse(previousSessionData);
+                initialState = { ...initialState, ...overrides };
             } catch (e) {
                 console.error("Failed to load previous form data for: ", formSession.id, e);
             }
