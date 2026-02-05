@@ -69,7 +69,9 @@ export function DependentFormSection(
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
 
-  const disable: boolean = fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount;
+  const disable: boolean = (fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount) ||
+  // Disable account field on assign price form page
+    (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
 
   return (
     <div className="rounded-lg my-4">
