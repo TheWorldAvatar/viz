@@ -130,14 +130,22 @@ export function parsePropertyShapeOrGroupList(
         ) {
 
           if (isFieldMappable(updatedProp)) {
-            fieldIdMapping[fieldset?.label?.[VALUE_KEY]] = fieldset?.label?.[VALUE_KEY]
+            fieldIdMapping[fieldset?.label?.[VALUE_KEY]] = fieldset?.label?.[VALUE_KEY];
+          }
+          // Initialise array field group object if they have yet to be
+          // Min count of 0 should be initialise as an empty array
+          if (!initialState[fieldset.label[VALUE_KEY]] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
+            initialState[fieldset.label[VALUE_KEY]] = [];
+            // If at least one item, initialise it with an array with 1 empty object
+          } else if (!initialState[fieldset.label[VALUE_KEY]] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
+            initialState[fieldset.label[VALUE_KEY]] = [{}];
           }
           return initFormField(
             updatedProp,
             initialState,
             fieldset.label[VALUE_KEY],
             true,
-            parseInt(fieldset.minCount?.[VALUE_KEY])
+            parseInt(updatedProp.minCount?.[VALUE_KEY])
           );
         }
         // Update and set property field ids to include their group name
@@ -293,7 +301,7 @@ export function parseBranches(
  * @param {PropertyShape} field The data model for the field of interest.
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
- * @param {boolean} isArray Optional state to initialise array fields.
+ * @param {boolean} isArray Optional boolean to indicate if the field is an array.
  * @param {number} minSize Optional parameter to indicate the minimum array size.
  */
 function initFormField(
@@ -307,7 +315,6 @@ function initFormField(
   if (isArray) {
     // Update field ID, the fieldId for an array should be its group name
     parsedFieldId = `${fieldId} ${field.name[VALUE_KEY]}`;
-    let currentIndex: number = 0;
     const minArraySize: number =
       Number.isNaN(minSize) || minSize != 0 ? 1 : minSize;
 
@@ -324,10 +331,6 @@ function initFormField(
     }
     // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
-      // If this is the first field item, initialise it as empty
-      if (!outputState[fieldId]) {
-        outputState[fieldId] = [{}];
-      }
       // Ensure the current field is optional
       outputState[fieldId][0][parsedFieldId] = "";
       // Terminate early
@@ -337,10 +340,6 @@ function initFormField(
       };
     }
 
-    // Initialise with an empty item as there is a default value
-    if (!outputState[fieldId] || outputState[fieldId].length === 0) {
-      outputState[fieldId] = [{}];
-    }
     // Append existing values if they exist
     if (field.defaultValue) {
       const defaultArray: SparqlResponseField[] = Array.isArray(
@@ -353,13 +352,8 @@ function initFormField(
           outputState[fieldId][index] = {};
         }
         outputState[fieldId][index][parsedFieldId] = defaultValue?.value;
-        currentIndex = index; // Always update the current index following default values
       });
-    } else {
-      // If no existing values exist, add an initial value
-      outputState[fieldId][currentIndex][parsedFieldId] = "";
     }
-    currentIndex++; // increment the counter
   } else if (field.class?.[ID_KEY] ===
     "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" &&
     outputState.formType == FormTypeMap.ADD) {
