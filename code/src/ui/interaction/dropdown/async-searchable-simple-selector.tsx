@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import {
+    components,
+    MenuListProps,
     MultiValue,
     SingleValue,
 } from "react-select";
@@ -47,6 +49,22 @@ export default function AsyncSearchableSimpleSelector(
         props.onChange(value);
     };
 
+    const MenuList = (
+        menuProps: MenuListProps<SelectOptionType, false>
+    ) => (
+        <components.MenuList {...menuProps}>
+            {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
+                <p className="text-sm text-foreground/80 italic px-2 my-1">
+                    {dict.message.typeMore}
+                </p>
+            )}
+            {menuProps.children}
+            {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
+                <p className="text-2xl text-foreground/80 italic px-2 ">...</p>
+            )}
+        </components.MenuList>
+    );
+
     return (
         <AsyncSelect
             styles={selectorStyles}
@@ -57,6 +75,7 @@ export default function AsyncSearchableSimpleSelector(
             isSearchable
             isDisabled={props.isDisabled}
             noOptionsMessage={() => props.noOptionMessage ?? dict.message.noOptions}
+            components={{ MenuList }}
         />
     );
 }

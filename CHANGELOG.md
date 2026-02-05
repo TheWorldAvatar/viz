@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.58.2
+
+### Changes
+
+- Added an indicator at the end of the drop-down lists in the side panels (...) to inform users that they can search for more options.
+
 ## 5.58.1
 
 ### Changes
