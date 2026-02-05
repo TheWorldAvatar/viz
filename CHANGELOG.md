@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.58.0
+
+### Changes
+
+- Implemented a form memory functionality that saves the form inputs data in local storage. This allows for users to navigate to sequential forms without losing their progress when they navigate back and forth between forms.
+- The form data is cleared from memory when the form is submitted, or when the user comes back to the form after form submission or closing the form panel.
+
 ## 5.57.3
 
 ### Changes

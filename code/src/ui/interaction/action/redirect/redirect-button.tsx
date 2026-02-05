@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Button, { ButtonProps } from "ui/interaction/button";
 
-
 interface RedirectButtonProps extends ButtonProps {
   url: string;
   softRedirect?: boolean;
+  additionalAction?: () => void;
 }
 
 /**
@@ -15,17 +15,25 @@ interface RedirectButtonProps extends ButtonProps {
  *
  * @param {string} url The redirect target url.
  * @param {boolean} softRedirect Performs a soft redirect using router.push().
+ * @param {void} additionalAction An optional additional action to perform after the redirect.
+ * 
  */
 export default function RedirectButton({
   url,
   softRedirect = false,
+  additionalAction,
   ...rest
 }: Readonly<RedirectButtonProps>) {
   const router = useRouter();
+
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
     event.preventDefault();
+    if (additionalAction) {
+      additionalAction();
+    }
+
     if (softRedirect) {
       // Use soft redirect to allow parallel routes to function
       router.push(url);
