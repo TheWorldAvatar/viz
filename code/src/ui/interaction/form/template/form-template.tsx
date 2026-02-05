@@ -1,6 +1,6 @@
+import useFormSession from 'hooks/form/useFormSession';
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
-
 import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
@@ -23,6 +23,7 @@ interface FormComponentProps {
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
+  const { addFrozenFields, loadPreviousSession, setFieldIdNameMapping } = useFormSession();
 
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
@@ -30,10 +31,22 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
         formType: 'edit', // DEFAULT TO EDIT TYPE
+        lockField: [] // An array that stores all fields that should be locked (disabled)
       };
-      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields);
+
+      const fieldIdMapping: Record<string, string> = {};
+      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
+
+      if (initialState.lockField.length > 0) {
+        addFrozenFields(initialState.lockField);
+      }
+
+      delete initialState.lockField;
+
       setFormFields(fields);
-      return initialState;
+      setFieldIdNameMapping(fieldIdMapping);
+
+      return loadPreviousSession(initialState);
     }
   });
 

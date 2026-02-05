@@ -1,6 +1,7 @@
 'use client';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { setFormCount, setFrozenFields } from 'state/form-session-slice';
 import { selectIsLoading, selectToastId, setLoading, setToastId } from 'state/loading-slice';
 import { Dictionary } from 'types/dictionary';
 import { toast } from "ui/interaction/action/toast/toast";
@@ -13,6 +14,7 @@ interface useOperationStatusReturn {
   isLoading: boolean;
   startLoading: () => void;
   stopLoading: () => void;
+  resetFormSession: () => void;
 }
 
 /**
@@ -36,8 +38,12 @@ const useOperationStatus = (): useOperationStatusReturn => {
     toast.dismiss(toastId);
     dispatch(setLoading(false));
   }
+  const resetFormSession = (): void => {
+    dispatch(setFormCount(0));
+    dispatch(setFrozenFields({}));
+  };
 
-  return { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading };
+  return { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading, resetFormSession };
 };
 
 export default useOperationStatus;

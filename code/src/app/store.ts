@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { featureInfoAgentApi } from "state/api/fia-api";
-import loadingReducer from "state/loading-slice";
 import contextMenuReducer from "state/context-menu-slice";
 import dimensionSliderSlice from "state/dimension-slider-slice";
 import drawerSignalReducer from "state/drawer-signal-slice";
 import floatingPanelReducer from "state/floating-panel-slice";
+import formSessionReducer from "state/form-session-slice";
+import loadingReducer from "state/loading-slice";
 import mapFeatureReducer from "state/map-feature-slice";
 import ribbonComponentReducer from "state/ribbon-component-slice";
 
@@ -17,6 +18,7 @@ export const reduxStore = configureStore({
     floatingPanel: floatingPanelReducer,
     mapFeature: mapFeatureReducer,
     dimensionSlider: dimensionSliderSlice,
+    formSession: formSessionReducer,
     loading: loadingReducer,
     [featureInfoAgentApi.reducerPath]: featureInfoAgentApi.reducer,
   },

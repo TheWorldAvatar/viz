@@ -13,6 +13,7 @@ import { FormType, FormTypeMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
 import Button from "../button";
@@ -41,9 +42,11 @@ export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <NavigationDrawer>
-      <FormContents {...props} />
-    </NavigationDrawer>
+    <FormSessionContextProvider entityType={props.entityType}>
+      <NavigationDrawer>
+        <FormContents {...props} />
+      </NavigationDrawer>
+    </FormSessionContextProvider>
   );
 }
 
@@ -60,9 +63,11 @@ export function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
-      <FormContents {...props} />
-    </div>
+    <FormSessionContextProvider entityType={props.entityType}>
+      <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
+        <FormContents {...props} />
+      </div>
+    </FormSessionContextProvider>
   );
 }
 
@@ -235,6 +240,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           )}
         </div>
       </section>
-    </>
+    </ >
   );
 }

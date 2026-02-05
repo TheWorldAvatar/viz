@@ -32,6 +32,7 @@ import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { compareDates, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 import ExternalRedirectButton from "../action/redirect/external-redirect-button";
@@ -51,9 +52,14 @@ export function InterceptTaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
   return (
-    <NavigationDrawer>
-      <TaskFormContents {...props} />
-    </NavigationDrawer>
+    <FormSessionContextProvider entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
+      props.formType === FormTypeMap.REPORT ? "report" :
+        props.formType === FormTypeMap.CANCEL ? "cancellation" :
+          "dispatch"}>
+      <NavigationDrawer>
+        <TaskFormContents {...props} />
+      </NavigationDrawer>
+    </FormSessionContextProvider>
   );
 }
 
@@ -67,9 +73,14 @@ export function TaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
   return (
-    <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
-      <TaskFormContents {...props} />
-    </div>
+    <FormSessionContextProvider entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
+      props.formType === FormTypeMap.REPORT ? "report" :
+        props.formType === FormTypeMap.CANCEL ? "cancellation" :
+          "dispatch"}>
+      <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
+        <TaskFormContents {...props} />
+      </div>
+    </FormSessionContextProvider >
   );
 }
 
@@ -461,6 +472,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           }
         </div>
       </section>
-    </>
+    </ >
   );
 }
