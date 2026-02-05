@@ -6,7 +6,7 @@ import Button from "ui/interaction/button";
 interface ExpandableTextCellProps {
     text: string;
     maxLengthText?: number;
-    overrideTextExpansion: boolean;
+    overrideExpansion: boolean;
 }
 
 /**
@@ -15,14 +15,14 @@ interface ExpandableTextCellProps {
  *
  * @param {string} text The full text content.
  * @param {number} maxLengthText (Optional) The maximum text length before truncation.
- * @param {boolean} overrideTextExpansion Flag to override text expansion behavior.
+ * @param {boolean} overrideExpansion Flag to override text expansion behavior.
  */
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const maxLengthText: number = props.maxLengthText ?? 100;
     const dict: Dictionary = useDictionary();
 
-    if (props.text.length <= maxLengthText || props.overrideTextExpansion) {
+    if (props.text.length <= maxLengthText || props.overrideExpansion) {
         return <div className="text-foreground">{props.text}</div>;
     }
 
