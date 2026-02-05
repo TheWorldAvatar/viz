@@ -8,19 +8,20 @@ import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
+import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
+import { FormSessionContextProvider } from "utils/form/FormSessionContext";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { toast } from "../action/toast/toast";
 import DateInput from "../input/date-input";
 import Tooltip from "../tooltip/tooltip";
-import { toast } from "../action/toast/toast";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
-import { JsonObject } from "types/json";
 
 
 /**
@@ -28,9 +29,11 @@ import { JsonObject } from "types/json";
  */
 export function InterceptTaskRescheduleComponent() {
   return (
-    <NavigationDrawer>
-      <TaskFormContents />
-    </NavigationDrawer>
+    <FormSessionContextProvider entityType="reschedule">
+      <NavigationDrawer>
+        <TaskFormContents />
+      </NavigationDrawer>
+    </FormSessionContextProvider>
   );
 }
 
@@ -39,9 +42,11 @@ export function InterceptTaskRescheduleComponent() {
  */
 export function TaskRescheduleComponent() {
   return (
-    <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
-      <TaskFormContents />
-    </div>
+    <FormSessionContextProvider entityType="reschedule">
+      <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
+        <TaskFormContents />
+      </div>
+    </FormSessionContextProvider>
   );
 }
 

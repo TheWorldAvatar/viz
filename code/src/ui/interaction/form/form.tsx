@@ -74,14 +74,12 @@ interface FormComponentProps {
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
-  const formSessionId: string = `_form_${props.entityType}`;
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { addFrozenFields, loadPreviousSession, handleFormClose } = useFormSession();
+  const { addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
-  const [translatedFormFieldIds, setTranslatedFormFieldIds] = useState<Record<string, string>>({});
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
 
@@ -95,7 +93,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
-      const fieldIdMapping: Record<string, string> = { formSessionId };
+      const fieldIdMapping: Record<string, string> = {};
 
       // Retrieve template from APIs
       let url: string;
@@ -148,10 +146,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       delete initialState.lockField;
 
       setFormTemplate(parsedTemplate);
-      setTranslatedFormFieldIds(fieldIdMapping);
+      setFieldIdNameMapping(fieldIdMapping);
       setBillingParams(billingParamsStore)
 
-      return loadPreviousSession(formSessionId, initialState);
+      return loadPreviousSession(initialState);
     },
   });
 
@@ -462,14 +460,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           form,
           -1,
           billingParams,
-          translatedFormFieldIds
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
           entityType={props.entityType}
           node={formTemplate?.node}
           form={form}
-          translatedFormFieldIds={translatedFormFieldIds}
           billingStore={billingParams}
         />
       )}
@@ -483,7 +479,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams, translatedFormFieldIds)
+            renderFormField(props.entityType, field, form, index, billingParams)
           )}
     </form>
   );
@@ -500,7 +496,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * @param form       A `react-hook-form` object providing methods and state for managing the form.
  * @param currentIndex An index used to generate a unique key for the rendered form field element.
  * @param {BillingEntityTypes} billingParams Optionally indicates the type of account and pricing.
- * @param translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  */
 export function renderFormField(
   entityType: string,
@@ -508,7 +503,6 @@ export function renderFormField(
   form: UseFormReturn,
   currentIndex: number,
   billingParams: BillingEntityTypes,
-  translatedFormFieldIds: Record<string, string>,
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -523,7 +517,6 @@ export function renderFormField(
         entityType={entityType}
         group={fieldset}
         form={form}
-        translatedFormFieldIds={translatedFormFieldIds}
         billingStore={billingParams}
         options={{
           disabled: disableAllInputs,
@@ -553,7 +546,6 @@ export function renderFormField(
           maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
           fieldConfigs={[fieldProp]}
           form={form}
-          translatedFormFieldIds={translatedFormFieldIds}
           billingStore={billingParams}
           options={{
             disabled: disableAllInputs,
@@ -606,7 +598,6 @@ export function renderFormField(
           key={fieldProp.name[VALUE_KEY] + currentIndex}
           dependentProp={fieldProp}
           form={form}
-          translatedFormFieldIds={translatedFormFieldIds}
           billingStore={billingParams}
         />
       );

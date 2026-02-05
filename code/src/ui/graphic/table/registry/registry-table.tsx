@@ -65,7 +65,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const { navigateToDrawer } = useDrawerNavigation();
   const isPermitted = usePermissionGuard();
-  const { resetFormSession } = useFormSession();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
   const [historyId, setHistoryId] = useState<string>("");
@@ -76,7 +75,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     props.tableDescriptor.setData
   );
 
-  const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
   const numberOfSelectedRows: number = props.tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"

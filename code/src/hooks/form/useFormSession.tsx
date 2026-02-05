@@ -1,19 +1,20 @@
 'use client';
 
+import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { browserStorageManager } from 'state/browser-storage-manager';
 import { selectFormCount, selectFrozenFields, setFormCount, setFrozenFields } from 'state/form-session-slice';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
+import { FormSessionContext, FormSessionState } from 'utils/form/FormSessionContext';
 
-interface useFormSessionReturn {
+interface useFormSessionReturn extends FormSessionState {
     formCount: number;
     frozenFields: Record<string, number>;
     incrementFormCount: () => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
-    resetFormSession: () => void;
-    loadPreviousSession: (_formId: string, _initialState: FieldValues) => FieldValues;
+    loadPreviousSession: (_initialState: FieldValues) => FieldValues;
 }
 
 /**
@@ -22,6 +23,11 @@ interface useFormSessionReturn {
  */
 const useFormSession = (): useFormSessionReturn => {
     const dispatch = useDispatch();
+    const formSession: FormSessionState = useContext(FormSessionContext);
+    if (!formSession) {
+        throw new Error("useFormSession must be used within a FormSessionContextProvider");
+    }
+
     const formCount: number = useSelector(selectFormCount);
     const frozenFields: Record<string, number> = useSelector(selectFrozenFields);
 
@@ -44,10 +50,6 @@ const useFormSession = (): useFormSessionReturn => {
         dispatch(setFrozenFields(tempLockedFields));
     };
 
-    const resetFormSession = (): void => {
-        dispatch(setFormCount(0));
-        dispatch(setFrozenFields({}));
-    };
 
     /** Handles the form close operations including decrementing form count and removing old frozen fields.
      */
@@ -65,14 +67,13 @@ const useFormSession = (): useFormSessionReturn => {
 
     /** Loads the previous form session for the current form.
      * 
-     * @param {string} formId  The unique form ID.
      * @param {FieldValues} initialState  The initial state for the form.
      */
-    const loadPreviousSession = (formId: string, initialState: FieldValues): FieldValues => {
+    const loadPreviousSession = (initialState: FieldValues): FieldValues => {
         const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
 
         // Load the values stored in the form ID, usually for input fields, branch names
-        const entityForm: string = browserStorageManager.get(formId);
+        const entityForm: string = browserStorageManager.get(formSession.id);
         if (entityForm) {
             try {
                 const nestedValues: FieldValues = JSON.parse(entityForm);
@@ -82,16 +83,16 @@ const useFormSession = (): useFormSessionReturn => {
                     }
                 });
             } catch (e) {
-                console.error("Failed to load previous form data for: ", formId, e);
+                console.error("Failed to load previous form data for: ", formSession.id, e);
             }
         }
         return initialState;
     };
 
     return {
+        ...formSession,
         formCount,
         frozenFields,
-        resetFormSession,
         incrementFormCount,
         addFrozenFields,
         handleFormClose,

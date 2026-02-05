@@ -42,7 +42,6 @@ interface RegistryRowActionProps {
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
-  const { resetFormSession } = useFormSession();
   const { navigateToDrawer } = useDrawerNavigation();
   const recordId: string = props.row.event_id
     ? getId(props.row.event_id)
@@ -55,7 +54,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {

@@ -17,6 +17,7 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import useOperationStatus from "hooks/useOperationStatus";
 
 interface TableRibbonProps {
   path: string;
@@ -43,9 +44,9 @@ interface TableRibbonProps {
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
-  const { resetFormSession } = useFormSession();
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
+  const { resetFormSession } = useOperationStatus();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;

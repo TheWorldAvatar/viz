@@ -26,7 +26,6 @@ interface FormQuickViewHeaderProps {
   accountType?: string;
   pricingType?: string;
   form: UseFormReturn;
-  translatedFormFieldIds: Record<string, string>;
   disableActions?: boolean;
 }
 
@@ -44,13 +43,12 @@ interface FormQuickViewHeaderProps {
  * @param {string} accountType Optionally indicates the type of account.
  * @param {string} pricingType Optionally indicates the type of pricing.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {Record<string, string>} translatedFormFieldIds A mapping of form field IDs to their translated storage keys.
  * @param {boolean} disableActions Disable action buttons if true.
  **/
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
-  const { incrementFormCount } = useFormSession();
+  const { id, fieldIdNameMapping, incrementFormCount } = useFormSession();
 
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
@@ -70,8 +68,8 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       // Skip excluded fields
       if (excludedFields.includes(key) || key.startsWith('_form_')) return;
       // Check if the field is a data type field
-      if (props.translatedFormFieldIds && props.translatedFormFieldIds[key]) {
-        browserStorageManager.set(props.translatedFormFieldIds[key], value);
+      if (fieldIdNameMapping && fieldIdNameMapping[key]) {
+        browserStorageManager.set(fieldIdNameMapping[key], value);
       } else {
         // Save individual field
         dataTypeValues[key] = value;
@@ -79,7 +77,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     });
     // Save all data type fields under a single identifier
     if (Object.keys(dataTypeValues).length) {
-      browserStorageManager.set(props.translatedFormFieldIds.formSessionId, JSON.stringify(dataTypeValues));
+      browserStorageManager.set(id, JSON.stringify(dataTypeValues));
     }
   }
 
