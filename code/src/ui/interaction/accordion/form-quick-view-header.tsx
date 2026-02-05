@@ -6,13 +6,11 @@ import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import type React from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
-import { browserStorageManager } from "state/browser-storage-manager";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap } from "types/form";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
-import { FORM_STATES } from "../form/form-utils";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -48,37 +46,16 @@ interface FormQuickViewHeaderProps {
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
-  const { id, fieldIdNameMapping, incrementFormCount } = useFormSession();
+  const { saveCurrentSession } = useFormSession();
 
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
   };
 
-  // Handler for form persistence when redirecting
-  // Saves the current form state to the session storage
-  const handleFormPersistence = (): void => {
+  // Handler to save the current form state
+  const onSaveSession = (): void => {
     const values: FieldValues = props.form.getValues();
-    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-    const dataTypeValues: Record<string, string> = {};
-    incrementFormCount();
-
-    Object.entries(values).forEach(([key, value]) => {
-      // If the field ID has been translated, use the translated ID
-      // client details client -> client
-      // Skip excluded fields
-      if (excludedFields.includes(key) || key.startsWith('_form_')) return;
-      // Check if the field is a data type field
-      if (fieldIdNameMapping && fieldIdNameMapping[key]) {
-        browserStorageManager.set(fieldIdNameMapping[key], value);
-      } else {
-        // Save individual field
-        dataTypeValues[key] = value;
-      }
-    });
-    // Save all data type fields under a single identifier
-    if (Object.keys(dataTypeValues).length) {
-      browserStorageManager.set(id, JSON.stringify(dataTypeValues));
-    }
+    saveCurrentSession(values);
   }
 
   // Generate URL for sub-entity actions (add, edit, delete)
@@ -122,7 +99,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             url={genSubEntityUrl("add", props.entityType)}
             softRedirect={true}
             variant="outline"
-            additionalAction={handleFormPersistence}
+            additionalAction={onSaveSession}
           />
           {props.selectedEntityId && isPermitted("edit") && <RedirectButton
             leftIcon="edit"
@@ -136,7 +113,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             )}
             softRedirect={true}
             variant="outline"
-            additionalAction={handleFormPersistence}
+            additionalAction={onSaveSession}
           />}
           {props.selectedEntityId && isPermitted("delete") && <RedirectButton
             leftIcon="delete"
@@ -150,7 +127,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             )}
             softRedirect={true}
             variant="outline"
-            additionalAction={handleFormPersistence}
+            additionalAction={onSaveSession}
           />}
         </div>}
     </div>

@@ -11,9 +11,9 @@ import { FormSessionContext, FormSessionState } from 'utils/form/FormSessionCont
 interface useFormSessionReturn extends FormSessionState {
     formCount: number;
     frozenFields: Record<string, number>;
-    incrementFormCount: () => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
+    saveCurrentSession: (_initialState: FieldValues) => void;
     loadPreviousSession: (_initialState: FieldValues) => FieldValues;
 }
 
@@ -27,13 +27,9 @@ const useFormSession = (): useFormSessionReturn => {
     if (!formSession) {
         throw new Error("useFormSession must be used within a FormSessionContextProvider");
     }
-
+    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
     const formCount: number = useSelector(selectFormCount);
     const frozenFields: Record<string, number> = useSelector(selectFrozenFields);
-
-    const incrementFormCount = (): void => {
-        dispatch(setFormCount(formCount + 1));
-    };
 
     /** Adds the frozen fields if they are not already present in the state
      * 
@@ -65,13 +61,39 @@ const useFormSession = (): useFormSessionReturn => {
         dispatch(setFrozenFields(updatedFrozenFields));
     };
 
+    /** Saves the current form data to the session storage and increment form counter 
+     * as saving usually occurs before moving to the next form.
+     * 
+     * @param {FieldValues} formData  The current form data.
+     */
+    const saveCurrentSession = (formData: FieldValues): void => {
+        // Increment form count
+        dispatch(setFormCount(formCount + 1));
+
+        const dataTypeValues: Record<string, string> = {};
+        Object.entries(formData).forEach(([key, value]) => {
+            // Skip excluded fields
+            if (excludedFields.includes(key) || key.startsWith("_form_")) return;
+            // If the field ID mapping exists for dropdown fields, use the field name
+            if (formSession.fieldIdNameMapping && formSession.fieldIdNameMapping[key]) {
+                browserStorageManager.set(formSession.fieldIdNameMapping[key], value);
+            } else {
+                // Save individual field
+                dataTypeValues[key] = value;
+            }
+        });
+        // Save all other fields under a single identifier
+        if (Object.keys(dataTypeValues).length) {
+            browserStorageManager.set(formSession.id, JSON.stringify(dataTypeValues));
+        }
+    }
+
+
     /** Loads the previous form session for the current form.
      * 
      * @param {FieldValues} initialState  The initial state for the form.
      */
     const loadPreviousSession = (initialState: FieldValues): FieldValues => {
-        const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-
         // Load the values stored in the form ID, usually for input fields, branch names
         const entityForm: string = browserStorageManager.get(formSession.id);
         if (entityForm) {
@@ -93,9 +115,9 @@ const useFormSession = (): useFormSessionReturn => {
         ...formSession,
         formCount,
         frozenFields,
-        incrementFormCount,
         addFrozenFields,
         handleFormClose,
+        saveCurrentSession,
         loadPreviousSession,
     };
 };
