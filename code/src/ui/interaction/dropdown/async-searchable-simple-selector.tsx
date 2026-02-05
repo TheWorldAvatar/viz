@@ -35,7 +35,6 @@ export default function AsyncSearchableSimpleSelector(
 ) {
     const dict: Dictionary = useDictionary();
     const [selectedOption, setSelectedOption] = useState<SelectOptionType>(props.initialValue);
-    const [optionCount, setOptionCount] = useState<number | null>(null);
 
     // If initial value changes, update the selected option as well
     useEffect(() => {
@@ -50,24 +49,17 @@ export default function AsyncSearchableSimpleSelector(
         props.onChange(value);
     };
 
-    // Track the number of options returned for the current input
-    const loadOptions = (inputValue: string) =>
-        props.options(inputValue).then((options) => {
-            setOptionCount(options.length);
-            return options;
-        });
-
     const MenuList = (
         menuProps: MenuListProps<SelectOptionType, false>
     ) => (
         <components.MenuList {...menuProps}>
-            {optionCount !== null && optionCount > 20 && (
+            {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
                 <p className="text-sm text-foreground/80 italic px-2 my-1">
                     {dict.message.typeMore}
                 </p>
             )}
             {menuProps.children}
-            {optionCount !== null && optionCount > 20 && (
+            {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
                 <p className="text-2xl text-foreground/80 italic px-2 ">...</p>
             )}
         </components.MenuList>
@@ -78,7 +70,7 @@ export default function AsyncSearchableSimpleSelector(
             styles={selectorStyles}
             value={selectedOption}
             onChange={handleChange}
-            loadOptions={loadOptions}
+            loadOptions={props.options}
             defaultOptions
             isSearchable
             isDisabled={props.isDisabled}
