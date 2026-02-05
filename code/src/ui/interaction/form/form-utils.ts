@@ -326,8 +326,10 @@ function initFormField(
     if (minArraySize == 0 && !field.defaultValue) {
       // If this is the first field item, initialise it as empty
       if (!outputState[fieldId]) {
-        outputState[fieldId] = [];
+        outputState[fieldId] = [{}];
       }
+      // Ensure the current field is optional
+      outputState[fieldId][0][parsedFieldId] = "";
       // Terminate early
       return {
         ...field,
