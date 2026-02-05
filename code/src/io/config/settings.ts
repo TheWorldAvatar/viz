@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { JsonObject } from 'types/json';
-import { MapSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
+import { DataSettings, MapSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
 import { logColours } from 'utils/logColours';
 
 /**
@@ -73,28 +73,18 @@ export default class SettingsStore {
    * Reads the initialisation settings.
    */
   public static readUISettings(): void {
-    try {
-      const settings: string = this.readFile(this.UI_SETTINGS_FILE);
-      const jsonifiedSettings: UISettings = JSON.parse(settings);
-      if (jsonifiedSettings.modules.dashboard && !jsonifiedSettings.resources?.dashboard?.url) {
-        console.warn(`${logColours.Yellow}modules.dashboard${logColours.Reset} module set to true but ${logColours.Yellow}resources.dashboard.url${logColours.Reset} is empty`);
-      }
-      this.UI_SETTINGS = jsonifiedSettings;
-    } catch (error) {
-      console.error("ERROR: Unable to read UI settings file:", this.UI_SETTINGS_FILE, error);
+    const jsonifiedSettings: UISettings = this.readFile<UISettings>(this.UI_SETTINGS_FILE);
+    if (jsonifiedSettings.modules.dashboard && !jsonifiedSettings.resources?.dashboard?.url) {
+      console.warn(`${logColours.Yellow}modules.dashboard${logColours.Reset} module set to true but ${logColours.Yellow}resources.dashboard.url${logColours.Reset} is empty`);
     }
+    this.UI_SETTINGS = jsonifiedSettings;
   }
 
   /**
    * Reads the map settings file and sets the string version to SettingsStore private field
   */
   public static readMapSettings(): void {
-    try {
-      const settings: string = this.readFile(this.MAP_SETTINGS_FILE);
-      this.MAP_SETTINGS = JSON.parse(settings);
-    } catch (error) {
-      console.error("ERROR: Unable to read map settings file:", this.MAP_SETTINGS_FILE, error);
-    }
+    this.MAP_SETTINGS = this.readFile<MapSettings>(this.MAP_SETTINGS_FILE);
   }
 
   /**
@@ -102,20 +92,9 @@ export default class SettingsStore {
    */
   public static readTableColumnOrderSettings(): void {
     try {
-      const settings: string = this.readFile(this.TABLE_ORDER_FILE);
-      const jsonifiedSettings: TableColumnOrderSettings = JSON.parse(settings);
-      this.TABLE_ORDER_SETTINGS = jsonifiedSettings;
-    } catch (error) {
-      // Check for File Not Found/Missing
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        console.warn("Table column order settings file not detected. Using default column order.");
-        // Check for Invalid JSON (Parsing Error)
-      } else if (error instanceof SyntaxError) {
-        console.error("ERROR: Settings file found but contains invalid JSON. Using default column order.", error);
-        // Other unexpected file I/O errors (e.g., permission denied)
-      } else {
-        console.error("An unexpected error occurred while reading settings file. Using default column order:", error);
-      }
+      this.TABLE_ORDER_SETTINGS = this.readFile<TableColumnOrderSettings>(this.TABLE_ORDER_FILE);
+    } catch (_error) {
+      console.warn("Using default column order without explicit overrides...");
     }
   }
 
@@ -133,8 +112,7 @@ export default class SettingsStore {
   public static async readMapDataSettings(): Promise<void> {
     try {
       // Retrieve datasets from data settings file
-      const dataSettings: string = this.readFile(this.DATA_SETTINGS_FILE);
-      const datasets: string[] = JSON.parse(dataSettings).dataSets;
+      const datasets: string[] = this.readFile<DataSettings>(this.DATA_SETTINGS_FILE).dataSets;
 
       // Array of promises to fetch data from each dataset
       const dataPromises: Promise<JsonObject>[] = (datasets.map(async dataset => {
@@ -150,22 +128,18 @@ export default class SettingsStore {
   }
 
   private static async loadLocalOrRemoteData(dataset: string) {
-    try {
-      let jsonData: JsonObject;
-      // Local datasets will start with /, and must have public appended
-      if (dataset.startsWith("/")) {
-        jsonData = JSON.parse(this.readFile("public" + dataset));
-      } else {
-        // For remote datasets, fetch the json
-        const res = await fetch(dataset);
-        if (res.ok) {
-          jsonData = await res.json();
-        }
+    let jsonData: JsonObject;
+    // Local datasets will start with /, and must have public appended
+    if (dataset.startsWith("/")) {
+      jsonData = this.readFile<JsonObject>("public" + dataset);
+    } else {
+      // For remote datasets, fetch the json
+      const res = await fetch(dataset);
+      if (res.ok) {
+        jsonData = await res.json();
       }
-      return jsonData;
-    } catch (error) {
-      console.error("ERROR: Unable to load dataset:", dataset, error);
     }
+    return jsonData;
   }
 
   /**
@@ -174,9 +148,22 @@ export default class SettingsStore {
    * @param file Config file path.
    * @throws When the configuration file is invalid or not found.
   */
-  private static readFile(file: string): string {
-    const contents: string = fs.readFileSync(file, "utf-8");
-    return decodeURIComponent(contents);
+  private static readFile<T>(file: string): T | null {
+    try {
+      const contents: string = fs.readFileSync(file, "utf-8");
+      return JSON.parse(decodeURIComponent(contents)) as T;
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(`${logColours.Red}[ERROR]${logColours.Reset} Invalid JSON format for \`${file}\``);
+        console.error(`${logColours.Red}REASON:${logColours.Reset} `, (error as Error).message);
+      } else if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        console.error(`${logColours.Red}[ERROR]${logColours.Reset} File not found for \`${file}\``);
+      } else {
+        console.error(`${logColours.Red}[ERROR]${logColours.Reset} Failed to read file for \`${file}\``);
+        console.error(`${logColours.Red}REASON:${logColours.Reset} `, (error as Error).message);
+      }
+      throw error;
+    }
   }
 }
 // End of class.
