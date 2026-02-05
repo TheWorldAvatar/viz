@@ -47,6 +47,11 @@ export interface NavBarItemSettings {
   permission?: keyof HasPermissions;
 }
 
+// Interface of data settings for visualisation page
+export type DataSettings = {
+  dataSets: string[],
+}
+
 // Interface of map settings for visualisation page
 export type MapSettings = {
   type: string,
