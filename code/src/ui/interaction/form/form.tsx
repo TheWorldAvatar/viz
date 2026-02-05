@@ -153,7 +153,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     },
   });
 
-  // // A function to initiate the form submission process
+  // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
     startLoading();
     let pendingResponse: AgentResponseBody;
