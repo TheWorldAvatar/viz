@@ -1,14 +1,16 @@
 "use client";
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
+import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
 import type React from "react";
+import { FieldValues, UseFormReturn } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
+import { FormTypeMap } from "types/form";
 import { buildUrl } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
-import { FormTypeMap } from "types/form";
 
 interface FormQuickViewHeaderProps {
   id: string;
@@ -21,6 +23,8 @@ interface FormQuickViewHeaderProps {
   accountId?: string;
   accountType?: string;
   pricingType?: string;
+  form: UseFormReturn;
+  disableActions?: boolean;
 }
 
 /** 
@@ -36,13 +40,23 @@ interface FormQuickViewHeaderProps {
  * @param {string} accountId Optionally indicates the account ID.
  * @param {string} accountType Optionally indicates the type of account.
  * @param {string} pricingType Optionally indicates the type of pricing.
+ * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+ * @param {boolean} disableActions Disable action buttons if true.
  **/
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
+  const { saveCurrentSession } = useFormSession();
+
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
   };
+
+  // Handler to save the current form state
+  const onSaveSession = (): void => {
+    const values: FieldValues = props.form.getValues();
+    saveCurrentSession(values);
+  }
 
   // Generate URL for sub-entity actions (add, edit, delete)
   const genSubEntityUrl = (
@@ -75,43 +89,47 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       >
         {props.title}
       </Button>}
-      {props.formType !== FormTypeMap.VIEW && props.formType !== FormTypeMap.DELETE && <div className="flex gap-2">
-        <RedirectButton
-          leftIcon="add"
-          size="icon"
-          iconSize="small"
-          tooltipText={dict.action.add}
-          url={genSubEntityUrl("add", props.entityType)}
-          softRedirect={true}
-          variant="outline"
-        />
-        {props.selectedEntityId && isPermitted("edit") && <RedirectButton
-          leftIcon="edit"
-          size="icon"
-          iconSize="small"
-          tooltipText={dict.action.edit}
-          url={genSubEntityUrl(
-            "edit",
-            props.entityType,
-            props.selectedEntityId
-          )}
-          softRedirect={true}
-          variant="outline"
-        />}
-        {props.selectedEntityId && isPermitted("delete") && <RedirectButton
-          leftIcon="delete"
-          size="icon"
-          iconSize="small"
-          tooltipText={dict.action.delete}
-          url={genSubEntityUrl(
-            "delete",
-            props.entityType,
-            props.selectedEntityId
-          )}
-          softRedirect={true}
-          variant="outline"
-        />}
-      </div>}
+      {props.formType !== FormTypeMap.VIEW && props.formType !== FormTypeMap.DELETE && !props.disableActions &&
+        <div className="flex gap-2">
+          <RedirectButton
+            leftIcon="add"
+            size="icon"
+            iconSize="small"
+            tooltipText={dict.action.add}
+            url={genSubEntityUrl("add", props.entityType)}
+            softRedirect={true}
+            variant="outline"
+            additionalAction={onSaveSession}
+          />
+          {props.selectedEntityId && isPermitted("edit") && <RedirectButton
+            leftIcon="edit"
+            size="icon"
+            iconSize="small"
+            tooltipText={dict.action.edit}
+            url={genSubEntityUrl(
+              "edit",
+              props.entityType,
+              props.selectedEntityId
+            )}
+            softRedirect={true}
+            variant="outline"
+            additionalAction={onSaveSession}
+          />}
+          {props.selectedEntityId && isPermitted("delete") && <RedirectButton
+            leftIcon="delete"
+            size="icon"
+            iconSize="small"
+            tooltipText={dict.action.delete}
+            url={genSubEntityUrl(
+              "delete",
+              props.entityType,
+              props.selectedEntityId
+            )}
+            softRedirect={true}
+            variant="outline"
+            additionalAction={onSaveSession}
+          />}
+        </div>}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 
 import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, FormType, FormTypeMap, RegistryFieldValues } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
@@ -12,6 +13,7 @@ import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   extractResponseField,
   extractResponseFieldArray,
+  getUTCDate,
   parseStringsForUrls,
   parseWordsForLabels,
 } from "utils/client-utils";
@@ -45,7 +47,6 @@ export const daysOfWeek: string[] = [
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
-  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
   const dict: Dictionary = useDictionary();
   const daysOfWeekLabel: string[] = [
     dict.form.sun,
@@ -61,11 +62,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const alternateService: string = dict.form.alternateService;
   const perpetualService: string = dict.form.perpetualService;
   const fixedService: string = dict.form.fixedService;
+  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
   };
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fixedDates, setFixedDates] = useState<Date[]>([new Date()]);
+  const [fixedDates, setFixedDates] = useState<Date[]>(entryDates?.length > 0
+    ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString))) : [new Date()]);
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.ENTRY_DATES)?.length > 0
@@ -81,13 +85,18 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      // Set defaults
-      let recurrence: number = 0;
-      let defaultTimeSlotStart: string = "00:00";
-      let defaultTimeSlotEnd: string = "23:59";
-
+      // If there is data in the session storage, do not fetch defaults for EDIT, VIEW, and DELETE forms
+      if (!browserStorageManager.empty()) {
+        setIsLoading(false);
+        return;
+      }
       // Fetch existing values and update them according
       if (formType != FormTypeMap.ADD && formType != FormTypeMap.SEARCH) {
+        // defaults
+        let recurrence: number = 0;
+        let defaultTimeSlotStart: string = "00:00";
+        let defaultTimeSlotEnd: string = "23:59";
+
         const fields: RegistryFieldValues = await fetch(
           makeInternalRegistryAPIwithParams(
             "schedule",
@@ -177,12 +186,10 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             )
           );
         });
+        props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
+        props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
+        props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
       }
-
-      props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
-      props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
-      props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
-
       setIsLoading(false);
     };
 
@@ -335,7 +342,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   type={"number"}
                   disabled={props.options?.disabled}
                   className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
-                    }`}
+                    } `}
                   step={"1"}
                   readOnly={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
                   aria-label={FORM_STATES.RECURRENCE}
