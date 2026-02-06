@@ -142,8 +142,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                         inputMode="decimal"
                         className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
                         value={value2 ?? ""}
-                        placeholder="To"
-                        aria-label={`upper bound filter value for ${props.label}`}
+                        placeholder={isBetweenFirst ? "To" : isBetweenSecond ? "From" : "Value..."}
+                        aria-label={`${isBetweenFirst || isBetweenSecond ? "second filter lower bound" : "second filter value"} for ${props.label}`}
                         onKeyDown={blockInvalidNumberKeys}
                         onChange={(e) => {
                             const value = e.currentTarget.valueAsNumber;
@@ -193,48 +193,26 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             }
                         }}
                     />
-                    {isBetweenSecond ? (
-                        <>
-                            <div className="relative">
-                                <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                                    <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                                </span>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    inputMode="decimal"
-                                    className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                                    value={value2 ?? ""}
-                                    placeholder="From"
-                                    aria-label={`second filter lower bound for ${props.label}`}
-                                    onKeyDown={blockInvalidNumberKeys}
-                                    onChange={(e) => {
-                                        const value = e.currentTarget.valueAsNumber;
-                                        setValue2(Number.isNaN(value) ? null : value);
-                                    }}
-                                />
-                            </div>
-                            <div className="relative">
-                                <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                                    <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                                </span>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    inputMode="decimal"
-                                    className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                                    value={value3 ?? ""}
-                                    placeholder="To"
-                                    aria-label={`second filter upper bound for ${props.label}`}
-                                    onKeyDown={blockInvalidNumberKeys}
-                                    onChange={(e) => {
-                                        const value = e.currentTarget.valueAsNumber;
-                                        setValue3(Number.isNaN(value) ? null : value);
-                                    }}
-                                />
-                            </div>
-                        </>
-                    ) : (
+                    <div className="relative">
+                        <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
+                            <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
+                        </span>
+                        <input
+                            type="number"
+                            step="0.01"
+                            inputMode="decimal"
+                            className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+                            value={value2 ?? ""}
+                            placeholder={isBetweenSecond ? "From" : "Value..."}
+                            aria-label={`${isBetweenSecond ? "second filter lower bound" : "second filter value"} for ${props.label}`}
+                            onKeyDown={blockInvalidNumberKeys}
+                            onChange={(e) => {
+                                const value = e.currentTarget.valueAsNumber;
+                                setValue2(Number.isNaN(value) ? null : value);
+                            }}
+                        />
+                    </div>
+                    {isBetweenSecond && (
                         <div className="relative">
                             <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
                                 <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
@@ -244,13 +222,13 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                                 step="0.01"
                                 inputMode="decimal"
                                 className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                                value={value2 ?? ""}
-                                placeholder="Value..."
-                                aria-label={`second filter value for ${props.label}`}
+                                value={value3 ?? ""}
+                                placeholder="To"
+                                aria-label={`second filter upper bound for ${props.label}`}
                                 onKeyDown={blockInvalidNumberKeys}
                                 onChange={(e) => {
                                     const value = e.currentTarget.valueAsNumber;
-                                    setValue2(Number.isNaN(value) ? null : value);
+                                    setValue3(Number.isNaN(value) ? null : value);
                                 }}
                             />
                         </div>
