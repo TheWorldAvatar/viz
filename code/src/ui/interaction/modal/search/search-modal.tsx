@@ -10,6 +10,7 @@ import { FormTypeMap } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import { FormComponent } from "ui/interaction/form/form";
+import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Modal from "../modal";
 
 interface SearchModalProps {
@@ -47,32 +48,34 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
       setIsOpen={props.setShowState}
       className="h-[90vh] w-[90vw]"
     >
-      <h1 className="text-xl font-bold">{dict.title.searchCriteria}</h1>
-      <section className={"overflow-y-auto overflow-x-hidden md:p-3 p-1 h-[60vh] max-h-[60vh]"}>
-        <FormComponent
-          formRef={formRef}
-          entityType={props.id}
-          formType={FormTypeMap.SEARCH}
-          setShowSearchModalState={props.setShowState}
-        />
-      </section>
-      <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
-        {formRef.current?.formState?.isSubmitting && (
-          <LoadingSpinner isSmall={false} />
-        )}
-        <div className="flex flex-wrap gap-2.5 2xl:gap-2">
-          <Button
-            leftIcon="search"
-            label={dict.action.search}
-            onClick={onSubmit}
+      <FormSessionContextProvider entityType={props.id}>
+        <h1 className="text-xl font-bold">{dict.title.searchCriteria}</h1>
+        <section className={"overflow-y-auto overflow-x-hidden md:p-3 p-1 h-[60vh] max-h-[60vh]"}>
+          <FormComponent
+            formRef={formRef}
+            entityType={props.id}
+            formType={FormTypeMap.SEARCH}
+            setShowSearchModalState={props.setShowState}
           />
-          <Button
-            leftIcon="select_all"
-            label={dict.action.showAll}
-            onClick={showAllFeatures}
-          />
-        </div>
-      </section>
+        </section>
+        <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
+          {formRef.current?.formState?.isSubmitting && (
+            <LoadingSpinner isSmall={false} />
+          )}
+          <div className="flex flex-wrap gap-2.5 2xl:gap-2">
+            <Button
+              leftIcon="search"
+              label={dict.action.search}
+              onClick={onSubmit}
+            />
+            <Button
+              leftIcon="select_all"
+              label={dict.action.showAll}
+              onClick={showAllFeatures}
+            />
+          </div>
+        </section>
+      </FormSessionContextProvider>
     </Modal>
   );
 }

@@ -20,6 +20,8 @@ import { FORM_STATES, getRegisterOptions } from "../form-utils";
 
 import { useDependentField } from "hooks/form/api/useDependentField";
 import { useFormQuickView } from "hooks/form/useFormQuickView";
+import useFormSession from "hooks/form/useFormSession";
+import { browserStorageManager } from "state/browser-storage-manager";
 import FormQuickViewBody from "ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "ui/interaction/accordion/form-quick-view-header";
 import AsyncSearchableSimpleSelector from "ui/interaction/dropdown/async-searchable-simple-selector";
@@ -45,11 +47,10 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-
+  const { formCount, frozenFields } = useFormSession();
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
-
   const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
 
   const control: Control = props.form.control;
@@ -67,6 +68,10 @@ export function DependentFormSection(
     isQuickViewOpen,
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
+
+  const disable: boolean = (fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount) ||
+  // Disable account field on assign price form page
+    (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
 
   return (
     <div className="rounded-lg my-4">
@@ -92,8 +97,7 @@ export function DependentFormSection(
                   onChange={(option: SelectOptionType) => {
                     onChange(option.value);
                   }}
-                  isDisabled={formType == FormTypeMap.VIEW ||
-                    formType == FormTypeMap.DELETE ||
+                  isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
                   noOptionMessage={dict.message.noInstances}
@@ -113,6 +117,8 @@ export function DependentFormSection(
           accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}
           accountType={props.billingStore?.account}
           pricingType={props.billingStore?.pricing}
+          form={props.form}
+          disableActions={disable}
         />}
         {currentOption &&
           isQuickViewOpen &&

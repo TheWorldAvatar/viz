@@ -26,6 +26,7 @@ import {
 } from "ui/interaction/form/form-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormInputContainer from "../form-input-container";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -100,16 +101,18 @@ export default function OntologyConceptSelector(
           );
           setConceptMappings(sortedConceptMappings);
 
-          // Only auto-select default values for non-add forms to force explicit user selection in add forms
+          // Only auto-select default values if there's no existing value (e.g., from storage)
           const currentFormType: string = props.form.getValues(
             FORM_STATES.FORM_TYPE
           );
-          // First option should be set if available, else the first parent value should be prioritised
-          const firstRootOption: OntologyConcept =
-            sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
-          props.form.setValue(
-            props.field.fieldId,
-            currentFormType === FormTypeMap.ADD
+
+          const storedValue: string = browserStorageManager.get(props.field.name[VALUE_KEY]);
+
+          // Only set a default value if there's no existing value (preserve stored values)
+          if (!storedValue) {
+            // First option should be set if available, else the first parent value should be prioritised
+            const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
+            props.form.setValue(props.field.fieldId, currentFormType === FormTypeMap.ADD
               // For add forms, default to default value if available, else, return undefined
               ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
               // For every other form type, extract the parent option if available, else, default to base
@@ -117,7 +120,10 @@ export default function OntologyConceptSelector(
                 ? sortedConceptMappings[firstRootOption.type.value][0]?.type
                   ?.value
                 : firstRootOption?.type?.value
-          );
+            );
+          } else {
+            props.form.setValue(props.field.fieldId, storedValue);
+          }
 
           // Parse the mappings to generate the format for select options
           const formOptions: SelectOptionType[] = [];

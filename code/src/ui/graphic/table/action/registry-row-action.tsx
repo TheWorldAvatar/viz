@@ -20,6 +20,7 @@ import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
+
 interface RegistryRowActionProps {
   recordType: string;
   accountType: string;
@@ -52,7 +53,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
 
-  const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -115,6 +116,8 @@ export default function RegistryRowAction(
   };
 
   const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    browserStorageManager.clear();
+    resetFormSession();
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
     const body: AgentResponseBody = await queryInternalApi(url);
     browserStorageManager.set(EVENT_KEY, props.row.event_id);
@@ -177,6 +180,8 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  browserStorageManager.clear();
+                  resetFormSession();
                   handleClickView();
                 }}
               />
@@ -227,6 +232,8 @@ export default function RegistryRowAction(
                 label={dict.action.edit}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  browserStorageManager.clear();
+                  resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
@@ -240,6 +247,8 @@ export default function RegistryRowAction(
                 label={dict.action.delete}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  browserStorageManager.clear();
+                  resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -256,6 +265,8 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  browserStorageManager.clear();
+                  resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />
@@ -269,6 +280,8 @@ export default function RegistryRowAction(
                 label={dict.action.complete}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  browserStorageManager.clear();
+                  resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
@@ -282,6 +295,8 @@ export default function RegistryRowAction(
                 label={dict.action.dispatch}
                 onClick={() => {
                   setIsActionMenuOpen(false);
+                  browserStorageManager.clear();
+                  resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}

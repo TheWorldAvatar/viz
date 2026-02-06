@@ -40,7 +40,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 interface RegistryTableProps {
   recordType: string;
@@ -63,7 +63,6 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
-
   const { navigateToDrawer } = useDrawerNavigation();
   const isPermitted = usePermissionGuard();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
@@ -76,7 +75,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     props.tableDescriptor.setData
   );
 
-  const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
   const numberOfSelectedRows: number = props.tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
@@ -90,6 +89,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       : row.id
         ? getId(row.id)
         : getId(row.iri);
+    // Clear any stored form data when clicking on a row
+    browserStorageManager.clear();
+    resetFormSession();
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
@@ -117,6 +119,19 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       browserStorageManager.set(EVENT_KEY, row.event_id)
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
       const body: AgentResponseBody = await queryInternalApi(url);
+      try {
+        const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+          InternalApiIdentifierMap.FILTER,
+          LifecycleStageMap.ACCOUNT,
+          props.accountType,
+          row[props.accountType]
+        ));
+        const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+        // Set the account type in browser storage to match the values of the account type in the assign price form
+        browserStorageManager.set(props.accountType, options[0]?.value);
+      } catch (error) {
+        console.error("Error fetching instances", error);
+      }
       if (row[dict.title.billingStatus] != "pendingApproval") {
         navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
       } else if (body.data.message == "true") {

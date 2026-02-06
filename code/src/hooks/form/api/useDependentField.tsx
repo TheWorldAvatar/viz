@@ -1,6 +1,7 @@
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useRef, useState } from "react";
 import { Control, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
@@ -119,17 +120,18 @@ export function useDependentField(
                 }
 
                 // By default, id is empty if optional, else its undefined
-                let defaultId: string = currentOption == "" ?
+                const storedValue: string = isArray ? undefined : browserStorageManager.get(label);
+                let defaultId: string = storedValue ?? (currentOption == "" ?
                     isSectionOptional ? naOption.value : undefined :
-                    currentOption;
-
+                    currentOption);
                 // Only update the id if there are any entities
                 if (entities.length > 0) {
                     let matchingExistingOptionValue: string = null;
                     // Find best matching value if there is an existing or default value;
                     // Existing value must take precedence
-                    if (currentOption && currentOption.length > 0) {
-                        matchingExistingOptionValue = findMatchingDropdownOptionValue(currentOption, entities);
+                    if (storedValue || (currentOption && currentOption.length > 0)) {
+                        // Always prefer stored value over current option
+                        matchingExistingOptionValue = findMatchingDropdownOptionValue(storedValue ?? currentOption, entities);
                     } else if (field?.defaultValue) {
                         const defaults: SparqlResponseField | SparqlResponseField[] =
                             field?.defaultValue;
@@ -158,13 +160,19 @@ export function useDependentField(
                         // Only append the existing option if it exists
                         const results: Record<string, SparqlResponseField>[] = responseEntity.data?.items as Record<string, SparqlResponseField>[];
                         if (results?.length > 0) {
-                            entities.push({
-                                label: results[0].name?.value,
-                                value: results[0].iri?.value
-                            });
+                            // The existing saved option's parent does not match the current parent option
+                            // reset to default NA or undefined dependending on whether it is optional
+                            if (parentField && results[0][field?.dependentOn?.label].value !== currentParentOption) {
+                                defaultId = isSectionOptional ? naOption.value : undefined;
+                                // Add the existing option if it should be shown
+                            } else {
+                                entities.push({
+                                    label: results[0].name?.value,
+                                    value: results[0].iri?.value
+                                });
+                            }
                         }
                     }
-
                 }
 
                 const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
@@ -195,11 +203,14 @@ export function useDependentField(
         });
     };
     useEffect(() => {
-        // Update the current option if there is none on first render
+        // Update the current option if there is none on first render; 
+        // Note that when loading saved data from session storage, parent option takes time to change 
+        // and this value should be repopulated after the parent option has been selected
         const updateCurrentOption = async () => {
             const options: SelectOptionType[] = await getFieldOptions("");
             if (options?.length > 0) {
-                const initialOption: SelectOptionType = options.find(option => option?.value == form.getValues(field?.fieldId));
+                const valueChecker: string = form.getValues(field?.fieldId);
+                const initialOption: SelectOptionType = options.find(option => option?.value == valueChecker);
                 setSelectedOption(initialOption);
             }
         };
@@ -207,7 +218,7 @@ export function useDependentField(
         if (selectedOption == null) {
             updateCurrentOption();
         }
-    }, []);
+    }, [currentParentOption]);
 
     // Reset dependent child field when parent changes (but not on initial load)
     // Note that this should be combined with a debouncer as react hook form changes are not propagated immediately
@@ -218,6 +229,8 @@ export function useDependentField(
             previousParentOption.current !== currentParentOption
         ) {
             // Parent changed - reset the dependent field to null
+            // Only reset if this is not the initial load (previousParentOption.current !== null)
+            // This prevents clearing stored values when the form first loads
             form.setValue(field?.fieldId, undefined);
             // Reset field for arrays
             if (isArray) {

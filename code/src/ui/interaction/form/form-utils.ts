@@ -11,7 +11,6 @@ import {
   FormType,
   FormTypeMap,
   ID_KEY,
-  LifecycleStageMap,
   NodeShape,
   ONTOLOGY_CONCEPT_ROOT,
   OntologyConcept,
@@ -28,6 +27,7 @@ import {
 } from "types/form";
 import { SelectOptionType } from "../dropdown/simple-selector";
 import { REPLACE_DICT_KEY } from "utils/constants";
+import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -69,39 +69,83 @@ export const ENTITY_STATUS: Record<string, string> = {
   PENDING: "Pending",
 };
 
+// Class IDs that should be excluded from field ID mapping.
+// It a field includes one of these class IDs, it is not part of the dependent form section.
+const EXCLUDED_CLASS_IDS: string[] = [
+  "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule",
+  "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation",
+  "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries",
+];
+
+/**
+ * Checks if a field shape has a class that is not in the excluded list.
+ * Also it check if its an ontology concept selector (has 'in' property).
+ * Returns true if the field should be included in the field ID mapping.
+ * 
+ * @param {PropertyShape} fieldShape The field shape to check.
+ * @returns {boolean} True if the field has a class that is not excluded.
+ */
+export function isFieldMappable(fieldShape: PropertyShape): boolean {
+  return (fieldShape.class && !EXCLUDED_CLASS_IDS.includes(fieldShape.class[ID_KEY])) || !!fieldShape.in;
+}
+
+
 /**
  * Parses a list of property shape or group into a format compliant with the viz.
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
+ * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
+ * Needed for form persistence, translating field IDs from dependant form section
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
+  fieldIdMapping?: Record<string, string>,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): PropertyShapeOrGroup[] {
+  // Ensure fieldIdMapping is always an object
+  if (!fieldIdMapping) fieldIdMapping = {};
+
   return fields.map((field) => {
     // Properties as part of a group
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
       const fieldset: PropertyGroup = field as PropertyGroup;
+
       const properties: PropertyShape[] = fieldset.property.map((fieldProp) => {
         // Iterate after filtering the property so that non-array fields are not parsed
         const updatedProp: PropertyShape = updateDependentProperty(
           fieldProp,
           fields
         );
+        // Collect dependentOn label into lockField array
+        if (updatedProp.dependentOn?.label && !initialState.lockField.includes(updatedProp.dependentOn.label)) {
+          initialState.lockField.push(updatedProp.dependentOn.label);
+        }
         // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
         if (
           !fieldset.maxCount ||
           (fieldset.maxCount && parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1)
         ) {
+
+          if (isFieldMappable(updatedProp)) {
+            fieldIdMapping[fieldset?.label?.[VALUE_KEY]] = fieldset?.label?.[VALUE_KEY];
+          }
+          // Initialise array field group object if they have yet to be
+          // Min count of 0 should be initialise as an empty array
+          if (!initialState[fieldset.label[VALUE_KEY]] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
+            initialState[fieldset.label[VALUE_KEY]] = [];
+            // If at least one item, initialise it with an array with 1 empty object
+          } else if (!initialState[fieldset.label[VALUE_KEY]] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
+            initialState[fieldset.label[VALUE_KEY]] = [{}];
+          }
           return initFormField(
             updatedProp,
             initialState,
             fieldset.label[VALUE_KEY],
             true,
-            parseInt(fieldset.minCount?.[VALUE_KEY])
+            parseInt(updatedProp.minCount?.[VALUE_KEY])
           );
         }
         // Update and set property field ids to include their group name
@@ -112,6 +156,9 @@ export function parsePropertyShapeOrGroupList(
           billingTypes.accountField = fieldId;
         } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.pricingField = fieldId;
+        }
+        if (isFieldMappable(updatedProp)) {
+          fieldIdMapping[fieldId] = updatedProp.name[VALUE_KEY];
         }
         return initFormField(updatedProp, initialState, fieldId);
       });
@@ -125,11 +172,18 @@ export function parsePropertyShapeOrGroupList(
         field as PropertyShape,
         fields
       );
+      // Collect dependentOn label into lockField array
+      if (fieldShape.dependentOn?.label && !initialState.lockField.includes(fieldShape.dependentOn.label)) {
+        initialState.lockField.push(fieldShape.dependentOn.label);
+      }
       // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
       if (
         !fieldShape.maxCount ||
         (fieldShape.maxCount && parseInt(fieldShape.maxCount?.[VALUE_KEY]) > 1)
       ) {
+        if (isFieldMappable(fieldShape)) {
+          fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
+        }
         return initFormField(
           fieldShape,
           initialState,
@@ -139,6 +193,9 @@ export function parsePropertyShapeOrGroupList(
         );
       }
       // For groupless properties, their field ID will be directly set without further parsing
+      if (isFieldMappable(fieldShape)) {
+        fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
+      }
       return initFormField(
         fieldShape,
         initialState,
@@ -153,16 +210,15 @@ export function parsePropertyShapeOrGroupList(
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
- * @param {boolean} reqMatching Enables the matching process to find the most suitable branch.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
+ * @param {Record<string, string>} fieldIdMapping Stores the mapping between translated and original field IDs.
  */
 export function parseBranches(
   initialState: FieldValues,
   nodeShapes: NodeShape[],
-  reqMatching: boolean,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
+  fieldIdMapping: Record<string, string>,
 ): NodeShape[] {
-  // Early termination
   if (nodeShapes.length === 0) {
     return nodeShapes;
   }
@@ -171,7 +227,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, fieldIdMapping, billingTypes);
     nodeStates.push(nodeState);
     results.push({
       ...shape,
@@ -181,7 +237,7 @@ export function parseBranches(
   // Find the best matched node states with non-empty values and null values
   let nodeWithMostNonEmpty: NodeShape = results[0];
   let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
-  if (reqMatching) {
+  if (initialState.formType != FormTypeMap.ADD) {
     let maxNonEmptyCount: number = 0;
     let minNullCount: number = 0;
     nodeStates.forEach((nodeState, index) => {
@@ -221,6 +277,16 @@ export function parseBranches(
       }
     });
   }
+  // Initalise branch fields based on the best matched node state and the form type
+  if (initialState.formType === FormTypeMap.DELETE) {
+    initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
+  } else if (initialState.formType === FormTypeMap.EDIT) {
+    // Set both values - branch_add for new, branch_delete for original
+    initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
+    initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
+  } else if (initialState.formType === FormTypeMap.ADD) {
+    initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
+  }
   for (const field in nodeStateWithMostNonEmpty) {
     initialState[field] = nodeStateWithMostNonEmpty[field];
   }
@@ -235,7 +301,7 @@ export function parseBranches(
  * @param {PropertyShape} field The data model for the field of interest.
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
- * @param {boolean} isArray Optional state to initialise array fields.
+ * @param {boolean} isArray Optional boolean to indicate if the field is an array.
  * @param {number} minSize Optional parameter to indicate the minimum array size.
  */
 function initFormField(
@@ -249,16 +315,24 @@ function initFormField(
   if (isArray) {
     // Update field ID, the fieldId for an array should be its group name
     parsedFieldId = `${fieldId} ${field.name[VALUE_KEY]}`;
-    let currentIndex: number = 0;
     const minArraySize: number =
       Number.isNaN(minSize) || minSize != 0 ? 1 : minSize;
 
+    // If there is an array values stored in browser storage, retrieve it 
+    // and terminate early
+    const storedValue: string = browserStorageManager.get(fieldId);
+    if (storedValue) {
+      outputState[fieldId] = storedValue;
+      // Terminate early
+      return {
+        ...field,
+        fieldId: parsedFieldId,
+      };
+    }
     // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
-      // If this is the first field item, initialise it as empty
-      if (!outputState[fieldId]) {
-        outputState[fieldId] = [];
-      }
+      // Ensure the current field is optional
+      outputState[fieldId][0][parsedFieldId] = "";
       // Terminate early
       return {
         ...field,
@@ -266,10 +340,6 @@ function initFormField(
       };
     }
 
-    // Initialise with an empty item as there is a default value
-    if (!outputState[fieldId] || outputState[fieldId].length === 0) {
-      outputState[fieldId] = [{}];
-    }
     // Append existing values if they exist
     if (field.defaultValue) {
       const defaultArray: SparqlResponseField[] = Array.isArray(
@@ -282,13 +352,14 @@ function initFormField(
           outputState[fieldId][index] = {};
         }
         outputState[fieldId][index][parsedFieldId] = defaultValue?.value;
-        currentIndex = index; // Always update the current index following default values
       });
-    } else {
-      // If no existing values exist, add an initial value
-      outputState[fieldId][currentIndex][parsedFieldId] = "";
     }
-    currentIndex++; // increment the counter
+  } else if (field.class?.[ID_KEY] ===
+    "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" &&
+    outputState.formType == FormTypeMap.ADD) {
+    outputState[FORM_STATES.RECURRENCE] = 0;
+    outputState[FORM_STATES.TIME_SLOT_START] = "00:00";
+    outputState[FORM_STATES.TIME_SLOT_END] = "23:59";
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue)
       ? field.defaultValue?.value
@@ -396,6 +467,7 @@ function updateDependentProperty(
       }
       if (property[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
         const fieldset: PropertyGroup = property as PropertyGroup;
+
         const propertyLabel: string = fieldset.property.find(
           (fieldProperty: PropertyShape) =>
             dependentIri == fieldProperty[ID_KEY]

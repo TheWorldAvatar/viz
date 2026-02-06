@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import useFormSession from "hooks/form/useFormSession";
 import { useDispatch } from "react-redux";
 import { setIsAnyDrawerOpen } from "state/drawer-signal-slice";
 import Drawer from "./drawer";
@@ -18,6 +19,7 @@ export default function NavigationDrawer(
 ) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { handleFormClose } = useFormSession();
   const [isOpen, setIsOpen] = useState(true); // Start as true immediately
 
   // Function to reset the open drawer flag
@@ -35,6 +37,7 @@ export default function NavigationDrawer(
       isExternalOpen={isOpen}
       setIsExternalOpen={setIsOpen}
       onClose={() => {
+        handleFormClose();
         resetDrawerOpenFlag();
         router.back();
       }}

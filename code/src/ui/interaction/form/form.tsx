@@ -4,6 +4,7 @@ import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
@@ -24,6 +25,7 @@ import {
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
+  SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY,
 } from "types/form";
@@ -41,6 +43,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
+
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -74,6 +77,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
+  const { addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
@@ -86,7 +90,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const initialState: FieldValues = {
         formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
         id: id,
+        lockField: [] // An array that stores all fields that should be locked (disabled)
       };
+
+      const fieldIdMapping: Record<string, string> = {};
+
       // Retrieve template from APIs
       let url: string;
       // For add form, get a blank template
@@ -118,30 +126,30 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         );
       }
 
-      if (props.formType == FormTypeMap.ADD) {
-        const hasScheduleField: boolean = template.property.some(
-          (field) =>
-            (field as PropertyShape)?.class?.[ID_KEY] ===
-            "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
-        );
-
-        if (hasScheduleField) {
-          initialState[FORM_STATES.RECURRENCE] = 0;
-        }
-      }
       const billingParamsStore: BillingEntityTypes = {
         account: props.accountType,
         accountField: props.accountType,
         pricing: props.pricingType,
         pricingField: props.pricingType
       };
-      setFormTemplate({
+
+      const parsedTemplate = {
         ...template,
-        node: parseBranches(initialState, template.node, props.formType != FormTypeMap.ADD, billingParamsStore),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore),
-      });
+        node: parseBranches(initialState, template.node, billingParamsStore, fieldIdMapping),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore),
+      };
+
+      if (initialState.lockField.length > 0) {
+        addFrozenFields(initialState.lockField);
+      }
+
+      delete initialState.lockField;
+
+      setFormTemplate(parsedTemplate);
+      setFieldIdNameMapping(fieldIdMapping);
       setBillingParams(billingParamsStore)
-      return initialState;
+
+      return loadPreviousSession(initialState);
     },
   });
 
@@ -151,14 +159,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     let pendingResponse: AgentResponseBody;
 
     // Check for fixed service (has entry_dates)
-    const entryDates: Date[] | undefined = formData[FORM_STATES.ENTRY_DATES];
+    const entryDates: string[] | undefined = formData[FORM_STATES.ENTRY_DATES];
     if (entryDates?.length > 0) {
       // Sort dates to find earliest and latest
-      const sortedDates: Date[] = [...entryDates].sort((a, b) => a.getTime() - b.getTime());
+      const sortedDates: Date[] = [...entryDates].map((date) => new Date(date))
+        .sort((a, b) => a.getTime() - b.getTime());
 
       formData = {
         ...formData,
-        "schedule entry": entryDates.map((date) => ({
+        "schedule entry": sortedDates.map((date) => ({
           "schedule entry date": getNormalizedDate(date),
         })),
         "start date": getNormalizedDate(sortedDates[0]),
@@ -166,7 +175,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         recurrence: "",
       };
       // Remove the internal fields
-      delete formData[FORM_STATES.ENTRY_DATES];
       delete formData[FORM_STATES.RECURRENCE];
     } else if (formData[FORM_STATES.RECURRENCE] == null) {
       // For perpetual service
@@ -251,6 +259,30 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, LifecycleStageMap.PRICING),
           "POST",
           JSON.stringify(formData));
+        // When adding price, fetch the relevant IRI based on the original entity type
+        if (!pendingResponse?.error) {
+          const priceModelResponse: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES,
+              props.entityType,
+              "false",
+              getAfterDelimiter(pendingResponse.data?.id, "/"),
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null),
+            "GET");
+          // Update the pending response with the correct IRI
+          pendingResponse = {
+            apiVersion: pendingResponse.apiVersion,
+            data: {
+              id: ((priceModelResponse.data.items[0] as Record<string, unknown>).iri as SparqlResponseField).value,
+              message: pendingResponse.data.message,
+            }
+          }
+        }
         break;
       }
       case FormTypeMap.ADD_INVOICE: {
@@ -384,12 +416,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       default:
         break;
     }
+
     stopLoading();
     toast(
       pendingResponse?.data?.message || pendingResponse?.error?.message,
       pendingResponse?.error ? "error" : "success"
     );
     if (!pendingResponse?.error) {
+      const newIri: string = pendingResponse.data.id;
+      const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
+      browserStorageManager.set(formattedEntityType, newIri);
+      handleFormClose();
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
@@ -423,7 +460,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           ),
           form,
           -1,
-          billingParams
+          billingParams,
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
@@ -481,10 +518,10 @@ export function renderFormField(
         entityType={entityType}
         group={fieldset}
         form={form}
+        billingStore={billingParams}
         options={{
           disabled: disableAllInputs,
         }}
-        billingStore={billingParams}
       />
     );
   } else {
@@ -510,10 +547,10 @@ export function renderFormField(
           maxSize={parseInt(fieldProp.maxCount?.[VALUE_KEY])}
           fieldConfigs={[fieldProp]}
           form={form}
+          billingStore={billingParams}
           options={{
             disabled: disableAllInputs,
           }}
-          billingStore={billingParams}
         />
       );
     }
