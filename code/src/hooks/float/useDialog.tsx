@@ -13,11 +13,22 @@ import React from "react";
 export function useDialog(
   isOpen: boolean,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  dismissOutsidePress: boolean = true
+  dismissOutsidePress: boolean = true,
+  onClose?: () => void
 ) {
+  const handleOpenChange = React.useCallback(
+    (open: boolean) => {
+      setIsOpen(open);
+      if (!open && onClose) {
+        onClose();
+      }
+    },
+    [setIsOpen, onClose]
+  );
+
   const floatingProps = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen,
+    onOpenChange: handleOpenChange,
     whileElementsMounted: autoUpdate,
   });
 

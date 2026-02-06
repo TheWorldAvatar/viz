@@ -28,7 +28,7 @@ interface DrawerProps {
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
   const [isOpen, setIsOpen] = useState(props.isExternalOpen ?? false);
-  const dialog = useDialog(props.isExternalOpen ?? isOpen, props.setIsExternalOpen ?? setIsOpen, false);
+  const dialog = useDialog(props.isExternalOpen ?? isOpen, props.setIsExternalOpen ?? setIsOpen, false, props.onClose);
   const transition = useTransitionStyles(dialog.context, {
     duration: 300,
     initial: {
