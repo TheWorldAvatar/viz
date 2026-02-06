@@ -16,15 +16,13 @@ export function useDialog(
   dismissOutsidePress: boolean = true,
   onClose?: () => void
 ) {
-  const handleOpenChange = React.useCallback(
-    (open: boolean) => {
-      setIsOpen(open);
-      if (!open && onClose) {
-        onClose();
-      }
-    },
-    [setIsOpen, onClose]
-  );
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
 
   const floatingProps = useFloating({
     open: isOpen,
