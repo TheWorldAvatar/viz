@@ -13,11 +13,20 @@ import React from "react";
 export function useDialog(
   isOpen: boolean,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  dismissOutsidePress: boolean = true
+  dismissOutsidePress: boolean = true,
+  onClose?: () => void
 ) {
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
+
   const floatingProps = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen,
+    onOpenChange: handleOpenChange,
     whileElementsMounted: autoUpdate,
   });
 
@@ -38,11 +47,11 @@ export function useDialog(
   return React.useMemo(
     () => ({
       open: isOpen,
-      setIsOpen,
+      setIsOpen: handleOpenChange,
       context,
       ...interactions,
       ...floatingProps,
     }),
-    [isOpen, setIsOpen, context, interactions, floatingProps]
+    [isOpen, handleOpenChange, context, interactions, floatingProps]
   );
 }

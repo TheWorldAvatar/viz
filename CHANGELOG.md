@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.58.3
+
+### Bug Fixes
+
+- Fixed the escape button functionality in the side pannel. Now it behaves the same way as the close button does, using the programmatic close function.
+
 ## 5.58.2
 
 ### Changes
