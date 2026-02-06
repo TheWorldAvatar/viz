@@ -49,11 +49,11 @@ export function useDialog(
   return React.useMemo(
     () => ({
       open: isOpen,
-      setIsOpen,
+      setIsOpen: handleOpenChange,
       context,
       ...interactions,
       ...floatingProps,
     }),
-    [isOpen, setIsOpen, context, interactions, floatingProps]
+    [isOpen, handleOpenChange, context, interactions, floatingProps]
   );
 }

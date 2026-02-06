@@ -88,14 +88,7 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     variant="ghost"
                     type="button"
                     className="absolute top-2 right-4 !rounded-full"
-                    onClick={() => {
-                      setIsOpen(false);
-                      props.setIsExternalOpen?.(false);
-                      // If there are additional close functions to execute
-                      if (props.onClose) {
-                        props.onClose();
-                      }
-                    }}
+                    onClick={() => dialog.setIsOpen(false)}
                   />
                   <div className="px-4 h-full flex flex-col min-h-0">
                     {props.children}
