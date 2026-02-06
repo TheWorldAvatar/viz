@@ -12,6 +12,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import TableCell from "./table-cell";
+import NumericColumnFilter from "../action/numeric-column-filter";
 
 interface HeaderCellProps {
   type: string;
@@ -57,6 +58,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     currentFilters,
     props.filters,
   );
+
+  const showNumericFilter: boolean = options.length > 0 &&
+    options.every((option) => option.trim() !== "" && !Number.isNaN(Number(option)));
 
   return (
     <TableCell
@@ -110,19 +114,32 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              <SearchSelector
-                searchString={search}
-                options={options}
-                label={props.header.id}
-                initSelectedOptions={currentFilters}
-                showOptions={!isLoading}
-                onSubmission={(selectedOptions: string[]) => {
-                  props.header.column.setFilterValue(selectedOptions);
-                  props.table.resetRowSelection();
-                  props.table.resetPageIndex();
-                }}
-                setSearchString={setSearch}
-              />
+
+              {showNumericFilter ? (
+                <NumericColumnFilter
+                  options={options}
+                  label={props.header.id}
+                  onSubmission={(selectedOptions: string[]) => {
+                    props.header.column.setFilterValue(selectedOptions);
+                    props.table.resetRowSelection();
+                    props.table.resetPageIndex();
+                  }}
+                />
+              ) : (
+                <SearchSelector
+                  searchString={search}
+                  options={options}
+                  label={props.header.id}
+                  initSelectedOptions={currentFilters}
+                  showOptions={!isLoading}
+                  onSubmission={(selectedOptions: string[]) => {
+                    props.header.column.setFilterValue(selectedOptions);
+                    props.table.resetRowSelection();
+                    props.table.resetPageIndex();
+                  }}
+                  setSearchString={setSearch}
+                />
+              )}
               {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
             }
