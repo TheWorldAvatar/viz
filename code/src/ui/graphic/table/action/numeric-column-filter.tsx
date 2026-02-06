@@ -99,7 +99,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
     return (
         <div className="flex flex-col w-62 gap-2">
-            {/* First condition */}
             <SimpleSelector
                 options={operators}
                 defaultVal={selectedOperator1}
@@ -129,31 +128,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     }}
                 />
             </div>
-
-            {/* Between: show "To" input directly below "From" */}
-            {isBetweenFirst && (
-                <div className="relative">
-                    <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                        <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                    </span>
-                    <input
-                        type="number"
-                        step="0.01"
-                        inputMode="decimal"
-                        className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                        value={value2 ?? ""}
-                        placeholder={isBetweenFirst ? "To" : isBetweenSecond ? "From" : "Value..."}
-                        aria-label={`${isBetweenFirst || isBetweenSecond ? "second filter lower bound" : "second filter value"} for ${props.label}`}
-                        onKeyDown={blockInvalidNumberKeys}
-                        onChange={(e) => {
-                            const value = e.currentTarget.valueAsNumber;
-                            setValue2(Number.isNaN(value) ? null : value);
-                        }}
-                    />
-                </div>
-            )}
-
-            {/* Second condition — only shown when value1 is non-empty and not between */}
             {hasFirstValue && !isBetweenFirst && (
                 <>
                     {/* AND / OR radio toggle */}
@@ -183,7 +157,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             OR
                         </label>
                     </div>
-
                     <SimpleSelector
                         options={operators}
                         defaultVal={selectedOperator2}
@@ -193,47 +166,49 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             }
                         }}
                     />
-                    <div className="relative">
-                        <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                            <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                        </span>
-                        <input
-                            type="number"
-                            step="0.01"
-                            inputMode="decimal"
-                            className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                            value={value2 ?? ""}
-                            placeholder={isBetweenSecond ? "From" : "Value..."}
-                            aria-label={`${isBetweenSecond ? "second filter lower bound" : "second filter value"} for ${props.label}`}
-                            onKeyDown={blockInvalidNumberKeys}
-                            onChange={(e) => {
-                                const value = e.currentTarget.valueAsNumber;
-                                setValue2(Number.isNaN(value) ? null : value);
-                            }}
-                        />
-                    </div>
-                    {isBetweenSecond && (
-                        <div className="relative">
-                            <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                                <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                            </span>
-                            <input
-                                type="number"
-                                step="0.01"
-                                inputMode="decimal"
-                                className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                                value={value3 ?? ""}
-                                placeholder="To"
-                                aria-label={`second filter upper bound for ${props.label}`}
-                                onKeyDown={blockInvalidNumberKeys}
-                                onChange={(e) => {
-                                    const value = e.currentTarget.valueAsNumber;
-                                    setValue3(Number.isNaN(value) ? null : value);
-                                }}
-                            />
-                        </div>
-                    )}
                 </>
+            )}
+            {(hasFirstValue || isBetweenFirst || isBetweenSecond) &&
+                <div className="relative">
+                    <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
+                        <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
+                    </span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        inputMode="decimal"
+                        className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+                        value={value2 ?? ""}
+                        placeholder={isBetweenFirst ? "To" : isBetweenSecond ? "From" : "Value..."}
+                        aria-label={`${isBetweenFirst ? "second filter upper bound" : isBetweenSecond ? "second filter lower bound" : "second filter value"} for ${props.label}`}
+                        onKeyDown={blockInvalidNumberKeys}
+                        onChange={(e) => {
+                            const value = e.currentTarget.valueAsNumber;
+                            setValue2(Number.isNaN(value) ? null : value);
+                        }}
+                    />
+                </div>
+            }
+            {!isBetweenFirst && isBetweenSecond && (
+                <div className="relative">
+                    <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
+                        <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
+                    </span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        inputMode="decimal"
+                        className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+                        value={value3 ?? ""}
+                        placeholder="To"
+                        aria-label={`second filter upper bound for ${props.label}`}
+                        onKeyDown={blockInvalidNumberKeys}
+                        onChange={(e) => {
+                            const value = e.currentTarget.valueAsNumber;
+                            setValue3(Number.isNaN(value) ? null : value);
+                        }}
+                    />
+                </div>
             )}
             <Button
                 variant="primary"
