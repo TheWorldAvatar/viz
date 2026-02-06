@@ -396,7 +396,7 @@ function makeExternalEndpoint(
       if (entityType == FormTypeMap.ASSIGN_PRICE) {
         return buildUrl(agentBaseApi, "report", "transaction", "model", encodeURIComponent(identifier));
       } else if (entityType == FormTypeMap.ADD_INVOICE) {
-        return buildUrl(agentBaseApi, "report", "transaction", "invoice");
+        return buildUrl(agentBaseApi, "report", "transaction", "invoice", "form", encodeURIComponent(identifier));
       }
       let url: string = `${agentBaseApi}/form/${entityType}`;
       if (identifier != "null") {

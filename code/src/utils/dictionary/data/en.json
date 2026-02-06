@@ -2,7 +2,8 @@
   "lang": "en",
   "action": {
     "add": "Add",
-    "addAdjustment": "Add adjustments",
+    "adjustments": "Adjustments",
+    "editAdjustment": "Edit adjustments",
     "assign": "Assign",
     "applyFilter": "Apply filter",
     "addItem": "add {replace}",

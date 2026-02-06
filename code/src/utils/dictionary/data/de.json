@@ -2,7 +2,8 @@
   "lang": "de",
   "action": {
     "add": "Hinzufügen",
-    "addAdjustment": "Anpassungen hinzufügen",
+    "adjustments": "Anpassungen",
+    "editAdjustment": "Anpassungen bearbeiten",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
     "addItem": "{replace} hinzufügen",

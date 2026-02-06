@@ -368,6 +368,17 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={onExcludeBilling}
           />}
+          {isActionAllowed("BILL_PAYMENT") &&
+            props.row[dict.title.billingStatus].toLowerCase() == dict.title.readyForPayment.toLowerCase().replace(/\s+/g, "") && < Button
+              variant="ghost"
+              leftIcon="money_off"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={dict.action.editAdjustment}
+              disabled={isLoading}
+              onClick={onGenInvoice}
+            />}
           {isActionAllowed("BILL_PAYMENT") && <Button
             variant="ghost"
             leftIcon="monetization_on"
