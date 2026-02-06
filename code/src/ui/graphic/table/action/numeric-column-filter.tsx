@@ -48,47 +48,45 @@ function matchesCondition(value: number, operator: ComparisonOperator, target: n
  * @param {void} onSubmission Function that submits the filtered options.
  */
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
-    const [value1, setValue1] = useState<string>("");
-    const [value2, setValue2] = useState<string>("");
+    const [value1, setValue1] = useState<number | null>(null);
+    const [value2, setValue2] = useState<number | null>(null);
     const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>("eq");
     const [selectedOperator2, setSelectedOperator2] = useState<ComparisonOperator>("eq");
     const [logicOperator, setLogicOperator] = useState<LogicOperator>("and");
 
-    const hasFirstValue: boolean = value1.trim() !== "";
-    const hasSecondValue: boolean = value2.trim() !== "";
+    const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
+    const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
     const isBetween: boolean = selectedOperator1 === "between";
 
-    function handleFilter(): void {
-        const num1: number = parseFloat(value1);
-        const num2: number = parseFloat(value2);
+    const handleFilter = (): void => {
+        if (!hasFirstValue) return;
 
         const filtered: string[] = props.options.filter((option) => {
-            const numericValue: number = parseFloat(option);
-            if (isNaN(numericValue)) return false;
+            const numericValue: number = Number(option);
+            if (Number.isNaN(numericValue)) return false;
 
-            // Between uses both values in a single condition
             if (isBetween) {
-                if (isNaN(num1) || isNaN(num2)) return false;
-                return matchesCondition(numericValue, "between", num1, num2);
+                if (!hasSecondValue) return false;
+                return matchesCondition(numericValue, "between", value1!, value2!);
             }
 
-            const condition1: boolean = !isNaN(num1)
-                ? matchesCondition(numericValue, selectedOperator1, num1)
-                : true;
+            const condition1: boolean = matchesCondition(numericValue, selectedOperator1, value1!);
 
-            if (!hasSecondValue || isNaN(num2)) {
-                return condition1;
-            }
+            if (!hasSecondValue) return condition1;
 
-            const condition2: boolean = matchesCondition(numericValue, selectedOperator2, num2);
+            const condition2: boolean = matchesCondition(numericValue, selectedOperator2, value2!);
 
-            return logicOperator === "and"
-                ? condition1 && condition2
-                : condition1 || condition2;
+            return logicOperator === "and" ? condition1 && condition2 : condition1 || condition2;
         });
 
         props.onSubmission(filtered);
     }
+
+    const blockInvalidNumberKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (["e", "E", "+", "-"].includes(e.key)) {
+            e.preventDefault();
+        }
+    };
 
     return (
         <div className="flex flex-col w-62 gap-2">
@@ -108,18 +106,17 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                 </span>
                 <input
                     autoFocus
-                    type="text"
+                    type="number"
+                    step="0.01"
                     inputMode="decimal"
                     className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                    value={value1}
+                    value={value1 ?? ""}
                     placeholder={isBetween ? "From" : "Value..."}
                     aria-label={`first filter value for ${props.label}`}
-                    onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }}
-                    onChange={(event) => {
-                        setValue1(event.target.value);
+                    onKeyDown={blockInvalidNumberKeys}
+                    onChange={(e) => {
+                        const value = e.currentTarget.valueAsNumber;
+                        setValue1(Number.isNaN(value) ? null : value);
                     }}
                 />
             </div>
@@ -131,18 +128,16 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                         <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
                     </span>
                     <input
-                        type="text"
+                        type="number"
+                        step="0.01"
                         inputMode="decimal"
                         className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                        value={value2}
+                        value={value2 ?? ""}
                         placeholder="To"
                         aria-label={`upper bound filter value for ${props.label}`}
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }}
-                        onChange={(event) => {
-                            setValue2(event.target.value);
+                        onChange={(e) => {
+                            const value = e.currentTarget.valueAsNumber;
+                            setValue2(Number.isNaN(value) ? null : value);
                         }}
                     />
                 </div>
@@ -193,18 +188,17 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
                         </span>
                         <input
-                            type="text"
+                            type="number"
+                            step="0.01"
                             inputMode="decimal"
                             className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                            value={value2}
+                            value={value2 ?? ""}
                             placeholder="Value..."
                             aria-label={`second filter value for ${props.label}`}
-                            onClick={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }}
-                            onChange={(event) => {
-                                setValue2(event.target.value);
+                            onKeyDown={blockInvalidNumberKeys}
+                            onChange={(e) => {
+                                const value = e.currentTarget.valueAsNumber;
+                                setValue2(Number.isNaN(value) ? null : value);
                             }}
                         />
                     </div>
