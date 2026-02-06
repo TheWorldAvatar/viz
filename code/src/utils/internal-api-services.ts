@@ -178,10 +178,35 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
 }
 
 export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlExistsResponse> {
-  const url: string = `${prefixedRegistryURL}attachment/${contract}`
-  const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
-  const res = await fetch(url, requestParams);
-  return await res.json();
+  try {
+    const url: string = `${prefixedRegistryURL}attachment/${contract}`;
+    const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
+    const res = await fetch(url, requestParams);
+
+    if (!res.ok) {
+      return { url: "", exists: false };
+    }
+
+    // A 204 status indicates the attachment does not exist, and there is no body to parse
+    if (res.status === 204) {
+      return { url: "", exists: false };
+    }
+
+    // If we call res.json() directly and the body is empty, we get the “Unexpected end of JSON input” error
+    const bodyText: string = await res.text();
+    if (!bodyText) {
+      return { url: "", exists: false };
+    }
+
+    try {
+      return JSON.parse(bodyText) as UrlExistsResponse;
+    } catch {
+      return { url: "", exists: false };
+    }
+  } catch (error) {
+    console.error("Error querying registry attachment API:", error);
+    return { url: "", exists: false };
+  }
 }
 
 /**
