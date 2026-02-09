@@ -144,7 +144,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
-        ).toUpperCase()} ${props.formType == FormTypeMap.ADD_INVOICE ? "" : parseWordsForLabels(props.entityType)
+        ).toUpperCase()} ${props.formType == FormTypeMap.ADD_INVOICE || props.formType == FormTypeMap.ADD_INVOICE_ITEM ? "" : parseWordsForLabels(props.entityType)
           .toUpperCase()
           .replace("_", " ")}`}</h1>
       </section>

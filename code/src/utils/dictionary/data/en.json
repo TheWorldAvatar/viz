@@ -53,7 +53,8 @@
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "addInvoiceItem": "Add invoice item"
   },
   "form": {
     "singleService": "Single Service",

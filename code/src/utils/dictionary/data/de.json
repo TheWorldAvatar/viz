@@ -53,7 +53,8 @@
     "clickDecrease": "Zum Verringern anklicken",
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen"
+    "showLess": "Weniger anzeigen",
+    "addInvoiceItem": "Rechnungsposition hinzufügen"
   },
   "form": {
     "singleService": "Einzelner Dienst",

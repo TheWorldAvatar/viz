@@ -20,6 +20,7 @@ export const LifecycleStageMap = {
   ACCOUNT: "account",
   ACTIVITY: "activity",
   PRICING: "pricing",
+  INVOICE: "invoice",
 } as const;
 export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
 
@@ -39,6 +40,7 @@ export const FormTypeMap = {
   CANCEL: "cancel",
   REPORT: "report",
   TERMINATE: "terminate",
+  ADD_INVOICE_ITEM: "invoice",
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 

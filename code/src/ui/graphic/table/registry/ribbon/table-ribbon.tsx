@@ -2,7 +2,6 @@
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
-import useFormSession from "hooks/form/useFormSession";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import { Routes } from "io/config/routes";
@@ -18,6 +17,7 @@ import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import useOperationStatus from "hooks/useOperationStatus";
+import { buildUrl } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -49,6 +49,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const { resetFormSession } = useOperationStatus();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
+    props.lifecycleStage === LifecycleStageMap.INVOICE ||
     props.lifecycleStage === LifecycleStageMap.ACTIVITY;
 
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -131,6 +132,18 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                       url={Routes.BILLING_ACTIVITY}
                       variant={
                         props.lifecycleStage === LifecycleStageMap.ACTIVITY ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 sm:w-auto">
+                    <RedirectButton
+                      label={"Invoices"}
+                      leftIcon={"description"}
+                      hasMobileIcon={false}
+                      url={Routes.BILLING_INVOICE}
+                      variant={
+                        props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
                       }
                       className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                     />
@@ -233,6 +246,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(props.lifecycleStage == LifecycleStageMap.PENDING ||
             props.lifecycleStage == LifecycleStageMap.GENERAL ||
             props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+            props.lifecycleStage === LifecycleStageMap.INVOICE ||
             props.lifecycleStage === LifecycleStageMap.PRICING) && (
               <Button
                 leftIcon="add"
@@ -244,11 +258,15 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 onClick={() => {
                   browserStorageManager.clear();
                   resetFormSession();
-                  navigateToDrawer(Routes.REGISTRY_ADD,
-                    ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-                      props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
-                    props.entityType
-                  )
+                  if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
+                    window.location.href = buildUrl(Routes.REGISTRY_ADD, LifecycleStageMap.INVOICE);
+                  } else {
+                    navigateToDrawer(Routes.REGISTRY_ADD,
+                      ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+                        props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
+                      props.entityType
+                    )
+                  }
                 }}
               />
             )}
