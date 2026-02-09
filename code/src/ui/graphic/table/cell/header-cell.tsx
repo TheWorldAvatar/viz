@@ -59,8 +59,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     props.filters,
   );
 
-  const showNumericFilter: boolean = options.length > 0 &&
-    options.every((option) => option.trim() !== "" && !Number.isNaN(Number(option)));
+  const showNumericFilter: boolean = options.length > 0 && options.every((option) => option.trim() !== "" && !Number.isNaN(Number(option)));
 
   return (
     <TableCell

@@ -218,9 +218,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     event.stopPropagation();
                     handleFilter();
                 }}
-                disabled={isBetweenFirst
-                    ? !hasFirstValue || !hasSecondValue
-                    : !hasFirstValue || (isBetweenSecond && hasSecondValue && !hasThirdValue)}
+                disabled={isBetweenFirst ? !hasFirstValue || !hasSecondValue : !hasFirstValue || (isBetweenSecond && hasSecondValue && !hasThirdValue)}
                 aria-label={`Apply numeric filter for ${props.label}`}
             >
                 Filter
