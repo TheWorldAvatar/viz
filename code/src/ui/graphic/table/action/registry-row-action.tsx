@@ -348,13 +348,15 @@ export default function RegistryRowAction(
               )}
             </>
           )}
-          {isActionAllowed("BILL_PENDING") && < Button
+          {(isActionAllowed("BILL_PENDING") || isActionAllowed("BILL_PAYMENT")) && < Button
             variant="ghost"
             leftIcon="price_check"
             size="md"
             iconSize="medium"
             className="w-full justify-start"
-            label={dict.action.approve}
+            label={props.row[dict.title.billingStatus].toLowerCase() ===
+              dict.title.readyForPayment.toLowerCase().replace(/\s+/g, "") ? 
+              dict.action.editAdjustment : dict.action.approve}
             disabled={isLoading}
             onClick={onGenInvoice}
           />}
@@ -368,17 +370,6 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={onExcludeBilling}
           />}
-          {isActionAllowed("BILL_PAYMENT") &&
-            props.row[dict.title.billingStatus].toLowerCase() == dict.title.readyForPayment.toLowerCase().replace(/\s+/g, "") && < Button
-              variant="ghost"
-              leftIcon="money_off"
-              size="md"
-              iconSize="medium"
-              className="w-full justify-start"
-              label={dict.action.editAdjustment}
-              disabled={isLoading}
-              onClick={onGenInvoice}
-            />}
           {isActionAllowed("BILL_PAYMENT") && <Button
             variant="ghost"
             leftIcon="monetization_on"
