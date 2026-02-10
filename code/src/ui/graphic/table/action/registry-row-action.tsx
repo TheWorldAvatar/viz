@@ -142,15 +142,6 @@ export default function RegistryRowAction(
     }
   };
 
-  const onExcludeBilling: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    setIsActionMenuOpen(false);
-    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.EXCLUDE_INVOICE);
-    submitPendingActions(url, "POST", JSON.stringify({
-      id: getId(props.row.event_id),
-      event: props.row.event_id,
-    }));
-  };
-
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
     props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
@@ -348,7 +339,7 @@ export default function RegistryRowAction(
               )}
             </>
           )}
-          {(isActionAllowed("BILL_PENDING") || isActionAllowed("BILL_PAYMENT")) && <Button
+          {(isActionAllowed("BILL_PAYMENT")) && <Button
             variant="ghost"
             leftIcon="price_check"
             size="md"
@@ -357,16 +348,6 @@ export default function RegistryRowAction(
             label={dict.action.editAdjustment}
             disabled={isLoading}
             onClick={onGenInvoice}
-          />}
-          {isActionAllowed("BILL_PENDING") && <Button
-            variant="ghost"
-            leftIcon="money_off"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
-            label={dict.action.excludeFromBilling}
-            disabled={isLoading}
-            onClick={onExcludeBilling}
           />}
           {isActionAllowed("BILL_PAYMENT") && <Button
             variant="ghost"

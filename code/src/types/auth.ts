@@ -52,11 +52,6 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.CLOSED],
         status: [],
     },
-    BILL_PENDING: {
-        permission: "invoice",
-        stage: [LifecycleStageMap.CLOSED],
-        status: [],
-    },
     DELETE: {
         permission: "delete",
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.GENERAL, LifecycleStageMap.ACCOUNT, LifecycleStageMap.PRICING],

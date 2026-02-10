@@ -228,9 +228,6 @@ function makeExternalEndpoint(
       if (type == FormTypeMap.ADD_INVOICE) {
         return buildUrl(agentBaseApi, "report", "transaction", "invoice");
       }
-      if (type == FormTypeMap.EXCLUDE_INVOICE) {
-        return buildUrl(agentBaseApi, "report", "transaction", "nonbillable");
-      }
       if (type == FormTypeMap.VIEW) {
         const id: string = searchParams.get("id");
         return buildUrl(agentBaseApi, "report", "transaction", "invoice", encodeURIComponent(id));
