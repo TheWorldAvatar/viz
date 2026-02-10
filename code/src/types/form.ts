@@ -18,7 +18,6 @@ export const LifecycleStageMap = {
   SCHEDULED: "scheduled",
   CLOSED: "closed",
   ACCOUNT: "account",
-  ACTIVITY: "activity",
   PRICING: "pricing",
 } as const;
 export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];

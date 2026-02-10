@@ -1,4 +1,4 @@
-import { LifecycleStage, LifecycleStageMap, RegistryStatusMap, RegistryStatus, BillingStatus, BillingStatusMap } from "./form";
+import { BillingStatus, BillingStatusMap, LifecycleStage, LifecycleStageMap, RegistryStatus, RegistryStatusMap } from "./form";
 
 /**
  * Information retaining to keycloak login - username and relevant permissions.
@@ -51,13 +51,13 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     },
     BILL_PAYMENT: {
         permission: "invoice",
-        stage: [LifecycleStageMap.ACTIVITY],
+        stage: [LifecycleStageMap.CLOSED],
         status: [],
         billingStatus: [BillingStatusMap.READY],
     },
     BILL_PENDING: {
         permission: "invoice",
-        stage: [LifecycleStageMap.ACTIVITY],
+        stage: [LifecycleStageMap.CLOSED],
         status: [],
         billingStatus: [BillingStatusMap.PENDING_APPROVAL],
     },

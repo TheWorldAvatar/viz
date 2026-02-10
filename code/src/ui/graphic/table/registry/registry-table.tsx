@@ -23,7 +23,7 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -32,7 +32,6 @@ import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
 import HistoryModal from "ui/interaction/modal/history-modal";
 import { getAfterDelimiter, getId } from "utils/client-utils";
-import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
@@ -40,7 +39,6 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 interface RegistryTableProps {
   recordType: string;
@@ -115,30 +113,29 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
       navigateToDrawer(taskRoute, recordId);
-    } else if (props.lifecycleStage === LifecycleStageMap.ACTIVITY) {
-      browserStorageManager.set(EVENT_KEY, row.event_id)
-      const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
-      const body: AgentResponseBody = await queryInternalApi(url);
-      try {
-        const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-          InternalApiIdentifierMap.FILTER,
-          LifecycleStageMap.ACCOUNT,
-          props.accountType,
-          row[props.accountType]
-        ));
-        const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-        // Set the account type in browser storage to match the values of the account type in the assign price form
-        browserStorageManager.set(props.accountType, options[0]?.value);
-      } catch (error) {
-        console.error("Error fetching instances", error);
-      }
-      if (row[dict.title.billingStatus] != "pendingApproval") {
-        navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
-      } else if (body.data.message == "true") {
-        navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id));
-      } else {
-        navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
-      }
+      // browserStorageManager.set(EVENT_KEY, row.event_id)
+      // const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
+      // const body: AgentResponseBody = await queryInternalApi(url);
+      // try {
+      //   const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+      //     InternalApiIdentifierMap.FILTER,
+      //     LifecycleStageMap.ACCOUNT,
+      //     props.accountType,
+      //     row[props.accountType]
+      //   ));
+      //   const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+      //   // Set the account type in browser storage to match the values of the account type in the assign price form
+      //   browserStorageManager.set(props.accountType, options[0]?.value);
+      // } catch (error) {
+      //   console.error("Error fetching instances", error);
+      // }
+      // if (row[dict.title.billingStatus] != "pendingApproval") {
+      //   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
+      // } else if (body.data.message == "true") {
+      //   navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id));
+      // } else {
+      //   navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
+      // }
     } else {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);
@@ -324,8 +321,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                     variant="ghost"
                                     tooltipText={dict.title.history}
                                     onClick={() => {
-                                      if (props.lifecycleStage == LifecycleStageMap.ACTIVITY ||
-                                        props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                      if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
                                         props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
                                         props.lifecycleStage == LifecycleStageMap.CLOSED) {
                                         setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
