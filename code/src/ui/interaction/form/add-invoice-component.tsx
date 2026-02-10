@@ -51,7 +51,7 @@ export default function AddInvoiceComponent(
 ) {
     return (
         <FormSessionContextProvider entityType={props.entityType}>
-            <div className="flex flex-col w-full h-full mt-0 xl:w-[80vw] xl:h-[85vh] mx-auto py-4 px-4 md:px-8 bg-muted xl:mt-4 overflow-y-auto">
+            <div className="flex flex-col w-full h-full mx-auto py-4 px-4 md:px-8 bg-muted overflow-y-auto">
                 <FormContents {...props} />
             </div>
         </FormSessionContextProvider>
@@ -112,7 +112,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                     variant="outline"
                     onClick={() => router.back()}
                     size="icon"
-                    tooltipText={dict.action.back}
+                    iconSize="small"
+                    tooltipPosition="right"
+                    tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(props.formType, dict).toUpperCase()}`}</h1>
             </section>
