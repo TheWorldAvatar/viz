@@ -49,12 +49,6 @@ export const RegistryStatusMap = {
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
 
-export const BillingStatusMap = {
-  PENDING_APPROVAL: "pendingApproval",
-  READY: "readyForPayment",
-} as const;
-export type BillingStatus = typeof BillingStatusMap[keyof typeof BillingStatusMap];
-
 export interface SparqlResponseField {
   value: string;
   type: string;

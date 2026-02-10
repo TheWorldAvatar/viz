@@ -48,7 +48,7 @@ export default function RegistryRowAction(
       ? getId(props.row.id)
       : getId(props.row.iri);
   const dict: Dictionary = useDictionary();
-  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase(), props.row[dict.title.billingStatus]);
+  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase());
 
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
@@ -354,9 +354,7 @@ export default function RegistryRowAction(
             size="md"
             iconSize="medium"
             className="w-full justify-start"
-            label={props.row[dict.title.billingStatus].toLowerCase() ===
-              dict.title.readyForPayment.toLowerCase().replace(/\s+/g, "") ?
-              dict.action.editAdjustment : dict.action.approve}
+            label={dict.action.editAdjustment}
             disabled={isLoading}
             onClick={onGenInvoice}
           />}

@@ -61,12 +61,10 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     case dict.title.issue.toLowerCase():
-    case dict.title.pendingApproval.toLowerCase():
       statusTextColor = "var(--status-issue-text)";
       statusBackgroundColor = "var(--status-issue-bg)";
       break;
     case dict.title.completed.toLowerCase():
-    case dict.title.readyForPayment.toLowerCase():
       statusTextColor = "var(--status-open-text)";
       statusBackgroundColor = "var(--status-open-bg)";
       break;
