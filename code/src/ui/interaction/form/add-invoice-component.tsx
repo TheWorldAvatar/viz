@@ -12,7 +12,7 @@ import { Dictionary } from "types/dictionary";
 import { FormType, FormTypeMap, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
-import { getAfterDelimiter, getInitialDateFromLifecycleStage, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getInitialDateFromLifecycleStage } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
@@ -51,7 +51,7 @@ export default function AddInvoiceComponent(
 ) {
     return (
         <FormSessionContextProvider entityType={props.entityType}>
-            <div className=" flex flex-col w-full h-full mt-0 xl:w-[80vw] xl:h-[85vh] mx-auto py-4 px-4 md:px-8 bg-muted xl:mt-4">
+            <div className="flex flex-col w-full h-full mt-0 xl:w-[80vw] xl:h-[85vh] mx-auto py-4 px-4 md:px-8 bg-muted xl:mt-4 overflow-y-auto">
                 <FormContents {...props} />
             </div>
         </FormSessionContextProvider>
@@ -60,6 +60,7 @@ export default function AddInvoiceComponent(
 
 function FormContents(props: Readonly<FormContainerComponentProps>) {
     const dict: Dictionary = useDictionary();
+    const router = useRouter();
     const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
     const [status, setStatus] = useState<AgentResponseBody>(null);
 
@@ -105,11 +106,18 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
     return (
         <>
-            <section className={`flex justify-between items-center text-foreground p-1 mt-5 mb-0.5  shrink-0`}>
+            <section className={`flex flex-col gap-4 text-foreground mt-5 mb-5`}>
+                <Button
+                    leftIcon="arrow_back"
+                    variant="outline"
+                    onClick={() => router.back()}
+                    size="icon"
+                    tooltipText={dict.action.back}
+                />
                 <h1 className="text-xl font-bold">{`${translateFormType(props.formType, dict).toUpperCase()}`}</h1>
             </section>
-            <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
-                {refreshFlag ? <FormSkeleton /> :
+            <div className="lg:w-lg">
+                {refreshFlag || tableDescriptor.isLoading ? <FormSkeleton numberOfFields={1} /> :
                     (<FormComponent
                         formRef={formRef}
                         entityType={props.entityType}
@@ -122,8 +130,8 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                     )}
             </div>
             <section>
-                <h2 className="text-lg font-semibold mb-2">Task selection</h2>
-                <div className="rounded-lg border border-border overflow-hidden">
+                <h2 className="text-lg font-semibold mb-4">Task selection</h2>
+                <div className="">
                     {refreshFlag || tableDescriptor.isLoading ? (
                         <TableSkeleton />
                     ) : tableDescriptor.data?.length > 0 ? (
@@ -134,13 +142,14 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                             tableDescriptor={tableDescriptor}
                             triggerRefresh={triggerRefresh}
                             accountType={props.accountType}
+                            formType={props.formType}
                         />
                     ) : (
                         <div className="p-4 text-sm">{dict.message.noResultFound}</div>
                     )}
                 </div>
             </section>
-            <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
+            <section className="bg-muted flex items-start 2xl:items-center justify-between sticky -bottom-4 p-2   ">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
                         leftIcon="cached"

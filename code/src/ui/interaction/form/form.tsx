@@ -449,7 +449,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   return (
     <form ref={props.formRef} onSubmit={onSubmit}>
-      {form.formState.isLoading && <FormSkeleton />}
+      {form.formState.isLoading && props.formType !== FormTypeMap.ADD_INVOICE_ITEM && <FormSkeleton />}
       {!form.formState.isLoading &&
         renderFormField(
           props.entityType,

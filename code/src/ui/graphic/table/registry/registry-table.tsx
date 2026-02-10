@@ -23,7 +23,7 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
+import { FormType, FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -49,6 +49,7 @@ interface RegistryTableProps {
   selectedDate: DateRange;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
+  formType?: FormType;
 }
 
 /**
@@ -60,6 +61,7 @@ interface RegistryTableProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
+ * @param {FormType} formType The type of form such as add, update, delete, and view.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -268,6 +270,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   <Checkbox
                                     aria-label={dict.action.selectAll}
                                     disabled={isLoading}
+                                    className="w-4 h-4 cursor-pointer"
                                     checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
                                     handleChange={(checked) => {
                                       props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
@@ -309,36 +312,39 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               isHeader={false}
                             >
                               <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                                <div className="flex gap-0.5">
-                                  <DragActionHandle disabled={isLoading} id={row.id} />
-                                  <RegistryRowAction
-                                    recordType={props.recordType}
-                                    accountType={props.accountType}
-                                    lifecycleStage={props.lifecycleStage}
-                                    row={row.original}
-                                    triggerRefresh={props.triggerRefresh}
-                                  />
-                                  <Button
-                                    leftIcon="history"
-                                    size="icon"
-                                    variant="ghost"
-                                    tooltipText={dict.title.history}
-                                    onClick={() => {
-                                      if (props.lifecycleStage == LifecycleStageMap.ACTIVITY ||
-                                        props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                                        props.lifecycleStage == LifecycleStageMap.CLOSED) {
-                                        setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
-                                      } else {
-                                        setHistoryId(row.original.id as string);
-                                      }
-                                      setIsOpenHistoryModal(true);
-                                    }}
-                                  />
-                                  {allowMultipleSelection && (
+                                <div className="flex items-center justify-end gap-0.5">
+                                  {props.formType !== FormTypeMap.ADD_INVOICE_ITEM &&
+                                    <>
+                                      <DragActionHandle disabled={isLoading} id={row.id} />
+                                      <RegistryRowAction
+                                        recordType={props.recordType}
+                                        accountType={props.accountType}
+                                        lifecycleStage={props.lifecycleStage}
+                                        row={row.original}
+                                        triggerRefresh={props.triggerRefresh}
+                                      />
+                                      <Button
+                                        leftIcon="history"
+                                        size="icon"
+                                        variant="ghost"
+                                        tooltipText={dict.title.history}
+                                        onClick={() => {
+                                          if (props.lifecycleStage == LifecycleStageMap.ACTIVITY ||
+                                            props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                            props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                                            props.lifecycleStage == LifecycleStageMap.CLOSED) {
+                                            setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
+                                          } else {
+                                            setHistoryId(row.original.id as string);
+                                          }
+                                          setIsOpenHistoryModal(true);
+                                        }}
+                                      />
+                                    </>
+                                  } {allowMultipleSelection && (
                                     <Checkbox
                                       aria-label={row.id}
-                                      className="ml-2"
+                                      className={`${props.formType !== FormTypeMap.ADD_INVOICE_ITEM && "ml-2"} w-4 h-4 cursor-pointer`}
                                       disabled={isLoading}
                                       checked={row.getIsSelected()}
                                       handleChange={(checked) =>
