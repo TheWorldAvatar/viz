@@ -194,14 +194,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-
   return (
     <>
       {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
         <>
-          <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
+          <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden animate-[fadeIn_0.2s_ease-in-out]">
             {/* Table container */}
-            <div className="overflow-auto flex-1 min-h-[500px] table-scrollbar ">
+            <div className="overflow-auto flex-1 min-h-[500px] table-scrollbar">
               <div className="min-w-full ">
                 <DndContext
                   collisionDetection={closestCenter}

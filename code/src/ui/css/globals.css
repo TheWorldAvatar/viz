@@ -298,3 +298,8 @@ input[type="file"] {
   color: rgba(0, 0, 0, 0.75);
   background-color: #efefef !important;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
