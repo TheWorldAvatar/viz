@@ -225,9 +225,6 @@ function makeExternalEndpoint(
       if (type == LifecycleStageMap.PRICING) {
         return buildUrl(agentBaseApi, "report", "account", "price");
       }
-      if (type == FormTypeMap.ADD_INVOICE) {
-        return buildUrl(agentBaseApi, "report", "transaction", "invoice");
-      }
       if (type == FormTypeMap.VIEW) {
         const id: string = searchParams.get("id");
         return buildUrl(agentBaseApi, "report", "transaction", "invoice", encodeURIComponent(id));
@@ -389,9 +386,7 @@ function makeExternalEndpoint(
       const identifier: string = searchParams.get("identifier");
       if (entityType == FormTypeMap.ASSIGN_PRICE) {
         return buildUrl(agentBaseApi, "report", "transaction", "model", encodeURIComponent(identifier));
-      } else if (entityType == FormTypeMap.ADD_INVOICE) {
-        return buildUrl(agentBaseApi, "report", "transaction", "invoice", "form", encodeURIComponent(identifier));
-      }
+      } 
       let url: string = `${agentBaseApi}/form/${entityType}`;
       if (identifier != "null") {
         url += `/${encodeURIComponent(identifier)}`;

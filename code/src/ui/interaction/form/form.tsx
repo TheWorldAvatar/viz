@@ -101,7 +101,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.SEARCH ||
         props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.ADD_PRICE) {
         url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType);
-      } else if (props.formType == FormTypeMap.ASSIGN_PRICE || props.formType == FormTypeMap.ADD_INVOICE) {
+      } else if (props.formType == FormTypeMap.ASSIGN_PRICE) {
         url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.formType, id);
       } else if (props.formType == FormTypeMap.TERMINATE) {
         url =
@@ -285,16 +285,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
-      case FormTypeMap.ADD_INVOICE: {
-        pendingResponse = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
-          "PUT",
-          JSON.stringify({
-            ...formData,
-            event: browserStorageManager.get(EVENT_KEY)
-          }));
-        break;
-      }
       case FormTypeMap.ASSIGN_PRICE: {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
         pendingResponse = await queryInternalApi(
@@ -433,9 +423,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           router.replace(
             buildUrl(Routes.REGISTRY_TASK_ACCRUAL, getId(browserStorageManager.get(EVENT_KEY)))
           );
-        } else if (props.formType === FormTypeMap.ADD_INVOICE) {
-          // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
-          window.location.href = Routes.REGISTRY_TASK_CLOSED;
           // Close search modal on success
         } else if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);
