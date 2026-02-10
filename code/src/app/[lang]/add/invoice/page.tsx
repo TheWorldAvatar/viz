@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
-import { FormTypeMap } from 'types/form';
+import { FormTypeMap, LifecycleStageMap } from 'types/form';
 import AddInvoiceComponent from 'ui/interaction/form/add-invoice-component';
 
 interface AddFormPageProps {
@@ -41,6 +41,8 @@ export default async function AddInvoiceFormPage(props: Readonly<AddFormPageProp
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
       registryEntityType={uiSettings?.resources?.registry?.data}
       tableColumnOrder={tableColumnOrderSettings}
+      accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+      pricingType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.PRICING).key}
     />
   );
 }

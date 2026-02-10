@@ -61,7 +61,7 @@ export default function AddInvoiceComponent(
 function FormContents(props: Readonly<FormContainerComponentProps>) {
     const dict: Dictionary = useDictionary();
     const router = useRouter();
-    const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
+    const { refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const [status, setStatus] = useState<AgentResponseBody>(null);
 
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
