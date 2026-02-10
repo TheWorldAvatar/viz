@@ -163,6 +163,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       getFormTemplate("service", "dispatch", id);
     } else if (props.formType === FormTypeMap.COMPLETE) {
       getFormTemplate("service", "complete", id);
+    } else if (props.formType === FormTypeMap.ACCRUAL) {
+      getFormTemplate("service", "accrual", id);
     } else if (props.formType === FormTypeMap.REPORT) {
       getFormTemplate("service", "report");
     } else if (props.formType === FormTypeMap.CANCEL) {
@@ -349,7 +351,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <div className="flex-grow" />
           {/* Submit button - shown for non-view task types */}
           {(props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.COMPLETE ||
-            props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT
+            props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT || 
+            props.formType === FormTypeMap.ACCRUAL
           ) && <Button
               leftIcon="send"
               label={dict.action.submit}

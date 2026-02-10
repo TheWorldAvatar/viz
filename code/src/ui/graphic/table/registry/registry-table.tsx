@@ -23,7 +23,7 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -39,6 +39,8 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import { EVENT_KEY } from "utils/constants";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 interface RegistryTableProps {
   recordType: string;
@@ -93,8 +95,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     if (
       props.lifecycleStage === LifecycleStageMap.TASKS ||
       props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
-      props.lifecycleStage === LifecycleStageMap.SCHEDULED ||
-      props.lifecycleStage === LifecycleStageMap.CLOSED
+      props.lifecycleStage === LifecycleStageMap.SCHEDULED
     ) {
 
       // Determine the appropriate task route based on status and permissions
@@ -113,29 +114,36 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         taskRoute = Routes.REGISTRY_TASK_VIEW;
       }
       navigateToDrawer(taskRoute, recordId);
-      // browserStorageManager.set(EVENT_KEY, row.event_id)
-      // const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
-      // const body: AgentResponseBody = await queryInternalApi(url);
-      // try {
-      //   const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-      //     InternalApiIdentifierMap.FILTER,
-      //     LifecycleStageMap.ACCOUNT,
-      //     props.accountType,
-      //     row[props.accountType]
-      //   ));
-      //   const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-      //   // Set the account type in browser storage to match the values of the account type in the assign price form
-      //   browserStorageManager.set(props.accountType, options[0]?.value);
-      // } catch (error) {
-      //   console.error("Error fetching instances", error);
-      // }
-      // if (row[dict.title.billingStatus] != "pendingApproval") {
-      //   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
-      // } else if (body.data.message == "true") {
-      //   navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(row.event_id));
-      // } else {
-      //   navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
-      // }
+    } else if (props.lifecycleStage === LifecycleStageMap.CLOSED) {
+      if (isPermitted("invoice") &&
+        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.COMPLETED ||
+        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.CANCELLED ||
+        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.REPORTED
+      ) {
+        browserStorageManager.set(EVENT_KEY, row.event_id)
+        const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
+        const body: AgentResponseBody = await queryInternalApi(url);
+        try {
+          const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.FILTER,
+            LifecycleStageMap.ACCOUNT,
+            props.accountType,
+            row[props.accountType]
+          ));
+          const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+          // Set the account type in browser storage to match the values of the account type in the assign price form
+          browserStorageManager.set(props.accountType, options[0]?.value);
+        } catch (error) {
+          console.error("Error fetching instances", error);
+        }
+        if (body.data.message == "true") {
+          navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, recordId);
+        } else {
+          navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
+        }
+      } else {
+        navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
+      }
     } else {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);

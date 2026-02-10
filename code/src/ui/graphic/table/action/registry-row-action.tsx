@@ -115,7 +115,7 @@ export default function RegistryRowAction(
     }
   };
 
-  const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
     browserStorageManager.clear();
     resetFormSession();
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
@@ -136,7 +136,7 @@ export default function RegistryRowAction(
     }
     setIsActionMenuOpen(false);
     if (body.data.message == "true") {
-      navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id))
+      navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(props.row.event_id))
     } else {
       navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id));
     }
@@ -345,9 +345,9 @@ export default function RegistryRowAction(
             size="md"
             iconSize="medium"
             className="w-full justify-start"
-            label={dict.action.editAdjustment}
+            label={dict.action.reviewBillable}
             disabled={isLoading}
-            onClick={onGenInvoice}
+            onClick={onReviewBillable}
           />}
           {isActionAllowed("BILL_PAYMENT") && <Button
             variant="ghost"

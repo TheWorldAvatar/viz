@@ -3,7 +3,6 @@
   "action": {
     "add": "Hinzufügen",
     "adjustments": "Anpassungen",
-    "editAdjustment": "Anpassungen bearbeiten",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
     "addItem": "{replace} hinzufügen",
@@ -37,6 +36,7 @@
     "complete": "Abschließen",
     "cancel": "Stornieren",
     "report": "Bericht",
+    "reviewBillable": "Rechnung prüfen",
     "submit": "Einreichen",
     "reschedule": "Neu terminieren",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",

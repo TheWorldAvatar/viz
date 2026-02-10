@@ -50,7 +50,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     BILL_PAYMENT: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED],
-        status: [],
+        status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
     },
     DELETE: {
         permission: "delete",

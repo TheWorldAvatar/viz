@@ -431,11 +431,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For assign price only, move to the next step to gen invoice
         if (props.formType === FormTypeMap.ASSIGN_PRICE) {
           router.replace(
-            buildUrl(Routes.BILLING_ACTIVITY_TRANSACTION, getId(browserStorageManager.get(EVENT_KEY)))
+            buildUrl(Routes.REGISTRY_TASK_ACCRUAL, getId(browserStorageManager.get(EVENT_KEY)))
           );
         } else if (props.formType === FormTypeMap.ADD_INVOICE) {
           // Do not use router.push() as Next.js is unable to clear previous parallel routes, and forms will remain open
-          window.location.href = Routes.BILLING_ACTIVITY;
+          window.location.href = Routes.REGISTRY_TASK_CLOSED;
           // Close search modal on success
         } else if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);

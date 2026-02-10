@@ -32,6 +32,7 @@ export const FormTypeMap = {
   EDIT: "edit",
   VIEW: "view",
   SEARCH: "search",
+  ACCRUAL: "accrual",
   DISPATCH: "dispatch",
   COMPLETE: "complete",
   CANCEL: "cancel",
@@ -44,6 +45,8 @@ export const RegistryStatusMap = {
   AMENDED: "amended",
   ASSIGNED: "assigned",
   COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  REPORTED: "issue",
   NEW: "new",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];

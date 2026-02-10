@@ -3,7 +3,6 @@
   "action": {
     "add": "Add",
     "adjustments": "Adjustments",
-    "editAdjustment": "Edit adjustments",
     "assign": "Assign",
     "applyFilter": "Apply filter",
     "addItem": "add {replace}",
@@ -37,6 +36,7 @@
     "complete": "Complete",
     "cancel": "Cancel",
     "report": "Report",
+    "reviewBillable": "Review billables",
     "submit": "Submit",
     "reschedule": "Reschedule",
     "submitAndDuplicate": "Submit and duplicate",
