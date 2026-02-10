@@ -2,9 +2,9 @@ import { Metadata } from 'next';
 
 import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, UISettings } from 'types/settings';
-import { FormContainerComponent } from 'ui/interaction/form/form-container';
+import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
 import { FormTypeMap } from 'types/form';
+import AddInvoiceComponent from 'ui/interaction/form/add-invoice-component';
 
 interface AddFormPageProps {
   params: Promise<{
@@ -31,12 +31,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AddInvoiceFormPage(props: Readonly<AddFormPageProps>) {
   const resolvedParams = await props.params;
   const uiSettings: UISettings = SettingsStore.getUISettings();
+  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
+
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
-    <FormContainerComponent
+    <AddInvoiceComponent
       entityType={"invoice"}
       formType={FormTypeMap.ADD_INVOICE_ITEM}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
+      registryEntityType={uiSettings?.resources?.registry?.data}
+      tableColumnOrder={tableColumnOrderSettings}
     />
   );
 }
