@@ -24,6 +24,7 @@ import { TableColumnOrderSettings } from "types/settings";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import RegistryTable from "ui/graphic/table/registry/registry-table";
 import TableSkeleton from "ui/graphic/table/skeleton/table-skeleton";
+import ColumnToggle from "ui/graphic/table/action/column-toggle";
 
 interface FormContainerComponentProps {
     entityType: string;
@@ -132,7 +133,14 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                     )}
             </div>
             <section>
-                <h2 className="text-lg font-semibold mb-4">Task selection</h2>
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4 mt-4">
+                    <h2 className="text-lg font-semibold">Task selection</h2>
+                    {tableDescriptor.data?.length > 0 && (
+                        <ColumnToggle
+                            columns={tableDescriptor.table.getAllLeafColumns()}
+                        />
+                    )}
+                </div>
                 <div className="">
                     {refreshFlag || tableDescriptor.isLoading ? (
                         <TableSkeleton />
@@ -151,7 +159,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                     )}
                 </div>
             </section>
-            <section className="bg-muted flex items-start 2xl:items-center justify-between sticky -bottom-4 p-2   ">
+            <section className="bg-muted flex items-start 2xl:items-center justify-between sticky -bottom-4 p-2">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
                         leftIcon="cached"
