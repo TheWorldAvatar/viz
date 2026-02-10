@@ -54,7 +54,8 @@
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "addInvoiceItem": "Rechnungsposition hinzufügen"
+    "addInvoiceItem": "Rechnungsposition hinzufügen",
+    "selectClient": "Wählen Sie einen Kunden aus, um dessen Aufgaben anzuzeigen."
   },
   "form": {
     "singleService": "Einzelner Dienst",

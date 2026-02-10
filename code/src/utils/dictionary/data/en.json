@@ -54,7 +54,8 @@
     "clearAllFilters": "Clear all filters",
     "showMore": "Show more",
     "showLess": "Show less",
-    "addInvoiceItem": "Add invoice item"
+    "addInvoiceItem": "Add invoice item",
+    "selectClient": "Select a client to view their tasks."
   },
   "form": {
     "singleService": "Single Service",
