@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
-import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
+import { FieldValues, useForm, useWatch, UseFormReturn } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
@@ -30,7 +30,7 @@ import {
   VALUE_KEY,
 } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
-import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
+import { buildUrl, getAfterDelimiter, getId, getInitialDateFromLifecycleStage, getNormalizedDate } from "utils/client-utils";
 import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
@@ -43,6 +43,11 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { TableDescriptor } from "hooks/table/useTable";
+import ColumnToggle from "ui/graphic/table/action/column-toggle";
+import TableSkeleton from "ui/graphic/table/skeleton/table-skeleton";
+import RegistryTable from "ui/graphic/table/registry/registry-table";
+import { DateRange } from "react-day-picker";
 
 
 interface FormComponentProps {
@@ -56,6 +61,7 @@ interface FormComponentProps {
   isPrimaryEntity?: boolean;
   additionalFields?: PropertyShapeOrGroup[];
   setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
+  tableDescriptor?: TableDescriptor;
 }
 
 /**
@@ -71,6 +77,7 @@ interface FormComponentProps {
  * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * @param {PropertyShapeOrGroup[]} additionalFields Additional form fields to render if required.
  * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
+ * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
   const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
@@ -78,10 +85,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const { addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
-  const { startLoading, stopLoading } = useOperationStatus();
+  const { startLoading, stopLoading, refreshFlag, triggerRefresh } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
+  const [selectedDate] = useState<DateRange>(getInitialDateFromLifecycleStage(LifecycleStageMap.CLOSED));
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -447,42 +455,78 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     }
   });
 
+  const accountValue = useWatch({ control: form.control, name: props.accountType ?? "", });
+  const hasAccountValue = accountValue !== undefined && accountValue !== "";
+  const showTable = props.formType === FormTypeMap.ADD_INVOICE_ITEM && hasAccountValue;
+
   return (
-    <form ref={props.formRef} onSubmit={onSubmit}>
-      {form.formState.isLoading && props.formType !== FormTypeMap.ADD_INVOICE_ITEM && <FormSkeleton />}
-      {!form.formState.isLoading &&
-        renderFormField(
-          props.entityType,
-          formTemplate?.property.find(
-            (node) =>
-              node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
-              (node as PropertyShape).name[VALUE_KEY] === "id"
-          ),
-          form,
-          -1,
-          billingParams,
+    <>
+      <form className={`${props.formType === FormTypeMap.ADD_INVOICE_ITEM && "w-full lg:w-lg"}`} ref={props.formRef} onSubmit={onSubmit}>
+        {form.formState.isLoading && (
+          props.formType === FormTypeMap.ADD_INVOICE_ITEM
+            ? <FormSkeleton numberOfFields={1} />
+            : <FormSkeleton />
         )}
-      {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
-        <BranchFormSection
-          entityType={props.entityType}
-          node={formTemplate?.node}
-          form={form}
-          billingStore={billingParams}
-        />
-      )}
-      {!form.formState.isLoading &&
-        formTemplate?.property
-          .filter(
-            (node) =>
-              !(
+        {!form.formState.isLoading &&
+          renderFormField(
+            props.entityType,
+            formTemplate?.property.find(
+              (node) =>
                 node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
                 (node as PropertyShape).name[VALUE_KEY] === "id"
-              )
-          )
-          .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams)
+            ),
+            form,
+            -1,
+            billingParams,
           )}
-    </form>
+        {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
+          <BranchFormSection
+            entityType={props.entityType}
+            node={formTemplate?.node}
+            form={form}
+            billingStore={billingParams}
+          />
+        )}
+        {!form.formState.isLoading &&
+          formTemplate?.property
+            .filter(
+              (node) =>
+                !(
+                  node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
+                  (node as PropertyShape).name[VALUE_KEY] === "id"
+                )
+            )
+            .map((field, index) =>
+              renderFormField(props.entityType, field, form, index, billingParams)
+            )}
+      </form>
+      {showTable && <section>
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
+          {props.tableDescriptor.data?.length > 0 && (
+            <ColumnToggle
+              columns={props.tableDescriptor.table.getAllLeafColumns()}
+            />
+          )}
+        </div>
+        <div className="">
+          {refreshFlag || props.tableDescriptor.isLoading ? (
+            <TableSkeleton />
+          ) : props.tableDescriptor.data?.length > 0 ? (
+            <RegistryTable
+              recordType={props.entityType}
+              lifecycleStage={LifecycleStageMap.CLOSED}
+              selectedDate={selectedDate}
+              tableDescriptor={props.tableDescriptor}
+              triggerRefresh={triggerRefresh}
+              accountType={props.accountType}
+              formType={props.formType}
+            />
+          ) : (
+            <div className="p-4 text-sm">{dict.message.noResultFound}</div>
+          )}
+        </div>
+      </section>}
+    </>
   );
 }
 

@@ -106,21 +106,21 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     }, []);
 
     return (
-        <>
-            <section className={`flex flex-col gap-4 text-foreground mt-5 mb-5`}>
-                <Button
-                    leftIcon="arrow_back"
-                    variant="outline"
-                    onClick={() => router.back()}
-                    size="icon"
-                    iconSize="small"
-                    tooltipPosition="right"
-                    tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
-                />
-                <h1 className="text-xl font-bold">{`${translateFormType(props.formType, dict).toUpperCase()}`}</h1>
-            </section>
-            <div className="lg:w-lg">
-                {refreshFlag || tableDescriptor.isLoading ? <FormSkeleton numberOfFields={1} /> :
+        <div className="flex flex-col justify-between min-h-dvh">
+            <div>
+                <header className={`flex flex-col gap-4 text-foreground mt-5 mb-5`}>
+                    <Button
+                        leftIcon="arrow_back"
+                        variant="outline"
+                        onClick={() => router.back()}
+                        size="icon"
+                        iconSize="small"
+                        tooltipPosition="right"
+                        tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
+                    />
+                    <h1 className="text-xl font-bold">{`${translateFormType(props.formType, dict).toUpperCase()}`}</h1>
+                </header>
+                {refreshFlag ? <FormSkeleton numberOfFields={1} /> :
                     (<FormComponent
                         formRef={formRef}
                         entityType={props.entityType}
@@ -129,37 +129,11 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                         isPrimaryEntity={props.isPrimaryEntity}
                         accountType={props.accountType}
                         pricingType={props.pricingType}
+                        tableDescriptor={tableDescriptor}
                     />
                     )}
             </div>
-            <section>
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4 mt-4">
-                    <h2 className="text-lg font-semibold">Task selection</h2>
-                    {tableDescriptor.data?.length > 0 && (
-                        <ColumnToggle
-                            columns={tableDescriptor.table.getAllLeafColumns()}
-                        />
-                    )}
-                </div>
-                <div className="">
-                    {refreshFlag || tableDescriptor.isLoading ? (
-                        <TableSkeleton />
-                    ) : tableDescriptor.data?.length > 0 ? (
-                        <RegistryTable
-                            recordType={props.entityType}
-                            lifecycleStage={LifecycleStageMap.CLOSED}
-                            selectedDate={selectedDate}
-                            tableDescriptor={tableDescriptor}
-                            triggerRefresh={triggerRefresh}
-                            accountType={props.accountType}
-                            formType={props.formType}
-                        />
-                    ) : (
-                        <div className="p-4 text-sm">{dict.message.noResultFound}</div>
-                    )}
-                </div>
-            </section>
-            <section className="bg-muted flex items-start 2xl:items-center justify-between sticky -bottom-4 p-2">
+            <section className="bg-muted flex items-center  justify-between sticky -bottom-4 py-2">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
                         leftIcon="cached"
@@ -183,6 +157,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                     )}
                 </div>
             </section>
-        </ >
+        </div >
     );
 }
