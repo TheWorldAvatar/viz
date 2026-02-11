@@ -385,8 +385,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                   )}
                 {/* Dispatch button - shown when viewing and status is not issue/cancelled */}
                 {isPermitted("operation") &&
-                  task?.status?.toLowerCase() !== "issue" &&
-                  task?.status?.toLowerCase() !== "cancelled" &&
+                  (task?.status?.toLowerCase() === RegistryStatusMap.NEW ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.ASSIGNED ||
+                    task?.status?.toLowerCase() === RegistryStatusMap.COMPLETED) &&
                   props.formType === FormTypeMap.VIEW && (
                     <Button
                       leftIcon="assignment"
