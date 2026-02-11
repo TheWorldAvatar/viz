@@ -203,6 +203,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     } else if (props.formType === FormTypeMap.REPORT) {
       action = "report";
       formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
+    } else if (props.formType === FormTypeMap.ACCRUAL) {
+      action = "accrual";
     } else {
       return;
     }
@@ -210,7 +212,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     let response: AgentResponseBody = await submitLifecycleAction(
       formData,
       action,
-      props.formType !== FormTypeMap.DISPATCH && props.formType !== FormTypeMap.COMPLETE,
+      props.formType !== FormTypeMap.DISPATCH && props.formType !== FormTypeMap.COMPLETE && props.formType !== FormTypeMap.ACCRUAL,
     );
 
     if (!response?.error && isDuplicate) {
@@ -238,26 +240,14 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     isPost: boolean
   ) => {
     // Add contract and date field
-
     formData[FORM_STATES.CONTRACT] = task.contract;
     formData[FORM_STATES.DATE] = task.date;
 
-
-    let response: AgentResponseBody;
-    if (isPost) {
-      response = await queryInternalApi(
-        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
-        "POST",
-        JSON.stringify(formData)
-      );
-    } else {
-      response = await queryInternalApi(
-        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
-        "PUT",
-        JSON.stringify(formData)
-      );
-    }
-    return response;
+    return await queryInternalApi(
+      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
+      isPost ? "POST" : "PUT",
+      JSON.stringify(formData)
+    );
   };
 
   // Navigate to a different task action view
@@ -351,7 +341,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <div className="flex-grow" />
           {/* Submit button - shown for non-view task types */}
           {(props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.COMPLETE ||
-            props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT || 
+            props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT ||
             props.formType === FormTypeMap.ACCRUAL
           ) && <Button
               leftIcon="send"
