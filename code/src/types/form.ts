@@ -40,6 +40,7 @@ export const FormTypeMap = {
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 
+// Requires lowercase
 export const RegistryStatusMap = {
   AMENDED: "amended",
   ASSIGNED: "assigned",
@@ -47,6 +48,9 @@ export const RegistryStatusMap = {
   CANCELLED: "cancelled",
   REPORTED: "issue",
   NEW: "new",
+  BILLABLE_COMPLETED: "billablecompleted",
+  BILLABLE_CANCELLED: "billablecancelled",
+  BILLABLE_REPORTED: "billableissue",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
 

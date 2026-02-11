@@ -116,9 +116,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       navigateToDrawer(taskRoute, recordId);
     } else if (props.lifecycleStage === LifecycleStageMap.CLOSED) {
       if (isPermitted("invoice") &&
-        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.COMPLETED ||
-        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.CANCELLED ||
-        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.REPORTED
+        [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED,
+        RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED,
+        RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row[dict.title.status].toLowerCase())
       ) {
         browserStorageManager.set(EVENT_KEY, row.event_id)
         const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);

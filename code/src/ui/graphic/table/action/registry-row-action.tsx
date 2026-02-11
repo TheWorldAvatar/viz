@@ -339,7 +339,7 @@ export default function RegistryRowAction(
               )}
             </>
           )}
-          {(isActionAllowed("BILL_PAYMENT")) && <Button
+          {(isActionAllowed("REVIEW_BILLABLES")) && <Button
             variant="ghost"
             leftIcon="price_check"
             size="md"
@@ -349,7 +349,7 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={onReviewBillable}
           />}
-          {isActionAllowed("BILL_PAYMENT") && <Button
+          {isActionAllowed("VIEW_BILLABLES") && <Button
             variant="ghost"
             leftIcon="monetization_on"
             size="md"
