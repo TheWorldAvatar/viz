@@ -1,30 +1,22 @@
 "use client";
 
-import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
-import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
-import { Routes } from "io/config/routes";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FormType, FormTypeMap, LifecycleStageMap } from "types/form";
-import { JsonObject } from "types/json";
 import { FormComponent } from "ui/interaction/form/form";
 import { getAfterDelimiter, getInitialDateFromLifecycleStage } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { toast } from "../action/toast/toast";
 import Button from "../button";
-import { ENTITY_STATUS, translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { DateRange } from "react-day-picker";
 import { TableColumnOrderSettings } from "types/settings";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
-import RegistryTable from "ui/graphic/table/registry/registry-table";
-import TableSkeleton from "ui/graphic/table/skeleton/table-skeleton";
-import ColumnToggle from "ui/graphic/table/action/column-toggle";
+import { translateFormType } from "./form-utils";
 
 interface FormContainerComponentProps {
     entityType: string;
@@ -64,7 +56,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
     const router = useRouter();
     const { refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const [status, setStatus] = useState<AgentResponseBody>(null);
-
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
     const [selectedDate] = useState<DateRange>(getInitialDateFromLifecycleStage(LifecycleStageMap.CLOSED));
 

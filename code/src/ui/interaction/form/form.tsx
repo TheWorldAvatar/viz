@@ -509,7 +509,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             />
           )}
         </div>
-        <div className="">
+        <div>
           {refreshFlag || props.tableDescriptor.isLoading ? (
             <TableSkeleton />
           ) : props.tableDescriptor.data?.length > 0 ? (
@@ -523,7 +523,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               formType={props.formType}
             />
           ) : (
-            <div className="p-4 text-sm">{dict.message.noResultFound}</div>
+            <div className="p-4 text-base">{dict.message.noResultFound}</div>
           )}
         </div>
       </section>}
