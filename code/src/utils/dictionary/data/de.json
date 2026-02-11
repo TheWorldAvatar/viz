@@ -235,6 +235,7 @@
     "cancelled": "Abgebrochen",
     "completed": "Abgeschlossen",
     "issue": "Problem",
+    "accrued": "aufgelaufen",
     "billableCancelled": "abrechnungsfähig (abgebrochen)",
     "billableCompleted": "abrechnungsfähig (abgeschlossen)",
     "billableIssue": "abrechnungsfähig (problem)",

@@ -26,6 +26,10 @@ export function getTranslatedStatusLabel(
       return dict.title.cancelled;
     case RegistryStatusMap.NEW:
       return dict.title.new;
+    case RegistryStatusMap.BILLABLE_CANCELLED:
+    case RegistryStatusMap.BILLABLE_COMPLETED:
+    case RegistryStatusMap.BILLABLE_REPORTED:
+      return dict.title.accrued;
     case "issue":
       return dict.title.issue;
     case "rescinded":

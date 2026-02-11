@@ -235,6 +235,7 @@
     "cancelled": "cancelled",
     "completed": "completed",
     "issue": "issue",
+    "accrued": "accrued",
     "billableCancelled": "billable (cancelled)",
     "billableCompleted": "billable (completed)",
     "billableIssue": "billable (issue)",
