@@ -303,3 +303,9 @@ input[type="file"] {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in-on-motion {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}
