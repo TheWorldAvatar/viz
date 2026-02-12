@@ -296,7 +296,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       case FormTypeMap.ADD_INVOICE: {
         pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ADD_INVOICE),
-          "POST",
+          "PUT",
           JSON.stringify({
             ...formData,
             event: browserStorageManager.get(EVENT_KEY)
