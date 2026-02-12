@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.59.0
+
+### Changes
+
+- Removed billing activities page and functionalities to exclude bills
+- Moved remaining functionalities from billing activities page to the closed task table
+- Modified closed task to show the current month data by default
+- Consolidated billing status into default status in the closed task table
+- Bump min version of `VisBackend Agent` from `v1.38.0` to `v1.39.0`
+
 ## 5.58.4
 
 ### Changes

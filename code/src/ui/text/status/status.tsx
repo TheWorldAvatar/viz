@@ -26,6 +26,10 @@ export function getTranslatedStatusLabel(
       return dict.title.cancelled;
     case RegistryStatusMap.NEW:
       return dict.title.new;
+    case RegistryStatusMap.BILLABLE_CANCELLED:
+    case RegistryStatusMap.BILLABLE_COMPLETED:
+    case RegistryStatusMap.BILLABLE_REPORTED:
+      return dict.title.accrued;
     case "issue":
       return dict.title.issue;
     case "rescinded":
@@ -61,12 +65,10 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     case dict.title.issue.toLowerCase():
-    case dict.title.pendingApproval.toLowerCase():
       statusTextColor = "var(--status-issue-text)";
       statusBackgroundColor = "var(--status-issue-bg)";
       break;
     case dict.title.completed.toLowerCase():
-    case dict.title.readyForPayment.toLowerCase():
       statusTextColor = "var(--status-open-text)";
       statusBackgroundColor = "var(--status-open-bg)";
       break;

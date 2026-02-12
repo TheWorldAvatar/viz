@@ -22,7 +22,6 @@ export type HistoryDetails = {
 
 export const InternalApiIdentifierMap = {
   ADDRESS: "address",
-  ACTIVITY: "activity",
   BILL: "bill",
   CONCEPT: "concept",
   CONTRACTS: "contracts",

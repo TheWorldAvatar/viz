@@ -70,8 +70,7 @@ export function useTableData(
           );
         } else if (
           lifecycleStage == LifecycleStageMap.SCHEDULED ||
-          lifecycleStage == LifecycleStageMap.CLOSED ||
-          lifecycleStage == LifecycleStageMap.ACTIVITY
+          lifecycleStage == LifecycleStageMap.CLOSED
         ) {
           url = makeInternalRegistryAPIwithParams(
             lifecycleStage,

@@ -2,9 +2,9 @@
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
-import useFormSession from "hooks/form/useFormSession";
 import { TableDescriptor } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
+import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { DateRange } from "react-day-picker";
@@ -17,7 +17,6 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import useOperationStatus from "hooks/useOperationStatus";
 
 interface TableRibbonProps {
   path: string;
@@ -48,8 +47,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const { navigateToDrawer } = useDrawerNavigation();
   const { resetFormSession } = useOperationStatus();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-    props.lifecycleStage === LifecycleStageMap.PRICING ||
-    props.lifecycleStage === LifecycleStageMap.ACTIVITY;
+    props.lifecycleStage === LifecycleStageMap.PRICING;
 
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
@@ -119,18 +117,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                       url={Routes.BILLING_PRICING_MODELS}
                       variant={
                         props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                  <div className="col-span-2 sm:col-span-1 sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.activities}
-                      leftIcon={"receipt_long"}
-                      hasMobileIcon={false}
-                      url={Routes.BILLING_ACTIVITY}
-                      variant={
-                        props.lifecycleStage === LifecycleStageMap.ACTIVITY ? "active" : "ghost"
                       }
                       className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                     />
@@ -221,8 +207,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-            props.lifecycleStage == LifecycleStageMap.CLOSED ||
-            props.lifecycleStage == LifecycleStageMap.ACTIVITY) && (
+            props.lifecycleStage == LifecycleStageMap.CLOSED) && (
               <DateInput
                 mode="range"
                 selectedDate={props.selectedDate}

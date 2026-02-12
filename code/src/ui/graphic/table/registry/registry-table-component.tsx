@@ -67,8 +67,7 @@ export default function RegistryTableComponent(
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-            props.lifecycleStage === LifecycleStageMap.PRICING ||
-            props.lifecycleStage === LifecycleStageMap.ACTIVITY ? dict.nav.title.billing
+            props.lifecycleStage === LifecycleStageMap.PRICING ? dict.nav.title.billing
             : parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
