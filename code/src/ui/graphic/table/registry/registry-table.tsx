@@ -316,8 +316,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               isHeader={false}
                             >
                               <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                                <div className={`flex items-center justify-end gap-0.5 ${props.formType === FormTypeMap.ADD_INVOICE_ITEM && "w-16"}`}>
-                                  {props.formType !== FormTypeMap.ADD_INVOICE_ITEM &&
+                                <div className={`flex items-center justify-end gap-0.5 ${props.formType === FormTypeMap.INVOICE && "w-16"}`}>
+                                  {props.formType !== FormTypeMap.INVOICE &&
                                     <>
                                       <DragActionHandle disabled={isLoading} id={row.id} />
                                       <RegistryRowAction
@@ -347,7 +347,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   } {allowMultipleSelection && (
                                     <Checkbox
                                       aria-label={row.id}
-                                      className={`${props.formType !== FormTypeMap.ADD_INVOICE_ITEM && "ml-2"} w-4 h-4 cursor-pointer`}
+                                      className={`${props.formType !== FormTypeMap.INVOICE && "ml-2"} w-4 h-4 cursor-pointer`}
                                       disabled={isLoading}
                                       checked={row.getIsSelected()}
                                       handleChange={(checked) =>

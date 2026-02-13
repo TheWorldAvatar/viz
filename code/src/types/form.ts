@@ -38,7 +38,7 @@ export const FormTypeMap = {
   CANCEL: "cancel",
   REPORT: "report",
   TERMINATE: "terminate",
-  ADD_INVOICE_ITEM: "invoice",
+  INVOICE: "invoice",
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 

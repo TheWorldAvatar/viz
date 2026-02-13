@@ -444,16 +444,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   const accountValue = useWatch({ control: form.control, name: props.accountType ?? "", });
   const hasAccountValue = accountValue !== undefined && accountValue !== "";
-  const showTable = props.formType === FormTypeMap.ADD_INVOICE_ITEM && hasAccountValue;
+  const showTable = props.formType === FormTypeMap.INVOICE && hasAccountValue;
 
   return (
     <>
-      <form className={`${props.formType === FormTypeMap.ADD_INVOICE_ITEM && "w-full lg:w-lg"}`} ref={props.formRef} onSubmit={onSubmit}>
-        {form.formState.isLoading && (
-          props.formType === FormTypeMap.ADD_INVOICE_ITEM
-            ? <FormSkeleton numberOfFields={1} />
-            : <FormSkeleton />
-        )}
+      <form className={`${props.formType === FormTypeMap.INVOICE && "w-full lg:w-lg"}`} ref={props.formRef} onSubmit={onSubmit}>
+        {form.formState.isLoading && <FormSkeleton />}
         {!form.formState.isLoading &&
           renderFormField(
             props.entityType,
@@ -487,7 +483,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               renderFormField(props.entityType, field, form, index, billingParams)
             )}
       </form>
-      {props.formType === FormTypeMap.ADD_INVOICE_ITEM && !showTable && !form.formState.isLoading && <h2>{dict.action.selectClient}</h2>}
+      {props.formType === FormTypeMap.INVOICE && !showTable && !form.formState.isLoading && <h2>{dict.action.selectClient}</h2>}
       {showTable && <section>
         <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
           {props.tableDescriptor.data?.length > 0 && (

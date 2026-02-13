@@ -36,8 +36,8 @@ export default async function AddInvoiceFormPage(props: Readonly<AddFormPageProp
   const decodedType = decodeURIComponent(resolvedParams?.type);
   return (
     <AddInvoiceComponent
-      entityType={"invoice"}
-      formType={FormTypeMap.ADD_INVOICE_ITEM}
+      entityType={FormTypeMap.INVOICE}
+      formType={FormTypeMap.INVOICE}
       isPrimaryEntity={uiSettings?.resources?.registry?.data === decodedType}
       registryEntityType={uiSettings?.resources?.registry?.data}
       tableColumnOrder={tableColumnOrderSettings}

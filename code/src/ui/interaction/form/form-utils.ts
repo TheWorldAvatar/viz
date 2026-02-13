@@ -808,8 +808,8 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
       return dict.action.delete;
     case FormTypeMap.SEARCH:
       return dict.action.search;
-    case FormTypeMap.ADD_INVOICE_ITEM:
-      return dict.action.addInvoiceItem;
+    case FormTypeMap.INVOICE:
+      return dict.action.addInvoice;
     case "terminate":
       return dict.action.terminate;
     default:
