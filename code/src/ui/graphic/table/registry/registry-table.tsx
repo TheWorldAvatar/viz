@@ -23,15 +23,17 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormType, FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import Checkbox from "ui/interaction/input/checkbox";
 import HistoryModal from "ui/interaction/modal/history-modal";
 import { getAfterDelimiter, getId } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
@@ -39,17 +41,15 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { EVENT_KEY } from "utils/constants";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 interface RegistryTableProps {
   recordType: string;
   accountType: string;
+  disableRowAction: boolean;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
-  formType?: FormType;
 }
 
 /**
@@ -57,11 +57,11 @@ interface RegistryTableProps {
  *
  * @param {string} recordType The type of the record.
  * @param {string} accountType The type of account for billing capabilities.
+ * @param {boolean} disableRowAction Hides the row actions for the user if true.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
- * @param {FormType} formType The type of form such as add, update, delete, and view.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -316,8 +316,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               isHeader={false}
                             >
                               <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                                <div className={`flex items-center justify-end gap-0.5 ${props.formType === FormTypeMap.INVOICE && "w-16"}`}>
-                                  {props.formType !== FormTypeMap.INVOICE &&
+                                <div className={`flex items-center justify-end gap-0.5 ${props.disableRowAction && "w-16"}`}>
+                                  {!props.disableRowAction &&
                                     <>
                                       <DragActionHandle disabled={isLoading} id={row.id} />
                                       <RegistryRowAction
@@ -347,7 +347,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   } {allowMultipleSelection && (
                                     <Checkbox
                                       aria-label={row.id}
-                                      className={`${props.formType !== FormTypeMap.INVOICE && "ml-2"} w-4 h-4 cursor-pointer`}
+                                      className={`${!props.disableRowAction && "ml-2"} w-4 h-4 cursor-pointer`}
                                       disabled={isLoading}
                                       checked={row.getIsSelected()}
                                       handleChange={(checked) =>
