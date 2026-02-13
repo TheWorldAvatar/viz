@@ -17,6 +17,7 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { buildUrl } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -47,7 +48,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const { navigateToDrawer } = useDrawerNavigation();
   const { resetFormSession } = useOperationStatus();
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-    props.lifecycleStage === LifecycleStageMap.PRICING;
+    props.lifecycleStage === LifecycleStageMap.PRICING ||
+    props.lifecycleStage === LifecycleStageMap.INVOICE;
 
   const triggerRefresh: React.MouseEventHandler<HTMLButtonElement> = () => {
     props.triggerRefresh();
@@ -117,6 +119,18 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                       url={Routes.BILLING_PRICING_MODELS}
                       variant={
                         props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.invoice}
+                      leftIcon={"request_quote"}
+                      hasMobileIcon={false}
+                      url={Routes.BILLING_INVOICE}
+                      variant={
+                        props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
                       }
                       className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                     />
@@ -218,22 +232,28 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           {(props.lifecycleStage == LifecycleStageMap.PENDING ||
             props.lifecycleStage == LifecycleStageMap.GENERAL ||
             props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+            props.lifecycleStage === LifecycleStageMap.INVOICE ||
             props.lifecycleStage === LifecycleStageMap.PRICING) && (
               <Button
                 leftIcon="add"
                 size="icon"
-                tooltipText={dict.action.addItem.replace(
-                  "{replace}",
-                  props.entityType.replace("_", " ")
-                )}
+                tooltipText={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
+                  dict.action.addItem.replace(
+                    "{replace}",
+                    props.entityType.replace("_", " ")
+                  )}
                 onClick={() => {
                   browserStorageManager.clear();
                   resetFormSession();
-                  navigateToDrawer(Routes.REGISTRY_ADD,
-                    ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-                      props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
-                    props.entityType
-                  )
+                  if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
+                    window.location.href = buildUrl(Routes.REGISTRY_ADD, LifecycleStageMap.INVOICE);
+                  } else {
+                    navigateToDrawer(Routes.REGISTRY_ADD,
+                      ...(props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+                        props.lifecycleStage === LifecycleStageMap.PRICING ? [props.lifecycleStage] : []),
+                      props.entityType
+                    )
+                  }
                 }}
               />
             )}

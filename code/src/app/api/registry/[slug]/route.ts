@@ -227,14 +227,14 @@ function makeExternalEndpoint(
       }
       if (type == FormTypeMap.VIEW) {
         const id: string = searchParams.get("id");
-        return buildUrl(agentBaseApi, "report", "transaction", "invoice", encodeURIComponent(id));
+        return buildUrl(agentBaseApi, "report", "service", "charge", encodeURIComponent(id));
       }
       if (type == FormTypeMap.ASSIGN_PRICE) {
         if (searchParams.get("id") != "null") {
           const id: string = searchParams.get("id");
-          return buildUrl(agentBaseApi, "report", "transaction", "contract", encodeURIComponent(id));
+          return buildUrl(agentBaseApi, "report", "contract", "pricing",  encodeURIComponent(id));
         }
-        return buildUrl(agentBaseApi, "report", "transaction", "model");
+        return buildUrl(agentBaseApi, "report", "contract", "pricing");
       }
       return "";
     }
@@ -385,8 +385,8 @@ function makeExternalEndpoint(
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");
       if (entityType == FormTypeMap.ASSIGN_PRICE) {
-        return buildUrl(agentBaseApi, "report", "transaction", "model", encodeURIComponent(identifier));
-      } 
+        return buildUrl(agentBaseApi, "report", "contract", "pricing", "form", encodeURIComponent(identifier));
+      }
       let url: string = `${agentBaseApi}/form/${entityType}`;
       if (identifier != "null") {
         url += `/${encodeURIComponent(identifier)}`;
