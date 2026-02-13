@@ -111,7 +111,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
                     />
                     <h1 className="text-xl font-bold">{`${translateFormType(props.formType, dict).toUpperCase()}`}</h1>
                 </header>
-                {refreshFlag ? <FormSkeleton numberOfFields={1} /> :
+                {refreshFlag ? <FormSkeleton /> :
                     (<FormComponent
                         formRef={formRef}
                         entityType={props.entityType}
