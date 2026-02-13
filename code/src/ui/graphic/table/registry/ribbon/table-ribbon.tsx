@@ -123,6 +123,18 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                       className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
                     />
                   </div>
+                  <div className="sm:w-auto">
+                    <RedirectButton
+                      label={dict.nav.title.invoice}
+                      leftIcon={"request_quote"}
+                      hasMobileIcon={false}
+                      url={Routes.BILLING_INVOICE}
+                      variant={
+                        props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
+                      }
+                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+                    />
+                  </div>
                 </>
                 )}
               </div>
