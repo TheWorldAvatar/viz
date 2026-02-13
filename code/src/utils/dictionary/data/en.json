@@ -53,7 +53,7 @@
     "clearAllFilters": "Clear all filters",
     "showMore": "Show more",
     "showLess": "Show less",
-    "addInvoiceItem": "Add invoice item",
+    "addInvoice": "add invoice",
     "selectClient": "Select a client to view their tasks."
   },
   "form": {

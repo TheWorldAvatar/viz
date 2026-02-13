@@ -237,10 +237,11 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               <Button
                 leftIcon="add"
                 size="icon"
-                tooltipText={dict.action.addItem.replace(
-                  "{replace}",
-                  props.entityType.replace("_", " ")
-                )}
+                tooltipText={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
+                  dict.action.addItem.replace(
+                    "{replace}",
+                    props.entityType.replace("_", " ")
+                  )}
                 onClick={() => {
                   browserStorageManager.clear();
                   resetFormSession();
