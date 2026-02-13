@@ -48,7 +48,7 @@ export default function RegistryRowAction(
       ? getId(props.row.id)
       : getId(props.row.iri);
   const dict: Dictionary = useDictionary();
-  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase(), props.row[dict.title.billingStatus]);
+  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase());
 
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
@@ -115,7 +115,7 @@ export default function RegistryRowAction(
     }
   };
 
-  const onGenInvoice: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
     browserStorageManager.clear();
     resetFormSession();
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
@@ -136,19 +136,10 @@ export default function RegistryRowAction(
     }
     setIsActionMenuOpen(false);
     if (body.data.message == "true") {
-      navigateToDrawer(Routes.BILLING_ACTIVITY_TRANSACTION, getId(props.row.event_id))
+      navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(props.row.event_id))
     } else {
       navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id));
     }
-  };
-
-  const onExcludeBilling: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    setIsActionMenuOpen(false);
-    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.EXCLUDE_INVOICE);
-    submitPendingActions(url, "POST", JSON.stringify({
-      id: getId(props.row.event_id),
-      event: props.row.event_id,
-    }));
   };
 
   const isSubmissionOrGeneralPage: boolean =
@@ -348,29 +339,17 @@ export default function RegistryRowAction(
               )}
             </>
           )}
-          {(isActionAllowed("BILL_PENDING") || isActionAllowed("BILL_PAYMENT")) && < Button
+          {(isActionAllowed("REVIEW_BILLABLES")) && <Button
             variant="ghost"
             leftIcon="price_check"
             size="md"
             iconSize="medium"
             className="w-full justify-start"
-            label={props.row[dict.title.billingStatus].toLowerCase() ===
-              dict.title.readyForPayment.toLowerCase().replace(/\s+/g, "") ? 
-              dict.action.editAdjustment : dict.action.approve}
+            label={dict.action.reviewBillable}
             disabled={isLoading}
-            onClick={onGenInvoice}
+            onClick={onReviewBillable}
           />}
-          {isActionAllowed("BILL_PENDING") && <Button
-            variant="ghost"
-            leftIcon="money_off"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
-            label={dict.action.excludeFromBilling}
-            disabled={isLoading}
-            onClick={onExcludeBilling}
-          />}
-          {isActionAllowed("BILL_PAYMENT") && <Button
+          {isActionAllowed("VIEW_BILLABLES") && <Button
             variant="ghost"
             leftIcon="monetization_on"
             size="md"
@@ -394,7 +373,7 @@ export default function RegistryRowAction(
           }
         </div>
       </PopoverActionButton>
-      {props.lifecycleStage === LifecycleStageMap.ACTIVITY && isOpenBillingModal && <BillingModal
+      {isOpenBillingModal && <BillingModal
         id={recordId}
         date={props.row.date}
         isOpen={isOpenBillingModal}

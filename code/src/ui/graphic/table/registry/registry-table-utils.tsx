@@ -14,9 +14,8 @@ import {
 import { TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATETIME } from "utils/constants";
-import { getAfterDelimiter } from "utils/client-utils";
 
 export type TableData = {
   data: FieldValues[];
@@ -122,7 +121,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
             return getAfterDelimiter(value, "/");
           }
 
-          if (col.toLowerCase() === "status" || col === titleDict.billingStatus) {
+          if (col === titleDict.status) {
             return <StatusComponent status={value} />;
           }
 
@@ -204,10 +203,6 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
       delete outputRow[field];
       outputRow[titleDict.scheduleType] = currentVal;
       return titleDict.scheduleType;
-    case "billingstatus":
-      delete outputRow[field];
-      outputRow[titleDict.billingStatus] = currentVal;
-      return titleDict.billingStatus;
     case "status":
       delete outputRow[field];
       outputRow[titleDict.status] = currentVal;
@@ -229,8 +224,6 @@ export function translateLifecycleFields(field: string, titleDict: Record<string
       return titleDict.lastModified;
     case "scheduletype":
       return titleDict.scheduleType;
-    case "billingstatus":
-      return titleDict.billingStatus;
     case "status":
       return titleDict.status;
     default:
@@ -276,8 +269,6 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
       return "lastModified";
     case titleDict.scheduleType.toLowerCase():
       return "scheduleType";
-    case titleDict.billingStatus.toLowerCase():
-      return "billingStatus";
     case titleDict.status.toLowerCase():
       return "status";
     default:
