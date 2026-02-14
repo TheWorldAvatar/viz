@@ -372,12 +372,17 @@ As with sources, definitions of layers vary depending on the chosen mapping prov
 - `clickable` (optional): Enables the layer to be clickable. Set to true by default.
 - `hovering` (optional): Creates a highlight effect when hovering over the layer's features. This parameter is an array of two numbers indicating the opacity for the highlighted and non-highlighted states respectively.
 - `isLive` (optional): If set to true, layer will regularly update and repaint. Useful for live data
+- `highlight` (optional): This is to highlight a feature when clicked, a compulsory property is `highlightFeatureId`, this is the column containing the unique ID of the feature in the layer. When activated, a layer hidden from the user is created with the properties specified in `highlight` (excluding `highlightFeatureId`). Please see example below, where the paint properties of the highlight layer is specified.
 
 ```json
 {
   "id": "example-mapbox-layer",
   "name": "My Example Data",
-  "source": "example-mapbox-source"
+  "source": "example-mapbox-source",
+  "highlight": {
+    "highlightFeatureId": "ogc_fid",
+    "paint": {"circle-color": "red"}
+  }
 }
 ```
 
