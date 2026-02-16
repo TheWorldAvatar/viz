@@ -275,6 +275,9 @@ function makeExternalEndpoint(
         return `${agentBaseApi}/${type}/count${filters}`;
       }
       const filters: string = encodeFilters(searchParams.get("filters"));
+      if (lifecycle == LifecycleStageMap.INVOICE) {
+        return `${agentBaseApi}/report/account/tasks/count?type=${type}${filters}`;
+      }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
         if (lifecycle === "pending") {
@@ -359,6 +362,9 @@ function makeExternalEndpoint(
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
+      }
+      if (lifecycle == LifecycleStageMap.INVOICE) {
+        return `${agentBaseApi}/report/account/tasks/filter?${urlParams.toString()}${filters}`;
       }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;

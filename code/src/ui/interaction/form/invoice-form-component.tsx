@@ -99,7 +99,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         {tableDescriptor.data?.length > 0 && (
                             <RegistryTable
                                 recordType={props.entityType}
-                                lifecycleStage={LifecycleStageMap.CLOSED}
+                                lifecycleStage={LifecycleStageMap.INVOICE}
                                 disableRowAction={true}
                                 tableDescriptor={tableDescriptor}
                                 triggerRefresh={triggerRefresh}
