@@ -401,7 +401,8 @@ export function getDefaultVal(
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
     if (formType == FormTypeMap.ADD || formType == FormTypeMap.SEARCH ||
-      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE || !defaultValue) {
+      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE ||
+      formType == FormTypeMap.INVOICE || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
