@@ -295,7 +295,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   lifecycleStage={props.lifecycleStage}
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
-                                  disableFilter={false}
+                                  disableFilter={props.lifecycleStage == LifecycleStageMap.INVOICE && header.id == props.accountType}
                                 />
                               );
                             })}
