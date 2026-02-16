@@ -1,16 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ColumnFilter } from "@tanstack/react-table";
 import { ReduxState } from "app/store";
 
 interface FormSession {
-    invoiceAccountFilter: string;
     formCount: number;
     frozenFields: Record<string, number>;
+    invoiceAccountFilter: ColumnFilter;
 }
 
 const initialState: FormSession = {
-    invoiceAccountFilter: "",
     formCount: 0,
     frozenFields: {},
+    invoiceAccountFilter: null,
 };
 
 /**
@@ -20,7 +21,7 @@ const formSessionSlice = createSlice({
     name: "formSession",
     initialState,
     reducers: {
-        setInvoiceAccountFilter: (state, action: PayloadAction<string>) => {
+        setInvoiceAccountFilter: (state, action: PayloadAction<ColumnFilter>) => {
             state.invoiceAccountFilter = action.payload;
         },
         /**
@@ -40,7 +41,7 @@ const formSessionSlice = createSlice({
 
 
 export const { setInvoiceAccountFilter, setFormCount, setFrozenFields } = formSessionSlice.actions;
-export const selectInvoiceAccountFilter = (state: ReduxState) => state.formSession.invoiceAccountFilter;
 export const selectFormCount = (state: ReduxState) => state.formSession.formCount;
 export const selectFrozenFields = (state: ReduxState) => state.formSession.frozenFields;
+export const selectInvoiceAccountFilter = (state: ReduxState) => state.formSession.invoiceAccountFilter;
 export default formSessionSlice.reducer;

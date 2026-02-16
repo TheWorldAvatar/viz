@@ -1,5 +1,6 @@
 "use client";
 
+import useFormSession from "hooks/form/useFormSession";
 import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
@@ -15,7 +16,6 @@ import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
-import useFormSession from "hooks/form/useFormSession";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -51,10 +51,10 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
 
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
-        invoiceAccountFilter,
         refreshFlag,
         LifecycleStageMap.INVOICE,
         props.tableColumnOrder,
+        invoiceAccountFilter,
     );
     const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
         if (formRef.current) {

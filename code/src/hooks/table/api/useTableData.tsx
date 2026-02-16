@@ -21,7 +21,6 @@ export interface TableDataDescriptor {
 * A custom hook to retrieve the total row count.
 * 
 * @param {string} entityType Type of entity for rendering.
-* @param {string} addFilters Additional filters to append.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
@@ -33,7 +32,6 @@ export interface TableDataDescriptor {
 */
 export function useTableData(
   entityType: string,
-  addFilters: string,
   sortParams: string,
   sorting: SortingState,
   refreshFlag: boolean,
@@ -55,14 +53,11 @@ export function useTableData(
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      let filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
+      const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       try {
         let instances: RegistryFieldValues[] = [];
         let url: string;
-        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || lifecycleStage == LifecycleStageMap.INVOICE) {
-          if (lifecycleStage == LifecycleStageMap.INVOICE) {
-            filterParams += addFilters;
-          }
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || lifecycleStage == LifecycleStageMap.INVOICE) {  
           url = makeInternalRegistryAPIwithParams(
             lifecycleStage,
             entityType,
@@ -156,7 +151,7 @@ export function useTableData(
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType, addFilters]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType]);
 
   return {
     isLoading,

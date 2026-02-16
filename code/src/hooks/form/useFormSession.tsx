@@ -1,5 +1,6 @@
 'use client';
 
+import { ColumnFilter } from '@tanstack/react-table';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,8 +10,8 @@ import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { FormSessionContext, FormSessionState } from 'utils/form/FormSessionContext';
 
 interface useFormSessionReturn extends FormSessionState {
-    invoiceAccountFilter: string;
     formCount: number;
+    invoiceAccountFilter: ColumnFilter;
     frozenFields: Record<string, number>;
     updateInvoiceAccount: (_account: string) => void;
     addFrozenFields: (_fields: string[]) => void;
@@ -30,7 +31,7 @@ const useFormSession = (): useFormSessionReturn => {
         throw new Error("useFormSession must be used within a FormSessionContextProvider");
     }
     const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
-    const invoiceAccountFilter: string = useSelector(selectInvoiceAccountFilter);
+    const invoiceAccountFilter: ColumnFilter = useSelector(selectInvoiceAccountFilter);
     const formCount: number = useSelector(selectFormCount);
     const frozenFields: Record<string, number> = useSelector(selectFrozenFields);
 
@@ -39,7 +40,10 @@ const useFormSession = (): useFormSessionReturn => {
      * @param {string} account  Updates the account.
      */
     const updateInvoiceAccount = (account: string): void => {
-        dispatch(setInvoiceAccountFilter(`%7E${formSession.accountType}=${account}`));
+        dispatch(setInvoiceAccountFilter({
+            id: formSession.accountType,
+            value: [account],
+        }));
     };
 
     /** Adds the frozen fields if they are not already present in the state
