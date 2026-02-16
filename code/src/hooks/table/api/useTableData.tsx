@@ -6,10 +6,10 @@ import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData, applyConfiguredColumnOrder } from "ui/graphic/table/registry/registry-table-utils";
+import { TableColumnOrderSettings } from "types/settings";
+import { applyConfiguredColumnOrder, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { TableColumnOrderSettings } from "types/settings";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
@@ -17,11 +17,11 @@ export interface TableDataDescriptor {
   initialInstances: RegistryFieldValues[];
 }
 
-
 /**
 * A custom hook to retrieve the total row count.
 * 
 * @param {string} entityType Type of entity for rendering.
+* @param {string} addFilters Additional filters to append.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
@@ -33,6 +33,7 @@ export interface TableDataDescriptor {
 */
 export function useTableData(
   entityType: string,
+  addFilters: string,
   sortParams: string,
   sorting: SortingState,
   refreshFlag: boolean,
@@ -50,18 +51,20 @@ export function useTableData(
   const [data, setData] = useState<
     TableData
   >({ data: [], columns: [] });
-
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
+      let filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
       try {
         let instances: RegistryFieldValues[] = [];
         let url: string;
-        if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || lifecycleStage == LifecycleStageMap.INVOICE) {
+          if (lifecycleStage == LifecycleStageMap.INVOICE) {
+            filterParams += addFilters;
+          }
           url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.OUTSTANDING,
+            lifecycleStage,
             entityType,
             apiPagination.pageIndex.toString(),
             apiPagination.pageSize.toString(),
@@ -153,7 +156,7 @@ export function useTableData(
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType, addFilters]);
 
   return {
     isLoading,

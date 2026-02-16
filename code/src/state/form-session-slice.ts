@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ReduxState } from "app/store";
 
 interface FormSession {
+    invoiceAccountFilter: string;
     formCount: number;
     frozenFields: Record<string, number>;
 }
 
 const initialState: FormSession = {
+    invoiceAccountFilter: "",
     formCount: 0,
     frozenFields: {},
 };
@@ -18,6 +20,9 @@ const formSessionSlice = createSlice({
     name: "formSession",
     initialState,
     reducers: {
+        setInvoiceAccountFilter: (state, action: PayloadAction<string>) => {
+            state.invoiceAccountFilter = action.payload;
+        },
         /**
          * Updates the number of forms that have been opened in the current session
         */
@@ -34,7 +39,8 @@ const formSessionSlice = createSlice({
 })
 
 
-export const { setFormCount, setFrozenFields } = formSessionSlice.actions;
+export const { setInvoiceAccountFilter, setFormCount, setFrozenFields } = formSessionSlice.actions;
+export const selectInvoiceAccountFilter = (state: ReduxState) => state.formSession.invoiceAccountFilter;
 export const selectFormCount = (state: ReduxState) => state.formSession.formCount;
 export const selectFrozenFields = (state: ReduxState) => state.formSession.frozenFields;
 export default formSessionSlice.reducer;

@@ -4,13 +4,15 @@ import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { browserStorageManager } from 'state/browser-storage-manager';
-import { selectFormCount, selectFrozenFields, setFormCount, setFrozenFields } from 'state/form-session-slice';
+import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFormCount, setFrozenFields, setInvoiceAccountFilter } from 'state/form-session-slice';
 import { FORM_STATES } from 'ui/interaction/form/form-utils';
 import { FormSessionContext, FormSessionState } from 'utils/form/FormSessionContext';
 
 interface useFormSessionReturn extends FormSessionState {
+    invoiceAccountFilter: string;
     formCount: number;
     frozenFields: Record<string, number>;
+    updateInvoiceAccount: (_account: string) => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
     saveCurrentSession: (_initialState: FieldValues) => void;
@@ -28,8 +30,17 @@ const useFormSession = (): useFormSessionReturn => {
         throw new Error("useFormSession must be used within a FormSessionContextProvider");
     }
     const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+    const invoiceAccountFilter: string = useSelector(selectInvoiceAccountFilter);
     const formCount: number = useSelector(selectFormCount);
     const frozenFields: Record<string, number> = useSelector(selectFrozenFields);
+
+    /** Update invoice account.
+     * 
+     * @param {string} account  Updates the account.
+     */
+    const updateInvoiceAccount = (account: string): void => {
+        dispatch(setInvoiceAccountFilter(`%7E${formSession.accountType}=${account}`));
+    };
 
     /** Adds the frozen fields if they are not already present in the state
      * 
@@ -110,8 +121,10 @@ const useFormSession = (): useFormSessionReturn => {
 
     return {
         ...formSession,
+        invoiceAccountFilter,
         formCount,
         frozenFields,
+        updateInvoiceAccount,
         addFrozenFields,
         handleFormClose,
         saveCurrentSession,

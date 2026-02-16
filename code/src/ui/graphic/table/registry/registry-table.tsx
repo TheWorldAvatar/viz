@@ -47,9 +47,9 @@ interface RegistryTableProps {
   accountType: string;
   disableRowAction: boolean;
   lifecycleStage: LifecycleStage;
-  selectedDate: DateRange;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
+  selectedDate?: DateRange;
 }
 
 /**

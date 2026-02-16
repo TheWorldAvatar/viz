@@ -232,7 +232,7 @@ function makeExternalEndpoint(
       if (type == FormTypeMap.ASSIGN_PRICE) {
         if (searchParams.get("id") != "null") {
           const id: string = searchParams.get("id");
-          return buildUrl(agentBaseApi, "report", "contract", "pricing",  encodeURIComponent(id));
+          return buildUrl(agentBaseApi, "report", "contract", "pricing", encodeURIComponent(id));
         }
         return buildUrl(agentBaseApi, "report", "contract", "pricing");
       }
@@ -432,13 +432,17 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
-    case InternalApiIdentifierMap.OUTSTANDING: {
+    case InternalApiIdentifierMap.OUTSTANDING:
+    case InternalApiIdentifierMap.INVOICEABLE: {
       const contractType: string = searchParams.get("type");
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const filters: string = encodeFilters(searchParams.get("filters"));
-      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+      if (slug == InternalApiIdentifierMap.OUTSTANDING) {
+        return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+      }
+      return `${agentBaseApi}/report/account/tasks?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case InternalApiIdentifierMap.SCHEDULED:
     case InternalApiIdentifierMap.CLOSED: {

@@ -4,19 +4,18 @@ import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
-import { DateRange } from "react-day-picker";
+import React, { useRef } from "react";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, LifecycleStageMap } from "types/form";
 import { TableColumnOrderSettings } from "types/settings";
 import ColumnToggle from "ui/graphic/table/action/column-toggle";
 import RegistryTable from "ui/graphic/table/registry/registry-table";
 import { FormComponent } from "ui/interaction/form/form";
-import { getInitialDateFromLifecycleStage } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import useFormSession from "hooks/form/useFormSession";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -35,7 +34,7 @@ export default function InvoiceFormComponent(
     props: Readonly<InvoiceFormComponentProps>
 ) {
     return (
-        <FormSessionContextProvider entityType={props.entityType}>
+        <FormSessionContextProvider entityType={props.entityType} accountType={props.accountType}>
             <div className="flex flex-col w-full h-full mx-auto py-4 px-4 md:px-8 bg-muted overflow-y-auto">
                 <InvoiceFormContents {...props} />
             </div>
@@ -48,16 +47,15 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     const router = useRouter();
     const { refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
-    const [selectedDate] = useState<DateRange>(getInitialDateFromLifecycleStage(LifecycleStageMap.CLOSED));
+    const { invoiceAccountFilter } = useFormSession();
 
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
+        invoiceAccountFilter,
         refreshFlag,
-        LifecycleStageMap.CLOSED,
-        selectedDate,
+        LifecycleStageMap.INVOICE,
         props.tableColumnOrder,
     );
-
     const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
         if (formRef.current) {
             formRef.current.requestSubmit();
@@ -87,7 +85,9 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         accountType={props.accountType}
                     />
                     )}
-                {<section>
+
+                {!invoiceAccountFilter && <h2>{dict.action.selectClient}</h2>}
+                {invoiceAccountFilter && <section>
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (
                             <ColumnToggle
@@ -95,22 +95,21 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                             />
                         )}
                     </div>
-                    <div>
-                        {!refreshFlag && !tableDescriptor.isLoading && tableDescriptor.data?.length > 0 && (
+                    {!refreshFlag && !tableDescriptor.isLoading && <div>
+                        {tableDescriptor.data?.length > 0 && (
                             <RegistryTable
                                 recordType={props.entityType}
                                 lifecycleStage={LifecycleStageMap.CLOSED}
                                 disableRowAction={true}
-                                selectedDate={selectedDate}
                                 tableDescriptor={tableDescriptor}
                                 triggerRefresh={triggerRefresh}
                                 accountType={props.accountType}
                             />
                         )}
-                        {!refreshFlag && !tableDescriptor.isLoading && tableDescriptor.data?.length == 0 && (
+                        {tableDescriptor.data?.length == 0 && (
                             <div className="p-4 text-base">{dict.message.noResultFound}</div>
                         )}
-                    </div>
+                    </div>}
                 </section>}
             </div>
             <section className="bg-muted flex items-center justify-between sticky -bottom-4 py-2">

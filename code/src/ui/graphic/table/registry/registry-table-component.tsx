@@ -45,10 +45,11 @@ export default function RegistryTableComponent(
   );
   const tableDescriptor: TableDescriptor = useTable(
     props.entityType,
+    "",
     refreshFlag,
     props.lifecycleStage,
-    selectedDate,
     props.tableColumnOrder,
+    selectedDate,
   );
 
   useEffect(() => {

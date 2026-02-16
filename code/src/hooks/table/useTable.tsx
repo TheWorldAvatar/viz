@@ -42,6 +42,7 @@ export interface TableDescriptor {
 * A custom hook to retrieve table data into functionalities for the registry table to function.
 *
 * @param {string} entityType Type of entity for rendering.
+* @param {string} filters Additional filters to append.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
@@ -49,10 +50,11 @@ export interface TableDescriptor {
 */
 export function useTable(
   entityType: string,
+  filters: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
-  selectedDate: DateRange,
   tableColumnOrder: TableColumnOrderSettings,
+  selectedDate?: DateRange,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -63,6 +65,7 @@ export function useTable(
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
   const { isLoading, tableData, initialInstances } = useTableData(
     entityType,
+    filters,
     sortParams,
     sorting,
     refreshFlag,
