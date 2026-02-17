@@ -140,7 +140,6 @@ export function makeInternalRegistryAPIwithParams(
         filters: params[4],
       });
       break;
-    case InternalApiIdentifierMap.ACTIVITY:
     case InternalApiIdentifierMap.SCHEDULED:
     case InternalApiIdentifierMap.CLOSED:
       searchParams = new URLSearchParams({

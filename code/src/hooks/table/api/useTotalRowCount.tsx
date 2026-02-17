@@ -47,8 +47,7 @@ export function useTotalRowCount(
           );
         } else if (
           lifecycleStage == LifecycleStageMap.SCHEDULED ||
-          lifecycleStage == LifecycleStageMap.CLOSED ||
-          lifecycleStage == LifecycleStageMap.ACTIVITY) {
+          lifecycleStage == LifecycleStageMap.CLOSED) {
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.COUNT,
             entityType,

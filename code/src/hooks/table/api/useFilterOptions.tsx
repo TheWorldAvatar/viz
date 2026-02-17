@@ -57,8 +57,7 @@ export function useFilterOptions(
         let url: string;
         if (
           lifecycleStage == LifecycleStageMap.SCHEDULED ||
-          lifecycleStage == LifecycleStageMap.CLOSED ||
-          lifecycleStage == LifecycleStageMap.ACTIVITY
+          lifecycleStage == LifecycleStageMap.CLOSED
         ) {
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.FILTER,

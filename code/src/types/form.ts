@@ -18,7 +18,6 @@ export const LifecycleStageMap = {
   SCHEDULED: "scheduled",
   CLOSED: "closed",
   ACCOUNT: "account",
-  ACTIVITY: "activity",
   PRICING: "pricing",
 } as const;
 export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
@@ -27,13 +26,12 @@ export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",
   ADD_PRICE: "addprice",
-  ADD_INVOICE: "addinvoice",
   ASSIGN_PRICE: "assignprice",
   DELETE: "delete",
   EDIT: "edit",
-  EXCLUDE_INVOICE: "nonbillable",
   VIEW: "view",
   SEARCH: "search",
+  ACCRUAL: "accrual",
   DISPATCH: "dispatch",
   COMPLETE: "complete",
   CANCEL: "cancel",
@@ -42,19 +40,19 @@ export const FormTypeMap = {
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 
+// Requires lowercase
 export const RegistryStatusMap = {
   AMENDED: "amended",
   ASSIGNED: "assigned",
   COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  REPORTED: "issue",
   NEW: "new",
+  BILLABLE_COMPLETED: "billablecompleted",
+  BILLABLE_CANCELLED: "billablecancelled",
+  BILLABLE_REPORTED: "billableissue",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
-
-export const BillingStatusMap = {
-  PENDING_APPROVAL: "pendingApproval",
-  READY: "readyForPayment",
-} as const;
-export type BillingStatus = typeof BillingStatusMap[keyof typeof BillingStatusMap];
 
 export interface SparqlResponseField {
   value: string;

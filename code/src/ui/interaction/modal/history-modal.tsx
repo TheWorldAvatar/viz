@@ -39,11 +39,10 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
             const url: string = makeInternalRegistryAPIwithParams(
                 InternalApiIdentifierMap.HISTORY,
                 props.id,
-                props.lifecycleStage == LifecycleStageMap.ACTIVITY ? "bill" :
-                    props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                        props.lifecycleStage == LifecycleStageMap.CLOSED ? "task" :
-                        props.entityType,
+                props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                    props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                    props.lifecycleStage == LifecycleStageMap.CLOSED ? "task" :
+                    props.entityType,
             );
             const res: AgentResponseBody = await queryInternalApi(url);
             const details: HistoryDetails[] = res.data.items as HistoryDetails[];

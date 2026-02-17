@@ -216,8 +216,8 @@ export function getInitialDateFromLifecycleStage(
     initialDate.setDate(initialDate.getDate() + 1);
     fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
     return { from: initialDate, to: fourWeeksFromInitialDate };
-    // For billing activity, set the date range to the current month
-  } else if (lifecycleStage === LifecycleStageMap.ACTIVITY) {
+    // For closed tasks, set the date range to the current month
+  } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
     // Get the first day of the current month
     const startOfMonth: Date = new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
     // Get the last day of the current month by passing the 0th day of the next month
