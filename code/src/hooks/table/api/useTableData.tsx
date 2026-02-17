@@ -57,9 +57,18 @@ export function useTableData(
       try {
         let instances: RegistryFieldValues[] = [];
         let url: string;
-        if (lifecycleStage == LifecycleStageMap.OUTSTANDING || lifecycleStage == LifecycleStageMap.INVOICE) {  
+        if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
           url = makeInternalRegistryAPIwithParams(
             lifecycleStage,
+            entityType,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.INVOICEABLE,
             entityType,
             apiPagination.pageIndex.toString(),
             apiPagination.pageSize.toString(),
@@ -83,7 +92,8 @@ export function useTableData(
         } else if (
           lifecycleStage == LifecycleStageMap.GENERAL ||
           lifecycleStage == LifecycleStageMap.ACCOUNT ||
-          lifecycleStage == LifecycleStageMap.PRICING) {
+          lifecycleStage == LifecycleStageMap.PRICING ||
+          lifecycleStage == LifecycleStageMap.INVOICE) {
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             entityType,

@@ -29,7 +29,7 @@ export default function InvoicesPage() {
 
     return (
         <RegistryTableComponent
-            entityType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
+            entityType={LifecycleStageMap.INVOICE}
             lifecycleStage={LifecycleStageMap.INVOICE}
             tableColumnOrder={tableColumnOrderSettings}
         />

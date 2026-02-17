@@ -52,7 +52,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
         refreshFlag,
-        LifecycleStageMap.INVOICE,
+        LifecycleStageMap.BILLABLE,
         props.tableColumnOrder,
         invoiceAccountFilter,
     );
@@ -100,7 +100,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         {tableDescriptor.data?.length > 0 && (
                             <RegistryTable
                                 recordType={props.entityType}
-                                lifecycleStage={LifecycleStageMap.INVOICE}
+                                lifecycleStage={LifecycleStageMap.BILLABLE}
                                 disableRowAction={true}
                                 tableDescriptor={tableDescriptor}
                                 triggerRefresh={triggerRefresh}

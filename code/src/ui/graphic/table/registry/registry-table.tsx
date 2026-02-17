@@ -295,7 +295,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   lifecycleStage={props.lifecycleStage}
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
-                                  disableFilter={props.lifecycleStage == LifecycleStageMap.INVOICE && header.id == props.accountType}
+                                  disableFilter={props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType}
                                 />
                               );
                             })}
@@ -351,7 +351,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       disabled={isLoading}
                                       checked={row.getIsSelected()}
                                       handleChange={(checked) => {
-                                        if (props.lifecycleStage == LifecycleStageMap.INVOICE) {
+                                        if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
                                           props.tableDescriptor.setSelectedRows(
                                             getId(row.getValue("event_id")), !checked);
                                         }
@@ -366,7 +366,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   key={cell.id + index}
                                   width={cell.column.getSize()}
                                   onClick={() => {
-                                    if (props.lifecycleStage == LifecycleStageMap.INVOICE) {
+                                    if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
                                       const isSelected: boolean = row.getIsSelected();
                                       props.tableDescriptor.setSelectedRows(
                                         getId(row.getValue("event_id")), isSelected);
