@@ -35,9 +35,7 @@ export default function InvoiceFormComponent(
 ) {
     return (
         <FormSessionContextProvider entityType={props.entityType} accountType={props.accountType}>
-            <div className="flex flex-col w-full h-full mx-auto py-4 px-4 md:px-8 bg-muted overflow-y-auto">
-                <InvoiceFormContents {...props} />
-            </div>
+            <InvoiceFormContents {...props} />
         </FormSessionContextProvider>
     );
 }
@@ -63,20 +61,20 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     };
 
     return (
-        <div className="flex flex-col justify-between min-h-dvh">
-            <div>
-                <header className={`flex flex-row gap-4 text-foreground mt-5 mb-5`}>
-                    <Button
-                        leftIcon="arrow_back"
-                        variant="outline"
-                        onClick={() => router.back()}
-                        size="icon"
-                        iconSize="small"
-                        tooltipPosition="right"
-                        tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
-                    />
-                    <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
-                </header>
+        <div className="flex flex-col w-full h-full mx-auto pt-4 pb-8 px-4 gap-5 md:px-8 bg-muted justify-between">
+            <header className={`flex flex-row gap-4 text-foreground justify-between`}>
+                <Button
+                    leftIcon="arrow_back"
+                    variant="outline"
+                    onClick={() => router.back()}
+                    size="icon"
+                    iconSize="small"
+                    tooltipPosition="right"
+                    tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
+                />
+                <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
+            </header>
+            <div className="flex-1 overflow-y-auto">
                 {refreshFlag ? <FormSkeleton /> :
                     (<FormComponent
                         formRef={formRef}
@@ -112,7 +110,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     </div>}
                 </section>}
             </div>
-            <section className="bg-muted flex items-center justify-between sticky -bottom-4 py-2">
+            <section className="bg-muted flex items-center justify-between">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
                         leftIcon="cached"
@@ -134,6 +132,6 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     />
                 </div>
             </section>
-        </div >
+        </div>
     );
 }
