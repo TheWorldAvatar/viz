@@ -242,6 +242,7 @@
     "billableCancelled": "billable (cancelled)",
     "billableCompleted": "billable (completed)",
     "billableIssue": "billable (issue)",
+    "invoiced": "invoiced",
     "item": "Item",
     "rescinded": "rescinded",
     "terminated": "terminated",
