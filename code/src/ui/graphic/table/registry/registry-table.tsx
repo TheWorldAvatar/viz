@@ -350,9 +350,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                       className={`${!props.disableRowAction && "ml-2"} w-4 h-4 cursor-pointer`}
                                       disabled={isLoading}
                                       checked={row.getIsSelected()}
-                                      handleChange={(checked) =>
-                                        row.toggleSelected(checked)
-                                      }
+                                      handleChange={(checked) => {
+                                        if (props.lifecycleStage == LifecycleStageMap.INVOICE) {
+                                          props.tableDescriptor.setSelectedRows(
+                                            getId(row.getValue("event_id")), !checked);
+                                        }
+                                        row.toggleSelected(checked);
+                                      }}
                                     />
                                   )}
                                 </div>
@@ -363,7 +367,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   width={cell.column.getSize()}
                                   onClick={() => {
                                     if (props.lifecycleStage == LifecycleStageMap.INVOICE) {
-                                      row.toggleSelected(!row.getIsSelected());
+                                      const isSelected: boolean = row.getIsSelected();
+                                      props.tableDescriptor.setSelectedRows(
+                                        getId(row.getValue("event_id")), isSelected);
+                                      row.toggleSelected(!isSelected);
                                     } else {
                                       onRowClick(row.original as FieldValues);
                                     }

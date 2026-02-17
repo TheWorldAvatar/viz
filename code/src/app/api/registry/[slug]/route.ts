@@ -448,6 +448,9 @@ function makeExternalEndpoint(
       if (slug == InternalApiIdentifierMap.OUTSTANDING) {
         return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
+      if (contractType == FormTypeMap.INVOICE) {
+        return `${agentBaseApi}/report/account/invoice`;
+      }
       return `${agentBaseApi}/report/account/tasks?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case InternalApiIdentifierMap.SCHEDULED:

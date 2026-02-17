@@ -83,6 +83,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         entityType={FormTypeMap.INVOICE}
                         formType={FormTypeMap.INVOICE}
                         accountType={props.accountType}
+                        selectedRowIds={tableDescriptor.selectedRowIds}
                     />
                     )}
 
