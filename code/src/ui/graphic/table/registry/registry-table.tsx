@@ -146,6 +146,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
       }
+    } else if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
+      navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
     } else {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);
