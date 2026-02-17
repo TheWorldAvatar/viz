@@ -203,6 +203,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             )}
           {isPermitted("edit") &&
             props.formType === FormTypeMap.VIEW &&
+            props.entityType != FormTypeMap.INVOICE &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <Button // Edit button
@@ -216,6 +217,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             )}
           {isPermitted("delete") &&
             props.formType === FormTypeMap.VIEW &&
+            props.entityType != FormTypeMap.INVOICE &&
             (status?.data?.message === ENTITY_STATUS.PENDING ||
               !props.isPrimaryEntity) && (
               <Button // Delete button
