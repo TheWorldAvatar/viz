@@ -53,8 +53,7 @@
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "addInvoice": "Rechnung hinzufügen",
-    "selectClient": "Wählen Sie einen Kunden aus, um dessen Aufgaben anzuzeigen."
+    "addInvoice": "Rechnung hinzufügen"
   },
   "form": {
     "singleService": "Einzelner Dienst",

@@ -87,7 +87,6 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     />
                     )}
 
-                {!invoiceAccountFilter && <h2>{dict.action.selectClient}</h2>}
                 {invoiceAccountFilter && <section>
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (
