@@ -361,9 +361,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <TableCell
                                   key={cell.id + index}
                                   width={cell.column.getSize()}
-                                  onClick={() =>
-                                    onRowClick(row.original as FieldValues)
-                                  }
+                                  onClick={() => {
+                                    if (props.lifecycleStage == LifecycleStageMap.INVOICE) {
+                                      row.toggleSelected(!row.getIsSelected());
+                                    } else {
+                                      onRowClick(row.original as FieldValues);
+                                    }
+                                  }}
                                 >
                                   {flexRender(
                                     cell.column.columnDef.cell,
