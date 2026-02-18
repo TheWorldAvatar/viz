@@ -63,9 +63,14 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
     const handleFilter = (): void => {
         if (!hasFirstValue) return;
+        setError(null);
 
-        if (isBetweenFirst && hasSecondValue && value2! < value1!) {
-            setError("For 'between' operator, the second value must be greater than or equal to the first value.");
+        const isInvalidRange = betweenOption === "exclusive" ? value2! <= value1! : value2! < value1!;
+        if (isBetweenFirst && hasSecondValue && isInvalidRange) {
+            setError(betweenOption === "exclusive"
+                ? "For 'between' (exclusive), the second value must be strictly greater than the first value."
+                : "For 'between' (inclusive), the second value must be greater than or equal to the first value."
+            );
             return;
         }
 
@@ -100,6 +105,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                 onChange={(selected) => {
                     if (selected) {
                         setSelectedOperator1((selected as SelectOptionType).value as ComparisonOperator);
+                        setValue2(null);
+                        setError(null);
                     }
                 }}
             />
