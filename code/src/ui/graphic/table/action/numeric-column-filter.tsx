@@ -24,7 +24,7 @@ const operators: { value: ComparisonOperator; label: string; }[] = [
 ]
 
 /**
- * Evaluates a single numeric comparison condition.
+ * Evaluates a numeric value against a specified comparison operator and target value(s).
  */
 function matchesCondition(value: number, operator: ComparisonOperator, target: number, target2?: number, betweenOption?: BetweenOptions): boolean {
     switch (operator) {
@@ -55,6 +55,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
     const [value2, setValue2] = useState<number | null>(null);
     const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>("eq");
     const [betweenOption, setBetweenOption] = useState<BetweenOptions>("inclusive");
+    const [error, setError] = useState<string | null>(null);
 
     const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
     const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
@@ -62,6 +63,11 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
     const handleFilter = (): void => {
         if (!hasFirstValue) return;
+
+        if (isBetweenFirst && hasSecondValue && value2! < value1!) {
+            setError("For 'between' operator, the second value must be greater than or equal to the first value.");
+            return;
+        }
 
         const filtered: string[] = props.options.filter((option) => {
             const numericValue: number = Number(option);
@@ -75,6 +81,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             const condition1: boolean = matchesCondition(numericValue, selectedOperator1, value1!);
             return condition1;
         });
+
 
         props.onSubmission(filtered);
     }
@@ -166,6 +173,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     </div>
                 </>
             )}
+            {error && <div className="text-red-500 text-sm">{error}</div>}
             <Button
                 variant="primary"
                 className="w-full mt-1"
