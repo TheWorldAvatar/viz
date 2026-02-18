@@ -47,8 +47,9 @@ export default function RegistryTableComponent(
     props.entityType,
     refreshFlag,
     props.lifecycleStage,
-    selectedDate,
     props.tableColumnOrder,
+    null,
+    selectedDate,
   );
 
   useEffect(() => {
@@ -67,7 +68,9 @@ export default function RegistryTableComponent(
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-            props.lifecycleStage === LifecycleStageMap.PRICING ? dict.nav.title.billing
+            props.lifecycleStage === LifecycleStageMap.PRICING ||
+            props.lifecycleStage === LifecycleStageMap.INVOICE
+            ? dict.nav.title.billing
             : parseWordsForLabels(props.entityType)}
         </h1>
         <TableRibbon
@@ -88,6 +91,7 @@ export default function RegistryTableComponent(
           <RegistryTable
             recordType={props.entityType}
             lifecycleStage={props.lifecycleStage}
+            disableRowAction={false}
             selectedDate={selectedDate}
             tableDescriptor={tableDescriptor}
             triggerRefresh={triggerRefresh}

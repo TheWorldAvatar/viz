@@ -132,6 +132,7 @@ export function makeInternalRegistryAPIwithParams(
       });
       break;
     case InternalApiIdentifierMap.OUTSTANDING:
+    case InternalApiIdentifierMap.INVOICEABLE:
       searchParams = new URLSearchParams({
         type: params[0],
         page: params[1],

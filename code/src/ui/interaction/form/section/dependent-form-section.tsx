@@ -47,7 +47,7 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { formCount, frozenFields } = useFormSession();
+  const { formCount, frozenFields, updateInvoiceAccount } = useFormSession();
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -70,7 +70,7 @@ export function DependentFormSection(
   } = useFormQuickView(currentOption, queryEntityType);
 
   const disable: boolean = (fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount) ||
-  // Disable account field on assign price form page
+    // Disable account field on assign price form page
     (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
 
   return (
@@ -95,6 +95,10 @@ export function DependentFormSection(
                   options={getFieldOptions}
                   initialValue={selectedOption}
                   onChange={(option: SelectOptionType) => {
+                    // When on the invoice form, update the invoice account for filtering
+                    if (formType == FormTypeMap.INVOICE && props.billingStore?.accountField === props.dependentProp.fieldId) {
+                      updateInvoiceAccount(option.label);
+                    }
                     onChange(option.value);
                   }}
                   isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||

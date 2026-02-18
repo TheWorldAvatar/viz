@@ -298,3 +298,14 @@ input[type="file"] {
   color: rgba(0, 0, 0, 0.75);
   background-color: #efefef !important;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in-on-motion {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}

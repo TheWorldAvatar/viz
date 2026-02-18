@@ -29,9 +29,11 @@ import DraftTemplateButton from "ui/interaction/action/draft-template/draft-temp
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import Checkbox from "ui/interaction/input/checkbox";
 import HistoryModal from "ui/interaction/modal/history-modal";
 import { getAfterDelimiter, getId } from "utils/client-utils";
+import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
@@ -39,16 +41,15 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
-import { EVENT_KEY } from "utils/constants";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
 interface RegistryTableProps {
   recordType: string;
   accountType: string;
+  disableRowAction: boolean;
   lifecycleStage: LifecycleStage;
-  selectedDate: DateRange;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
+  selectedDate?: DateRange;
 }
 
 /**
@@ -56,6 +57,7 @@ interface RegistryTableProps {
  *
  * @param {string} recordType The type of the record.
  * @param {string} accountType The type of account for billing capabilities.
+ * @param {boolean} disableRowAction Hides the row actions for the user if true.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
@@ -80,7 +82,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const hasAmendedStatus: boolean = props.tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
   );
-  const allowMultipleSelection: boolean = props.lifecycleStage !== LifecycleStageMap.GENERAL;
+  const allowMultipleSelection: boolean = props.lifecycleStage === LifecycleStageMap.PENDING || props.lifecycleStage === LifecycleStageMap.ACTIVE
+    || props.lifecycleStage === LifecycleStageMap.ARCHIVE || props.lifecycleStage === LifecycleStageMap.OUTSTANDING || props.lifecycleStage === LifecycleStageMap.SCHEDULED
+    || props.lifecycleStage === LifecycleStageMap.CLOSED || props.lifecycleStage === LifecycleStageMap.BILLABLE;
 
   const onRowClick = async (row: FieldValues) => {
     if (isLoading) return;
@@ -144,6 +148,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       } else {
         navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
       }
+    } else if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
+      navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
     } else {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);
@@ -197,14 +203,13 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     }
   };
 
-
   return (
     <>
       {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
         <>
-          <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden">
+          <div className="w-full rounded-lg border border-border flex flex-col h-full overflow-hidden fade-in-on-motion">
             {/* Table container */}
-            <div className="overflow-auto flex-1 min-h-[500px] table-scrollbar ">
+            <div className="overflow-auto flex-1 min-h-[500px] table-scrollbar">
               <div className="min-w-full ">
                 <DndContext
                   collisionDetection={closestCenter}
@@ -273,6 +278,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   <Checkbox
                                     aria-label={dict.action.selectAll}
                                     disabled={isLoading}
+                                    className="w-4 h-4 cursor-pointer"
                                     checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
                                     handleChange={(checked) => {
                                       props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
@@ -293,7 +299,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   lifecycleStage={props.lifecycleStage}
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
-                                  disableFilter={false}
+                                  disableFilter={props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType}
                                 />
                               );
                             })}
@@ -314,40 +320,47 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               isHeader={false}
                             >
                               <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                                <div className="flex gap-0.5">
-                                  <DragActionHandle disabled={isLoading} id={row.id} />
-                                  <RegistryRowAction
-                                    recordType={props.recordType}
-                                    accountType={props.accountType}
-                                    lifecycleStage={props.lifecycleStage}
-                                    row={row.original}
-                                    triggerRefresh={props.triggerRefresh}
-                                  />
-                                  <Button
-                                    leftIcon="history"
-                                    size="icon"
-                                    variant="ghost"
-                                    tooltipText={dict.title.history}
-                                    onClick={() => {
-                                      if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                                        props.lifecycleStage == LifecycleStageMap.CLOSED) {
-                                        setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
-                                      } else {
-                                        setHistoryId(row.original.id as string);
-                                      }
-                                      setIsOpenHistoryModal(true);
-                                    }}
-                                  />
-                                  {allowMultipleSelection && (
+                                <div className={`flex items-center justify-end gap-0.5 ${props.disableRowAction && "w-16"}`}>
+                                  {!props.disableRowAction &&
+                                    <>
+                                      <DragActionHandle disabled={isLoading} id={row.id} />
+                                      <RegistryRowAction
+                                        recordType={props.recordType}
+                                        accountType={props.accountType}
+                                        lifecycleStage={props.lifecycleStage}
+                                        row={row.original}
+                                        triggerRefresh={props.triggerRefresh}
+                                      />
+                                      <Button
+                                        leftIcon="history"
+                                        size="icon"
+                                        variant="ghost"
+                                        tooltipText={dict.title.history}
+                                        onClick={() => {
+                                          if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                            props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                                            props.lifecycleStage == LifecycleStageMap.CLOSED) {
+                                            setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
+                                          } else {
+                                            setHistoryId(row.original.id as string);
+                                          }
+                                          setIsOpenHistoryModal(true);
+                                        }}
+                                      />
+                                    </>
+                                  } {allowMultipleSelection && (
                                     <Checkbox
                                       aria-label={row.id}
-                                      className="ml-2"
+                                      className={`${!props.disableRowAction && "ml-2"} w-4 h-4 cursor-pointer`}
                                       disabled={isLoading}
                                       checked={row.getIsSelected()}
-                                      handleChange={(checked) =>
-                                        row.toggleSelected(checked)
-                                      }
+                                      handleChange={(checked) => {
+                                        if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
+                                          props.tableDescriptor.setSelectedRows(
+                                            getId(row.getValue("event_id")), !checked);
+                                        }
+                                        row.toggleSelected(checked);
+                                      }}
                                     />
                                   )}
                                 </div>
@@ -356,9 +369,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 <TableCell
                                   key={cell.id + index}
                                   width={cell.column.getSize()}
-                                  onClick={() =>
-                                    onRowClick(row.original as FieldValues)
-                                  }
+                                  onClick={() => {
+                                    if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
+                                      const isSelected: boolean = row.getIsSelected();
+                                      props.tableDescriptor.setSelectedRows(
+                                        getId(row.getValue("event_id")), isSelected);
+                                      row.toggleSelected(!isSelected);
+                                    } else {
+                                      onRowClick(row.original as FieldValues);
+                                    }
+                                  }}
                                 >
                                   {flexRender(
                                     cell.column.columnDef.cell,

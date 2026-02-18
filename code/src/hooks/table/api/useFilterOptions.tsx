@@ -72,7 +72,8 @@ export function useFilterOptions(
         } else {
           let parsedStage: string = lifecycleStage;
           if (lifecycleStage == LifecycleStageMap.ACCOUNT ||
-            lifecycleStage == LifecycleStageMap.PRICING) {
+            lifecycleStage == LifecycleStageMap.PRICING ||
+            lifecycleStage == LifecycleStageMap.INVOICE) {
             parsedStage = LifecycleStageMap.GENERAL;
           }
           url = makeInternalRegistryAPIwithParams(

@@ -227,14 +227,14 @@ function makeExternalEndpoint(
       }
       if (type == FormTypeMap.VIEW) {
         const id: string = searchParams.get("id");
-        return buildUrl(agentBaseApi, "report", "transaction", "invoice", encodeURIComponent(id));
+        return buildUrl(agentBaseApi, "report", "service", "charge", encodeURIComponent(id));
       }
       if (type == FormTypeMap.ASSIGN_PRICE) {
         if (searchParams.get("id") != "null") {
           const id: string = searchParams.get("id");
-          return buildUrl(agentBaseApi, "report", "transaction", "contract", encodeURIComponent(id));
+          return buildUrl(agentBaseApi, "report", "contract", "pricing", encodeURIComponent(id));
         }
-        return buildUrl(agentBaseApi, "report", "transaction", "model");
+        return buildUrl(agentBaseApi, "report", "contract", "pricing");
       }
       return "";
     }
@@ -275,6 +275,9 @@ function makeExternalEndpoint(
         return `${agentBaseApi}/${type}/count${filters}`;
       }
       const filters: string = encodeFilters(searchParams.get("filters"));
+      if (lifecycle == LifecycleStageMap.BILLABLE) {
+        return `${agentBaseApi}/report/account/tasks/count?type=${type}${filters}`;
+      }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
         if (lifecycle === "pending") {
@@ -360,6 +363,9 @@ function makeExternalEndpoint(
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
       }
+      if (lifecycle == LifecycleStageMap.BILLABLE) {
+        return `${agentBaseApi}/report/account/tasks/filter?${urlParams.toString()}${filters}`;
+      }
       if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
         let stagePath: string;
         if (lifecycle === "pending") {
@@ -385,8 +391,8 @@ function makeExternalEndpoint(
       const entityType: string = searchParams.get("type");
       const identifier: string = searchParams.get("identifier");
       if (entityType == FormTypeMap.ASSIGN_PRICE) {
-        return buildUrl(agentBaseApi, "report", "transaction", "model", encodeURIComponent(identifier));
-      } 
+        return buildUrl(agentBaseApi, "report", "contract", "pricing", "form", encodeURIComponent(identifier));
+      }
       let url: string = `${agentBaseApi}/form/${entityType}`;
       if (identifier != "null") {
         url += `/${encodeURIComponent(identifier)}`;
@@ -432,13 +438,20 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       return `${agentBaseApi}/contracts/service/${idOrTimestamp}?type=${contractType}${filters}`;
     }
-    case InternalApiIdentifierMap.OUTSTANDING: {
+    case InternalApiIdentifierMap.OUTSTANDING:
+    case InternalApiIdentifierMap.INVOICEABLE: {
       const contractType: string = searchParams.get("type");
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");
       const filters: string = encodeFilters(searchParams.get("filters"));
-      return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+      if (slug == InternalApiIdentifierMap.OUTSTANDING) {
+        return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+      }
+      if (contractType == FormTypeMap.INVOICE) {
+        return `${agentBaseApi}/report/account/invoice`;
+      }
+      return `${agentBaseApi}/report/account/tasks?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
     }
     case InternalApiIdentifierMap.SCHEDULED:
     case InternalApiIdentifierMap.CLOSED: {

@@ -99,7 +99,6 @@ export default function RegistryRowAction(
     props.triggerRefresh();
   };
 
-
   const handleClickView = (): void => {
     if (
       props.lifecycleStage == LifecycleStageMap.TASKS ||
@@ -145,7 +144,8 @@ export default function RegistryRowAction(
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
     props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
-    props.lifecycleStage == LifecycleStageMap.ACTIVE || props.lifecycleStage == LifecycleStageMap.ARCHIVE;
+    props.lifecycleStage == LifecycleStageMap.ACTIVE || props.lifecycleStage == LifecycleStageMap.ARCHIVE ||
+    props.lifecycleStage == LifecycleStageMap.INVOICE;
 
   return (
     <div aria-label="Actions">

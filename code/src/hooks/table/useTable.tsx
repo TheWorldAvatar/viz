@@ -36,6 +36,8 @@ export interface TableDescriptor {
   filters: ColumnFilter[];
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>,
   sortParams: string;
+  selectedRowIds: Set<string>;
+  setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
 }
 
 /**
@@ -44,18 +46,21 @@ export interface TableDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {DateRange} selectedDate The currently selected date.
 * @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
+* @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
+* @param {DateRange} selectedDate Optional to put the currently selected date.
 */
 export function useTable(
   entityType: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
-  selectedDate: DateRange,
   tableColumnOrder: TableColumnOrderSettings,
+  invoiceAccountFilter: ColumnFilter,
+  selectedDate?: DateRange,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
@@ -84,6 +89,31 @@ export function useTable(
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
   }, [tableData, pagination.pageIndex]);
 
+
+  useEffect(() => {
+    if (invoiceAccountFilter) {
+      // Take out any invoice account filter and add the latest version
+      const nonDefaultFilters: ColumnFilter[] = columnFilters.filter(filter => filter.id != invoiceAccountFilter.id);
+      setColumnFilters([...nonDefaultFilters, invoiceAccountFilter]);
+    }
+  }, [invoiceAccountFilter]);
+
+  /** Adds or delete the selected row.
+    * 
+    * @param {string} rowId  The target row ID to add or delete.
+    * @param {boolean} isRemove  Indicates if we should add or delete the row. Delete if true; add if not.
+    */
+  const setSelectedRows = (rowId: string, isRemove: boolean): void => {
+    setSelectedRowIds((prev) => {
+      const nextSet: Set<string> = new Set<string>(prev);
+      if (isRemove) {
+        nextSet.delete(rowId);
+      } else {
+        nextSet.add(rowId);
+      }
+      return nextSet;
+    });
+  };
 
   const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
 
@@ -139,5 +169,7 @@ export function useTable(
     filters: columnFilters,
     setFilters: setColumnFilters,
     sortParams,
+    selectedRowIds,
+    setSelectedRows,
   };
 }
