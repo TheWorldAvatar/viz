@@ -11,8 +11,7 @@ interface NumericColumnFilterProps {
 }
 
 type ComparisonOperator = | "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "between"
-
-type LogicOperator = "and" | "or";
+type BetweenOptions = "inclusive" | "exclusive";
 
 const operators: { value: ComparisonOperator; label: string; }[] = [
     { value: "eq", label: "Equals" },
@@ -27,7 +26,7 @@ const operators: { value: ComparisonOperator; label: string; }[] = [
 /**
  * Evaluates a single numeric comparison condition.
  */
-function matchesCondition(value: number, operator: ComparisonOperator, target: number, target2?: number): boolean {
+function matchesCondition(value: number, operator: ComparisonOperator, target: number, target2?: number, betweenOption?: BetweenOptions): boolean {
     switch (operator) {
         case "eq": return value === target;
         case "neq": return value !== target;
@@ -35,7 +34,11 @@ function matchesCondition(value: number, operator: ComparisonOperator, target: n
         case "gte": return value >= target;
         case "lt": return value < target;
         case "lte": return value <= target;
-        case "between": return target2 !== undefined && value >= target && value <= target2;
+        case "between":
+            if (target2 === undefined) return false;
+            return betweenOption === "exclusive"
+                ? value > target && value < target2
+                : value >= target && value <= target2;
     }
 }
 
@@ -50,16 +53,12 @@ function matchesCondition(value: number, operator: ComparisonOperator, target: n
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
     const [value1, setValue1] = useState<number | null>(null);
     const [value2, setValue2] = useState<number | null>(null);
-    const [value3, setValue3] = useState<number | null>(null);
     const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>("eq");
-    const [selectedOperator2, setSelectedOperator2] = useState<ComparisonOperator>("eq");
-    const [logicOperator, setLogicOperator] = useState<LogicOperator>("and");
+    const [betweenOption, setBetweenOption] = useState<BetweenOptions>("inclusive");
 
     const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
     const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
-    const hasThirdValue: boolean = value3 !== null && !Number.isNaN(value3);
     const isBetweenFirst: boolean = selectedOperator1 === "between";
-    const isBetweenSecond: boolean = selectedOperator2 === "between";
 
     const handleFilter = (): void => {
         if (!hasFirstValue) return;
@@ -70,29 +69,18 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
             if (isBetweenFirst) {
                 if (!hasSecondValue) return false;
-                return matchesCondition(numericValue, "between", value1!, value2!);
+                return matchesCondition(numericValue, "between", value1!, value2!, betweenOption);
             }
 
             const condition1: boolean = matchesCondition(numericValue, selectedOperator1, value1!);
-
-            if (!hasSecondValue) return condition1;
-
-            if (isBetweenSecond) {
-                if (!hasThirdValue) return false;
-                const condition2Between: boolean = matchesCondition(numericValue, "between", value2!, value3!);
-                return logicOperator === "and" ? condition1 && condition2Between : condition1 || condition2Between;
-            }
-
-            const condition2: boolean = matchesCondition(numericValue, selectedOperator2, value2!);
-
-            return logicOperator === "and" ? condition1 && condition2 : condition1 || condition2;
+            return condition1;
         });
 
         props.onSubmission(filtered);
     }
 
     const blockInvalidNumberKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (["e", "E", "+", "-"].includes(e.key)) {
+        if (["e", "E", "+"].includes(e.key)) {
             e.preventDefault();
         }
     };
@@ -120,7 +108,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
                     value={value1 ?? ""}
                     placeholder={isBetweenFirst ? "From" : "Value..."}
-                    aria-label={`first filter value for ${props.label}`}
+                    aria-label={`${isBetweenFirst ? "Lower bound" : "Filter value"} for ${props.label}`}
                     onKeyDown={blockInvalidNumberKeys}
                     onChange={(e) => {
                         const value = e.currentTarget.valueAsNumber;
@@ -128,87 +116,55 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     }}
                 />
             </div>
-            {hasFirstValue && !isBetweenFirst && (
+
+            {isBetweenFirst && (
                 <>
-                    {/* AND / OR radio toggle */}
-                    <div className="flex items-center justify-center gap-6 py-1">
-                        <label htmlFor="and" className="flex items-center gap-1.5 text-sm">
-                            <input
-                                id="and"
-                                type="radio"
-                                name="logic-operator"
-                                value="and"
-                                checked={logicOperator === "and"}
-                                onChange={() => setLogicOperator("and")}
-                                className="accent-foreground"
-                            />
-                            AND
+                    <div className="relative">
+                        <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
+                            <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
+                        </span>
+                        <input
+                            type="number"
+                            step="0.01"
+                            inputMode="decimal"
+                            className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+                            value={value2 ?? ""}
+                            placeholder="To"
+                            aria-label={`Upper bound for ${props.label}`}
+                            onKeyDown={blockInvalidNumberKeys}
+                            onChange={(e) => {
+                                const value = e.currentTarget.valueAsNumber;
+                                setValue2(Number.isNaN(value) ? null : value);
+                            }}
+                        />
+                    </div>
+                    <div className="flex items-center justify-center gap-2 py-1">
+                        <input
+                            id="inclusive"
+                            type="radio"
+                            name="between-option"
+                            value="inclusive"
+                            checked={betweenOption === "inclusive"}
+                            onChange={() => setBetweenOption("inclusive")}
+                            className="accent-foreground"
+                        />
+                        <label htmlFor="inclusive" className="text-sm">
+                            Inclusive
                         </label>
-                        <label htmlFor="or" className="flex items-center gap-1.5 text-sm">
-                            <input
-                                id="or"
-                                type="radio"
-                                name="logic-operator"
-                                value="or"
-                                checked={logicOperator === "or"}
-                                onChange={() => setLogicOperator("or")}
-                                className="accent-foreground"
-                            />
-                            OR
+                        <input
+                            id="exclusive"
+                            type="radio"
+                            name="between-option"
+                            value="exclusive"
+                            checked={betweenOption === "exclusive"}
+                            onChange={() => setBetweenOption("exclusive")}
+                            className="accent-foreground"
+                        />
+                        <label htmlFor="exclusive" className=" text-sm">
+                            Exclusive
                         </label>
                     </div>
-                    <SimpleSelector
-                        options={operators}
-                        defaultVal={selectedOperator2}
-                        onChange={(selected) => {
-                            if (selected) {
-                                setSelectedOperator2((selected as SelectOptionType).value as ComparisonOperator);
-                            }
-                        }}
-                    />
                 </>
-            )}
-            {(hasFirstValue || isBetweenFirst || isBetweenSecond) &&
-                <div className="relative">
-                    <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                        <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                    </span>
-                    <input
-                        type="number"
-                        step="0.01"
-                        inputMode="decimal"
-                        className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                        value={value2 ?? ""}
-                        placeholder={isBetweenFirst ? "To" : isBetweenSecond ? "From" : "Value..."}
-                        aria-label={`${isBetweenFirst ? "second filter upper bound" : isBetweenSecond ? "second filter lower bound" : "second filter value"} for ${props.label}`}
-                        onKeyDown={blockInvalidNumberKeys}
-                        onChange={(e) => {
-                            const value = e.currentTarget.valueAsNumber;
-                            setValue2(Number.isNaN(value) ? null : value);
-                        }}
-                    />
-                </div>
-            }
-            {!isBetweenFirst && isBetweenSecond && (
-                <div className="relative">
-                    <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-                        <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
-                    </span>
-                    <input
-                        type="number"
-                        step="0.01"
-                        inputMode="decimal"
-                        className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-                        value={value3 ?? ""}
-                        placeholder="To"
-                        aria-label={`second filter upper bound for ${props.label}`}
-                        onKeyDown={blockInvalidNumberKeys}
-                        onChange={(e) => {
-                            const value = e.currentTarget.valueAsNumber;
-                            setValue3(Number.isNaN(value) ? null : value);
-                        }}
-                    />
-                </div>
             )}
             <Button
                 variant="primary"
@@ -218,7 +174,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     event.stopPropagation();
                     handleFilter();
                 }}
-                disabled={isBetweenFirst ? !hasFirstValue || !hasSecondValue : !hasFirstValue || (isBetweenSecond && hasSecondValue && !hasThirdValue)}
+                disabled={isBetweenFirst ? !hasFirstValue || !hasSecondValue : !hasFirstValue}
                 aria-label={`Apply numeric filter for ${props.label}`}
             >
                 Filter
