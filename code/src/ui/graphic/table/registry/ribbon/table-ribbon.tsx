@@ -47,6 +47,12 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const isPermitted = usePermissionGuard();
   const { navigateToDrawer } = useDrawerNavigation();
   const { resetFormSession } = useOperationStatus();
+  const isContractRegistry: boolean = props.lifecycleStage === LifecycleStageMap.PENDING ||
+    props.lifecycleStage === LifecycleStageMap.ACTIVE ||
+    props.lifecycleStage === LifecycleStageMap.ARCHIVE;
+  const isTaskRegistry: boolean = props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+    props.lifecycleStage === LifecycleStageMap.SCHEDULED ||
+    props.lifecycleStage === LifecycleStageMap.CLOSED;
   const isBillingStage: boolean = props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
     props.lifecycleStage === LifecycleStageMap.PRICING ||
     props.lifecycleStage === LifecycleStageMap.INVOICE;
@@ -141,84 +147,72 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             </div>
           )}
       </div>
-      <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-4 flex-wrap">
-        { /* Remove overflow-hidden when in billing stages to allow dropdown to overflow */}
-        <div className={`flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border divide-x divide-border ${isBillingStage ? '' : 'overflow-hidden '}`}>
-          {isPermitted("registryFullAccess") &&
-            (props.lifecycleStage === LifecycleStageMap.PENDING ||
-              props.lifecycleStage === LifecycleStageMap.ACTIVE ||
-              props.lifecycleStage === LifecycleStageMap.ARCHIVE) && (
-              <>
-                <RedirectButton
-                  label={dict.nav.title.pending}
-                  leftIcon="free_cancellation"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                  variant={
-                    props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
-                  }
-                  className="text-sm font-medium !rounded-none !border-0"
-                />
-                <RedirectButton
-                  label={dict.nav.title.active}
-                  leftIcon="check_circle_outline"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
-                  variant={
-                    props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
-                  }
-                  className="text-sm font-medium !rounded-none !border-0"
-                />
-                <RedirectButton
-                  label={dict.nav.title.archive}
-                  leftIcon="archive_outlined"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
-                  variant={
-                    props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
-                  }
-                  className="text-sm font-medium !rounded-none !border-0"
-                />
-              </>
-            )}
-          {isPermitted("registryFullAccess") &&
-            (props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
-              props.lifecycleStage === LifecycleStageMap.SCHEDULED ||
-              props.lifecycleStage === LifecycleStageMap.CLOSED) && (
-              <>
-                <RedirectButton
-                  label={dict.nav.title.outstanding}
-                  leftIcon="pending"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
-                  variant={
-                    props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
-                  }
-                  className="text-sm font-medium !rounded-none !border-0 "
-                />
-                <RedirectButton
-                  label={dict.nav.title.scheduled}
-                  leftIcon="schedule"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
-                  variant={
-                    props.lifecycleStage == LifecycleStageMap.SCHEDULED ? "active" : "ghost"
-                  }
-                  className="text-sm font-medium !rounded-none !border-0 "
-                />
-                <RedirectButton
-                  label={dict.nav.title.closed}
-                  leftIcon="event_busy"
-                  hasMobileIcon={false}
-                  url={`${Routes.REGISTRY_TASK_CLOSED}`}
-                  variant={
-                    props.lifecycleStage == LifecycleStageMap.CLOSED ? "active" : "ghost"
-                  }
-                  className="text-sm font-medium !rounded-none !border-0 "
-                />
-              </>
-            )}
-        </div>
+      <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
+      items-end md:gap-2 lg:gap-0 mt-4 flex-wrap`}>
+        {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
+          <div className={`flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border divide-x divide-border}`}>
+            {isContractRegistry && <RedirectButton
+              label={dict.nav.title.pending}
+              leftIcon="free_cancellation"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+              variant={
+                props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
+              }
+              className="text-sm font-medium !rounded-none !border-0"
+            />}
+            {isContractRegistry && <RedirectButton
+              label={dict.nav.title.active}
+              leftIcon="check_circle_outline"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_GENERAL}/active/${props.entityType}`}
+              variant={
+                props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
+              }
+              className="text-sm font-medium !rounded-none !border-0"
+            />}
+            {isContractRegistry && <RedirectButton
+              label={dict.nav.title.archive}
+              leftIcon="archive_outlined"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_GENERAL}/archive/${props.entityType}`}
+              variant={
+                props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
+              }
+              className="text-sm font-medium !rounded-none !border-0"
+            />}
+            {isTaskRegistry && <RedirectButton
+              label={dict.nav.title.outstanding}
+              leftIcon="pending"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+              variant={
+                props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
+              }
+              className="text-sm font-medium !rounded-none !border-0 "
+            />}
+            {isTaskRegistry && <RedirectButton
+              label={dict.nav.title.scheduled}
+              leftIcon="schedule"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_TASK_SCHEDULED}`}
+              variant={
+                props.lifecycleStage == LifecycleStageMap.SCHEDULED ? "active" : "ghost"
+              }
+              className="text-sm font-medium !rounded-none !border-0 "
+            />}
+            {isTaskRegistry && <RedirectButton
+              label={dict.nav.title.closed}
+              leftIcon="event_busy"
+              hasMobileIcon={false}
+              url={`${Routes.REGISTRY_TASK_CLOSED}`}
+              variant={
+                props.lifecycleStage == LifecycleStageMap.CLOSED ? "active" : "ghost"
+              }
+              className="text-sm font-medium !rounded-none !border-0 "
+            />}
+          </div>
+        }
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
             props.lifecycleStage == LifecycleStageMap.CLOSED) && (
