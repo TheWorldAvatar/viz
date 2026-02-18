@@ -18,7 +18,6 @@ export interface NavMenuProps {
   pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
-  setContentWidthClass?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface NavMenuContentsProps extends NavMenuProps {
@@ -43,7 +42,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <div className="flex mr-1.5">
+      <nav className="flex mr-1.5">
         <PopoverActionButton
           variant="ghost"
           leftIcon="menu"
@@ -69,7 +68,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
             setIsOpen={setIsFileModalOpen}
           />
         )}
-      </div>
+      </nav>
     );
   }
 
@@ -146,19 +145,15 @@ function NavMenuContents(
   const handleMenuToggle = () => {
     if (isMenuExpanded) {
       setNavMenuWidthClass("w-[6vw]");
-      props.setContentWidthClass("w-[calc(100vw-6vw)]");
     } else {
       setNavMenuWidthClass("w-[16vw] xl:w-[18vw] 2xl:w-[16vw]");
-      props.setContentWidthClass(
-        "w-[calc(100vw-16vw)] xl:w-[calc(100vw-18vw)] 2xl:w-[calc(100vw-16vw)]"
-      );
     }
 
     setIsMenuExpanded(!isMenuExpanded);
   };
 
   return (
-    <div
+    <nav
       ref={navMenuRef}
       className={`${props.isMobile
         ? "flex gap-4 p-2 w-full"
@@ -342,6 +337,6 @@ function NavMenuContents(
           );
         }
       })}
-    </div>
+    </nav>
   );
 }

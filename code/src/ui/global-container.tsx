@@ -34,8 +34,6 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   }>({ x: 0, y: 0 });
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
-  const [contentWidthClass, setContentWidthClass] =
-    useState<string>("w-[84vw]");
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -55,46 +53,42 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
   return (
     <Provider store={reduxStore}>
-      <div
+      <HeaderBar pages={props.pages} settings={props.settings} />
+
+      <main className="flex h-[92dvh] w-full"
         onContextMenu={handleContextMenu}
         onClick={closeContextMenu} // Close context menu when clicking elsewhere
         style={{
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-        }}
-      >
-        {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
-        {contextMenuVisible && (
-          <ContextMenu
-            x={contextMenuPosition.x}
-            y={contextMenuPosition.y}
-            showContextMenu={contextMenuVisible}
+        }}>
+        {!pathname.endsWith("map") && (
+          <NavMenu
+            pages={props.pages}
+            settings={props.settings}
+            isMobile={false}
           />
         )}
+        <div className={`flex flex-col bg-muted h-full w-full box-border`}>
+          <section className="grow overflow-y-auto">
+            {props.children}
+          </section>
+          {!pathname.endsWith("map") && <Footer />}
+        </div>
+      </main>
 
-        <HeaderBar pages={props.pages} settings={props.settings} />
+      <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
+      {popup && <Trex callback={togglePopup} />}
 
-        <main className="flex h-[92dvh] w-full">
-          {!pathname.endsWith("map") && (
-            <NavMenu
-              setContentWidthClass={setContentWidthClass}
-              pages={props.pages}
-              settings={props.settings}
-              isMobile={false}
-            />
-          )}
-          <div className={`flex flex-col bg-muted h-full w-full box-border`}>
-            <div className="grow overflow-y-auto">
-              {props.children}
-            </div>
-            {!pathname.endsWith("map") && <Footer />}
-          </div>
-        </main>
-
-        <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
-        {popup && <Trex callback={togglePopup} />}
-      </div>
+      {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
+      {contextMenuVisible && (
+        <ContextMenu
+          x={contextMenuPosition.x}
+          y={contextMenuPosition.y}
+          showContextMenu={contextMenuVisible}
+        />
+      )}
     </Provider>
   );
 }

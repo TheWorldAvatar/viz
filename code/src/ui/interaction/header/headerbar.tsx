@@ -56,7 +56,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
     props.settings.branding.navbar = props.settings?.branding?.navbarLogo;
   }
   return (
-    <div
+    <header
       id="headerbar"
       className="bg-muted border-b-border z-[999] flex h-[8dvh] items-center justify-between overflow-hidden border-b"
     >
@@ -97,6 +97,6 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
 
         {keycloakEnabled && <KeycloakUserButton />}
       </div>
-    </div>
+    </header>
   );
 }
