@@ -84,8 +84,10 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
               isMobile={false}
             />
           )}
-          <div className={`flex grow flex-col bg-muted ${contentWidthClass}`}>
-            {props.children}
+          <div className={`flex flex-col bg-muted h-full w-full box-border`}>
+            <div className="grow overflow-y-auto">
+              {props.children}
+            </div>
             {!pathname.endsWith("map") && <Footer />}
           </div>
         </main>
