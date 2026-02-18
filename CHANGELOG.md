@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.59.2
+
+### Bug Fixes
+
+- Fixed an issue where the form branching was not initially added in all forms 
+
 ## 5.59.1
 
 ### Bug Fixes

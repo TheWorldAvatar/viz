@@ -280,11 +280,11 @@ export function parseBranches(
   // Initalise branch fields based on the best matched node state and the form type
   if (initialState.formType === FormTypeMap.DELETE) {
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
-  } else if (initialState.formType === FormTypeMap.EDIT) {
+  } else if (initialState.formType === FormTypeMap.EDIT || initialState.formType === FormTypeMap.ACCRUAL || initialState.formType === FormTypeMap.DISPATCH || initialState.formType === FormTypeMap.COMPLETE || initialState.formType === FormTypeMap.CANCEL || initialState.formType === FormTypeMap.REPORT || initialState.formType === FormTypeMap.TERMINATE) {
     // Set both values - branch_add for new, branch_delete for original
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
-  } else if (initialState.formType === FormTypeMap.ADD) {
+  } else if (initialState.formType === FormTypeMap.ADD || initialState.formType === FormTypeMap.ADD_BILL || initialState.formType === FormTypeMap.ADD_PRICE || initialState.formType === FormTypeMap.ASSIGN_PRICE) {
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
   }
   for (const field in nodeStateWithMostNonEmpty) {
