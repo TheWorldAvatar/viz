@@ -50,7 +50,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="mr-4 w-12 h-12 "
+          className="mr-4 h-12 "
         >
           <NavMenuContents
             {...props}
@@ -106,9 +106,7 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [navMenuWidthClass, setNavMenuWidthClass] = useState<string>(
-    "w-[16vw] xl:w-[18vw] 2xl:w-[16vw]"
-  );
+  const [navMenuWidthClass, setNavMenuWidthClass] = useState<string>("max-w-[15vw]");
   const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
@@ -144,9 +142,9 @@ function NavMenuContents(
 
   const handleMenuToggle = () => {
     if (isMenuExpanded) {
-      setNavMenuWidthClass("w-[6vw]");
+      setNavMenuWidthClass("min-w-[6vw]");
     } else {
-      setNavMenuWidthClass("w-[16vw] xl:w-[18vw] 2xl:w-[16vw]");
+      setNavMenuWidthClass("max-w-[15vw]");
     }
 
     setIsMenuExpanded(!isMenuExpanded);
@@ -157,9 +155,8 @@ function NavMenuContents(
       ref={navMenuRef}
       className={`${props.isMobile
         ? "flex gap-4 p-2 w-full"
-        : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20"
+        : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20 " + navMenuWidthClass
         }
-      ${navMenuWidthClass}
       xl:flex flex-col ${isMenuExpanded ? "items-stretch" : "items-center"
         }  transition-all duration-200 ease-in-out `}
     >
