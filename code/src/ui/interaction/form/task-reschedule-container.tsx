@@ -43,9 +43,9 @@ export function InterceptTaskRescheduleComponent() {
 export function TaskRescheduleComponent() {
   return (
     <FormSessionContextProvider entityType="reschedule">
-      <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
+      <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
         <TaskFormContents />
-      </div>
+      </section>
     </FormSessionContextProvider>
   );
 }
@@ -110,8 +110,7 @@ function TaskFormContents() {
 
   return (
     <>
-      {/* Header */}
-      <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5 shrink-0">
+      <header className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5 shrink-0">
         <h1 className="text-xl font-bold">
           {parseWordsForLabels(dict.title.actions)}
         </h1>
@@ -120,7 +119,7 @@ function TaskFormContents() {
             {task.date}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
-      </section>
+      </header>
       {/* Scrollable Content */}
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {task?.date && (
@@ -148,8 +147,7 @@ function TaskFormContents() {
           </div>
         )}
       </section >
-      {/* Footer */}
-      <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4" >
+      <footer className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4" >
         <div className="flex gap-2.5">
           <Button
             leftIcon="cached"
@@ -175,7 +173,7 @@ function TaskFormContents() {
             onClick={() => taskSubmitAction()}
           />
         </div>
-      </section >
+      </footer >
     </>
   );
 }

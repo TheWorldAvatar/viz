@@ -61,8 +61,8 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     };
 
     return (
-        <div className="flex flex-col w-full h-full mx-auto pt-4 pb-8 px-4 gap-5 md:px-8 bg-muted justify-between">
-            <header className={`flex flex-row gap-4 text-foreground justify-between`}>
+        <section className="flex flex-col h-full w-full mx-auto px-4 gap-5 md:px-8 bg-muted justify-between">
+            <header className={`flex flex-row gap-4 pt-10 text-foreground justify-between`}>
                 <Button
                     leftIcon="arrow_back"
                     variant="outline"
@@ -74,7 +74,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
-            <div className="flex-1 overflow-y-auto">
+            <div className="grow overflow-y-auto">
                 {refreshFlag ? <FormSkeleton /> :
                     (<FormComponent
                         formRef={formRef}
@@ -110,7 +110,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     </div>}
                 </section>}
             </div>
-            <section className="bg-muted flex items-center justify-between">
+            <footer className="bg-muted flex items-center justify-between">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
                         leftIcon="cached"
@@ -131,7 +131,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         onClick={onSubmit}
                     />
                 </div>
-            </section>
-        </div>
+            </footer>
+        </section>
     );
 }

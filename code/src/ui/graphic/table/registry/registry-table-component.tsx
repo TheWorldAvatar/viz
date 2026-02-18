@@ -64,7 +64,7 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4 h-dvh">
+    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4">
       <div className="rounded-lg md:p-4 ">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
