@@ -24,7 +24,9 @@ interface NavMenuContentsProps extends NavMenuProps {
   setFileUploadEndpoint: React.Dispatch<React.SetStateAction<string>>;
   setFileModalType: React.Dispatch<React.SetStateAction<NavBarItemType>>;
   setIsFileUploadModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isMenuExpanded?: boolean;
   setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  handleMenuToggle?: () => void;
 }
 
 /**
@@ -40,9 +42,12 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [fileModalType, setFileModalType] = useState<NavBarItemType>("default");
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
 
+  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
+  const [nonMobileNavMenuWidth, setNonMobileNavMenuWidth] = useState<string>("w-1/5");
+
   if (props.isMobile) {
     return (
-      <nav className="flex mr-1.5">
+      <nav className="flex mr-1.5 lg:hidden">
         <PopoverActionButton
           variant="ghost"
           leftIcon="menu"
@@ -54,6 +59,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         >
           <NavMenuContents
             {...props}
+            isMenuExpanded={isMenuExpanded}
             setFileUploadEndpoint={setFileUploadEndpoint}
             setFileModalType={setFileModalType}
             setIsFileUploadModalOpen={setIsFileModalOpen}
@@ -72,13 +78,26 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
     );
   }
 
+  const handleMenuToggle = () => {
+    if (isMenuExpanded) {
+      setNonMobileNavMenuWidth("w-1/20 md:w-1/15");
+    } else {
+      setNonMobileNavMenuWidth("w-1/5");
+    }
+
+    setIsMenuExpanded(!isMenuExpanded);
+  };
+
   return (
-    <>
+    <div className={`${nonMobileNavMenuWidth} overflow-y-auto bg-muted border-r-border border-r hidden lg:block`}>
       <NavMenuContents
         {...props}
+        isMenuExpanded={isMenuExpanded}
         setFileUploadEndpoint={setFileUploadEndpoint}
         setFileModalType={setFileModalType}
         setIsFileUploadModalOpen={setIsFileModalOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        handleMenuToggle={handleMenuToggle}
       />
       {isFileModalOpen && (
         <FileModal
@@ -88,7 +107,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           setIsOpen={setIsFileModalOpen}
         />
       )}
-    </>
+    </div>
   );
 }
 /**
@@ -105,8 +124,6 @@ function NavMenuContents(
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
-  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [navMenuWidthClass, setNavMenuWidthClass] = useState<string>("max-w-[15vw]");
   const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
@@ -140,36 +157,27 @@ function NavMenuContents(
     };
   }
 
-  const handleMenuToggle = () => {
-    if (isMenuExpanded) {
-      setNavMenuWidthClass("min-w-[6vw]");
-    } else {
-      setNavMenuWidthClass("max-w-[15vw]");
-    }
-
-    setIsMenuExpanded(!isMenuExpanded);
-  };
-
   return (
     <nav
       ref={navMenuRef}
       className={`${props.isMobile
         ? "flex gap-4 p-2 w-full"
-        : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20 " + navMenuWidthClass
+        : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
-      xl:flex flex-col ${isMenuExpanded ? "items-stretch" : "items-center"
-        }  transition-all duration-200 ease-in-out `}
+      xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
+        } transition-all duration-200 ease-in-out `}
     >
       {!props.isMobile && (
         <button
-          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
-            ? "mr-2 self-end rounded-md -mb-8 "
-            : " justify-center items-center rounded-full -mb-4"
+          className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 
+            ${props.isMenuExpanded
+              ? "ml-auto rounded-md"
+              : "items-center rounded-full"
             }`}
-          onClick={handleMenuToggle}
+          onClick={props.handleMenuToggle}
         >
           <Icon className="material-symbols-outlined">
-            {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+            {props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
           </Icon>
         </button>
       )}
@@ -180,7 +188,7 @@ function NavMenuContents(
           url={Routes.HOME}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
 
@@ -193,8 +201,8 @@ function NavMenuContents(
             icon={page.thumbnail ?? "info"}
             url={`${ASSET_PREFIX}/${page.slug}`}
             isMobile={props.isMobile}
-            caption={isMenuExpanded ? page.description : undefined}
-            isMenuExpanded={isMenuExpanded}
+            caption={props.isMenuExpanded ? page.description : undefined}
+            isMenuExpanded={props.isMenuExpanded}
             setIsOpen={props.setIsMenuOpen}
           />
         ))}
@@ -207,11 +215,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? mapLinkProps?.caption ?? dict.nav.caption.map
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
       {props.settings?.modules?.dashboard && (
@@ -222,11 +230,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? dashboardLinkProps?.caption ?? dict.nav.caption.dashboard
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
       {props.settings?.modules?.billing && isPermitted("invoice") && (
@@ -237,11 +245,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? billingLinkProps?.caption ?? dict.nav.caption.billing
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
       {props.settings?.modules?.help && (
@@ -252,11 +260,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? helpLinkProps?.caption ?? dict.nav.caption.help
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
 
@@ -272,12 +280,12 @@ function NavMenuContents(
             }
             isMobile={props.isMobile}
             caption={
-              isMenuExpanded
+              props.isMenuExpanded
                 ? registryLinkProps?.caption ?? dict.nav.caption.registry
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={isMenuExpanded}
+            isMenuExpanded={props.isMenuExpanded}
           />
         )}
 
@@ -290,7 +298,7 @@ function NavMenuContents(
             url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
             isMobile={props.isMobile}
             caption={
-              isMenuExpanded
+              props.isMenuExpanded
                 ? dict.nav.caption.generalReg.replace(
                   "{replace}",
                   parseWordsForLabels(path.type).toLowerCase()
@@ -298,7 +306,7 @@ function NavMenuContents(
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={isMenuExpanded}
+            isMenuExpanded={props.isMenuExpanded}
           />
         ))}
 
@@ -322,14 +330,14 @@ function NavMenuContents(
                   ? dict.nav.tooltip.fileUpload
                   : undefined
               }
-              caption={isMenuExpanded ? externalLink.caption : undefined}
+              caption={props.isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
                 !externalLink.type || externalLink.type === "default"
                   ? undefined
                   : createHandleFileClick(externalLink.url, externalLink.type)
               }
-              isMenuExpanded={isMenuExpanded}
+              isMenuExpanded={props.isMenuExpanded}
             />
           );
         }

@@ -68,7 +68,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
             isMobile={false}
           />
         )}
-        <div className={`flex flex-col bg-muted h-full w-full box-border`}>
+        <div className={`flex flex-col flex-1 bg-muted h-full box-border`}>
           <section className="grow overflow-y-auto">
             {props.children}
           </section>

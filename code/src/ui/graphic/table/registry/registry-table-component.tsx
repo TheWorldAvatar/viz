@@ -64,8 +64,8 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted mx-auto overflow-auto w-full p-2.5 sm:p-4">
-      <div className="rounded-lg md:p-4 ">
+    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8">
+      <div className="rounded-lg pb-4">
         <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
             props.lifecycleStage === LifecycleStageMap.PRICING ||
@@ -84,23 +84,21 @@ export default function RegistryTableComponent(
           tableDescriptor={tableDescriptor}
         />
       </div>
-      <div className="flex flex-col overflow-auto gap-y-2 py-4  md:p-4">
-        {refreshFlag || tableDescriptor.isLoading ? (
-          <TableSkeleton />
-        ) : tableDescriptor.data?.length > 0 ? (
-          <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            disableRowAction={false}
-            selectedDate={selectedDate}
-            tableDescriptor={tableDescriptor}
-            triggerRefresh={triggerRefresh}
-            accountType={props.accountType}
-          />
-        ) : (
-          <div className="text-lg ml-6">{dict.message.noResultFound}</div>
-        )}
-      </div>
+      {refreshFlag || tableDescriptor.isLoading ? (
+        <TableSkeleton />
+      ) : tableDescriptor.data?.length > 0 ? (
+        <RegistryTable
+          recordType={props.entityType}
+          lifecycleStage={props.lifecycleStage}
+          disableRowAction={false}
+          selectedDate={selectedDate}
+          tableDescriptor={tableDescriptor}
+          triggerRefresh={triggerRefresh}
+          accountType={props.accountType}
+        />
+      ) : (
+        <div className="text-lg ml-6">{dict.message.noResultFound}</div>
+      )}
     </div>
   );
 }
