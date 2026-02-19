@@ -24,25 +24,6 @@ const operators: { value: ComparisonOperator; label: string; }[] = [
 ]
 
 /**
- * Evaluates a numeric value against a specified comparison operator and target value(s).
- */
-function matchesCondition(value: number, operator: ComparisonOperator, target: number, target2?: number, betweenOption?: BetweenOptions): boolean {
-    switch (operator) {
-        case "eq": return value === target;
-        case "neq": return value !== target;
-        case "gt": return value > target;
-        case "gte": return value >= target;
-        case "lt": return value < target;
-        case "lte": return value <= target;
-        case "between":
-            if (target2 === undefined) return false;
-            return betweenOption === "exclusive"
-                ? value > target && value < target2
-                : value >= target && value <= target2;
-    }
-}
-
-/**
  * A numeric column filter component that allows filtering table data using one or two
  * numeric comparison conditions combined with AND/OR logic.
  *
@@ -74,26 +55,20 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             return;
         }
 
-        const filtered: string[] = props.options.filter((option) => {
-            const numericValue: number = Number(option);
-            if (Number.isNaN(numericValue)) return false;
+        const filterInfo: string[] = [];
 
-            if (isBetweenFirst) {
-                if (!hasSecondValue) return false;
-                return matchesCondition(numericValue, "between", value1!, value2!, betweenOption);
-            }
-
-            const condition1: boolean = matchesCondition(numericValue, selectedOperator1, value1!);
-            return condition1;
-        });
-
-        // If no results found
-        if (filtered.length === 0) {
-            setError("No matching values found for the specified filter criteria.");
-            return;
+        if (isBetweenFirst && hasSecondValue) {
+            const lowerOp = betweenOption === "exclusive" ? "gt" : "gte";
+            const upperOp = betweenOption === "exclusive" ? "lt" : "lte";
+            // Results in: ["gte:10", "lte:20"]
+            filterInfo.push(`${lowerOp}:${value1}`);
+            filterInfo.push(`${upperOp}:${value2}`);
         } else {
-            props.onSubmission(filtered);
+            // Results in: ["eq:500"]
+            filterInfo.push(`${selectedOperator1}:${value1}`);
         }
+
+        props.onSubmission(filterInfo);
     }
 
     const blockInvalidNumberKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
