@@ -280,11 +280,16 @@ export function parseBranches(
   // Initalise branch fields based on the best matched node state and the form type
   if (initialState.formType === FormTypeMap.DELETE) {
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
-  } else if (initialState.formType === FormTypeMap.EDIT) {
+  } else if (initialState.formType === FormTypeMap.EDIT || initialState.formType === FormTypeMap.ACCRUAL ||
+    initialState.formType === FormTypeMap.DISPATCH || initialState.formType === FormTypeMap.COMPLETE ||
+    initialState.formType === FormTypeMap.CANCEL || initialState.formType === FormTypeMap.REPORT ||
+    initialState.formType === FormTypeMap.TERMINATE) {
     // Set both values - branch_add for new, branch_delete for original
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
-  } else if (initialState.formType === FormTypeMap.ADD) {
+  } else if (initialState.formType === FormTypeMap.ADD || initialState.formType === FormTypeMap.ADD_BILL ||
+    initialState.formType === FormTypeMap.ADD_PRICE || initialState.formType === FormTypeMap.ASSIGN_PRICE ||
+    initialState.formType === FormTypeMap.INVOICE) {
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
   }
   for (const field in nodeStateWithMostNonEmpty) {
@@ -401,7 +406,8 @@ export function getDefaultVal(
   if (field == FORM_STATES.ID) {
     // ID property should only be randomised for the add/search form type, and if it doesn't exists, else, use the default value
     if (formType == FormTypeMap.ADD || formType == FormTypeMap.SEARCH ||
-      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE || !defaultValue) {
+      formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE ||
+      formType == FormTypeMap.INVOICE || !defaultValue) {
       return uuidv4();
     }
     // Retrieve only the ID without any prefix
@@ -808,6 +814,8 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
       return dict.action.delete;
     case FormTypeMap.SEARCH:
       return dict.action.search;
+    case FormTypeMap.INVOICE:
+      return dict.action.addInvoice;
     case "terminate":
       return dict.action.terminate;
     default:

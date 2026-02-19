@@ -39,7 +39,8 @@ export function useTotalRowCount(
         let url: string;
         if (lifecycleStage == LifecycleStageMap.GENERAL ||
           lifecycleStage == LifecycleStageMap.ACCOUNT ||
-          lifecycleStage == LifecycleStageMap.PRICING) {
+          lifecycleStage == LifecycleStageMap.PRICING ||
+          lifecycleStage == LifecycleStageMap.INVOICE) {
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.COUNT,
             entityType,

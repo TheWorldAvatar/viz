@@ -52,7 +52,8 @@
     "clickDecrease": "Zum Verringern anklicken",
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen"
+    "showLess": "Weniger anzeigen",
+    "addInvoice": "Rechnung hinzufügen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -197,6 +198,7 @@
       "activities": "Aktivitäten",
       "submission": "Einreichung des Registers",
       "help": "Hilfe-Center",
+      "invoice": "Rechnungen",
       "pending": "Ausstehend",
       "active": "Aktiv",
       "archive": "Archiv",
@@ -239,6 +241,7 @@
     "billableCancelled": "abrechnungsfähig (abgebrochen)",
     "billableCompleted": "abrechnungsfähig (abgeschlossen)",
     "billableIssue": "abrechnungsfähig (problem)",
+    "invoiced": "in Rechnung gestellt",
     "item": "Artikel",
     "rescinded": "Aufgehoben",
     "terminated": "Beendet",

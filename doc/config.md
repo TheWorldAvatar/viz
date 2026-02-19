@@ -400,7 +400,7 @@ Instructions:
 
 ### 1.3 Table Column Order
 
-The `config/table-column-order.json` file is optional and can be used to override the default column order for  registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views(`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `activity`, `pricing`).
+The `config/table-column-order.json` file is optional and can be used to override the default column order for  registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views(`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
 
 - Any columns not listed remain available and will fall back to the platform's default ordering.
 - You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.

@@ -52,7 +52,8 @@
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "addInvoice": "add invoice"
   },
   "form": {
     "singleService": "Single Service",
@@ -197,6 +198,7 @@
       "activities": "Activities",
       "submission": "Registry Submission",
       "help": "Help Centre",
+      "invoice": "Invoices",
       "pending": "Pending",
       "active": "Active",
       "archive": "Archive",
@@ -239,6 +241,7 @@
     "billableCancelled": "billable (cancelled)",
     "billableCompleted": "billable (completed)",
     "billableIssue": "billable (issue)",
+    "invoiced": "invoiced",
     "item": "Item",
     "rescinded": "rescinded",
     "terminated": "terminated",

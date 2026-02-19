@@ -2,6 +2,25 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.60.0
+
+### Changes
+
+- Added invoice tab and related functionalities
+- Added a new invoice form to select billable tasks and submit to create invoice
+- Bump min version of `VisBackend Agent` from `v1.39.0` to `v1.40.0`
+
+### Bug Fixes
+
+- Hide a border div element in non-registry contract or task pages
+- Disable checkboxes when not required
+
+## 5.59.2
+
+### Bug Fixes
+
+- Fixed an issue where the form branching was not initially added in all forms
+
 ## 5.59.1
 
 ### Bug Fixes

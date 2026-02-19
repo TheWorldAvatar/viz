@@ -54,6 +54,7 @@ interface FormComponentProps {
   accountType?: string;
   pricingType?: string;
   isPrimaryEntity?: boolean;
+  selectedRowIds?: Set<string>;
   additionalFields?: PropertyShapeOrGroup[];
   setShowSearchModalState?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -215,6 +216,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     delete formData[FORM_STATES.ENTRY_DATES];
 
     switch (props.formType) {
+      case FormTypeMap.INVOICE: {
+        formData["account"] = decodeURIComponent(getId(formData[billingParams.accountField]));
+        formData["task"] = [...props.selectedRowIds];
+        pendingResponse = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, FormTypeMap.INVOICE),
+          "POST",
+          JSON.stringify(formData));
+        break;
+      }
       case FormTypeMap.ADD: {
         // Add entity via API route
         pendingResponse = await queryInternalApi(

@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ColumnFilter } from "@tanstack/react-table";
 import { ReduxState } from "app/store";
 
 interface FormSession {
     formCount: number;
     frozenFields: Record<string, number>;
+    invoiceAccountFilter: ColumnFilter;
 }
 
 const initialState: FormSession = {
     formCount: 0,
     frozenFields: {},
+    invoiceAccountFilter: null,
 };
 
 /**
@@ -18,6 +21,9 @@ const formSessionSlice = createSlice({
     name: "formSession",
     initialState,
     reducers: {
+        setInvoiceAccountFilter: (state, action: PayloadAction<ColumnFilter>) => {
+            state.invoiceAccountFilter = action.payload;
+        },
         /**
          * Updates the number of forms that have been opened in the current session
         */
@@ -34,7 +40,8 @@ const formSessionSlice = createSlice({
 })
 
 
-export const { setFormCount, setFrozenFields } = formSessionSlice.actions;
+export const { setInvoiceAccountFilter, setFormCount, setFrozenFields } = formSessionSlice.actions;
 export const selectFormCount = (state: ReduxState) => state.formSession.formCount;
 export const selectFrozenFields = (state: ReduxState) => state.formSession.frozenFields;
+export const selectInvoiceAccountFilter = (state: ReduxState) => state.formSession.invoiceAccountFilter;
 export default formSessionSlice.reducer;

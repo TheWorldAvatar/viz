@@ -6,17 +6,16 @@ import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { parseColumnFiltersIntoUrlParams, parseDataForTable, TableData, applyConfiguredColumnOrder } from "ui/graphic/table/registry/registry-table-utils";
+import { TableColumnOrderSettings } from "types/settings";
+import { applyConfiguredColumnOrder, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
-import { TableColumnOrderSettings } from "types/settings";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
   tableData: TableData;
   initialInstances: RegistryFieldValues[];
 }
-
 
 /**
 * A custom hook to retrieve the total row count.
@@ -50,7 +49,6 @@ export function useTableData(
   const [data, setData] = useState<
     TableData
   >({ data: [], columns: [] });
-
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -61,7 +59,16 @@ export function useTableData(
         let url: string;
         if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
           url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.OUTSTANDING,
+            lifecycleStage,
+            entityType,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.INVOICEABLE,
             entityType,
             apiPagination.pageIndex.toString(),
             apiPagination.pageSize.toString(),
@@ -85,7 +92,8 @@ export function useTableData(
         } else if (
           lifecycleStage == LifecycleStageMap.GENERAL ||
           lifecycleStage == LifecycleStageMap.ACCOUNT ||
-          lifecycleStage == LifecycleStageMap.PRICING) {
+          lifecycleStage == LifecycleStageMap.PRICING ||
+          lifecycleStage == LifecycleStageMap.INVOICE) {
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.INSTANCES,
             entityType,

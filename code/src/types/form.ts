@@ -19,6 +19,8 @@ export const LifecycleStageMap = {
   CLOSED: "closed",
   ACCOUNT: "account",
   PRICING: "pricing",
+  BILLABLE: "billable",
+  INVOICE: "invoice",
 } as const;
 export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
 
@@ -37,6 +39,7 @@ export const FormTypeMap = {
   CANCEL: "cancel",
   REPORT: "report",
   TERMINATE: "terminate",
+  INVOICE: "invoice",
 } as const;
 export type FormType = typeof FormTypeMap[keyof typeof FormTypeMap];
 
@@ -51,6 +54,7 @@ export const RegistryStatusMap = {
   BILLABLE_COMPLETED: "billablecompleted",
   BILLABLE_CANCELLED: "billablecancelled",
   BILLABLE_REPORTED: "billableissue",
+  INVOICED: "invoiced",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
 
