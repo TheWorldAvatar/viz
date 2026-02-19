@@ -3,6 +3,8 @@ import Button from "ui/interaction/button";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { Icon } from "@mui/material";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 interface NumericColumnFilterProps {
     options: string[];
@@ -13,15 +15,6 @@ interface NumericColumnFilterProps {
 type ComparisonOperator = | "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "between"
 type BetweenOptions = "inclusive" | "exclusive";
 
-const operators: { value: ComparisonOperator; label: string; }[] = [
-    { value: "eq", label: "Equals" },
-    { value: "neq", label: "Does not equal" },
-    { value: "gt", label: "Greater than" },
-    { value: "gte", label: "Greater than or equal to" },
-    { value: "lt", label: "Less than" },
-    { value: "lte", label: "Less than or equal to" },
-    { value: "between", label: "Between" },
-]
 
 /**
  * A numeric column filter component that allows filtering table data using one or two
@@ -32,6 +25,7 @@ const operators: { value: ComparisonOperator; label: string; }[] = [
  * @param {void} onSubmission Function that submits the filtered options.
  */
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
+    const dict: Dictionary = useDictionary();
     const [value1, setValue1] = useState<number | null>(null);
     const [value2, setValue2] = useState<number | null>(null);
     const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>("eq");
@@ -41,6 +35,17 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
     const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
     const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
     const isBetweenFirst: boolean = selectedOperator1 === "between";
+
+    const operators: { value: ComparisonOperator; label: string; }[] = [
+        { value: "eq", label: dict.title.equal },
+        { value: "neq", label: dict.title.notEqual },
+        { value: "gt", label: dict.title.greaterThan },
+        { value: "gte", label: dict.title.greaterThanOrEqual },
+        { value: "lt", label: dict.title.lessThan },
+        { value: "lte", label: dict.title.lessThanOrEqual },
+        { value: "between", label: dict.title.between },
+    ]
+
 
     const handleFilter = (): void => {
         if (!hasFirstValue) return;
@@ -101,7 +106,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                     inputMode="decimal"
                     className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
                     value={value1 ?? ""}
-                    placeholder={isBetweenFirst ? "From" : "Value..."}
+                    placeholder={isBetweenFirst ? dict.form.from : dict.title.value}
                     aria-label={`${isBetweenFirst ? "Lower bound" : "Filter value"} for ${props.label}`}
                     onKeyDown={blockInvalidNumberKeys}
                     onChange={(e) => {
@@ -123,7 +128,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             inputMode="decimal"
                             className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
                             value={value2 ?? ""}
-                            placeholder="To"
+                            placeholder={dict.form.to}
                             aria-label={`Upper bound for ${props.label}`}
                             onKeyDown={blockInvalidNumberKeys}
                             onChange={(e) => {
@@ -143,7 +148,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             className="accent-foreground"
                         />
                         <label htmlFor="inclusive" className="text-sm">
-                            Inclusive
+                            {dict.title.inclusive}
                         </label>
                         <input
                             id="exclusive"
@@ -155,7 +160,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                             className="accent-foreground"
                         />
                         <label htmlFor="exclusive" className=" text-sm">
-                            Exclusive
+                            {dict.title.exclusive}
                         </label>
                     </div>
                 </>
@@ -172,7 +177,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
                 disabled={isBetweenFirst ? !hasFirstValue || !hasSecondValue : !hasFirstValue}
                 aria-label={`Apply numeric filter for ${props.label}`}
             >
-                Filter
+                {dict.action.filter}
             </Button>
         </div>
     );

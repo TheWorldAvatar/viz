@@ -258,6 +258,16 @@
     "total": "insgesamt",
     "user": "Benutzer",
     "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
-    "loading": "Laden"
+    "loading": "Laden",
+    "equal": "Gleich",
+    "notEqual": "Ist nicht gleich",
+    "greaterThan": "Größer als",
+    "greaterThanOrEqual": "Größer als oder gleich",
+    "lessThan": "Weniger als",
+    "lessThanOrEqual": "Kleiner oder gleich",
+    "between": "Zwischen",
+    "inclusive": "Inklusiv",
+    "exclusive": "Exklusiv",
+    "value": "Wert"
   }
 }

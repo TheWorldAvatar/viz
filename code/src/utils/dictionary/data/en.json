@@ -258,6 +258,16 @@
     "total": "Total",
     "user": "User",
     "error": "Error",
-    "loading": "Loading"
+    "loading": "Loading",
+    "equal": "Equals",
+    "notEqual": "Does not equal",
+    "greaterThan": "Greater than",
+    "greaterThanOrEqual": "Greater than or equal to",
+    "lessThan": "Less than",
+    "lessThanOrEqual": "Less than or equal to",
+    "between": "Between",
+    "inclusive": "Inclusive",
+    "exclusive": "Exclusive",
+    "value": "Value"
   }
 }
