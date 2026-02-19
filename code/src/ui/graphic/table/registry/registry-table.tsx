@@ -207,7 +207,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     <>
       {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
         <>
-          <div className="flex rounded-lg border border-border w-[75dvw] max-h-screen overflow-auto fade-in-on-motion table-scrollbar">
+          <div className="flex rounded-lg border border-border w-[95dvw] xl:w-[75dvw] mr-auto max-h-screen overflow-auto fade-in-on-motion table-scrollbar">
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
