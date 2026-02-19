@@ -58,12 +58,12 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <header
       id="headerbar"
-      className="bg-muted border-b-border z-[999] flex h-[8dvh] items-center justify-between overflow-hidden border-b"
+      className="bg-muted border-b-border z-999 flex h-[8dvh] items-center justify-between overflow-hidden border-b"
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
         // Handle the case where header bar is a list
-        <div className="flex  items-center gap-5 md:gap-2">
+        <div className="flex items-center gap-5 md:gap-2">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
               <Link key={logo} href={Routes.HOME}>
