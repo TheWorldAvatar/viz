@@ -300,6 +300,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   selectedDate={props.selectedDate}
                                   filters={props.tableDescriptor.filters}
                                   disableFilter={props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType}
+                                  initialInstances={props.tableDescriptor.initialInstances}
                                 />
                               );
                             })}
