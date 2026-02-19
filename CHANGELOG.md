@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.60.1
+
+### Changes
+
+- Changed side nav menu, body, and footer to utilise flexbox css
+- Align remaining components with required css changes
+
+### Bug Fixes
+
+- Fixed hidden submit button in invoice form for some resolutions
+
 ## 5.60.0
 
 ### Changes

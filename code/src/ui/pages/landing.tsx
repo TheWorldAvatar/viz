@@ -34,13 +34,10 @@ interface LandingPageProps {
  * @returns JSX for landing page.
  */
 export default function LandingPage(props: Readonly<LandingPageProps>) {
-  // CSS class names
-  const introClasses = ["markdown-body", styles.introInner].join(" ");
-
   return (
-    <div className="bg-muted mx-auto flex p-4  h-dvh w-full overflow-auto">
+    <div className="flex w-full px-12 py-8">
       <div
-        className={introClasses}
+        className={"markdown-body bg-muted!"}
         dangerouslySetInnerHTML={{
           __html: getIntroductionContent(props.pages),
         }}

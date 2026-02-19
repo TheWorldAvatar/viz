@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Konami from "react-konami-code";
 import { Provider } from "react-redux";
 
 import { reduxStore } from "app/store";
 import { useBackgroundImageUrl } from "hooks/useBackgroundImageUrl";
 import { OptionalPage } from "io/config/optional-pages";
+import { usePathname } from "next/navigation";
 import { UISettings } from "types/settings";
 import Trex from "utils/trex";
 import ContextMenu from "./interaction/context-menu/context-menu";
 import HeaderBar from "./interaction/header/headerbar";
-import Footer from "./text/footer";
 import { NavMenu } from "./navigation/navbar/nav-menu";
-import { usePathname } from "next/navigation";
+import Footer from "./text/footer";
 
 // Incoming properties for global container
 interface GlobalContainerProps {
@@ -34,65 +34,59 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   }>({ x: 0, y: 0 });
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
-  const [contentWidthClass, setContentWidthClass] =
-    useState<string>("w-[84vw]");
 
   const togglePopup = () => {
     setPopup(!popup);
   };
 
-  // Method to handle right-click and show the context menu
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setContextMenuVisible(true);
-    setContextMenuPosition({ x: e.pageX, y: e.pageY });
-  };
-
-  // Method to close the context menu when it is no longer needed
-  const closeContextMenu = () => {
-    setContextMenuVisible(false);
-  };
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setContextMenuPosition({ x: e.pageX, y: e.pageY });
+    };
+    window.addEventListener("contextmenu", handleContextMenu);
+    return () => {
+      window.removeEventListener("contextmenu", handleContextMenu);
+    };
+  }, []);
 
   return (
     <Provider store={reduxStore}>
-      <div
-        onContextMenu={handleContextMenu}
-        onClick={closeContextMenu} // Close context menu when clicking elsewhere
+      <HeaderBar pages={props.pages} settings={props.settings} />
+
+      <main className="flex h-[92dvh] w-full"
         style={{
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-        }}
-      >
-        {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
-        {contextMenuVisible && (
-          <ContextMenu
-            x={contextMenuPosition.x}
-            y={contextMenuPosition.y}
-            showContextMenu={contextMenuVisible}
+        }}>
+        {!pathname.endsWith("map") && (
+          <NavMenu
+            pages={props.pages}
+            settings={props.settings}
+            isMobile={false}
           />
         )}
-
-        <HeaderBar pages={props.pages} settings={props.settings} />
-
-        <main className="flex h-[92dvh] w-full">
-          {!pathname.endsWith("map") && (
-            <NavMenu
-              setContentWidthClass={setContentWidthClass}
-              pages={props.pages}
-              settings={props.settings}
-              isMobile={false}
-            />
-          )}
-          <div className={`flex grow flex-col bg-muted ${contentWidthClass}`}>
+        <div className={`flex flex-col flex-1 bg-muted h-full box-border`}>
+          <section className="grow overflow-y-auto">
             {props.children}
-            {!pathname.endsWith("map") && <Footer />}
-          </div>
-        </main>
+          </section>
+          {!pathname.endsWith("map") && <Footer />}
+        </div>
+      </main>
 
-        <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
-        {popup && <Trex callback={togglePopup} />}
-      </div>
+      <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
+      {popup && <Trex callback={togglePopup} />}
+
+      {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
+      {contextMenuVisible && (
+        <ContextMenu
+          x={contextMenuPosition.x}
+          y={contextMenuPosition.y}
+          showContextMenu={contextMenuVisible}
+        />
+      )}
     </Provider>
   );
 }

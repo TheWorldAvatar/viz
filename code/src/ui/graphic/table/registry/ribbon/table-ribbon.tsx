@@ -62,95 +62,82 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-    <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
-      <div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
-        {props.lifecycleStage !== LifecycleStageMap.GENERAL && isPermitted("registryFullAccess") &&
-          (
-            <div className="bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border">
-              <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-                {!isBillingStage && (
-                  <div className="sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.jobs}
-                      leftIcon="local_shipping"
-                      hasMobileIcon={false}
-                      url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
-                      variant={
-                        props.lifecycleStage == LifecycleStageMap.PENDING ||
-                          props.lifecycleStage == LifecycleStageMap.ACTIVE ||
-                          props.lifecycleStage == LifecycleStageMap.ARCHIVE
-                          ? "active"
-                          : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                )}
-                {!isBillingStage && (
-                  <div className="sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.tasks}
-                      leftIcon="list_alt"
-                      hasMobileIcon={false}
-                      url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
-                      variant={
-                        props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                          props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                          props.lifecycleStage == LifecycleStageMap.CLOSED
-                          ? "active"
-                          : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                )}
-                {(isBillingStage) && isPermitted("invoice") && (<>
-                  <div className="sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.accounts}
-                      leftIcon={"account_balance_wallet"}
-                      hasMobileIcon={false}
-                      url={Routes.BILLING_ACCOUNTS}
-                      variant={
-                        props.lifecycleStage === LifecycleStageMap.ACCOUNT ? "active" : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                  <div className="sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.pricing}
-                      leftIcon={"price_change"}
-                      hasMobileIcon={false}
-                      url={Routes.BILLING_PRICING_MODELS}
-                      variant={
-                        props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                  <div className="sm:w-auto">
-                    <RedirectButton
-                      label={dict.nav.title.invoice}
-                      leftIcon={"request_quote"}
-                      hasMobileIcon={false}
-                      url={Routes.BILLING_INVOICE}
-                      variant={
-                        props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
-                      }
-                      className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
-                    />
-                  </div>
-                </>
-                )}
-              </div>
-            </div>
-          )}
-      </div>
+    <div className="flex flex-col py-1 md:py-2">
+      {props.lifecycleStage !== LifecycleStageMap.GENERAL && isPermitted("registryFullAccess") &&
+        (<div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
+          <div className={`bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border grid ${isBillingStage ? "grid-cols-3" : "grid-cols-2"} gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4`}>
+            {!isBillingStage && (
+              <RedirectButton
+                label={dict.nav.title.jobs}
+                leftIcon="local_shipping"
+                hasMobileIcon={false}
+                url={`${Routes.REGISTRY_GENERAL}/${props.entityType}`}
+                variant={
+                  props.lifecycleStage == LifecycleStageMap.PENDING ||
+                    props.lifecycleStage == LifecycleStageMap.ACTIVE ||
+                    props.lifecycleStage == LifecycleStageMap.ARCHIVE
+                    ? "active"
+                    : "ghost"
+                }
+                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+              />
+            )}
+            {!isBillingStage && (
+              <RedirectButton
+                label={dict.nav.title.tasks}
+                leftIcon="list_alt"
+                hasMobileIcon={false}
+                url={`${Routes.REGISTRY_TASK_OUTSTANDING}`}
+                variant={
+                  props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                    props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                    props.lifecycleStage == LifecycleStageMap.CLOSED
+                    ? "active"
+                    : "ghost"
+                }
+                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+              />
+            )}
+            {(isBillingStage) && isPermitted("invoice") && (<>
+              <RedirectButton
+                label={dict.nav.title.accounts}
+                leftIcon={"account_balance_wallet"}
+                hasMobileIcon={false}
+                url={Routes.BILLING_ACCOUNTS}
+                variant={
+                  props.lifecycleStage === LifecycleStageMap.ACCOUNT ? "active" : "ghost"
+                }
+                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+              />
+              <RedirectButton
+                label={dict.nav.title.pricing}
+                leftIcon={"price_change"}
+                hasMobileIcon={false}
+                url={Routes.BILLING_PRICING_MODELS}
+                variant={
+                  props.lifecycleStage === LifecycleStageMap.PRICING ? "active" : "ghost"
+                }
+                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+              />
+              <RedirectButton
+                label={dict.nav.title.invoice}
+                leftIcon={"request_quote"}
+                hasMobileIcon={false}
+                url={Routes.BILLING_INVOICE}
+                variant={
+                  props.lifecycleStage === LifecycleStageMap.INVOICE ? "active" : "ghost"
+                }
+                className="w-full sm:w-auto py-3 sm:py-2 text-sm font-medium"
+              />
+            </>
+            )}
+          </div>
+        </div>
+        )}
       <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
-      items-end md:gap-2 lg:gap-0 mt-4 flex-wrap`}>
+      items-stretch md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
-          <div className={`flex flex-wrap sm:flex-nowrap items-stretch bg-ring rounded-lg border border-border divide-x divide-border}`}>
+          <div className={`flex flex-wrap sm:flex-nowrap  bg-ring rounded-lg border border-border divide-x divide-border}`}>
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.pending}
               leftIcon="free_cancellation"
@@ -159,7 +146,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
               }
-              className="text-sm font-medium !rounded-none !border-0"
+              className="text-sm font-medium rounded-none! border-0!"
             />}
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.active}
@@ -169,7 +156,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.ACTIVE ? "active" : "ghost"
               }
-              className="text-sm font-medium !rounded-none !border-0"
+              className="text-sm font-medium rounded-none! border-0!"
             />}
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.archive}
@@ -179,7 +166,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
               }
-              className="text-sm font-medium !rounded-none !border-0"
+              className="text-sm font-medium rounded-none! border-0!"
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.outstanding}
