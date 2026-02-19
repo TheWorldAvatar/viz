@@ -60,12 +60,12 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         if (isBetweenFirst && hasSecondValue) {
             const lowerOp = betweenOption === "exclusive" ? "gt" : "gte";
             const upperOp = betweenOption === "exclusive" ? "lt" : "lte";
-            // Results in: ["gte:10", "lte:20"]
-            filterInfo.push(`${lowerOp}:${value1}`);
-            filterInfo.push(`${upperOp}:${value2}`);
+            // Results in: ["gte10", "lte20"]
+            filterInfo.push(`${lowerOp}${value1}`);
+            filterInfo.push(`${upperOp}${value2}`);
         } else {
-            // Results in: ["eq:500"]
-            filterInfo.push(`${selectedOperator1}:${value1}`);
+            // Results in: ["eq500"]
+            filterInfo.push(`${selectedOperator1}${value1}`);
         }
 
         props.onSubmission(filterInfo);
