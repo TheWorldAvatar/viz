@@ -89,7 +89,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   };
 
   return (
-    <div className={`${nonMobileNavMenuWidth} overflow-y-auto bg-muted border-r-border border-r hidden lg:block`}>
+    <div className={`${nonMobileNavMenuWidth} overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
       <NavMenuContents
         {...props}
         isMenuExpanded={isMenuExpanded}
@@ -165,7 +165,7 @@ function NavMenuContents(
         : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
       xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
-        } transition-all duration-200 ease-in-out `}
+        }`}
     >
       {!props.isMobile && (
         <button
