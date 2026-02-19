@@ -7,7 +7,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { TableColumnOrderSettings } from "types/settings";
-import { applyConfiguredColumnOrder, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
+import { applyConfiguredColumnOrder, EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -121,7 +121,7 @@ export function useTableData(
 
         setInitialInstances(instances);
         const parsedData: TableData = parseDataForTable(instances, dict.title);
-        const orderedColumns: ColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
+        const orderedColumns: EnhancedColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
           parsedData.columns,
           tableOrderConfig,
           entityType,

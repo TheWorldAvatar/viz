@@ -19,9 +19,10 @@ import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client
 import { XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
 
+export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & { dataType: string };
 export type TableData = {
   data: FieldValues[];
-  columns: ColumnDef<FieldValues>[];
+  columns: EnhancedColumnDef<FieldValues>[];
 }
 
 /**
@@ -81,6 +82,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
       results.columns.push({
         accessorKey: col,
         header: title,
+        dataType,
         cell: ({ getValue }) => {
           if (Array.isArray(getValue())) {
             const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
@@ -170,12 +172,12 @@ function flattenInstance(
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function applyConfiguredColumnOrder(
-  columns: ColumnDef<FieldValues>[],
+  columns: EnhancedColumnDef<FieldValues>[],
   config: TableColumnOrderSettings,
   entityType: string,
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
-): ColumnDef<FieldValues>[] {
+): EnhancedColumnDef<FieldValues>[] {
   const configuredOrder: string[] = config[entityType] || config[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
