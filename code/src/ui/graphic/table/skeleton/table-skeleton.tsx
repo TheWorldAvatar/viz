@@ -2,7 +2,7 @@ import { Icon } from "@mui/material";
 
 export default function TableSkeleton() {
     return (
-        <div className="rounded-lg border border-border flex flex-col h-full w-full overflow-hidden">
+        <div className="rounded-lg border border-border flex flex-col h-full w-[95dvw] xl:w-[75dvw] overflow-hidden">
             <table className="w-full border-separate border-spacing-0 ">
                 <thead className="bg-muted sticky top-0 z-10">
                     <tr>
