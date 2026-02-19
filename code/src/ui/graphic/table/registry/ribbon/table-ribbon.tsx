@@ -62,7 +62,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-    <div className="flex flex-col p-1 md:p-2 gap-2 md:gap-4">
+    <div className="flex flex-col py-1 md:py-2 gap-2 md:gap-4">
       <div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
         {props.lifecycleStage !== LifecycleStageMap.GENERAL && isPermitted("registryFullAccess") &&
           (
