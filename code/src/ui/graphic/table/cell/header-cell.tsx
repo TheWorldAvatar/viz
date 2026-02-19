@@ -6,13 +6,14 @@ import { Dictionary } from "types/dictionary";
 
 import { useFilterOptions } from "hooks/table/api/useFilterOptions";
 import { DateRange } from "react-day-picker";
-import { LifecycleStage } from "types/form";
+import { LifecycleStage, RegistryFieldValues, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import TableCell from "./table-cell";
 import NumericColumnFilter from "../action/numeric-column-filter";
+import { XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
 
 interface HeaderCellProps {
   type: string;
@@ -22,6 +23,7 @@ interface HeaderCellProps {
   selectedDate: DateRange;
   disableFilter: boolean;
   filters: ColumnFilter[];
+  initialInstances: RegistryFieldValues[]
 }
 
 /**
@@ -59,7 +61,15 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     props.filters,
   );
 
-  const showNumericFilter: boolean = options.length > 0 && options.every((option) => option.trim() !== "" && !Number.isNaN(Number(option)));
+  const columnField: SparqlResponseField | SparqlResponseField[] = props.initialInstances
+    ?.find(instance => instance?.[props.header.id.toLowerCase()])
+    ?.[props.header.id.toLowerCase()];
+
+  const columnDataType: string | undefined = columnField
+    ? (Array.isArray(columnField) ? columnField[0]?.dataType : columnField.dataType)
+    : undefined;
+
+  const showNumericFilter: boolean = columnDataType === XSD_DECIMAL || columnDataType === XSD_INTEGER;
 
   return (
     <TableCell
