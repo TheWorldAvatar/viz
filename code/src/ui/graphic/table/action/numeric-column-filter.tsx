@@ -87,8 +87,13 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             return condition1;
         });
 
-
-        props.onSubmission(filtered);
+        // If no results found
+        if (filtered.length === 0) {
+            setError("No matching values found for the specified filter criteria.");
+            return;
+        } else {
+            props.onSubmission(filtered);
+        }
     }
 
     const blockInvalidNumberKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
