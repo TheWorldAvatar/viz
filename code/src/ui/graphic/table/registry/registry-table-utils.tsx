@@ -9,6 +9,7 @@ import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
   RegistryFieldValues,
+  RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
 import { TableColumnOrderSettings } from "types/settings";
@@ -16,6 +17,7 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATETIME } from "utils/constants";
+import ArrayTextCell from "../cell/array-text-cell";
 
 export type TableData = {
   data: FieldValues[];
@@ -60,40 +62,11 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   if (instances?.length > 0) {
     const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
     const columnNames: string[] = [];
-    // Track column dataTypes 
     const columnDataTypes: Record<string, string> = {};
 
     instances.forEach(instance => {
-      const flattenInstance: Record<string, string> = {};
-      const fields: string[] = Object.keys(instance);
-
-      fields.forEach((field, index) => {
-        const fieldValue: SparqlResponseField | SparqlResponseField[] = instance[field];
-        let firstValue: SparqlResponseField;
-
-        if (Array.isArray(fieldValue)) {
-          firstValue = fieldValue[0];
-        } else {
-          firstValue = fieldValue;
-        }
-
-        flattenInstance[field] = firstValue?.value;
-
-        const normalizedField: string = parseLifecycleFieldsToTranslations(field, flattenInstance, titleDict);
-
-        // Store the dataType using the normalized field name only if not already stored
-        if (firstValue?.dataType && !columnDataTypes[normalizedField]) {
-          columnDataTypes[normalizedField] = firstValue.dataType;
-        }
-
-        if (!columnNames.includes(normalizedField)) {
-          // Insert at the current index if possible, else push to end
-          const insertIndex: number = Math.min(index, columnNames.length);
-          columnNames.splice(insertIndex, 0, normalizedField);
-        }
-      });
-
-      results.data.push(flattenInstance);
+      const flatInstance: RegistryFlatFieldValues = flattenInstance(instance, columnNames, columnDataTypes, titleDict);
+      results.data.push(flatInstance);
     });
 
     // Create column definitions based on available columns
@@ -109,9 +82,12 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
         accessorKey: col,
         header: title,
         cell: ({ getValue }) => {
+          if (Array.isArray(getValue())) {
+            const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
+            return <ArrayTextCell fields={arrayFields} />
+          }
           const value: string = getValue() as string;
           if (!value) return "";
-
           // Format datetime/date columns for display
           if (isDateTimeColumn) {
             return formatDatetimeValue(value);
@@ -140,6 +116,50 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
   return results;
 }
 
+/**
+ * Flattens the instance to a string instead of SparqlResponseField.
+ *
+ * @param {RegistryFieldValues} instance The original column definitions.
+ * @param {string[]}columnNames List of column names.
+ * @param {Record<string, string>} columnDataTypes Stores the data type for columns.
+ * @param {Record<string, string>} titleDict The dictionary object leading to title.
+ */
+function flattenInstance(
+  instance: RegistryFieldValues,
+  columnNames: string[],
+  columnDataTypes: Record<string, string>,
+  titleDict: Record<string, string>
+): RegistryFlatFieldValues {
+  const flatInstance: RegistryFlatFieldValues = {};
+  const instanceFields: string[] = Object.keys(instance);
+
+  instanceFields.forEach((instanceField, index) => {
+    const instanceValue: SparqlResponseField | RegistryFieldValues[] = instance[instanceField];
+    let fieldName: string;
+    if (Array.isArray(instanceValue)) {
+      // For array fields, only display array field, subfields need not be parsed
+      flatInstance[instanceField] = instanceValue.map((nestedFields) =>
+        flattenInstance(nestedFields, [], {}, titleDict)) as Record<string, string>[];
+      fieldName = instanceField;
+      columnDataTypes[fieldName] = "array";
+    } else {
+      flatInstance[instanceField] = instanceValue?.value;
+      // Normalise fields with translations so that columns are ordered by translated headers
+      fieldName = parseLifecycleFieldsToTranslations(instanceField, flatInstance, titleDict);
+      // Store the dataType using the normalized field name only if not already stored
+      if (instanceValue?.dataType && !columnDataTypes[fieldName]) {
+        columnDataTypes[fieldName] = instanceValue.dataType;
+      }
+    }
+    // Stores column name so that they may be displayed
+    if (!columnNames.includes(fieldName)) {
+      // Insert at the current index if possible, else push to end
+      const insertIndex: number = Math.min(index, columnNames.length);
+      columnNames.splice(insertIndex, 0, fieldName);
+    }
+  });
+  return flatInstance;
+}
 
 /**
  * Applies the configured column order to the given columns.
@@ -149,7 +169,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], titleDict: R
  * @param {string} entityType Type of entity for rendering.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
-
 export function applyConfiguredColumnOrder(
   columns: ColumnDef<FieldValues>[],
   config: TableColumnOrderSettings,
@@ -188,24 +207,26 @@ export function formatDatetimeValue(value: string): string {
  * Parses the lifecycle field to their translations.
  *
  * @param {string} field Name of field from backend to be translated.
- * @param {Record<string, string>} outputRow The row data being built.
+ * @param {RegistryFlatFieldValues} outputRow The row data being built.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function parseLifecycleFieldsToTranslations(field: string, outputRow: Record<string, string>, titleDict: Record<string, string>): string {
-  const currentVal: string = outputRow[field];
-  // Delete unmodified field first before adding the translation
+export function parseLifecycleFieldsToTranslations(field: string, outputRow: RegistryFlatFieldValues, titleDict: Record<string, string>): string {
+  // Delete unmodified field after adding the translation
   switch (field.toLowerCase()) {
     case "lastmodified":
+      outputRow[titleDict.lastModified] = outputRow[field] as string; // Keep raw ISO date for sorting
       delete outputRow[field];
-      outputRow[titleDict.lastModified] = currentVal; // Keep raw ISO date for sorting
       return titleDict.lastModified;
     case "scheduletype":
+      outputRow[titleDict.scheduleType] = outputRow[field] as string;
       delete outputRow[field];
-      outputRow[titleDict.scheduleType] = currentVal;
       return titleDict.scheduleType;
     case "status":
-      delete outputRow[field];
-      outputRow[titleDict.status] = currentVal;
+      // Status in english is equivalent and will cause errors
+      if (field != titleDict.status) {
+        outputRow[titleDict.status] = outputRow[field] as string;
+        delete outputRow[field];
+      }
       return titleDict.status;
     default:
       return field;
