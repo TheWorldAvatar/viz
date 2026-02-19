@@ -66,7 +66,7 @@ export default function RegistryTableComponent(
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8">
       <div className="rounded-lg pb-4">
-        <h1 className="text-2xl md:text-4xl font-bold mb-1 sm:mb-4 ">
+        <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold ">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
             props.lifecycleStage === LifecycleStageMap.PRICING ||
             props.lifecycleStage === LifecycleStageMap.INVOICE
