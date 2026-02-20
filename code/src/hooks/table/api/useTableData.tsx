@@ -1,4 +1,4 @@
-import { ColumnDef, ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
+import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
