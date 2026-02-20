@@ -65,9 +65,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     ?.find(instance => instance?.[props.header.id.toLowerCase()])
     ?.[props.header.id.toLowerCase()];
 
-  const columnDataType: string | undefined = columnField
-    ? (Array.isArray(columnField) ? columnField[0]?.dataType : columnField.dataType)
-    : undefined;
+  const columnDataType = Array.isArray(columnField) ? columnField[0]?.dataType : columnField?.dataType;
 
   const showNumericFilter: boolean = columnDataType === XSD_DECIMAL || columnDataType === XSD_INTEGER;
 
