@@ -7,7 +7,6 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
 interface NumericColumnFilterProps {
-    options: string[];
     label: string;
     onSubmission: (_options: string[]) => void;
 }
@@ -20,7 +19,6 @@ type BetweenOptions = "inclusive" | "exclusive";
  * A numeric column filter component that allows filtering table data using one or two
  * numeric comparison conditions combined with AND/OR logic.
  *
- * @param {string[]} options The available column values to filter against.
  * @param {string} label The name of the column.
  * @param {void} onSubmission Function that submits the filtered options.
  */
@@ -46,7 +44,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         { value: "between", label: dict.title.between },
     ]
 
-
     const handleFilter = (): void => {
         if (!hasFirstValue) return;
         setError(null);
@@ -63,8 +60,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         const filterInfo: string[] = [];
 
         if (isBetweenFirst && hasSecondValue) {
-            const lowerOp = betweenOption === "exclusive" ? "gt" : "gte";
-            const upperOp = betweenOption === "exclusive" ? "lt" : "lte";
+            const lowerOp: Extract<ComparisonOperator, "gt" | "gte"> = betweenOption === "exclusive" ? "gt" : "gte";
+            const upperOp: Extract<ComparisonOperator, "lt" | "lte"> = betweenOption === "exclusive" ? "lt" : "lte";
             // Results in: ["gte10", "lte20"]
             filterInfo.push(`${lowerOp}${value1}`);
             filterInfo.push(`${upperOp}${value2}`);

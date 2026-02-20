@@ -126,7 +126,6 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
 
               {showNumericFilter ? (
                 <NumericColumnFilter
-                  options={options}
                   label={props.header.id}
                   onSubmission={(selectedOptions: string[]) => {
                     props.header.column.setFilterValue(selectedOptions);
