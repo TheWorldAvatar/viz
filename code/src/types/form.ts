@@ -72,8 +72,9 @@ export interface FormFieldOptions {
 
 export type RegistryFieldValues = Record<
   string,
-  SparqlResponseField | SparqlResponseField[]
+  SparqlResponseField | RegistryFieldValues[]
 >;
+export type RegistryFlatFieldValues = Record<string, string | Record<string, string>[]>;
 
 export type OntologyConceptMappings = Record<string, OntologyConcept[]>;
 
