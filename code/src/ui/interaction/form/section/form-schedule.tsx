@@ -29,6 +29,15 @@ interface FormScheduleProps {
   options?: FormFieldOptions;
 }
 
+interface EntryDateItem {
+  entry_date: {
+    type: string;
+    value: string;
+    dataType: string;
+    lang: string;
+  };
+}
+
 export const daysOfWeek: string[] = [
   FORM_STATES.SUN,
   FORM_STATES.MON,
@@ -97,30 +106,30 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         let defaultTimeSlotStart: string = "00:00";
         let defaultTimeSlotEnd: string = "23:59";
 
-        const fields: RegistryFieldValues = await fetch(
-          makeInternalRegistryAPIwithParams(
-            "schedule",
-            props.form.getValues("id")
-          ),
+        const res = await fetch(
+          makeInternalRegistryAPIwithParams("schedule", props.form.getValues("id")),
           {
             cache: "no-store",
             credentials: "same-origin",
           }
-        ).then((res) => res.json());
+        );
+
+        const resJson = await res.json(); // keep original JSON before casting
+        const fields: RegistryFieldValues = resJson; // cast to correct type
 
         // Check if this is a fixed service (has entry_date field)
-        const entryDates = extractResponseFieldArray(
-          fields,
-          FORM_STATES.ENTRY_DATES
-        );
-        if (entryDates.length > 0) {
+        if (FORM_STATES.ENTRY_DATES in resJson) {
+
+          const entryDates = resJson[FORM_STATES.ENTRY_DATES] as EntryDateItem[];
           // This is a fixed service - extract dates
-          const parsedDates: Date[] = entryDates
-            .filter((entry) => entry?.value)
-            .map((entry) => new Date(entry.value));
-          setFixedDates(parsedDates);
-          setSelectedServiceOption(fixedService);
-          props.form.setValue(FORM_STATES.ENTRY_DATES, parsedDates);
+          if (entryDates.length > 0) {
+            const parsedDates: Date[] = entryDates
+              .filter((item) => item?.entry_date?.value)
+              .map((item) => new Date(item.entry_date.value));
+            setFixedDates(parsedDates);
+            setSelectedServiceOption(fixedService);
+            props.form.setValue(FORM_STATES.ENTRY_DATES, parsedDates);
+          }
         } else {
           // Retrieve recurrence and selected service option
           recurrence = getDefaultVal(
