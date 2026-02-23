@@ -135,9 +135,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         </div>
         )}
       <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
-      items-stretch md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
+      items-end md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
-          <div className={`flex flex-wrap sm:flex-nowrap  bg-ring rounded-lg border border-border divide-x divide-border}`}>
+          <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border}`}>
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.pending}
               leftIcon="free_cancellation"
@@ -146,7 +146,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.PENDING ? "active" : "ghost"
               }
-              className="text-sm font-medium rounded-none! border-0!"
+              className="text-sm font-medium rounded-l-lg rounded-r-none border-0!"
             />}
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.active}
@@ -166,7 +166,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.ARCHIVE ? "active" : "ghost"
               }
-              className="text-sm font-medium rounded-none! border-0!"
+              className="text-sm font-medium rounded-r-lg rounded-l-none border-0!"
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.outstanding}
@@ -176,7 +176,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
               }
-              className="text-sm font-medium !rounded-none !border-0 "
+              className="text-sm font-medium  rounded-l-lg rounded-r-none !border-0 "
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.scheduled}
@@ -196,7 +196,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.CLOSED ? "active" : "ghost"
               }
-              className="text-sm font-medium !rounded-none !border-0 "
+              className="text-sm font-medium rounded-r-lg rounded-l-none !border-0 "
             />}
           </div>
         }
