@@ -317,7 +317,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           isHeader={false}
                         >
                           <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                            <div className="flex items-center justify-end gap-0.5">
+                            <div className="flex items-center justify-evenly gap-0.5">
                               {!props.disableRowAction &&
                                 <>
                                   <DragActionHandle disabled={isLoading} id={row.id} />
