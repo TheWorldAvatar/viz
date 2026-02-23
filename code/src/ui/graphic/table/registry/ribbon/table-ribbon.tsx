@@ -137,7 +137,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
       <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
       items-end md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
-          <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border}`}>
+          <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border`}>
             {isContractRegistry && <RedirectButton
               label={dict.nav.title.pending}
               leftIcon="free_cancellation"
