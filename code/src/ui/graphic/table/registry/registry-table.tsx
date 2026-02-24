@@ -280,6 +280,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
                                 handleChange={(checked) => {
                                   props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
+                                    if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
+                                      const eventId: string = getId(row.getValue("event_id"));
+                                      props.tableDescriptor.setSelectedRows(eventId, !checked);
+                                    }
                                     row.toggleSelected(checked);
                                   });
                                 }}
