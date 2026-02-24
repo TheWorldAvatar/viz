@@ -6,15 +6,15 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
-    | "link"
-    | "primary"
-    | "secondary"
-    | "destructive"
-    | "success"
-    | "warning"
-    | "outline"
-    | "ghost"
-    | "active";
+  | "link"
+  | "primary"
+  | "secondary"
+  | "destructive"
+  | "success"
+  | "warning"
+  | "outline"
+  | "ghost"
+  | "active";
   size?: "sm" | "md" | "lg" | "default" | "icon";
   leftIcon?: "string" | React.ReactNode;
   rightIcon?: "string" | React.ReactNode;
@@ -69,7 +69,7 @@ export default function Button({
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
     link: "text-primary-foreground underline-offset-4 hover:underline",
     success:
-      "text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600",
+      "text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600",
     warning:
       "bg-amber-300 hover:bg-amber-500/80 dark:bg-amber-800 dark:hover:bg-amber-900/80",
     secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
@@ -124,16 +124,14 @@ export default function Button({
         {...props}
       >
         <div
-          className={`flex items-center ${iconSpacing[size]} ${
-            loading ? "gap-2" : ""
-          }`}
+          className={`flex items-center ${iconSpacing[size]} ${loading ? "gap-2" : ""
+            }`}
         >
           {loading && <LoadingSpinner isSmall={true} />}
           {!loading && leftIcon && (
             <span
-              className={`${
-                hasMobileIcon ? "flex" : "hidden md:flex"
-              } items-center`}
+              className={`${hasMobileIcon ? "flex" : "hidden md:flex"
+                } items-center`}
             >
               {
                 <Icon fontSize={iconSize} className="material-symbols-outlined">
@@ -145,9 +143,8 @@ export default function Button({
           <span>{children || label}</span>
           {!loading && rightIcon && (
             <span
-              className={`${
-                hasMobileIcon ? "flex" : "hidden md:flex"
-              } items-center`}
+              className={`${hasMobileIcon ? "flex" : "hidden md:flex"
+                } items-center`}
             >
               {
                 <Icon fontSize={iconSize} className="material-symbols-outlined">

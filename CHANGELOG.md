@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.60.3
+
+### Bug fixes
+
+- Parses the array fields in the registry table and display them in a new manner
+- Disable filters for array columns
+- Extended column type definition to include datatype
+- Fixed end dates display in the schedule form
+
 ## 5.60.2
 
 ### Bug fixes
