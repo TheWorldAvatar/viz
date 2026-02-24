@@ -22,6 +22,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 variant="outline"
                 leftIcon="keyboard_arrow_left"
                 size="icon"
+                iconSize="small"
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -29,11 +30,13 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 }}
                 disabled={currentFieldValue === 0}
                 aria-label="Go to previous array field"
+                className="h-8 w-8"
             />
             <Button
                 variant="outline"
                 leftIcon="keyboard_arrow_right"
                 size="icon"
+                iconSize="small"
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -41,6 +44,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 }}
                 disabled={currentFieldValue == props.fields.length - 1}
                 aria-label="Go to next array field"
+                className="h-8 w-8"
             />
         </div>}
         <div>
