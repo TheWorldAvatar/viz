@@ -19,7 +19,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
     return <div>
         {props.fields.length > 1 && <div className="flex gap-2 justify-end mb-2">
             <Button
-                variant="outline"
+                variant="success"
                 leftIcon="keyboard_arrow_left"
                 size="icon"
                 iconSize="small"
@@ -33,7 +33,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 className="h-8 w-8"
             />
             <Button
-                variant="outline"
+                variant="success"
                 leftIcon="keyboard_arrow_right"
                 size="icon"
                 iconSize="small"
