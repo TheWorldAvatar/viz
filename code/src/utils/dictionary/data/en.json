@@ -215,7 +215,9 @@
       "registry": "Open registry",
       "help": "Open help page",
       "landingRedirect": "Click to open the '{replace}' page",
-      "fileUpload": "Click to upload a file"
+      "fileUpload": "Click to upload a file",
+      "expand": "Expand sidebar",
+      "collapse": "Collapse sidebar"
     }
   },
   "title": {

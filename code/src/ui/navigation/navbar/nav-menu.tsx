@@ -13,6 +13,8 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem, NavBarItemType } from "./navbar-item";
+import Tooltip from "ui/interaction/tooltip/tooltip";
+
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -168,20 +170,23 @@ function NavMenuContents(
         }`}
     >
       {!props.isMobile && (
-        <button
-          className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 
+        <Tooltip text={props.isMenuExpanded ? dict.nav.tooltip.collapse : dict.nav.tooltip.expand} placement="right">
+          <button
+            className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 
             ${props.isMenuExpanded
-              ? "ml-auto rounded-md"
-              : "items-center rounded-full"
-            }`}
-          onClick={props.handleMenuToggle}
-        >
-          <Icon className="material-symbols-outlined">
-            {props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-          </Icon>
-        </button>
+                ? "ml-auto rounded-md"
+                : "items-center rounded-full"
+              }`}
+            onClick={props.handleMenuToggle}
+          >
+            <Icon className="material-symbols-outlined">
+              {props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+            </Icon>
+          </button>
+        </Tooltip>
       )}
       {props.settings?.modules?.landing && (
+
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
