@@ -280,7 +280,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                 handleChange={(checked) => {
                                   props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
                                     if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
-                                      const eventId = getId(row.getValue("event_id"));
+                                      const eventId: string = getId(row.getValue("event_id"));
                                       props.tableDescriptor.setSelectedRows(eventId, !checked);
                                     }
                                     row.toggleSelected(checked);
