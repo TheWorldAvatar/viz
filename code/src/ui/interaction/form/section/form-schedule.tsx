@@ -4,15 +4,14 @@ import { UseFormReturn } from "react-hook-form";
 import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { browserStorageManager } from "state/browser-storage-manager";
+import { InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, FormType, FormTypeMap, RegistryFieldValues } from "types/form";
+import { FormFieldOptions, FormType, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import DateInput from "ui/interaction/input/date-input";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
-  extractResponseField,
-  extractResponseFieldArray,
   getUTCDate,
   parseStringsForUrls,
   parseWordsForLabels,
@@ -99,7 +98,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
         const fields: RegistryFieldValues = await fetch(
           makeInternalRegistryAPIwithParams(
-            "schedule",
+            InternalApiIdentifierMap.SCHEDULE,
             props.form.getValues("id")
           ),
           {
@@ -108,24 +107,21 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           }
         ).then((res) => res.json());
 
-        // Check if this is a fixed service (has entry_date field)
-        const entryDates = extractResponseFieldArray(
-          fields,
-          FORM_STATES.ENTRY_DATES
-        );
-        if (entryDates.length > 0) {
-          // This is a fixed service - extract dates
-          const parsedDates: Date[] = entryDates
-            .filter((entry) => entry?.value)
-            .map((entry) => new Date(entry.value));
-          setFixedDates(parsedDates);
-          setSelectedServiceOption(fixedService);
-          props.form.setValue(FORM_STATES.ENTRY_DATES, parsedDates);
+        // This is a fixed service - extract dates
+        if (fields[FORM_STATES.ENTRY_DATES] && Array.isArray(fields[FORM_STATES.ENTRY_DATES])) {
+          const entryDates: RegistryFieldValues[] = fields[FORM_STATES.ENTRY_DATES] as RegistryFieldValues[];
+          if (entryDates.length > 0) {
+            const parsedDates: Date[] = entryDates
+              .map((item) => new Date((item?.entry_date as SparqlResponseField).value));
+            setFixedDates(parsedDates);
+            setSelectedServiceOption(fixedService);
+            props.form.setValue(FORM_STATES.ENTRY_DATES, parsedDates);
+          }
         } else {
           // Retrieve recurrence and selected service option
           recurrence = getDefaultVal(
             FORM_STATES.RECURRENCE,
-            extractResponseField(fields, FORM_STATES.RECURRENCE, true)?.value,
+            (fields[FORM_STATES.RECURRENCE] as SparqlResponseField)?.value,
             formType
           ) as number;
           setSelectedServiceOption(
@@ -141,13 +137,13 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
         defaultTimeSlotStart = getDefaultVal(
           FORM_STATES.TIME_SLOT_START,
-          extractResponseField(fields, "start_time", true)?.value,
+          (fields["start_time"] as SparqlResponseField)?.value,
           formType
         ).toString();
 
         defaultTimeSlotEnd = getDefaultVal(
           FORM_STATES.TIME_SLOT_END,
-          extractResponseField(fields, "end_time", true)?.value,
+          (fields["end_time"] as SparqlResponseField)?.value,
           formType
         ).toString();
 
@@ -155,11 +151,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           FORM_STATES.START_DATE,
           getDefaultVal(
             FORM_STATES.START_DATE,
-            extractResponseField(
-              fields,
-              parseStringsForUrls(FORM_STATES.START_DATE),
-              true
-            )?.value,
+            (fields[parseStringsForUrls(FORM_STATES.START_DATE)] as SparqlResponseField)?.value,
             formType
           )
         );
@@ -167,11 +159,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           FORM_STATES.END_DATE,
           getDefaultVal(
             FORM_STATES.END_DATE,
-            extractResponseField(
-              fields,
-              parseStringsForUrls(FORM_STATES.END_DATE),
-              true
-            )?.value,
+            (fields[parseStringsForUrls(FORM_STATES.END_DATE)] as SparqlResponseField)?.value,
             formType
           )
         );
@@ -181,7 +169,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             dayOfWeek,
             getDefaultVal(
               dayOfWeek,
-              extractResponseField(fields, dayOfWeek, true)?.value,
+              (fields[dayOfWeek] as SparqlResponseField)?.value,
               formType
             )
           );

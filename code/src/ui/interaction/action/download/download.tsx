@@ -1,9 +1,8 @@
 "use client";
 
-import { Dictionary } from "types/dictionary";
-import { RegistryFieldValues } from "types/form";
-import { extractResponseField } from "utils/client-utils";
 import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
+import { RegistryFieldValues, SparqlResponseField } from "types/form";
 
 import Button, { ButtonProps } from "ui/interaction/button";
 
@@ -33,8 +32,8 @@ export function DownloadButton({
     csvRows.push(headers.join(",")); // Add headers
 
     for (const row of instances) {
-      const values = headers.map(
-        (header) => extractResponseField(row, header)?.value ?? ""
+       const values: string[] = headers.map(
+        (header) => !Array.isArray(row[header]) ? (row[header] as SparqlResponseField)?.value : ""
       );
       csvRows.push(values.join(","));
     }

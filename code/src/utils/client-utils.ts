@@ -145,61 +145,6 @@ export function getAfterDelimiter(str: string, delimiter: string): string {
 }
 
 /**
- * Get the value from the target SPARQL response.
- *
- * @param {SparqlResponseField} response The target SPARQL response.
- */
-export function getSparqlResponseValue(response: SparqlResponseField): string {
-  return response.value;
-}
-
-/**
- * Extract the target field as a Response Field Object from the response.
- *
- * @param {RegistryFieldValues} response The response.
- * @param {string} field The target field of interest.
- * @param {boolean} getFirstArrayField Optional indicator to retrieve the first array field if required.
- */
-export function extractResponseField(
-  response: RegistryFieldValues,
-  field: string,
-  getFirstArrayField?: boolean
-): SparqlResponseField {
-  if (Array.isArray(response[field])) {
-    if (getFirstArrayField) {
-      return response[field][0];
-    } else {
-      console.warn(
-        `Detected that field ${field} is an array! Skipping field...`
-      );
-      return null;
-    }
-  } else {
-    return response[field];
-  }
-}
-
-/**
- * Extract the target field as an array of Response Field Objects from the response.
- * Returns an empty array if the field is not found or not an array.
- *
- * @param {RegistryFieldValues} response The response.
- * @param {string} field The target field of interest.
- */
-export function extractResponseFieldArray(
-  response: RegistryFieldValues,
-  field: string
-): SparqlResponseField[] {
-  if (Array.isArray(response[field])) {
-    return response[field];
-  } else if (response[field]) {
-    // If it's a single value, wrap it in an array
-    return [response[field]];
-  }
-  return [];
-}
-
-/**
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
