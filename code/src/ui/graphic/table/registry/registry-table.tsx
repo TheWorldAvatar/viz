@@ -41,6 +41,7 @@ import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
 import TablePagination from "../pagination/table-pagination";
 import TableRow from "../row/table-row";
+import { EnhancedColumnDef } from "./registry-table-utils";
 
 interface RegistryTableProps {
   recordType: string;
@@ -300,7 +301,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               lifecycleStage={props.lifecycleStage}
                               selectedDate={props.selectedDate}
                               filters={props.tableDescriptor.filters}
-                              disableFilter={props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType}
+                              disableFilter={(header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType == "array" ||
+                                (props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
                             />
                           );
                         })}
