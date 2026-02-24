@@ -110,9 +110,7 @@
       "placenames": "Show / hide place names",
       "terrain": "Toggle 3D terrain",
       "fullscreen": "Toggle fullscreen mode",
-      "selectScenario": "Select another scenario",
-      "collapsePanel": "Collapse panel",
-      "expandPanel": "Expand panel"
+      "selectScenario": "Select another scenario"
     }
   },
   "context": {

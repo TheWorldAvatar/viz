@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 
-import { Icon } from "@mui/material";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
 import { OptionalPage } from "io/config/optional-pages";
@@ -13,7 +12,7 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem, NavBarItemType } from "./navbar-item";
-import Tooltip from "ui/interaction/tooltip/tooltip";
+import Button from "ui/interaction/button";
 
 
 export interface NavMenuProps {
@@ -170,20 +169,17 @@ function NavMenuContents(
         }`}
     >
       {!props.isMobile && (
-        <Tooltip text={props.isMenuExpanded ? dict.nav.tooltip.collapse : dict.nav.tooltip.expand} placement="right">
-          <button
-            className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 
+        <Button
+          variant="ghost"
+          size="icon"
+          leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+          className={`!flex mt-4 p-7 
             ${props.isMenuExpanded
-                ? "ml-auto rounded-md"
-                : "items-center rounded-full"
-              }`}
-            onClick={props.handleMenuToggle}
-          >
-            <Icon className="material-symbols-outlined">
-              {props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-            </Icon>
-          </button>
-        </Tooltip>
+              ? "ml-auto rounded-md"
+              : "items-center !rounded-full"
+            }`}
+          onClick={props.handleMenuToggle}
+        />
       )}
       {props.settings?.modules?.landing && (
 
