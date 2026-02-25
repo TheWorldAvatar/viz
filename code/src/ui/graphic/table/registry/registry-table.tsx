@@ -276,7 +276,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               <Checkbox
                                 aria-label={dict.action.selectAll}
                                 disabled={isLoading}
-                                className="w-4 h-4 cursor-pointer"
+                                className="w-4 h-4 mx-2 cursor-pointer"
                                 checked={props.tableDescriptor.table.getIsAllPageRowsSelected()}
                                 handleChange={(checked) => {
                                   props.tableDescriptor.table.getRowModel().rows.forEach((row) => {
@@ -324,37 +324,34 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         >
                           <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
                             <div className="flex items-center justify-evenly gap-0.5">
-                              {!props.disableRowAction &&
-                                <>
-                                  <DragActionHandle disabled={isLoading} id={row.id} />
-                                  <RegistryRowAction
-                                    recordType={props.recordType}
-                                    accountType={props.accountType}
-                                    lifecycleStage={props.lifecycleStage}
-                                    row={row.original}
-                                    triggerRefresh={props.triggerRefresh}
-                                  />
-                                  <Button
-                                    leftIcon="history"
-                                    size="icon"
-                                    variant="ghost"
-                                    tooltipText={dict.title.history}
-                                    onClick={() => {
-                                      if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                                        props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                                        props.lifecycleStage == LifecycleStageMap.CLOSED) {
-                                        setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
-                                      } else {
-                                        setHistoryId(row.original.id as string);
-                                      }
-                                      setIsOpenHistoryModal(true);
-                                    }}
-                                  />
-                                </>
-                              } {allowMultipleSelection && (
+                              {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={row.id} />}
+                              <RegistryRowAction
+                                recordType={props.recordType}
+                                accountType={props.accountType}
+                                lifecycleStage={props.lifecycleStage}
+                                row={row.original}
+                                triggerRefresh={props.triggerRefresh}
+                              />
+                              {!props.disableRowAction && <Button
+                                leftIcon="history"
+                                size="icon"
+                                variant="ghost"
+                                tooltipText={dict.title.history}
+                                onClick={() => {
+                                  if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                    props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                                    props.lifecycleStage == LifecycleStageMap.CLOSED) {
+                                    setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
+                                  } else {
+                                    setHistoryId(row.original.id as string);
+                                  }
+                                  setIsOpenHistoryModal(true);
+                                }}
+                              />}
+                              {allowMultipleSelection && (
                                 <Checkbox
                                   aria-label={row.id}
-                                  className={`${!props.disableRowAction && "ml-2"} w-4 h-4 cursor-pointer`}
+                                  className="mx-2 w-4 h-4 cursor-pointer"
                                   disabled={isLoading}
                                   checked={row.getIsSelected()}
                                   handleChange={(checked) => {

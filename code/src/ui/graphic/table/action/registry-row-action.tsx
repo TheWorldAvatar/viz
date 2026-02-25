@@ -247,7 +247,7 @@ export default function RegistryRowAction(
           )}
           {!isSubmissionOrGeneralPage && (
             <>
-              <Button
+              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <Button
                 variant="ghost"
                 leftIcon="open_in_new"
                 size="md"
@@ -260,7 +260,7 @@ export default function RegistryRowAction(
                   resetFormSession();
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
-              />
+              />}
               {isActionAllowed("COMPLETE_TASK") && <Button
                 variant="ghost"
                 leftIcon="done_outline"
