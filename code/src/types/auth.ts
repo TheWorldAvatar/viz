@@ -54,7 +54,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     },
     VIEW_BILLABLES: {
         permission: "invoice",
-        stage: [LifecycleStageMap.CLOSED],
+        stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],
         status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED, RegistryStatusMap.INVOICED],
     },
     DELETE: {
