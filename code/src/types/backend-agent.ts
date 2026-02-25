@@ -1,6 +1,10 @@
 import { EVENT_KEY } from "utils/constants";
 import { SparqlResponseField } from "./form";
 
+export const BackendApis = {
+  REGISTRY_TASK_ATTACHMENT: process.env.REGISTRY_TASK_ATTACHMENT_URL,
+};
+
 export type AgentResponseBody = {
   apiVersion: string;
   data?: {
@@ -14,6 +18,7 @@ export type AgentResponseBody = {
     message: string;
   };
 };
+
 export type HistoryDetails = {
   message: SparqlResponseField;
   timestamp: SparqlResponseField;

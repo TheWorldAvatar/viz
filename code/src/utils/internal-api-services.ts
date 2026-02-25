@@ -1,5 +1,5 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
-import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { AgentResponseBody, BackendApis, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
 import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
@@ -204,4 +204,16 @@ export function getSafeUrl(rawUrl: string): string | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Get the backend API URL for a given service key.
+ * Throws an error if the service is not configured in the environment variables.
+ * 
+ * @param service The resource identifier representing the backend service.
+ */
+export function getBackendApi(service: keyof typeof BackendApis) {
+  const url: string = BackendApis[service];
+  if (!url) throw new Error(`Backend for ${service} not configured.`);
+  return url;
 }

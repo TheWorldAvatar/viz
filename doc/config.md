@@ -120,9 +120,6 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "data": "type", // Specify only the type to reach the registry page of interest
       "paths": ["resource one", "resource two"] // Specify the resource names on the backend
     },
-    "registry-attachment": {
-      "url": "http://sample.org/file/", // Edit redirect link to registry attachments here
-    },
     "scenario": {
       "url": "https://theworldavatar.io/demos/credo-ofwat/central/CentralStackAgent", // Edit scenario url here
       "data": "water" // Edit scenario target dataset here
