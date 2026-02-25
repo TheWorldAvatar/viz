@@ -44,7 +44,6 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
 
-
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
   formType: FormType;
@@ -436,7 +435,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           // Close search modal on success
         } else if (props.formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);
-        } else {
+        } else if (props.formType === FormTypeMap.INVOICE) {
+          // Redirect to invoice page on success
+          // Need window.location.href to ensure the page is fully reloaded to fetch the new invoice data from the table
+          window.location.href = buildUrl(Routes.BILLING_INVOICE);
+        }
+        else {
           // Redirect back for other types (add and edit) as users will want to see their changes
           router.back();
         }
