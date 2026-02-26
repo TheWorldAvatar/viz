@@ -19,7 +19,7 @@
           "ROLE_PROTECTED_PAGES=/role,/protected,/pages",
           "ROLE=viz:protected",
           "ASSET_PREFIX=/visualisation",
-          "REGISTRY_BACKEND=http://vis-backend-agent:8080/vis-backend-agent",
+          "REGISTRY_BACKEND_URL=http://vis-backend-agent:8080/vis-backend-agent",
           "REGISTRY_TASK_ATTACHMENT_URL=http://registry-attachment:8000"
         ],
         "Secrets": [
