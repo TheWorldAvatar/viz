@@ -38,7 +38,7 @@ Additionally, there is a tutorial in the [example](./example/) directory, includ
 
 Specific endpoints must be set as environment variables in order for the viz to call the right endpoints on the serverside. These endpoints are all optional and if left blank, will not execute the associated calls.
 
-1) `REGISTRY_BACKEND`: Sets the endpoint to the `VizBackendAgent` endpoint eg `https://example.org/vis-backend-agent` (close it without /) to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](./doc/form.md).
+1) `REGISTRY_BACKEND_URL`: Sets the endpoint to the `VizBackendAgent` endpoint eg `https://example.org/vis-backend-agent` (close it without /) to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](./doc/form.md).
 2) `REGISTRY_TASK_ATTACHMENT_URL`: Sets the endpoint to the target attachment directory for each registry task
 
 ## 2. Development
