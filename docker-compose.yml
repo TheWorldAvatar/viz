@@ -12,6 +12,7 @@ services:
       REACT_APP_USE_GEOSERVER_PROXY: false
       REACT_APP_SERVER_URL: http://localhost:3000 # only applicable for REACT_APP_USE_GEOSERVER_PROXY = true
       ASSET_PREFIX: # Fill this in if app is to be deployed at a reverse proxy path other than root
+      REGISTRY_BACKEND: # Fill this in if you require a registry backend, otherwise leave blank
       REGISTRY_TASK_ATTACHMENT_URL: # Fill this in if you require a task attachment backend, otherwise leave blank
     secrets:
       - mapbox_username

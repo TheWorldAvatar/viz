@@ -1,11 +1,10 @@
-import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { buildUrl } from "utils/client-utils";
+import { getBackendApi } from "utils/internal-api-services";
 import { logColours } from "utils/logColours";
 
-const agentBaseApi: string = await SettingsStore.getRegistryURL();
 const apiVersion: string = "5.30.5";
 
 /**
@@ -15,20 +14,11 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
-    return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
-    );
-  }
-
-  // Generate API url and parameters based on the slug
   const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
 
   if (!url) {
     return NextResponse.json(
@@ -73,16 +63,6 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
-    return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
-    );
-  }
-
   const body = await parseBody(req);
   if (!body) {
     return NextResponse.json(
@@ -91,10 +71,11 @@ export async function POST(
     );
   }
 
-  // Generate API url and parameters based on the slug
   const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -123,16 +104,6 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
-    return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
-    );
-  }
-
   const body = await parseBody(req);
   if (!body) {
     return NextResponse.json(
@@ -141,10 +112,11 @@ export async function PUT(
     );
   }
 
-  // Generate API url and parameters based on the slug
   const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -172,20 +144,11 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
-    return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
-    );
-  }
-
-  // Generate API url and parameters based on the slug
   const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -203,6 +166,31 @@ export async function DELETE(
     bearerToken
   );
   return NextResponse.json(responseBody);
+}
+
+/**
+ * Generates the API endpoint and parameters based on the slug and search params from the request.
+ *
+ * @param {InternalApiIdentifier} slug An identifier for the specific API call.
+ * @param {NextRequest} req Request object to extract search params and headers.
+ */
+function genApiEndpoint(
+  slug: InternalApiIdentifier,
+  req: NextRequest
+): string | NextResponse<AgentResponseBody> {
+  try {
+    const agentBaseApi: string = getBackendApi("REGISTRY_BACKEND");
+    const { searchParams } = new URL(req.url);
+    return makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  } catch (_error) {
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: { code: 503, message: "Backend service not configured for registry." },
+      },
+      { status: 503 }
+    );
+  }
 }
 
 function makeExternalEndpoint(

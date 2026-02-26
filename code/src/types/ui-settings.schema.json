@@ -102,9 +102,6 @@
                 "registry": {
                     "type": "object",
                     "properties": {
-                        "url": {
-                            "type": "string"
-                        },
                         "data": {
                             "type": "string"
                         },
@@ -131,9 +128,6 @@
                 "billing": {
                     "type": "object",
                     "properties": {
-                        "url": {
-                            "type": "string"
-                        },
                         "paths": {
                             "type": "array",
                             "items": {
