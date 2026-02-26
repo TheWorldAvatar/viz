@@ -57,7 +57,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `type`: OPTIONAL. This modifies the thumbnail's behavior based on the specified type. By default, it redirect users to the specified url. When set to `file`, the thumbnail allows users to send a local file to the target URL. When set to `date`, the thumbnail allows users to select a date range before being redirected to the requested url.
 - `resources`: optional configuration for additional resources. They follow the following format
   - `resourceName`: indicates the type of resource required - dashboard, scenario, registry, billing
-    - `url`: optional. url of the resource
+    - `url`: optional that is only used with scenario and dashboard resources
     - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
     - `paths`: optional array of strings to denote the names of the registry resources
 
@@ -67,14 +67,12 @@ Note that resources are optional and their configuration options can differ from
 - Scenario: Enables scenario selection in the `map` page
   - `url`: This is a required field that specifies the URL from which the scenarios and their settings can be retrieved. In this example, the URL points to a stack deployed on theworldavatar.io platform.
   - `data`: This required field indicates the target dataset that should be accessible to the user from the central stack. In the given example, the data field is set to "water", indicating that the scenario contains information only on water assets and not power nor telecoms etc.
-- Registry: Activate the `registry` page based on the backend resource indicated in the `url` parameter. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent). Note that this will require at least one of the `data` or `paths` property to be valid.
+- Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
-- Registry attachments: Requires the `registry` page. Enables the viz to display the attachments in the file directly in the task pages.
-  - `url`: The domain url that is a prefix to the directory of individual contract files. Eg if the files are stored at `https://example.org/id1/`, the domain url is `https://example.org`.
-- Billing: Activate the `billing` page based on the backend resource indicated in the `url` parameter. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI. This endpoint should target the [VisBackendAgent](https://github.com/TheWorldAvatar/Viz-Backend-Agent).
+- Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
     - `type`: Must be either `account`, `pricing`, or `activity`
     - `key`: The entity type of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
@@ -114,7 +112,6 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
       "url": "" // Edit dashboard url here
     },
     "registry": {
-      "url": "http://sample.org/agent/", // Edit registry agent's API here
       "data": "type", // Specify only the type to reach the registry page of interest
       "paths": ["resource one", "resource two"] // Specify the resource names on the backend
     },
