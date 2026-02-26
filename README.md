@@ -3,9 +3,6 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/TheWorldAvatar/viz?logo=github&logoColor=181717&color=18677a&labelColor=157b3e)
 [![Docker Image CI](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/TheWorldAvatar/viz/actions/workflows/docker-ci.yml)
 
-
-
-
 # The World Avatar (TWA) Visualisation Platform
 
 A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisation Platform, or TWA-ViP) has been created to standardise and simplify the visualisation process. The goal is that a developer does not have to worry about web design, and can set up a reasonable web visualisation displaying landing pages, descriptions, dashboards, and geospatial maps, with some basic configuration files. The platform is the next stage of the Visualisation Framework, and can be [almost deployed following the same steps](#1-precursor).
@@ -15,6 +12,7 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
 - [The World Avatar (TWA) Visualisation Platform](#the-world-avatar-twa-visualisation-platform)
   - [Table of Contents](#table-of-contents)
   - [1. Precursor](#1-precursor)
+    - [1.1 Endpoints](#11-endpoints)
   - [2. Development](#2-development)
   - [3. Production](#3-production)
     - [3.1 Docker Deployment](#31-docker-deployment)
@@ -30,12 +28,18 @@ As the visualisation platform is intended to be customisable, [configuration fil
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
 2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.40.0`
 
-
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
 For any authorisation capabilities, refer to the [Authorisation](#4-authorisation) section. When releasing the platform as a developer, be sure to review the [Releasing](#5-release) section.
 
 Additionally, there is a tutorial in the [example](./example/) directory, including a sample directory setup. Please check it out if you are setting up the platform for the first time.
+
+### 1.1 Endpoints
+
+Specific endpoints must be set as environment variables in order for the viz to call the right endpoints on the serverside. These endpoints are all optional and if left blank, will not execute the associated calls.
+
+1) `REGISTRY_BACKEND_URL`: Sets the endpoint to the `VizBackendAgent` endpoint eg `https://example.org/vis-backend-agent` (close it without /) to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](./doc/form.md).
+2) `REGISTRY_TASK_ATTACHMENT_URL`: Sets the endpoint to the target attachment directory for each registry task
 
 ## 2. Development
 
@@ -51,9 +55,9 @@ The recommended way to develop viz is to work in the `devcontainer` configured i
 - `KEYCLOAK` optional environment variable to set up an authorisation server if required; See [authorisation server](#4-authorisation) for more details
 - `REDIS_SOCKET_ADDRESS` optional environment variable to set up the REDIS endpoint; Defaults to `localhost:6379`; Usually requires local IP (`191.xx.xxx.xxx`) or `host.docker.internal` for standalone containers or `<stack-name>-redis:6379` for the stack deployment.
 
-3) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
-4) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
-5) Once installed, run `pnpm dev` from the `code` directory to set up the app server. Alternatively, go to the debug tab on VSCode to run in debug mode.
+1) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
+2) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
+3) Once installed, run `pnpm dev` from the `code` directory to set up the app server. Alternatively, go to the debug tab on VSCode to run in debug mode.
 
 ## 3. Production
 
@@ -69,9 +73,9 @@ This deployment section is for a standalone Docker container:
 
 To view the example configuration, simply run `docker compose up` in this directory when the mapbox secrets are created. Allow a few minutes for the viz to build and start up, you will see a message in the terminal when this is completed, as well as your docker container's status. When this has started you should see a visualisation at `http://localhost:3000` if you are running locally. For further configuration, look at the following steps.
 
-2. (optional) Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly. Skip this step to use the default example config.
-3. (optional) Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
-4. (optional) If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
+1. (optional) Set up the custom [configuration files](./doc/config.md) in the `code/public` directory. If you wish to use other file paths, please update the `volumes` value in `docker-compose.yml` accordingly. Skip this step to use the default example config.
+2. (optional) Set up the [authorisation server](#4-authorisation) and update the relevant environment variables in `docker-compose.yml` if required.
+3. (optional) If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in the docker compose file, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above
@@ -83,10 +87,12 @@ To view the example configuration, simply run `docker compose up` in this direct
 For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Deploy/stacks/dynamic/stack-manager), please spin up the stack with the `visualisation` service as documented [here](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Deploy/stacks/dynamic/stack-manager#example---including-a-visualisation). The key steps are as follows:
 
 1. The `mapbox_username` and `mapbox_api_key` are available as Docker secrets
-  - `redis_password` only if redis is required
-2. Copy the [custom visualisation service config](./example/vip.json) to the `stack-manager/inputs/config/services` directory
-3. In the stack config file, `visualisation` is included as part of the `services` `includes` list
-4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
+
+- `redis_password` only if redis is required
+
+1. Copy the [custom visualisation service config](./example/vip.json) to the `stack-manager/inputs/config/services` directory
+2. In the stack config file, `visualisation` is included as part of the `services` `includes` list
+3. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above.
@@ -94,10 +100,10 @@ For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAva
 > [!NOTE]
 > For typical self-hosted TWA deployment, `ASSET_PREFIX` must contain both the top level nginx path, and the stack level nginx path. e.g. if the app is deployed in a stack at `theworldavatar.io/demos/app`, then `ASSET_PREFIX` should be set to `demos/app/visualisation` to account for the `visualisation` path added by the stack level nginx.
 
-5. Specify the directory holding the configuration files that should be mapped to a volume called `webspace` or your preference
-6. Populate this directory with your require visualisation configuration files
-7. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables at `docker-compose.yml` if required.
-8. Start the stack as per usual
+1. Specify the directory holding the configuration files that should be mapped to a volume called `webspace` or your preference
+2. Populate this directory with your require visualisation configuration files
+3. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables at `docker-compose.yml` if required.
+4. Start the stack as per usual
 
 > Custom Service
 
@@ -124,6 +130,7 @@ PROTECTED_PAGES: /page,/otherpage ## (optional) pages that a user must be logged
 ROLE_PROTECTED_PAGES: /role,/protected,/pages ## (optional) pages that require a user to have a given REALM or CLIENT role
 ROLE: viz:protected ## (optional) the role required for the above list
 ```
+
 If `PROTECTED_PAGES` is not defined, all pages will be protected.
 
 The [`keycloak.json` file](./code/keycloak.json) must also be correctly configured with the realm name, its address, and the client used for this app. By default, it is configured for the sample auth server committed in [auth](/auth/), but it should be edited if another auth server is in use.

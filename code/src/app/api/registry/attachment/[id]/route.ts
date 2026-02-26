@@ -1,8 +1,7 @@
-import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 import { UrlExistsResponse } from "types/backend-agent";
-import { UISettings } from "types/settings";
 import { buildUrl } from "utils/client-utils";
+import { getBackendApi } from "utils/internal-api-services";
 
 /**
  * Get request handler
@@ -11,15 +10,20 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<UrlExistsResponse>> {
-  const uiSettings: UISettings = SettingsStore.getUISettings();
-  const urlPrefix: string = uiSettings?.resources?.["registry-attachment"]?.url ?? "";
-  if (urlPrefix == "") {
-    return null;
-  }
+  let url: string = "";
+  try {
 
-  // Build url with id parameter
-  const { id } = await params;
-  const url: string = buildUrl(urlPrefix, id, "");
+    const urlPrefix: string = getBackendApi("REGISTRY_TASK_ATTACHMENT");
+    // Build url with id parameter
+    const { id } = await params;
+    url = buildUrl(urlPrefix, id, "");
+  } catch (_error) {
+    console.error("Ignoring attachment checks as no valid API is configured!");
+    return NextResponse.json({
+      url,
+      exists: false,
+    });
+  }
 
   // Get the Accept-Language header from the request
   const acceptLanguageHeader = req.headers.get("accept-language");
