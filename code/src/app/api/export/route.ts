@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from "next/server";
+import { AgentResponseBody } from "types/backend-agent";
+import { buildUrl } from "utils/client-utils";
+import { getBackendApi } from "utils/internal-api-services";
+
+/**
+ * GET request handler
+ */
+export async function GET(
+  req: NextRequest,
+): Promise<NextResponse<AgentResponseBody>> {
+  const { searchParams } = new URL(req.url);
+  const id: string = searchParams.get("id");
+  const resource: string = searchParams.get("resource");
+
+  let url: string;
+  try {
+    const urlPrefix: string = getBackendApi("FILE_EXPORTER");
+    url = buildUrl(urlPrefix, "export", resource);
+  } catch (_error) {
+    return NextResponse.json(
+      { apiVersion: "1.0.0", error: { code: 503, message: "File exporter service is not configured!" } },
+      { status: 503 }
+    );
+  }
+
+  const apiSearchParams: URLSearchParams = new URLSearchParams({ id });
+  const apiUrl: string = `${url}?${apiSearchParams.toString()}`;
+  const response = await fetch(apiUrl, {
+    method: "GET",
+    headers: {
+      "Accept": req.headers.get("accept"),
+    },
+  });
+  if (response.ok) {
+    return NextResponse.json(
+      { apiVersion: "1.0.0", data: { message: apiUrl } },
+      { status: 200 }
+    );
+  }
+  const data: AgentResponseBody = await response.json();
+  return NextResponse.json(data);
+}

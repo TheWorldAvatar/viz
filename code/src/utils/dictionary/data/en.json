@@ -13,6 +13,7 @@
     "refresh": "Refresh",
     "backTo": "back to {replace}s",
     "export": "Export",
+    "exportAsCsv": "Export as CSV",
     "upload": "Upload file",
     "overview": "overview",
     "file": "Choose file",

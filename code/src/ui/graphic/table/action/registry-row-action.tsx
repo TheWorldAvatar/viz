@@ -10,6 +10,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
+import { FileDownloadButton } from "ui/interaction/action/download/file-download";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
@@ -364,6 +365,18 @@ export default function RegistryRowAction(
               setIsOpenBillingModal(true);
             }}
           />}
+          <FileDownloadButton
+            id={recordId}
+            resource={props.recordType}
+            format="csv"
+            leftIcon="download"
+            variant="ghost"
+            size="md"
+            iconSize="medium"
+            className="w-full justify-start"
+            label={dict.action.exportAsCsv}
+            disabled={isLoading}
+          />
           {isActionAllowed("DRAFT_TEMPLATE") &&
             <DraftTemplateButton
               rowId={[props.row.id]}
