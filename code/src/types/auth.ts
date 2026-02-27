@@ -57,6 +57,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],
         status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED, RegistryStatusMap.INVOICED],
     },
+    VIEW_INVOICE: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.INVOICE],
+        status: [],
+    },
     DELETE: {
         permission: "delete",
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.GENERAL, LifecycleStageMap.ACCOUNT, LifecycleStageMap.PRICING],

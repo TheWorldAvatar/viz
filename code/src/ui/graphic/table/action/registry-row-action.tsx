@@ -365,30 +365,32 @@ export default function RegistryRowAction(
               setIsOpenBillingModal(true);
             }}
           />}
-          <FileDownloadButton
-            id={recordId}
-            resource={props.recordType}
-            format="csv"
-            leftIcon="download"
-            variant="ghost"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
-            label={dict.action.exportAsCsv}
-            disabled={isLoading}
-          />
-          <FileDownloadButton
-            id={recordId}
-            resource={props.recordType}
-            format="pdf"
-            leftIcon="download"
-            variant="ghost"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
-            label={dict.action.exportAsPdf}
-            disabled={isLoading}
-          />
+          {isActionAllowed("VIEW_INVOICE") &&
+            <FileDownloadButton
+              id={recordId}
+              resource={props.recordType}
+              format="csv"
+              leftIcon="download"
+              variant="ghost"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={dict.action.exportAsCsv}
+              disabled={isLoading}
+            />}
+          {isActionAllowed("VIEW_INVOICE") &&
+            <FileDownloadButton
+              id={recordId}
+              resource={props.recordType}
+              format="pdf"
+              leftIcon="download"
+              variant="ghost"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={dict.action.exportAsPdf}
+              disabled={isLoading}
+            />}
           {isActionAllowed("DRAFT_TEMPLATE") &&
             <DraftTemplateButton
               rowId={[props.row.id]}
