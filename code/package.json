@@ -22,8 +22,8 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@floating-ui/react": "^0.27.15",
-    "@formatjs/intl-localematcher": "^0.6.1",
+    "@floating-ui/react": "^0.27.17",
+    "@formatjs/intl-localematcher": "^0.8.0",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.0.2",
     "@reduxjs/toolkit": "^2.8.2",
@@ -52,9 +52,9 @@
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
     "keycloak-connect": "^26.1.1",
-    "mapbox-gl": "3.14.0",
+    "mapbox-gl": "3.18.1",
     "markdown-it": "^14.1.0",
-    "material-symbols": "^0.34.1",
+    "material-symbols": "^0.40.2",
     "moment": "^2.30.1",
     "negotiator": "^1.0.0",
     "next": "^15.4.10",
@@ -77,7 +77,7 @@
     "tailwindcss": "^4.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -86,7 +86,7 @@
     "eslint-config-next": "^15.3.1",
     "eslint-plugin-react": "^7.37.5",
     "fs": "0.0.1-security",
-    "globals": "^16.0.0",
+    "globals": "^17.3.0",
     "ts-jest": "^29.3.2",
     "ts-typed-json": "^0.3.2",
     "typescript-eslint": "^8.30.1"
