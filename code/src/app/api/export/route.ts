@@ -38,6 +38,12 @@ export async function GET(
       { status: 200 }
     );
   }
+  if (response.status === 404) {
+    return NextResponse.json(
+      { apiVersion: "1.0.0", error: { code: 404, message: "Invalid API configured!" } },
+      { status: 404 }
+    );
+  }
   const data: AgentResponseBody = await response.json();
   return NextResponse.json(data);
 }
