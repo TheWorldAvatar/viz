@@ -14,6 +14,7 @@
     "backTo": "back to {replace}s",
     "export": "Export",
     "exportAsCsv": "Export as CSV",
+    "exportAsPdf": "Export as PDF",
     "upload": "Upload file",
     "overview": "overview",
     "file": "Choose file",

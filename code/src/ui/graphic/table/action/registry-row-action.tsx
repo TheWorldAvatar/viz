@@ -377,6 +377,18 @@ export default function RegistryRowAction(
             label={dict.action.exportAsCsv}
             disabled={isLoading}
           />
+          <FileDownloadButton
+            id={recordId}
+            resource={props.recordType}
+            format="pdf"
+            leftIcon="download"
+            variant="ghost"
+            size="md"
+            iconSize="medium"
+            className="w-full justify-start"
+            label={dict.action.exportAsPdf}
+            disabled={isLoading}
+          />
           {isActionAllowed("DRAFT_TEMPLATE") &&
             <DraftTemplateButton
               rowId={[props.row.id]}
