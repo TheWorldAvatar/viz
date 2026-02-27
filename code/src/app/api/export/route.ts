@@ -13,6 +13,15 @@ export async function GET(
   const id: string = searchParams.get("id");
   const resource: string = searchParams.get("resource");
 
+  // Validate the resource parameter to prevent SSRF/path manipulation
+  const resourcePattern = /^[A-Za-z0-9._-]+$/;
+  if (!resource || !resourcePattern.test(resource)) {
+    return NextResponse.json(
+      { apiVersion: "1.0.0", error: { code: 400, message: "Invalid resource parameter" } },
+      { status: 400 }
+    );
+  }
+
   let url: string;
   try {
     const urlPrefix: string = getBackendApi("FILE_EXPORTER");
