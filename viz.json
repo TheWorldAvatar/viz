@@ -19,6 +19,7 @@
           "ROLE_PROTECTED_PAGES=/role,/protected,/pages",
           "ROLE=viz:protected",
           "ASSET_PREFIX=/visualisation",
+          "FILE_EXPORTER_URL=http://file-exporter:8080",
           "REGISTRY_BACKEND_URL=http://vis-backend-agent:8080/vis-backend-agent",
           "REGISTRY_TASK_ATTACHMENT_URL=http://registry-attachment:8000"
         ],
