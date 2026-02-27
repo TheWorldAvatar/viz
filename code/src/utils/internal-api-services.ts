@@ -1,5 +1,6 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { AgentResponseBody, BackendApis, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { toast } from "ui/interaction/action/toast/toast";
 import { parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
@@ -182,6 +183,30 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);
   return await res.json();
+}
+
+/**
+ * Queries the file export API to retrieve a download URL for a specific resource, then initiates the file download.
+ * 
+ * @param {string} id The target ID of the resource.
+ * @param {string} resource The resource type.
+ * @param {"csv" | "pdf"} format The file format (csv or pdf).
+ */
+export async function queryFileExportAPI(id: string, resource: string, format: "csv" | "pdf"): Promise<void> {
+  const mimeType: string = format === "pdf" ? "application/pdf" : "text/csv";
+  const searchParams: URLSearchParams = new URLSearchParams({ id, resource });
+  const url: string = `${assetPrefix}/api/export?${searchParams.toString()}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: { "Accept": mimeType, },
+  });
+  const agentResponse: AgentResponseBody = await response.json();
+  if (response.ok) {
+    window.location.href = agentResponse.data?.message;
+  } else {
+    toast(agentResponse.error?.message, "error");
+  }
 }
 
 /**

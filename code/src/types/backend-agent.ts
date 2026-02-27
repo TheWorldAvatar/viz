@@ -4,6 +4,7 @@ import { SparqlResponseField } from "./form";
 export const BackendApis = {
   REGISTRY_BACKEND: process.env.REGISTRY_BACKEND_URL,
   REGISTRY_TASK_ATTACHMENT: process.env.REGISTRY_TASK_ATTACHMENT_URL,
+  FILE_EXPORTER: process.env.FILE_EXPORTER_URL,
 };
 
 export type AgentResponseBody = {

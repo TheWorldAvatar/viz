@@ -13,6 +13,8 @@
     "refresh": "Aktualisieren",
     "backTo": "Zurück zur {replace}",
     "export": "Exportieren",
+    "exportAsCsv": "Als CSV exportieren",
+    "exportAsPdf": "Als PDF exportieren",
     "upload": "Datei hochladen",
     "overview": "Auftragsübersicht",
     "file": "Datei auswählen",

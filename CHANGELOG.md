@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.62.0
+
+### Changes
+
+- Added file exporting capabilities for invoices
+- Added file exporter url env variable
+
 ## 5.61.0
 
 ### Changes
