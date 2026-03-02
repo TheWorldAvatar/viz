@@ -51,6 +51,8 @@ export default function FileModal(props: Readonly<FileModalProps>) {
         }
       } finally {
         setIsUploading(false);
+        // Closes the modal after download is triggered
+        props.setIsOpen(false);
       }
     } else if (props.type === "file") {
       let response;
