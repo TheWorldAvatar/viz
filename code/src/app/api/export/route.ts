@@ -41,11 +41,19 @@ export async function GET(
       "Accept": req.headers.get("accept"),
     },
   });
+
   if (response.ok) {
-    return NextResponse.json(
-      { apiVersion: "1.0.0", data: { message: apiUrl } },
-      { status: 200 }
-    );
+    const contentType = response.headers.get("content-type") || "application/octet-stream";
+    const contentDisposition = response.headers.get("content-disposition") || "attachment";
+    const fileBuffer: ArrayBuffer = await response.arrayBuffer();
+    return new NextResponse(fileBuffer, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Content-Disposition": contentDisposition,
+        "Access-Control-Expose-Headers": "Content-Disposition",
+      },
+    })
   }
 
   return NextResponse.json(

@@ -21,6 +21,11 @@ export type AgentResponseBody = {
   };
 };
 
+export type FileResponse = {
+  blob: Blob;
+  file: string;
+};
+
 export type HistoryDetails = {
   message: SparqlResponseField;
   timestamp: SparqlResponseField;
