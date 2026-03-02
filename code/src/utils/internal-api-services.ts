@@ -1,7 +1,8 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
+import { DateRange } from "react-day-picker";
 import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
 import { toast } from "ui/interaction/action/toast/toast";
-import { parseStringsForUrls } from "./client-utils";
+import { getUTCDate, parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
@@ -186,6 +187,26 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
 }
 
 /**
+ * Queries the file export API from UI-settings to retrieve the file download object and name.
+ * 
+ * @param {string} id The index of the target link in the UI settings links array.
+ * @param {DateRange} selectedDate The selected date range.
+ */
+export async function queryDefaultFileExportAPI(id: string, selectedDate: DateRange): Promise<FileResponse | undefined> {
+  const searchParams: URLSearchParams = new URLSearchParams({
+    id,
+    resource: "default",
+    start: Math.floor(
+      getUTCDate(selectedDate.from).getTime() / 1000
+    ).toString(),
+    end: Math.floor(
+      getUTCDate(selectedDate.to).getTime() / 1000
+    ).toString(),
+  });
+  return execFileExportAPI(searchParams, "csv");
+}
+
+/**
  * Queries the file export API to retrieve the file download object and name.
  * 
  * @param {string} id The target ID of the resource.
@@ -193,8 +214,12 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
  * @param {"csv" | "pdf"} format The file format (csv or pdf).
  */
 export async function queryFileExportAPI(id: string, resource: string, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
-  const mimeType: string = format === "pdf" ? "application/pdf" : "text/csv";
   const searchParams: URLSearchParams = new URLSearchParams({ id, resource });
+  return execFileExportAPI(searchParams, format);
+}
+
+async function execFileExportAPI(searchParams: URLSearchParams, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
+  const mimeType: string = format === "pdf" ? "application/pdf" : "text/csv";
   const url: string = `${assetPrefix}/api/export?${searchParams.toString()}`;
 
   const response = await fetch(url, {

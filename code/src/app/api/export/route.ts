@@ -1,11 +1,13 @@
+import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody } from "types/backend-agent";
+import { UISettings } from "types/settings";
 import { buildUrl } from "utils/client-utils";
 import { getBackendApi } from "utils/internal-api-services";
 
 /**
  * GET request handler
- */
+*/
 export async function GET(
   req: NextRequest,
 ): Promise<NextResponse<AgentResponseBody>> {
@@ -21,20 +23,32 @@ export async function GET(
       { status: 400 }
     );
   }
+  let apiUrl: string;
+  // When retrieving resources configured in the UI settings
+  if (resource === "default") {
+    // The ID corresponds to the index of the link in the UI settings links array
+    const settings: UISettings = SettingsStore.getUISettings();
+    const url: string = settings.links[parseInt(id)]?.url;
 
-  let url: string;
-  try {
-    const urlPrefix: string = getBackendApi("FILE_EXPORTER");
-    url = buildUrl(urlPrefix, "export", resource);
-  } catch (_error) {
-    return NextResponse.json(
-      { apiVersion: "1.0.0", error: { code: 503, message: "File exporter service is not configured!" } },
-      { status: 503 }
-    );
+    const apiSearchParams: URLSearchParams = new URLSearchParams();
+    apiSearchParams.append("start", searchParams.get("start"));
+    apiSearchParams.append("end", searchParams.get("end"));
+    apiUrl = `${url}?${apiSearchParams.toString()}`;
+  } else {
+    let url: string;
+    try {
+      const urlPrefix: string = getBackendApi("FILE_EXPORTER");
+      url = buildUrl(urlPrefix, "export", resource);
+    } catch (_error) {
+      return NextResponse.json(
+        { apiVersion: "1.0.0", error: { code: 503, message: "File exporter service is not configured!" } },
+        { status: 503 }
+      );
+    }
+
+    const apiSearchParams: URLSearchParams = new URLSearchParams({ id });
+    apiUrl = `${url}?${apiSearchParams.toString()}`;
   }
-
-  const apiSearchParams: URLSearchParams = new URLSearchParams({ id });
-  const apiUrl: string = `${url}?${apiSearchParams.toString()}`;
   const response = await fetch(apiUrl, {
     method: "GET",
     headers: {
