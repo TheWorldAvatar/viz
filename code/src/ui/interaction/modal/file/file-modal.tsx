@@ -16,7 +16,7 @@ import DateInput from "ui/interaction/input/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { getInitialDate, handleDownload } from "utils/client-utils";
-import { queryDefaultFileExportAPI } from "utils/internal-api-services";
+import { queryDefaultFileExportAPI, postFileUploadAPI } from "utils/internal-api-services";
 
 interface FileModalProps {
   url: string;
@@ -55,22 +55,17 @@ export default function FileModal(props: Readonly<FileModalProps>) {
         props.setIsOpen(false);
       }
     } else if (props.type === "file") {
-      let response;
       if (formData.files.length > 0) {
         const fileData: FormData = new FormData();
         fileData.append("file", formData.files[0]);
         try {
           setIsUploading(true);
-          response = await fetch(props.url, {
-            method: "POST",
-            body: fileData,
-          });
-          const jsonResp: AgentResponseBody = await response.json();
+          const respBody: AgentResponseBody = await postFileUploadAPI(props.url, fileData);
           toast(
-            jsonResp?.data?.message || jsonResp?.error?.message,
-            jsonResp?.error ? "error" : "success"
+            respBody?.data?.message || respBody?.error?.message,
+            respBody?.error ? "error" : "success"
           );
-          // Closes the modal only if response is successfull
+          // Closes the modal after request is completed
           setTimeout(() => {
             props.setIsOpen(false);
           }, 2000);

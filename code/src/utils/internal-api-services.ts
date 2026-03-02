@@ -187,6 +187,21 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
 }
 
 /**
+ * Sends the file for uploading to the API from UI-settings.
+ * 
+ * @param {string} id The index of the target link in the UI settings links array.
+ * @param {FormData} fileData The selected file data.
+ */
+export async function postFileUploadAPI(id: string, fileData: FormData): Promise<AgentResponseBody> {
+  const url: string = `${assetPrefix}/api/upload?id=${id}`;
+  const res = await fetch(url, {
+    method: "POST",
+    body: fileData,
+  });
+  return await res.json();
+}
+
+/**
  * Queries the file export API from UI-settings to retrieve the file download object and name.
  * 
  * @param {string} id The index of the target link in the UI settings links array.
