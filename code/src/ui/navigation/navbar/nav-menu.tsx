@@ -78,16 +78,15 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   const handleMenuToggle = () => {
     if (isMenuExpanded) {
-      setNonMobileNavMenuWidth("w-1/20 md:w-1/15");
+      setNonMobileNavMenuWidth("md:w-1/20");
     } else {
-      setNonMobileNavMenuWidth("w-1/5");
+      setNonMobileNavMenuWidth("w-2/13");
     }
-
     setIsMenuExpanded(!isMenuExpanded);
   };
 
   return (
-    <div className={`${nonMobileNavMenuWidth} overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
+    <div className={`${nonMobileNavMenuWidth} w-2/13 overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
       <NavMenuContents
         {...props}
         isMenuExpanded={isMenuExpanded}
