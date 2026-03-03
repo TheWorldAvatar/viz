@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.62.1
+
+### Changes
+
+- Resolved the visibility of external file upload and export endpoints to all users on client-side
+
 ## 5.62.0
 
 ### Changes

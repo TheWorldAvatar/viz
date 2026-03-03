@@ -298,7 +298,23 @@ export function isValidCoordinates(lng: number, lat: number): boolean {
   );
 };
 
+/**
+ * Handles the download of a Blob object.
+ *
+ * @param blob The Blob object to download.
+ * @param fileName The name of the file to be downloaded.
+ */
+export function handleDownload(blob: Blob, fileName: string): void {
+  const url: string = window.URL.createObjectURL(blob);
+  const link: HTMLAnchorElement = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
 
+  link.parentNode?.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
 
 /**
  * Builds a URL by concatenating the provided arguments with '/' as a separator.

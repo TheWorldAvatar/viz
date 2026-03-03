@@ -1,7 +1,8 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
-import { AgentResponseBody, BackendApis, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { DateRange } from "react-day-picker";
+import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
 import { toast } from "ui/interaction/action/toast/toast";
-import { parseStringsForUrls } from "./client-utils";
+import { getUTCDate, parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
@@ -186,26 +187,69 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
 }
 
 /**
- * Queries the file export API to retrieve a download URL for a specific resource, then initiates the file download.
+ * Sends the file for uploading to the API from UI-settings.
+ * 
+ * @param {string} id The index of the target link in the UI settings links array.
+ * @param {FormData} fileData The selected file data.
+ */
+export async function postFileUploadAPI(id: string, fileData: FormData): Promise<AgentResponseBody> {
+  const url: string = `${assetPrefix}/api/upload?id=${id}`;
+  const res = await fetch(url, {
+    method: "POST",
+    body: fileData,
+  });
+  return await res.json();
+}
+
+/**
+ * Queries the file export API from UI-settings to retrieve the file download object and name.
+ * 
+ * @param {string} id The index of the target link in the UI settings links array.
+ * @param {DateRange} selectedDate The selected date range.
+ */
+export async function queryDefaultFileExportAPI(id: string, selectedDate: DateRange): Promise<FileResponse | undefined> {
+  const searchParams: URLSearchParams = new URLSearchParams({
+    id,
+    resource: "default",
+    start: Math.floor(
+      getUTCDate(selectedDate.from).getTime() / 1000
+    ).toString(),
+    end: Math.floor(
+      getUTCDate(selectedDate.to).getTime() / 1000
+    ).toString(),
+  });
+  return execFileExportAPI(searchParams, "csv");
+}
+
+/**
+ * Queries the file export API to retrieve the file download object and name.
  * 
  * @param {string} id The target ID of the resource.
  * @param {string} resource The resource type.
  * @param {"csv" | "pdf"} format The file format (csv or pdf).
  */
-export async function queryFileExportAPI(id: string, resource: string, format: "csv" | "pdf"): Promise<void> {
-  const mimeType: string = format === "pdf" ? "application/pdf" : "text/csv";
+export async function queryFileExportAPI(id: string, resource: string, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
   const searchParams: URLSearchParams = new URLSearchParams({ id, resource });
+  return execFileExportAPI(searchParams, format);
+}
+
+async function execFileExportAPI(searchParams: URLSearchParams, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
+  const mimeType: string = format === "pdf" ? "application/pdf" : "text/csv";
   const url: string = `${assetPrefix}/api/export?${searchParams.toString()}`;
 
   const response = await fetch(url, {
     method: "GET",
-    headers: { "Accept": mimeType, },
+    headers: { "Accept": mimeType },
   });
-  const agentResponse: AgentResponseBody = await response.json();
   if (response.ok) {
-    window.location.href = agentResponse.data?.message;
+    const file: string = response.headers.get("content-disposition")
+      .split("filename=")[1];
+    const blob = await response.blob();
+    return { blob, file };
   } else {
+    const agentResponse: AgentResponseBody = await response.json();
     toast(agentResponse.error?.message, "error");
+    return undefined;
   }
 }
 

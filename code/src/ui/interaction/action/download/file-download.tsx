@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { FileResponse } from "types/backend-agent";
 
 import Button, { ButtonProps } from "ui/interaction/button";
+import { handleDownload } from "utils/client-utils";
 import { queryFileExportAPI } from "utils/internal-api-services";
 
 interface FileDownloadButtonProps extends ButtonProps {
@@ -29,7 +31,10 @@ export function FileDownloadButton({
   const downloadFile = async () => {
     setLoading(true);
     try {
-      await queryFileExportAPI(id, resource, format);
+      const fileResponse: FileResponse = await queryFileExportAPI(id, resource, format);
+      if (fileResponse) {
+        handleDownload(fileResponse.blob, fileResponse.file);
+      }
     } finally {
       setLoading(false);
     }
