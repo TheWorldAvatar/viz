@@ -102,9 +102,6 @@
                 "registry": {
                     "type": "object",
                     "properties": {
-                        "url": {
-                            "type": "string"
-                        },
                         "data": {
                             "type": "string"
                         },
@@ -128,24 +125,9 @@
                     ],
                     "additionalProperties": false
                 },
-                "registry-attachment": {
-                    "type": "object",
-                    "properties": {
-                        "url": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "url"
-                    ],
-                    "additionalProperties": false
-                },
                 "billing": {
                     "type": "object",
                     "properties": {
-                        "url": {
-                            "type": "string"
-                        },
                         "paths": {
                             "type": "array",
                             "items": {

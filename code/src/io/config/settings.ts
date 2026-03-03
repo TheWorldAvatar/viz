@@ -98,14 +98,6 @@ export default class SettingsStore {
     }
   }
 
-  public static async getRegistryURL(): Promise<string> {
-    if (!this.UI_SETTINGS) {
-      this.readUISettings();
-    }
-    return this.UI_SETTINGS.resources?.registry?.url ?? "";
-  }
-
-
   /**
    * Reads the data settings for populating the map
   */

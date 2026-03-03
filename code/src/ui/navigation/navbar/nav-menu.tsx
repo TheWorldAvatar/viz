@@ -11,7 +11,7 @@ import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { NavBarItem, NavBarItemType } from "./navbar-item";
+import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
 
 
@@ -22,8 +22,7 @@ export interface NavMenuProps {
 }
 
 interface NavMenuContentsProps extends NavMenuProps {
-  setFileUploadEndpoint: React.Dispatch<React.SetStateAction<string>>;
-  setFileModalType: React.Dispatch<React.SetStateAction<NavBarItemType>>;
+  setFileModalSettings: React.Dispatch<React.SetStateAction<NavBarItemSettings>>;
   setIsFileUploadModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isMenuExpanded?: boolean;
   setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,8 +38,7 @@ interface NavMenuContentsProps extends NavMenuProps {
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
-  const [fileModalType, setFileModalType] = useState<NavBarItemType>("default");
+  const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
 
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
@@ -61,16 +59,15 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           <NavMenuContents
             {...props}
             isMenuExpanded={isMenuExpanded}
-            setFileUploadEndpoint={setFileUploadEndpoint}
-            setFileModalType={setFileModalType}
+            setFileModalSettings={setFileModalSettings}
             setIsFileUploadModalOpen={setIsFileModalOpen}
             setIsMenuOpen={setIsMenuOpen}
           />
         </PopoverActionButton>
         {isFileModalOpen && (
           <FileModal
-            url={fileUploadEndpoint}
-            type={fileModalType}
+            url={fileModalSettings?.url}
+            type={fileModalSettings?.type}
             isOpen={isFileModalOpen}
             setIsOpen={setIsFileModalOpen}
           />
@@ -94,16 +91,15 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
       <NavMenuContents
         {...props}
         isMenuExpanded={isMenuExpanded}
-        setFileUploadEndpoint={setFileUploadEndpoint}
-        setFileModalType={setFileModalType}
+        setFileModalSettings={setFileModalSettings}
         setIsFileUploadModalOpen={setIsFileModalOpen}
         setIsMenuOpen={setIsMenuOpen}
         handleMenuToggle={handleMenuToggle}
       />
       {isFileModalOpen && (
         <FileModal
-          url={fileUploadEndpoint}
-          type={fileModalType}
+          url={fileModalSettings?.url}
+          type={fileModalSettings?.type}
           isOpen={isFileModalOpen}
           setIsOpen={setIsFileModalOpen}
         />
@@ -146,14 +142,12 @@ function NavMenuContents(
   );
 
   function createHandleFileClick(
-    url: string,
-    type: NavBarItemType
+    settings: NavBarItemSettings
   ): React.MouseEventHandler<HTMLDivElement> {
     return (event: React.MouseEvent<HTMLDivElement>): void => {
       event.preventDefault();
-      props.setFileUploadEndpoint(url);
       props.setIsFileUploadModalOpen(true);
-      props.setFileModalType(type);
+      props.setFileModalSettings(settings);
       props.setIsMenuOpen?.(false);
     };
   }
@@ -336,7 +330,10 @@ function NavMenuContents(
               handleClick={
                 !externalLink.type || externalLink.type === "default"
                   ? undefined
-                  : createHandleFileClick(externalLink.url, externalLink.type)
+                  : createHandleFileClick({
+                    ...externalLink,
+                    url: index.toString(), // Pass index as string to identify which link was clicked
+                  })
               }
               isMenuExpanded={props.isMenuExpanded}
             />

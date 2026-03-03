@@ -2,6 +2,26 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.62.1
+
+### Changes
+
+- Resolved the visibility of external file upload and export endpoints to all users on client-side
+
+## 5.62.0
+
+### Changes
+
+- Added file exporting capabilities for invoices
+- Added file exporter url env variable
+
+## 5.61.0
+
+### Changes
+
+- Refactor registry urls to be set as an environment variable instead of the `ui-settings.json`
+- Affects the default registry and registry task attachment url
+
 ## 5.60.5
 
 ### Bug fixes

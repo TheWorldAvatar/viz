@@ -5,9 +5,8 @@ import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
 import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
-import { useRouter } from "next/navigation";
 import { DateRange } from "react-day-picker";
-import { AgentResponseBody } from "types/backend-agent";
+import { AgentResponseBody, FileResponse } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
@@ -16,7 +15,8 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
-import { getInitialDate, getUTCDate } from "utils/client-utils";
+import { getInitialDate, handleDownload } from "utils/client-utils";
+import { queryDefaultFileExportAPI, postFileUploadAPI } from "utils/internal-api-services";
 
 interface FileModalProps {
   url: string;
@@ -40,50 +40,32 @@ export default function FileModal(props: Readonly<FileModalProps>) {
     useRef<HTMLFormElement>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<DateRange>(getInitialDate());
-  const router = useRouter();
 
   const onFormSubmit = form.handleSubmit(async (formData: FieldValues) => {
     if (props.type === "date") {
-      const searchParams: URLSearchParams = new URLSearchParams({
-        start: Math.floor(
-          getUTCDate(selectedDate.from).getTime() / 1000
-        ).toString(),
-        end: Math.floor(
-          getUTCDate(selectedDate.to).getTime() / 1000
-        ).toString(),
-      });
       try {
         setIsUploading(true);
-        const response = await fetch(`${props.url}?${searchParams.toString()}`);
-        if (response.ok) {
-          router.push(`${props.url}?${searchParams.toString()}`);
-        } else {
-          const jsonBody: AgentResponseBody = await response.json();
-          toast(jsonBody.error?.message, "error");
+        const fileResponse: FileResponse = await queryDefaultFileExportAPI(props.url, selectedDate);
+        if (fileResponse) {
+          handleDownload(fileResponse.blob, fileResponse.file);
         }
-      } catch (error) {
-        console.error("There was an error uploading the file:", error);
-        toast(dict.message.exportError, "error");
       } finally {
         setIsUploading(false);
+        // Closes the modal after download is triggered
+        props.setIsOpen(false);
       }
     } else if (props.type === "file") {
-      let response;
       if (formData.files.length > 0) {
         const fileData: FormData = new FormData();
         fileData.append("file", formData.files[0]);
         try {
           setIsUploading(true);
-          response = await fetch(props.url, {
-            method: "POST",
-            body: fileData,
-          });
-          const jsonResp: AgentResponseBody = await response.json();
+          const respBody: AgentResponseBody = await postFileUploadAPI(props.url, fileData);
           toast(
-            jsonResp?.data?.message || jsonResp?.error?.message,
-            jsonResp?.error ? "error" : "success"
+            respBody?.data?.message || respBody?.error?.message,
+            respBody?.error ? "error" : "success"
           );
-          // Closes the modal only if response is successfull
+          // Closes the modal after request is completed
           setTimeout(() => {
             props.setIsOpen(false);
           }, 2000);
