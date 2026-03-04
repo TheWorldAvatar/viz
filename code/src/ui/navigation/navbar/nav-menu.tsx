@@ -42,7 +42,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
 
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [nonMobileNavMenuWidth, setNonMobileNavMenuWidth] = useState<string>("w-1/5");
+  const [nonMobileNavMenuWidth, setNonMobileNavMenuWidth] = useState<string>("w-2/13");
 
   if (props.isMobile) {
     return (
@@ -86,7 +86,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   };
 
   return (
-    <div className={`${nonMobileNavMenuWidth} w-2/13 overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
+    <div className={`${nonMobileNavMenuWidth} overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
       <NavMenuContents
         {...props}
         isMenuExpanded={isMenuExpanded}
