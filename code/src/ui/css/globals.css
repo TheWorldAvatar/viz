@@ -45,6 +45,11 @@
     --ring: oklch(92.8% 0.006 264.531);
     --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
 
+    /* Info input */
+    --info-background: oklch(97% 0.014 254.604);
+    --info-foreground: oklch(48.8% 0.243 264.376);
+    --info-border: oklch(88.2% 0.059 254.128);
+
     /* Status Colours */
     --status-open-bg: hsl(156, 40%, 86%);
     --status-open-text: hsl(159, 75%, 16%);
@@ -100,6 +105,11 @@
     --ring: oklch(1 0 0 / 10%);
     --ring-hover: oklch(0.95 0.04 286 / 0.5);
 
+    /* Info input */
+    --info-background: #0d1117;
+    --info-foreground: oklch(70.7% 0.165 254.624);
+    --info-border: oklch(70.7% 0.165 254.624);
+
     /* Status Colours */
     --status-open-bg: hsl(156, 40%, 20%);
     --status-open-text: hsl(156, 40%, 86%);
@@ -149,6 +159,9 @@
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
   --color-ring-hover: var(--ring-hover);
+  --color-info-background: var(--info-background);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-border: var(--info-border);
   --input: var(--input);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
