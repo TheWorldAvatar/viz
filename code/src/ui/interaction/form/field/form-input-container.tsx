@@ -37,18 +37,17 @@ export default function FormInputContainer(
 
   const description =
     props.field.description[VALUE_KEY] != ""
-      ? `${props.field.description[VALUE_KEY]}${
-          props.selectedOption
-            ? `\n\n${props.selectedOption?.label.value}: ${props.selectedOption?.description.value}`
-            : ""
-        }`
+      ? `${props.field.description[VALUE_KEY]}${props.selectedOption
+        ? `\n\n${props.selectedOption?.label.value}: ${props.selectedOption?.description.value}`
+        : ""
+      }`
       : "";
 
   return (
     <>
       <div className="flex flex-wrap items-center justify-between">
         <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
-          <span className="text-lg  font-semibold flex items gap-1.5">
+          <span className="text-lg font-semibold flex items gap-1.5">
             {parseWordsForLabels(label)}
             {props.error && "*"}
             <Tooltip text={description} placement="right">
@@ -56,7 +55,7 @@ export default function FormInputContainer(
             </Tooltip>
           </span>
           {props.formatLabel && (
-            <span className=" text-gray-600 text-sm">{props.formatLabel}</span>
+            <span className="text-muted-foreground text-sm">{props.formatLabel}</span>
           )}
         </label>
       </div>

@@ -36,8 +36,8 @@ export default function NumericInputField(
     return props.field.step
       ? Number(props.field.step[VALUE_KEY])
       : props.field.datatype === "integer"
-      ? 1
-      : 0.01;
+        ? 1
+        : 0.01;
   }, [props.field]);
   const scaleFactor: number = useMemo(() => {
     if (props.field.datatype === "integer") {
