@@ -67,7 +67,7 @@ export default function Button({
   // Define styles for each variant
   const variantStyles = {
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-    link: "text-primary-foreground underline-offset-4 hover:underline",
+    link: "text-blue-500 underline-offset-4 hover:underline",
     success:
       "text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600",
     warning:
