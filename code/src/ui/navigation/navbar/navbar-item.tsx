@@ -62,7 +62,7 @@ export function NavBarItem(
           : props.isMenuExpanded
             ? "p-4 gap-4"
             : "p-3 rounded-full"
-          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
+          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring`}
         onClick={props.handleClick ?? handleClick}
       >
         <div
@@ -80,13 +80,13 @@ export function NavBarItem(
         </div>
         <div className="flex flex-1 flex-col">
           <h3
-            className={`text-foreground text-base font-bold  ${props.isMenuExpanded ? "" : "hidden"
+            className={`text-foreground text-base font-bold ${props.isMenuExpanded ? "" : "hidden"
               }`}
           >
             {props.title}
           </h3>
           {!props.isMobile && props.isMenuExpanded && (
-            <p className="text-sm text-gray-500 dark:text-foreground/85 wrap-break-word hyphens-auto">
+            <p className="text-sm text-muted-foreground wrap-break-word hyphens-auto">
               {props.caption}
             </p>
           )}

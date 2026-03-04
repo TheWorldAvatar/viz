@@ -163,7 +163,7 @@ function NavMenuContents(
     >
       {!props.isMobile && (
         <button
-          className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 
+          className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-ring 
             ${props.isMenuExpanded
               ? "ml-auto rounded-md"
               : "items-center rounded-full"
