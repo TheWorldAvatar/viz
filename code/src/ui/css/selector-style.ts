@@ -44,7 +44,7 @@ export const selectorStyles: StylesConfig<
   noOptionsMessage: (provided) => ({
     ...provided,
     padding: "0.25rem 0.5rem",
-    backgroundColor: "var(--background-muted)",
+    backgroundColor: "var(--muted)",
     boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
     color: "var(--background-inverse-primary)",
     fontSize: "var(--font-size-primary)",
@@ -89,8 +89,8 @@ export const selectorStyles: StylesConfig<
       backgroundColor: isFocused
         ? "var(--background-tertiary)"
         : isSelected
-        ? "var(--background-muted)"
-        : "var(--background-muted)",
+          ? "var(--muted)"
+          : "var(--muted)",
       color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",
@@ -107,16 +107,16 @@ export const selectorStyles: StylesConfig<
       width: "fit-content",
       "&::before": isSelected
         ? {
-            content: "'✓'",
-            color: "var(--text-color-primary)",
-            fontWeight: "bold",
-            marginRight: "0.5rem",
-            fontSize: "0.875rem",
-          }
+          content: "'✓'",
+          color: "var(--text-color-primary)",
+          fontWeight: "bold",
+          marginRight: "0.5rem",
+          fontSize: "0.875rem",
+        }
         : {
-            content: "''",
-            marginRight: "1rem",
-          },
+          content: "''",
+          marginRight: "1rem",
+        },
     };
   },
 };
@@ -166,7 +166,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
   noOptionsMessage: (provided) => ({
     ...provided,
     padding: "0.25rem 0.5rem",
-    backgroundColor: "var(--background-muted)",
+    backgroundColor: "var(--muted)",
     boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
     color: "var(--background-inverse-primary)",
     fontSize: "var(--font-size-primary)",
@@ -220,8 +220,8 @@ export const checkboxInputsSelectorStyles: StylesConfig<
       backgroundColor: isFocused
         ? "var(--background-tertiary)"
         : isSelected
-        ? "var(--background)"
-        : "var(--background)",
+          ? "var(--background)"
+          : "var(--background)",
       color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",
