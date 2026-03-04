@@ -41,7 +41,7 @@
     --border-tertiary: #9898af;
 
     /* Button */
-    --destructive: oklch(63.472% 0.17115 20.398 / 0.76);
+    --destructive: oklch(0.577 0.245 27.325);
     --ring: oklch(92.8% 0.006 264.531);
     --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
 
