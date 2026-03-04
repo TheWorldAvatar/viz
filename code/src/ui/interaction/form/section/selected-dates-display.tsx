@@ -60,7 +60,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                         {sortedDatesWithIndex.map(({ date, originalIndex }, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-between border-b last:border-b-0 border-border "
+                                className="flex items-center justify-between border-b last:border-b-0 border-border"
                             >
                                 <div className="flex items-center ">
                                     <span className="text-sm font-medium text-foreground">
