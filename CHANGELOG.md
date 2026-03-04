@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.62.2
+
+### Changes
+
+- UI/UX improvements: Fixed an issue with the table not responding when the side navigation is toggled. Fixed table scrollbar overflowing issues.
+
 ## 5.62.1
 
 ### Changes
