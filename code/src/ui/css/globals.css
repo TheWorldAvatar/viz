@@ -19,6 +19,7 @@
     --input: oklch(0.922 0 0);
     --accent: rgba(35, 103, 118, 25%);
     --accent-foreground: #0d1117;
+    --focus:oklch(70.5% 0.015 286.067);
 
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
@@ -74,6 +75,7 @@
     --input: oklch(0.922 0 0);
     --accent: rgba(35, 103, 118, 25%);
     --accent-foreground: #0d1117;
+    --focus: oklch(70.5% 0.015 286.067);
 
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
@@ -143,6 +145,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-focus: var(--focus);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
   --color-ring-hover: var(--ring-hover);
