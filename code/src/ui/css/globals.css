@@ -25,9 +25,6 @@
     --background-tertiary: #e5e5e5;
 
     --background-inverse-primary: rgba(44, 47, 51, 80%);
-    --background-inverse-primary-rgb: 13, 17, 23;
-    --background-inverse-secondary: #30363d;
-    --background-inverse-tertiary: #434c57;
 
     /* Text colors */
     --text-color-primary: #30363d;
@@ -91,9 +88,6 @@
     --background-tertiary: #434c57;
 
     --background-inverse-primary: rgba(44, 47, 51, 80%);
-    --background-inverse-primary-rgb: 249, 249, 249;
-    --background-inverse-secondary: #efefef;
-    --background-inverse-tertiary: #e5e5e5;
 
     /* Text colors */
     --text-color-primary: #dde9ff;
