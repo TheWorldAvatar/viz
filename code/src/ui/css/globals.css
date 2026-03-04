@@ -31,7 +31,6 @@
     --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
-    --text-color-title-primary: #0b4452;
 
     /* Select input colors */
     --text-color-selected: #146a7d;
@@ -43,11 +42,6 @@
     --border-tertiary: #9898af;
 
     /* Button */
-    --description-box: #82b29a;
-    --button-color-primary: #82b29a;
-    --button-color-primary-active: #6fa085;
-    --button-color-secondary: #18677a;
-    --button-color-secondary-hover: #0b4452;
     --destructive: oklch(63.472% 0.17115 20.398 / 0.76);
     --ring: oklch(92.8% 0.006 264.531);
     --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
@@ -94,7 +88,6 @@
     --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
-    --text-color-title-primary: #0b4452;
 
     --text-color-selected: #146a7d;
 
@@ -104,11 +97,6 @@
     --border-tertiary: #7f8ea1;
 
     /* Button */
-    --description-box: #2b816f;
-    --button-color-primary: #4f7a5f;
-    --button-color-primary-active: #42664f;
-    --button-color-secondary: #7acadb;
-    --button-color-secondary-hover: #35a7c0;
     --destructive: oklch(0.704 0.191 22.216);
     --ring: oklch(27.4% 0.006 286.033);
     --ring-hover: oklch(27.4% 0.006 286.033 / 0.5);
