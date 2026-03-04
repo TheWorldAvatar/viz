@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "NODE_ENV=production node --env-file='.env.local' server.js",
     "start-docker": "NODE_ENV=production node server.js",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "jest",
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit"
   },
@@ -81,11 +81,10 @@
   "devDependencies": {
     "@eslint/js": "^9.39.3",
     "@next/eslint-plugin-next": "16.1.6",
-    "eslint": "^10.0.2",
+    "eslint": "^9.39.3",
     "eslint-config-next": "16.1.6",
     "eslint-plugin-react": "^7.37.5",
     "fs": "0.0.1-security",
-    "globals": "^16.5.0",
     "ts-jest": "^29.4.6",
     "ts-typed-json": "^0.3.2",
     "typescript-eslint": "^8.56.1"
