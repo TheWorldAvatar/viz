@@ -41,8 +41,8 @@
 
     /* Button */
     --destructive: oklch(63.472% 0.17115 20.398 / 0.76);
-    --ring: oklch(92.8% 0.006 264.531);
-    --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
+    --ring: oklch(0.922 0 0);
+    --ring-hover: oklch(0.85 0.03 264);
 
     /* Status Colours */
     --status-open-bg: hsl(156, 40%, 86%);
@@ -95,8 +95,8 @@
 
     /* Button */
     --destructive: oklch(0.704 0.191 22.216);
-    --ring: oklch(27.4% 0.006 286.033);
-    --ring-hover: oklch(27.4% 0.006 286.033 / 0.5);
+    --ring: oklch(1 0 0 / 10%);
+    --ring-hover: oklch(0.95 0.04 286 / 0.5);
 
     /* Status Colours */
     --status-open-bg: hsl(156, 40%, 20%);
