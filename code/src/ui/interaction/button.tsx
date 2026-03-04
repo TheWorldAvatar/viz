@@ -11,7 +11,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   | "secondary"
   | "destructive"
   | "destructiveOutline"
-  | "success"
+  | "info"
   | "warning"
   | "outline"
   | "ghost"
@@ -68,7 +68,7 @@ export default function Button({
   const variantStyles = {
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
     link: "text-blue-500 underline-offset-4 hover:underline",
-    success:
+    info:
       "text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600",
     warning:
       "bg-amber-300 hover:bg-amber-500/80 dark:bg-amber-800 dark:hover:bg-amber-900/80",
