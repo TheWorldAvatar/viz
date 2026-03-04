@@ -112,7 +112,9 @@
       "placenames": "Show / hide place names",
       "terrain": "Toggle 3D terrain",
       "fullscreen": "Toggle fullscreen mode",
-      "selectScenario": "Select another scenario"
+      "selectScenario": "Select another scenario",
+      "collapsePanel": "Collapse panel",
+      "expandPanel": "Expand panel"
     }
   },
   "context": {
@@ -215,9 +217,7 @@
       "registry": "Open registry",
       "help": "Open help page",
       "landingRedirect": "Click to open the '{replace}' page",
-      "fileUpload": "Click to upload a file",
-      "expand": "Expand sidebar",
-      "collapse": "Collapse sidebar"
+      "fileUpload": "Click to upload a file"
     }
   },
   "title": {

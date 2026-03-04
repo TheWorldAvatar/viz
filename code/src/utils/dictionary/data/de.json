@@ -112,7 +112,9 @@
       "placenames": "Ortsnamen ein-/ausblenden",
       "terrain": "3D-Gelände umschalten",
       "fullscreen": "Vollbildmodus umschalten",
-      "selectScenario": "Anderes Szenario auswählen"
+      "selectScenario": "Anderes Szenario auswählen",
+      "collapsePanel": "Panel zusammenklappen",
+      "expandPanel": "Panel erweitern"
     }
   },
   "context": {
@@ -215,9 +217,7 @@
       "registry": "Register öffnen",
       "help": "Hilfeseite öffnen",
       "landingRedirect": "Klicken Sie, um die Seite '{replace}' zu öffnen",
-      "fileUpload": "Klicken Sie zum Hochladen einer Datei",
-      "expand": "Seitenleiste erweitern",
-      "collapse": "Seitenleiste ausblenden"
+      "fileUpload": "Klicken Sie zum Hochladen einer Datei"
     }
   },
   "title": {
