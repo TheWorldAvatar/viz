@@ -16,9 +16,7 @@ import {
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  LifecycleStageMap,
-  RegistryFieldValues,
-  SparqlResponseField,
+  LifecycleStageMap
 } from "types/form";
 import { JsonObject } from "types/json";
 import { ToastConfig, ToastType } from "types/toast";

@@ -24,8 +24,8 @@ export default function DimensionSlider({ data }: DimensionSliderProps) {
     const dispatch = useDispatch();
     const dimensionSliderValue = useSelector(selectDimensionSliderValue);
     const [tempValue, setTempValue] = useState(dimensionSliderValue);
-    
-    const handleChange = (event : React.SyntheticEvent | Event, newValue: number | number[]) => {
+
+    const handleChange = (event: React.SyntheticEvent | Event, newValue: number | number[]) => {
         setTempValue(newValue);
     };
 
