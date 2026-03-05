@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.62.3
+
+### Bug Fixes
+
+- Fixes the issue with the table being scrolled down when side panel is triggered
+
 ## 5.62.2
 
 ### Changes
