@@ -67,7 +67,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
             />
             {!!labelComponent && labelComponent}
             {!labelComponent && label && (
-                <label htmlFor={checkboxId} className="text-base text-muted-foreground">
+                <label htmlFor={checkboxId} className="text-base text-foreground">
                     {label}
                 </label>
             )}
