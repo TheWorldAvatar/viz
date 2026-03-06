@@ -26,11 +26,11 @@
     --secondary-foreground: #0d1117;
 
     /* Accent: highlight for active or emphasised UI elements */
-    --accent: rgba(35, 103, 118, 25%);
+    --accent: #23677640;
     --accent-foreground: #0d1117;
 
     /* Focus ring colour for keyboard navigation indicators */
-    --focus: oklch(70.5% 0.015 286.067);
+    --focus: #9f9fa9;
 
     /* used in .module.css files (scrollbars, context menus, map panels, ribbons) */
     --background-secondary: #efefef;
@@ -41,7 +41,7 @@
 
     /* Text colours used in .module.css files (floating panels, info trees, dropdowns, selectors) */
     --text-color-primary: #30363d;
-    --text-color-secondary: deepskyblue;
+    --text-color-secondary: #00bfff;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
 
@@ -51,16 +51,16 @@
     --border-tertiary: #9898af;
 
     /* Destructive action (delete, cancel, error buttons) */
-    --destructive: oklch(0.54 0.21 27.325);
+    --destructive: #cd171c;
 
     /* For toggle/tab backgrounds */
-    --ring: oklch(92.8% 0.006 264.531);
-    --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
+    --ring: #e5e7eb;
+    --ring-hover: #e5e7eb80;
 
     /* Background, text, and border for info banners/tooltips */
-    --info-background: oklch(97% 0.014 254.604);
-    --info-foreground: oklch(48.8% 0.243 264.376);
-    --info-border: oklch(88.2% 0.059 254.128);
+    --info-background:#eff6ff;
+    --info-foreground: #1447e6;
+    --info-border: #bedbff;
 
     /* Status badge colours: paired bg/text for each status type */
     --status-open-bg: hsl(156, 40%, 86%);
@@ -93,10 +93,10 @@
     --secondary: #236776;
     --secondary-foreground: #0d1117;
 
-    --accent: rgba(35, 103, 118, 25%);
+    --accent: #23677640;
     --accent-foreground: #0d1117;
 
-    --focus: oklch(70.5% 0.015 286.067);
+    --focus: #9f9fa9;
 
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
@@ -104,7 +104,7 @@
     --background-inverse-primary: rgba(44, 47, 51, 80%);
 
     --text-color-primary: #dde9ff;
-    --text-color-secondary: deepskyblue;
+    --text-color-secondary: #00bfff;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
 
@@ -112,14 +112,14 @@
     --border-secondary: #ffffff;
     --border-tertiary: #7f8ea1;
 
-    --destructive: oklch(0.704 0.191 22.216);
+    --destructive: #ff6467;
 
-    --ring: oklch(1 0 0 / 10%);
-    --ring-hover: oklch(0.95 0.04 286 / 0.5);
+    --ring: #ffffff1a;
+    --ring-hover: #ebebff80;
 
     --info-background: #0d1117;
-    --info-foreground: oklch(70.7% 0.165 254.624);
-    --info-border: oklch(70.7% 0.165 254.624);
+    --info-foreground: #51a2ff;
+    --info-border: #51a2ff;
 
     --status-open-bg: hsl(156, 40%, 20%);
     --status-open-text: hsl(156, 40%, 86%);
