@@ -56,7 +56,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
             <input
                 id={checkboxId}
                 type="checkbox"
-                className={`${disabledClasses} ${props.className}  outline-none focus-visible:ring-zinc-400 focus-visible:ring-[3px] focus-visible:ring-offset-1`}
+                className={`${disabledClasses} ${props.className}  outline-none focus-visible:ring-focus focus-visible:ring-[3px] focus-visible:ring-offset-1`}
                 checked={isChecked}
                 onChange={handleInputChange}
                 role="checkbox"
@@ -67,7 +67,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
             />
             {!!labelComponent && labelComponent}
             {!labelComponent && label && (
-                <label htmlFor={checkboxId} className="text-base text-gray-700 dark:text-gray-300">
+                <label htmlFor={checkboxId} className="text-base text-foreground">
                     {label}
                 </label>
             )}

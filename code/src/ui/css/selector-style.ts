@@ -10,7 +10,7 @@ export const selectorStyles: StylesConfig<
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
-    border: isFocused ? "1px solid var(--border)" : "1px solid var(--border)",
+    border: isFocused ? "1px solid var(--focus)" : "1px solid var(--border)",
     height: "2.72rem",
     width: "100%",
     maxWidth: "none",
@@ -20,7 +20,7 @@ export const selectorStyles: StylesConfig<
     cursor: isDisabled ? "not-allowed !important" : "default",
     backgroundColor: "var(--muted)",
     opacity: isDisabled ? "0.75" : "1",
-    boxShadow: isFocused ? "0 0 0 2px var(--border)" : "none",
+    boxShadow: isFocused ? "0 0 0 2px var(--focus)" : "none",
     "&:hover": {
       backgroundColor: "var(--background)",
     },
@@ -44,28 +44,28 @@ export const selectorStyles: StylesConfig<
   noOptionsMessage: (provided) => ({
     ...provided,
     padding: "0.25rem 0.5rem",
-    backgroundColor: "var(--background-muted)",
+    backgroundColor: "var(--muted)",
     boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
     color: "var(--background-inverse-primary)",
     fontSize: "var(--font-size-primary)",
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary-text)",
     marginLeft: "0.5rem",
   }),
   singleValue: (provided, { isDisabled }) => ({
     ...provided,
     color: isDisabled
-      ? "var(--text-color-primary)"
-      : "var(--text-color-primary)",
+      ? "var(--foreground)"
+      : "var(--foreground)",
     fontSize: "var(--font-size-primary)",
     marginLeft: "0.25rem",
   }),
   input: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary)",
   }),
   group: (provided) => ({
@@ -73,7 +73,7 @@ export const selectorStyles: StylesConfig<
   }),
   groupHeading: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     textTransform: "none",
     textWrap: "nowrap",
     fontWeight: "600",
@@ -89,14 +89,14 @@ export const selectorStyles: StylesConfig<
       backgroundColor: isFocused
         ? "var(--background-tertiary)"
         : isSelected
-        ? "var(--background-muted)"
-        : "var(--background-muted)",
+          ? "var(--muted)"
+          : "var(--muted)",
       color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",
       fontSize: "var(--font-size-primary)",
       "&:hover": {
-        color: "var(--text-color-primary)",
+        color: "var(--foreground)",
         backgroundColor: isSelected
           ? "var(--background-secondary)"
           : "var(--background-tertiary)",
@@ -107,16 +107,16 @@ export const selectorStyles: StylesConfig<
       width: "fit-content",
       "&::before": isSelected
         ? {
-            content: "'✓'",
-            color: "var(--text-color-primary)",
-            fontWeight: "bold",
-            marginRight: "0.5rem",
-            fontSize: "0.875rem",
-          }
+          content: "'✓'",
+          color: "var(--foreground)",
+          fontWeight: "bold",
+          marginRight: "0.5rem",
+          fontSize: "0.875rem",
+        }
         : {
-            content: "''",
-            marginRight: "1rem",
-          },
+          content: "''",
+          marginRight: "1rem",
+        },
     };
   },
 };
@@ -138,7 +138,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     cursor: isDisabled ? "not-allowed" : "default",
     backgroundColor: "var(--background)",
     opacity: isDisabled ? "0.75" : "1",
-    boxShadow: isFocused ? "0 0 0 2px var(--border)" : "none",
+    boxShadow: isFocused ? "0 0 0 2px var(--focus)" : "none",
     "&:hover": {
       backgroundColor: "var(--muted)",
       cursor: "pointer",
@@ -166,28 +166,28 @@ export const checkboxInputsSelectorStyles: StylesConfig<
   noOptionsMessage: (provided) => ({
     ...provided,
     padding: "0.25rem 0.5rem",
-    backgroundColor: "var(--background-muted)",
+    backgroundColor: "var(--muted)",
     boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
     color: "var(--background-inverse-primary)",
     fontSize: "var(--font-size-primary)",
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary-text)",
     marginLeft: "0.5rem",
   }),
   singleValue: (provided, { isDisabled }) => ({
     ...provided,
     color: isDisabled
-      ? "var(--text-color-primary)"
-      : "var(--text-color-primary)",
+      ? "var(--foreground)"
+      : "var(--foreground)",
     fontSize: "var(--font-size-primary)",
     marginLeft: "0.25rem",
   }),
   input: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary)",
   }),
   group: (provided) => ({
@@ -195,7 +195,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
   }),
   groupHeading: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     textTransform: "none",
     textWrap: "nowrap",
     fontWeight: "600",
@@ -220,14 +220,14 @@ export const checkboxInputsSelectorStyles: StylesConfig<
       backgroundColor: isFocused
         ? "var(--background-tertiary)"
         : isSelected
-        ? "var(--background)"
-        : "var(--background)",
+          ? "var(--background)"
+          : "var(--background)",
       color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",
       fontSize: "var(--font-size-primary)",
       "&:hover": {
-        color: "var(--text-color-primary)",
+        color: "var(--foreground)",
         backgroundColor: isSelected
           ? "var(--background-secondary)"
           : "var(--background-tertiary)",

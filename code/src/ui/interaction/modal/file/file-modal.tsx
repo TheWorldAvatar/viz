@@ -157,7 +157,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
               </Button>
 
               <Button
-                variant="success"
+                variant="info"
                 leftIcon={props.type === "date" ? "download" : "file_upload"}
                 type="button"
                 onClick={onSubmit}
