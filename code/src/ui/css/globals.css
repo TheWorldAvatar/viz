@@ -6,48 +6,63 @@
 **/
 @media (prefers-color-scheme: light) {
   :root {
-    /* Background colors */
+    /* Page background & text */
     --background: #ffffff;
     --foreground: #30363d;
+
+    /* Muted surface & text: for subtle panels (nav, sidebars, cards) */
     --muted: #fafafa;
     --muted-foreground: #5a5a5a;
+
+    /* Default border colour */
     --border: #a5a5b3;
+
+    /* Primary action: for main CTA buttons/links and key user actions */
     --primary: #82b29a;
     --primary-foreground: #0d1117;
+
+    /* Secondary action: for supporting actions */
     --secondary: #236776;
     --secondary-foreground: #0d1117;
-    --input: oklch(0.922 0 0);
+
+    /* Accent: highlight for active or emphasised UI elements */
     --accent: rgba(35, 103, 118, 25%);
     --accent-foreground: #0d1117;
-    --focus:oklch(70.5% 0.015 286.067);
 
+    /* Focus ring colour for keyboard navigation indicators */
+    --focus: oklch(70.5% 0.015 286.067);
+
+    /* used in .module.css files (scrollbars, context menus, map panels, ribbons) */
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
 
+    /* Overlay background: semi-transparent dark surface for modals */
     --background-inverse-primary: rgba(44, 47, 51, 80%);
 
-    /* Text colors */
+    /* Text colours used in .module.css files (floating panels, info trees, dropdowns, selectors) */
     --text-color-primary: #30363d;
     --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
 
-    /* Border colors */
+    /* Border colours used in .module.css files (context menus, info trees, floating panels, selectors) */
     --border-primary: #dbdbdb;
     --border-secondary: #a5a5b3;
     --border-tertiary: #9898af;
 
-    /* Button */
+    /* Destructive action (delete, cancel, error buttons) */
     --destructive: oklch(0.54 0.21 27.325);
+
+    /* For toggle/tab backgrounds */
     --ring: oklch(92.8% 0.006 264.531);
     --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
 
-    /* Info input */
+    /* Background, text, and border for info banners/tooltips */
     --info-background: oklch(97% 0.014 254.604);
     --info-foreground: oklch(48.8% 0.243 264.376);
     --info-border: oklch(88.2% 0.059 254.128);
 
-    /* Status Colours */
+    /* Status badge colours: paired bg/text for each status type */
     --status-open-bg: hsl(156, 40%, 86%);
     --status-open-text: hsl(159, 75%, 16%);
     --status-assigned-bg: hsl(0, 0%, 90%);
@@ -64,19 +79,23 @@
 **/
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Background colors */
     --background: #151515;
     --foreground: #dde9ff;
+
     --muted: #0a0a0a;
     --muted-foreground: #c7c7cf;
+
     --border: #6b6b78;
+
     --primary: #4f7a5f;
     --primary-foreground: #0d1117;
+
     --secondary: #236776;
     --secondary-foreground: #0d1117;
-    --input: oklch(0.922 0 0);
+
     --accent: rgba(35, 103, 118, 25%);
     --accent-foreground: #0d1117;
+
     --focus: oklch(70.5% 0.015 286.067);
 
     --background-secondary: #30363d;
@@ -84,28 +103,24 @@
 
     --background-inverse-primary: rgba(44, 47, 51, 80%);
 
-    /* Text colors */
     --text-color-primary: #dde9ff;
     --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
 
-    /* Border colors */
     --border-primary: #434b55;
     --border-secondary: #ffffff;
     --border-tertiary: #7f8ea1;
 
-    /* Button */
     --destructive: oklch(0.704 0.191 22.216);
+
     --ring: oklch(1 0 0 / 10%);
     --ring-hover: oklch(0.95 0.04 286 / 0.5);
 
-    /* Info input */
     --info-background: #0d1117;
     --info-foreground: oklch(70.7% 0.165 254.624);
     --info-border: oklch(70.7% 0.165 254.624);
 
-    /* Status Colours */
     --status-open-bg: hsl(156, 40%, 20%);
     --status-open-text: hsl(156, 40%, 86%);
     --status-assigned-bg: hsl(0, 0%, 25%);
@@ -135,7 +150,12 @@
   --smallest-icon-size: 0.6rem;
 }
 
-/* Variables for Tailwind CSS, so they can be accessd as classes  */
+/*
+ * Tailwind colour-token bridge.
+ * Each --color-* variable maps a raw CSS variable to a Tailwind utility class.
+ * In .tsx files prefer Tailwind classes (e.g. bg-primary, text-muted-foreground).
+ * Use raw var(--…) only in .module.css or inline styles where Tailwind isn't available.
+ */
 @theme {
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);

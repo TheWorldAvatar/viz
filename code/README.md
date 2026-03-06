@@ -23,6 +23,7 @@ This document is split into three key sections: [Architecture](#1-architecture),
     - [2.2 Code conventions](#22-code-conventions)
     - [React components](#react-components)
     - [2.3 Client-Side](#23-client-side)
+    - [2.4 Colour Usage](#24-colour-usage)
   - [3. Local Development Workflow](#3-local-development-workflow)
     - [3.1 Requirements](#31-requirements)
   - [3.2 Installation](#32-installation)
@@ -158,6 +159,65 @@ class Button extends React.Component<ButtonProps> {
 ### 2.3 Client-Side
 
 Additionally, reusable components are provided to facilitate this. For navigation, `AppLink` is available at `ui/navigation/link/link.tsx`. For graphics, use the default `<Image>` element provided by next
+
+### 2.4 Colour Usage
+
+All colours are declared as CSS custom properties in `src/ui/css/globals.css` with light and dark variants. The `@theme` block maps each variable to a Tailwind utility class — **always prefer these Tailwind classes in `.tsx` files** (e.g. `bg-primary`, `text-muted-foreground`). Use raw `var(--…)` only in `.module.css` or inline styles.
+
+#### Core Background & Text
+
+| Variable | Tailwind class | Purpose |
+| --- | --- | --- |
+| `--background` | `bg-background` | Main page background |
+| `--foreground` | `text-foreground` | Default body text |
+| `--muted` | `bg-muted` | Subtle panels — nav, sidebars, cards |
+| `--muted-foreground` | `text-muted-foreground` | Secondary/helper text |
+| `--ring` / `--ring-hover` | `bg-ring`, `bg-ring-hover` | Toggle/tab highlight backgrounds |
+
+#### Actions & Interactions
+
+| Variable | Tailwind class | Purpose |
+| --- | --- | --- |
+| `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` | Primary call-to-action buttons and key links |
+| `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` | Secondary or supporting actions |
+| `--destructive` | `bg-destructive` | Delete, cancel, or error-related actions |
+| `--accent` / `--accent-foreground` | `bg-accent`, `text-accent-foreground` | Hover, active, or selected UI highlight |
+
+#### Borders & Focus states
+
+| Variable | Tailwind class | Purpose |
+| --- | --- | --- |
+| `--border` | `border-border` | Default border colour |
+| `--focus` | `ring-focus` | Keyboard focus ring indicator |
+
+#### Informational
+
+| Variable | Tailwind class | Purpose |
+| --- | --- | --- |
+| `--info-background` | `bg-info-background` | Info banner/tooltip background |
+| `--info-foreground` | `text-info-foreground` | Info banner text |
+| `--info-border` | `border-info-border` | Info banner border |
+
+#### Status Badges
+
+| Variable | Tailwind class | Purpose |
+| --- | --- | --- |
+| `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` | Open / success status |
+| `--status-assigned-bg/text` | `bg-status-assigned-bg`, `text-status-assigned-text` | Assigned status |
+| `--status-issue-bg/text` | `bg-status-issue-bg`, `text-status-issue-text` | Issue / warning status |
+| `--status-cancelled-bg/text` | `bg-status-cancelled-bg`, `text-status-cancelled-text` | Cancelled / error status |
+
+#### Legacy Variables
+
+These live in `globals.css` but are consumed **only** in `.module.css` files. Migrate to Tailwind classes when touching these components.
+
+| Variable | Used By |
+| --- | --- |
+| `--background-secondary`, `--background-tertiary` | Scrollbars, context menus, map panels, ribbons |
+| `--background-inverse-primary` | Map popover overlay |
+| `--text-color-primary`, `--text-color-secondary` | Floating panels, info trees, dropdowns |
+| `--text-color-links`, `--text-color-links-hover` | Link colours  |
+| `--border-primary`, `--border-secondary`, `--border-tertiary` | Context menus, info trees, floating panels |
 
 ## 3. Local Development Workflow
 
