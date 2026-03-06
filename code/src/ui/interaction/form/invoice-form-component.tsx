@@ -75,15 +75,17 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
             <div className="grow overflow-y-auto">
-                {refreshFlag ? <FormSkeleton /> :
-                    (<FormComponent
-                        formRef={formRef}
-                        entityType={FormTypeMap.INVOICE}
-                        formType={FormTypeMap.INVOICE}
-                        accountType={props.accountType}
-                        selectedRowIds={tableDescriptor.selectedRowIds}
-                    />
-                    )}
+                <div className="w-full xl:max-w-xl">
+                    {refreshFlag ? <FormSkeleton /> :
+                        (<FormComponent
+                            formRef={formRef}
+                            entityType={FormTypeMap.INVOICE}
+                            formType={FormTypeMap.INVOICE}
+                            accountType={props.accountType}
+                            selectedRowIds={tableDescriptor.selectedRowIds}
+                        />
+                        )}
+                </div>
 
                 {invoiceAccountFilter && <section>
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
