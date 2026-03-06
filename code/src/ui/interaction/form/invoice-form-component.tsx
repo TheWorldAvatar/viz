@@ -62,7 +62,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
 
     return (
         <section className="flex flex-col h-full w-full mx-auto px-4 gap-5 md:px-8 bg-muted justify-between">
-            <header className={`flex flex-row gap-4 pt-10 text-foreground justify-between`}>
+            <header className={`flex flex-row gap-4 pt-10 text-foreground items-baseline`}>
                 <Button
                     leftIcon="arrow_back"
                     variant="outline"
