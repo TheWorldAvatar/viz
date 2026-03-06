@@ -51,21 +51,21 @@ export const selectorStyles: StylesConfig<
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary-text)",
     marginLeft: "0.5rem",
   }),
   singleValue: (provided, { isDisabled }) => ({
     ...provided,
     color: isDisabled
-      ? "var(--text-color-primary)"
-      : "var(--text-color-primary)",
+      ? "var(--foreground)"
+      : "var(--foreground)",
     fontSize: "var(--font-size-primary)",
     marginLeft: "0.25rem",
   }),
   input: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary)",
   }),
   group: (provided) => ({
@@ -73,7 +73,7 @@ export const selectorStyles: StylesConfig<
   }),
   groupHeading: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     textTransform: "none",
     textWrap: "nowrap",
     fontWeight: "600",
@@ -96,7 +96,7 @@ export const selectorStyles: StylesConfig<
       cursor: isDisabled ? "not-allowed" : "default",
       fontSize: "var(--font-size-primary)",
       "&:hover": {
-        color: "var(--text-color-primary)",
+        color: "var(--foreground)",
         backgroundColor: isSelected
           ? "var(--background-secondary)"
           : "var(--background-tertiary)",
@@ -108,7 +108,7 @@ export const selectorStyles: StylesConfig<
       "&::before": isSelected
         ? {
           content: "'✓'",
-          color: "var(--text-color-primary)",
+          color: "var(--foreground)",
           fontWeight: "bold",
           marginRight: "0.5rem",
           fontSize: "0.875rem",
@@ -173,21 +173,21 @@ export const checkboxInputsSelectorStyles: StylesConfig<
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary-text)",
     marginLeft: "0.5rem",
   }),
   singleValue: (provided, { isDisabled }) => ({
     ...provided,
     color: isDisabled
-      ? "var(--text-color-primary)"
-      : "var(--text-color-primary)",
+      ? "var(--foreground)"
+      : "var(--foreground)",
     fontSize: "var(--font-size-primary)",
     marginLeft: "0.25rem",
   }),
   input: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     fontSize: "var(--font-size-primary)",
   }),
   group: (provided) => ({
@@ -195,7 +195,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
   }),
   groupHeading: (provided) => ({
     ...provided,
-    color: "var(--text-color-primary)",
+    color: "var(--foreground)",
     textTransform: "none",
     textWrap: "nowrap",
     fontWeight: "600",
@@ -227,7 +227,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
       cursor: isDisabled ? "not-allowed" : "default",
       fontSize: "var(--font-size-primary)",
       "&:hover": {
-        color: "var(--text-color-primary)",
+        color: "var(--foreground)",
         backgroundColor: isSelected
           ? "var(--background-secondary)"
           : "var(--background-tertiary)",
