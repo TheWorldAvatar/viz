@@ -32,9 +32,6 @@
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
 
-    /* Select input colors */
-    --text-color-selected: #146a7d;
-
     /* Border colors */
     --border-primary: #dbdbdb;
     --border-secondary: #a5a5b3;
@@ -92,8 +89,6 @@
     --text-color-secondary: deepskyblue;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
-
-    --text-color-selected: #146a7d;
 
     /* Border colors */
     --border-primary: #434b55;
@@ -166,7 +161,6 @@
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
-  --color-selected: var(--text-color-selected);
   --color-status-open-bg: var(--status-open-bg);
   --color-status-open-text: var(--status-open-text);
   --color-status-assigned-bg: var(--status-assigned-bg);
