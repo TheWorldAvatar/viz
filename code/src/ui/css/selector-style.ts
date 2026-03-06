@@ -10,7 +10,7 @@ export const selectorStyles: StylesConfig<
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
-    border: isFocused ? "1px solid var(--border)" : "1px solid var(--border)",
+    border: isFocused ? "1px solid var(--focus)" : "1px solid var(--border)",
     height: "2.72rem",
     width: "100%",
     maxWidth: "none",
@@ -20,7 +20,7 @@ export const selectorStyles: StylesConfig<
     cursor: isDisabled ? "not-allowed !important" : "default",
     backgroundColor: "var(--muted)",
     opacity: isDisabled ? "0.75" : "1",
-    boxShadow: isFocused ? "0 0 0 2px var(--border)" : "none",
+    boxShadow: isFocused ? "0 0 0 2px var(--focus)" : "none",
     "&:hover": {
       backgroundColor: "var(--background)",
     },
@@ -138,7 +138,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     cursor: isDisabled ? "not-allowed" : "default",
     backgroundColor: "var(--background)",
     opacity: isDisabled ? "0.75" : "1",
-    boxShadow: isFocused ? "0 0 0 2px var(--border)" : "none",
+    boxShadow: isFocused ? "0 0 0 2px var(--focus)" : "none",
     "&:hover": {
       backgroundColor: "var(--muted)",
       cursor: "pointer",
