@@ -50,7 +50,7 @@ export default function OntologyConceptSelector(
     control,
     name: props.field.fieldId,
   });
-  const registerOptions = getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE));
+  const registerOptions = getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE), dict);
   const effectRan = useRef(false);
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [conceptMappings, setConceptMappings] = useState<OntologyConceptMappings>({});
