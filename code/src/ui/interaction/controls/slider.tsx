@@ -38,7 +38,7 @@ export default function DimensionSlider({ data }: DimensionSliderProps) {
         const firstValue = Array.isArray(value) ? value[0] : value;
         const selectedStep = values.find(step => step.value === firstValue);
         // label is used
-        // eslint-disable-next-line no-unused-vars
+         
         const label = selectedStep ? selectedStep.label : 'Unknown';
 
         dispatch(setValue(value));

@@ -39,7 +39,7 @@ export async function GET(
     try {
       const urlPrefix: string = getBackendApi("FILE_EXPORTER");
       url = buildUrl(urlPrefix, "export", resource);
-    } catch (_error) {
+    } catch {
       return NextResponse.json(
         { apiVersion: "1.0.0", error: { code: 503, message: "File exporter service is not configured!" } },
         { status: 503 }
