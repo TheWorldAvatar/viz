@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 
-import { Icon } from "@mui/material";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
 import { OptionalPage } from "io/config/optional-pages";
@@ -13,6 +12,8 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
+import Button from "ui/interaction/button";
+
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -41,7 +42,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
 
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [nonMobileNavMenuWidth, setNonMobileNavMenuWidth] = useState<string>("w-1/5");
+  const [nonMobileNavMenuWidth, setNonMobileNavMenuWidth] = useState<string>("w-2/13");
 
   if (props.isMobile) {
     return (
@@ -77,11 +78,10 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   const handleMenuToggle = () => {
     if (isMenuExpanded) {
-      setNonMobileNavMenuWidth("w-1/20 md:w-1/15");
+      setNonMobileNavMenuWidth("md:w-1/20");
     } else {
-      setNonMobileNavMenuWidth("w-1/5");
+      setNonMobileNavMenuWidth("w-2/13");
     }
-
     setIsMenuExpanded(!isMenuExpanded);
   };
 
@@ -162,20 +162,20 @@ function NavMenuContents(
         }`}
     >
       {!props.isMobile && (
-        <button
-          className={`flex cursor-pointer mt-4 p-4 justify-end transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 
+        <Button
+          variant="ghost"
+          size="icon"
+          leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+          className={`!flex mt-4 p-7 
             ${props.isMenuExpanded
               ? "ml-auto rounded-md"
-              : "items-center rounded-full"
+              : "items-center !rounded-full"
             }`}
           onClick={props.handleMenuToggle}
-        >
-          <Icon className="material-symbols-outlined">
-            {props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-          </Icon>
-        </button>
+        />
       )}
       {props.settings?.modules?.landing && (
+
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
