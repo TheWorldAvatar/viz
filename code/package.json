@@ -1,6 +1,6 @@
 {
   "name": "viz",
-  "version": "5.63.0",
+  "version": "5.63.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -23,9 +23,9 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@floating-ui/react": "^0.27.19",
-    "@formatjs/intl-localematcher": "^0.6.2",
-    "@mui/icons-material": "^7.3.8",
-    "@mui/material": "^7.3.8",
+    "@formatjs/intl-localematcher": "^0.8.1",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/postcss": "^4.2.1",
     "@tanstack/react-table": "^8.21.3",
@@ -36,7 +36,7 @@
     "@types/mapbox": "^1.6.45",
     "@types/markdown-it": "^14.1.2",
     "@types/negotiator": "^0.6.4",
-    "@types/node": "^22.19.13",
+    "@types/node": "^25.5.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "axios": "^1.13.6",
@@ -45,15 +45,15 @@
     "connect-redis": "^9.0.0",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "framer-motion": "^12.34.5",
+    "framer-motion": "^12.36.0",
     "github-markdown-css": "^5.9.0",
     "gray-matter": "^4.0.3",
-    "jest": "^30.2.0",
-    "jest-environment-jsdom": "^30.2.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "keycloak-connect": "^26.1.1",
-    "mapbox-gl": "3.14.0",
+    "mapbox-gl": "3.20.0",
     "markdown-it": "^14.1.1",
-    "material-symbols": "^0.34.1",
+    "material-symbols": "^0.40.2",
     "moment": "^2.30.1",
     "negotiator": "^1.0.0",
     "next": "16.1.6",
@@ -76,7 +76,7 @@
     "tailwindcss": "^4.2.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",
@@ -87,7 +87,7 @@
     "fs": "0.0.1-security",
     "ts-jest": "^29.4.6",
     "ts-typed-json": "^0.3.2",
-    "typescript-eslint": "^8.56.1"
+    "typescript-eslint": "^8.57.0"
   },
   "packageManager": "pnpm@10.32.1",
   "pnpm": {
