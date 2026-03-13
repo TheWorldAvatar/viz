@@ -1,6 +1,6 @@
 {
 	"name": "Viz Dev Container",
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-25-bookworm",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
 			"nodeGypDependencies": true,
