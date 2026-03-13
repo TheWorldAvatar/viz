@@ -11,7 +11,7 @@
 #
 
 # ---- Base Image ----
-FROM node:25.7-slim AS base
+FROM node:25.8-slim AS base
 RUN npm install -g pnpm@10.32.1
 WORKDIR /twa
 RUN mkdir .public_hash
