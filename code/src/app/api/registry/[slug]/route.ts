@@ -6,15 +6,27 @@ import { getBackendApi } from "utils/internal-api-services";
 import { logColours } from "utils/logColours";
 
 const apiVersion: string = "5.30.5";
+const internalApiIdentifierSet: ReadonlySet<string> = new Set(Object.values(InternalApiIdentifierMap));
+
+function parseInternalApiIdentifier(slug: string): InternalApiIdentifier | null {
+  return internalApiIdentifierSet.has(slug) ? (slug as InternalApiIdentifier) : null;
+}
 
 /**
  * GET request handler
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
+  }
   const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
   if (url instanceof NextResponse) {
     return url;
@@ -61,7 +73,7 @@ export async function GET(
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
   const body = await parseBody(req);
   if (!body) {
@@ -71,7 +83,14 @@ export async function POST(
     );
   }
 
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
+  }
   const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
   if (url instanceof NextResponse) {
     return url;
@@ -102,7 +121,7 @@ export async function POST(
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
   const body = await parseBody(req);
   if (!body) {
@@ -112,7 +131,14 @@ export async function PUT(
     );
   }
 
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
+  }
   const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
   if (url instanceof NextResponse) {
     return url;
@@ -142,9 +168,16 @@ export async function PUT(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
+  }
   const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
   if (url instanceof NextResponse) {
     return url;
@@ -182,7 +215,7 @@ function genApiEndpoint(
     const agentBaseApi: string = getBackendApi("REGISTRY_BACKEND");
     const { searchParams } = new URL(req.url);
     return makeExternalEndpoint(agentBaseApi, slug, searchParams);
-  } catch (_error) {
+  } catch {
     return NextResponse.json(
       {
         apiVersion,

@@ -2,6 +2,11 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.63.0
+
+- Several major vesion dependency bumps incl node and Next
+- Update ESLint config and fix new highlighted lint errors
+
 ## 5.62.3
 
 ### Bug Fixes

@@ -1,7 +1,6 @@
 import { FieldValues, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
-import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 
 import { browserStorageManager } from "state/browser-storage-manager";
@@ -25,9 +24,9 @@ import {
   TYPE_KEY,
   VALUE_KEY
 } from "types/form";
-import { SelectOptionType } from "../dropdown/simple-selector";
 import { REPLACE_DICT_KEY } from "utils/constants";
 import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
+import { SelectOptionType } from "../dropdown/simple-selector";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -507,13 +506,14 @@ function updateDependentProperty(
  *
  * @param {PropertyShape} field The SHACL restrictions for the specific property
  * @param {string} formType The type of form.
+ * @param {Dictionary} dict The dictionary mappings.
  */
 export function getRegisterOptions(
   field: PropertyShape,
-  formType: string
+  formType: string,
+  dict: Dictionary
 ): RegisterOptions {
   const options: RegisterOptions = {};
-  const dict: Dictionary = useDictionary();
 
   // The field is required if this is currently not the search form and SHACL defines them as optional
   // Also required for start and end search period
