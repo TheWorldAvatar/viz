@@ -299,7 +299,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
         pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-          "PUT",
+          "POST",
           JSON.stringify(formData));
         break;
       }
