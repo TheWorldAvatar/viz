@@ -16,7 +16,6 @@ import {
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  LifecycleStageMap,
   LifecycleStageMap
 } from "types/form";
 import { JsonObject } from "types/json";
