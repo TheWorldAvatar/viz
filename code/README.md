@@ -168,11 +168,11 @@ All colours are declared as CSS custom properties in `src/ui/css/globals.css` wi
 
 | Variable | Tailwind class | Purpose |
 | --- | --- | --- |
-| `--background` | `bg-background` | Main page background |
-| `--foreground` | `text-foreground` | Default body text |
-| `--muted` | `bg-muted` | Subtle panels — nav, sidebars, cards |
-| `--muted-foreground` | `text-muted-foreground` | Secondary/helper text |
-| `--ring` / `--ring-hover` | `bg-ring`, `bg-ring-hover` | Toggle/tab highlight backgrounds |
+| `--background` | `bg-background` | Main page background colour - used in pair with `--foreground` |
+| `--foreground` | `text-foreground` | Main text colour - used in pair with `--background` |
+| `--muted` | `bg-muted` | Secondary background surfaces, e.g. nav bars, sidebars, and cards. Pair with `--muted-foreground` for less important/descriptive text, or with `--foreground` for primary text |
+| `--muted-foreground` | `text-muted-foreground` | Lower-emphasis text colour for descriptions, hints, and other supporting copy |
+| `--ring` / `--ring-hover` | `bg-ring`, `bg-ring-hover` | Highlight backgrounds for interactive controls (e.g. toggles/tabs): use `bg-ring` for the default/active state and `bg-ring-hover` for hover on the same component; not required for every highlighted element |
 
 #### Actions & Interactions
 
@@ -202,8 +202,8 @@ All colours are declared as CSS custom properties in `src/ui/css/globals.css` wi
 
 | Variable | Tailwind class | Purpose |
 | --- | --- | --- |
-| `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` | Open / success status |
-| `--status-assigned-bg/text` | `bg-status-assigned-bg`, `text-status-assigned-text` | Assigned status |
+| `--status-assigned-bg/text` | `bg-status-assigned-bg`, `text-status-assigned-text` | Assigned and Default status |
+| `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` | Open status |
 | `--status-issue-bg/text` | `bg-status-issue-bg`, `text-status-issue-text` | Issue / warning status |
 | `--status-cancelled-bg/text` | `bg-status-cancelled-bg`, `text-status-cancelled-text` | Cancelled / error status |
 
