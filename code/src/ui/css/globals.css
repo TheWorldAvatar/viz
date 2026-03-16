@@ -63,10 +63,10 @@
     --info-border: #bedbff;
 
     /* Status badge colours: paired bg/text for each status type */
+    --status-default-bg: hsl(0, 0%, 90%);
+    --status-default-text: hsl(0, 0%, 20%);
     --status-open-bg: hsl(156, 40%, 86%);
     --status-open-text: hsl(159, 75%, 16%);
-    --status-assigned-bg: hsl(0, 0%, 90%);
-    --status-assigned-text: hsl(0, 0%, 20%);
     --status-issue-bg: hsl(52, 82%, 93%);
     --status-issue-text: hsl(18, 74%, 24%);
     --status-cancelled-bg: hsl(2, 100%, 96%);
@@ -121,10 +121,10 @@
     --info-foreground: #51a2ff;
     --info-border: #51a2ff;
 
+    --status-default-bg: hsl(0, 0%, 25%);
+    --status-default-text: hsl(0, 0%, 85%);
     --status-open-bg: hsl(156, 40%, 20%);
     --status-open-text: hsl(156, 40%, 86%);
-    --status-assigned-bg: hsl(0, 0%, 25%);
-    --status-assigned-text: hsl(0, 0%, 85%);
     --status-issue-bg: hsl(52, 82%, 20%);
     --status-issue-text: hsl(52, 82%, 93%);
     --status-cancelled-bg: hsl(2, 100%, 20%);
@@ -180,10 +180,10 @@
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
+  --color-status-default-bg: var(--status-default-bg);
+  --color-status-default-text: var(--status-default-text);
   --color-status-open-bg: var(--status-open-bg);
   --color-status-open-text: var(--status-open-text);
-  --color-status-assigned-bg: var(--status-assigned-bg);
-  --color-status-assigned-text: var(--status-assigned-text);
   --color-status-issue-bg: var(--status-issue-bg);
   --color-status-issue-text: var(--status-issue-text);
   --color-status-cancelled-bg: var(--status-cancelled-bg);

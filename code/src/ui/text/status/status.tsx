@@ -78,8 +78,8 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBackgroundColor = "var(--status-cancelled-bg)";
       break;
     default:
-      statusTextColor = "var(--status-assigned-text)";
-      statusBackgroundColor = "var(--status-assigned-bg)";
+      statusTextColor = "var(--status-default-text)";
+      statusBackgroundColor = "var(--status-default-bg)";
   }
 
   return (
