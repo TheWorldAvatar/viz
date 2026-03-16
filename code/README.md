@@ -203,7 +203,7 @@ All colours are declared as CSS custom properties in `src/ui/css/globals.css` wi
 | Variable | Tailwind class | Purpose |
 | --- | --- | --- |
 | `--status-assigned-bg/text` | `bg-status-assigned-bg`, `text-status-assigned-text` | Assigned and Default status |
-| `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` | Open status |
+| `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` | Open/completed status |
 | `--status-issue-bg/text` | `bg-status-issue-bg`, `text-status-issue-text` | Issue / warning status |
 | `--status-cancelled-bg/text` | `bg-status-cancelled-bg`, `text-status-cancelled-text` | Cancelled / error status |
 
