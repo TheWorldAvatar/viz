@@ -87,7 +87,7 @@ export function DependentFormSection(
             name={fieldName}
             control={props.form.control}
             defaultValue={selectedOption}
-            rules={getRegisterOptions(props.dependentProp, formType)}
+            rules={getRegisterOptions(props.dependentProp, formType, dict)}
             render={({ field: { onChange } }) => {
               return (
                 <AsyncSearchableSimpleSelector

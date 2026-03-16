@@ -17,6 +17,7 @@ import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
   LifecycleStageMap,
+  LifecycleStageMap
 } from "types/form";
 import { JsonObject } from "types/json";
 import { ToastConfig, ToastType } from "types/toast";
@@ -127,7 +128,7 @@ export function getId(input: string): string {
  * @param {string} iri input iri.
  */
 export function isValidIRI(iri: string): boolean {
-  // eslint-disable-next-line
+
   const iriPattern = /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
   return iriPattern.test(iri);
 }

@@ -11,6 +11,7 @@ import {
 import DateInput from "ui/interaction/input/date-input";
 import { getNormalizedDate, getUTCDate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
+import { useDictionary } from "hooks/useDictionary";
 
 interface FormDateTimePickerProps {
   field: PropertyShape;
@@ -18,16 +19,18 @@ interface FormDateTimePickerProps {
   options?: FormFieldOptions;
 }
 
+
 /**
  * This component renders a date time picker for the form.
- *
- * @param {PropertyShape} field The form field data model.
- * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {FormFieldOptions} options Configuration options for the field.
- */
+*
+* @param {PropertyShape} field The form field data model.
+* @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
+* @param {FormFieldOptions} options Configuration options for the field.
+*/
 export default function FormDateTimePicker(
   props: Readonly<FormDateTimePickerProps>
 ) {
+  const dict = useDictionary();
   const dateType: string = "date";
   const timeType: string = "time";
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -88,7 +91,8 @@ export default function FormDateTimePicker(
             props.field.fieldId,
             getRegisterOptions(
               props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE)
+              props.form.getValues(FORM_STATES.FORM_TYPE),
+              dict
             )
           )}
         >
@@ -114,7 +118,8 @@ export default function FormDateTimePicker(
             props.field.fieldId,
             getRegisterOptions(
               props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE)
+              props.form.getValues(FORM_STATES.FORM_TYPE),
+              dict
             )
           )}
         />

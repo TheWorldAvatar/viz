@@ -134,7 +134,8 @@ export default function NumericInputField(
           props.field.fieldId,
           getRegisterOptions(
             props.field,
-            props.form.getValues(FORM_STATES.FORM_TYPE)
+            props.form.getValues(FORM_STATES.FORM_TYPE),
+            dict
           )
         )}
       />
