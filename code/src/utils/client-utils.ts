@@ -250,17 +250,17 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
       };
     case "success":
       return {
-        bg: "bg-status-completed-bg",
+        bg: "bg-status-completed-background",
         border: "border-green-200",
-        text: "text-status-completed-text",
+        text: "text-status-completed-foreground",
         icon: "check_circle",
         title: dict.title.success,
       };
     case "error":
       return {
-        bg: "bg-status-cancelled-bg",
+        bg: "bg-status-cancelled-background",
         border: "border-red-200",
-        text: "text-status-cancelled-text",
+        text: "text-status-cancelled-foreground",
         icon: "error",
         title: dict.title.error,
       };

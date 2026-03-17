@@ -56,30 +56,30 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
-      statusTextColor = "var(--status-open-text)";
-      statusBackgroundColor = "var(--status-open-bg)";
+      statusTextColor = "var(--status-open-foreground)";
+      statusBackgroundColor = "var(--status-open-background)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
-      statusTextColor = "var(--status-cancelled-text)";
-      statusBackgroundColor = "var(--status-cancelled-bg)";
+      statusTextColor = "var(--status-cancelled-foreground)";
+      statusBackgroundColor = "var(--status-cancelled-background)";
       break;
     case dict.title.issue.toLowerCase():
-      statusTextColor = "var(--status-issue-text)";
-      statusBackgroundColor = "var(--status-issue-bg)";
+      statusTextColor = "var(--status-issue-foreground)";
+      statusBackgroundColor = "var(--status-issue-background)";
       break;
     case dict.title.completed.toLowerCase():
-      statusTextColor = "var(--status-completed-text)";
-      statusBackgroundColor = "var(--status-completed-bg)";
+      statusTextColor = "var(--status-completed-foreground)";
+      statusBackgroundColor = "var(--status-completed-background)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
-      statusTextColor = "var(--status-cancelled-text)";
-      statusBackgroundColor = "var(--status-cancelled-bg)";
+      statusTextColor = "var(--status-cancelled-foreground)";
+      statusBackgroundColor = "var(--status-cancelled-background)";
       break;
     default:
-      statusTextColor = "var(--status-default-text)";
-      statusBackgroundColor = "var(--status-default-bg)";
+      statusTextColor = "var(--status-default-foreground)";
+      statusBackgroundColor = "var(--status-default-background)";
   }
 
   return (

@@ -182,11 +182,11 @@ When a colour is defined as a pair, use the full pair together for colour usage:
 | Informational | Background colour for non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use with the matching informational text and border colours. | `--info-background` | `bg-info-background` |
 | Informational | Text colour for non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use with the matching informational background colour. | `--info-foreground` | `text-info-foreground` |
 | Informational | Border colour for non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use with the matching informational background and text colours. | `--info-border` | `border-info-border` |
-| Status Badges | Default status badge colours. Use the background and text pair together. | `--status-default-bg/text` | `bg-status-default-bg`, `text-status-default-text` |
-| Status Badges | Open status badge colours. Use the background and text pair together. | `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` |
-| Status Badges | Completed or success status badge colours. Use the background and text pair together. | `--status-completed-bg/text` | `bg-status-completed-bg`, `text-status-completed-text` |
-| Status Badges | Issue status badge colours. Use the background and text pair together. | `--status-issue-bg/text` | `bg-status-issue-bg`, `text-status-issue-text` |
-| Status Badges | Cancelled or error status badge colours. Use the background and text pair together. | `--status-cancelled-bg/text` | `bg-status-cancelled-bg`, `text-status-cancelled-text` |
+| Status Badges | Default status badge colours. Use the background and text pair together. | `--status-default-background`/`--status-default-foreground` | `bg-status-default-background`, `text-status-default-foreground` |
+| Status Badges | Open status badge colours. Use the background and text pair together. | `--status-open-background`/`--status-open-foreground` | `bg-status-open-background`, `text-status-open-foreground` |
+| Status Badges | Completed or success status badge colours. Use the background and text pair together. | `--status-completed-background`/`--status-completed-foreground` | `bg-status-completed-background`, `text-status-completed-foreground` |
+| Status Badges | Issue status badge colours. Use the background and text pair together. | `--status-issue-background`/`--status-issue-foreground` | `bg-status-issue-background`, `text-status-issue-foreground` |
+| Status Badges | Cancelled or error status badge colours. Use the background and text pair together. | `--status-cancelled-background`/`--status-cancelled-foreground` | `bg-status-cancelled-background`, `text-status-cancelled-foreground` |
 
 #### Legacy Variables
 
