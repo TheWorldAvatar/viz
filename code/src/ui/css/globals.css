@@ -25,10 +25,6 @@
     --secondary: #236776;
     --secondary-foreground: #0d1117;
 
-    /* Accent: highlight for active or emphasised UI elements */
-    --accent: #23677640;
-    --accent-foreground: #0d1117;
-
     /* Focus ring colour for keyboard navigation indicators */
     --focus: #9f9fa9;
 
@@ -93,9 +89,6 @@
 
     --secondary: #236776;
     --secondary-foreground: #0d1117;
-
-    --accent: #23677640;
-    --accent-foreground: #0d1117;
 
     --focus: #9f9fa9;
 
@@ -170,8 +163,6 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
   --color-focus: var(--focus);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
