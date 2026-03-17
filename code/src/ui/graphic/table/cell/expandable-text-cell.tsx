@@ -40,7 +40,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                 }}
                 variant="link"
                 size="sm"
-                className="text-base !text-blue-500 !p-0"
+                className="text-base !p-0"
             >
                 {isExpanded ? dict.action.showLess : dict.action.showMore}
             </Button>
