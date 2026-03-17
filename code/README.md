@@ -173,17 +173,18 @@ When a colour is defined as a pair, use the full pair together for colour usage:
 | Core Background & Text | Secondary background surfaces such as nav bars, sidebars, and cards. Pair with `--muted-foreground` for supporting text or with `--foreground` for primary text. | `--muted` | `bg-muted` |
 | Core Background & Text | Lower-emphasis text colour for descriptions, hints, and other supporting copy. | `--muted-foreground` | `text-muted-foreground` |
 | Core Background & Text | Highlight background for interactive controls such as toggles and tabs. | `--ring` | `bg-ring` |
+| Core Background & Text | Semi-transparent inverse background used as a modal overlay backdrop. | `--background-inverse-primary` | `bg-inverse-primary` |
 | Actions & Interactions | Primary call-to-action buttons and key links. Use the foreground pair together with the background token. | `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` |
 | Actions & Interactions | Secondary or supporting actions. Use the foreground pair together with the background token. | `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` |
-| Actions & Interactions | Delete, cancel, or error-related actions. | `--destructive` | `bg-destructive` |
+| Actions & Interactions | Background for delete, cancel, or error-related actions. | `--destructive` | `bg-destructive` |
 | Borders & Focus States | Default border colour. | `--border` | `border-border` |
 | Borders & Focus States | Keyboard focus ring colour for interactive elements. In Tailwind, use with `focus-visible`; for example `focus-visible:ring-focus focus-visible:ring-[2px]`, where `ring-[2px]` sets the ring width (border thickness) so the focus ring is visible. | `--focus` | `ring-focus` |
 | Miscellaneous | Non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use the background, text, and border tokens together. | `--info-background` / `--info-foreground` / `--info-border` | `bg-info-background`, `text-info-foreground`, `border-info-border` |
-| Miscellaneous | Default status badge colours. Use the background and text pair together. | `--status-default-background`/`--status-default-foreground` | `bg-status-default-background`, `text-status-default-foreground` |
-| Miscellaneous | Open status badge colours. Use the background and text pair together. | `--status-open-background`/`--status-open-foreground` | `bg-status-open-background`, `text-status-open-foreground` |
-| Miscellaneous | Completed status badge colours. Use the background and text pair together. Also used for success toast message. | `--status-completed-background`/`--status-completed-foreground` | `bg-status-completed-background`, `text-status-completed-foreground` |
-| Miscellaneous | Issue status badge colours. Use the background and text pair together. | `--status-issue-background`/`--status-issue-foreground` | `bg-status-issue-background`, `text-status-issue-foreground` |
-| Miscellaneous | Cancelled status badge colours. Use the background and text pair together. Also used for error toast messages. | `--status-cancelled-background`/`--status-cancelled-foreground` | `bg-status-cancelled-background`, `text-status-cancelled-foreground` |
+| Miscellaneous | Default status badge colours. Use the background and foreground pair together. | `--status-default-background`/`--status-default-foreground` | `bg-status-default-background`, `text-status-default-foreground` |
+| Miscellaneous | Open status badge colours. Use the background and foreground pair together. | `--status-open-background`/`--status-open-foreground` | `bg-status-open-background`, `text-status-open-foreground` |
+| Miscellaneous | Completed status badge colours. Use the background and foreground pair together. Also used for success toast message. | `--status-completed-background`/`--status-completed-foreground` | `bg-status-completed-background`, `text-status-completed-foreground` |
+| Miscellaneous | Issue status badge colours. Use the background and foreground pair together. | `--status-issue-background`/`--status-issue-foreground` | `bg-status-issue-background`, `text-status-issue-foreground` |
+| Miscellaneous | Cancelled status badge colours. Use the background and foreground pair together. Also used for error toast messages. | `--status-cancelled-background`/`--status-cancelled-foreground` | `bg-status-cancelled-background`, `text-status-cancelled-foreground` |
 
 #### Legacy Variables
 
@@ -192,7 +193,7 @@ These live in `globals.css` but are consumed **only** in `.module.css` files. Mi
 | Variable | Used By |
 | --- | --- |
 | `--background-secondary`, `--background-tertiary` | Scrollbars, context menus, map panels, ribbons |
-| `--background-inverse-primary` | Map popover overlay |
+| `--background-inverse-primary` | Dropdown selectors |
 | `--text-color-primary`, `--text-color-secondary` | Floating panels, info trees, dropdowns |
 | `--text-color-links`, `--text-color-links-hover` | Link colours  |
 | `--border-primary`, `--border-secondary`, `--border-tertiary` | Context menus, info trees, floating panels |
