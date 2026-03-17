@@ -69,8 +69,8 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBackgroundColor = "var(--status-issue-bg)";
       break;
     case dict.title.completed.toLowerCase():
-      statusTextColor = "var(--status-open-text)";
-      statusBackgroundColor = "var(--status-open-bg)";
+      statusTextColor = "var(--status-completed-text)";
+      statusBackgroundColor = "var(--status-completed-bg)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():

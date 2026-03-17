@@ -71,6 +71,8 @@
     --status-issue-text: hsl(18, 74%, 24%);
     --status-cancelled-bg: hsl(2, 100%, 96%);
     --status-cancelled-text: hsl(1, 75%, 20%);
+    --status-completed-bg: hsl(156, 40%, 86%);
+    --status-completed-text: hsl(159, 75%, 16%);
   }
 }
 
@@ -129,6 +131,8 @@
     --status-issue-text: hsl(52, 82%, 93%);
     --status-cancelled-bg: hsl(2, 100%, 20%);
     --status-cancelled-text: hsl(2, 100%, 96%);
+    --status-completed-bg: hsl(156, 40%, 20%);
+    --status-completed-text: hsl(156, 40%, 86%);
   }
 }
 
@@ -188,10 +192,8 @@
   --color-status-issue-text: var(--status-issue-text);
   --color-status-cancelled-bg: var(--status-cancelled-bg);
   --color-status-cancelled-text: var(--status-cancelled-text);
-  --color-status-success-bg: var(--status-open-bg);
-  --color-status-success-text: var(--status-open-text);
-  --color-status-error-bg: var(--status-cancelled-bg);
-  --color-status-error-text: var(--status-cancelled-text);
+  --color-status-completed-bg: var(--status-completed-bg);
+  --color-status-completed-text: var(--status-completed-text);
 }
 
 * {
