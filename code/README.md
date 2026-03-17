@@ -164,49 +164,29 @@ Additionally, reusable components are provided to facilitate this. For navigatio
 
 All colours are declared as CSS custom properties in `src/ui/css/globals.css` with light and dark variants. The `@theme` block maps each variable to a Tailwind utility class — **always prefer these Tailwind classes in `.tsx` files** (e.g. `bg-primary`, `text-muted-foreground`). Use raw `var(--…)` only in `.module.css` or inline styles.
 
-#### Core Background & Text
+When a colour is defined as a pair, use the full pair together for colour usage: combine the related background and foreground variables or the related Tailwind classes unless a component has a specific reason not to. For example, use `--primary` with `--primary-foreground`, `bg-primary` with `text-primary-foreground`, and `--status-open-bg` with `--status-open-text`.
 
-| Variable | Tailwind class | Purpose |
-| --- | --- | --- |
-| `--background` | `bg-background` | Main page background colour - used in pair with `--foreground` |
-| `--foreground` | `text-foreground` | Main text colour - used in pair with `--background` |
-| `--muted` | `bg-muted` | Secondary background surfaces, e.g. nav bars, sidebars, and cards. Pair with `--muted-foreground` for less important/descriptive text, or with `--foreground` for primary text |
-| `--muted-foreground` | `text-muted-foreground` | Lower-emphasis text colour for descriptions, hints, and other supporting copy |
-| `--ring` / `--ring-hover` | `bg-ring`, `bg-ring-hover` | Highlight backgrounds for interactive controls (e.g. toggles/tabs): use `bg-ring` for the default/active state and `bg-ring-hover` for hover on the same component; not required for every highlighted element |
-
-#### Actions & Interactions
-
-| Variable | Tailwind class | Purpose |
-| --- | --- | --- |
-| `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` | Primary call-to-action buttons and key links |
-| `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` | Secondary or supporting actions |
-| `--destructive` | `bg-destructive` | Delete, cancel, or error-related actions |
-| `--accent` / `--accent-foreground` | `bg-accent`, `text-accent-foreground` | Hover, active, or selected UI highlight |
-
-#### Borders & Focus states
-
-| Variable | Tailwind class | Purpose |
-| --- | --- | --- |
-| `--border` | `border-border` | Default border colour |
-| `--focus` | `ring-focus` | Keyboard focus ring indicator |
-
-#### Informational
-
-| Variable | Tailwind class | Purpose |
-| --- | --- | --- |
-| `--info-background` | `bg-info-background` | Info banner/tooltip background |
-| `--info-foreground` | `text-info-foreground` | Info banner text |
-| `--info-border` | `border-info-border` | Info banner border |
-
-#### Status Badges
-
-| Variable | Tailwind class | Purpose |
-| --- | --- | --- |
-| `--status-default-bg/text` | `bg-status-default-bg`, `text-status-default-text` | Default status |
-| `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` | Open status (available, active, new) |
-| `--status-completed-bg/text` | `bg-status-completed-bg`, `text-status-completed-text` | Completed status |
-| `--status-issue-bg/text` | `bg-status-issue-bg`, `text-status-issue-text` | Issue / warning status |
-| `--status-cancelled-bg/text` | `bg-status-cancelled-bg`, `text-status-cancelled-text` | Cancelled / error status |
+| Group | Description | Variable | Tailwind Class |
+| --- | --- | --- | --- |
+| Core Background & Text | Main page background colour. Use in pair with the main text colour. | `--background` | `bg-background` |
+| Core Background & Text | Main text colour. Use in pair with the main page background colour. | `--foreground` | `text-foreground` |
+| Core Background & Text | Secondary background surfaces such as nav bars, sidebars, and cards. Pair with `--muted-foreground` for supporting text or with `--foreground` for primary text. | `--muted` | `bg-muted` |
+| Core Background & Text | Lower-emphasis text colour for descriptions, hints, and other supporting copy. | `--muted-foreground` | `text-muted-foreground` |
+| Core Background & Text | Highlight backgrounds for interactive controls such as toggles and tabs. Use `--ring` for default or active state and `--ring-hover` for hover on the same component. | `--ring` / `--ring-hover` | `bg-ring`, `bg-ring-hover` |
+| Actions & Interactions | Primary call-to-action buttons and key links. Use the foreground pair together with the background token. | `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` |
+| Actions & Interactions | Secondary or supporting actions. Use the foreground pair together with the background token. | `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` |
+| Actions & Interactions | Delete, cancel, or error-related actions. | `--destructive` | `bg-destructive` |
+| Actions & Interactions | Highlight colour for important or interactive elements that should stand out, such as hovered menu items, selected rows, and active tabs. | `--accent` / `--accent-foreground` | `bg-accent`, `text-accent-foreground` |
+| Borders & Focus States | Default border colour. | `--border` | `border-border` |
+| Borders & Focus States | Keyboard focus ring colour for interactive elements. In Tailwind, use with `focus-visible`, for example `focus-visible:ring-focus focus-visible:ring-[2px]`. | `--focus` | `ring-focus` |
+| Informational | Informational banner or tooltip background. | `--info-background` | `bg-info-background` |
+| Informational | Informational banner text. | `--info-foreground` | `text-info-foreground` |
+| Informational | Informational banner border. | `--info-border` | `border-info-border` |
+| Status Badges | Default status badge colours. Use the background and text pair together. | `--status-default-bg/text` | `bg-status-default-bg`, `text-status-default-text` |
+| Status Badges | Open status badge colours. Use the background and text pair together. | `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` |
+| Status Badges | Completed or success status badge colours. Use the background and text pair together. | `--status-completed-bg/text` | `bg-status-completed-bg`, `text-status-completed-text` |
+| Status Badges | Issue status badge colours. Use the background and text pair together. | `--status-issue-bg/text` | `bg-status-issue-bg`, `text-status-issue-text` |
+| Status Badges | Cancelled or error status badge colours. Use the background and text pair together. | `--status-cancelled-bg/text` | `bg-status-cancelled-bg`, `text-status-cancelled-text` |
 
 #### Legacy Variables
 
