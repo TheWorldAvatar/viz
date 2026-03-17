@@ -1,5 +1,5 @@
 .globalContainer {
-  background-color: var(--background-primary);
+  background-color: var(--background);
   color: var(--text-color-primary);
   position: relative;
   max-height: 70vh;

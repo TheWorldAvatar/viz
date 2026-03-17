@@ -132,7 +132,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               fontSize={props.mode === "single" || props.mode === "multiple" ? "small" : "medium"}
               className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${props.mode === "single" || props.mode === "multiple"
                 ? "text-foreground"
-                : "text-blue-600 dark:text-blue-400"
+                : "text-info-foreground"
                 }  pointer-events-none`}
             >
               calendar_month
@@ -151,7 +151,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   : `h-10  ${(props.selectedDate as DateRange)?.to
                     ? "w-fit pr-11 pl-4"
                     : "w-24"
-                  } rounded-lg bg-blue-50 dark:bg-background dark:text-blue-400 dark:border-blue-400 border border-blue-200 text-blue-700 shadow-xs cursor-pointer`
+                  } rounded-lg bg-info-background border border-info-border text-info-foreground shadow-xs cursor-pointer`
               }
               {...popover.getReferenceProps()}
               disabled={props.disabled}

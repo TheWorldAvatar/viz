@@ -6,66 +6,66 @@
 **/
 @media (prefers-color-scheme: light) {
   :root {
-    /* Background colors */
+    /* Page background & text */
     --background: #ffffff;
-    --background-primary: #ffffff;
     --foreground: #30363d;
+
+    /* Muted surface & text: for subtle panels (nav, sidebars, cards) */
     --muted: #fafafa;
-    --muted-foreground: #30363d;
+    --muted-foreground: #5a5a5a;
+
+    /* Default border colour */
     --border: #a5a5b3;
+
+    /* Primary action: for main CTA buttons/links and key user actions */
     --primary: #82b29a;
     --primary-foreground: #0d1117;
+
+    /* Secondary action: for supporting actions */
     --secondary: #236776;
     --secondary-foreground: #0d1117;
-    --input: oklch(0.922 0 0);
-    --accent: rgba(35, 103, 118, 25%);
-    --accent-foreground: #0d1117;
 
+    /* Focus ring colour for keyboard navigation indicators */
+    --focus: #9f9fa9;
+
+    /* used in .module.css files (scrollbars, context menus, map panels, ribbons) */
     --background-secondary: #efefef;
     --background-tertiary: #e5e5e5;
 
-    --background-muted: #fafafa;
-
+    /* Overlay background: semi-transparent dark surface for modals */
     --background-inverse-primary: rgba(44, 47, 51, 80%);
-    --background-inverse-primary-rgb: 13, 17, 23;
-    --background-inverse-secondary: #30363d;
-    --background-inverse-tertiary: #434c57;
 
-    /* Text colors */
+    /* Text colours used in .module.css files (floating panels, info trees, dropdowns, selectors) */
     --text-color-primary: #30363d;
-    --text-color-secondary: deepskyblue;
+    --text-color-secondary: #00bfff;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
-    --text-color-title-primary: #0b4452;
 
-    /* Select input colors */
-    --text-color-selected: #146a7d;
-    --background-selected: #f9f9f9;
-
-    /* Border colors */
+    /* Border colours used in .module.css files (context menus, info trees, floating panels, selectors) */
     --border-primary: #dbdbdb;
     --border-secondary: #a5a5b3;
     --border-tertiary: #9898af;
 
-    /* Button */
-    --description-box: #82b29a;
-    --button-color-primary: #82b29a;
-    --button-color-primary-active: #6fa085;
-    --button-color-secondary: #18677a;
-    --button-color-secondary-hover: #0b4452;
-    --destructive: oklch(63.472% 0.17115 20.398 / 0.76);
-    --ring: oklch(92.8% 0.006 264.531);
-    --ring-hover: oklch(92.8% 0.006 264.531 / 0.5);
+    /* Destructive action (delete, cancel, error buttons) */
+    --destructive: #cd171c;
 
-    /* Status Colours */
-    --status-open-bg: hsl(156, 40%, 86%);
-    --status-open-text: hsl(159, 75%, 16%);
-    --status-assigned-bg: hsl(0, 0%, 90%);
-    --status-assigned-text: hsl(0, 0%, 20%);
-    --status-issue-bg: hsl(52, 82%, 93%);
-    --status-issue-text: hsl(18, 74%, 24%);
-    --status-cancelled-bg: hsl(2, 100%, 96%);
-    --status-cancelled-text: hsl(1, 75%, 20%);
+    /* For toggle/tab backgrounds */
+    --ring: #e5e7eb;
+
+    /* Background, text, and border for info banners/tooltips */
+    --info-background:#eff6ff;
+    --info-foreground: #1447e6;
+    --info-border: #bedbff;
+
+    /* Status badge colours: paired bg/text for each status type */
+    --neutral-background: hsl(0, 0%, 90%);
+    --neutral-foreground: hsl(0, 0%, 20%);
+    --warning-background: hsl(52, 82%, 86%);
+    --warning-foreground: hsl(18, 74%, 24%);
+    --error-background: hsl(2, 100%, 96%);
+    --error-foreground: hsl(1, 75%, 20%);
+    --success-background: hsl(156, 40%, 86%);
+    --success-foreground: hsl(159, 75%, 16%);
   }
 }
 
@@ -74,62 +74,52 @@
 **/
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Background colors */
-    --background: #0d1117;
-    --background-primary: #0d1117;
+    --background: #151515;
     --foreground: #dde9ff;
-    --muted: #0d0e12;
-    --muted-foreground: #dde9ff;
+
+    --muted: #0a0a0a;
+    --muted-foreground: #c7c7cf;
+
     --border: #6b6b78;
+
     --primary: #4f7a5f;
     --primary-foreground: #0d1117;
+
     --secondary: #236776;
     --secondary-foreground: #0d1117;
-    --input: oklch(0.922 0 0);
-    --accent: rgba(35, 103, 118, 25%);
-    --accent-foreground: #0d1117;
+
+    --focus: #9f9fa9;
 
     --background-secondary: #30363d;
     --background-tertiary: #434c57;
 
     --background-inverse-primary: rgba(44, 47, 51, 80%);
-    --background-inverse-primary-rgb: 249, 249, 249;
-    --background-inverse-secondary: #efefef;
-    --background-inverse-tertiary: #e5e5e5;
 
-    /* Text colors */
     --text-color-primary: #dde9ff;
-    --text-color-secondary: deepskyblue;
+    --text-color-secondary: #00bfff;
     --text-color-links: #146a7d;
     --text-color-links-hover: #20aac9;
-    --text-color-title-primary: #0b4452;
 
-    --text-color-selected: #146a7d;
-
-    /* Border colors */
     --border-primary: #434b55;
     --border-secondary: #ffffff;
     --border-tertiary: #7f8ea1;
 
-    /* Button */
-    --description-box: #2b816f;
-    --button-color-primary: #4f7a5f;
-    --button-color-primary-active: #42664f;
-    --button-color-secondary: #7acadb;
-    --button-color-secondary-hover: #35a7c0;
-    --destructive: oklch(0.704 0.191 22.216);
-    --ring: oklch(27.4% 0.006 286.033);
-    --ring-hover: oklch(27.4% 0.006 286.033 / 0.5);
+    --destructive: #ff6467;
 
-    /* Status Colours */
-    --status-open-bg: hsl(156, 40%, 20%);
-    --status-open-text: hsl(156, 40%, 86%);
-    --status-assigned-bg: hsl(0, 0%, 25%);
-    --status-assigned-text: hsl(0, 0%, 85%);
-    --status-issue-bg: hsl(52, 82%, 20%);
-    --status-issue-text: hsl(52, 82%, 93%);
-    --status-cancelled-bg: hsl(2, 100%, 20%);
-    --status-cancelled-text: hsl(2, 100%, 96%);
+    --ring: #ffffff1a;
+
+    --info-background: #0d1117;
+    --info-foreground: #51a2ff;
+    --info-border: #51a2ff;
+
+    --neutral-background: hsl(0, 0%, 25%);
+    --neutral-foreground: hsl(0, 0%, 85%);
+    --warning-background: hsl(52, 82%, 20%);
+    --warning-foreground: hsl(52, 82%, 93%);
+    --error-background: hsl(2, 100%, 20%);
+    --error-foreground: hsl(2, 100%, 96%);
+    --success-background: hsl(156, 40%, 20%);
+    --success-foreground: hsl(156, 40%, 86%);
   }
 }
 
@@ -149,19 +139,18 @@
   --icon-size: 1.5rem;
   --small-icon-size: 1rem;
   --smallest-icon-size: 0.6rem;
-
-  /* Button colors */
-  /* --button-color-primary: #82b29a;
-  --button-color-primary-active: #6fa085; */
-  --alert-color: 191, 74, 42;
 }
 
-/* Variables for Tailwind CSS, so they can be accessd as classes  */
+/*
+ * Tailwind colour-token bridge.
+ * Each --color-* variable maps a raw CSS variable to a Tailwind utility class.
+ * In .tsx files prefer Tailwind classes (e.g. bg-primary, text-muted-foreground).
+ * Use raw var(--…) only in .module.css or inline styles where Tailwind isn't available.
+ */
 @theme {
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
   --color-background-tertiary: var(--background-tertiary);
-  --color-modal-bg-dark: #0a0a0a;
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -170,29 +159,23 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-background-secondary: var(--background-secondary);
+  --color-focus: var(--focus);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
-  --color-ring-hover: var(--ring-hover);
-  --input: var(--input);
+  --color-info-background: var(--info-background);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-border: var(--info-border);
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
-  --color-selected: var(--text-color-selected);
-  --color-status-open-bg: var(--status-open-bg);
-  --color-status-open-text: var(--status-open-text);
-  --color-status-assigned-bg: var(--status-assigned-bg);
-  --color-status-assigned-text: var(--status-assigned-text);
-  --color-status-issue-bg: var(--status-issue-bg);
-  --color-status-issue-text: var(--status-issue-text);
-  --color-status-cancelled-bg: var(--status-cancelled-bg);
-  --color-status-cancelled-text: var(--status-cancelled-text);
-  --color-status-success-bg: var(--status-open-bg);
-  --color-status-success-text: var(--status-open-text);
-  --color-status-error-bg: var(--status-cancelled-bg);
-  --color-status-error-text: var(--status-cancelled-text);
+  --color-neutral-background: var(--neutral-background);
+  --color-neutral-foreground: var(--neutral-foreground);
+  --color-warning-background: var(--warning-background);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-error-background: var(--error-background);
+  --color-error-foreground: var(--error-foreground);
+  --color-success-background: var(--success-background);
+  --color-success-foreground: var(--success-foreground);
 }
 
 * {

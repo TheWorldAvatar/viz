@@ -49,6 +49,7 @@ export function getTranslatedStatusLabel(
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusTextColor: string;
   let statusBackgroundColor: string;
+  let statusBorderColor: string;
   const dict: Dictionary = useDictionary();
 
   const statusVal: string = dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status;
@@ -56,30 +57,31 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
-      statusTextColor = "var(--status-open-text)";
-      statusBackgroundColor = "var(--status-open-bg)";
+      statusTextColor = "var(--info-foreground)";
+      statusBackgroundColor = "var(--info-background)";
+      statusBorderColor = "var(--info-border)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
-      statusTextColor = "var(--status-cancelled-text)";
-      statusBackgroundColor = "var(--status-cancelled-bg)";
+      statusTextColor = "var(--error-foreground)";
+      statusBackgroundColor = "var(--error-background)";
       break;
     case dict.title.issue.toLowerCase():
-      statusTextColor = "var(--status-issue-text)";
-      statusBackgroundColor = "var(--status-issue-bg)";
+      statusTextColor = "var(--warning-foreground)";
+      statusBackgroundColor = "var(--warning-background)";
       break;
     case dict.title.completed.toLowerCase():
-      statusTextColor = "var(--status-open-text)";
-      statusBackgroundColor = "var(--status-open-bg)";
+      statusTextColor = "var(--success-foreground)";
+      statusBackgroundColor = "var(--success-background)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
-      statusTextColor = "var(--status-cancelled-text)";
-      statusBackgroundColor = "var(--status-cancelled-bg)";
+      statusTextColor = "var(--error-foreground)";
+      statusBackgroundColor = "var(--error-background)";
       break;
     default:
-      statusTextColor = "var(--status-assigned-text)";
-      statusBackgroundColor = "var(--status-assigned-bg)";
+      statusTextColor = "var(--neutral-foreground)";
+      statusBackgroundColor = "var(--neutral-background)";
   }
 
   return (
@@ -89,6 +91,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
         style={{
           color: statusTextColor,
           backgroundColor: statusBackgroundColor,
+          border: `1px solid ${statusBorderColor ?? 'transparent'}`
         }}
       >
         {parseWordsForLabels(statusVal)}

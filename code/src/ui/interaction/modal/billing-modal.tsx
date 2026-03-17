@@ -47,9 +47,9 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
     }, []);
 
     return (
-        <Modal className="!w-full  md:!max-w-2xl lg:!max-w-3xl  !h-auto !min-h-0 !rounded-xl !shadow-xl !border !border-border" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
-            <div className="flex flex-col p-2  w-full max-w-2xl mx-auto mt-4">
-                <div className="flex  items-center justify-between">
+        <Modal className="w-full md:max-w-2xl lg:max-w-3xl !h-auto !min-h-0 rounded-xl shadow-xl border border-border" isOpen={props.isOpen} setIsOpen={props.setIsOpen}>
+            <div className="flex flex-col p-2 w-full max-w-2xl mx-auto mt-4">
+                <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-foreground">{dict.title.serviceCostBreakdown}</h2>
                     <p className="text-foreground">{props.date}</p>
                 </div>
@@ -66,7 +66,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                                     const chargeDescriptionParts: string[] = charge?.description?.split(/(<b>.*?<\/b>)/g) || [];
                                     return (
                                         <div key={index} className="flex p-2 justify-between">
-                                            <p className="text-sm text-pretty w-58 md:w-md text-gray-600 dark:text-gray-300">{
+                                            <p className="text-sm text-pretty w-58 md:w-md text-muted-foreground">{
                                                 chargeDescriptionParts.map((part, index) => {
                                                     if (part.startsWith("<b>") && part.endsWith("</b>")) {
                                                         // Remove the literal <b> and </b> tags to get the raw text
@@ -74,8 +74,8 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                                                     }
                                                     // Return as plain text without any b tags
                                                     return part;
-                                                })}                                            </p>
-                                            <p className="text-gray-600 dark:text-gray-300">+ ${charge?.amount}</p>
+                                                })}</p>
+                                            <p className="text-muted-foreground">+ ${charge?.amount}</p>
                                         </div>
                                     )
                                 })}
@@ -83,8 +83,8 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                                 {/* Discounts */}
                                 {costDetails?.discount?.map((discount, index) => (
                                     <div key={index} className="flex p-2 justify-between">
-                                        <p className="text-sm w-58 md:w-md text-gray-600 dark:text-gray-300">{discount?.description}</p>
-                                        <p className="text-gray-600 dark:text-gray-300">- ${discount?.amount}</p>
+                                        <p className="text-sm w-58 md:w-md text-muted-foreground">{discount?.description}</p>
+                                        <p className="text-muted-foreground">- ${discount?.amount}</p>
                                     </div>
                                 ))}
                             </div>
