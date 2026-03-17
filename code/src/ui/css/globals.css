@@ -58,16 +58,14 @@
     --info-border: #bedbff;
 
     /* Status badge colours: paired bg/text for each status type */
-    --status-default-background: hsl(0, 0%, 90%);
-    --status-default-foreground: hsl(0, 0%, 20%);
-    --status-open-background: hsl(156, 40%, 86%);
-    --status-open-foreground: hsl(159, 75%, 16%);
-    --status-issue-background: hsl(52, 82%, 93%);
-    --status-issue-foreground: hsl(18, 74%, 24%);
-    --status-cancelled-background: hsl(2, 100%, 96%);
-    --status-cancelled-foreground: hsl(1, 75%, 20%);
-    --status-completed-background: hsl(156, 40%, 86%);
-    --status-completed-foreground: hsl(159, 75%, 16%);
+    --neutral-background: hsl(0, 0%, 90%);
+    --neutral-foreground: hsl(0, 0%, 20%);
+    --warning-background: hsl(52, 82%, 86%);
+    --warning-foreground: hsl(18, 74%, 24%);
+    --error-background: hsl(2, 100%, 96%);
+    --error-foreground: hsl(1, 75%, 20%);
+    --success-background: hsl(156, 40%, 86%);
+    --success-foreground: hsl(159, 75%, 16%);
   }
 }
 
@@ -114,16 +112,14 @@
     --info-foreground: #51a2ff;
     --info-border: #51a2ff;
 
-    --status-default-background: hsl(0, 0%, 25%);
-    --status-default-foreground: hsl(0, 0%, 85%);
-    --status-open-background: hsl(156, 40%, 20%);
-    --status-open-foreground: hsl(156, 40%, 86%);
-    --status-issue-background: hsl(52, 82%, 20%);
-    --status-issue-foreground: hsl(52, 82%, 93%);
-    --status-cancelled-background: hsl(2, 100%, 20%);
-    --status-cancelled-foreground: hsl(2, 100%, 96%);
-    --status-completed-background: hsl(156, 40%, 20%);
-    --status-completed-foreground: hsl(156, 40%, 86%);
+    --neutral-background: hsl(0, 0%, 25%);
+    --neutral-foreground: hsl(0, 0%, 85%);
+    --warning-background: hsl(52, 82%, 20%);
+    --warning-foreground: hsl(52, 82%, 93%);
+    --error-background: hsl(2, 100%, 20%);
+    --error-foreground: hsl(2, 100%, 96%);
+    --success-background: hsl(156, 40%, 20%);
+    --success-foreground: hsl(156, 40%, 86%);
   }
 }
 
@@ -172,16 +168,14 @@
   --color-links: var(--text-color-links);
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
-  --color-status-default-background: var(--status-default-background);
-  --color-status-default-foreground: var(--status-default-foreground);
-  --color-status-open-background: var(--status-open-background);
-  --color-status-open-foreground: var(--status-open-foreground);
-  --color-status-issue-background: var(--status-issue-background);
-  --color-status-issue-foreground: var(--status-issue-foreground);
-  --color-status-cancelled-background: var(--status-cancelled-background);
-  --color-status-cancelled-foreground: var(--status-cancelled-foreground);
-  --color-status-completed-background: var(--status-completed-background);
-  --color-status-completed-foreground: var(--status-completed-foreground);
+  --color-neutral-background: var(--neutral-background);
+  --color-neutral-foreground: var(--neutral-foreground);
+  --color-warning-background: var(--warning-background);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-error-background: var(--error-background);
+  --color-error-foreground: var(--error-foreground);
+  --color-success-background: var(--success-background);
+  --color-success-foreground: var(--success-foreground);
 }
 
 * {

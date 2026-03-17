@@ -56,30 +56,30 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
     case dict.title.available.toLowerCase():
     case dict.title.active.toLowerCase():
     case dict.title.new.toLowerCase():
-      statusTextColor = "var(--status-open-foreground)";
-      statusBackgroundColor = "var(--status-open-background)";
+      statusTextColor = "var(--info-foreground)";
+      statusBackgroundColor = "var(--info-background)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
-      statusTextColor = "var(--status-cancelled-foreground)";
-      statusBackgroundColor = "var(--status-cancelled-background)";
+      statusTextColor = "var(--error-foreground)";
+      statusBackgroundColor = "var(--error-background)";
       break;
     case dict.title.issue.toLowerCase():
-      statusTextColor = "var(--status-issue-foreground)";
-      statusBackgroundColor = "var(--status-issue-background)";
+      statusTextColor = "var(--warning-foreground)";
+      statusBackgroundColor = "var(--warning-background)";
       break;
     case dict.title.completed.toLowerCase():
-      statusTextColor = "var(--status-completed-foreground)";
-      statusBackgroundColor = "var(--status-completed-background)";
+      statusTextColor = "var(--success-foreground)";
+      statusBackgroundColor = "var(--success-background)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
-      statusTextColor = "var(--status-cancelled-foreground)";
-      statusBackgroundColor = "var(--status-cancelled-background)";
+      statusTextColor = "var(--error-foreground)";
+      statusBackgroundColor = "var(--error-background)";
       break;
     default:
-      statusTextColor = "var(--status-default-foreground)";
-      statusBackgroundColor = "var(--status-default-background)";
+      statusTextColor = "var(--neutral-foreground)";
+      statusBackgroundColor = "var(--neutral-background)";
   }
 
   return (
