@@ -132,6 +132,7 @@
     "numberOfRecords": "{replace} von insgesamt {replacetotal}",
     "rowsPerPage": "Zeilen pro Seite: ",
     "arrayInstruction": "Dieser Bereich ist leer. Klicken Sie auf „+“, um ein Element hinzuzufügen.",
+    "emptySection": "Dieser Bereich ist leer.",
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
     "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
