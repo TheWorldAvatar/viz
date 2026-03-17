@@ -49,6 +49,7 @@ export function getTranslatedStatusLabel(
 export default function StatusComponent(props: Readonly<StatusComponentProps>) {
   let statusTextColor: string;
   let statusBackgroundColor: string;
+  let statusBorderColor: string;
   const dict: Dictionary = useDictionary();
 
   const statusVal: string = dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status;
@@ -58,6 +59,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
     case dict.title.new.toLowerCase():
       statusTextColor = "var(--info-foreground)";
       statusBackgroundColor = "var(--info-background)";
+      statusBorderColor = "var(--info-border)";
       break;
     case dict.title.unavailable.toLowerCase():
     case dict.title.cancelled.toLowerCase():
@@ -89,6 +91,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
         style={{
           color: statusTextColor,
           backgroundColor: statusBackgroundColor,
+          border: `1px solid ${statusBorderColor ?? 'transparent'}`
         }}
       >
         {parseWordsForLabels(statusVal)}
