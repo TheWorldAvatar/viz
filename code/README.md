@@ -179,9 +179,9 @@ When a colour is defined as a pair, use the full pair together for colour usage:
 | Actions & Interactions | Highlight colour for important or interactive elements that should stand out, such as hovered menu items, selected rows, and active tabs. | `--accent` / `--accent-foreground` | `bg-accent`, `text-accent-foreground` |
 | Borders & Focus States | Default border colour. | `--border` | `border-border` |
 | Borders & Focus States | Keyboard focus ring colour for interactive elements. In Tailwind, use with `focus-visible`, for example `focus-visible:ring-focus focus-visible:ring-[2px]`. | `--focus` | `ring-focus` |
-| Informational | Informational banner or tooltip background. | `--info-background` | `bg-info-background` |
-| Informational | Informational banner text. | `--info-foreground` | `text-info-foreground` |
-| Informational | Informational banner border. | `--info-border` | `border-info-border` |
+| Informational | Background colour for non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use with the matching informational text and border colours. | `--info-background` | `bg-info-background` |
+| Informational | Text colour for non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use with the matching informational background colour. | `--info-foreground` | `text-info-foreground` |
+| Informational | Border colour for non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use with the matching informational background and text colours. | `--info-border` | `border-info-border` |
 | Status Badges | Default status badge colours. Use the background and text pair together. | `--status-default-bg/text` | `bg-status-default-bg`, `text-status-default-text` |
 | Status Badges | Open status badge colours. Use the background and text pair together. | `--status-open-bg/text` | `bg-status-open-bg`, `text-status-open-text` |
 | Status Badges | Completed or success status badge colours. Use the background and text pair together. | `--status-completed-bg/text` | `bg-status-completed-bg`, `text-status-completed-text` |
