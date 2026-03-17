@@ -109,9 +109,7 @@ export default function MultivalueSelector(
         ...baseStyles.control?.(provided, state),
         backgroundColor: props.isActive ? "var(--ring)" : "var(--background)",
         ":hover": {
-          backgroundColor: props.isActive
-            ? "var(--ring-hover)"
-            : "var(--muted)",
+          backgroundColor: "var(--muted)",
         },
       }),
     };

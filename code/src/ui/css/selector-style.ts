@@ -10,7 +10,7 @@ export const selectorStyles: StylesConfig<
 > = {
   control: (provided, { isDisabled, isFocused }) => ({
     ...provided,
-    border: isFocused ? "1px solid var(--focus)" : "1px solid var(--border)",
+    border: "1px solid var(--border)",
     height: "2.72rem",
     width: "100%",
     maxWidth: "none",

@@ -172,7 +172,7 @@ When a colour is defined as a pair, use the full pair together for colour usage:
 | Core Background & Text | Main text colour. Use in pair with the main page background colour. | `--foreground` | `text-foreground` |
 | Core Background & Text | Secondary background surfaces such as nav bars, sidebars, and cards. Pair with `--muted-foreground` for supporting text or with `--foreground` for primary text. | `--muted` | `bg-muted` |
 | Core Background & Text | Lower-emphasis text colour for descriptions, hints, and other supporting copy. | `--muted-foreground` | `text-muted-foreground` |
-| Core Background & Text | Highlight backgrounds for interactive controls such as toggles and tabs. Use `--ring` for default or active state and `--ring-hover` for hover on the same component. | `--ring` / `--ring-hover` | `bg-ring`, `bg-ring-hover` |
+| Core Background & Text | Highlight background for interactive controls such as toggles and tabs. | `--ring` | `bg-ring` |
 | Actions & Interactions | Primary call-to-action buttons and key links. Use the foreground pair together with the background token. | `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` |
 | Actions & Interactions | Secondary or supporting actions. Use the foreground pair together with the background token. | `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` |
 | Actions & Interactions | Delete, cancel, or error-related actions. | `--destructive` | `bg-destructive` |

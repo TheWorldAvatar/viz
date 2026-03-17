@@ -55,7 +55,6 @@
 
     /* For toggle/tab backgrounds */
     --ring: #e5e7eb;
-    --ring-hover: #e5e7eb80;
 
     /* Background, text, and border for info banners/tooltips */
     --info-background:#eff6ff;
@@ -117,7 +116,6 @@
     --destructive: #ff6467;
 
     --ring: #ffffff1a;
-    --ring-hover: #ebebff80;
 
     --info-background: #0d1117;
     --info-foreground: #51a2ff;
@@ -177,7 +175,6 @@
   --color-focus: var(--focus);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
-  --color-ring-hover: var(--ring-hover);
   --color-info-background: var(--info-background);
   --color-info-foreground: var(--info-foreground);
   --color-info-border: var(--info-border);
