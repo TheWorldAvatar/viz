@@ -56,7 +56,7 @@ export default function Checkbox(props: Readonly<CheckboxProps>) {
             <input
                 id={checkboxId}
                 type="checkbox"
-                className={`${disabledClasses} ${props.className}  outline-none focus-visible:ring-focus focus-visible:ring-[3px] focus-visible:ring-offset-1`}
+                className={`${disabledClasses} ${props.className}`}
                 checked={isChecked}
                 onChange={handleInputChange}
                 role="checkbox"
