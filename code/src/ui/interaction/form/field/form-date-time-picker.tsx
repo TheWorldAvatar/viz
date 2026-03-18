@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./field.module.css";
 
-import { Controller, FieldError, UseFormReturn } from "react-hook-form";
+import { FieldError, UseFormReturn } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
   FORM_STATES,
