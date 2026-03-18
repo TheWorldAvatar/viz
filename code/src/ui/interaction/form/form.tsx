@@ -35,7 +35,7 @@ import { EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
-import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
+import { FORM_STATES, parseBranches, parsePricingModels, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
 import { DependentFormSection } from "./section/dependent-form-section";
 import FormGeocoder from "./section/form-geocoder";
@@ -242,14 +242,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               ...formData,
             }));
           if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            pendingResponse = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              "PUT",
-              JSON.stringify({
-                ...formData,
-                pricing: formData[billingParams.pricingField],
-                contract: pendingResponse.data?.id,
-              }));
+            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
+            parsePricingModels(formData, billingParams)?.forEach(async model =>
+              pendingResponse = await queryInternalApi(
+                url,
+                "POST",
+                JSON.stringify({
+                  id: formData.id,
+                  pricing: model,
+                }))
+            )
           }
         }
         break;
@@ -337,14 +339,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               contract: props.primaryInstance,
             }));
           if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            pendingResponse = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              "PUT",
-              JSON.stringify({
-                ...formData,
-                pricing: formData[billingParams.pricingField],
-                contract: pendingResponse.data?.id,
-              }));
+            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
+            parsePricingModels(formData, billingParams)?.forEach(async model =>
+              pendingResponse = await queryInternalApi(
+                url,
+                "POST",
+                JSON.stringify({
+                  id: formData.id,
+                  pricing: model,
+                }))
+            )
           }
         }
         break;
