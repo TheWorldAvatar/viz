@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.63.3
+
+### Changes
+
+- Redesigned the add invoice page inputs so they dont take the whole width of the page on a desktop view
+
 ## 5.63.2
 
 ### Changes
