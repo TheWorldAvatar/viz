@@ -143,6 +143,7 @@
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
+    "invalidPricingModelInstructions": "The pricing model has been successfully added but the task date is outside its valid range. Please reassign a valid pricing model for this period.",
     "loading": "Loading, please wait...",
     "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually or select a location from the map.",
     "noData": "No data available",

@@ -143,6 +143,7 @@
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
+    "invalidPricingModelInstructions": "Das Preismodell wurde erfolgreich hinzugefügt, aber das Aufgabendatum liegt außerhalb des gültigen Zeitraums. Bitte weisen Sie für diesen Zeitraum ein gültiges Preismodell zu.",
     "loading": "Wird geladen, bitte warten...",
     "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein oder wählen Sie einen Ort auf der Karte aus.",
     "noData": "Keine Daten verfügbar",

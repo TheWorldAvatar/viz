@@ -18,7 +18,7 @@ import Button from "ui/interaction/button";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { EVENT_KEY } from "utils/constants";
+import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 
@@ -120,6 +120,7 @@ export default function RegistryRowAction(
     resetFormSession();
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id, props.row.date);
     const body: AgentResponseBody = await queryInternalApi(url);
+    browserStorageManager.set(DATE_KEY, props.row.date);
     browserStorageManager.set(EVENT_KEY, props.row.event_id);
     try {
       const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(

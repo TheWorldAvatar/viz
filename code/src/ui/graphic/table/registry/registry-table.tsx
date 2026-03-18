@@ -33,7 +33,7 @@ import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import Checkbox from "ui/interaction/input/checkbox";
 import HistoryModal from "ui/interaction/modal/history-modal";
 import { getAfterDelimiter, getId } from "utils/client-utils";
-import { EVENT_KEY } from "utils/constants";
+import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
@@ -126,6 +126,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row[dict.title.status].toLowerCase())
       ) {
         browserStorageManager.set(EVENT_KEY, row.event_id)
+        browserStorageManager.set(DATE_KEY, row.date)
         const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
         const body: AgentResponseBody = await queryInternalApi(url);
         try {

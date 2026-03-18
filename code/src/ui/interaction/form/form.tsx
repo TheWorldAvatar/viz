@@ -31,7 +31,7 @@ import {
 } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
-import { EVENT_KEY } from "utils/constants";
+import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -421,12 +421,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
     }
 
+    let isInvalidPricingModel: boolean = false;
+    if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+      const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, id, browserStorageManager.get(DATE_KEY));
+      const body: AgentResponseBody = await queryInternalApi(url);
+      isInvalidPricingModel = body.data.message == "false";
+    }
     stopLoading();
     toast(
-      pendingResponse?.data?.message || pendingResponse?.error?.message,
-      pendingResponse?.error ? "error" : "success"
+      (props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel) ? dict.message.invalidPricingModelInstructions
+        : (pendingResponse?.data?.message || pendingResponse?.error?.message),
+      props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel ? "default" : pendingResponse?.error ? "error" : "success"
     );
-    if (!pendingResponse?.error) {
+
+    if ((props.formType != FormTypeMap.ASSIGN_PRICE && !pendingResponse?.error) ||
+      (props.formType === FormTypeMap.ASSIGN_PRICE && !isInvalidPricingModel)) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
