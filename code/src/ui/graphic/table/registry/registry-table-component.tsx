@@ -17,6 +17,7 @@ import {
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import Button from "ui/interaction/button";
 
 
 interface RegistryTableComponentProps {
@@ -39,6 +40,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
+  const [hideTableRibbon, setHideTableRibbon] = useState<boolean>(false);
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
@@ -64,25 +66,36 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8">
+    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 h-full min-h-0 flex flex-col">
       <div className="rounded-lg pb-4">
-        <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold ">
-          {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
-            props.lifecycleStage === LifecycleStageMap.PRICING ||
-            props.lifecycleStage === LifecycleStageMap.INVOICE
-            ? dict.nav.title.billing
-            : parseWordsForLabels(props.entityType)}
-        </h1>
-        <TableRibbon
-          path={pathNameEnd}
-          entityType={props.entityType}
-          selectedDate={selectedDate as DateRange}
-          setSelectedDate={setSelectedDate}
-          lifecycleStage={props.lifecycleStage}
-          instances={tableDescriptor.initialInstances}
-          triggerRefresh={triggerRefresh}
-          tableDescriptor={tableDescriptor}
-        />
+        <div className="flex items-baseline gap-4">
+          <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
+            {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
+              props.lifecycleStage === LifecycleStageMap.PRICING ||
+              props.lifecycleStage === LifecycleStageMap.INVOICE
+              ? dict.nav.title.billing
+              : parseWordsForLabels(props.entityType)}
+          </h1>
+          <Button
+            leftIcon="hide_source"
+            size="icon"
+            variant="outline"
+            tooltipText={hideTableRibbon ? dict.action.showRibbon : dict.action.hideRibbon}
+            onClick={() => setHideTableRibbon(!hideTableRibbon)}
+          />
+        </div>
+
+        {!hideTableRibbon &&
+          <TableRibbon
+            path={pathNameEnd}
+            entityType={props.entityType}
+            selectedDate={selectedDate as DateRange}
+            setSelectedDate={setSelectedDate}
+            lifecycleStage={props.lifecycleStage}
+            instances={tableDescriptor.initialInstances}
+            triggerRefresh={triggerRefresh}
+            tableDescriptor={tableDescriptor}
+          />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (
         <TableSkeleton />

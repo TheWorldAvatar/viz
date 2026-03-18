@@ -55,7 +55,9 @@
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "addInvoice": "Rechnung hinzufügen"
+    "addInvoice": "Rechnung hinzufügen",
+    "hideRibbon": "Tabellenband ausblenden",
+    "showRibbon": "Tischband anzeigen"
   },
   "form": {
     "singleService": "Einzelner Dienst",

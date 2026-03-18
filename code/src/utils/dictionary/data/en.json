@@ -55,7 +55,9 @@
     "clearAllFilters": "Clear all filters",
     "showMore": "Show more",
     "showLess": "Show less",
-    "addInvoice": "add invoice"
+    "addInvoice": "add invoice",
+    "hideRibbon": "Hide table ribbon",
+    "showRibbon": "Show table ribbon"
   },
   "form": {
     "singleService": "Single Service",

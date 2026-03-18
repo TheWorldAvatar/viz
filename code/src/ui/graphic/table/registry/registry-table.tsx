@@ -208,8 +208,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     <>
       {props.tableDescriptor.table.getVisibleLeafColumns().length > 0 ? (
         <>
-          <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion">
-            <div className="flex max-h-screen overflow-auto table-scrollbar">
+          <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-full min-h-0">
+            <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
               <DndContext
                 collisionDetection={closestCenter}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
@@ -218,7 +218,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               >
                 <table
                   aria-label={`${props.recordType} registry table`}
-                  className="border-separate border-spacing-0 w-full"
+                  className="border-separate border-spacing-0 w-full min-h-full"
                 >
                   <thead className="bg-muted sticky top-0 z-10">
                     {props.tableDescriptor.table
@@ -395,8 +395,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                 </table>
               </DndContext>
             </div>
+            <TablePagination rows={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
           </div>
-          <TablePagination rows={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
         </>
       ) : (
         <div className="text-center text-md md:text-lg py-8 text-foreground h-72">
