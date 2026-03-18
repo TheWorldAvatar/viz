@@ -118,7 +118,7 @@ export default function RegistryRowAction(
   const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
     browserStorageManager.clear();
     resetFormSession();
-    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id);
+    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id, props.row.date);
     const body: AgentResponseBody = await queryInternalApi(url);
     browserStorageManager.set(EVENT_KEY, props.row.event_id);
     try {

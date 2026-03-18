@@ -126,7 +126,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row[dict.title.status].toLowerCase())
       ) {
         browserStorageManager.set(EVENT_KEY, row.event_id)
-        const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id);
+        const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
         const body: AgentResponseBody = await queryInternalApi(url);
         try {
           const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
