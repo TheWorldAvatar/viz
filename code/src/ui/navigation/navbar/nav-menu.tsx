@@ -40,9 +40,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
-
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [nonMobileNavMenuWidth, setNonMobileNavMenuWidth] = useState<string>("w-3/16");
 
   if (props.isMobile) {
     return (
@@ -76,24 +74,15 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
     );
   }
 
-  const handleMenuToggle = () => {
-    if (isMenuExpanded) {
-      setNonMobileNavMenuWidth("md:w-1/15");
-    } else {
-      setNonMobileNavMenuWidth("w-3/16");
-    }
-    setIsMenuExpanded(!isMenuExpanded);
-  };
-
   return (
-    <div className={`${nonMobileNavMenuWidth} overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
+    <div className={`${isMenuExpanded ? "w-3/16" : "w-1/15"} overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
       <NavMenuContents
         {...props}
         isMenuExpanded={isMenuExpanded}
         setFileModalSettings={setFileModalSettings}
         setIsFileUploadModalOpen={setIsFileModalOpen}
         setIsMenuOpen={setIsMenuOpen}
-        handleMenuToggle={handleMenuToggle}
+        handleMenuToggle={() => setIsMenuExpanded(!isMenuExpanded)}
       />
       {isFileModalOpen && (
         <FileModal
