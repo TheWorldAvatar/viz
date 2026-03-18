@@ -62,7 +62,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
 
     return (
         <section className="flex flex-col h-full w-full mx-auto px-4 gap-5 md:px-8 bg-muted justify-between">
-            <header className={`flex flex-row gap-4 pt-10 text-foreground justify-between`}>
+            <header className={`flex flex-row gap-4 pt-10 text-foreground items-baseline`}>
                 <Button
                     leftIcon="arrow_back"
                     variant="outline"
@@ -75,16 +75,17 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
             <div className="grow overflow-y-auto">
-                {refreshFlag ? <FormSkeleton /> :
-                    (<FormComponent
-                        formRef={formRef}
-                        entityType={FormTypeMap.INVOICE}
-                        formType={FormTypeMap.INVOICE}
-                        accountType={props.accountType}
-                        selectedRowIds={tableDescriptor.selectedRowIds}
-                    />
-                    )}
-
+                <div className="w-full xl:max-w-xl">
+                    {refreshFlag ? <FormSkeleton /> :
+                        (<FormComponent
+                            formRef={formRef}
+                            entityType={FormTypeMap.INVOICE}
+                            formType={FormTypeMap.INVOICE}
+                            accountType={props.accountType}
+                            selectedRowIds={tableDescriptor.selectedRowIds}
+                        />
+                        )}
+                </div>
                 {invoiceAccountFilter && <section>
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (

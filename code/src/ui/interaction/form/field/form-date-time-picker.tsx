@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./field.module.css";
 
-import { FieldError, UseFormReturn } from "react-hook-form";
-
+import { FieldError, UseFormReturn, useWatch } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
   FORM_STATES,
@@ -33,11 +32,17 @@ export default function FormDateTimePicker(
   const dict = useDictionary();
   const dateType: string = "date";
   const timeType: string = "time";
-  const [selectedDate, setSelectedDate] = useState<Date>(
+  const watchedDateValue: string = useWatch({
+    control: props.form.control,
+    name: props.field.fieldId
+  });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     (() => {
       if (props.field.datatype !== dateType) return new Date();
       const formValue: string = props.form.getValues(props.field.fieldId);
-      if (!formValue) return new Date();
+      if (!formValue) {
+        return Number(props.field.minCount?.[VALUE_KEY]) === 0 ? undefined : new Date();
+      }
       return new Date(formValue);
     })()
   );
@@ -54,12 +59,18 @@ export default function FormDateTimePicker(
     inputType = "datetime-local";
     formatLabel = "DD/MM/YYYY HH:MM";
   }
+  const isOptionalDateField: boolean =
+    inputType === dateType && Number(props.field.minCount?.[VALUE_KEY]) === 0;
 
   // useEffect to avoid calling setValue during render
   useEffect(() => {
     if (inputType === dateType) {
-      const UTCDate: Date = getUTCDate(selectedDate as Date);
-      props.form.setValue(props.field.fieldId, getNormalizedDate(UTCDate));
+      if (selectedDate) {
+        const UTCDate: Date = getUTCDate(selectedDate);
+        props.form.setValue(props.field.fieldId, getNormalizedDate(UTCDate));
+      } else if (isOptionalDateField) {
+        props.form.setValue(props.field.fieldId, "");
+      }
     } else if (
       !props.form.getValues(props.field.fieldId) ||
       props.form.getValues(props.field.fieldId) === ""
@@ -76,7 +87,7 @@ export default function FormDateTimePicker(
       }
       props.form.setValue(props.field.fieldId, currentDateTime);
     }
-  }, [props.form, props.field.fieldId, selectedDate]);
+  }, [props.form, props.field.fieldId, selectedDate, inputType, props.field.datatype, watchedDateValue, isOptionalDateField]);
 
   return (
     <FormInputContainer
@@ -103,6 +114,7 @@ export default function FormDateTimePicker(
             placement="bottom"
             disableMobileView={true}
             disabled={props.options.disabled}
+            required={!isOptionalDateField}
           />
         </div>
       ) : (

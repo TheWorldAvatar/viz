@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.63.4
+
+### Changes
+
+- Made date inputs in the forms optional
+- Fixed an issue where on initial render the default value was not being set for the date inputs
+
+## 5.63.3
+
+### Changes
+
+- Redesigned the add invoice page inputs so they dont take the whole width of the page on a desktop view
+
 ## 5.63.2
 
 ### Changes
