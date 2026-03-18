@@ -10,7 +10,7 @@ import { Icon } from "@mui/material";
 import { usePopover } from "hooks/float/usePopover";
 import { useDictionary } from "hooks/useDictionary";
 import { useScreenType } from "hooks/useScreenType";
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import {
   ClassNames,
   DateBefore,
@@ -25,14 +25,15 @@ import Button from "ui/interaction/button";
 import { getNormalizedDate } from "utils/client-utils";
 
 interface DateInputProps {
-  selectedDate: Date | DateRange | Date[];
-  setSelectedDate?: React.Dispatch<React.SetStateAction<Date>>;
+  selectedDate: Date | DateRange | Date[] | undefined;
+  setSelectedDate?: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   setSelectedDates?: React.Dispatch<React.SetStateAction<Date[]>>;
   placement?: Placement;
   disabledDates?: DateBefore;
   disabled?: boolean;
   disableMobileView?: boolean;
+  required?: boolean;
   mode: "single" | "range" | "multiple";
 }
 
@@ -45,6 +46,7 @@ interface DateInputProps {
  * @param {DateBefore} disabledDates Optional dates to be disabled.
  * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
+ * @param {boolean} required Whether the date input is required or not. Only applicable in single date mode.
  * @param {"single" | "range" | "multiple"} mode The mode of the date input, either single date, date range or multiple dates.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
@@ -53,8 +55,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   const screenType: ScreenType = useScreenType();
   const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
 
-  const extractDateDisplay = (targetDate: Date | DateRange | Date[]): string => {
+  const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined): string => {
     if (props.mode === "single") {
+      if (!targetDate) return "";
       return getNormalizedDate(targetDate as Date);
     }
     if (props.mode === "multiple") {
@@ -71,9 +74,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     const toDate: string = targetDateRange?.to?.toLocaleDateString();
     return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
   };
-  const [displayedDateValues, setDisplayedDateValues] = useState<string>(
-    extractDateDisplay(props.selectedDate)
-  );
+  const displayedDateValues: string = extractDateDisplay(props.selectedDate);
 
   const popover = usePopover(props.placement);
   const transition = useTransitionStyles(popover.context, {
@@ -86,7 +87,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
 
   const handleDateSelect = (date: Date | DateRange | Date[]) => {
     if (props.mode === "single") {
-      props.setSelectedDate?.(date as Date);
+      props.setSelectedDate?.(date as Date | undefined);
     } else if (props.mode === "multiple") {
       props.setSelectedDates?.(date as Date[]);
     } else {
@@ -96,11 +97,6 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       });
     }
   };
-
-  useEffect(() => {
-    setDisplayedDateValues(extractDateDisplay(props.selectedDate));
-  }, [props.selectedDate]);
-
 
   const dayPickerClassNames: Partial<ClassNames> = {
     today: "text-yellow-500",
@@ -212,11 +208,11 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="single"
-                    selected={props.selectedDate as Date}
+                    selected={props.selectedDate as Date | undefined}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
                     classNames={dayPickerClassNames}
-                    required={true}
+                    required={props.required ?? true}
                   />
                 )}
               </div>
