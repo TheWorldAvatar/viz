@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./field.module.css";
 
-import { FieldError, UseFormReturn } from "react-hook-form";
-
+import { Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
   FORM_STATES,
@@ -33,6 +32,7 @@ export default function FormDateTimePicker(
   const dict = useDictionary();
   const dateType: string = "date";
   const timeType: string = "time";
+  const watchedDateValue: string = props.form.watch(props.field.fieldId);
   const [selectedDate, setSelectedDate] = useState<Date>(
     (() => {
       if (props.field.datatype !== dateType) return new Date();
@@ -76,7 +76,7 @@ export default function FormDateTimePicker(
       }
       props.form.setValue(props.field.fieldId, currentDateTime);
     }
-  }, [props.form, props.field.fieldId, selectedDate]);
+  }, [props.form, props.field.fieldId, selectedDate, inputType, props.field.datatype, watchedDateValue]);
 
   return (
     <FormInputContainer
