@@ -15,7 +15,7 @@ export interface FormArrayProps {
   maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
-  billingStore?: BillingEntityTypes;
+  billingStore: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 
@@ -28,7 +28,7 @@ export interface FormArrayProps {
  * @param {number} maxSize The maximum size of the array.
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
+ * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
