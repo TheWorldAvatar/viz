@@ -73,7 +73,8 @@ interface FormComponentProps {
  * @param setShowSearchModalState An optional dispatch method to close the search modal after a successful search.
  */
 export function FormComponent(props: Readonly<FormComponentProps>) {
-  const id: string = props.id ?? getAfterDelimiter(usePathname(), "/");
+  const pathname = usePathname();
+  const id: string = props.id ?? getAfterDelimiter(pathname, "/");
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();

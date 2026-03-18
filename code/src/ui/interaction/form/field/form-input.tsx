@@ -9,6 +9,7 @@ import {
 } from "ui/interaction/form/form-utils";
 import FormInputContainer from "./form-input-container";
 import NumericInputField from "./input/numeric-input";
+import { useDictionary } from "hooks/useDictionary";
 
 export interface InputFieldProps {
   field: PropertyShape;
@@ -24,6 +25,7 @@ export interface InputFieldProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormInputField(props: Readonly<InputFieldProps>) {
+  const dict = useDictionary();
   const inputClassNames: string = props.options?.inputStyle?.join(" ");
   // Disabled inputs should provide only text input
   const inputMode: "none" | "text" | "numeric" | "decimal" = props.options
@@ -46,7 +48,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
     "aria-label": props.field.name[VALUE_KEY],
     ...props.form.register(
       props.field.fieldId,
-      getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE))
+      getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE), dict)
     ),
   };
 

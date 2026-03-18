@@ -3,11 +3,11 @@
 }
 
 .mapboxgl-popup-content {
-  background: var(--background-primary) !important;
+  background: var(--background) !important;
   color: var(--text-color-primary) !important;
   font-size: var(--font-size-secondary-text);
 }
 
 .mapboxgl-popup-tip {
-  border-top-color: var(--background-primary) !important;
+  border-top-color: var(--background) !important;
 }

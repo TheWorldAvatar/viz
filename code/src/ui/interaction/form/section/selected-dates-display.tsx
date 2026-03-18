@@ -60,7 +60,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                         {sortedDatesWithIndex.map(({ date, originalIndex }, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-between border-b last:border-b-0 border-border "
+                                className="flex items-center justify-between border-b last:border-b-0 border-border"
                             >
                                 <div className="flex items-center ">
                                     <span className="text-sm font-medium text-foreground">
@@ -70,10 +70,10 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                 <Button
                                     type="button"
                                     leftIcon="close"
-                                    variant="ghost"
+                                    variant="destructiveOutline"
                                     size="icon"
                                     iconSize="small"
-                                    className="w-8 h-8 text-red-400 hover:bg-red-100 dark:text-red-600 dark:hover:!bg-red-200 mb-1"
+                                    className="w-8 h-8 mb-1"
                                     onClick={() => handleRemoveDate(originalIndex)}
                                     disabled={props.disabled || props.dates.length === 1}
                                     aria-label={`Remove date ${date.toLocaleDateString()}`}

@@ -79,7 +79,7 @@
     margin-top: 10px;
     flex-grow: 1;
     width: fit-content;
-    border: 1px solid var(--background-primary);
+    border: 1px solid var(--background);
 
     background-color: var(--background-tertiary);
 
@@ -106,7 +106,7 @@
 }
 
 .ribbonOption.active {
-    background-color: var(--background-primary);
+    background-color: var(--background);
 }
 
 .dropdownArrowIconContainer {

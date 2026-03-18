@@ -48,9 +48,6 @@ export default function PopoverActionButton({
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
-  if (validChildren.length === 0) {
-    return null;
-  }
   const popover = usePopover(placement, isOpen, setIsOpen);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
@@ -60,6 +57,9 @@ export default function PopoverActionButton({
     },
   });
 
+  if (validChildren.length === 0) {
+    return null;
+  }
   return (
     <>
       <div ref={popover.refs.setReference} {...popover.getReferenceProps()}>

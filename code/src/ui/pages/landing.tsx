@@ -4,7 +4,6 @@
  */
 
 import "github-markdown-css/github-markdown.css";
-import styles from "./landing.module.css";
 
 import markdownit from "markdown-it";
 

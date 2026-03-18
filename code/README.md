@@ -23,6 +23,7 @@ This document is split into three key sections: [Architecture](#1-architecture),
     - [2.2 Code conventions](#22-code-conventions)
     - [React components](#react-components)
     - [2.3 Client-Side](#23-client-side)
+    - [2.4 Colour Usage](#24-colour-usage)
   - [3. Local Development Workflow](#3-local-development-workflow)
     - [3.1 Requirements](#31-requirements)
   - [3.2 Installation](#32-installation)
@@ -158,6 +159,43 @@ class Button extends React.Component<ButtonProps> {
 ### 2.3 Client-Side
 
 Additionally, reusable components are provided to facilitate this. For navigation, `AppLink` is available at `ui/navigation/link/link.tsx`. For graphics, use the default `<Image>` element provided by next
+
+### 2.4 Colour Usage
+
+All colours are declared as CSS custom properties in `src/ui/css/globals.css` with light and dark variants. The `@theme` block maps each variable to a Tailwind utility class — **always prefer these Tailwind classes in `.tsx` files** (e.g. `bg-primary`, `text-muted-foreground`). Use raw `var(--…)` only in `.module.css` or inline styles.
+
+When a colour is defined as a pair, use the full pair together for colour usage: combine the related background and foreground variables or the related Tailwind classes unless a component has a specific reason not to. For example, use `--primary` with `--primary-foreground`, `bg-primary` with `text-primary-foreground`, and `--status-open-bg` with `--status-open-text`.
+
+| Group | Description | Variable | Tailwind Class |
+| --- | --- | --- | --- |
+| Core Background & Text | Main page background colour. Use in pair with `--foreground`. | `--background` | `bg-background` |
+| Core Background & Text | Main text colour. Use in pair with `--background`. | `--foreground` | `text-foreground` |
+| Core Background & Text | Secondary background surfaces such as nav bars, sidebars, and cards. Pair with `--muted-foreground` for supporting text or with `--foreground` for primary text. | `--muted` | `bg-muted` |
+| Core Background & Text | Lower-emphasis text colour for descriptions, hints, and other supporting copy. | `--muted-foreground` | `text-muted-foreground` |
+| Core Background & Text | Highlight background for interactive controls such as toggles and tabs. | `--ring` | `bg-ring` |
+| Core Background & Text | Semi-transparent inverse background used as a modal overlay backdrop. | `--background-inverse-primary` | `bg-inverse-primary` |
+| Actions & Interactions | Primary call-to-action buttons and key links. Use the foreground pair together with the background token. | `--primary` / `--primary-foreground` | `bg-primary`, `text-primary-foreground` |
+| Actions & Interactions | Secondary or supporting actions. Use the foreground pair together with the background token. | `--secondary` / `--secondary-foreground` | `bg-secondary`, `text-secondary-foreground` |
+| Actions & Interactions | Background for delete, cancel, or error-related actions. | `--destructive` | `bg-destructive` |
+| Borders & Focus States | Default border colour. | `--border` | `border-border` |
+| Borders & Focus States | Keyboard focus ring colour for interactive elements. In Tailwind, use with `focus-visible`; for example `focus-visible:ring-focus focus-visible:ring-[2px]`, where `ring-[2px]` sets the ring width (border thickness) so the focus ring is visible. | `--focus` | `ring-focus` |
+| Miscellaneous | Non-critical information surfaces such as help banners, inline notices, guidance callouts, and tooltips. Use the background, text, and border tokens together. | `--info-background` / `--info-foreground` / `--info-border` | `bg-info-background`, `text-info-foreground`, `border-info-border` |
+| Miscellaneous | Default colours used when a state is undefined, neutral, or not applicable. Always apply the background and foreground pair together for proper contrast. | `--neutral-background`/`--neutral-foreground` | `bg-neutral-background`, `text-neutral-foreground` |
+| Miscellaneous | Colours used to highlight warnings, caution states, or situations that may require user attention. Always apply the background and foreground pair together. | `--warning-background`/`--warning-foreground` | `bg-warning-background`, `text-warning-foreground` |
+| Miscellaneous | Colours used to represent errors, failures, or terminated states. Also used for error notifications and toast messages. Always apply the background and foreground pair together. | `--error-background`/`--error-foreground` | `bg-error-background`, `text-error-foreground` |
+| Miscellaneous | Colours used to indicate successful outcomes, completed actions, or active/available states. Also used for success notifications and toast messages. Always apply the background and foreground pair together. | `--success-background`/`--success-foreground` | `bg-success-background`, `text-success-foreground` |
+
+#### Legacy Variables
+
+These live in `globals.css` but are consumed **only** in `.module.css` files. Migrate to Tailwind classes when touching these components.
+
+| Variable | Used By |
+| --- | --- |
+| `--background-secondary`, `--background-tertiary` | Scrollbars, context menus, map panels, ribbons |
+| `--background-inverse-primary` | Dropdown selectors |
+| `--text-color-primary`, `--text-color-secondary` | Floating panels, info trees, dropdowns |
+| `--text-color-links`, `--text-color-links-hover` | Link colours  |
+| `--border-primary`, `--border-secondary`, `--border-tertiary` | Context menus, info trees, floating panels |
 
 ## 3. Local Development Workflow
 

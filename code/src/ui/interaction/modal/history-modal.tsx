@@ -77,7 +77,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                             </thead>
                             <tbody className="divide-y divide-border/50">
                                 {historyDetails.length > 0 ? historyDetails.map((history, index) => (
-                                    <tr key={index} className="text-base text-muted-foreground hover:bg-muted/30 ">
+                                    <tr key={index} className="text-base text-muted-foreground hover:bg-ring/50">
                                         <td className="py-3 px-2">{formatDatetimeValue(history?.timestamp?.value)}</td>
                                         <td className="py-3 px-2">{history?.user?.value ?? "-"}</td>
                                         <td className="py-3 px-2">{history?.message?.value}</td>

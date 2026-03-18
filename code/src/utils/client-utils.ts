@@ -16,9 +16,7 @@ import {
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  LifecycleStageMap,
-  RegistryFieldValues,
-  SparqlResponseField,
+  LifecycleStageMap
 } from "types/form";
 import { JsonObject } from "types/json";
 import { ToastConfig, ToastType } from "types/toast";
@@ -129,7 +127,7 @@ export function getId(input: string): string {
  * @param {string} iri input iri.
  */
 export function isValidIRI(iri: string): boolean {
-  // eslint-disable-next-line
+
   const iriPattern = /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
   return iriPattern.test(iri);
 }
@@ -252,17 +250,17 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
       };
     case "success":
       return {
-        bg: "bg-status-success-bg",
+        bg: "bg-success-background",
         border: "border-green-200",
-        text: "text-status-success-text",
+        text: "text-success-foreground",
         icon: "check_circle",
         title: dict.title.success,
       };
     case "error":
       return {
-        bg: "bg-status-error-bg",
+        bg: "bg-error-background",
         border: "border-red-200",
-        text: "text-status-error-text",
+        text: "text-error-foreground",
         icon: "error",
         title: dict.title.error,
       };
