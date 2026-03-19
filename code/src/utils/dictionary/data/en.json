@@ -55,9 +55,7 @@
     "clearAllFilters": "Clear all filters",
     "showMore": "Show more",
     "showLess": "Show less",
-    "addInvoice": "add invoice",
-    "hideRibbon": "Hide table ribbon",
-    "showRibbon": "Show table ribbon"
+    "addInvoice": "add invoice"
   },
   "form": {
     "singleService": "Single Service",
@@ -127,6 +125,10 @@
     "navBar": {
       "title": "Show navigation bar",
       "tooltip": "Show / hide navigation"
+    },
+    "tableRibbon": {
+    "title": "Hide ribbon",
+    "tooltip": "Show / hide ribbon"
     }
   },
   "message": {

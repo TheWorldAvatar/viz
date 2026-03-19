@@ -55,9 +55,7 @@
     "clearAllFilters": "Alle Filter löschen",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "addInvoice": "Rechnung hinzufügen",
-    "hideRibbon": "Tabellenband ausblenden",
-    "showRibbon": "Tischband anzeigen"
+    "addInvoice": "Rechnung hinzufügen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -127,6 +125,10 @@
     "navBar": {
       "title": "Navigationsleiste anzeigen",
       "tooltip": "Navigationsleiste ein-/ausblenden"
+    },
+    "tableRibbon": {
+    "title": "Versteckband",
+    "tooltip": "Band ein-/ausblenden"
     }
   },
   "message": {
