@@ -9,7 +9,7 @@ interface FormSectionProps {
   entityType: string;
   group: PropertyGroup;
   form: UseFormReturn;
-  billingStore?: BillingEntityTypes;
+  billingStore: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 /**
@@ -18,7 +18,7 @@ interface FormSectionProps {
  * @param {string} entityType The type of entity.
  * @param {PropertyGroup} group Fieldset group model.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
+ * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
@@ -37,6 +37,7 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
             maxSize={parseInt(props.group.maxCount?.[VALUE_KEY])}
             fieldConfigs={props.group.property}
             form={props.form}
+            billingStore={props.billingStore}
             options={props.options}
           />
         ) : (

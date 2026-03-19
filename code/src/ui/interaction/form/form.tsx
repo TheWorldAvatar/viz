@@ -31,11 +31,11 @@ import {
 } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "utils/client-utils";
-import { EVENT_KEY } from "utils/constants";
+import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
-import { FORM_STATES, parseBranches, parsePropertyShapeOrGroupList } from "./form-utils";
+import { FORM_STATES, parseBranches, parsePricingModels, parsePropertyShapeOrGroupList } from "./form-utils";
 import BranchFormSection from "./section/branch-form-section";
 import { DependentFormSection } from "./section/dependent-form-section";
 import FormGeocoder from "./section/form-geocoder";
@@ -242,14 +242,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               ...formData,
             }));
           if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            pendingResponse = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              "PUT",
-              JSON.stringify({
-                ...formData,
-                pricing: formData[billingParams.pricingField],
-                contract: pendingResponse.data?.id,
-              }));
+            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
+            parsePricingModels(formData, billingParams)?.forEach(async model =>
+              pendingResponse = await queryInternalApi(
+                url,
+                "POST",
+                JSON.stringify({
+                  id: formData.id,
+                  pricing: model,
+                }))
+            )
           }
         }
         break;
@@ -299,7 +301,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
         pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-          "PUT",
+          "POST",
           JSON.stringify(formData));
         break;
       }
@@ -337,14 +339,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               contract: props.primaryInstance,
             }));
           if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            pendingResponse = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              "PUT",
-              JSON.stringify({
-                ...formData,
-                pricing: formData[billingParams.pricingField],
-                contract: pendingResponse.data?.id,
-              }));
+            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
+            parsePricingModels(formData, billingParams)?.forEach(async model =>
+              pendingResponse = await queryInternalApi(
+                url,
+                "POST",
+                JSON.stringify({
+                  id: formData.id,
+                  pricing: model,
+                }))
+            )
           }
         }
         break;
@@ -417,12 +421,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
     }
 
+    let isInvalidPricingModel: boolean = false;
+    if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+      const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, id, browserStorageManager.get(DATE_KEY));
+      const body: AgentResponseBody = await queryInternalApi(url);
+      isInvalidPricingModel = body.data.message == "false";
+    }
     stopLoading();
     toast(
-      pendingResponse?.data?.message || pendingResponse?.error?.message,
-      pendingResponse?.error ? "error" : "success"
+      (props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel) ? dict.message.invalidPricingModelInstructions
+        : (pendingResponse?.data?.message || pendingResponse?.error?.message),
+      props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel ? "default" : pendingResponse?.error ? "error" : "success"
     );
-    if (!pendingResponse?.error) {
+
+    if ((props.formType != FormTypeMap.ASSIGN_PRICE && !pendingResponse?.error) ||
+      (props.formType === FormTypeMap.ASSIGN_PRICE && !isInvalidPricingModel)) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);

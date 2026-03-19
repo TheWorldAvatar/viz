@@ -253,7 +253,8 @@ function makeExternalEndpoint(
       if (type == FormTypeMap.ASSIGN_PRICE) {
         if (searchParams.get("id") != "null") {
           const id: string = searchParams.get("id");
-          return buildUrl(agentBaseApi, "report", "contract", "pricing", encodeURIComponent(id));
+          const date: string = searchParams.get("date");
+          return buildUrl(agentBaseApi, "report", "contract", "pricing", `${encodeURIComponent(id)}?date=${date}`);
         }
         return buildUrl(agentBaseApi, "report", "contract", "pricing");
       }

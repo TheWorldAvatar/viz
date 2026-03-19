@@ -15,7 +15,7 @@ export interface FormArrayProps {
   maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
-  billingStore?: BillingEntityTypes;
+  billingStore: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 
@@ -28,7 +28,7 @@ export interface FormArrayProps {
  * @param {number} maxSize The maximum size of the array.
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
+ * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
@@ -51,10 +51,10 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
 
   return (
     <div className="flex flex-col ">
-      <div className="flex flex-col justify-start items-start gap-4 my-4">
-        <div className="flex flex-row items-center justify-start gap-2">
-          {!props.options?.disabled &&
-            (Number.isNaN(props.maxSize) || fields.length < props.maxSize) && (
+      <div className="flex flex-col justify-start items-start gap-2 my-2">
+        {!props.options?.disabled &&
+          (<div className="flex flex-row items-center justify-start gap-2">
+            {(Number.isNaN(props.maxSize) || fields.length < props.maxSize) && (
               <Button
                 size="icon"
                 leftIcon="add"
@@ -64,22 +64,22 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                 }}
               />
             )}
-          {!props.options?.disabled && fields.length > minArraySize && (
-            <Button
-              leftIcon="remove"
-              size="icon"
-              variant="destructive"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                remove(currentIndex);
-                // Adjust current index
-                if (currentIndex >= fields.length - 1) {
-                  setCurrentIndex(Math.max(0, fields.length - 2));
-                }
-              }}
-            />
-          )}
-        </div>
+            {fields.length > minArraySize && (
+              <Button
+                leftIcon="remove"
+                size="icon"
+                variant="destructive"
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  remove(currentIndex);
+                  // Adjust current index
+                  if (currentIndex >= fields.length - 1) {
+                    setCurrentIndex(Math.max(0, fields.length - 2));
+                  }
+                }}
+              />
+            )}
+          </div>)}
 
         <div className="flex flex-wrap gap-4  rounded-lg w-fit">
           {Array.from({ length: fields.length }, (_, index) => (
@@ -98,8 +98,9 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         </div>
       </div>
 
+
       <div className="bg-background flex flex-col w-full p-2 rounded-lg">
-        {fields.length == 0 && <p>{dict.message.arrayInstruction}</p>}
+        {fields.length == 0 && <p>{props.options?.disabled ? dict.message.emptySection : dict.message.arrayInstruction}</p>}
         {fields.length > 0 &&
           props.fieldConfigs.map((config, index) => {
             const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
