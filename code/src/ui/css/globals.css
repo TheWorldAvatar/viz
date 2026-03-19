@@ -241,6 +241,10 @@ input[type="file"] {
   width: 22px;
 }
 
+.table-scrollbar::-webkit-scrollbar-corner {
+  background: var(--background-secondary);
+}
+
 .hidden-scrollbar {
   /* Hide scrollbar for Chrome, Safari and Opera */
   scrollbar-width: none;
