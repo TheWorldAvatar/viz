@@ -53,28 +53,29 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
   return (
     <Provider store={reduxStore}>
-      <HeaderBar pages={props.pages} settings={props.settings} />
-
-      <main className="flex h-[92dvh] w-full"
-        style={{
-          backgroundImage: `url(${backgroundImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}>
-        {!pathname.endsWith("map") && (
-          <NavMenu
-            pages={props.pages}
-            settings={props.settings}
-            isMobile={false}
-          />
-        )}
-        <div className={`flex flex-col flex-1 min-w-0 bg-muted h-full box-border`}>
-          <section className="grow overflow-y-auto">
-            {props.children}
-          </section>
-          {!pathname.endsWith("map") && <Footer />}
-        </div>
-      </main>
+      <div className="flex h-dvh w-full flex-col overflow-hidden">
+        <HeaderBar pages={props.pages} settings={props.settings} />
+        <main className="flex w-full flex-1 min-h-0"
+          style={{
+            backgroundImage: `url(${backgroundImageUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}>
+          {!pathname.endsWith("map") && (
+            <NavMenu
+              pages={props.pages}
+              settings={props.settings}
+              isMobile={false}
+            />
+          )}
+          <div className="flex flex-col flex-1 min-h-0 min-w-0 bg-muted h-full box-border">
+            <section className="grow overflow-y-auto">
+              {props.children}
+            </section>
+            {!pathname.endsWith("map") && <Footer />}
+          </div>
+        </main>
+      </div>
 
       <Konami action={togglePopup} timeout={6000} resetDelay={1000} />
       {popup && <Trex callback={togglePopup} />}
