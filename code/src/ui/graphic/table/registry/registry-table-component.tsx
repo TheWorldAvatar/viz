@@ -40,7 +40,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
-  const [hideTableRibbon, setHideTableRibbon] = useState<boolean>(false);
+  const [isTableRibbonVisible, setIsTableRibbonVisible] = useState<boolean>(false);
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
@@ -80,12 +80,12 @@ export default function RegistryTableComponent(
             leftIcon="hide_source"
             size="icon"
             variant="outline"
-            tooltipText={hideTableRibbon ? dict.action.showRibbon : dict.action.hideRibbon}
-            onClick={() => setHideTableRibbon(!hideTableRibbon)}
+            tooltipText={isTableRibbonVisible ? dict.action.showRibbon : dict.action.hideRibbon}
+            onClick={() => setIsTableRibbonVisible(!isTableRibbonVisible)}
           />
         </div>
 
-        {!hideTableRibbon &&
+        {!isTableRibbonVisible &&
           <TableRibbon
             path={pathNameEnd}
             entityType={props.entityType}
