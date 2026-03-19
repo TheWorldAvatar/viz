@@ -4,7 +4,8 @@ import { TableDescriptor, useTable } from "hooks/table/useTable";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
@@ -14,6 +15,8 @@ import {
   getInitialDateFromLifecycleStage,
   parseWordsForLabels
 } from "utils/client-utils";
+import { addItem, selectItem } from "state/context-menu-slice";
+import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
@@ -37,12 +40,24 @@ export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
+  const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshFlag, triggerRefresh } = useOperationStatus();
-
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
+
+  const tableRibbonContextItem: ContextItemDefinition = useMemo(() => {
+    return {
+      name: dict.context.tableRibbon.title,
+      description: dict.context.tableRibbon.tooltip,
+      id: "table-ribbon",
+      toggled: false,
+    };
+  }, [dict]);
+
+  const ribbonState: ContextItemDefinition = useSelector(selectItem(tableRibbonContextItem.id));
+
   const tableDescriptor: TableDescriptor = useTable(
     props.entityType,
     refreshFlag,
@@ -51,6 +66,10 @@ export default function RegistryTableComponent(
     null,
     selectedDate,
   );
+
+  useEffect(() => {
+    dispatch(addItem(tableRibbonContextItem));
+  }, [dispatch, tableRibbonContextItem]);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
@@ -64,25 +83,27 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8">
+    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 h-full min-h-0 flex flex-col">
       <div className="rounded-lg pb-4">
-        <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold ">
+        <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
             props.lifecycleStage === LifecycleStageMap.PRICING ||
             props.lifecycleStage === LifecycleStageMap.INVOICE
             ? dict.nav.title.billing
             : parseWordsForLabels(props.entityType)}
         </h1>
-        <TableRibbon
-          path={pathNameEnd}
-          entityType={props.entityType}
-          selectedDate={selectedDate as DateRange}
-          setSelectedDate={setSelectedDate}
-          lifecycleStage={props.lifecycleStage}
-          instances={tableDescriptor.initialInstances}
-          triggerRefresh={triggerRefresh}
-          tableDescriptor={tableDescriptor}
-        />
+
+        {!ribbonState?.toggled &&
+          <TableRibbon
+            path={pathNameEnd}
+            entityType={props.entityType}
+            selectedDate={selectedDate as DateRange}
+            setSelectedDate={setSelectedDate}
+            lifecycleStage={props.lifecycleStage}
+            instances={tableDescriptor.initialInstances}
+            triggerRefresh={triggerRefresh}
+            tableDescriptor={tableDescriptor}
+          />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (
         <TableSkeleton />

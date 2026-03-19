@@ -20,7 +20,7 @@ export default function TableSkeleton() {
                     </tr>
                 </thead>
                 <tbody>
-                    {[...Array(5)].map((_, rowIndex) => (
+                    {[...Array(7)].map((_, rowIndex) => (
                         <tr key={`skeleton-row-${rowIndex}`}>
                             {/* Action cells */}
                             <th className="w-[calc(100%/20)] border-r border-border border-b  p-2 md:p-3 sticky left-0 z-20 bg-background group-hover:bg-muted">

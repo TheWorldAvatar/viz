@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.1
+
+### Changes
+
+- Updated the table UX experience. The scrolling of the table now happens only inside the table, not having to scroll on the outer page as well. This allows users to have a better experience when navigating through the table.
+- The horizontal scrollbar in the table is now always visible
+- Added the ability to hide the table ribbon from the context menu. 
+
 ## 5.64.0
 
 ### Changes

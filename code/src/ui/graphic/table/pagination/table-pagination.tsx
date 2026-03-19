@@ -25,7 +25,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
   const numberOfSelectedRows: number = props.table.getSelectedRowModel().rows.length;
   const lastPageIndex: number = Math.ceil(props.table.getRowCount() / props.pagination.pageSize);
   return (
-    <div className="flex items-center justify-between p-4 mt-3 bg-muted border-t border-border flex-shrink-0">
+    <div className="flex items-center justify-between p-2 bg-muted border-t border-border shrink-0">
       <div className="text-sm text-foreground">
         {dict.message.numberOfRecords
           .replace("{replace}", String(numberOfSelectedRows > 0 ? numberOfSelectedRows : Math.min(props.rows, props.table.getRowCount())))
@@ -70,7 +70,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
             variant="outline"
             leftIcon="keyboard_double_arrow_left"
             size="icon"
-            className="!hidden md:!flex"
+            className="hidden! md:flex!"
             onClick={() => props.table.setPageIndex(0)}
             disabled={props.pagination.pageIndex == 0}
             aria-label="Go to first page"
@@ -94,7 +94,7 @@ export default function TablePagination(props: Readonly<TablePaginationProps>) {
           <Button
             variant="outline"
             leftIcon="keyboard_double_arrow_right"
-            className="!hidden md:!flex"
+            className="hidden! md:flex!"
             size="icon"
             onClick={() => props.table.setPageIndex(lastPageIndex - 1)}
             disabled={props.pagination.pageIndex == lastPageIndex - 1}

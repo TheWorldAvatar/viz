@@ -222,28 +222,6 @@ input[type="file"] {
     Constants for our own CSS classes (across all themes).
 **/
 
-.partner-button {
-  width: 50%;
-
-  margin: 10px;
-  padding: 10px;
-  flex-grow: 1;
-
-  border: 2px solid var(--border-primary);
-  background-color: #f9f9f9 !important;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-.partner-button:hover {
-  background-color: #e5e5e5 !important;
-}
-
-.partner-button:after {
-  display: block;
-  padding-bottom: 100%;
-}
-
 * ::-webkit-scrollbar {
   height: 12px;
   width: 12px;
@@ -260,7 +238,11 @@ input[type="file"] {
 
 .table-scrollbar::-webkit-scrollbar {
   height: 28px;
-  width: 12px;
+  width: 22px;
+}
+
+.table-scrollbar::-webkit-scrollbar-corner {
+  background: var(--background-secondary);
 }
 
 .hidden-scrollbar {

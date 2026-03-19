@@ -30,7 +30,7 @@ export default function DragActionHandle(
       {...attributes}
       {...listeners}
       tooltipText={dict.message.dragToReorder}
-      className="cursor-grab hover:cursor-grabbing hover:bg-transparent border-r-2 border-border/80 border-t-1"
+      className="cursor-grab hover:cursor-grabbing hover:bg-transparent border-r-2 border-border/80 border-t"
     />
   );
 }

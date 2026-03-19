@@ -62,7 +62,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   };
 
   return (
-    <div className="flex flex-col py-1 md:py-2">
+    <div className="flex flex-col py-1 md:py-2 fade-in-on-motion">
       {props.lifecycleStage !== LifecycleStageMap.GENERAL && isPermitted("registryFullAccess") &&
         (<div className="flex justify-between items-center flex-wrap gap-2 md:gap-0">
           <div className={`bg-ring w-full sm:max-w-fit rounded-lg p-1 sm:p-1.5 border border-border grid ${isBillingStage ? "grid-cols-3" : "grid-cols-2"} gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4`}>
@@ -176,7 +176,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.OUTSTANDING ? "active" : "ghost"
               }
-              className="text-sm font-medium  rounded-l-lg rounded-r-none !border-0 "
+              className="text-sm font-medium  rounded-l-lg rounded-r-none border-0!"
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.scheduled}
@@ -186,7 +186,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.SCHEDULED ? "active" : "ghost"
               }
-              className="text-sm font-medium !rounded-none !border-0 "
+              className="text-sm font-medium rounded-none! border-0! "
             />}
             {isTaskRegistry && <RedirectButton
               label={dict.nav.title.closed}
@@ -196,7 +196,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               variant={
                 props.lifecycleStage == LifecycleStageMap.CLOSED ? "active" : "ghost"
               }
-              className="text-sm font-medium rounded-r-lg rounded-l-none !border-0 "
+              className="text-sm font-medium rounded-r-lg rounded-l-none border-0!"
             />}
           </div>
         }
