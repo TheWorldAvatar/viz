@@ -260,7 +260,7 @@ input[type="file"] {
 
 .table-scrollbar::-webkit-scrollbar {
   height: 28px;
-  width: 12px;
+  width: 22px;
 }
 
 .hidden-scrollbar {
