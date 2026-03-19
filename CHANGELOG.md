@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.3
+
+### Bug Fixes
+
+- Fixed an issue where the mobile navigation was not showing at the map page
+
 ## 5.64.2
 
 ### Changes
