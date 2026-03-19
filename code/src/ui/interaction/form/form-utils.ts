@@ -127,17 +127,23 @@ export function parsePropertyShapeOrGroupList(
           !fieldset.maxCount ||
           (fieldset.maxCount && parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1)
         ) {
-
+          const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
           if (isFieldMappable(updatedProp)) {
-            fieldIdMapping[fieldset?.label?.[VALUE_KEY]] = fieldset?.label?.[VALUE_KEY];
+            fieldIdMapping[fieldsetName] = fieldsetName;
+          }
+          // Replace account or pricing field with the field ID so that we can still retrieve the old values
+          if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+            billingTypes.accountField = fieldsetName;
+          } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+            billingTypes.pricingField = fieldsetName;
           }
           // Initialise array field group object if they have yet to be
           // Min count of 0 should be initialise as an empty array
-          if (!initialState[fieldset.label[VALUE_KEY]] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
-            initialState[fieldset.label[VALUE_KEY]] = [];
+          if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
+            initialState[fieldsetName] = [];
             // If at least one item, initialise it with an array with 1 empty object
-          } else if (!initialState[fieldset.label[VALUE_KEY]] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
-            initialState[fieldset.label[VALUE_KEY]] = [{}];
+          } else if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
+            initialState[fieldsetName] = [{}];
           }
           return initFormField(
             updatedProp,
@@ -966,4 +972,22 @@ export function genDefaultSelectOption(dict: Dictionary): OntologyConcept {
       lang: "",
     },
   };
+}
+
+/**
+  * Parses the form inputs for the pricing model into a flat map when required.
+  *
+  * @param {FieldValues} formData The form data inputs.
+  * @param {BillingEntityTypes} billingParams The billing fields of interest.
+  */
+export function parsePricingModels(formData: FieldValues, billingParams: BillingEntityTypes): string[] {
+  const pricingData = formData[billingParams.pricingField];
+  if (!Array.isArray(pricingData)) {
+    return [pricingData];
+  } else if (pricingData.length > 0) {
+    const pricingFieldKey: string = Object.keys(pricingData[0] as FieldValues)
+      .find(field => field.includes(billingParams.pricing.replace("_", " ")));
+    return pricingData.flatMap(data => data[pricingFieldKey]);
+  }
+  return [];
 }

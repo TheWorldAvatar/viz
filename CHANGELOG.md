@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.0
+
+### Changes
+
+- Update pricing route changes to work with new backend requirements
+- Update the design of an empty array in view forms
+- Add checks for valid pricing model when assigning pricing before redirecting to billables form
+- Bump min version of `VisBackend Agent` from `v1.40.0` to `v1.41.0`
+
+### Bug Fixes
+
+- Fixes the wrong redirect for pricing model when called within an array
+
 ## 5.63.4
 
 ### Changes
