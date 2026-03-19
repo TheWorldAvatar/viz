@@ -44,7 +44,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <nav className="flex mr-1.5 lg:hidden">
+      <nav className="flex mr-1.5">
         <PopoverActionButton
           variant="ghost"
           leftIcon="menu"
@@ -75,7 +75,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   }
 
   return (
-    <div className={`${isMenuExpanded ? "w-3/16" : "w-1/15"} overflow-y-auto bg-muted border-r-border border-r hidden lg:block transition-all duration-200 ease-in-out`}>
+    <div className={`${isMenuExpanded ? "w-3/16" : "w-1/15"} overflow-y-auto bg-muted border-r-border border-r hidden xl:block transition-all duration-200 ease-in-out`}>
       <NavMenuContents
         {...props}
         isMenuExpanded={isMenuExpanded}
