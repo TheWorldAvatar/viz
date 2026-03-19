@@ -152,7 +152,10 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       }
     } else if (props.lifecycleStage === LifecycleStageMap.INVOICE) {
       navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
-    } else {
+    } else if (props.lifecycleStage === LifecycleStageMap.ACTIVE || props.lifecycleStage === LifecycleStageMap.ARCHIVE) {
+      navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
+    }
+    else {
       const registryRoute: string = isPermitted("edit") ? Routes.REGISTRY_EDIT : Routes.REGISTRY;
       navigateToDrawer(registryRoute, props.recordType, recordId);
     }
