@@ -218,7 +218,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               >
                 <table
                   aria-label={`${props.recordType} registry table`}
-                  className="border-separate border-spacing-0 w-full min-h-full"
+                  className="border-separate border-spacing-0 w-full"
                 >
                   <thead className="bg-muted sticky top-0 z-10">
                     {props.tableDescriptor.table
