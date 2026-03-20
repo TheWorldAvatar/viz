@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Konami from "react-konami-code";
 import { Provider } from "react-redux";
 
 import { reduxStore } from "app/store";
 import { useBackgroundImageUrl } from "hooks/useBackgroundImageUrl";
+import { useContextMenuOpen } from "hooks/useContextMenuOpen";
 import { OptionalPage } from "io/config/optional-pages";
 import { usePathname } from "next/navigation";
 import { UISettings } from "types/settings";
@@ -39,17 +40,16 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
     setPopup(!popup);
   };
 
-  useEffect(() => {
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setContextMenuPosition({ x: e.pageX, y: e.pageY });
-    };
-    window.addEventListener("contextmenu", handleContextMenu);
-    return () => {
-      window.removeEventListener("contextmenu", handleContextMenu);
-    };
+  const openContextMenuAtPageCoords = useCallback((x: number, y: number) => {
+    setContextMenuVisible(true);
+    setContextMenuPosition({ x, y });
   }, []);
+
+  const closeContextMenu = useCallback(() => {
+    setContextMenuVisible(false);
+  }, []);
+
+  useContextMenuOpen(openContextMenuAtPageCoords);
 
   return (
     <Provider store={reduxStore}>
@@ -85,7 +85,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
         <ContextMenu
           x={contextMenuPosition.x}
           y={contextMenuPosition.y}
-          showContextMenu={contextMenuVisible}
+          onClose={closeContextMenu}
         />
       )}
     </Provider>
