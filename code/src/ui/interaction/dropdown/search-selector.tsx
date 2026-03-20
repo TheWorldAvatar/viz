@@ -1,6 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dictionary } from "types/dictionary";
 import StatusComponent from "ui/text/status/status";
 import Button from "../button";
@@ -79,7 +79,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             triggerRefresh();
             setSelectedOptions([]);
           }}
-          tooltipText={dict.action.clearAllFilters}
+          tooltipText={dict.action.clearFilter}
           variant="destructive"
           aria-label={"Clear all options for " + props.label}
         />}
