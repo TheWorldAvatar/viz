@@ -2,7 +2,7 @@
 
 import styles from './context-menu.module.css';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxState } from 'app/store';
@@ -13,14 +13,11 @@ import ContextItem, { ContextItemDefinition } from './context-item';
 interface ContextMenuProps {
   x: number,
   y: number,
-  showContextMenu: boolean,
+  onClose: () => void,
   items?: ContextItemDefinition[],
   addItem?: (_item: ContextItemDefinition) => void,
-  toggleItem?: (_name: string) => void
+  toggleItem?: (id: string) => void
 }
-
-// Time the RMB was pressed down
-let rmbDownTime: number;
 
 /**
  * Represents a component for a custom right-click menu, containing instances of the
@@ -30,48 +27,17 @@ let rmbDownTime: number;
  * the global Redux state so it that it persists across the application lifecycle.
  */
 function ContextMenu(props: Readonly<ContextMenuProps>) {
-  const [xPos, setXPos] = useState<string>(`${props.x}px`);
-  const [yPos, setYPos] = useState<string>(`${props.y}px`);
-  const [showMenu, setShowMenu] = useState<boolean>(props.showContextMenu);
-
-  // On left-click
-  const handleLeftClick = () => {
-    if (showMenu) setShowMenu(false);
-  }
-
-  // On right-click
-  const handleRightClick = (e: MouseEvent) => {
-    e.preventDefault();
-    setXPos(`${e.pageX}px`);
-    setYPos(`${e.pageY}px`);
-    setShowMenu(true);
-  }
-
-
-  // Executes the following when the component is first mounted
   useEffect(() => {
-    // Add event listeners and actions
+    const handleLeftClick = () => {
+      props.onClose();
+    };
     document.addEventListener("click", handleLeftClick);
-
-    document.onmousedown = (event) => {
-      if (event.button === 2) rmbDownTime = Date.now();
-    }
-
-    document.onmouseup = (event) => {
-      if (event.button === 2) {
-        const duration = Date.now() - rmbDownTime;
-        if (duration < 500) {
-          handleRightClick(event);
-        }
-      }
-    }
-    // When component is unmounted, remove the following
     return () => {
       document.removeEventListener("click", handleLeftClick);
     };
-  }, []);
+  }, [props]);
 
-  if (!showMenu || props.items == null || props.items.length === 0) {
+  if (props.items == null || props.items.length === 0) {
     return null;
   }
 
@@ -80,10 +46,9 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
       className={styles.menu}
       style={{
         position: "absolute",
-        top: yPos,
-        left: xPos
+        top: `${props.y}px`,
+        left: `${props.x}px`,
       }}>
-
       {props.items.map((item) => (
         <ContextItem
           key={item.id}
@@ -92,7 +57,7 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
           description={item.description ?? ""}
           toggled={item.toggled}
           callback={(id: string) => {
-            props.toggleItem(id);;
+            props.toggleItem(id);
           }}
         />
       ))}
