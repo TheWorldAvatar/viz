@@ -121,7 +121,23 @@ export function useTable(
       ? updater(columnFilters)
       : updater;
 
-    const activeNewFilters: ColumnFilter[] = newFilters.filter(filter => !!filter.value);
+    // In JS, an empty array is truthy, so we need to filter out the filters with empty array
+    // or empty string value to get the actual active filters.
+    const activeNewFilters: ColumnFilter[] = newFilters.filter((filter) => {
+      if (filter.value === null || filter.value === undefined) {
+        return false;
+      }
+
+      if (Array.isArray(filter.value)) {
+        return filter.value.length > 0;
+      }
+
+      if (typeof filter.value === "string") {
+        return filter.value.trim().length > 0;
+      }
+
+      return true;
+    });
 
     // Limit to maximum 3 active filters at a time 
     if (activeNewFilters.length > 3) {
