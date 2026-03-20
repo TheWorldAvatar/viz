@@ -79,7 +79,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             triggerRefresh();
             setSelectedOptions([]);
           }}
-          tooltipText={dict.action.clearAllFilters}
+          tooltipText={dict.action.clearFilter}
           variant="destructive"
           aria-label={"Clear all options for " + props.label}
         />}

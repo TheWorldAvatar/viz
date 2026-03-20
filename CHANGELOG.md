@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.4
+
+### Bug Fixes
+
+- Fixed an issue with table column filter count not resetting after a filter is cleared, which was causing the filter count to be incorrect when you clear a filter and select a new filter without refreshing the page.
+
 ## 5.64.3
 
 ### Bug Fixes
