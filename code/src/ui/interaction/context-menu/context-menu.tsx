@@ -1,7 +1,5 @@
 "use client";
 
-import styles from './context-menu.module.css';
-
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 
@@ -43,7 +41,7 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
 
   return (
     <div
-      className={styles.menu}
+      className="absolute min-w-50 flex flex-col p-2.5 z-1000 bg-muted border border-border rounded shadow-lg"
       style={{
         position: "absolute",
         top: `${props.y}px`,
