@@ -1,6 +1,6 @@
 import { useDictionary } from "hooks/useDictionary";
 import useRefresh from "hooks/useRefresh";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dictionary } from "types/dictionary";
 import StatusComponent from "ui/text/status/status";
 import Button from "../button";
