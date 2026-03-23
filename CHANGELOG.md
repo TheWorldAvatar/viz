@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.5
+
+### Changes
+
+- Disabled sorting on table columns that have array values
+
 ## 5.64.4
 
 ### Bug Fixes
