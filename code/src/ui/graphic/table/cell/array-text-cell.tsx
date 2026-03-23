@@ -49,14 +49,12 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
         </div>}
         <div className="min-w-56">
             {nestedFields.map((nestedField) => (
-                <div key={nestedField}>
-                    <span className="font-semibold">{parseWordsForLabels(nestedField)}:</span>
-                    <ExpandableTextCell
-                        text={props.fields[currentFieldValue]?.[nestedField] ?? ""}
-                        maxLengthText={35}
-                        overrideExpansion={false}
-                    />
-                </div>
+                <ExpandableTextCell
+                    key={nestedField}
+                    text={parseWordsForLabels(nestedField) + " : " + props.fields[currentFieldValue][nestedField]}
+                    maxLengthText={35}
+                    overrideExpansion={false}
+                />
             ))}
         </div>
     </div>

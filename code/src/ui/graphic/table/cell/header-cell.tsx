@@ -37,8 +37,6 @@ interface HeaderCellProps {
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const canSort: boolean = !props.disableSort && props.header.column.getCanSort();
-
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
   const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
@@ -68,24 +66,20 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <Tooltip text={canSort ? dict.message.sort : ""} placement="top-start">
+            <Tooltip text={!props.disableSort ? dict.message.sort : ""} placement="top-start">
               <div
-                className={`flex items-center gap-2 ${canSort
-                  ? "cursor-pointer select-none"
-                  : ""
+                className={`flex items-center gap-2 ${!props.disableSort
+                  ? "cursor-pointer"
+                  : "select-none"
                   }`}
-                onClick={canSort ? props.header.column.getToggleSortingHandler() : undefined}
-                aria-label={
-                  canSort
-                    ? `Sort by ${props.header.column.columnDef.header}`
-                    : undefined
-                }
+                onClick={!props.disableSort ? props.header.column.getToggleSortingHandler() : undefined}
+                aria-label={props.header.column.columnDef.header as string}
               >
                 {flexRender(
                   props.header.column.columnDef.header,
                   props.header.getContext()
                 )}
-                {canSort && ({
+                {!props.disableSort && ({
                   asc: (
                     <Icon className="material-symbols-outlined">arrow_upward</Icon>
                   ),
