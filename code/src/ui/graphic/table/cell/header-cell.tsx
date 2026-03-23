@@ -33,6 +33,7 @@ interface HeaderCellProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {boolean} disableFilter Disables the filters when set to true.
+ * @param {boolean} disableSort Disables sorting when set to true.
  * @param {ColumnFilter[]} filters Filter state for the entire table.
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
@@ -66,12 +67,9 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <Tooltip text={!props.disableSort ? dict.message.sort : ""} placement="top-start">
+            <Tooltip text={props.disableSort ? "" : dict.message.sort} placement="top-start">
               <div
-                className={`flex items-center gap-2 ${!props.disableSort
-                  ? "cursor-pointer"
-                  : "select-none"
-                  }`}
+                className={`flex items-center gap-2 ${props.disableSort ? "select-none" : "cursor-pointer"}`}
                 onClick={!props.disableSort ? props.header.column.getToggleSortingHandler() : undefined}
                 aria-label={props.header.column.columnDef.header as string}
               >

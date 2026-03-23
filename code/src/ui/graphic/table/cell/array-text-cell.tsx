@@ -51,7 +51,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
             {nestedFields.map((nestedField) => (
                 <ExpandableTextCell
                     key={nestedField}
-                    text={parseWordsForLabels(nestedField) + " : " + props.fields[currentFieldValue][nestedField]}
+                    text={parseWordsForLabels(nestedField) + ": " + props.fields[currentFieldValue][nestedField]}
                     maxLengthText={35}
                     overrideExpansion={false}
                 />
