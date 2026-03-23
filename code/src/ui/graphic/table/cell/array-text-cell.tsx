@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "ui/interaction/button";
 import { parseWordsForLabels } from "utils/client-utils";
+import ExpandableTextCell from "./expandable-text-cell";
 
 interface ArrayTextCellProps {
     fields: Record<string, string>[];
@@ -13,7 +14,6 @@ interface ArrayTextCellProps {
  */
 export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
     const [currentFieldValue, setCurrentFieldValue] = useState<number>(0);
-
     const nestedFields: string[] = Object.keys(props.fields[currentFieldValue]);
 
     return <div>
@@ -47,9 +47,17 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 className="h-8 w-8"
             />
         </div>}
-        <div>
-            {nestedFields.map(nestedField =>
-                `${parseWordsForLabels(nestedField)}: ${props.fields[currentFieldValue][nestedField]}`)}
+        <div className="min-w-56">
+            {nestedFields.map((nestedField) => (
+                <div key={nestedField}>
+                    <span className="font-semibold">{parseWordsForLabels(nestedField)}:</span>
+                    <ExpandableTextCell
+                        text={props.fields[currentFieldValue]?.[nestedField] ?? ""}
+                        maxLengthText={35}
+                        overrideExpansion={false}
+                    />
+                </div>
+            ))}
         </div>
     </div>
 }
