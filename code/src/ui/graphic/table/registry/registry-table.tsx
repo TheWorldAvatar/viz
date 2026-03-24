@@ -305,6 +305,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               lifecycleStage={props.lifecycleStage}
                               selectedDate={props.selectedDate}
                               filters={props.tableDescriptor.filters}
+                              disableSort={(header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType == "array"}
                               disableFilter={(header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType == "array" ||
                                 (props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
                             />
