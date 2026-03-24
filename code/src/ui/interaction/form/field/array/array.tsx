@@ -18,8 +18,8 @@ export interface FormArrayProps {
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
   billingStore: BillingEntityTypes;
-  options?: FormFieldOptions;
   isPrimaryEntity: boolean;
+  options?: FormFieldOptions;
 }
 
 /**
