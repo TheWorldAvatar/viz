@@ -422,7 +422,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     }
 
     let isInvalidPricingModel: boolean = false;
-    if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+    if (props.formType === FormTypeMap.ASSIGN_PRICE && !pendingResponse?.error) {
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, id, browserStorageManager.get(DATE_KEY));
       const body: AgentResponseBody = await queryInternalApi(url);
       isInvalidPricingModel = body.data.message == "false";
@@ -434,8 +434,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel ? "default" : pendingResponse?.error ? "error" : "success"
     );
 
-    if ((props.formType != FormTypeMap.ASSIGN_PRICE && !pendingResponse?.error) ||
-      (props.formType === FormTypeMap.ASSIGN_PRICE && !isInvalidPricingModel)) {
+    if (!pendingResponse?.error && (props.formType != FormTypeMap.ASSIGN_PRICE || !isInvalidPricingModel)) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);

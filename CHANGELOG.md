@@ -2,6 +2,18 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.7
+
+### Bug Fixes
+
+- Fixed response toast in assign pricing form to display error when required and skip validity check afterwards
+
+## 5.64.6
+
+### Bug fixes
+
+- Fixed an issue with the UI not showing the correct array item when removing an item from the array form field.
+
 ## 5.64.5
 
 ### Changes
