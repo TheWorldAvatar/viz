@@ -9,6 +9,7 @@ import Button from "ui/interaction/button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
 import { genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
+import useRefresh from "hooks/useRefresh";
 
 export interface FormArrayProps {
   fieldId: string;
@@ -35,7 +36,7 @@ export interface FormArrayProps {
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { refreshFlag, triggerRefresh } = useRefresh(150);
   const dict: Dictionary = useDictionary();
   // Min size defaults to 1. Users can only set it as 0 or 1
   const minArraySize: number =
@@ -60,7 +61,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               <Button
                 size="icon"
                 leftIcon="add"
-                disabled={isLoading}
+                disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   append(emptyRow);
@@ -72,16 +73,15 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                 leftIcon="remove"
                 size="icon"
                 variant="destructive"
-                disabled={isLoading}
+                disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
-                  setIsLoading(true);
+                  triggerRefresh();
                   remove(currentIndex);
                   // Adjust current index
                   if (currentIndex >= fields.length - 1) {
                     setCurrentIndex(Math.max(0, fields.length - 2));
                   }
-                  setTimeout(() => setIsLoading(false), 150);
                 }}
               />
             )}
@@ -105,8 +105,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
 
 
       <div className="bg-background flex flex-col w-full p-2 rounded-lg">
-        {isLoading && <LoadingSpinner isSmall={false} />}
-        {!isLoading && (
+        {refreshFlag && <LoadingSpinner isSmall={false} />}
+        {!refreshFlag && (
           <>
             {fields.length == 0 && <p>{props.options?.disabled ? dict.message.emptySection : dict.message.arrayInstruction}</p>}
             {fields.length > 0 &&
