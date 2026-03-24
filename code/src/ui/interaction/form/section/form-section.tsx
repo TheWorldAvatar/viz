@@ -10,6 +10,7 @@ interface FormSectionProps {
   group: PropertyGroup;
   form: UseFormReturn;
   billingStore: BillingEntityTypes;
+  isPrimaryEntity?: boolean;
   options?: FormFieldOptions;
 }
 /**
@@ -38,11 +39,19 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
             fieldConfigs={props.group.property}
             form={props.form}
             billingStore={props.billingStore}
+            isPrimaryEntity={props.isPrimaryEntity}
             options={props.options}
           />
         ) : (
           props.group.property.map((field, index) =>
-            renderFormField(props.entityType, field, props.form, index, props.billingStore)
+            renderFormField(
+              props.entityType,
+              field,
+              props.form,
+              index,
+              props.billingStore,
+              props.isPrimaryEntity,
+            )
           )
         )}
       </div>

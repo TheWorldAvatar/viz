@@ -475,6 +475,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           form,
           -1,
           billingParams,
+          props.isPrimaryEntity,
         )}
       {!form.formState.isLoading && formTemplate?.node?.length > 0 && (
         <BranchFormSection
@@ -494,7 +495,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams)
+            renderFormField(props.entityType, field, form, index, billingParams, props.isPrimaryEntity)
           )}
     </form>
   );
@@ -518,6 +519,7 @@ export function renderFormField(
   form: UseFormReturn,
   currentIndex: number,
   billingParams: BillingEntityTypes,
+  isPrimaryEntity?: boolean,
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
@@ -533,6 +535,7 @@ export function renderFormField(
         group={fieldset}
         form={form}
         billingStore={billingParams}
+        isPrimaryEntity={isPrimaryEntity}
         options={{
           disabled: disableAllInputs,
         }}
@@ -562,6 +565,7 @@ export function renderFormField(
           fieldConfigs={[fieldProp]}
           form={form}
           billingStore={billingParams}
+          isPrimaryEntity={isPrimaryEntity}
           options={{
             disabled: disableAllInputs,
           }}

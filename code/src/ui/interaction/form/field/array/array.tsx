@@ -3,11 +3,11 @@ import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
-import { BillingEntityTypes, FormFieldOptions, PropertyShape } from "types/form";
+import { BillingEntityTypes, FormFieldOptions, FormType, FormTypeMap, PropertyShape } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
-import { genEmptyArrayRow } from "../../form-utils";
+import { FORM_STATES, genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
 import useRefresh from "hooks/useRefresh";
 
@@ -19,6 +19,7 @@ export interface FormArrayProps {
   form: UseFormReturn;
   billingStore: BillingEntityTypes;
   options?: FormFieldOptions;
+  isPrimaryEntity: boolean;
 }
 
 /**
@@ -32,11 +33,13 @@ export interface FormArrayProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
+ * @param {boolean} isPrimaryEntity An indicator if the form is targeting a primary entity.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const { refreshFlag, triggerRefresh } = useRefresh(150);
+  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
   const dict: Dictionary = useDictionary();
   // Min size defaults to 1. Users can only set it as 0 or 1
   const minArraySize: number =
@@ -47,6 +50,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     control,
     name: props.fieldId,
   });
+
+  const disableAddButton: boolean = props.isPrimaryEntity && (FormTypeMap.ADD || formType === FormTypeMap.EDIT) && fields.length >= 1;
 
   const emptyRow: FieldValues = useMemo(() => {
     return genEmptyArrayRow(props.fieldConfigs);
@@ -61,7 +66,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               <Button
                 size="icon"
                 leftIcon="add"
-                disabled={refreshFlag}
+                disabled={refreshFlag || disableAddButton}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   append(emptyRow);
