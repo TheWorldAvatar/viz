@@ -80,12 +80,11 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               />
             )}
           </div>)}
-
         <div className="flex flex-wrap gap-4  rounded-lg w-fit">
-          {Array.from({ length: fields.length }, (_, index) => (
+          {fields.map((field, index) => (
             <button
-              key={index}
-              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-border rounded-sm ${index === currentIndex ? "bg-primary " : ""
+              key={field.id}
+              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border border-border rounded-sm ${index === currentIndex ? "bg-primary " : ""
                 }`}
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
@@ -106,7 +105,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
             return (
               <div
-                key={`field-${currentIndex}-${index}`}
+                key={`field-${fields[currentIndex]?.id}-${index}`}
                 className="flex-1 whitespace-nowrap"
               >
                 {config.class && (
