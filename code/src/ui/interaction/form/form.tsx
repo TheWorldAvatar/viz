@@ -343,7 +343,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             parsePricingModels(formData, billingParams)?.forEach(async model =>
               pendingResponse = await queryInternalApi(
                 url,
-                "POST",
+                "PUT",
                 JSON.stringify({
                   id: formData.id,
                   pricing: model,
