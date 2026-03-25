@@ -185,15 +185,10 @@ export function applyConfiguredColumnOrder(
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  const orderMap: Map<string, number> = new Map(
-    configuredOrder.map((item, index) => [translateLifecycleFields(item.name, titleDict), index])
-  );
-  const widthMap: Map<string, number> = new Map(
-    configuredOrder
-      .map((item) => {
-        return [translateLifecycleFields(item.name, titleDict), item.width] as [string, number];
-      })
-      .filter(([, width]) => width !== undefined)
+  const orderMap: Map<string, number> = new Map(configuredOrder.map((item, index) => [translateLifecycleFields(item.name, titleDict), index]));
+  const widthMap: Map<string, number> = new Map(configuredOrder.map((item) => {
+    return [translateLifecycleFields(item.name, titleDict), item.width] as [string, number];
+  }).filter(([, width]) => width !== undefined)
   );
 
   return columns
