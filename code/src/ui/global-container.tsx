@@ -36,7 +36,6 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
     setPopup(!popup);
   };
 
-
   return (
     <Provider store={reduxStore}>
       <div className="flex h-dvh w-full flex-col overflow-hidden">
