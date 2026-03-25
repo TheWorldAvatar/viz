@@ -124,11 +124,11 @@
       "tooltip": "Menüband für Steuerelemente ein-/ausblenden"
     },
     "navBar": {
-      "title": "Navigationsleiste ausblenden",
+      "title": "Navigationsleiste anzeigen",
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {
-    "title": "Versteckband",
+    "title": "Band anzeigen",
     "tooltip": "Band ein-/ausblenden"
     }
   },
