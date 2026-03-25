@@ -124,7 +124,7 @@
       "tooltip": "Menüband für Steuerelemente ein-/ausblenden"
     },
     "navBar": {
-      "title": "Navigationsleiste anzeigen",
+      "title": "Navigationsleiste ausblenden",
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {

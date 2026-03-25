@@ -124,7 +124,7 @@
       "tooltip": "Show / hide controls ribbon"
     },
     "navBar": {
-      "title": "Show navigation bar",
+      "title": "Hide navigation bar",
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {

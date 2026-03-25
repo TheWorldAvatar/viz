@@ -34,7 +34,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
       name: contextDict.navBar.title,
       description: contextDict.navBar.tooltip,
       id: "navbar",
-      toggled: true,
+      toggled: false,
     };
   }, []);
 
@@ -47,8 +47,8 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   // Visibility state of header bar
   const headerBarState = useSelector(selectItem(headerItem.id));
 
-  // Do not show if state exists and is disabled
-  if (headerBarState?.toggled != null && !headerBarState.toggled) {
+  // Do not show header bar if state exists and is enabled
+  if (headerBarState?.toggled != null && headerBarState.toggled) {
     return null;
   }
   // Backwards compatibility for header bar logo
