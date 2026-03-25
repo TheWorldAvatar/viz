@@ -18,21 +18,15 @@ export function useContextMenuOpen(
   openAtPageCoords: (x: number, y: number) => void,
 ): void {
   useEffect(() => {
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      openAtPageCoords(e.pageX, e.pageY);
-    };
-    window.addEventListener("contextmenu", handleContextMenu);
-    return () => {
-      window.removeEventListener("contextmenu", handleContextMenu);
-    };
-  }, [openAtPageCoords]);
-
-  useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let startX: number = 0;
     let startY: number = 0;
     let activePointerId: number | undefined;
+
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      openAtPageCoords(e.pageX, e.pageY);
+    };
 
     const clearTimer = () => {
       if (timer !== undefined) {
@@ -73,6 +67,7 @@ export function useContextMenuOpen(
       activePointerId = undefined;
     };
 
+    window.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", endPointer);
@@ -81,6 +76,7 @@ export function useContextMenuOpen(
 
     return () => {
       clearTimer();
+      window.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerup", endPointer);
