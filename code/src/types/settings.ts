@@ -29,7 +29,12 @@ export type UISettings = {
   }
 }
 
-export type TableColumnOrderSettings = Record<string, string[]>;
+export type TableColumnConfigItem = {
+  name: string;
+  width?: number;
+};
+
+export type TableColumnOrderSettings = Record<string, TableColumnConfigItem[]>;
 
 
 export interface ResourcesPathSettings {

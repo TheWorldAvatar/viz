@@ -12,7 +12,7 @@ import {
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnConfigItem, TableColumnOrderSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
@@ -178,22 +178,43 @@ export function applyConfiguredColumnOrder(
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): EnhancedColumnDef<FieldValues>[] {
-  const configuredOrder: string[] = config[entityType] || config[lifecycleStage];
+  const configuredOrder: TableColumnConfigItem[] = config[entityType] || config[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   if (columns.length !== configuredOrder.length) {
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [translateLifecycleFields(id, titleDict), index]));
+  const orderMap: Map<string, number> = new Map(
+    configuredOrder.map((item, index) => [translateLifecycleFields(item.name, titleDict), index])
+  );
+  const widthMap: Map<string, number> = new Map(
+    configuredOrder
+      .map((item) => {
+        return [translateLifecycleFields(item.name, titleDict), item.width] as [string, number];
+      })
+      .filter(([, width]) => width !== undefined)
+  );
 
-  return columns.sort((a, b) => {
-    const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
-    const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
-    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
-    return indexA - indexB;
-  });
+  return columns
+    .sort((a, b) => {
+      const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
+      const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
+      const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+      const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
+      return indexA - indexB;
+    })
+    .map((column) => {
+      const accessorKey: string = (column as { accessorKey?: string }).accessorKey;
+      const configuredWidth: number = widthMap.get(accessorKey);
+      if (configuredWidth === undefined) {
+        return column;
+      }
+      return {
+        ...column,
+        size: configuredWidth,
+      };
+    });
 }
 
 /**
