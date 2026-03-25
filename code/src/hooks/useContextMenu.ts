@@ -53,12 +53,12 @@ export function useContextMenu(): useContextMenuReturn {
     const onPointerDown = (e: PointerEvent) => {
       if (e.pointerType === "mouse") return;
       if (e.button !== 0) return;
+      if (activePointerId !== undefined) return;
 
       startX = e.clientX;
       startY = e.clientY;
       activePointerId = e.pointerId;
-      clearTimer();
-
+ 
       timer = setTimeout(() => {
         timer = undefined;
         const { x, y } = pageCoordsFromClient(startX, startY);
