@@ -11,7 +11,6 @@ interface FormSectionProps {
   form: UseFormReturn;
   billingStore: BillingEntityTypes;
   options?: FormFieldOptions;
-  isPrimaryEntity?: boolean;
 }
 /**
  * This component renders a form section.
@@ -21,7 +20,6 @@ interface FormSectionProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
- * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
   return (
@@ -40,7 +38,6 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
             fieldConfigs={props.group.property}
             form={props.form}
             billingStore={props.billingStore}
-            isPrimaryEntity={props.isPrimaryEntity}
             options={props.options}
           />
         ) : (
@@ -51,7 +48,6 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
               props.form,
               index,
               props.billingStore,
-              props.isPrimaryEntity,
             )
           )
         )}
