@@ -1,7 +1,14 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const LONG_PRESS_MS = 500;
 const LONG_PRESS_MOVE_THRESHOLD_PX = 10;
+
+interface useContextMenuReturn {
+  contextMenuVisible: boolean;
+  x: number;
+  y: number;
+  closeContextMenu: () => void;
+}
 
 function pageCoordsFromClient(clientX: number, clientY: number) {
   return {
@@ -14,9 +21,17 @@ function pageCoordsFromClient(clientX: number, clientY: number) {
  * Opens a page-level context menu on the window `contextmenu` event (desktop mouse right click)
  * and on long-press with the primary pointer for touch and pen anywhere on the document (mobile, tablet, etc.).
  */
-export function useContextMenuOpen(
-  openAtPageCoords: (x: number, y: number) => void,
-): void {
+export function useContextMenu(): useContextMenuReturn {
+  const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number; }>({ x: 0, y: 0 });
+
+  const openContextMenuAtPageCoords = useCallback((x: number, y: number) => {
+    setContextMenuVisible(true);
+    setContextMenuPosition({ x, y });
+  }, []);
+
+  const closeContextMenu = () => setContextMenuVisible(false);
+
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let startX: number = 0;
@@ -25,7 +40,7 @@ export function useContextMenuOpen(
 
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      openAtPageCoords(e.pageX, e.pageY);
+      openContextMenuAtPageCoords(e.pageX, e.pageY);
     };
 
     const clearTimer = () => {
@@ -47,7 +62,7 @@ export function useContextMenuOpen(
       timer = setTimeout(() => {
         timer = undefined;
         const { x, y } = pageCoordsFromClient(startX, startY);
-        openAtPageCoords(x, y);
+        openContextMenuAtPageCoords(x, y);
       }, LONG_PRESS_MS);
     };
 
@@ -83,5 +98,12 @@ export function useContextMenuOpen(
       document.removeEventListener("pointercancel", endPointer);
       document.removeEventListener("pointerleave", endPointer);
     };
-  }, [openAtPageCoords]);
+  }, [openContextMenuAtPageCoords]);
+
+  return {
+    contextMenuVisible,
+    x: contextMenuPosition.x,
+    y: contextMenuPosition.y,
+    closeContextMenu,
+  };
 }

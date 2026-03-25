@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import Konami from "react-konami-code";
 import { Provider } from "react-redux";
 
 import { reduxStore } from "app/store";
 import { useBackgroundImageUrl } from "hooks/useBackgroundImageUrl";
-import { useContextMenuOpen } from "hooks/useContextMenuOpen";
+import { useContextMenu } from "hooks/useContextMenu";
 import { OptionalPage } from "io/config/optional-pages";
 import { usePathname } from "next/navigation";
 import { UISettings } from "types/settings";
@@ -28,28 +28,14 @@ interface GlobalContainerProps {
  */
 export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const [popup, setPopup] = useState<boolean>(false);
-  const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{
-    x: number;
-    y: number;
-  }>({ x: 0, y: 0 });
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
+  const { contextMenuVisible, x: contextMenuX, y: contextMenuY, closeContextMenu } = useContextMenu();
 
   const togglePopup = () => {
     setPopup(!popup);
   };
 
-  const openContextMenuAtPageCoords = useCallback((x: number, y: number) => {
-    setContextMenuVisible(true);
-    setContextMenuPosition({ x, y });
-  }, []);
-
-  const closeContextMenu = useCallback(() => {
-    setContextMenuVisible(false);
-  }, []);
-
-  useContextMenuOpen(openContextMenuAtPageCoords);
 
   return (
     <Provider store={reduxStore}>
@@ -83,8 +69,8 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
       {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
       {contextMenuVisible && (
         <ContextMenu
-          x={contextMenuPosition.x}
-          y={contextMenuPosition.y}
+          x={contextMenuX}
+          y={contextMenuY}
           onClose={closeContextMenu}
         />
       )}
