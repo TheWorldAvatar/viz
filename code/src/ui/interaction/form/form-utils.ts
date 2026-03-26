@@ -96,14 +96,14 @@ export function isFieldMappable(fieldShape: PropertyShape): boolean {
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
- * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * Needed for form persistence, translating field IDs from dependant form section
+ * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
-  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
   fieldIdMapping?: Record<string, string>,
+  billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
   isPrimaryEntity?: boolean
 ): PropertyShapeOrGroup[] {
   // Ensure fieldIdMapping is always an object
@@ -247,7 +247,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, billingTypes, fieldIdMapping);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, fieldIdMapping, billingTypes);
     nodeStates.push(nodeState);
     results.push({
       ...shape,
