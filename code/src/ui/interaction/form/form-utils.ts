@@ -115,17 +115,14 @@ export function parsePropertyShapeOrGroupList(
       const fieldset: PropertyGroup = field as PropertyGroup;
       const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
       const isPricingGroup: boolean = billingTypes.pricing && fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " "));
-      const parsedFieldset: PropertyGroup =
-        isPrimaryEntity && isFieldsetArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingGroup
-          ? {
-            ...fieldset,
-            maxCount: {
-              ...fieldset.maxCount,
-              [VALUE_KEY]: "1",
-            },
-          }
-          : fieldset;
-      const properties: PropertyShape[] = parsedFieldset.property.map((fieldProp) => {
+      if (isPrimaryEntity && isFieldsetArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingGroup) {
+        fieldset.maxCount = {
+          ...fieldset.maxCount,
+          [VALUE_KEY]: "1",
+        }
+      }
+
+      const properties: PropertyShape[] = fieldset.property.map((fieldProp) => {
         // Iterate after filtering the property so that non-array fields are not parsed
         const updatedProp: PropertyShape = updateDependentProperty(
           fieldProp,
@@ -140,7 +137,7 @@ export function parsePropertyShapeOrGroupList(
         if (
           !isPrimaryEntity && isFieldsetArray
         ) {
-          const fieldsetName: string = parsedFieldset?.label?.[VALUE_KEY];
+          const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
 
           if (isFieldMappable(updatedProp)) {
             fieldIdMapping[fieldsetName] = fieldsetName;
@@ -154,24 +151,24 @@ export function parsePropertyShapeOrGroupList(
           }
           // Initialise array field group object if they have yet to be
           // Min count of 0 should be initialise as an empty array
-          if (!initialState[fieldsetName] && parsedFieldset.minCount && parseInt(parsedFieldset.minCount?.[VALUE_KEY]) == 0) {
+          if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
             initialState[fieldsetName] = [];
             // If at least one item, initialise it with an array with 1 empty object
-          } else if (!initialState[fieldsetName] && parsedFieldset.minCount && parseInt(parsedFieldset.minCount?.[VALUE_KEY]) > 0) {
+          } else if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
             initialState[fieldsetName] = [{}];
 
           }
           return initFormField(
             updatedProp,
             initialState,
-            parsedFieldset.label[VALUE_KEY],
+            fieldset.label[VALUE_KEY],
             true,
             parseInt(updatedProp.minCount?.[VALUE_KEY])
           );
         }
         // Update and set property field ids to include their group name
         // Append field id with group name as prefix
-        const fieldId: string = `${parsedFieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
+        const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
         // Replace account or pricing field with the field ID so that we can still retrieve the old values
         if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.accountField = fieldId;
@@ -185,7 +182,7 @@ export function parsePropertyShapeOrGroupList(
       });
       // Update the property group with updated properties
       return {
-        ...parsedFieldset,
+        ...fieldset,
         property: properties,
       };
     } else {
