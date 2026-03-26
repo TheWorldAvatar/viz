@@ -148,13 +148,8 @@ export function parsePropertyShapeOrGroupList(
             billingTypes.pricingField = fieldsetName;
           }
           // Initialise array field group object if they have yet to be
-          // Min count of 0 should be initialise as an empty array
-          if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
-            initialState[fieldsetName] = [];
-            // If at least one item, initialise it with an array with 1 empty object
-          } else if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
+          if (!initialState[fieldsetName] && fieldset.minCount) {
             initialState[fieldsetName] = [{}];
-
           }
           return initFormField(
             updatedProp,
