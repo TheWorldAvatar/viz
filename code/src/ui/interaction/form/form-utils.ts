@@ -114,7 +114,7 @@ export function parsePropertyShapeOrGroupList(
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
       const fieldset: PropertyGroup = field as PropertyGroup;
       const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
-      const isPricingGroup: boolean = billingTypes.pricing && fieldset.property?.[0].name[VALUE_KEY] === billingTypes.pricing.replace("_", " ");
+      const isPricingGroup: boolean = billingTypes.pricing && fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " "));
       const parsedFieldset: PropertyGroup =
         isPrimaryEntity && isFieldsetArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingGroup
           ? {
