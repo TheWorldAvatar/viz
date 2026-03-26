@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.64.8
+
+### Changes
+
+- Allowed to edit pricing models
+- Changed the code so only one pricing model can be assigned to a contract at ADD form. Same for EDIT form.
+- When billing a task , you can assaign a new pricing model and view all the pricing models for this contract in VIEW form.
+- Bump min version of `VisBackend Agent` from `v1.41.0` to `v1.42.1`
+
 ## 5.64.7
 
 ### Bug Fixes
