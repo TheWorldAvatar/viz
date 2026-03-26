@@ -8,7 +8,7 @@ export interface ContextItemDefinition {
     description?: string,
     id: string
     toggled?: boolean,
-    callback?: (id: string) => void
+    callback?: (_id: string) => void
 }
 
 export default function ContextItem(props: Readonly<ContextItemDefinition>) {
