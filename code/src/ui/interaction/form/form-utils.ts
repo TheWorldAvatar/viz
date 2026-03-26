@@ -96,6 +96,7 @@ export function isFieldMappable(fieldShape: PropertyShape): boolean {
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
+ * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  * Needed for form persistence, translating field IDs from dependant form section
  */
 export function parsePropertyShapeOrGroupList(
