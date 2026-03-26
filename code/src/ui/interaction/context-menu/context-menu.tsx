@@ -25,6 +25,7 @@ interface ContextMenuProps {
  * the global Redux state so it that it persists across the application lifecycle.
  */
 function ContextMenu(props: Readonly<ContextMenuProps>) {
+
   useEffect(() => {
     const handleLeftClick = () => {
       props.onClose();
@@ -33,7 +34,7 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
     return () => {
       document.removeEventListener("click", handleLeftClick);
     };
-  }, [props]);
+  }, []);
 
   if (props.items == null || props.items.length === 0) {
     return null;

@@ -60,7 +60,7 @@ export function useContextMenu(): useContextMenuReturn {
       startX = e.clientX;
       startY = e.clientY;
       activePointerId = e.pointerId;
- 
+
       timer = setTimeout(() => {
         timer = undefined;
         const { x, y } = pageCoordsFromClient(startX, startY);
