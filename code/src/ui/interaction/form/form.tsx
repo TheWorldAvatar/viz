@@ -338,12 +338,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               ...formData,
               contract: props.primaryInstance,
             }));
-          if (!pendingResponse.error && formData[billingParams.pricingField]) {
+          if (!pendingResponse.error && billingParams.pricingField in formData) {
             const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
             parsePricingModels(formData, billingParams)?.forEach(async model =>
               pendingResponse = await queryInternalApi(
                 url,
-                "POST",
+                "PUT",
                 JSON.stringify({
                   id: formData.id,
                   pricing: model,
