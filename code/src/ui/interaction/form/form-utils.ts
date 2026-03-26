@@ -97,12 +97,14 @@ export function isFieldMappable(fieldShape: PropertyShape): boolean {
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
  * Needed for form persistence, translating field IDs from dependant form section
+ * @param {boolean} isPrimaryEntity An optional indicator if the form is targeting a primary entity.
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
   fields: PropertyShapeOrGroup[],
   fieldIdMapping?: Record<string, string>,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
+  isPrimaryEntity?: boolean
 ): PropertyShapeOrGroup[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
@@ -111,51 +113,59 @@ export function parsePropertyShapeOrGroupList(
     // Properties as part of a group
     if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
       const fieldset: PropertyGroup = field as PropertyGroup;
-
+      const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
+      const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
+      const isAddOrEditPricingGroup: boolean = isPrimaryEntity && billingTypes.pricing &&
+        fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " ")) &&
+        (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT);
+      if (isFieldsetArray && isAddOrEditPricingGroup) {
+        fieldset.maxCount = {
+          ...fieldset.maxCount,
+          [VALUE_KEY]: "1",
+        }
+      }
       const properties: PropertyShape[] = fieldset.property.map((fieldProp) => {
         // Iterate after filtering the property so that non-array fields are not parsed
         const updatedProp: PropertyShape = updateDependentProperty(
           fieldProp,
           fields
         );
+        // Store field id with group name as prefix
+        const fieldId: string = `${fieldsetName} ${updatedProp.name[VALUE_KEY]}`;
+
         // Collect dependentOn label into lockField array
         if (updatedProp.dependentOn?.label && !initialState.lockField.includes(updatedProp.dependentOn.label)) {
           initialState.lockField.push(updatedProp.dependentOn.label);
         }
         // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
-        if (
-          !fieldset.maxCount ||
-          (fieldset.maxCount && parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1)
-        ) {
-          const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
+        if (isFieldsetArray) {
+
           if (isFieldMappable(updatedProp)) {
             fieldIdMapping[fieldsetName] = fieldsetName;
           }
-          // Replace account or pricing field with the field ID so that we can still retrieve the old values
+          // Replace account or pricing field with the fieldset as it is an array so that we can still retrieve the old values
           if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
             billingTypes.accountField = fieldsetName;
           } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
-            billingTypes.pricingField = fieldsetName;
+            // As pricing field is an single input for add and edit draft contract forms, they should reuse the field id
+            billingTypes.pricingField = isAddOrEditPricingGroup ? fieldId : fieldsetName;
           }
           // Initialise array field group object if they have yet to be
-          // Min count of 0 should be initialise as an empty array
-          if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
+          // Min count of 0 should be initialise as an empty array if it does not belong to pricing group at add/edit draft form
+          if (!initialState[fieldsetName] && !isAddOrEditPricingGroup && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
             initialState[fieldsetName] = [];
-            // If at least one item, initialise it with an array with 1 empty object
-          } else if (!initialState[fieldsetName] && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) > 0) {
+            // If at least one item or belongs to pricing group, initialise it with an array with 1 empty object
+          } else if (!initialState[fieldsetName] && fieldset.minCount && (parseInt(fieldset.minCount?.[VALUE_KEY]) > 0 || isAddOrEditPricingGroup)) {
             initialState[fieldsetName] = [{}];
           }
           return initFormField(
             updatedProp,
             initialState,
-            fieldset.label[VALUE_KEY],
+            fieldsetName,
             true,
             parseInt(updatedProp.minCount?.[VALUE_KEY])
           );
         }
-        // Update and set property field ids to include their group name
-        // Append field id with group name as prefix
-        const fieldId: string = `${fieldset.label[VALUE_KEY]} ${updatedProp.name[VALUE_KEY]}`;
         // Replace account or pricing field with the field ID so that we can still retrieve the old values
         if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.accountField = fieldId;
@@ -173,19 +183,28 @@ export function parsePropertyShapeOrGroupList(
         property: properties,
       };
     } else {
-      const fieldShape: PropertyShape = updateDependentProperty(
+      const shape: PropertyShape = updateDependentProperty(
         field as PropertyShape,
         fields
       );
+      const isFieldShapeArray: boolean = !shape.maxCount || parseInt(shape.maxCount?.[VALUE_KEY]) > 1;
+      const isPricingField: boolean = billingTypes.pricing && shape.name?.[VALUE_KEY] === billingTypes.pricing.replace("_", " ");
+      const fieldShape: PropertyShape =
+        isPrimaryEntity && isFieldShapeArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingField
+          ? {
+            ...shape,
+            maxCount: {
+              ...shape.maxCount,
+              [VALUE_KEY]: "1",
+            },
+          }
+          : shape;
       // Collect dependentOn label into lockField array
       if (fieldShape.dependentOn?.label && !initialState.lockField.includes(fieldShape.dependentOn.label)) {
         initialState.lockField.push(fieldShape.dependentOn.label);
       }
       // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
-      if (
-        !fieldShape.maxCount ||
-        (fieldShape.maxCount && parseInt(fieldShape.maxCount?.[VALUE_KEY]) > 1)
-      ) {
+      if (isFieldShapeArray) {
         if (isFieldMappable(fieldShape)) {
           fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
         }

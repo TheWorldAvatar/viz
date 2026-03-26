@@ -42,7 +42,9 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
           />
         ) : (
           props.group.property.map((field, index) =>
-            renderFormField(props.entityType, field, props.form, index, props.billingStore)
+            renderFormField(props.entityType, field, props.form, index,
+              props.billingStore,
+            )
           )
         )}
       </div>

@@ -137,7 +137,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const parsedTemplate = {
         ...template,
         node: parseBranches(initialState, template.node, billingParamsStore, fieldIdMapping),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore, props.isPrimaryEntity)
       };
 
       if (initialState.lockField.length > 0) {
@@ -338,12 +338,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               ...formData,
               contract: props.primaryInstance,
             }));
-          if (!pendingResponse.error && formData[billingParams.pricingField]) {
+          if (!pendingResponse.error && billingParams.pricingField in formData) {
             const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
             parsePricingModels(formData, billingParams)?.forEach(async model =>
               pendingResponse = await queryInternalApi(
                 url,
-                "POST",
+                "PUT",
                 JSON.stringify({
                   id: formData.id,
                   pricing: model,
