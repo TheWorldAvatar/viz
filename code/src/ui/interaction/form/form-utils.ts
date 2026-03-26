@@ -134,9 +134,7 @@ export function parsePropertyShapeOrGroupList(
           initialState.lockField.push(updatedProp.dependentOn.label);
         }
         // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
-        if (
-          !isPrimaryEntity && isFieldsetArray
-        ) {
+        if (isFieldsetArray) {
           const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
 
           if (isFieldMappable(updatedProp)) {
@@ -207,9 +205,7 @@ export function parsePropertyShapeOrGroupList(
         initialState.lockField.push(fieldShape.dependentOn.label);
       }
       // When there should be multiple values for the same property ie no max count or at least more than 1 value, initialise it as an array
-      if (
-        !isPrimaryEntity && isFieldShapeArray
-      ) {
+      if (isFieldShapeArray) {
         if (isFieldMappable(fieldShape)) {
           fieldIdMapping[fieldShape?.name?.[VALUE_KEY]] = fieldShape?.name?.[VALUE_KEY]
         }
