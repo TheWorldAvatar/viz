@@ -137,7 +137,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const parsedTemplate = {
         ...template,
         node: parseBranches(initialState, template.node, billingParamsStore, fieldIdMapping),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore, fieldIdMapping, props.isPrimaryEntity, props.formType),
+        property: parsePropertyShapeOrGroupList(initialState, template.property, billingParamsStore, fieldIdMapping, props.isPrimaryEntity)
       };
 
       if (initialState.lockField.length > 0) {

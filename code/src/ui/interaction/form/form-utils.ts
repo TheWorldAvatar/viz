@@ -103,8 +103,7 @@ export function parsePropertyShapeOrGroupList(
   fields: PropertyShapeOrGroup[],
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
   fieldIdMapping?: Record<string, string>,
-  isPrimaryEntity?: boolean,
-  formType?: FormType
+  isPrimaryEntity?: boolean
 ): PropertyShapeOrGroup[] {
   // Ensure fieldIdMapping is always an object
   if (!fieldIdMapping) fieldIdMapping = {};
@@ -116,7 +115,7 @@ export function parsePropertyShapeOrGroupList(
       const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
       const isPricingGroup: boolean = billingTypes.pricing && fieldset.property?.[0].name[VALUE_KEY] === billingTypes.pricing.replace("_", " ");
       const parsedFieldset: PropertyGroup =
-        isPrimaryEntity && isFieldsetArray && (formType == FormTypeMap.ADD || formType == FormTypeMap.EDIT) && isPricingGroup
+        isPrimaryEntity && isFieldsetArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingGroup
           ? {
             ...fieldset,
             maxCount: {
@@ -196,7 +195,7 @@ export function parsePropertyShapeOrGroupList(
       const isFieldShapeArray: boolean = !shape.maxCount || parseInt(shape.maxCount?.[VALUE_KEY]) > 1;
       const isPricingField: boolean = billingTypes.pricing && shape.name?.[VALUE_KEY] === billingTypes.pricing.replace("_", " ");
       const fieldShape: PropertyShape =
-        isPrimaryEntity && isFieldShapeArray && (formType == FormTypeMap.ADD || formType == FormTypeMap.EDIT) && isPricingField
+        isPrimaryEntity && isFieldShapeArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingField
           ? {
             ...shape,
             maxCount: {
