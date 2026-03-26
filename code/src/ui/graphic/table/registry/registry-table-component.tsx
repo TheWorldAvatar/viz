@@ -52,7 +52,7 @@ export default function RegistryTableComponent(
       name: dict.context.tableRibbon.title,
       description: dict.context.tableRibbon.tooltip,
       id: "table-ribbon",
-      toggled: false,
+      toggled: true,
     };
   }, [dict]);
 
@@ -93,7 +93,7 @@ export default function RegistryTableComponent(
             : parseWordsForLabels(props.entityType)}
         </h1>
 
-        {!ribbonState?.toggled &&
+        {ribbonState?.toggled &&
           <TableRibbon
             path={pathNameEnd}
             entityType={props.entityType}
