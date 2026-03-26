@@ -115,8 +115,10 @@ export function parsePropertyShapeOrGroupList(
       const fieldset: PropertyGroup = field as PropertyGroup;
       const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
       const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
-      const isPricingGroup: boolean = billingTypes.pricing && fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " "));
-      if (isPrimaryEntity && isFieldsetArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingGroup) {
+      const isAddOrEditPricingGroup: boolean = isPrimaryEntity && billingTypes.pricing &&
+        fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " ")) &&
+        (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT);
+      if (isFieldsetArray && isAddOrEditPricingGroup) {
         fieldset.maxCount = {
           ...fieldset.maxCount,
           [VALUE_KEY]: "1",
@@ -146,11 +148,14 @@ export function parsePropertyShapeOrGroupList(
             billingTypes.accountField = fieldsetName;
           } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
             // As pricing field is an single input for add and edit draft contract forms, they should reuse the field id
-            billingTypes.pricingField = isPrimaryEntity && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) ?
-              fieldId : fieldsetName;
+            billingTypes.pricingField = isAddOrEditPricingGroup ? fieldId : fieldsetName;
           }
           // Initialise array field group object if they have yet to be
-          if (!initialState[fieldsetName] && fieldset.minCount) {
+          // Min count of 0 should be initialise as an empty array if it does not belong to pricing group at add/edit draft form
+          if (!initialState[fieldsetName] && !isAddOrEditPricingGroup && fieldset.minCount && parseInt(fieldset.minCount?.[VALUE_KEY]) == 0) {
+            initialState[fieldsetName] = [];
+            // If at least one item or belongs to pricing group, initialise it with an array with 1 empty object
+          } else if (!initialState[fieldsetName] && fieldset.minCount && (parseInt(fieldset.minCount?.[VALUE_KEY]) > 0 || isAddOrEditPricingGroup)) {
             initialState[fieldsetName] = [{}];
           }
           return initFormField(
