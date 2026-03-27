@@ -397,7 +397,7 @@ The `config/table-column-settings.json` file is optional and can be used to over
 Each table key maps to an array of column configuration objects. The supported object fields are:
 
 - `name` (required): The backend column identifier.
-- `width` (optional): Default width of the column in pixels.
+- `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
 - `visible` (optional): Default visibility of the column. Set to `false` to hide the column or `true` to show it. By default, all columns are visible.
 
 Additional notes:
