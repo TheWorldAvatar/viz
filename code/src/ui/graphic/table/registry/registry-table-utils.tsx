@@ -215,29 +215,24 @@ export function applyConfiguredColumnOrder(
 }
 
 /**
- * Builds the initial column visibility state from the config.
+ * Builds the initial column visibility state from the column options config.
  * Columns with `visible: false` are hidden; all others default to visible.
  *
- * @param {TableColumnSettings} tableColumnSettings Configuration for table column settings.
- * @param {string} entityType Type of entity for rendering.
- * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
- * @param {Record<string, string>} titleDict The dictionary object leading to title..
+ * @param {TableColumnConfigItem[]} columnOptions Column options for the target table.
+ * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
-export function getInitialColumnVisibilityConfig(
-  tableColumnSettings: TableColumnSettings,
-  entityType: string,
-  lifecycleStage: LifecycleStage,
+export function getInitialColumnVisibilityState(
+  columnOptions: TableColumnConfigItem[],
   titleDict: Record<string, string>,
 ): VisibilityState {
-  const configuredOrder: TableColumnConfigItem[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
-  if (!configuredOrder || configuredOrder.length === 0) return {};
-  const columnvisibility: VisibilityState = {};
-  for (const item of configuredOrder) {
+  if (!columnOptions || columnOptions.length === 0) return {};
+  const columnVisibilityState: VisibilityState = {};
+  for (const item of columnOptions) {
     if (item.visible === false) {
-      columnvisibility[translateLifecycleFields(item.name, titleDict)] = false;
+      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
     }
   }
-  return columnvisibility;
+  return columnVisibilityState;
 }
 
 /**
