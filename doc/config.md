@@ -394,22 +394,21 @@ Instructions:
 
 ### 1.3 Table Column Settings
 
-The `config/table-column-settings.json` file is optional and can be used to override the default column settings for registry or billing tables. To enable it for registry, reference it from `config/ui-settings.json` under `resources.registry.settings` (for example, `"settings": "table-column-settings.json"`). This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
+The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or lifecycle-stage views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
 
 Each table key maps to an array of column configuration objects. The supported object fields are:
 
 - `name` (required): The backend column identifier.
 - `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
-- `visible` (optional): Default visibility of the column. Set to `false` to hide the column or `true` to show it. By default, all columns are visible.
+- `visible` (optional): Default to `true` if not set explicitly. Set to `false` to hide the column. 
 
 Additional notes:
 
 - Any columns not listed remain available and fall back to the platform's default ordering and sizing.
 - You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.
 - Only existing column names are applied. Unknown `name` values are ignored.
-- A column with `visible: false` remains available in the column toggle menu and can be re-enabled by users.
 
-Example `table-column-settings.json`:
+Example:
 
 ```json
 {
