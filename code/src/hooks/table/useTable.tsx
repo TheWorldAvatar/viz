@@ -23,7 +23,6 @@ import {
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
-import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
@@ -68,8 +67,7 @@ export function useTable(
   const [data, setData] = useState<FieldValues[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const { isLoading, tableData, initialInstances } = useTableData(
+  const { isLoading, tableData, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
@@ -173,7 +171,7 @@ export function useTable(
     manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    rowCount: rowCounts.filter,
+    rowCount: selectedCount,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange,
@@ -192,7 +190,7 @@ export function useTable(
     initialInstances,
     pagination,
     apiPagination,
-    totalRows: rowCounts.total,
+    totalRows: totalCount,
     filters: columnFilters,
     setFilters: setColumnFilters,
     sortParams,
