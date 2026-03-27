@@ -26,15 +26,12 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
     value: col.id,
   }));
 
-  // Set the initial selected options based on the visibility of the columns
-  const initialSelected: SelectOptionType[] = props.columns
+  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(props.columns
     .filter((col) => col.getIsVisible())
     .map((col) => ({
       label: parseWordsForLabels(col.id),
       value: col.id,
-    }));
-
-  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(null);
+    })));
 
   useEffect(() => {
     if (selectedOptions) {
@@ -54,7 +51,7 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
           options={options}
           toggleAll={true}
           isClearable={false}
-          controlledSelectedOptions={initialSelected}
+          controlledSelectedOptions={selectedOptions}
           setControlledSelectedOptions={setSelectedOptions}
         />
       </div>
