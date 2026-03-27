@@ -2,7 +2,8 @@ import {
   ColumnDef,
   ColumnFilter,
   FilterFnOption,
-  SortingState
+  SortingState,
+  VisibilityState
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -169,6 +170,7 @@ function flattenInstance(
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
  * @param {TableColumnOrderSettings} config Configuration for table column order.
  * @param {string} entityType Type of entity for rendering.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function applyConfiguredColumnOrder(
@@ -210,6 +212,32 @@ export function applyConfiguredColumnOrder(
         size: configuredWidth,
       };
     });
+}
+
+/**
+ * Builds the initial column visibility state from the config.
+ * Columns with `visible: false` are hidden; all others default to visible.
+ *
+ * @param {TableColumnOrderSettings} config Configuration for table column order.
+ * @param {string} entityType Type of entity for rendering.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {Record<string, string>} titleDict The dictionary object leading to title..
+ */
+export function getInitialColumnVisibilityConfig(
+  config: TableColumnOrderSettings,
+  entityType: string,
+  lifecycleStage: LifecycleStage,
+  titleDict: Record<string, string>,
+): VisibilityState {
+  const configuredOrder: TableColumnConfigItem[] = config[entityType] || config[lifecycleStage];
+  if (!configuredOrder || configuredOrder.length === 0) return {};
+  const columnvisibility: VisibilityState = {};
+  for (const item of configuredOrder) {
+    if (item.visible === false) {
+      columnvisibility[translateLifecycleFields(item.name, titleDict)] = false;
+    }
+  }
+  return columnvisibility;
 }
 
 /**
