@@ -7,17 +7,19 @@ import {
   PaginationState,
   SortingState,
   Table,
-  useReactTable
+  useReactTable,
+  VisibilityState
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { TableColumnOrderSettings } from "types/settings";
 import {
-  genSortParams
+  genSortParams,
+  getInitialColumnVisibilityConfig
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
@@ -64,6 +66,8 @@ export function useTable(
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [hasAppliedInitialVisibility, setHasAppliedInitialVisibility] = useState<boolean>(false);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
   const { isLoading, tableData, initialInstances } = useTableData(
@@ -78,6 +82,11 @@ export function useTable(
     tableColumnOrder,
   );
 
+  const configColumnVisibility: VisibilityState = useMemo(() =>
+    getInitialColumnVisibilityConfig(tableColumnOrder, entityType, lifecycleStage, dict.title),
+    [tableColumnOrder, entityType, lifecycleStage, dict.title],
+  );
+
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
     setSorting(newSorting);
@@ -88,6 +97,15 @@ export function useTable(
   useEffect(() => {
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
   }, [tableData, pagination.pageIndex]);
+
+  // Applies the configured initial column visibility on the first load when the table data is ready.
+  useEffect(() => {
+    if (!hasAppliedInitialVisibility && Object.keys(configColumnVisibility).length > 0) {
+      setColumnVisibility(configColumnVisibility);
+      // We set this flag to true to avoid overriding any user customisation on column visibility after the initial load.
+      setHasAppliedInitialVisibility(true);
+    }
+  }, [configColumnVisibility, hasAppliedInitialVisibility]);
 
 
   useEffect(() => {
@@ -157,6 +175,7 @@ export function useTable(
     columns: tableData?.columns,
     state: {
       columnFilters,
+      columnVisibility,
       pagination,
       sorting,
     },
@@ -167,6 +186,7 @@ export function useTable(
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange,
+    onColumnVisibilityChange: setColumnVisibility,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
