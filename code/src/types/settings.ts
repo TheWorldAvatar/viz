@@ -24,6 +24,7 @@ export type UISettings = {
     [key: 'scenario' | 'registry' | 'dashboard' | "billing" | string]: {
       url?: string;
       data?: string;
+      settings?: string;
       paths?: ResourcesPathSettings[];
     };
   }

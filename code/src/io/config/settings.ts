@@ -20,7 +20,6 @@ export default class SettingsStore {
   private static readonly UI_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
   private static readonly DATA_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/data-settings.json");
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
-  private static readonly TABLE_COLUMN_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/table-column-settings.json");
 
   // Cached settings
   private static UI_SETTINGS: UISettings | null = null;
@@ -91,11 +90,14 @@ export default class SettingsStore {
    * Reads the table column settings file and sets it to SettingsStore private field.
    */
   public static readTableColumnSettings(): void {
-    try {
-      this.TABLE_COLUMN_SETTINGS = this.readFile<TableColumnSettings>(this.TABLE_COLUMN_SETTINGS_FILE);
-    } catch (_error) {
-      console.warn("Using default column order without explicit overrides...");
+    const uiSettings: UISettings = this.getUISettings();
+    const registrySettingsFile: string | undefined = uiSettings.resources?.registry?.settings;
+    if (!registrySettingsFile) {
+      this.TABLE_COLUMN_SETTINGS = {};
+      return;
     }
+    const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
+    this.TABLE_COLUMN_SETTINGS = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
   }
 
   /**
