@@ -392,20 +392,48 @@ Instructions:
 
 ### 1.3 Table Column Settings
 
-The `config/table-column-settings.json` file is optional and can be used to override the default column settings for registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views(`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
+The `config/table-column-settings.json` file is optional and can be used to override the default column settings for registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
 
-- Any columns not listed remain available and will fall back to the platform's default ordering.
+Each table key maps to an array of column configuration objects. The supported object fields are:
+
+- `name` (required): The backend column identifier.
+- `width` (optional): Default width of the column in pixels.
+- `visible` (optional): Default visibility of the column. Set to `false` to hide the column or `true` to show it. By default, all columns are visible.
+
+Additional notes:
+
+- Any columns not listed remain available and fall back to the platform's default ordering and sizing.
 - You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.
-- Only existing column names will be rendered. If you include a column ID that does not exist for that table, it will be ignored (and will not be shown).
+- Only existing column names are applied. Unknown `name` values are ignored.
+- A column with `visible: false` remains available in the column toggle menu and can be re-enabled by users.
 
 Example `table-column-settings.json`:
 
 ```json
 {
-  "bin": ["bin_type", "name", "id"],
-  "driver": ["name", "id", "start", "last_name", "end", "plate_number", "truck_type"],
-  "outstanding": ["client" , "status"],
-  "scheduled": ["status" , "client" , "driver"]
+  "bin": [
+    { "name": "bin_type", "width": 180 },
+    { "name": "name", "width": 220 },
+    { "name": "id", "visible": false }
+  ],
+  "driver": [
+    { "name": "name", "width": 180 },
+    { "name": "id", "width": 240 },
+    { "name": "start" },
+    { "name": "last_name" },
+    { "name": "end" },
+    { "name": "plate_number", "visible": false },
+    { "name": "truck_type" }
+  ],
+  "outstanding": [
+    { "name": "client", "visible": false },
+    { "name": "status", "width": 160 }
+  ],
+  "scheduled": [
+    { "name": "status" },
+    { "name": "client" },
+    { "name": "driver" }
+  ]
 }
 ```
 
