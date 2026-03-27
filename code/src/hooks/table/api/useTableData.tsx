@@ -13,6 +13,8 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/inter
 
 export interface TableDataDescriptor {
   isLoading: boolean;
+  selectedCount: number;
+  totalCount: number;
   tableData: TableData;
   initialInstances: RegistryFieldValues[];
 }
@@ -46,6 +48,8 @@ export function useTableData(
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);
+  const [selectedCount, setSelectedCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [data, setData] = useState<
     TableData
   >({ data: [], columns: [] });
@@ -118,7 +122,8 @@ export function useTableData(
         }
         const res: AgentResponseBody = await queryInternalApi(url);
         instances = (res.data?.items as RegistryFieldValues[]) ?? [];
-
+        setSelectedCount(res.data?.currentItemCount);
+        setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
         const parsedData: TableData = parseDataForTable(instances, dict.title);
         const orderedColumns: EnhancedColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
@@ -166,6 +171,8 @@ export function useTableData(
   return {
     isLoading,
     tableData: data,
+    selectedCount,
+    totalCount,
     initialInstances,
   };
 }

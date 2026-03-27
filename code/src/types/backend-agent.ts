@@ -12,6 +12,8 @@ export type AgentResponseBody = {
   data?: {
     id?: string;
     message?: string;
+    currentItemCount?: number;
+    totalItems?: number;
     deleted?: boolean;
     items?: string[] | Record<string, unknown>[];
   };
@@ -38,7 +40,6 @@ export const InternalApiIdentifierMap = {
   CONCEPT: "concept",
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",
-  COUNT: "count",
   EVENT: EVENT_KEY,
   FILTER: "filter",
   FORM: "form",

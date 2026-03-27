@@ -289,43 +289,6 @@ function makeExternalEndpoint(
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/status/${id}`;
     }
-    case InternalApiIdentifierMap.COUNT: {
-      const type: string = searchParams.get("type");
-      const lifecycle: string = searchParams.get("lifecycle");
-      if (lifecycle == "null") {
-        const filters: string = encodeFilters(searchParams.get("filters"), "?");
-        return `${agentBaseApi}/${type}/count${filters}`;
-      }
-      const filters: string = encodeFilters(searchParams.get("filters"));
-      if (lifecycle == LifecycleStageMap.BILLABLE) {
-        return `${agentBaseApi}/report/account/tasks/count?type=${type}${filters}`;
-      }
-      if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
-        let stagePath: string;
-        if (lifecycle === "pending") {
-          stagePath = "draft";
-        } else if (lifecycle === "active") {
-          stagePath = "service";
-        } else if (lifecycle === "archive") {
-          stagePath = "archive";
-        } else {
-          throw Error("Invalid stage");
-        }
-        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}${filters}`;
-      }
-      let params: string = "";
-      if (lifecycle == "scheduled" || lifecycle == "closed" || lifecycle == "activity") {
-        const startDate: string = searchParams.get("start_date");
-        const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
-        const endDate: string = searchParams.get("end_date");
-        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
-        params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
-      }
-      if (lifecycle == "activity") {
-        return `${agentBaseApi}/report/bill/count?type=${type}${params}${filters}`;
-      }
-      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
-    }
     case InternalApiIdentifierMap.INSTANCES: {
       const type: string = searchParams.get("type");
       const requireLabel: string = searchParams.get("label");
