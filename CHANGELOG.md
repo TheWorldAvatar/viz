@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.65.0
+
+### Changes
+
+- Upadted table column settings to include width and visiblity options for each column
+- Now the table column settings file is optional and if you want to use it , you have to specify the file name in the ui-settings.json file under `resources.registry.settings`
+- Updated table settings documentation
+
+
 ## 5.64.9
 
 ### Changes
