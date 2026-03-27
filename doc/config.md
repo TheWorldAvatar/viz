@@ -394,13 +394,13 @@ Instructions:
 
 ### 1.3 Table Column Settings
 
-The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or lifecycle-stage views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
+The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or specific views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `invoice`, `billable`).
 
 Each table key maps to an array of column configuration objects. The supported object fields are:
 
 - `name` (required): The backend column identifier.
 - `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
-- `visible` (optional): Default to `true` if not set explicitly. Set to `false` to hide the column. 
+- `visible` (optional): Hides or shows the column at the start. Default to `true` if not set explicitly. Set to `false` to hide the column.
 
 Additional notes:
 
