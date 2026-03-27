@@ -32,6 +32,7 @@ export type UISettings = {
 export type TableColumnConfigItem = {
   name: string;
   width?: number;
+  visible?: boolean;
 };
 
 export type TableColumnOrderSettings = Record<string, TableColumnConfigItem[]>;
