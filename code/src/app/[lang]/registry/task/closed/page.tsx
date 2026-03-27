@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { LifecycleStageMap } from 'types/form';
 
@@ -27,14 +27,14 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default function RegistryTaskByDatePage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
+  const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
         lifecycleStage={LifecycleStageMap.CLOSED}
         accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
-        tableColumnOrder={tableColumnOrderSettings}
+        tableColumnSettings={tableColumnSettings}
       />
     );
   } else {

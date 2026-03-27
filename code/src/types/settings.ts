@@ -35,7 +35,7 @@ export type TableColumnConfigItem = {
   visible?: boolean;
 };
 
-export type TableColumnOrderSettings = Record<string, TableColumnConfigItem[]>;
+export type TableColumnSettings = Record<string, TableColumnConfigItem[]>;
 
 
 export interface ResourcesPathSettings {

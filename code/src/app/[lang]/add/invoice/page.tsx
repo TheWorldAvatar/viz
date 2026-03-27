@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Modules, PageTitles } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
 import { LifecycleStageMap } from 'types/form';
-import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnSettings, UISettings } from 'types/settings';
 import InvoiceFormComponent from 'ui/interaction/form/invoice-form-component';
 
 /**
@@ -24,13 +24,13 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function AddInvoiceFormPage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
+  const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
 
   return (
     <InvoiceFormComponent
       entityType={uiSettings?.resources?.registry?.data}
       accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT).key}
-      tableColumnOrder={tableColumnOrderSettings}
+      tableColumnSettings={tableColumnSettings}
     />
   );
 }

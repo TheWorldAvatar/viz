@@ -13,7 +13,7 @@ import {
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
-import { TableColumnConfigItem, TableColumnOrderSettings } from "types/settings";
+import { TableColumnConfigItem, TableColumnSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
@@ -168,19 +168,19 @@ function flattenInstance(
  * Applies the configured column order to the given columns.
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
- * @param {TableColumnOrderSettings} config Configuration for table column order.
+ * @param {TableColumnSettings} tableColumnSettings Configuration for table colums settings.
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function applyConfiguredColumnOrder(
   columns: EnhancedColumnDef<FieldValues>[],
-  config: TableColumnOrderSettings,
+  tableColumnSettings: TableColumnSettings,
   entityType: string,
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): EnhancedColumnDef<FieldValues>[] {
-  const configuredOrder: TableColumnConfigItem[] = config[entityType] || config[lifecycleStage];
+  const configuredOrder: TableColumnConfigItem[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   if (columns.length !== configuredOrder.length) {
@@ -218,18 +218,18 @@ export function applyConfiguredColumnOrder(
  * Builds the initial column visibility state from the config.
  * Columns with `visible: false` are hidden; all others default to visible.
  *
- * @param {TableColumnOrderSettings} config Configuration for table column order.
+ * @param {TableColumnSettings} tableColumnSettings Configuration for table column settings.
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {Record<string, string>} titleDict The dictionary object leading to title..
  */
 export function getInitialColumnVisibilityConfig(
-  config: TableColumnOrderSettings,
+  tableColumnSettings: TableColumnSettings,
   entityType: string,
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): VisibilityState {
-  const configuredOrder: TableColumnConfigItem[] = config[entityType] || config[lifecycleStage];
+  const configuredOrder: TableColumnConfigItem[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return {};
   const columnvisibility: VisibilityState = {};
   for (const item of configuredOrder) {

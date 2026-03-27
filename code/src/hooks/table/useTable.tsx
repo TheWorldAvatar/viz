@@ -16,7 +16,7 @@ import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnSettings } from "types/settings";
 import {
   genSortParams,
   getInitialColumnVisibilityConfig
@@ -48,7 +48,7 @@ export interface TableDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
+* @param {TableColumnSettings} tableColumnOrderConfig Configuration for table column settings.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
 */
@@ -56,7 +56,7 @@ export function useTable(
   entityType: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
-  tableColumnOrder: TableColumnOrderSettings,
+  tableColumnSettings: TableColumnSettings,
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
 ): TableDescriptor {
@@ -79,12 +79,12 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
-    tableColumnOrder,
+    tableColumnSettings,
   );
 
   const configColumnVisibility: VisibilityState = useMemo(() =>
-    getInitialColumnVisibilityConfig(tableColumnOrder, entityType, lifecycleStage, dict.title),
-    [tableColumnOrder, entityType, lifecycleStage, dict.title],
+    getInitialColumnVisibilityConfig(tableColumnSettings, entityType, lifecycleStage, dict.title),
+    [tableColumnSettings, entityType, lifecycleStage, dict.title],
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {

@@ -3,7 +3,7 @@ import SettingsStore from "io/config/settings";
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
 import { redirect } from "next/navigation";
 import { LifecycleStageMap } from "types/form";
-import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from "types/settings";
+import { NavBarItemSettings, TableColumnSettings, UISettings } from "types/settings";
 import RegistryTableComponent from "ui/graphic/table/registry/registry-table-component";
 
 /**
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function InvoicesPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
-    const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
+    const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
 
     if (!uiSettings.modules.billing) {
         redirect(Routes.HOME);
@@ -31,7 +31,7 @@ export default function InvoicesPage() {
         <RegistryTableComponent
             entityType={LifecycleStageMap.INVOICE}
             lifecycleStage={LifecycleStageMap.INVOICE}
-            tableColumnOrder={tableColumnOrderSettings}
+            tableColumnSettings={tableColumnSettings}
         />
     );
 }
