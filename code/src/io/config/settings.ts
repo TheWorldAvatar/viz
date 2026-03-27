@@ -89,15 +89,13 @@ export default class SettingsStore {
   /**
    * Reads the table column settings file and sets it to SettingsStore private field.
    */
-  public static readTableColumnSettings(): void {
+  private static readTableColumnSettings(): void {
     const uiSettings: UISettings = this.getUISettings();
     const registrySettingsFile: string | undefined = uiSettings.resources?.registry?.settings;
-    if (!registrySettingsFile) {
-      this.TABLE_COLUMN_SETTINGS = {};
-      return;
+    if (registrySettingsFile) {
+      const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
+      this.TABLE_COLUMN_SETTINGS = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
     }
-    const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
-    this.TABLE_COLUMN_SETTINGS = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
   }
 
   /**
