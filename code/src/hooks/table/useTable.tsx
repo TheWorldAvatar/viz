@@ -7,17 +7,19 @@ import {
   PaginationState,
   SortingState,
   Table,
-  useReactTable
+  useReactTable,
+  VisibilityState
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
+import { TableColumnOption, TableColumnSettings } from "types/settings";
 import {
-  genSortParams
+  genSortParams,
+  getInitialColumnVisibilityState
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
@@ -46,7 +48,7 @@ export interface TableDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
+* @param {TableColumnSettings} tableColumnSettings Configuration for table column settings.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
 */
@@ -54,7 +56,7 @@ export function useTable(
   entityType: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
-  tableColumnOrder: TableColumnOrderSettings,
+  tableColumnSettings: TableColumnSettings,
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
 ): TableDescriptor {
@@ -64,6 +66,7 @@ export function useTable(
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
   const { isLoading, tableData, initialInstances } = useTableData(
@@ -75,7 +78,7 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
-    tableColumnOrder,
+    tableColumnSettings,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -85,10 +88,16 @@ export function useTable(
     setSortParams(params);
   };
 
+  // Configure the initial visibility state for each column if set on first load
+  useEffect(() => {
+    const columnOptions: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
+      : tableColumnSettings[lifecycleStage];
+    setColumnVisibility(getInitialColumnVisibilityState(columnOptions, dict.title));
+  }, []);
+
   useEffect(() => {
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
   }, [tableData, pagination.pageIndex]);
-
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -157,6 +166,7 @@ export function useTable(
     columns: tableData?.columns,
     state: {
       columnFilters,
+      columnVisibility,
       pagination,
       sorting,
     },
@@ -167,6 +177,7 @@ export function useTable(
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange,
+    onColumnVisibilityChange: setColumnVisibility,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),

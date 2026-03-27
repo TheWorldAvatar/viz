@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnSettings, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 
 interface ActiveRegistryPageProps {
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function ActiveRegistryPage(props: ActiveRegistryPageProps) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
+  const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
   const resolvedParams = await props.params;
   if (!uiSettings.modules.registry || !uiSettings.resources?.registry?.data) {
     redirect(Routes.HOME);
@@ -41,7 +41,7 @@ export default async function ActiveRegistryPage(props: ActiveRegistryPageProps)
     <RegistryTableComponent
       entityType={decodeURIComponent(resolvedParams.type)}
       lifecycleStage={'active'}
-      tableColumnOrder={tableColumnOrderSettings}
+      tableColumnSettings={tableColumnSettings}
     />
   );
 }

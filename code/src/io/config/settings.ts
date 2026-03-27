@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { JsonObject } from 'types/json';
-import { DataSettings, MapSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
+import { DataSettings, MapSettings, TableColumnSettings, UISettings } from 'types/settings';
 import { logColours } from 'utils/logColours';
 
 /**
@@ -20,13 +20,12 @@ export default class SettingsStore {
   private static readonly UI_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
   private static readonly DATA_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/data-settings.json");
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
-  private static readonly TABLE_ORDER_FILE: string = path.join(process.cwd(), "public/config/table-column-order.json");
 
   // Cached settings
   private static UI_SETTINGS: UISettings | null = null;
   private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
-  private static TABLE_ORDER_SETTINGS: TableColumnOrderSettings = {};
+  private static TABLE_COLUMN_SETTINGS: TableColumnSettings = {};
 
 
   /**
@@ -60,13 +59,13 @@ export default class SettingsStore {
   }
 
   /**
-   * Retrieves table column order settings from `SettingsStore` class
+   * Retrieves table column settings from `SettingsStore` class
    */
-  public static getTableColumnOrderSettings(): TableColumnOrderSettings {
-    if (Object.keys(this.TABLE_ORDER_SETTINGS).length === 0) {
-      this.readTableColumnOrderSettings();
+  public static getTableColumnSettings(): TableColumnSettings {
+    if (Object.keys(this.TABLE_COLUMN_SETTINGS).length === 0) {
+      this.readTableColumnSettings();
     }
-    return this.TABLE_ORDER_SETTINGS;
+    return this.TABLE_COLUMN_SETTINGS;
   }
 
   /**
@@ -88,13 +87,14 @@ export default class SettingsStore {
   }
 
   /**
-   * Reads the table order settings file and sets it to SettingsStore private field.
+   * Reads the table column settings file and sets it to SettingsStore private field.
    */
-  public static readTableColumnOrderSettings(): void {
-    try {
-      this.TABLE_ORDER_SETTINGS = this.readFile<TableColumnOrderSettings>(this.TABLE_ORDER_FILE);
-    } catch (_error) {
-      console.warn("Using default column order without explicit overrides...");
+  private static readTableColumnSettings(): void {
+    const uiSettings: UISettings = this.getUISettings();
+    const registrySettingsFile: string | undefined = uiSettings.resources?.registry?.settings;
+    if (registrySettingsFile) {
+      const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
+      this.TABLE_COLUMN_SETTINGS = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
     }
   }
 

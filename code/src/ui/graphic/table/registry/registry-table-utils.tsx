@@ -2,7 +2,8 @@ import {
   ColumnDef,
   ColumnFilter,
   FilterFnOption,
-  SortingState
+  SortingState,
+  VisibilityState
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
@@ -12,7 +13,7 @@ import {
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnOption, TableColumnSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
@@ -167,33 +168,71 @@ function flattenInstance(
  * Applies the configured column order to the given columns.
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
- * @param {TableColumnOrderSettings} config Configuration for table column order.
+ * @param {TableColumnSettings} tableColumnSettings Configuration for table colums settings.
  * @param {string} entityType Type of entity for rendering.
+ * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function applyConfiguredColumnOrder(
   columns: EnhancedColumnDef<FieldValues>[],
-  config: TableColumnOrderSettings,
+  tableColumnSettings: TableColumnSettings,
   entityType: string,
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): EnhancedColumnDef<FieldValues>[] {
-  const configuredOrder: string[] = config[entityType] || config[lifecycleStage];
+  const configuredOrder: TableColumnOption[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   if (columns.length !== configuredOrder.length) {
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [translateLifecycleFields(id, titleDict), index]));
+  const orderMap: Map<string, number> = new Map(configuredOrder.map((item, index) => [translateLifecycleFields(item.name, titleDict), index]));
+  const widthMap: Map<string, number> = new Map(configuredOrder.map((item) => {
+    return [translateLifecycleFields(item.name, titleDict), item.width] as [string, number];
+  }).filter(([, width]) => width !== undefined)
+  );
 
-  return columns.sort((a, b) => {
-    const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
-    const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
-    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
-    return indexA - indexB;
-  });
+  return columns
+    .sort((a, b) => {
+      const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
+      const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
+      const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+      const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
+      return indexA - indexB;
+    })
+    .map((column) => {
+      const accessorKey: string = (column as { accessorKey?: string }).accessorKey;
+      const configuredWidth: number = widthMap.get(accessorKey);
+      if (configuredWidth === undefined) {
+        return column;
+      }
+      return {
+        ...column,
+        size: configuredWidth,
+      };
+    });
+}
+
+/**
+ * Builds the initial column visibility state from the column options config.
+ * Columns with `visible: false` are hidden; all others default to visible.
+ *
+ * @param {TableColumnOption[]} columnOptions Column options for the target table.
+ * @param {Record<string, string>} titleDict The dictionary object leading to title.
+ */
+export function getInitialColumnVisibilityState(
+  columnOptions: TableColumnOption[],
+  titleDict: Record<string, string>,
+): VisibilityState {
+  if (!columnOptions || columnOptions.length === 0) return {};
+  const columnVisibilityState: VisibilityState = {};
+  for (const item of columnOptions) {
+    if (item.visible === false) {
+      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
+    }
+  }
+  return columnVisibilityState;
 }
 
 /**
