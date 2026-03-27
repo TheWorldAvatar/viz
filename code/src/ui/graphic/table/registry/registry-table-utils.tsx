@@ -13,7 +13,7 @@ import {
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
-import { TableColumnConfigItem, TableColumnSettings } from "types/settings";
+import { TableColumnOption, TableColumnSettings } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
@@ -180,7 +180,7 @@ export function applyConfiguredColumnOrder(
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): EnhancedColumnDef<FieldValues>[] {
-  const configuredOrder: TableColumnConfigItem[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
+  const configuredOrder: TableColumnOption[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   if (columns.length !== configuredOrder.length) {
@@ -218,11 +218,11 @@ export function applyConfiguredColumnOrder(
  * Builds the initial column visibility state from the column options config.
  * Columns with `visible: false` are hidden; all others default to visible.
  *
- * @param {TableColumnConfigItem[]} columnOptions Column options for the target table.
+ * @param {TableColumnOption[]} columnOptions Column options for the target table.
  * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(
-  columnOptions: TableColumnConfigItem[],
+  columnOptions: TableColumnOption[],
   titleDict: Record<string, string>,
 ): VisibilityState {
   if (!columnOptions || columnOptions.length === 0) return {};

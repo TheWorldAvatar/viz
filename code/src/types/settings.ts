@@ -30,14 +30,13 @@ export type UISettings = {
   }
 }
 
-export type TableColumnConfigItem = {
+export type TableColumnOption = {
   name: string;
   width?: number;
   visible?: boolean;
 };
 
-export type TableColumnSettings = Record<string, TableColumnConfigItem[]>;
-
+export type TableColumnSettings = Record<string, TableColumnOption[]>;
 
 export interface ResourcesPathSettings {
   type: string;

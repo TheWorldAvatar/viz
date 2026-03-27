@@ -16,7 +16,7 @@ import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { TableColumnConfigItem, TableColumnSettings } from "types/settings";
+import { TableColumnOption, TableColumnSettings } from "types/settings";
 import {
   genSortParams,
   getInitialColumnVisibilityState
@@ -90,7 +90,7 @@ export function useTable(
 
   // Configure the initial visibility state for each column if set on first load
   useEffect(() => {
-    const columnOptions: TableColumnConfigItem[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
+    const columnOptions: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
       : tableColumnSettings[lifecycleStage];
     setColumnVisibility(getInitialColumnVisibilityState(columnOptions, dict.title));
   }, []);
