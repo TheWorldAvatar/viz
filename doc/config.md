@@ -69,6 +69,7 @@ Note that resources are optional and their configuration options can differ from
   - `data`: This required field indicates the target dataset that should be accessible to the user from the central stack. In the given example, the data field is set to "water", indicating that the scenario contains information only on water assets and not power nor telecoms etc.
 - Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
+  - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
@@ -113,6 +114,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     },
     "registry": {
       "data": "type", // Specify only the type to reach the registry page of interest
+      "settings": "table-column-settings.json", // Optional table column settings file in /config
       "paths": ["resource one", "resource two"] // Specify the resource names on the backend
     },
     "scenario": {
@@ -392,7 +394,7 @@ Instructions:
 
 ### 1.3 Table Column Settings
 
-The `config/table-column-settings.json` file is optional and can be used to override the default column settings for registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
+The `config/table-column-settings.json` file is optional and can be used to override the default column settings for registry or billing tables. To enable it for registry, reference it from `config/ui-settings.json` under `resources.registry.settings` (for example, `"settings": "table-column-settings.json"`). This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
 
 Each table key maps to an array of column configuration objects. The supported object fields are:
 
