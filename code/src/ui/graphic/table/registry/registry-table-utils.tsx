@@ -215,15 +215,17 @@ export function applyConfiguredColumnOrder(
  * Columns with `visible: false` are hidden; all others default to visible.
  *
  * @param {TableColumnOption[]} columnOptions Column options for the target table.
+ * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(
   columnOptions: TableColumnOption[],
+  titleDict: Record<string, string>
 ): VisibilityState {
   if (!columnOptions || columnOptions.length === 0) return {};
   const columnVisibilityState: VisibilityState = {};
   for (const item of columnOptions) {
     if (item.visible === false) {
-      columnVisibilityState[item.name] = false;
+      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
     }
   }
   return columnVisibilityState;
