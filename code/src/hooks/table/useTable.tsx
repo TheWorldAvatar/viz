@@ -66,9 +66,12 @@ export function useTable(
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
+  const columnOptions: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
+    : tableColumnSettings[lifecycleStage];
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(columnOptions));
+
   const { isLoading, tableData, initialInstances } = useTableData(
     entityType,
     sortParams,
@@ -78,7 +81,7 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
-    tableColumnSettings,
+    columnOptions,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -88,12 +91,6 @@ export function useTable(
     setSortParams(params);
   };
 
-  // Configure the initial visibility state for each column if set on first load
-  useEffect(() => {
-    const columnOptions: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
-      : tableColumnSettings[lifecycleStage];
-    setColumnVisibility(getInitialColumnVisibilityState(columnOptions, dict.title));
-  }, []);
 
   useEffect(() => {
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));

@@ -169,28 +169,22 @@ function flattenInstance(
  * Applies the configured column order to the given columns.
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
- * @param {TableColumnSettings} tableColumnSettings Configuration for table colums settings.
- * @param {string} entityType Type of entity for rendering.
- * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {TableColumnOption[]} columnOptions Configuration for table columns settings.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function applyConfiguredColumnOrder(
   columns: EnhancedColumnDef<FieldValues>[],
-  tableColumnSettings: TableColumnSettings,
-  entityType: string,
-  lifecycleStage: LifecycleStage,
+  columnOptions: TableColumnOption[],
   titleDict: Record<string, string>,
 ): EnhancedColumnDef<FieldValues>[] {
-  const configuredOrder: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
-    : tableColumnSettings[lifecycleStage];
-  if (!configuredOrder || configuredOrder.length === 0) return columns;
+  if (!columnOptions || columnOptions.length === 0) return columns;
 
-  if (columns.length !== configuredOrder.length) {
+  if (columns.length !== columnOptions.length) {
     console.warn("Configured column order does not match the number of columns available.");
   }
 
   const configuredColumnMap: Map<string, TableColumnOption> = new Map(
-    configuredOrder.map((item, index) => [
+    columnOptions.map((item, index) => [
       translateLifecycleFields(item.name, titleDict),
       { ...item, order: index }
     ])
@@ -222,17 +216,15 @@ export function applyConfiguredColumnOrder(
  * Columns with `visible: false` are hidden; all others default to visible.
  *
  * @param {TableColumnOption[]} columnOptions Column options for the target table.
- * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(
   columnOptions: TableColumnOption[],
-  titleDict: Record<string, string>,
 ): VisibilityState {
   if (!columnOptions || columnOptions.length === 0) return {};
   const columnVisibilityState: VisibilityState = {};
   for (const item of columnOptions) {
     if (item.visible === false) {
-      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
+      columnVisibilityState[item.name] = false;
     }
   }
   return columnVisibilityState;
