@@ -336,9 +336,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         const isRowChecked: boolean = row.getIsSelected();
                         const isRowClicked: boolean = activeRowId === recordId;
                         const rowCellBackgroundClass: string = isRowClicked
-                          ? "bg-success-background dark:bg-success-background/60 group-hover:bg-success-background/80 dark:group-hover:bg-success-background/60"
+                          ? "bg-success-background dark:bg-success-background/60 group-hover:bg-success-background/80"
                           : isRowChecked
-                            ? "bg-neutral-background dark:bg-ring group-hover:bg-neutral-background/30 dark:group-hover:bg-ring/90"
+                            ? "bg-neutral-background dark:bg-ring group-hover:bg-neutral-background/80"
                             : "group-hover:bg-muted";
 
                         return (
@@ -356,6 +356,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                                   lifecycleStage={props.lifecycleStage}
                                   row={row.original}
                                   triggerRefresh={props.triggerRefresh}
+                                  setActiveRowId={setActiveRowId}
                                 />
                                 {!props.disableRowAction && <Button
                                   leftIcon="history"

@@ -28,6 +28,7 @@ interface RegistryRowActionProps {
   lifecycleStage: LifecycleStage;
   row: FieldValues;
   triggerRefresh: () => void;
+  setActiveRowId?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 /**
@@ -38,6 +39,7 @@ interface RegistryRowActionProps {
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {FieldValues} row Row values.
  * @param triggerRefresh A function to refresh the table when required.
+ * @param setActiveRowId A function to set the active row ID.
  */
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
@@ -57,6 +59,10 @@ export default function RegistryRowAction(
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
 
+  const markRowAsActive = (): void => {
+    props.setActiveRowId?.(recordId);
+  };
+
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
       contract: recordId,
@@ -67,6 +73,7 @@ export default function RegistryRowAction(
       "service",
       "commence"
     );
+    markRowAsActive();
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
@@ -81,6 +88,7 @@ export default function RegistryRowAction(
       "draft",
       "reset"
     );
+    markRowAsActive();
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
 
@@ -116,6 +124,7 @@ export default function RegistryRowAction(
   };
 
   const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    markRowAsActive();
     browserStorageManager.clear();
     resetFormSession();
     const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id, props.row.date);
@@ -172,6 +181,7 @@ export default function RegistryRowAction(
                 className="w-full justify-start"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
+                  markRowAsActive();
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
@@ -188,6 +198,7 @@ export default function RegistryRowAction(
                   disabled={isLoading}
                   label={dict.action.terminate}
                   onClick={() => {
+                    markRowAsActive();
                     setIsActionMenuOpen(false);
                     navigateToDrawer(Routes.REGISTRY_TERMINATE, props.recordType, recordId);
                   }}
@@ -224,6 +235,7 @@ export default function RegistryRowAction(
                 disabled={isLoading}
                 label={dict.action.edit}
                 onClick={() => {
+                  markRowAsActive();
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
@@ -239,6 +251,7 @@ export default function RegistryRowAction(
                 disabled={isLoading}
                 label={dict.action.delete}
                 onClick={() => {
+                  markRowAsActive();
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
@@ -257,6 +270,7 @@ export default function RegistryRowAction(
                 className="w-full justify-start"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
+                  markRowAsActive();
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
@@ -272,6 +286,7 @@ export default function RegistryRowAction(
                 disabled={isLoading}
                 label={dict.action.complete}
                 onClick={() => {
+                  markRowAsActive();
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
@@ -287,6 +302,7 @@ export default function RegistryRowAction(
                 disabled={isLoading}
                 label={dict.action.dispatch}
                 onClick={() => {
+                  markRowAsActive();
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
@@ -304,6 +320,7 @@ export default function RegistryRowAction(
                     disabled={isLoading}
                     label={dict.action.reschedule}
                     onClick={() => {
+                      markRowAsActive();
                       setIsActionMenuOpen(false);
                       navigateToDrawer(Routes.REGISTRY_TASK_RESCHEDULE, recordId);
                     }}
@@ -319,6 +336,7 @@ export default function RegistryRowAction(
                   disabled={isLoading}
                   label={dict.action.cancel}
                   onClick={() => {
+                    markRowAsActive();
                     setIsActionMenuOpen(false);
                     navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
                   }}
@@ -334,6 +352,7 @@ export default function RegistryRowAction(
                   label={dict.action.report}
                   disabled={isLoading}
                   onClick={() => {
+                    markRowAsActive();
                     setIsActionMenuOpen(false);
                     navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
                   }}
@@ -362,6 +381,7 @@ export default function RegistryRowAction(
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              markRowAsActive();
               setIsActionMenuOpen(false);
               setIsOpenBillingModal(true);
             }}
