@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { TableColumnOption, TableColumnSettings } from "types/settings";
+import { LifecycleStage, RegistryFieldValues } from "types/form";
+import { TableColumnOption } from "types/settings";
 import {
   genSortParams,
   getInitialColumnVisibilityState
@@ -48,7 +48,7 @@ export interface TableDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {TableColumnSettings} tableColumnSettings Configuration for table column settings.
+* @param {TableColumnOption[]} tableColumnOptions Configuration for table column settings.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
 */
@@ -56,7 +56,7 @@ export function useTable(
   entityType: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
-  tableColumnSettings: TableColumnSettings,
+  tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
 ): TableDescriptor {
@@ -68,9 +68,7 @@ export function useTable(
   const [data, setData] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const columnOptions: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
-    : tableColumnSettings[lifecycleStage];
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(columnOptions));
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
   const { isLoading, tableData, initialInstances } = useTableData(
     entityType,
@@ -81,7 +79,7 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
-    columnOptions,
+    tableColumnOptions,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {

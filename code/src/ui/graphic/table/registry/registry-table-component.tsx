@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
-import { TableColumnSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
@@ -26,7 +26,7 @@ interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
-  tableColumnSettings: TableColumnSettings;
+  tableColumnOptions: TableColumnOption[];
 }
 
 /**
@@ -35,7 +35,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
- * @param {TableColumnSettings} tableColumnSettings The column settings for the registry table.
+ * @param {TableColumnOption[]} tableColumnOptions The column options for the registry table.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
@@ -63,7 +63,7 @@ export default function RegistryTableComponent(
     props.entityType,
     refreshFlag,
     props.lifecycleStage,
-    props.tableColumnSettings,
+    props.tableColumnOptions,
     null,
     selectedDate,
   );

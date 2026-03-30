@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 
 import { Modules, PageTitles, Routes } from "io/config/routes";
 import SettingsStore from "io/config/settings";
-import { NavBarItemSettings, TableColumnSettings, UISettings } from "types/settings";
+import { NavBarItemSettings, TableColumnOption, UISettings } from "types/settings";
 import RegistryTableComponent from "ui/graphic/table/registry/registry-table-component";
+import { LifecycleStageMap } from "types/form";
 
 /**
  * Set page metadata.
@@ -28,13 +29,13 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default function RegistryTaskByDatePage() {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
+  const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.TASKS);
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
         entityType={uiSettings.resources?.registry?.data}
-        lifecycleStage={"tasks"}
-        tableColumnSettings={tableColumnSettings}
+        lifecycleStage={LifecycleStageMap.TASKS}
+        tableColumnOptions={tableColumnSettings}
       />
     );
   } else {
