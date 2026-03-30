@@ -381,7 +381,6 @@ export default function RegistryRowAction(
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              markRowAsActive();
               setIsActionMenuOpen(false);
               setIsOpenBillingModal(true);
             }}
