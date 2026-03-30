@@ -71,6 +71,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
   const [historyId, setHistoryId] = useState<string>("");
+  const [activeRowId, setActiveRowId] = useState<string>("");
 
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
@@ -87,13 +88,22 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     || props.lifecycleStage === LifecycleStageMap.ARCHIVE || props.lifecycleStage === LifecycleStageMap.OUTSTANDING || props.lifecycleStage === LifecycleStageMap.SCHEDULED
     || props.lifecycleStage === LifecycleStageMap.CLOSED || props.lifecycleStage === LifecycleStageMap.BILLABLE;
 
+  const getRowRecordId = (row: FieldValues): string => {
+    if (row.event_id) {
+      return getId(row.event_id);
+    }
+
+    if (row.id) {
+      return getId(row.id);
+    }
+
+    return getId(row.iri);
+  };
+
   const onRowClick = async (row: FieldValues) => {
     if (isLoading) return;
-    const recordId: string = row.event_id
-      ? getId(row.event_id)
-      : row.id
-        ? getId(row.id)
-        : getId(row.iri);
+    const recordId: string = getRowRecordId(row);
+    setActiveRowId(recordId);
     // Clear any stored form data when clicking on a row
     browserStorageManager.clear();
     resetFormSession();
@@ -321,78 +331,85 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                       items={dragAndDropDescriptor.dataIds}
                       strategy={verticalListSortingStrategy}
                     >
-                      {props.tableDescriptor.table.getRowModel().rows.map((row, index) => (
-                        <TableRow
-                          key={row.id + index}
-                          id={row.id}
-                          isHeader={false}
-                        >
-                          <TableCell className="sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default">
-                            <div className="flex items-center justify-evenly gap-0.5">
-                              {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={row.id} />}
-                              <RegistryRowAction
-                                recordType={props.recordType}
-                                accountType={props.accountType}
-                                lifecycleStage={props.lifecycleStage}
-                                row={row.original}
-                                triggerRefresh={props.triggerRefresh}
-                              />
-                              {!props.disableRowAction && <Button
-                                leftIcon="history"
-                                size="icon"
-                                variant="ghost"
-                                tooltipText={dict.title.history}
-                                onClick={() => {
-                                  if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
-                                    props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-                                    props.lifecycleStage == LifecycleStageMap.CLOSED) {
-                                    setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
-                                  } else {
-                                    setHistoryId(row.original.id as string);
-                                  }
-                                  setIsOpenHistoryModal(true);
-                                }}
-                              />}
-                              {allowMultipleSelection && (
-                                <Checkbox
-                                  aria-label={row.id}
-                                  className="mx-2 w-4 h-4 cursor-pointer"
-                                  disabled={isLoading}
-                                  checked={row.getIsSelected()}
-                                  handleChange={(checked) => {
-                                    if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
-                                      props.tableDescriptor.setSelectedRows(
-                                        getId(row.getValue("event_id")), !checked);
-                                    }
-                                    row.toggleSelected(checked);
-                                  }}
+                      {props.tableDescriptor.table.getRowModel().rows.map((row, index) => {
+                        const recordId: string = getRowRecordId(row.original as FieldValues);
+                        const isRowChecked: boolean = row.getIsSelected();
+                        const isRowClicked: boolean = activeRowId === recordId;
+
+                        return (
+                          <TableRow
+                            key={row.id + index}
+                            id={row.id}
+                            isHeader={false}
+                          >
+                            <TableCell className={`sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default `}>
+                              <div className="flex items-center justify-evenly gap-0.5">
+                                {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={row.id} />}
+                                <RegistryRowAction
+                                  recordType={props.recordType}
+                                  accountType={props.accountType}
+                                  lifecycleStage={props.lifecycleStage}
+                                  row={row.original}
+                                  triggerRefresh={props.triggerRefresh}
                                 />
-                              )}
-                            </div>
-                          </TableCell>
-                          {row.getVisibleCells().map((cell, index) => (
-                            <TableCell
-                              key={cell.id + index}
-                              width={cell.column.getSize()}
-                              onClick={() => {
-                                if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
-                                  const isSelected: boolean = row.getIsSelected();
-                                  props.tableDescriptor.setSelectedRows(
-                                    getId(row.getValue("event_id")), isSelected);
-                                  row.toggleSelected(!isSelected);
-                                } else {
-                                  onRowClick(row.original as FieldValues);
-                                }
-                              }}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
+                                {!props.disableRowAction && <Button
+                                  leftIcon="history"
+                                  size="icon"
+                                  variant="ghost"
+                                  tooltipText={dict.title.history}
+                                  onClick={() => {
+                                    if (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+                                      props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
+                                      props.lifecycleStage == LifecycleStageMap.CLOSED) {
+                                      setHistoryId(getAfterDelimiter(row.original.event_id as string, "/"));
+                                    } else {
+                                      setHistoryId(row.original.id as string);
+                                    }
+                                    setIsOpenHistoryModal(true);
+                                  }}
+                                />}
+                                {allowMultipleSelection && (
+                                  <Checkbox
+                                    aria-label={row.id}
+                                    className="mx-2 w-4 h-4 cursor-pointer"
+                                    disabled={isLoading}
+                                    checked={row.getIsSelected()}
+                                    handleChange={(checked) => {
+                                      if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
+                                        props.tableDescriptor.setSelectedRows(
+                                          getId(row.getValue("event_id")), !checked);
+                                      }
+                                      row.toggleSelected(checked);
+                                    }}
+                                  />
+                                )}
+                              </div>
                             </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
+                            {row.getVisibleCells().map((cell, index) => (
+                              <TableCell
+                                key={cell.id + index}
+                                width={cell.column.getSize()}
+                                className={isRowClicked ? "bg-success-background  dark:bg-success-background/70" : isRowChecked ? "bg-neutral-background dark:bg-ring" : ""}
+                                onClick={() => {
+                                  if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
+                                    const isSelected: boolean = row.getIsSelected();
+                                    props.tableDescriptor.setSelectedRows(
+                                      getId(row.getValue("event_id")), isSelected);
+                                    row.toggleSelected(!isSelected);
+                                  } else {
+                                    onRowClick(row.original as FieldValues);
+                                  }
+                                }}
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        );
+                      })}
                     </SortableContext>
                   )}
                 </tbody>
