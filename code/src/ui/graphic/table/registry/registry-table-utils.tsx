@@ -9,12 +9,11 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
-  LifecycleStageMap,
   RegistryFieldValues,
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
-import { TableColumnOption, TableColumnSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
