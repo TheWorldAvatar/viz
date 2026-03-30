@@ -189,23 +189,24 @@ export function applyConfiguredColumnOrder(
     console.warn("Configured column order does not match the number of columns available.");
   }
 
-  const orderMap: Map<string, number> = new Map(configuredOrder.map((item, index) => [translateLifecycleFields(item.name, titleDict), index]));
-  const widthMap: Map<string, number> = new Map(configuredOrder.map((item) => {
-    return [translateLifecycleFields(item.name, titleDict), item.width] as [string, number];
-  }).filter(([, width]) => width !== undefined)
+  const configuredColumnMap: Map<string, TableColumnOption> = new Map(
+    configuredOrder.map((item, index) => [
+      translateLifecycleFields(item.name, titleDict),
+      { ...item, order: index }
+    ])
   );
 
   return columns
     .sort((a, b) => {
       const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
       const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-      const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
-      const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
+      const indexA: number = configuredColumnMap.get(accessorKeyA)?.order ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+      const indexB: number = configuredColumnMap.get(accessorKeyB)?.order ?? Infinity;
       return indexA - indexB;
     })
     .map((column) => {
       const accessorKey: string = (column as { accessorKey?: string }).accessorKey;
-      const configuredWidth: number = widthMap.get(accessorKey);
+      const configuredWidth: number = configuredColumnMap.get(accessorKey)?.width;
       if (configuredWidth === undefined) {
         return column;
       }

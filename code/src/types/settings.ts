@@ -34,6 +34,7 @@ export type TableColumnOption = {
   name: string;
   width?: number;
   visible?: boolean;
+  order?: number;
 };
 
 export type TableColumnSettings = Record<string, TableColumnOption[]>;
