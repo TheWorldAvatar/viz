@@ -28,7 +28,7 @@ interface InvoiceFormComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {string} accountType The type of account.
- * @param {TableColumnOption[]} tableColumnOptions The column options for the registry table.
+ * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function InvoiceFormComponent(
     props: Readonly<InvoiceFormComponentProps>

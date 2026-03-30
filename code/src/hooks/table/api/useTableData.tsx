@@ -28,7 +28,7 @@ export interface TableDataDescriptor {
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
-* @param {TableColumnOption[]} columnOptions Configuration for table columns settings.
+* @param {TableColumnOption[]} columnOptions Configuration for table columns options.
 */
 export function useTableData(
   entityType: string,

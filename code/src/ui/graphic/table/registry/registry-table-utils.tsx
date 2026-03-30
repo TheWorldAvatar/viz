@@ -168,7 +168,7 @@ function flattenInstance(
  * Applies the configured column order to the given columns.
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
- * @param {TableColumnOption[]} columnOptions Configuration for table columns settings.
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function applyConfiguredColumnOrder(
@@ -214,7 +214,7 @@ export function applyConfiguredColumnOrder(
  * Builds the initial column visibility state from the column options config.
  * Columns with `visible: false` are hidden; all others default to visible.
  *
- * @param {TableColumnOption[]} columnOptions Column options for the target table.
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
  * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(

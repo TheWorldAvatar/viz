@@ -35,7 +35,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
- * @param {TableColumnOption[]} tableColumnOptions The column options for the registry table.
+ * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
