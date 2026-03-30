@@ -60,7 +60,10 @@ export default class SettingsStore {
   }
 
   /**
-   * Retrieves table column settings from `SettingsStore` class
+   * Retrieves table column options for a given entity type or lifecycle stage
+   * 
+   * @param {string} entityType Type of entity for rendering.
+   * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
    */
   public static getTableColumnSettings(entityType: string, lifecycleStage: string): TableColumnOption[] {
     if (Object.keys(this.TABLE_COLUMN_SETTINGS).length === 0) {
