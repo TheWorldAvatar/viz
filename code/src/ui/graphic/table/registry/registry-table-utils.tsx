@@ -9,6 +9,7 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import {
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   RegistryFlatFieldValues,
   SparqlResponseField
@@ -180,7 +181,8 @@ export function applyConfiguredColumnOrder(
   lifecycleStage: LifecycleStage,
   titleDict: Record<string, string>,
 ): EnhancedColumnDef<FieldValues>[] {
-  const configuredOrder: TableColumnOption[] = tableColumnSettings[entityType] || tableColumnSettings[lifecycleStage];
+  const configuredOrder: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
+    : tableColumnSettings[lifecycleStage];
   if (!configuredOrder || configuredOrder.length === 0) return columns;
 
   if (columns.length !== configuredOrder.length) {
