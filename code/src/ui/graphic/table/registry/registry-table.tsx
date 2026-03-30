@@ -335,6 +335,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         const recordId: string = getRowRecordId(row.original as FieldValues);
                         const isRowChecked: boolean = row.getIsSelected();
                         const isRowClicked: boolean = activeRowId === recordId;
+                        const rowCellBackgroundClass: string = isRowClicked
+                          ? "bg-success-background dark:bg-success-background/60 group-hover:bg-success-background/80 dark:group-hover:bg-success-background/60"
+                          : isRowChecked
+                            ? "bg-neutral-background dark:bg-ring group-hover:bg-neutral-background/30 dark:group-hover:bg-ring/90"
+                            : "group-hover:bg-muted";
 
                         return (
                           <TableRow
@@ -342,7 +347,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             id={row.id}
                             isHeader={false}
                           >
-                            <TableCell className={`sticky left-0 z-20 bg-background group-hover:bg-muted cursor-default `}>
+                            <TableCell className={`sticky left-0 z-20 bg-background cursor-default ${rowCellBackgroundClass}`}>
                               <div className="flex items-center justify-evenly gap-0.5">
                                 {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={row.id} />}
                                 <RegistryRowAction
@@ -389,7 +394,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               <TableCell
                                 key={cell.id + index}
                                 width={cell.column.getSize()}
-                                className={isRowClicked ? "bg-success-background  dark:bg-success-background/70" : isRowChecked ? "bg-neutral-background dark:bg-ring" : ""}
+                                className={rowCellBackgroundClass}
                                 onClick={() => {
                                   if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
                                     const isSelected: boolean = row.getIsSelected();
