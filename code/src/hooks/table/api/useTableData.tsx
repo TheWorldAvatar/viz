@@ -7,7 +7,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { TableColumnOption } from "types/settings";
-import { applyConfiguredColumnOrder, EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
+import { EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
@@ -15,7 +15,8 @@ export interface TableDataDescriptor {
   isLoading: boolean;
   selectedCount: number;
   totalCount: number;
-  tableData: TableData;
+  data: FieldValues[];
+  columns: EnhancedColumnDef<FieldValues>[];
   initialInstances: RegistryFieldValues[];
 }
 
@@ -50,9 +51,8 @@ export function useTableData(
   >([]);
   const [selectedCount, setSelectedCount] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [data, setData] = useState<
-    TableData
-  >({ data: [], columns: [] });
+  const [data, setData] = useState<FieldValues[]>([]);
+  const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -125,38 +125,14 @@ export function useTableData(
         setSelectedCount(res.data?.currentItemCount);
         setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
-        const parsedData: TableData = parseDataForTable(instances, dict.title);
-        const orderedColumns: EnhancedColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
-          parsedData.columns,
+        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title);
+        const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(
+          res.data?.columns,
           columnOptions,
           dict.title,
         );
-        setData({
-          ...parsedData,
-          columns: orderedColumns,
-          data: parsedData.data.sort((a: FieldValues, b: FieldValues): number => {
-            for (const sort of sorting) {
-              const field: string = sort.id;
-              const valA: string = a[field];
-              const valB: string = b[field];
-              // For null, undefined, or empty values, 
-              // A comes last if descending, and first if ascending
-              if (!valA) return sort.desc ? 1 : -1;
-              // B comes first if descending, and last if ascending
-              if (!valB) return sort.desc ? -1 : 1;
-
-              const comparison: number = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
-              // Only returns the comparison if they are not equal on this sort field
-              // A user may have multiple fields to sort, and if they are equal on this field, 
-              // we must continue with the other fields to compare
-              if (comparison !== 0) {
-                return sort.desc ? -comparison : comparison;
-              }
-            }
-            // If all fields are equal, there is no need to reorder
-            return 0;
-          })
-        });
+        setData(parsedData);
+        setColumns(columns);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching instances", error);
@@ -168,7 +144,8 @@ export function useTableData(
 
   return {
     isLoading,
-    tableData: data,
+    data,
+    columns,
     selectedCount,
     totalCount,
     initialInstances,

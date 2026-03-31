@@ -64,11 +64,11 @@ export function useTable(
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<FieldValues[]>([]);
+  const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions, dict.title));
 
-  const { isLoading, tableData, selectedCount, totalCount, initialInstances } = useTableData(
+  const { isLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
@@ -89,8 +89,8 @@ export function useTable(
 
 
   useEffect(() => {
-    setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
-  }, [tableData, pagination.pageIndex]);
+    setCurrentDataView(data?.slice(startIndex, startIndex + pagination.pageSize));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -155,8 +155,8 @@ export function useTable(
   };
 
   const table: Table<FieldValues> = useReactTable({
-    data,
-    columns: tableData?.columns,
+    data: currentDataView,
+    columns,
     state: {
       columnFilters,
       columnVisibility,
@@ -180,8 +180,8 @@ export function useTable(
   return {
     isLoading,
     table,
-    data,
-    setData,
+    data: currentDataView,
+    setData: setCurrentDataView,
     initialInstances,
     pagination,
     apiPagination,

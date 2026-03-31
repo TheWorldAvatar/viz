@@ -14,6 +14,7 @@ export type AgentResponseBody = {
     message?: string;
     currentItemCount?: number;
     totalItems?: number;
+    columns?: ColumnDefinitionResponse[];
     deleted?: boolean;
     items?: string[] | Record<string, unknown>[];
   };
@@ -22,6 +23,13 @@ export type AgentResponseBody = {
     message: string;
   };
 };
+
+export type ColumnDefinitionResponse = {
+  value: string;
+  type: "literal" | "uri" | "array";
+  datatype: string;
+};
+
 
 export type FileResponse = {
   blob: Blob;
