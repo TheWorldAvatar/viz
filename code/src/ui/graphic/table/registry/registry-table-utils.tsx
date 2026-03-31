@@ -139,7 +139,7 @@ export function parseColumnsMetadata(
     results.push({
       accessorKey: col.value,
       header: title,
-      dataType: col.datatype,
+      dataType: col.type == "array" ? col.type : col.datatype,
       cell: ({ getValue }) => {
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
