@@ -290,7 +290,7 @@ export function genSortParams(currentSort: SortingState, titleDict: Record<strin
 export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<string, string>): string {
   switch (field.toLowerCase()) {
     case titleDict.lastModified.toLowerCase():
-      return "lastModified";
+      return "lastmodified";
     case titleDict.scheduleType.toLowerCase():
       return "scheduleType";
     case titleDict.status.toLowerCase():
