@@ -4,9 +4,10 @@
 
 import fs from 'fs';
 import path from 'path';
+import { LifecycleStageMap } from 'types/form';
 
 import { JsonObject } from 'types/json';
-import { DataSettings, MapSettings, TableColumnSettings, UISettings } from 'types/settings';
+import { DataSettings, MapSettings, TableColumnOption, TableColumnSettings, UISettings } from 'types/settings';
 import { logColours } from 'utils/logColours';
 
 /**
@@ -59,13 +60,17 @@ export default class SettingsStore {
   }
 
   /**
-   * Retrieves table column settings from `SettingsStore` class
+   * Retrieves table column options for a given entity type or lifecycle stage
+   * 
+   * @param {string} entityType Type of entity for rendering.
+   * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
    */
-  public static getTableColumnSettings(): TableColumnSettings {
+  public static getTableColumnSettings(entityType: string, lifecycleStage: string): TableColumnOption[] {
     if (Object.keys(this.TABLE_COLUMN_SETTINGS).length === 0) {
       this.readTableColumnSettings();
     }
-    return this.TABLE_COLUMN_SETTINGS;
+    return lifecycleStage === LifecycleStageMap.GENERAL ? this.TABLE_COLUMN_SETTINGS[entityType]
+      : this.TABLE_COLUMN_SETTINGS[lifecycleStage];
   }
 
   /**
