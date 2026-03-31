@@ -242,7 +242,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         id={headerGroup.id}
                         isHeader={true}
                       >
-                        <TableCell className="w-1/10 sticky left-0 z-20 bg-muted">
+                        <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
                           <div className="flex justify-end items-center rounded-md gap-2">
                             {numberOfSelectedRows > 0 && (
                               <PopoverActionButton
@@ -338,8 +338,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         const rowCellBackgroundClass: string = isRowClicked
                           ? "bg-success-background dark:bg-success-background/60 group-hover:bg-success-background/80"
                           : isRowChecked
-                            ? "bg-neutral-background dark:bg-ring/50 group-hover:bg-neutral-background/60"
-                            : "group-hover:bg-muted";
+                            ? "bg-neutral-background group-hover:bg-neutral-background/70"
+                            : "bg-muted group-hover:bg-background";
 
                         return (
                           <TableRow
@@ -347,7 +347,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             id={row.id}
                             isHeader={false}
                           >
-                            <TableCell className={`sticky left-0 z-20 bg-background cursor-default ${rowCellBackgroundClass}`}>
+                            <TableCell className={`sticky left-0 z-20 bg-muted cursor-default ${rowCellBackgroundClass}`}>
                               <div className="flex items-center justify-evenly gap-0.5">
                                 {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={row.id} />}
                                 <RegistryRowAction
