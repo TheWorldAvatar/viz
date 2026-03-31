@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.65.2
+
+### Changes
+
+- Changed how the table column settings are applied. Now the column settings are applied based on the entity type and lifecycle stage directly from the route level.
+- This improves the performance of the table as it reduces the number of times the column settings are applied.
+
 ## 5.65.1
 
 ### Bug fixes
