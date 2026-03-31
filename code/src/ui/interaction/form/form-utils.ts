@@ -361,7 +361,9 @@ function initFormField(
     // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
       // Ensure the current field is optional
-      outputState[fieldId][0][parsedFieldId] = "";
+      outputState[fieldId].push({
+        parsedFieldId: "",
+      });
       // Terminate early
       return {
         ...field,

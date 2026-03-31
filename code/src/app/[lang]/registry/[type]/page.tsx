@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { LifecycleStage } from 'types/form';
-import { NavBarItemSettings, TableColumnSettings, UISettings } from 'types/settings';
+import { LifecycleStage, LifecycleStageMap } from 'types/form';
+import { NavBarItemSettings, TableColumnOption, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from 'utils/client-utils';
 
@@ -34,24 +34,24 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function GeneralRegistryPage(props: Readonly<GeneralRegistryPageProps>) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
   const resolvedParams = await props.params;
   const decodedType: string = decodeURIComponent(resolvedParams.type);
   if (uiSettings.modules.registry) {
     // Stage should be pending for the main data
     let lifecycleStage: LifecycleStage;
     if (uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == decodedType)) {
-      lifecycleStage = 'general';
+      lifecycleStage = LifecycleStageMap.GENERAL;
     } else if (uiSettings.resources?.registry?.data) {
-      lifecycleStage = 'pending';
+      lifecycleStage = LifecycleStageMap.PENDING;
     } else {
       redirect(Routes.HOME);
     }
+    const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(decodedType, lifecycleStage);
     return (
       <RegistryTableComponent
         entityType={decodedType}
         lifecycleStage={lifecycleStage}
-        tableColumnSettings={tableColumnSettings}
+        tableColumnOptions={tableColumnSettings}
       />
     );
   } else {

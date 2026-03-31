@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { TableColumnOption, TableColumnSettings } from "types/settings";
+import { LifecycleStage, RegistryFieldValues } from "types/form";
+import { TableColumnOption } from "types/settings";
 import {
   genSortParams,
   getInitialColumnVisibilityState
@@ -47,7 +47,7 @@ export interface TableDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {boolean} refreshFlag Flag to trigger refresh when required.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {TableColumnSettings} tableColumnSettings Configuration for table column settings.
+* @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
 */
@@ -55,7 +55,7 @@ export function useTable(
   entityType: string,
   refreshFlag: boolean,
   lifecycleStage: LifecycleStage,
-  tableColumnSettings: TableColumnSettings,
+  tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
 ): TableDescriptor {
@@ -65,8 +65,9 @@ export function useTable(
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<FieldValues[]>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions, dict.title));
+
   const { isLoading, tableData, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
@@ -76,7 +77,7 @@ export function useTable(
     selectedDate,
     apiPagination,
     columnFilters,
-    tableColumnSettings,
+    tableColumnOptions,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -86,12 +87,6 @@ export function useTable(
     setSortParams(params);
   };
 
-  // Configure the initial visibility state for each column if set on first load
-  useEffect(() => {
-    const columnOptions: TableColumnOption[] = lifecycleStage == LifecycleStageMap.GENERAL ? tableColumnSettings[entityType]
-      : tableColumnSettings[lifecycleStage];
-    setColumnVisibility(getInitialColumnVisibilityState(columnOptions, dict.title));
-  }, []);
 
   useEffect(() => {
     setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));

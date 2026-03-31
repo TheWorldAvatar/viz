@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.65.2
+
+### Changes
+
+- Changed how the table column settings are applied. Now the column settings are applied based on the entity type and lifecycle stage directly from the route level.
+- This improves the performance of the table as it reduces the number of times the column settings are applied.
+
+## 5.65.1
+
+### Bug fixes
+
+- Fixed the optional field array mechanism for a pricing field when set
+
 ## 5.65.0
 
 ### Changes
@@ -9,7 +22,6 @@
 - Upadted table column settings to include width and visiblity options for each column
 - Now the table column settings file is optional and if you want to use it , you have to specify the file name in the ui-settings.json file under `resources.registry.settings`
 - Updated table settings documentation
-
 
 ## 5.64.9
 
@@ -68,7 +80,7 @@
 
 - Updated the table UX experience. The scrolling of the table now happens only inside the table, not having to scroll on the outer page as well. This allows users to have a better experience when navigating through the table.
 - The horizontal scrollbar in the table is now always visible
-- Added the ability to hide the table ribbon from the context menu. 
+- Added the ability to hide the table ribbon from the context menu.
 
 ## 5.64.0
 

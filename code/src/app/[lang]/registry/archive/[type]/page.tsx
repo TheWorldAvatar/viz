@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, TableColumnSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnOption, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
+import { LifecycleStageMap } from 'types/form';
 
 interface ArchiveRegistryPageProps {
   params: Promise<{
@@ -32,14 +33,15 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function ArchiveRegistryPage(props: Readonly<ArchiveRegistryPageProps>) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnSettings: TableColumnSettings = SettingsStore.getTableColumnSettings();
   const resolvedParams = await props.params
+  const decodedType: string = decodeURIComponent(resolvedParams.type);
+  const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(decodedType, LifecycleStageMap.ARCHIVE);
   if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
     return (
       <RegistryTableComponent
-        entityType={decodeURIComponent(resolvedParams.type)}
-        lifecycleStage={'archive'}
-        tableColumnSettings={tableColumnSettings}
+        entityType={decodedType}
+        lifecycleStage={LifecycleStageMap.ARCHIVE}
+        tableColumnOptions={tableColumnSettings}
       />
     );
   } else {
