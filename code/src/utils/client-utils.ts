@@ -155,8 +155,9 @@ export function getInitialDateFromLifecycleStage(
 
   if (lifecycleStage === LifecycleStageMap.SCHEDULED) {
     // For scheduled: start with tomorrow since today and past are disabled, and set the end date to 7 days from initial date
-    const endDate: Date = new Date();
     initialDate.setDate(initialDate.getDate() + 1);
+    const endDate: Date = new Date(initialDate);
+    // we need to set the end date starting point as the initial date starting point
     endDate.setDate(initialDate.getDate() + 7);
     return { from: initialDate, to: endDate };
     // For closed tasks, set the date range to the current month
