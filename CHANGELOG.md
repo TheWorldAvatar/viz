@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.65.4
+
+### Changes
+
+- Added a row visual clue to indicate which row was clicked on and whcih row was checked (checkbox) in the registry table. This allows users to have a better experience when navigating through the table and easily identify which row they are interacting with (opened side panel or checked checkbox).
+
 ## 5.65.3
 
 ### Bug fixes
