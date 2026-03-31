@@ -20,12 +20,18 @@ interface ColumnToggleProps {
  */
 export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
   const dict: Dictionary = useDictionary();
+  // Get all the options for the dropdown, including columns that are currently hidden (getIsVisible() is false)
   const options: SelectOptionType[] = props.columns.map((col) => ({
     label: parseWordsForLabels(col.id),
     value: col.id,
   }));
 
-  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(null);
+  const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(props.columns
+    .filter((col) => col.getIsVisible())
+    .map((col) => ({
+      label: parseWordsForLabels(col.id),
+      value: col.id,
+    })));
 
   useEffect(() => {
     if (selectedOptions) {
@@ -45,6 +51,7 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
           options={options}
           toggleAll={true}
           isClearable={false}
+          controlledSelectedOptions={selectedOptions}
           setControlledSelectedOptions={setSelectedOptions}
         />
       </div>

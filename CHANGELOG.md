@@ -2,6 +2,45 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.65.4
+
+### Changes
+
+- Added a row visual clue to indicate which row was clicked on and whcih row was checked (checkbox) in the registry table. This allows users to have a better experience when navigating through the table and easily identify which row they are interacting with (opened side panel or checked checkbox).
+
+## 5.65.3
+
+### Bug fixes
+
+- Fixed an issue with the scheduled task date range where the initial date was not being set to tomorrow's date as expected. This was because we were not starting the end date from the initial date.
+
+## 5.65.2
+
+### Changes
+
+- Changed how the table column settings are applied. Now the column settings are applied based on the entity type and lifecycle stage directly from the route level.
+- This improves the performance of the table as it reduces the number of times the column settings are applied.
+
+## 5.65.1
+
+### Bug fixes
+
+- Fixed the optional field array mechanism for a pricing field when set
+
+## 5.65.0
+
+### Changes
+
+- Upadted table column settings to include width and visiblity options for each column
+- Now the table column settings file is optional and if you want to use it , you have to specify the file name in the ui-settings.json file under `resources.registry.settings`
+- Updated table settings documentation
+
+## 5.64.9
+
+### Changes
+
+- Changed the default date range for scheduled task to 7 days in future
+
 ## 5.64.8
 
 ### Changes
@@ -53,7 +92,7 @@
 
 - Updated the table UX experience. The scrolling of the table now happens only inside the table, not having to scroll on the outer page as well. This allows users to have a better experience when navigating through the table.
 - The horizontal scrollbar in the table is now always visible
-- Added the ability to hide the table ribbon from the context menu. 
+- Added the ability to hide the table ribbon from the context menu.
 
 ## 5.64.0
 

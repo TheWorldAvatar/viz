@@ -6,7 +6,7 @@ import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import { applyConfiguredColumnOrder, EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
@@ -28,7 +28,7 @@ export interface TableDataDescriptor {
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
-* @param {TableColumnOrderSettings} tableOrderConfig Configuration for table column order.
+* @param {TableColumnOption[]} columnOptions Configuration for table columns options.
 */
 export function useTableData(
   entityType: string,
@@ -39,7 +39,7 @@ export function useTableData(
   selectedDate: DateRange,
   apiPagination: PaginationState,
   filters: ColumnFilter[],
-  tableOrderConfig: TableColumnOrderSettings
+  columnOptions: TableColumnOption[]
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -123,9 +123,7 @@ export function useTableData(
         const parsedData: TableData = parseDataForTable(instances, dict.title);
         const orderedColumns: EnhancedColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
           parsedData.columns,
-          tableOrderConfig,
-          entityType,
-          lifecycleStage,
+          columnOptions,
           dict.title,
         );
         setData({
@@ -161,7 +159,7 @@ export function useTableData(
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, tableOrderConfig, entityType]);
+  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, columnOptions, entityType]);
 
   return {
     isLoading,

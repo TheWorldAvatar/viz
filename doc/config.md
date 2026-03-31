@@ -20,7 +20,7 @@ The uploaded content provided by the deploying developer should match the direct
         - [Dataset: Defining a group](#dataset-defining-a-group)
         - [Dataset: Defining a source](#dataset-defining-a-source)
         - [Dataset: Defining a layer](#dataset-defining-a-layer)
-    - [1.3 Table Column Order](#13-table-column-order)
+    - [1.3 Table Column Settings](#13-table-column-settings)
   - [2. Assets](#2-assets)
   - [3. Optional Pages](#3-optional-pages)
     - [3.1 Fields](#31-fields)
@@ -33,7 +33,7 @@ The platform requires the following [JSON](https://en.wikipedia.org/wiki/JSON) c
 - [`ui-settings.json`](#11-ui-settings): UI configuration settings; **[MANDATORY]**.
 - [`data-settings.json`](#121-general-settings): Specifies the urls of datasets for mapping the data sources and layers; **[OPTIONAL]**
 - [`map-settings.json`](#122-map-data-settings): Non-data specific configuration for maps; **[OPTIONAL]**
-- [`table-column-order.json`](#13-table-column-order): Custom column ordering for tables by entity type or lifecycle stage; **[OPTIONAL]**
+- [`table-column-settings.json`](#13-table-column-settings): Custom column settings for tables by entity type or lifecycle stage; **[OPTIONAL]**
 
 ### 1.1 UI Settings
 
@@ -69,6 +69,7 @@ Note that resources are optional and their configuration options can differ from
   - `data`: This required field indicates the target dataset that should be accessible to the user from the central stack. In the given example, the data field is set to "water", indicating that the scenario contains information only on water assets and not power nor telecoms etc.
 - Registry: Activate the `registry` page based on the backend resource. The registry page provides a table for viewing all records within a contractual lifecycle as well as in general, as well as pages to add, delete, edit, and view these records individually using a form UI. Note that this will require at least one of the `data` or `paths` property to be valid.
   - `data`: OPTIONAL: The entity of interest that acts as the first landing page for the contractual registry. This should be `contract` at the moment.
+  - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
@@ -113,6 +114,7 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     },
     "registry": {
       "data": "type", // Specify only the type to reach the registry page of interest
+      "settings": "table-column-settings.json", // Optional table column settings file in /config
       "paths": ["resource one", "resource two"] // Specify the resource names on the backend
     },
     "scenario": {
@@ -390,22 +392,49 @@ Instructions:
 
 1. Filters: Developers may add a filter for the entire layer by adding [Mapbox Expressions](https://docs.mapbox.com/style-spec/reference/expressions/) to the `filter` key, which is found at the root level of the layer specification. This is especially relevant for layers with searchable parameters and they should display only a subset of feature by default
 
-### 1.3 Table Column Order
+### 1.3 Table Column Settings
 
-The `config/table-column-order.json` file is optional and can be used to override the default column order for  registry or billing tables. This is useful when you want different column sequences depending on the [resource identifier](https://github.com/TheWorldAvatar/Viz-Backend-Agent/tree/main) (e.g. `driver`) or default table views(`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `billable`).
+The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or specific views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `invoice`, `billable`).
 
-- Any columns not listed remain available and will fall back to the platform's default ordering.
+Each table key maps to an array of column configuration objects. The supported object fields are:
+
+- `name` (required): The backend column identifier.
+- `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
+- `visible` (optional): Hides or shows the column at the start. Default to `true` if not set explicitly. Set to `false` to hide the column.
+
+Additional notes:
+
+- Any columns not listed remain available and fall back to the platform's default ordering and sizing.
 - You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.
-- Only existing column names will be rendered. If you include a column ID that does not exist for that table, it will be ignored (and will not be shown).
+- Only existing column names are applied. Unknown `name` values are ignored.
 
-Example `table-column-order.json`:
+Example:
 
 ```json
 {
-  "bin": ["bin_type", "name", "id"],
-  "driver": ["name", "id", "start", "last_name", "end", "plate_number", "truck_type"],
-  "outstanding": ["client" , "status"],
-  "scheduled": ["status" , "client" , "driver"]
+  "bin": [
+    { "name": "bin_type", "width": 180 },
+    { "name": "name", "width": 220 },
+    { "name": "id", "visible": false }
+  ],
+  "driver": [
+    { "name": "name", "width": 180 },
+    { "name": "id", "width": 240 },
+    { "name": "start" },
+    { "name": "last_name" },
+    { "name": "end" },
+    { "name": "plate_number", "visible": false },
+    { "name": "truck_type" }
+  ],
+  "outstanding": [
+    { "name": "client", "visible": false },
+    { "name": "status", "width": 160 }
+  ],
+  "scheduled": [
+    { "name": "status" },
+    { "name": "client" },
+    { "name": "driver" }
+  ]
 }
 ```
 

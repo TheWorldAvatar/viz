@@ -24,13 +24,20 @@ export type UISettings = {
     [key: 'scenario' | 'registry' | 'dashboard' | "billing" | string]: {
       url?: string;
       data?: string;
+      settings?: string;
       paths?: ResourcesPathSettings[];
     };
   }
 }
 
-export type TableColumnOrderSettings = Record<string, string[]>;
+export type TableColumnOption = {
+  name: string;
+  width?: number;
+  visible?: boolean;
+  order?: number;
+};
 
+export type TableColumnSettings = Record<string, TableColumnOption[]>;
 
 export interface ResourcesPathSettings {
   type: string;

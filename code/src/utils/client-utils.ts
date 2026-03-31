@@ -154,11 +154,12 @@ export function getInitialDateFromLifecycleStage(
   const initialDate: Date = new Date();
 
   if (lifecycleStage === LifecycleStageMap.SCHEDULED) {
-    // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
-    const fourWeeksFromInitialDate: Date = new Date();
+    // For scheduled: start with tomorrow since today and past are disabled, and set the end date to 7 days from initial date
     initialDate.setDate(initialDate.getDate() + 1);
-    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
-    return { from: initialDate, to: fourWeeksFromInitialDate };
+    // we need to set the end date starting point as the initial date starting point
+    const endDate: Date = new Date(initialDate);
+    endDate.setDate(initialDate.getDate() + 7);
+    return { from: initialDate, to: endDate };
     // For closed tasks, set the date range to the current month
   } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
     // Get the first day of the current month

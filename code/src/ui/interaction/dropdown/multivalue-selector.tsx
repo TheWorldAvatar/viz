@@ -44,13 +44,7 @@ export default function MultivalueSelector(
     : props.options;
   // Use any existing option if it is provided
   const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(props.controlledSelectedOptions ? props.controlledSelectedOptions :
-    props.toggleAll ? defaultOptions.filter(
-      (option) =>
-        option.value != "id" &&
-        option.value != "event_id" &&
-        option.value != "service_location" &&
-        option.value != "select-all"
-    ) : []);
+    props.toggleAll ? defaultOptions : []);
 
   // Notify parent on initial mount if toggleAll is enabled
   // This useEffect updates the null state (In Column toggle component) on the first render

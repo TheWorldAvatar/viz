@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from 'io/config/routes';
 import SettingsStore from 'io/config/settings';
-import { NavBarItemSettings, TableColumnOrderSettings, UISettings } from 'types/settings';
+import { NavBarItemSettings, TableColumnOption, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
+import { LifecycleStageMap } from 'types/form';
 
 interface ActiveRegistryPageProps {
   params: Promise<{
@@ -31,17 +32,18 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function ActiveRegistryPage(props: ActiveRegistryPageProps) {
   const uiSettings: UISettings = SettingsStore.getUISettings();
-  const tableColumnOrderSettings: TableColumnOrderSettings = SettingsStore.getTableColumnOrderSettings();
   const resolvedParams = await props.params;
+  const decodedType: string = decodeURIComponent(resolvedParams.type);
+  const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(decodedType, LifecycleStageMap.ACTIVE);
   if (!uiSettings.modules.registry || !uiSettings.resources?.registry?.data) {
     redirect(Routes.HOME);
   }
 
   return (
     <RegistryTableComponent
-      entityType={decodeURIComponent(resolvedParams.type)}
-      lifecycleStage={'active'}
-      tableColumnOrder={tableColumnOrderSettings}
+      entityType={decodedType}
+      lifecycleStage={LifecycleStageMap.ACTIVE}
+      tableColumnOptions={tableColumnSettings}
     />
   );
 }

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, LifecycleStageMap } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import ColumnToggle from "ui/graphic/table/action/column-toggle";
 import RegistryTable from "ui/graphic/table/registry/registry-table";
 import { FormComponent } from "ui/interaction/form/form";
@@ -20,7 +20,7 @@ import FormSkeleton from "./skeleton/form-skeleton";
 interface InvoiceFormComponentProps {
     entityType: string;
     accountType: string;
-    tableColumnOrder: TableColumnOrderSettings;
+    tableColumnOptions: TableColumnOption[];
 }
 
 /**
@@ -28,7 +28,7 @@ interface InvoiceFormComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {string} accountType The type of account.
- * @param {TableColumnOrderSettings} tableColumnOrder The column order settings for the registry table.
+ * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function InvoiceFormComponent(
     props: Readonly<InvoiceFormComponentProps>
@@ -51,7 +51,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
         props.entityType,
         refreshFlag,
         LifecycleStageMap.BILLABLE,
-        props.tableColumnOrder,
+        props.tableColumnOptions,
         invoiceAccountFilter,
     );
     const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
