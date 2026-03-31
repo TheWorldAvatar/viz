@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.65.3
+
+### Bug fixes
+
+- Fixed an issue with the scheduled task date range where the initial date was not being set to tomorrow's date as expected. This was because we were not starting the end date from the initial date.
+
 ## 5.65.2
 
 ### Changes
