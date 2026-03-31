@@ -338,7 +338,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         const rowCellBackgroundClass: string = isRowClicked
                           ? "bg-success-background dark:bg-success-background/60 group-hover:bg-success-background/80"
                           : isRowChecked
-                            ? "bg-neutral-background dark:bg-ring group-hover:bg-neutral-background/80"
+                            ? "bg-neutral-background dark:bg-ring/50 group-hover:bg-neutral-background/60"
                             : "group-hover:bg-muted";
 
                         return (
