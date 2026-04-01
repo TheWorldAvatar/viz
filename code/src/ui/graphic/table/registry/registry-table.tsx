@@ -244,7 +244,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                       >
                         <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
                           <div className="flex justify-end items-center rounded-md gap-2">
-                            {numberOfSelectedRows > 0 && (
+                            {numberOfSelectedRows > 0 && !props.tableDescriptor.isBulkDispatchEdit && (
                               <PopoverActionButton
                                 placement="bottom-start"
                                 leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
@@ -316,7 +316,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               lifecycleStage={props.lifecycleStage}
                               selectedDate={props.selectedDate}
                               filters={props.tableDescriptor.filters}
-                              isEditable={props.tableDescriptor.isBulkDispatchEdit && colDef.stage === "dispatch"}
+                              isEditable={props.tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
                               disableSort={colDef.dataType == "array"}
                               disableFilter={colDef.dataType == "array" ||
                                 (props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
@@ -352,15 +352,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                             <TableCell className={`sticky left-0 z-20 bg-muted cursor-default ${rowCellBackgroundClass}`}>
                               <div className="flex items-center justify-evenly gap-0.5">
                                 {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={row.id} />}
-                                <RegistryRowAction
+                                {!props.tableDescriptor.isBulkDispatchEdit && <RegistryRowAction
                                   recordType={props.recordType}
                                   accountType={props.accountType}
                                   lifecycleStage={props.lifecycleStage}
                                   row={row.original}
                                   triggerRefresh={props.triggerRefresh}
                                   setActiveRowId={setActiveRowId}
-                                />
-                                {!props.disableRowAction && <Button
+                                />}
+                                {!props.disableRowAction && !props.tableDescriptor.isBulkDispatchEdit && <Button
                                   leftIcon="history"
                                   size="icon"
                                   variant="ghost"
@@ -397,8 +397,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               <TableCell
                                 key={cell.id + index}
                                 width={cell.column.getSize()}
-                                className={rowCellBackgroundClass}
-                                onClick={() => {
+                                className={`${rowCellBackgroundClass} ${props.tableDescriptor.isBulkDispatchEdit ? "cursor-default" : "cursor-pointer"}`}
+                                onClick={props.tableDescriptor.isBulkDispatchEdit ? undefined : () => {
                                   if (props.lifecycleStage == LifecycleStageMap.BILLABLE) {
                                     const isSelected: boolean = row.getIsSelected();
                                     props.tableDescriptor.setSelectedRows(

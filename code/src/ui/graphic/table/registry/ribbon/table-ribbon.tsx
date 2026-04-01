@@ -15,9 +15,9 @@ import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
+import { buildUrl } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { buildUrl } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -261,7 +261,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             <Button
               size="icon"
               leftIcon={props.tableDescriptor.isBulkDispatchEdit ? "edit_off" : "edit"}
-              onClick={() => props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit)}
+              onClick={() => {
+                props.tableDescriptor.table.resetRowSelection();
+                props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit);
+              }}
               variant={props.tableDescriptor.isBulkDispatchEdit ? "destructive" : "outline"}
             />}
           {isPermitted("export") && <DownloadButton instances={props.instances} />}
