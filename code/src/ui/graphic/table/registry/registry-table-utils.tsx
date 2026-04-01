@@ -21,7 +21,10 @@ import { XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
 import { ColumnDefinitionResponse } from "types/backend-agent";
 
-export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & { dataType: string };
+export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & { 
+  dataType: string;
+  stage: string;
+ };
 
 /**
  * Parses the column filters into URL parameters for API querying.
@@ -140,6 +143,7 @@ export function parseColumnsMetadata(
       accessorKey: col.value,
       header: title,
       dataType: col.type == "array" ? col.type : col.datatype,
+      stage: col.stage,
       cell: ({ getValue }) => {
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];

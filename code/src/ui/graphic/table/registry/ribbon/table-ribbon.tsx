@@ -256,6 +256,14 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
           />
+          {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+            props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
+            <Button
+              size="icon"
+              leftIcon={props.tableDescriptor.isBulkDispatchEdit ? "edit_off" : "edit"}
+              onClick={() => props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit)}
+              variant={props.tableDescriptor.isBulkDispatchEdit ? "destructive" : "outline"}
+            />}
           {isPermitted("export") && <DownloadButton instances={props.instances} />}
           <Button
             size="icon"

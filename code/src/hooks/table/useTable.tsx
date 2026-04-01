@@ -27,6 +27,8 @@ import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   isLoading: boolean;
+  isBulkDispatchEdit: boolean;
+  setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
   initialInstances: RegistryFieldValues[];
@@ -62,6 +64,7 @@ export function useTable(
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
@@ -179,6 +182,8 @@ export function useTable(
 
   return {
     isLoading,
+    isBulkDispatchEdit,
+    setIsBulkDispatchEdit,
     table,
     data: currentDataView,
     setData: setCurrentDataView,

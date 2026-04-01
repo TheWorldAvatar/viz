@@ -306,6 +306,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           </div>
                         </TableCell>
                         {headerGroup.headers.map((header, index) => {
+                          const colDef: EnhancedColumnDef<FieldValues> = header.column.columnDef as EnhancedColumnDef<FieldValues>;
                           return (
                             <HeaderCell
                               key={header.id + index}
@@ -315,8 +316,9 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                               lifecycleStage={props.lifecycleStage}
                               selectedDate={props.selectedDate}
                               filters={props.tableDescriptor.filters}
-                              disableSort={(header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType == "array"}
-                              disableFilter={(header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType == "array" ||
+                              isEditable={props.tableDescriptor.isBulkDispatchEdit && colDef.stage === "dispatch"}
+                              disableSort={colDef.dataType == "array"}
+                              disableFilter={colDef.dataType == "array" ||
                                 (props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
                             />
                           );
