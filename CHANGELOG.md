@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.66.0
+
+### Changes
+
+- Removed get count calls to work with the count in the main route
+- Updated to work with the new column metadata returned from backend
+- Bump min version of `VisBackend Agent` from `v1.42.1` to `v1.43.0`
+
 ## 5.65.4
 
 ### Changes
