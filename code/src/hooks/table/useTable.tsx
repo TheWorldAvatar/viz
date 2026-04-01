@@ -23,7 +23,6 @@ import {
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
-import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
@@ -65,12 +64,11 @@ export function useTable(
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<FieldValues[]>([]);
+  const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions, dict.title));
 
-  const { isLoading, tableData, initialInstances } = useTableData(
+  const { isLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
@@ -91,8 +89,8 @@ export function useTable(
 
 
   useEffect(() => {
-    setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
-  }, [tableData, pagination.pageIndex]);
+    setCurrentDataView(data?.slice(startIndex, startIndex + pagination.pageSize));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -157,8 +155,8 @@ export function useTable(
   };
 
   const table: Table<FieldValues> = useReactTable({
-    data,
-    columns: tableData?.columns,
+    data: currentDataView,
+    columns,
     state: {
       columnFilters,
       columnVisibility,
@@ -168,7 +166,7 @@ export function useTable(
     manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    rowCount: rowCounts.filter,
+    rowCount: selectedCount,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange,
@@ -182,12 +180,12 @@ export function useTable(
   return {
     isLoading,
     table,
-    data,
-    setData,
+    data: currentDataView,
+    setData: setCurrentDataView,
     initialInstances,
     pagination,
     apiPagination,
-    totalRows: rowCounts.total,
+    totalRows: totalCount,
     filters: columnFilters,
     setFilters: setColumnFilters,
     sortParams,

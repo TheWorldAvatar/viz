@@ -12,6 +12,9 @@ export type AgentResponseBody = {
   data?: {
     id?: string;
     message?: string;
+    currentItemCount?: number;
+    totalItems?: number;
+    columns?: ColumnDefinitionResponse[];
     deleted?: boolean;
     items?: string[] | Record<string, unknown>[];
   };
@@ -20,6 +23,13 @@ export type AgentResponseBody = {
     message: string;
   };
 };
+
+export type ColumnDefinitionResponse = {
+  value: string;
+  type: "literal" | "uri" | "array";
+  datatype: string;
+};
+
 
 export type FileResponse = {
   blob: Blob;
@@ -38,7 +48,6 @@ export const InternalApiIdentifierMap = {
   CONCEPT: "concept",
   CONTRACTS: "contracts",
   CONTRACT_STATUS: "contract_status",
-  COUNT: "count",
   EVENT: EVENT_KEY,
   FILTER: "filter",
   FORM: "form",
