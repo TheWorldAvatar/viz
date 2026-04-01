@@ -28,6 +28,7 @@ export type ColumnDefinitionResponse = {
   value: string;
   type: "literal" | "uri" | "array";
   datatype: string;
+  stage?: string;
 };
 
 
