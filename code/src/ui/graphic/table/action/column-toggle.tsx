@@ -7,6 +7,7 @@ import { Dictionary } from "types/dictionary";
 import MultivalueSelector from "ui/interaction/dropdown/multivalue-selector";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { parseWordsForLabels } from "utils/client-utils";
+import { translateLifecycleFields } from "../registry/registry-table-utils";
 
 interface ColumnToggleProps {
   columns: Column<FieldValues, unknown>[];
@@ -22,14 +23,14 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
   const dict: Dictionary = useDictionary();
   // Get all the options for the dropdown, including columns that are currently hidden (getIsVisible() is false)
   const options: SelectOptionType[] = props.columns.map((col) => ({
-    label: parseWordsForLabels(col.id),
+    label: parseWordsForLabels(translateLifecycleFields(col.id, dict.title)),
     value: col.id,
   }));
 
   const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(props.columns
     .filter((col) => col.getIsVisible())
     .map((col) => ({
-      label: parseWordsForLabels(col.id),
+      label: parseWordsForLabels(translateLifecycleFields(col.id, dict.title)),
       value: col.id,
     })));
 
