@@ -64,7 +64,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   return (
     <TableCell
       width={props.header.getSize()}
-      className={`${props.isEditable ? "bg-success-background text-success-foreground" : "bg-background text-foreground"} 
+      className={`${props.isEditable ? "bg-success-background text-success-foreground" : ""} 
       font-semibold text-left border-b border-border`}
     >
       {props.header.isPlaceholder ? null : (

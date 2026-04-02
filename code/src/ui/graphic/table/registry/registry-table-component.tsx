@@ -20,6 +20,7 @@ import { ContextItemDefinition } from "ui/interaction/context-menu/context-item"
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import { TableSessionContextProvider } from "utils/table/TableSessionContext";
 
 
 interface RegistryTableComponentProps {
@@ -109,15 +110,22 @@ export default function RegistryTableComponent(
       {refreshFlag || tableDescriptor.isLoading ? (
         <TableSkeleton />
       ) : tableDescriptor.data?.length > 0 ? (
-        <RegistryTable
+        <TableSessionContextProvider
           recordType={props.entityType}
           lifecycleStage={props.lifecycleStage}
-          disableRowAction={false}
-          selectedDate={selectedDate}
           tableDescriptor={tableDescriptor}
-          triggerRefresh={triggerRefresh}
-          accountType={props.accountType}
-        />
+        >
+          <RegistryTable
+            recordType={props.entityType}
+            lifecycleStage={props.lifecycleStage}
+            disableRowAction={false}
+            selectedDate={selectedDate}
+            tableDescriptor={tableDescriptor}
+            triggerRefresh={triggerRefresh}
+            accountType={props.accountType}
+          />
+        </TableSessionContextProvider>
+
       ) : (
         <div className="text-lg ml-6">{dict.message.noResultFound}</div>
       )}
