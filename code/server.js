@@ -16,13 +16,12 @@
 import express from "express";
 import next from "next";
 
-import axios from 'axios';
 import { RedisStore } from 'connect-redis';
 import session, { MemoryStore } from 'express-session';
-import Keycloak from 'keycloak-connect';
-import { createClient } from "redis";
-import path from "path";
 import { readFileSync } from "fs";
+import Keycloak from 'keycloak-connect';
+import path from "path";
+import { createClient } from "redis";
 
 const colourReset = "\x1b[0m";
 const colourRed = "\x1b[31m";
@@ -139,15 +138,15 @@ nextApp.prepare().then(async () => {
 
                 try {
                     // Forward the request to the target URL with the modified headers
-                    const response = await axios({
+                    const response = await fetch({
                         url: targetUrl,
                         method: req.method,
                         headers: headers,
-                        responseType: 'stream', // To stream the response back
                     });
 
-                    // Pipe the response back to the client
-                    response.data.pipe(res);
+                    if (response.body) {
+                        Readable.fromWeb(response.body).pipe(res);
+                    }
                 } catch (err) {
                     // most of these errors can probably be ignored
                     console.error(err);
