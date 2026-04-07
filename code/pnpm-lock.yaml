@@ -81,9 +81,6 @@ importers:
       '@types/react-dom':
         specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
-      axios:
-        specifier: ^1.13.6
-        version: 1.13.6
       chart.js:
         specifier: ^4.5.1
         version: 4.5.1
@@ -1929,8 +1926,8 @@ packages:
   cheap-ruler@4.0.0:
     resolution: {integrity: sha512-0BJa8f4t141BYKQyn9NSQt1PguFQXMXwZiA5shfoaBYHAb2fFk2RAX+tiWMoQU+Agtzt3mdt0JtuyshAXqZ+Vw==}
 
-  chromedriver@146.0.2:
-    resolution: {integrity: sha512-/A6ht59pGGrV3bU6eC//yH6W+NRexVGXy/KEe+pNn1MP5Xb34krSA02bGlYuA5XCrfdXPsFI//slvsOBwH//4Q==}
+  chromedriver@147.0.1:
+    resolution: {integrity: sha512-bGmw/dtwI5VX5BwbK4Vlotl9Yfm+np/FV54GG6IAXJDZUdGVCa5ABM8NjHpPzRzoum6bAvGTpPOdDtMpxSvalg==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -6334,7 +6331,8 @@ snapshots:
 
   async-function@1.0.0: {}
 
-  asynckit@0.4.0: {}
+  asynckit@0.4.0:
+    optional: true
 
   available-typed-arrays@1.0.7:
     dependencies:
@@ -6349,6 +6347,7 @@ snapshots:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
+    optional: true
 
   axobject-query@4.1.0: {}
 
@@ -6532,7 +6531,7 @@ snapshots:
 
   cheap-ruler@4.0.0: {}
 
-  chromedriver@146.0.2:
+  chromedriver@147.0.1:
     dependencies:
       '@testim/chrome-version': 1.1.4
       axios: 1.13.6
@@ -6575,6 +6574,7 @@ snapshots:
   combined-stream@1.0.8:
     dependencies:
       delayed-stream: 1.0.0
+    optional: true
 
   comma-separated-tokens@2.0.3: {}
 
@@ -6713,7 +6713,8 @@ snapshots:
       esprima: 4.0.1
     optional: true
 
-  delayed-stream@1.0.0: {}
+  delayed-stream@1.0.0:
+    optional: true
 
   depd@2.0.0: {}
 
@@ -7285,7 +7286,8 @@ snapshots:
 
   flatted@3.4.1: {}
 
-  follow-redirects@1.15.11: {}
+  follow-redirects@1.15.11:
+    optional: true
 
   for-each@0.3.5:
     dependencies:
@@ -7303,6 +7305,7 @@ snapshots:
       es-set-tostringtag: 2.1.0
       hasown: 2.0.2
       mime-types: 2.1.35
+    optional: true
 
   forwarded@0.2.0: {}
 
@@ -8239,7 +8242,7 @@ snapshots:
     dependencies:
       jwk-to-pem: 2.0.7
     optionalDependencies:
-      chromedriver: 146.0.2
+      chromedriver: 147.0.1
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -8646,13 +8649,15 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  mime-db@1.52.0: {}
+  mime-db@1.52.0:
+    optional: true
 
   mime-db@1.54.0: {}
 
   mime-types@2.1.35:
     dependencies:
       mime-db: 1.52.0
+    optional: true
 
   mime-types@3.0.2:
     dependencies:
@@ -8994,7 +8999,8 @@ snapshots:
       - supports-color
     optional: true
 
-  proxy-from-env@1.1.0: {}
+  proxy-from-env@1.1.0:
+    optional: true
 
   proxy-from-env@2.0.0:
     optional: true
