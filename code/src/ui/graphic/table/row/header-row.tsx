@@ -1,12 +1,15 @@
+import { Header } from "@tanstack/react-table";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import useTableSession from "hooks/table/useTableSession";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { HTTP_METHOD } from "next/dist/server/web/http";
-import React, { useState } from "react";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
+import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStageMap } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -15,18 +18,24 @@ import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
+import { EnhancedColumnDef } from "../registry/registry-table-utils";
 
 interface HeaderRowProps {
+  accountType: string;
+  headers: Header<FieldValues, unknown>[];
   triggerRefresh: () => void;
-  children: React.ReactNode;
+  selectedDate?: DateRange;
 }
 
 /**
  * This component renders a header row with a bulk action menu in the first column.
  *
+ * @param {string} accountType The type of account for billing capabilities.
+ * @param { Header<FieldValues, unknown>[]} headers Column metadata in tan stack format.
  * @param triggerRefresh A function to refresh the table when required.
- * @param {React.ReactNode} children The content of the row.
+ * @param {DateRange} selectedDate Optional parameter for the currently selected date.
  */
 export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const dict: Dictionary = useDictionary();
@@ -150,7 +159,24 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
           )}
         </div>
       </TableCell>
-      {props.children}
+      {props.headers.map((header, index) => {
+        const colDef: EnhancedColumnDef<FieldValues> = header.column.columnDef as EnhancedColumnDef<FieldValues>;
+        return (
+          <HeaderCell
+            key={header.id + index}
+            type={recordType}
+            table={tableDescriptor.table}
+            header={header}
+            lifecycleStage={lifecycleStage}
+            selectedDate={props.selectedDate}
+            filters={tableDescriptor.filters}
+            isEditable={tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
+            disableSort={colDef.dataType == "array"}
+            disableFilter={colDef.dataType == "array" ||
+              (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
+          />
+        );
+      })}
     </tr>
   );
 }

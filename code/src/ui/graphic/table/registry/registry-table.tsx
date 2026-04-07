@@ -14,12 +14,12 @@ import { useDictionary } from "hooks/useDictionary";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
-import HeaderCell from "../cell/header-cell";
+import { LifecycleStage } from "types/form";
+import { TableSessionContextProvider } from "utils/table/TableSessionContext";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow from "../row/table-row";
-import { EnhancedColumnDef, getRowRecordId } from "./registry-table-utils";
+import { getRowRecordId } from "./registry-table-utils";
 
 interface RegistryTableProps {
   recordType: string;
@@ -52,72 +52,62 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
 
   if (props.tableDescriptor.table.getVisibleLeafColumns().length > 0) {
     return (
-      <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-full min-h-0">
-        <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={dragAndDropDescriptor.handleDragEnd}
-            sensors={dragAndDropDescriptor.sensors}
-          >
-            <table
-              aria-label={`${props.recordType} registry table`}
-              className="border-separate border-spacing-0 w-full"
+      <TableSessionContextProvider
+        recordType={props.recordType}
+        lifecycleStage={props.lifecycleStage}
+        tableDescriptor={props.tableDescriptor}
+      >
+        <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-full min-h-0">
+          <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
+            <DndContext
+              collisionDetection={closestCenter}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+              onDragEnd={dragAndDropDescriptor.handleDragEnd}
+              sensors={dragAndDropDescriptor.sensors}
             >
-              <thead className="bg-muted sticky top-0 z-10">
-                {props.tableDescriptor.table
-                  .getHeaderGroups()
-                  .map((headerGroup) => (
-                    <HeaderRow
-                      key={headerGroup.id}
-                      triggerRefresh={props.triggerRefresh}
-                    >
-                      {headerGroup.headers.map((header, index) => {
-                        const colDef: EnhancedColumnDef<FieldValues> = header.column.columnDef as EnhancedColumnDef<FieldValues>;
-                        return (
-                          <HeaderCell
-                            key={header.id + index}
-                            type={props.recordType}
-                            table={props.tableDescriptor.table}
-                            header={header}
-                            lifecycleStage={props.lifecycleStage}
-                            selectedDate={props.selectedDate}
-                            filters={props.tableDescriptor.filters}
-                            isEditable={props.tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
-                            disableSort={colDef.dataType == "array"}
-                            disableFilter={colDef.dataType == "array" ||
-                              (props.lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
-                          />
-                        );
-                      })}
-                    </HeaderRow>
-                  ))}
-              </thead>
-              <tbody>
-                {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
-                  <SortableContext
-                    items={dragAndDropDescriptor.dataIds}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {props.tableDescriptor.table.getRowModel().rows.map(row => {
-                      const recordId: string = getRowRecordId(row.original as FieldValues);
-                      return <TableRow
-                        key={recordId}
-                        id={recordId}
-                        row={row}
+              <table
+                aria-label={`${props.recordType} registry table`}
+                className="border-separate border-spacing-0 w-full"
+              >
+                <thead className="bg-muted sticky top-0 z-10">
+                  {props.tableDescriptor.table
+                    .getHeaderGroups()
+                    .map((headerGroup) => (
+                      <HeaderRow
+                        key={headerGroup.id}
                         accountType={props.accountType}
-                        disableRowAction={props.disableRowAction}
+                        headers={headerGroup.headers}
                         triggerRefresh={props.triggerRefresh}
+                        selectedDate={props.selectedDate}
                       />
-                    })}
-                  </SortableContext>
-                )}
-              </tbody>
-            </table>
-          </DndContext>
+                    ))}
+                </thead>
+                <tbody>
+                  {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
+                    <SortableContext
+                      items={dragAndDropDescriptor.dataIds}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {props.tableDescriptor.table.getRowModel().rows.map(row => {
+                        const recordId: string = getRowRecordId(row.original as FieldValues);
+                        return <TableRow
+                          key={recordId}
+                          id={recordId}
+                          row={row}
+                          accountType={props.accountType}
+                          disableRowAction={props.disableRowAction}
+                          triggerRefresh={props.triggerRefresh}
+                        />
+                      })}
+                    </SortableContext>
+                  )}
+                </tbody>
+              </table>
+            </DndContext>
+          </div>
+          <TablePagination />
         </div>
-        <TablePagination rows={props.tableDescriptor.totalRows} table={props.tableDescriptor.table} pagination={props.tableDescriptor.pagination} />
-      </div>
+      </TableSessionContextProvider>
     );
   }
   return (

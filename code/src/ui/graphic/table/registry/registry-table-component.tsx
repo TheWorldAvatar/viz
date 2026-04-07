@@ -5,22 +5,21 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { DateRange } from "react-day-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, selectItem } from "state/context-menu-slice";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { TableColumnOption } from "types/settings";
+import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
   parseWordsForLabels
 } from "utils/client-utils";
-import { addItem, selectItem } from "state/context-menu-slice";
-import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-import { TableSessionContextProvider } from "utils/table/TableSessionContext";
 
 
 interface RegistryTableComponentProps {
@@ -110,22 +109,15 @@ export default function RegistryTableComponent(
       {refreshFlag || tableDescriptor.isLoading ? (
         <TableSkeleton />
       ) : tableDescriptor.data?.length > 0 ? (
-        <TableSessionContextProvider
+        <RegistryTable
           recordType={props.entityType}
           lifecycleStage={props.lifecycleStage}
+          disableRowAction={false}
+          selectedDate={selectedDate}
           tableDescriptor={tableDescriptor}
-        >
-          <RegistryTable
-            recordType={props.entityType}
-            lifecycleStage={props.lifecycleStage}
-            disableRowAction={false}
-            selectedDate={selectedDate}
-            tableDescriptor={tableDescriptor}
-            triggerRefresh={triggerRefresh}
-            accountType={props.accountType}
-          />
-        </TableSessionContextProvider>
-
+          triggerRefresh={triggerRefresh}
+          accountType={props.accountType}
+        />
       ) : (
         <div className="text-lg ml-6">{dict.message.noResultFound}</div>
       )}
