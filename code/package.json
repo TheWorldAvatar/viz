@@ -91,8 +91,7 @@
   "packageManager": "pnpm@10.32.1",
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@tailwindcss/oxide",
-      "chromedriver"
+      "@tailwindcss/oxide"
     ],
     "ignoredBuiltDependencies": [
       "sharp",
@@ -100,7 +99,8 @@
     ],
     "overrides": {
       "@types/react": "19.2.14",
-      "@types/react-dom": "19.2.3"
+      "@types/react-dom": "19.2.3",
+      "chromedriver": "-"
     }
   }
 }
