@@ -1,6 +1,7 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { DateRange } from "react-day-picker";
 import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { FORM_IDENTIFIER, FormTemplateType, FormType } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getUTCDate, parseStringsForUrls } from "./client-utils";
 
@@ -176,6 +177,27 @@ export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlE
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);
   return await res.json();
+}
+
+/**
+ * Query for the task form template via the internal API.
+ * 
+ * @param {FormType} eventType The type of event.
+ * @param {string} targetId Optional identifier for the target resource. Defaults to form.
+ */
+export async function queryInternalTaskFormTemplate(
+  eventType: FormType,
+  targetId?: string
+): Promise<FormTemplateType> {
+  const resBody: AgentResponseBody = await queryInternalApi(
+    makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.EVENT,
+      "service",
+      eventType,
+      targetId ?? FORM_IDENTIFIER
+    )
+  );
+  return resBody.data?.items?.[0] as FormTemplateType;
 }
 
 /**
