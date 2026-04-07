@@ -17,7 +17,7 @@ import {
 import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -257,6 +257,24 @@ export function translateLifecycleFields(field: string, titleDict: Record<string
     default:
       return field;
   }
+}
+
+/**
+ * Retrieves the record ID for a given row, prioritizing 'event_id', then 'id', and finally 'iri'.
+ *
+ * @param {FieldValues} row The row data.
+ * @returns {string} The record ID.
+ */
+export function getRowRecordId(row: FieldValues): string {
+  if (row.event_id) {
+    return getId(row.event_id);
+  }
+
+  if (row.id) {
+    return getId(row.id);
+  }
+
+  return getId(row.iri);
 }
 
 /**

@@ -1,6 +1,6 @@
 import React from "react";
 
-interface TableCellProps {
+export interface TableCellProps {
   width?: number;
   className?: string;
   children?: React.ReactNode;
@@ -13,6 +13,7 @@ interface TableCellProps {
  * @param {number} width The width of the table cell.
  * @param {string} className Optional additional CSS classes for the cell.
  * @param {React.ReactNode} children The content of the cell.
+ * @param onClick The optional on click event handler for the cell.
  */
 export default function TableCell(props: Readonly<TableCellProps>) {
   return (
@@ -22,9 +23,8 @@ export default function TableCell(props: Readonly<TableCellProps>) {
         minWidth: props.width,
       }}
       onClick={props.onClick}
-      className={`border-r border-border border-b p-2 md:p-3 whitespace-nowrap text-lg text-left  font-normal last:border-r-0 ${
-        props.className ?? ""
-      }`}
+      className={`border-r border-border border-b p-2 md:p-3 whitespace-nowrap text-lg text-left  font-normal last:border-r-0 ${props.className ?? ""
+        }`}
     >
       {props.children}
     </th>
