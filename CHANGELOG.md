@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.66.1
+
+### Changes
+
+- added new row action for waiving billables of closed tasks
+- Bump min version of `VisBackend Agent` from `v1.43.0` to `v1.43.1`
+
 ## 5.66.0
 
 ### Changes
