@@ -47,15 +47,6 @@ export function makeInternalRegistryAPIwithParams(
         id: params[0],
       });
       break;
-    case InternalApiIdentifierMap.COUNT:
-      searchParams = new URLSearchParams({
-        type: params[0],
-        filters: params[1] ?? "",
-        lifecycle: params[2] ?? null,
-        start_date: params[3] ?? null,
-        end_date: params[4] ?? null,
-      });
-      break;
     case InternalApiIdentifierMap.INSTANCES:
       searchParams = new URLSearchParams({
         type: params[0],
