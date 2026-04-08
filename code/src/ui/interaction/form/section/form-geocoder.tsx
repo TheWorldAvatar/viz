@@ -7,7 +7,7 @@ import { useDictionary } from "hooks/useDictionary";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
-import { PropertyShape, VALUE_KEY } from "types/form";
+import { FormTypeMap, PropertyShape, VALUE_KEY } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
@@ -28,7 +28,6 @@ interface FormGeocoderProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  */
 export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
-  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const dict: Dictionary = useDictionary();
 
   const latitudeShape: PropertyShape = {
@@ -101,6 +100,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
 
   const {
     isFetching,
+    formType,
     postalCodeShape,
     addressShapes,
   }: GeocodeTemplateDescriptor = useGeocodeTemplate(props.field, props.form);
@@ -189,14 +189,14 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               field={latitudeShape}
               form={props.form}
               options={{
-                disabled: formType == "view" || formType == "delete",
+                disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
               }}
             />
             <FormFieldComponent
               field={longitudeShape}
               form={props.form}
               options={{
-                disabled: formType == "view" || formType == "delete",
+                disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
               }}
             />
           </div>

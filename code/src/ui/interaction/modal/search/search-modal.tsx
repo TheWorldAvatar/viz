@@ -48,13 +48,12 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
       setIsOpen={props.setShowState}
       className="h-[90vh] w-[90vw]"
     >
-      <FormSessionContextProvider formType={FormTypeMap.SEARCH}  entityType={props.id}>
+      <FormSessionContextProvider formType={FormTypeMap.SEARCH} entityType={props.id}>
         <h1 className="text-xl font-bold">{dict.title.searchCriteria}</h1>
         <section className={"overflow-y-auto overflow-x-hidden md:p-3 p-1 h-[60vh] max-h-[60vh]"}>
           <FormComponent
             formRef={formRef}
             entityType={props.id}
-            formType={FormTypeMap.SEARCH}
             setShowSearchModalState={props.setShowState}
           />
         </section>

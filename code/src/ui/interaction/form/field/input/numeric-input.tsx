@@ -1,14 +1,14 @@
 import React, { useMemo, useRef } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
-import {
-  FORM_STATES,
-  getRegisterOptions,
-} from "ui/interaction/form/form-utils";
 import Button from "ui/interaction/button";
+import {
+  getRegisterOptions
+} from "ui/interaction/form/form-utils";
 
 export interface NumericInputFieldProps {
   field: PropertyShape;
@@ -28,6 +28,7 @@ export default function NumericInputField(
 ) {
   const dict: Dictionary = useDictionary();
   const lastKeyPressTime: React.RefObject<number> = useRef<number>(0);
+  const { formType } = useFormSession();
 
   const inputClassNames: string = props.options?.inputStyle?.join(" ");
   const inputMode: "numeric" | "decimal" =
@@ -134,7 +135,7 @@ export default function NumericInputField(
           props.field.fieldId,
           getRegisterOptions(
             props.field,
-            props.form.getValues(FORM_STATES.FORM_TYPE),
+            formType,
             dict
           )
         )}

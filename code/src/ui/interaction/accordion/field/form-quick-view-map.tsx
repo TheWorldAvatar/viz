@@ -9,6 +9,7 @@ import GeocodeMapContainer from "ui/map/geocode/geocode-map-container";
 import Button from "../../button";
 import { FORM_STATES } from "../../form/form-utils";
 import Modal from "../../modal/modal";
+import { FormTypeMap } from "types/form";
 
 interface FormQuickViewMapProps {
   label: string;
@@ -29,11 +30,10 @@ export default function FormQuickViewMap(
 
   const { isFetching, coordinates } = useExistingLocationCoordinates(
     props.locationUri,
-    "view"
+    FormTypeMap.VIEW,
   );
   const mapForm = useForm<FieldValues>({
     defaultValues: {
-      formType: "view",
       latitude: 0,
       longitude: 0,
     },

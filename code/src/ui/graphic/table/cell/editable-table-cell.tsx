@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { PropertyShape } from "types/form";
+import { FormTypeMap, PropertyShape } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { renderFormField } from "ui/interaction/form/form";
 import TableCell, { TableCellProps } from "./table-cell";
@@ -30,7 +30,7 @@ export default function EditableTableCell(props: Readonly<EditableTableCellProps
     >
       {props.isBulkEditMode ?
         // If in bulk edit mode, render the form field if it is not retrieving the data from backend
-        props.fieldShape != undefined ? renderFormField("", props.fieldShape, props.form, 0) :
+        props.fieldShape != undefined ? renderFormField("", FormTypeMap.MASS_EDIT, props.fieldShape, props.form, 0) :
           <LoadingSpinner isSmall={true} /> :
         props.children}
     </TableCell>

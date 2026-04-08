@@ -1,10 +1,10 @@
+import { Icon } from "@mui/material";
+import useFormSession from "hooks/form/useFormSession";
 import { FieldError } from "react-hook-form";
-import { FormType, FormTypeMap, OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
+import { FormTypeMap, OntologyConcept, PropertyShape, VALUE_KEY } from "types/form";
+import Tooltip from "ui/interaction/tooltip/tooltip";
 import FormErrorComponent from "ui/text/error/form-error";
 import { parseWordsForLabels } from "utils/client-utils";
-import { Icon } from "@mui/material";
-import Tooltip from "ui/interaction/tooltip/tooltip";
-import useFormSession from "hooks/form/useFormSession";
 
 export interface FormInputContainerProps {
   field: PropertyShape;

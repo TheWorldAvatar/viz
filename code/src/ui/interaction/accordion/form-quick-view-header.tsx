@@ -17,7 +17,6 @@ interface FormQuickViewHeaderProps {
   title: string;
   selectedEntityId: string;
   entityType: string;
-  formType: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   accountId?: string;
@@ -46,7 +45,7 @@ interface FormQuickViewHeaderProps {
 export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderProps>) {
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
-  const { saveCurrentSession } = useFormSession();
+  const { formType, saveCurrentSession } = useFormSession();
 
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
@@ -89,7 +88,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
       >
         {props.title}
       </Button>}
-      {props.formType !== FormTypeMap.VIEW && props.formType !== FormTypeMap.DELETE && !props.disableActions &&
+      {formType !== FormTypeMap.VIEW && formType !== FormTypeMap.DELETE && !props.disableActions &&
         <div className="flex gap-2">
           <RedirectButton
             leftIcon="add"

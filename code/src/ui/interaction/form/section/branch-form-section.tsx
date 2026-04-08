@@ -102,7 +102,7 @@ export default function BranchFormSection(
     });
     // Update form branch fields and values
     const nodeState: FieldValues = {};
-    parsePropertyShapeOrGroupList(nodeState, matchingNode.property);
+    parsePropertyShapeOrGroupList(nodeState, formType, matchingNode.property);
     setSelectedModel(matchingNode);
     setTimeout(() => setIsSwitching(false), 250);
   };
@@ -122,8 +122,8 @@ export default function BranchFormSection(
             }
           }}
           isDisabled={
-            props.form.getValues(FORM_STATES.FORM_TYPE) == "delete" ||
-            props.form.getValues(FORM_STATES.FORM_TYPE) == "view"
+            formType == FormTypeMap.DELETE ||
+            formType == FormTypeMap.VIEW
           }
         />}
         <p className="text-md md:text-lg">
@@ -133,7 +133,7 @@ export default function BranchFormSection(
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
         : selectedModel?.property.map((field, index) => {
-          return renderFormField(props.entityType, field, props.form, index, props.billingStore);
+          return renderFormField(props.entityType, formType, field, props.form, index, props.billingStore);
         })}
     </>
   );

@@ -7,9 +7,10 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, ID_KEY, OntologyConcept, PropertyShape, SparqlResponseField, VALUE_KEY } from "types/form";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
-import { findMatchingDropdownOptionValue, FORM_STATES, genDefaultSelectOption } from "ui/interaction/form/form-utils";
+import { findMatchingDropdownOptionValue, genDefaultSelectOption } from "ui/interaction/form/form-utils";
 import { getAfterDelimiter, parseStringsForUrls } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import useFormSession from "../useFormSession";
 
 interface UseDependentFieldDescriptor {
     selectedOption: SelectOptionType,
@@ -37,7 +38,6 @@ export function useDependentField(
     const label: string = field.name[VALUE_KEY];
     const entityType: string = parseStringsForUrls(label);
     const control: Control = form.control;
-    const formType: string = form.getValues(FORM_STATES.FORM_TYPE);
 
     const [selectedOption, setSelectedOption] = useState<SelectOptionType>(null);
 
@@ -46,6 +46,7 @@ export function useDependentField(
         control,
         name: parentField,
     });
+    const { formType } = useFormSession();
 
     // An async method to retrieve the dependent entities options from the backend
     const getFieldOptions = async (inputValue: string): Promise<SelectOptionType[]> => {

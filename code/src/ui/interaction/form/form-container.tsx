@@ -153,7 +153,6 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
           (<FormComponent
             formRef={formRef}
             entityType={props.entityType}
-            formType={props.formType}
             primaryInstance={status?.data?.id}
             isPrimaryEntity={props.isPrimaryEntity}
             accountType={props.accountType}

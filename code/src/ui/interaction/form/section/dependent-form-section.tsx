@@ -114,7 +114,6 @@ export function DependentFormSection(
           title={dict.title.quickView}
           selectedEntityId={selectedEntityId}
           entityType={queryEntityType}
-          formType={formType}
           isOpen={isQuickViewOpen}
           setIsOpen={setIsQuickViewOpen}
           accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}

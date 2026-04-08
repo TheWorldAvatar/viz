@@ -146,10 +146,9 @@ export default function TableRow(props: Readonly<TableRowProps>) {
       try {
         const template: FormTemplateType = await queryInternalTaskFormTemplate(FormTypeMap.DISPATCH, props.id);
         const initialState: FieldValues = {
-          formType: FormTypeMap.MASS_EDIT,
           lockField: [] // An array that stores all fields that should be locked (disabled)
         };
-        const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, template?.property, {});
+        const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, FormTypeMap.MASS_EDIT, template?.property, {});
         fields.forEach((field) => {
           if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
             (field as PropertyGroup).property.forEach((nestedField) => {

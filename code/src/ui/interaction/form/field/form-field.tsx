@@ -8,6 +8,7 @@ import FormDateTimePicker from "./form-date-time-picker";
 import FormInputField from "./form-input";
 import FormInputMinMaxField from "./input/form-min-max-input";
 import OntologyConceptSelector from "./input/ontology-concept-selector";
+import useFormSession from "hooks/form/useFormSession";
 
 interface FormFieldProps {
   field: PropertyShape;
@@ -23,7 +24,7 @@ interface FormFieldProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
-  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const { formType } = useFormSession();
   // Any id field in the search form should be ignored
   if (!(formType == FormTypeMap.SEARCH && props.field.name[VALUE_KEY] == "id")) {
     if (
@@ -35,7 +36,7 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
           <div className="flex flex-col">
             {/** Display input min max range only if this is the search form and a numerical value */}
             {formType == FormTypeMap.SEARCH &&
-            ["integer", "decimal"].includes(props.field.datatype) ? (
+              ["integer", "decimal"].includes(props.field.datatype) ? (
               <FormInputMinMaxField
                 field={props.field}
                 form={props.form}
