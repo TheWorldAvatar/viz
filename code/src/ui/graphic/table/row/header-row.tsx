@@ -97,19 +97,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
     <tr className="border-b border-border text-left bg-background text-foreground">
       <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
         <div className="flex justify-end items-center rounded-md gap-2">
-          {
-            tableDescriptor.isBulkDispatchEdit && <Button
-              leftIcon="send"
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                onBulkEditSubmit();
-                tableDescriptor.table.resetRowSelection();
-                tableDescriptor.setIsBulkDispatchEdit(false);
-              }}
-            />
-          }
-          {numberOfSelectedRows > 0 && !tableDescriptor.isBulkDispatchEdit && (
+          {numberOfSelectedRows > 0 && (
             <PopoverActionButton
               placement="bottom-start"
               leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
@@ -120,6 +108,19 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
               setIsOpen={setIsActionMenuOpen}
             >
               <div className="flex flex-col space-y-3">
+                {
+                  tableDescriptor.isBulkDispatchEdit && <Button
+                    leftIcon="assignment_add"
+                    label={dict.action.bulkAssign}
+                    variant="ghost"
+                    disabled={isLoading}
+                    onClick={() => {
+                      onBulkEditSubmit();
+                      tableDescriptor.table.resetRowSelection();
+                      tableDescriptor.setIsBulkDispatchEdit(false);
+                    }}
+                  />
+                }
                 {lifecycleStage === LifecycleStageMap.PENDING && (
                   <>
                     <Button
@@ -140,7 +141,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                     )}
                   </>
                 )}
-                {isPermitted("draftTemplate") && (
+                {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
                   <DraftTemplateButton
                     rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
                     recordType={recordType}

@@ -57,7 +57,8 @@
     "clearFilter": "Filter löschen",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "addInvoice": "Rechnung hinzufügen"
+    "addInvoice": "Rechnung hinzufügen",
+     "bulkAssign": "Massenzuweisung"
   },
   "form": {
     "singleService": "Einzelner Dienst",
