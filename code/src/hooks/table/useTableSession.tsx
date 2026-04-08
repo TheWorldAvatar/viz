@@ -1,5 +1,6 @@
 'use client';
 
+import useOperationStatus from 'hooks/useOperationStatus';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { AgentResponseBody, InternalApiIdentifierMap } from 'types/backend-agent';
@@ -22,7 +23,9 @@ const useTableSession = (): useTableSessionReturn => {
         throw new Error("useTableSessionReturn must be used within a TableSessionContextProvider");
     }
 
+    const { startLoading, stopLoading } = useOperationStatus();
     const onBulkEditSubmit = async () => {
+        startLoading();
         const allData: FieldValues[] = tableSession.rowRefs.current
             .filter(row => Object.keys(row.getRowData()).length > 0)
             .map(row => row.getRowData());
@@ -31,6 +34,7 @@ const useTableSession = (): useTableSessionReturn => {
             "PUT",
             JSON.stringify({ items: allData })
         );
+        stopLoading();
         toast(
             response?.data?.message || response?.error?.message,
             response?.error ? "error" : "success"
