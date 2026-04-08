@@ -129,7 +129,7 @@
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {
-    "title": "Hide ribbon",
+    "title": "Show ribbon",
     "tooltip": "Show / hide ribbon"
     }
   },
