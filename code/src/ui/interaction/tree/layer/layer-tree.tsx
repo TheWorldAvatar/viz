@@ -107,11 +107,13 @@ function recurseParseTreeStructure(
     const mapLayer: MapLayer = {
       name: key,
       address: dataGroup.name + "." + key,
-      ids: collectIDs(layers),
+      ids: layers.map(layer => layer.id),
       icon: getIcon(layers, icons),
       grouping: layers.find((layer) => layer.grouping !== undefined)?.grouping,
       isVisible: layers.find((layer) => layer.cachedVisibility !== null)
         ?.cachedVisibility,
+      isAHighlightLayer: layers.every(layer => layer.isAHighlightLayer), // this is fine, either all layers will be highlight layers or not
+      highlightLayerIds: layers.filter(layer => layer.hasHighlight).map(layer => layer.id + '-highlight')
     };
     mapLayerGroup.layers.push(mapLayer);
   }
@@ -132,19 +134,6 @@ function recurseParseTreeStructure(
   } else {
     parentGroup.subGroups.push(mapLayerGroup);
   }
-}
-
-/**
- *
- * @param layers
- * @returns
- */
-function collectIDs(layers: DataLayer[]): string {
-  const ids = [];
-  for (const layer of layers) {
-    ids.push(layer.id);
-  }
-  return ids.join(" ");
 }
 
 /** Retrieve the icon from the current layers. This method will prioritise line colors over the icon if available.
