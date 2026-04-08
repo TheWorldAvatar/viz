@@ -153,7 +153,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             </PopoverActionButton>
           )}
 
-          {isBulkActionPermitted && (
+          {isBulkActionPermitted && !tableDescriptor.isBulkDispatchEdit && (
             <Checkbox
               aria-label={dict.action.selectAll}
               disabled={isLoading}
