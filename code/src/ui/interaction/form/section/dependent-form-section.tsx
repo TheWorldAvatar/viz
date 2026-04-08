@@ -16,7 +16,7 @@ import {
   getId,
   parseStringsForUrls
 } from "utils/client-utils";
-import { FORM_STATES, getRegisterOptions } from "../form-utils";
+import { getRegisterOptions } from "../form-utils";
 
 import { useDependentField } from "hooks/form/api/useDependentField";
 import { useFormQuickView } from "hooks/form/useFormQuickView";
@@ -104,6 +104,7 @@ export function DependentFormSection(
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
                   noOptionMessage={dict.message.noInstances}
+                  menuPortalTarget={formType === FormTypeMap.MASS_EDIT ? document.body : undefined}
                 />
               );
             }}
