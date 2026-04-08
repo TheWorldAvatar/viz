@@ -36,7 +36,7 @@ export const selectorStyles: StylesConfig<
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     borderRadius: "0.2rem",
     margin: "0.25rem 0",
-    minWidth: "100%",
+    minWidth: "fit-content",
     border: "1px solid var(--border)",
     zIndex: 99999,
     overflow: "visible",
