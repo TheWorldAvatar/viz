@@ -120,7 +120,7 @@ export default function FormDateTimePicker(
       ) : (
         <input
           id={props.field.fieldId}
-          className={`${styles["dtpicker"]} ${props.options?.disabled &&
+          className={`h-7 w-full max-w-none py-[1.3rem] pl-2 pr-3 border border-border rounded-lg bg-muted text-base text-foreground ${props.options?.disabled &&
             styles["input-disabled"] + " " + styles["field-disabled"]
             }`}
           type={inputType}
