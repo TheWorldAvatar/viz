@@ -47,11 +47,10 @@ export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { formCount, frozenFields, updateInvoiceAccount } = useFormSession();
+  const { formType, formCount, frozenFields, updateInvoiceAccount } = useFormSession();
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
-  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
 
   const control: Control = props.form.control;
   const currentOption: string = useWatch<FieldValues>({
@@ -110,7 +109,7 @@ export function DependentFormSection(
             }}
           />
         </FormInputContainer>
-        {formType != FormTypeMap.SEARCH && <FormQuickViewHeader
+        {formType != FormTypeMap.SEARCH && formType != FormTypeMap.MASS_EDIT && <FormQuickViewHeader
           id={id}
           title={dict.title.quickView}
           selectedEntityId={selectedEntityId}

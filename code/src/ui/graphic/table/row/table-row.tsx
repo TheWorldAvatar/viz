@@ -7,18 +7,20 @@ import useTableSession from "hooks/table/useTableSession";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
-import React, { useState } from "react";
-import { FieldValues } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStageMap, RegistryStatusMap } from "types/form";
+import { FormTemplateType, FormTypeMap, LifecycleStageMap, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryStatusMap, TYPE_KEY, VALUE_KEY } from "types/form";
 import Button from "ui/interaction/button";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import { parsePropertyShapeOrGroupList } from "ui/interaction/form/form-utils";
 import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
 import { DATE_KEY, EVENT_KEY } from "utils/constants";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { FormSessionContextProvider } from "utils/form/FormSessionContext";
+import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
@@ -45,6 +47,8 @@ interface TableRowProps {
 export default function TableRow(props: Readonly<TableRowProps>) {
   const dict: Dictionary = useDictionary();
   const [isBulkEditMode, setIsBulkEditMode] = useState<boolean>(false);
+  const [dispatchDefaultValues, setDispatchDefaultValues] = useState<FieldValues>({});
+  const [dispatchFormFields, setDispatchFormFields] = useState<Record<string, PropertyShape>>({});
 
   const { isLoading, resetFormSession } = useOperationStatus();
   const { navigateToDrawer } = useDrawerNavigation();
@@ -134,93 +138,141 @@ export default function TableRow(props: Readonly<TableRowProps>) {
     }
   };
 
+  useEffect(() => {
+    // Declare an async function to retrieve the form template for executing the target action
+    const getFormTemplate = async (): Promise<void> => {
+      setDispatchDefaultValues({});
+      setDispatchFormFields({});
+      try {
+        const template: FormTemplateType = await queryInternalTaskFormTemplate(FormTypeMap.DISPATCH, props.id);
+        const initialState: FieldValues = {
+          formType: FormTypeMap.MASS_EDIT,
+          lockField: [] // An array that stores all fields that should be locked (disabled)
+        };
+        const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, template?.property, {});
+        fields.forEach((field) => {
+          if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
+            (field as PropertyGroup).property.forEach((nestedField) => {
+              setDispatchFormFields((prev) => ({
+                ...prev,
+                [nestedField.name[VALUE_KEY].replace(" ", "_")]: nestedField
+              }));
+            })
+          } else {
+            const fieldShape: PropertyShape = field as PropertyShape;
+            setDispatchFormFields((prev) => ({
+              ...prev,
+              [fieldShape.name[VALUE_KEY].replace(" ", "_")]: fieldShape
+            }));
+          }
+        });
+        delete initialState.lockField;
+        setDispatchDefaultValues(initialState);
+      } catch (error) {
+        console.error("Failed to fetch form template:", error);
+      }
+    };
+
+    if (isBulkEditMode) {
+      getFormTemplate();
+    }
+  }, [props.id, isBulkEditMode]);
+
+  const form: UseFormReturn = useForm({
+    defaultValues: dispatchDefaultValues,
+  });
+
   return (
-    <tr
-      ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition: transition,
-      }}
-      className={`border-b border-border text-left relative ${isDragging ? "z-10 opacity-70" : "z-0"} ${rowBackgroundClass}`}
-    >
-      <TableCell className={`sticky left-0 z-20 cursor-default ${rowBackgroundClass}`}>
-        <div className="flex items-center justify-evenly gap-0.5">
-          {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={props.row.id} />}
-          {!tableDescriptor.isBulkDispatchEdit && <RegistryRowAction
-            recordType={recordType}
-            accountType={props.accountType}
-            lifecycleStage={lifecycleStage}
-            row={props.row.original}
-            triggerRefresh={props.triggerRefresh}
-            setActiveRowId={setActiveRowId}
-          />}
-          {!props.disableRowAction && !tableDescriptor.isBulkDispatchEdit && <Button
-            leftIcon="history"
-            size="icon"
-            variant="ghost"
-            tooltipText={dict.title.history}
-            onClick={() => {
-              setHistoryId(props.id);
-              setIsOpenHistoryModal(true);
-            }}
-          />}
-          {isBulkActionPermitted && (
-            <Checkbox
-              aria-label={props.row.id}
-              className="mx-2 w-4 h-4 cursor-pointer"
-              disabled={isLoading}
-              checked={props.row.getIsSelected()}
-              handleChange={(checked) => {
-                if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-                  tableDescriptor.setSelectedRows(props.id, !checked);
-                }
-                props.row.toggleSelected(checked);
+    <FormSessionContextProvider formType={FormTypeMap.MASS_EDIT} entityType="">
+      <tr
+        ref={setNodeRef}
+        style={{
+          transform: CSS.Transform.toString(transform),
+          transition: transition,
+        }}
+        className={`border-b border-border text-left relative ${isDragging ? "z-10 opacity-70" : "z-0"} ${rowBackgroundClass}`}
+      >
+        <TableCell className={`sticky left-0 z-20 cursor-default ${rowBackgroundClass}`}>
+          <div className="flex items-center justify-evenly gap-0.5">
+            {!props.disableRowAction && <DragActionHandle disabled={isLoading} id={props.row.id} />}
+            {!tableDescriptor.isBulkDispatchEdit && <RegistryRowAction
+              recordType={recordType}
+              accountType={props.accountType}
+              lifecycleStage={lifecycleStage}
+              row={props.row.original}
+              triggerRefresh={props.triggerRefresh}
+              setActiveRowId={setActiveRowId}
+            />}
+            {!props.disableRowAction && !tableDescriptor.isBulkDispatchEdit && <Button
+              leftIcon="history"
+              size="icon"
+              variant="ghost"
+              tooltipText={dict.title.history}
+              onClick={() => {
+                setHistoryId(props.id);
+                setIsOpenHistoryModal(true);
               }}
-            />
-          )}
-        </div>
-      </TableCell>
-      {props.row.getVisibleCells().map((cell, index) => {
-        if (tableDescriptor.isBulkDispatchEdit &&
-          (cell.column.columnDef as EnhancedColumnDef<FieldValues>).stage == FormTypeMap.DISPATCH) {
-          return <EditableTableCell
-            key={cell.id + index}
-            isBulkEditMode={isBulkEditMode}
-            onClick={() => {
-              if (!isBulkEditMode) {
-                setIsBulkEditMode(true);
-                props.row.toggleSelected(true);
-              }
-            }}
-          >
-            {flexRender(
-              cell.column.columnDef.cell,
-              cell.getContext()
+            />}
+            {isBulkActionPermitted && (
+              <Checkbox
+                aria-label={props.row.id}
+                className="mx-2 w-4 h-4 cursor-pointer"
+                disabled={isLoading}
+                checked={props.row.getIsSelected()}
+                handleChange={(checked) => {
+                  if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+                    tableDescriptor.setSelectedRows(props.id, !checked);
+                  }
+                  props.row.toggleSelected(checked);
+                }}
+              />
             )}
-          </EditableTableCell>;
-        } else {
-          return <TableCell
-            key={cell.id + index}
-            width={cell.column.getSize()}
-            className={`${tableDescriptor.isBulkDispatchEdit ? "cursor-default" : "cursor-pointer"}`}
-            onClick={tableDescriptor.isBulkDispatchEdit ? undefined : () => {
-              if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-                const isSelected: boolean = props.row.getIsSelected();
-                tableDescriptor.setSelectedRows(
-                  getId(props.row.getValue("event_id")), isSelected);
-                props.row.toggleSelected(!isSelected);
-              } else {
-                onRowClick(props.row.original as FieldValues);
-              }
-            }}
-          >
-            {flexRender(
-              cell.column.columnDef.cell,
-              cell.getContext()
-            )}
-          </TableCell>
-        }
-      })}
-    </tr>
+          </div>
+        </TableCell>
+        {props.row.getVisibleCells().map((cell, index) => {
+          if (tableDescriptor.isBulkDispatchEdit &&
+            (cell.column.columnDef as EnhancedColumnDef<FieldValues>).stage == FormTypeMap.DISPATCH) {
+            return <EditableTableCell
+              key={cell.id + index}
+              isBulkEditMode={isBulkEditMode}
+              fieldShape={dispatchFormFields[cell.column.id]}
+              form={form}
+              onClick={() => {
+                if (!isBulkEditMode) {
+                  setIsBulkEditMode(true);
+                  props.row.toggleSelected(true);
+                }
+              }}
+            >
+              {flexRender(
+                cell.column.columnDef.cell,
+                cell.getContext()
+              )}
+            </EditableTableCell>;
+          } else {
+            return <TableCell
+              key={cell.id + index}
+              width={cell.column.getSize()}
+              className={`${tableDescriptor.isBulkDispatchEdit ? "cursor-default" : "cursor-pointer"}`}
+              onClick={tableDescriptor.isBulkDispatchEdit ? undefined : () => {
+                if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+                  const isSelected: boolean = props.row.getIsSelected();
+                  tableDescriptor.setSelectedRows(
+                    getId(props.row.getValue("event_id")), isSelected);
+                  props.row.toggleSelected(!isSelected);
+                } else {
+                  onRowClick(props.row.original as FieldValues);
+                }
+              }}
+            >
+              {flexRender(
+                cell.column.columnDef.cell,
+                cell.getContext()
+              )}
+            </TableCell>
+          }
+        })}
+      </tr>
+    </FormSessionContextProvider>
   );
 }

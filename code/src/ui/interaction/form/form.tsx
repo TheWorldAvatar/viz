@@ -517,7 +517,7 @@ export function renderFormField(
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
   currentIndex: number,
-  billingParams: BillingEntityTypes,
+  billingParams: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): ReactNode {
   const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =

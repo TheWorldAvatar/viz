@@ -56,7 +56,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         <LoadingSpinner isSmall={false} /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
           .map((formField, index) => {
-            return renderFormField(props.entityType, formField, form, index, { account: "", accountField: "", pricing: "", pricingField: "" })
+            return renderFormField(props.entityType, formField, form, index)
           })}
     </form>
   );

@@ -22,6 +22,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/inter
 import { toast } from "../action/toast/toast";
 import DateInput from "../input/date-input";
 import Tooltip from "../tooltip/tooltip";
+import { FormTypeMap } from "types/form";
 
 
 /**
@@ -29,7 +30,7 @@ import Tooltip from "../tooltip/tooltip";
  */
 export function InterceptTaskRescheduleComponent() {
   return (
-    <FormSessionContextProvider entityType="reschedule">
+    <FormSessionContextProvider formType={FormTypeMap.EDIT} entityType="reschedule">
       <NavigationDrawer>
         <TaskFormContents />
       </NavigationDrawer>
@@ -42,11 +43,9 @@ export function InterceptTaskRescheduleComponent() {
  */
 export function TaskRescheduleComponent() {
   return (
-    <FormSessionContextProvider entityType="reschedule">
-      <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
-        <TaskFormContents />
-      </section>
-    </FormSessionContextProvider>
+    <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
+      <TaskFormContents />
+    </section>
   );
 }
 

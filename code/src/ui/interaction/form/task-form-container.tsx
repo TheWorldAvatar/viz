@@ -51,7 +51,7 @@ export function InterceptTaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
+    <FormSessionContextProvider formType={props.formType} entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
       props.formType === FormTypeMap.REPORT ? "report" :
         props.formType === FormTypeMap.CANCEL ? "cancellation" :
           "dispatch"}>
@@ -72,7 +72,7 @@ export function TaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
+    <FormSessionContextProvider formType={props.formType} entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
       props.formType === FormTypeMap.REPORT ? "report" :
         props.formType === FormTypeMap.CANCEL ? "cancellation" :
           "dispatch"}>

@@ -307,7 +307,7 @@ export function parseBranches(
   } else if (initialState.formType === FormTypeMap.EDIT || initialState.formType === FormTypeMap.ACCRUAL ||
     initialState.formType === FormTypeMap.DISPATCH || initialState.formType === FormTypeMap.COMPLETE ||
     initialState.formType === FormTypeMap.CANCEL || initialState.formType === FormTypeMap.REPORT ||
-    initialState.formType === FormTypeMap.TERMINATE) {
+    initialState.formType === FormTypeMap.TERMINATE || initialState.formType === FormTypeMap.MASS_EDIT) {
     // Set both values - branch_add for new, branch_delete for original
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
