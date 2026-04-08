@@ -264,7 +264,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               onClick={() => {
                 props.tableDescriptor.table.resetRowSelection();
                 props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit);
-                props.triggerRefresh();
+                if (props.tableDescriptor.isBulkDispatchEdit) {
+                  props.triggerRefresh();
+                }
               }}
               variant={props.tableDescriptor.isBulkDispatchEdit ? "destructive" : "outline"}
             />}
