@@ -19,14 +19,12 @@ interface EditableTableCellProps extends TableCellProps {
  * @param {PropertyShape} fieldShape The shape of the field for the cell.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {React.ReactNode} children The content of the cell.
- * @param onClick The optional on click event handler for the cell.
  */
 export default function EditableTableCell(props: Readonly<EditableTableCellProps>) {
   return (
     <TableCell
-      width={props.width}
+      {...props}
       className={`${props.className} ${props.isBulkEditMode ? "cursor-default bg-success-background  hover:bg-success-background/80" : "cursor-pointer"}`}
-      onClick={props.onClick}
     >
       {props.isBulkEditMode ?
         // If in bulk edit mode, render the form field if it is not retrieving the data from backend

@@ -207,6 +207,12 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
           transform: CSS.Transform.toString(transform),
           transition: transition,
         }}
+        onClick={() => {
+          if (!isBulkEditMode) {
+            setIsBulkEditMode(true);
+            props.row.toggleSelected(true);
+          }
+        }}
         className={`border-b border-border text-left relative ${isDragging ? "z-10 opacity-70" : "z-0"} ${rowBackgroundClass}`}
       >
         <TableCell className={`sticky left-0 z-20 cursor-default ${rowBackgroundClass}`}>
@@ -254,12 +260,6 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               isBulkEditMode={isBulkEditMode}
               fieldShape={dispatchFormFields[cell.column.id]}
               form={form}
-              onClick={() => {
-                if (!isBulkEditMode) {
-                  setIsBulkEditMode(true);
-                  props.row.toggleSelected(true);
-                }
-              }}
             >
               {flexRender(
                 cell.column.columnDef.cell,
@@ -270,7 +270,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             return <TableCell
               key={cell.id + index}
               width={cell.column.getSize()}
-              className={`${tableDescriptor.isBulkDispatchEdit ? "cursor-default" : "cursor-pointer"}`}
+              className={`${tableDescriptor.isBulkDispatchEdit && isBulkEditMode ? "cursor-default" : "cursor-pointer"}`}
               onClick={tableDescriptor.isBulkDispatchEdit ? undefined : () => {
                 if (lifecycleStage == LifecycleStageMap.BILLABLE) {
                   const isSelected: boolean = props.row.getIsSelected();
