@@ -326,7 +326,7 @@ export default function RegistryRowAction(
                 }}
               />}
               {isActionAllowed("RESCHEDULE_TASK") &&
-                props.row[dict.title.scheduleType] == dict.form.singleService && (
+                props.row.scheduleType == dict.form.singleService && (
                   <Button
                     variant="ghost"
                     leftIcon="schedule"
