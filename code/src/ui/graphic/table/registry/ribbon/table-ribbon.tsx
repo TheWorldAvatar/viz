@@ -268,7 +268,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                   props.triggerRefresh();
                 }
               }}
-              variant={props.tableDescriptor.isBulkDispatchEdit ? "destructive" : "outline"}
+              tooltipText={dict.action.bulkAssign}
+              variant="outline"
             />}
           {isPermitted("export") && <DownloadButton instances={props.instances} />}
           <Button

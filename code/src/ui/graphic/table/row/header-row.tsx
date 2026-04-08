@@ -111,7 +111,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                 {
                   tableDescriptor.isBulkDispatchEdit && <Button
                     leftIcon="assignment_add"
-                    label={dict.action.bulkAssign}
+                    label={dict.action.dispatch}
                     variant="ghost"
                     disabled={isLoading}
                     onClick={() => {
