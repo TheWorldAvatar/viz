@@ -67,9 +67,9 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
   const isActive: boolean = activeRowId === props.id;
 
   const rowBackgroundClass: string = isActive
-    ? "bg-success-background dark:bg-success-background/60 hover:bg-success-background/80"
+    ? "bg-success-background dark:bg-success-background hover:bg-success-background-hover"
     : isSelected
-      ? "bg-neutral-background hover:bg-neutral-background/70"
+      ? "bg-neutral-background hover:bg-neutral-background-hover"
       : "bg-muted hover:bg-background";
 
   const onRowClick = async (row: FieldValues) => {

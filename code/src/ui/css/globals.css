@@ -59,12 +59,16 @@
 
     /* Status badge colours: paired bg/text for each status type */
     --neutral-background: hsl(0, 0%, 90%);
+    --neutral-background-hover: hsl(0, 0%, 85%);
     --neutral-foreground: hsl(0, 0%, 20%);
     --warning-background: hsl(52, 82%, 86%);
+    --warning-background-hover: hsl(52, 82%, 75%);
     --warning-foreground: hsl(18, 74%, 24%);
     --error-background: hsl(2, 100%, 96%);
+    --error-background-hover: hsl(2, 100%, 90%);
     --error-foreground: hsl(1, 75%, 20%);
     --success-background: hsl(156, 40%, 86%);
+    --success-background-hover: hsl(156, 40%, 80%);
     --success-foreground: hsl(159, 75%, 16%);
   }
 }
@@ -113,12 +117,16 @@
     --info-border: #51a2ff;
 
     --neutral-background: hsl(0, 0%, 25%);
+    --neutral-background-hover: hsl(0, 0%, 20%);
     --neutral-foreground: hsl(0, 0%, 85%);
     --warning-background: hsl(52, 82%, 20%);
+    --warning-background-hover: hsl(52, 82%, 14%);
     --warning-foreground: hsl(52, 82%, 93%);
     --error-background: hsl(2, 100%, 20%);
+    --error-background-hover: hsl(2, 100%, 15%);
     --error-foreground: hsl(2, 100%, 96%);
     --success-background: hsl(156, 40%, 20%);
+    --success-background-hover: hsl(156, 40%, 15%);;
     --success-foreground: hsl(156, 40%, 86%);
   }
 }
@@ -169,12 +177,16 @@
   --color-links-hover: var(--text-color-links-hover);
   --color-inverse-primary: var(--background-inverse-primary);
   --color-neutral-background: var(--neutral-background);
+  --color-neutral-background-hover: var(--neutral-background-hover);
   --color-neutral-foreground: var(--neutral-foreground);
   --color-warning-background: var(--warning-background);
+  --color-warning-background-hover: var(--warning-background-hover);
   --color-warning-foreground: var(--warning-foreground);
   --color-error-background: var(--error-background);
+  --color-error-background-hover: var(--error-background-hover);
   --color-error-foreground: var(--error-foreground);
   --color-success-background: var(--success-background);
+  --color-success-background-hover: var(--success-background-hover);
   --color-success-foreground: var(--success-foreground);
 }
 
