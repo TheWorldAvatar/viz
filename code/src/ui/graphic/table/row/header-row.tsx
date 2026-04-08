@@ -118,6 +118,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       onBulkEditSubmit();
                       tableDescriptor.table.resetRowSelection();
                       tableDescriptor.setIsBulkDispatchEdit(false);
+                      props.triggerRefresh();
                     }}
                   />
                 }
