@@ -2,7 +2,10 @@
 
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { LifecycleStageMap } from 'types/form';
+import { AgentResponseBody, InternalApiIdentifierMap } from 'types/backend-agent';
+import { FormTypeMap, LifecycleStageMap } from 'types/form';
+import { toast } from 'ui/interaction/action/toast/toast';
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from 'utils/internal-api-services';
 import { TableSessionContext, TableSessionState } from 'utils/table/TableSessionContext';
 
 interface useTableSessionReturn extends TableSessionState {
@@ -23,7 +26,15 @@ const useTableSession = (): useTableSessionReturn => {
         const allData: FieldValues[] = tableSession.rowRefs.current
             .filter(row => Object.keys(row.getRowData()).length > 0)
             .map(row => row.getRowData());
-
+        const response: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", FormTypeMap.MASS_EDIT),
+            "PUT",
+            JSON.stringify({ items: allData })
+        );
+        toast(
+            response?.data?.message || response?.error?.message,
+            response?.error ? "error" : "success"
+        );
     };
 
     return {

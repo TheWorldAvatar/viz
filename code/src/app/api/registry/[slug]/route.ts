@@ -329,6 +329,9 @@ function makeExternalEndpoint(
       const stage = searchParams.get("stage");
       const eventType = searchParams.get("type");
       const identifier = searchParams.get("identifier");
+      if (stage == "service" && eventType == FormTypeMap.MASS_EDIT) {
+        return `${agentBaseApi}/contracts/service/dispatch/bulk`;
+      }
       let url: string = `${agentBaseApi}/contracts/${stage}/${eventType}`;
       if (identifier != "null") {
         url += `/${identifier}`;
