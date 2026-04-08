@@ -25,7 +25,7 @@ export default function EditableTableCell(props: Readonly<EditableTableCellProps
   return (
     <TableCell
       width={props.width}
-      className={`${props.className} ${props.isBulkEditMode ? "cursor-default" : "cursor-pointer"}`}
+      className={`${props.className} ${props.isBulkEditMode ? "cursor-default bg-success-background  hover:bg-success-background/80" : "cursor-pointer"}`}
       onClick={props.onClick}
     >
       {props.isBulkEditMode ?
