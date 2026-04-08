@@ -42,7 +42,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const isPermitted = usePermissionGuard();
   const { isLoading, startLoading, stopLoading } = useOperationStatus();
-  const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted } = useTableSession();
+  const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted, onBulkEditSubmit } = useTableSession();
   const numberOfSelectedRows: number = tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = tableDescriptor.table.getSelectedRowModel().rows.some(
     (row) => (row.original.status as string)?.toLowerCase() === "amended"
@@ -97,6 +97,18 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
     <tr className="border-b border-border text-left bg-background text-foreground">
       <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
         <div className="flex justify-end items-center rounded-md gap-2">
+          {
+            tableDescriptor.isBulkDispatchEdit && <Button
+              leftIcon="send"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                onBulkEditSubmit();
+                tableDescriptor.table.resetRowSelection();
+                tableDescriptor.setIsBulkDispatchEdit(false);
+              }}
+            />
+          }
           {numberOfSelectedRows > 0 && !tableDescriptor.isBulkDispatchEdit && (
             <PopoverActionButton
               placement="bottom-start"

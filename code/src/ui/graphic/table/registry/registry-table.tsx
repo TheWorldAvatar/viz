@@ -11,6 +11,7 @@ import { TableDescriptor } from "hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "hooks/table/useTableDnd";
 import { useDictionary } from "hooks/useDictionary";
 
+import { RefObject, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
@@ -18,7 +19,7 @@ import { LifecycleStage } from "types/form";
 import { TableSessionContextProvider } from "utils/table/TableSessionContext";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
-import TableRow from "../row/table-row";
+import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
 
 interface RegistryTableProps {
@@ -44,6 +45,7 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const rowRefs: RefObject<TableRowHandle[]> = useRef<TableRowHandle[]>([]);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor.table,
     props.tableDescriptor.data,
@@ -56,6 +58,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         recordType={props.recordType}
         lifecycleStage={props.lifecycleStage}
         tableDescriptor={props.tableDescriptor}
+        rowRefs={rowRefs}
       >
         <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-full min-h-0">
           <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
@@ -88,10 +91,11 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                       items={dragAndDropDescriptor.dataIds}
                       strategy={verticalListSortingStrategy}
                     >
-                      {props.tableDescriptor.table.getRowModel().rows.map(row => {
+                      {props.tableDescriptor.table.getRowModel().rows.map((row, index) => {
                         const recordId: string = getRowRecordId(row.original as FieldValues);
                         return <TableRow
                           key={recordId}
+                          ref={el => { rowRefs.current[index] = el }}
                           id={recordId}
                           row={row}
                           accountType={props.accountType}

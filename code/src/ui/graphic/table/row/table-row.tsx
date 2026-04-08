@@ -7,7 +7,7 @@ import useTableSession from "hooks/table/useTableSession";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
@@ -35,6 +35,10 @@ interface TableRowProps {
   triggerRefresh: () => void;
 }
 
+export interface TableRowHandle {
+  getRowData: () => FieldValues;
+}
+
 /**
  * This component renders a draggable table row with an action menu on the first cell.
  *
@@ -44,7 +48,7 @@ interface TableRowProps {
  * @param triggerRefresh A function to refresh the table when required.
  * @param {React.ReactNode} children The content of the row.
  */
-export default function TableRow(props: Readonly<TableRowProps>) {
+export function TableRowRender(props: Readonly<TableRowProps>, ref: React.ForwardedRef<TableRowHandle>) {
   const dict: Dictionary = useDictionary();
   const [isBulkEditMode, setIsBulkEditMode] = useState<boolean>(false);
   const [dispatchDefaultValues, setDispatchDefaultValues] = useState<FieldValues>({});
@@ -181,6 +185,18 @@ export default function TableRow(props: Readonly<TableRowProps>) {
     defaultValues: dispatchDefaultValues,
   });
 
+  useImperativeHandle(ref, () => ({
+    getRowData: () => {
+      if (props.row.getIsSelected()) {
+        return {
+          ...form.getValues(),
+          id: props.id,
+        };
+      }
+      return {};
+    }
+  }));
+
   return (
     <FormSessionContextProvider formType={FormTypeMap.MASS_EDIT} entityType="">
       <tr
@@ -274,4 +290,7 @@ export default function TableRow(props: Readonly<TableRowProps>) {
       </tr>
     </FormSessionContextProvider>
   );
-}
+};
+
+const TableRow = forwardRef(TableRowRender);
+export default TableRow;
