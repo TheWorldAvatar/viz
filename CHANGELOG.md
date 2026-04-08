@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.66.2
+
+### Changes
+
+- Removed axios library as a dependancy
+
 ## 5.66.1
 
 ### Changes
