@@ -156,7 +156,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             <Checkbox
               aria-label={dict.action.selectAll}
               disabled={isLoading}
-              className="w-4 h-4 mx-2 cursor-pointer"
+              className="w-4 h-4 mx-4 cursor-pointer"
               checked={tableDescriptor.table.getIsAllPageRowsSelected()}
               handleChange={(checked) => {
                 tableDescriptor.table.getRowModel().rows.forEach((row) => {

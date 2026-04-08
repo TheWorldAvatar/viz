@@ -233,7 +233,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             {isBulkActionPermitted && (
               <Checkbox
                 aria-label={props.row.id}
-                className="mx-2 w-4 h-4 cursor-pointer"
+                className="mx-4 w-4 h-4 cursor-pointer"
                 disabled={isLoading}
                 checked={props.row.getIsSelected()}
                 handleChange={(checked) => {
