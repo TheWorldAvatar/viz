@@ -191,7 +191,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         return {
           ...form.getValues(),
           id: props.id,
-          contract: props.row.id,
+          contract: props.row.original.id,
           date: props.row.original.date,
         };
       }
