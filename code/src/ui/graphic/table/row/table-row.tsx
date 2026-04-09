@@ -51,7 +51,6 @@ export interface TableRowHandle {
 export function TableRowRender(props: Readonly<TableRowProps>, ref: React.ForwardedRef<TableRowHandle>) {
   const dict: Dictionary = useDictionary();
   const [isBulkEditMode, setIsBulkEditMode] = useState<boolean>(false);
-  const [dispatchDefaultValues, setDispatchDefaultValues] = useState<FieldValues>({});
   const [dispatchFormFields, setDispatchFormFields] = useState<Record<string, PropertyShape>>({});
 
   const { isLoading, resetFormSession } = useOperationStatus();
@@ -142,10 +141,13 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
     }
   };
 
+  const form: UseFormReturn = useForm({
+    defaultValues: {},
+  });
+
   useEffect(() => {
     // Declare an async function to retrieve the form template for executing the target action
     const getFormTemplate = async (): Promise<void> => {
-      setDispatchDefaultValues({});
       setDispatchFormFields({});
       try {
         const template: FormTemplateType = await queryInternalTaskFormTemplate(FormTypeMap.DISPATCH, props.id);
@@ -170,7 +172,8 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
           }
         });
         delete initialState.lockField;
-        setDispatchDefaultValues(initialState);
+        // reset form data state on use effect
+        form.reset(initialState);
       } catch (error) {
         console.error("Failed to fetch form template:", error);
       }
@@ -181,9 +184,6 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
     }
   }, [props.id, isBulkEditMode]);
 
-  const form: UseFormReturn = useForm({
-    defaultValues: dispatchDefaultValues,
-  });
 
   useImperativeHandle(ref, () => ({
     getRowData: () => {
