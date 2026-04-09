@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Control, Controller, FieldError, FieldValues, UseFormReturn, useWatch } from "react-hook-form";
 import { GroupBase, OptionsOrGroups } from "react-select";
 
+import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -18,15 +20,13 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import {
-  FORM_STATES,
   genDefaultSelectOption,
   getMatchingConcept,
   getRegisterOptions,
-  parseConcepts,
+  parseConcepts
 } from "ui/interaction/form/form-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormInputContainer from "../form-input-container";
-import { browserStorageManager } from "state/browser-storage-manager";
 
 interface OntologyConceptSelectorProps {
   field: PropertyShape;
@@ -50,7 +50,9 @@ export default function OntologyConceptSelector(
     control,
     name: props.field.fieldId,
   });
-  const registerOptions = getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE), dict);
+  const { formType } = useFormSession();
+
+  const registerOptions = getRegisterOptions(props.field, formType, dict);
   const effectRan = useRef(false);
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [conceptMappings, setConceptMappings] = useState<OntologyConceptMappings>({});
@@ -90,7 +92,7 @@ export default function OntologyConceptSelector(
           let firstOption: string = props.form.getValues(props.field.fieldId);
 
           // Add the default search option only if this is the search form
-          if (props.form.getValues(FORM_STATES.FORM_TYPE) === FormTypeMap.SEARCH) {
+          if (formType === FormTypeMap.SEARCH) {
             const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
             firstOption = defaultSearchOption.label.value;
             concepts.unshift(defaultSearchOption);
@@ -102,9 +104,6 @@ export default function OntologyConceptSelector(
           setConceptMappings(sortedConceptMappings);
 
           // Only auto-select default values if there's no existing value (e.g., from storage)
-          const currentFormType: string = props.form.getValues(
-            FORM_STATES.FORM_TYPE
-          );
 
           const storedValue: string = browserStorageManager.get(props.field.name[VALUE_KEY]);
 
@@ -112,7 +111,7 @@ export default function OntologyConceptSelector(
           if (!storedValue) {
             // First option should be set if available, else the first parent value should be prioritised
             const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
-            props.form.setValue(props.field.fieldId, currentFormType === FormTypeMap.ADD
+            props.form.setValue(props.field.fieldId, formType === FormTypeMap.ADD
               // For add forms, default to default value if available, else, return undefined
               ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
               // For every other form type, extract the parent option if available, else, default to base

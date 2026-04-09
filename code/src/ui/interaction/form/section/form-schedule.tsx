@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { Icon } from "@mui/material";
+import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, FormType, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
+import { FormFieldOptions, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import DateInput from "ui/interaction/input/date-input";
@@ -61,8 +62,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const alternateService: string = dict.form.alternateService;
   const perpetualService: string = dict.form.perpetualService;
   const fixedService: string = dict.form.fixedService;
-  const formType: FormType = props.form.getValues(FORM_STATES.FORM_TYPE);
   const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
+  const { formType } = useFormSession();
   const isDisabledOption: { disabled: boolean } = {
     disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
   };

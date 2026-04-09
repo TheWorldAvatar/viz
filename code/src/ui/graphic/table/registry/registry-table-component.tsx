@@ -5,18 +5,18 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { DateRange } from "react-day-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, selectItem } from "state/context-menu-slice";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import { TableColumnOption } from "types/settings";
+import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
   getInitialDateFromLifecycleStage,
   parseWordsForLabels
 } from "utils/client-utils";
-import { addItem, selectItem } from "state/context-menu-slice";
-import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
@@ -68,6 +68,11 @@ export default function RegistryTableComponent(
     selectedDate,
   );
 
+  const triggerTableRefresh = () => {
+    triggerRefresh();
+    tableDescriptor.table.resetRowSelection();
+  }
+
   useEffect(() => {
     dispatch(addItem(tableRibbonContextItem));
   }, [dispatch, tableRibbonContextItem]);
@@ -75,7 +80,7 @@ export default function RegistryTableComponent(
   useEffect(() => {
     // Trigger refresh when back navigation occurs
     const handleHistoryChange = () => {
-      triggerRefresh();
+      triggerTableRefresh();
     };
     window.addEventListener("popstate", handleHistoryChange);
     return () => {
@@ -102,7 +107,7 @@ export default function RegistryTableComponent(
             setSelectedDate={setSelectedDate}
             lifecycleStage={props.lifecycleStage}
             instances={tableDescriptor.initialInstances}
-            triggerRefresh={triggerRefresh}
+            triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
           />}
       </div>
@@ -115,7 +120,7 @@ export default function RegistryTableComponent(
           disableRowAction={false}
           selectedDate={selectedDate}
           tableDescriptor={tableDescriptor}
-          triggerRefresh={triggerRefresh}
+          triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
         />
       ) : (

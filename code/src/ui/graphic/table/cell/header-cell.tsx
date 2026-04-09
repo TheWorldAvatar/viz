@@ -19,6 +19,7 @@ interface HeaderCellProps {
   header: Header<FieldValues, unknown>;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
+  isEditable: boolean;
   disableFilter: boolean;
   disableSort: boolean;
   filters: ColumnFilter[];
@@ -32,6 +33,7 @@ interface HeaderCellProps {
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
+ * @param {boolean} isEditable Determines if the cell is editable.
  * @param {boolean} disableFilter Disables the filters when set to true.
  * @param {boolean} disableSort Disables sorting when set to true.
  * @param {ColumnFilter[]} filters Filter state for the entire table.
@@ -62,7 +64,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   return (
     <TableCell
       width={props.header.getSize()}
-      className={"bg-background font-semibold text-foreground text-left border-b border-border"}
+      className={`${props.isEditable ? "bg-success-background text-success-foreground" : ""} 
+      font-semibold text-left border-b border-border`}
     >
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">

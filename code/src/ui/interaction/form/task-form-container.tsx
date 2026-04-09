@@ -14,13 +14,12 @@ import { Routes } from "io/config/routes";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
-  FORM_IDENTIFIER,
   FormTemplateType,
   FormType,
   FormTypeMap,
   PropertyShapeOrGroup,
   RegistryStatusMap,
-  RegistryTaskType,
+  RegistryTaskType
 } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { toast } from "ui/interaction/action/toast/toast";
@@ -31,9 +30,9 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { compareDates, getAfterDelimiter, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, getId, parseWordsForLabels } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 import ExternalRedirectButton from "../action/redirect/external-redirect-button";
 
@@ -52,7 +51,7 @@ export function InterceptTaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
+    <FormSessionContextProvider formType={props.formType} entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
       props.formType === FormTypeMap.REPORT ? "report" :
         props.formType === FormTypeMap.CANCEL ? "cancellation" :
           "dispatch"}>
@@ -73,7 +72,7 @@ export function TaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
+    <FormSessionContextProvider formType={props.formType} entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
       props.formType === FormTypeMap.REPORT ? "report" :
         props.formType === FormTypeMap.CANCEL ? "cancellation" :
           "dispatch"}>
@@ -130,21 +129,12 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     // Declare an async function to retrieve the form template for executing the target action
     // Target id is optional, and will default to form
     const getFormTemplate = async (
-      lifecycleStage: string,
-      eventType: string,
+      eventType: FormType,
       targetId?: string
     ): Promise<void> => {
       setIsFetching(true);
       try {
-        const resBody: AgentResponseBody = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.EVENT,
-            lifecycleStage,
-            eventType,
-            targetId ? getAfterDelimiter(targetId, "/") : FORM_IDENTIFIER
-          )
-        );
-        const template = resBody.data?.items?.[0] as FormTemplateType;
+        const template: FormTemplateType = await queryInternalTaskFormTemplate(eventType, getId(targetId));
         if (template?.property) {
           setFormFields(template.property);
         }
@@ -159,16 +149,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     triggerRefresh();
     setFormFields([]);
 
-    if (props.formType === FormTypeMap.DISPATCH) {
-      getFormTemplate("service", "dispatch", id);
-    } else if (props.formType === FormTypeMap.COMPLETE) {
-      getFormTemplate("service", "complete", id);
-    } else if (props.formType === FormTypeMap.ACCRUAL) {
-      getFormTemplate("service", "accrual", id);
-    } else if (props.formType === FormTypeMap.REPORT) {
-      getFormTemplate("service", "report");
-    } else if (props.formType === FormTypeMap.CANCEL) {
-      getFormTemplate("service", "cancel");
+    if (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.COMPLETE ||
+      props.formType === FormTypeMap.ACCRUAL) {
+      getFormTemplate(props.formType, id);
+    } else if (props.formType === FormTypeMap.REPORT || props.formType === FormTypeMap.CANCEL) {
+      getFormTemplate(props.formType);
     }
   }, [id, props.formType]);
 
@@ -292,7 +277,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <FormComponent
             formRef={formRef}
             entityType={props.entityType}
-            formType={FormTypeMap.VIEW}
             id={task ? getAfterDelimiter(task.contract, "/") : ""}
           />
         )}

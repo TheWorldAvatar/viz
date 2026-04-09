@@ -46,7 +46,6 @@ import FormSkeleton from "./skeleton/form-skeleton";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
-  formType: FormType;
   entityType: string;
   id?: string;
   primaryInstance?: string;
@@ -62,7 +61,6 @@ interface FormComponentProps {
  * This component renders a dynamic form component that generates inputs based on its inputs.
  *
  * @param { React.MutableRefObject<HTMLFormElement>} formRef Reference to the form element.
- * @param {FormType} formType The type of submission based on enum.
  * @param {string} entityType The type of entity.
  * @param {string} id An optional identifier input.
  * @param {string} primaryInstance An optional instance for the primary entity.
@@ -78,7 +76,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
+  const { formType, addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
@@ -89,7 +87,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     defaultValues: async (): Promise<FieldValues> => {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
-        formType: props.formType, // Store form type for easy access and reduce need to pass parameters to child
         id: id,
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
@@ -99,16 +96,16 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       // Retrieve template from APIs
       let url: string;
       // For add form, get a blank template
-      if (props.formType == FormTypeMap.ADD || props.formType == FormTypeMap.SEARCH ||
-        props.formType == FormTypeMap.ADD_BILL || props.formType == FormTypeMap.ADD_PRICE) {
+      if (formType == FormTypeMap.ADD || formType == FormTypeMap.SEARCH ||
+        formType == FormTypeMap.ADD_BILL || formType == FormTypeMap.ADD_PRICE) {
         url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.entityType);
-      } else if (props.formType == FormTypeMap.ASSIGN_PRICE) {
-        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, props.formType, id);
-      } else if (props.formType == FormTypeMap.TERMINATE) {
+      } else if (formType == FormTypeMap.ASSIGN_PRICE) {
+        url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.FORM, formType, id);
+      } else if (formType == FormTypeMap.TERMINATE) {
         url =
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT,
             LifecycleStageMap.ARCHIVE,
-            props.formType,
+            formType,
             FORM_IDENTIFIER);
       } else {
         // For edit and view, get template with values
@@ -136,8 +133,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       const parsedTemplate = {
         ...template,
-        node: parseBranches(initialState, template.node, billingParamsStore, fieldIdMapping),
-        property: parsePropertyShapeOrGroupList(initialState, template.property, fieldIdMapping, billingParamsStore, props.isPrimaryEntity)
+        node: parseBranches(initialState, formType, template.node, billingParamsStore, fieldIdMapping),
+        property: parsePropertyShapeOrGroupList(initialState, formType, template.property, fieldIdMapping, billingParamsStore, props.isPrimaryEntity)
       };
 
       if (initialState.lockField.length > 0) {
@@ -210,12 +207,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       };
     }
 
-    // Remove form type state before sending to backend
-    delete formData[FORM_STATES.FORM_TYPE];
     // Ensure entry_dates is removed if not used
     delete formData[FORM_STATES.ENTRY_DATES];
 
-    switch (props.formType) {
+    switch (formType) {
       case FormTypeMap.INVOICE: {
         formData["account"] = decodeURIComponent(getId(formData[billingParams.accountField]));
         formData["task"] = [...props.selectedRowIds];
@@ -355,7 +350,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormTypeMap.TERMINATE: {
         pendingResponse = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, LifecycleStageMap.ARCHIVE, props.formType),
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, LifecycleStageMap.ARCHIVE, formType),
           "POST",
           JSON.stringify({
             ...formData,
@@ -422,33 +417,33 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     }
 
     let isInvalidPricingModel: boolean = false;
-    if (props.formType === FormTypeMap.ASSIGN_PRICE && !pendingResponse?.error) {
+    if (formType === FormTypeMap.ASSIGN_PRICE && !pendingResponse?.error) {
       const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, id, browserStorageManager.get(DATE_KEY));
       const body: AgentResponseBody = await queryInternalApi(url);
       isInvalidPricingModel = body.data.message == "false";
     }
     stopLoading();
     toast(
-      (props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel) ? dict.message.invalidPricingModelInstructions
+      (formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel) ? dict.message.invalidPricingModelInstructions
         : (pendingResponse?.data?.message || pendingResponse?.error?.message),
-      props.formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel ? "default" : pendingResponse?.error ? "error" : "success"
+      formType === FormTypeMap.ASSIGN_PRICE && isInvalidPricingModel ? "default" : pendingResponse?.error ? "error" : "success"
     );
 
-    if (!pendingResponse?.error && (props.formType != FormTypeMap.ASSIGN_PRICE || !isInvalidPricingModel)) {
+    if (!pendingResponse?.error && (formType != FormTypeMap.ASSIGN_PRICE || !isInvalidPricingModel)) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
       handleFormClose();
       handleDrawerClose(() => {
         // For assign price only, move to the next step to gen invoice
-        if (props.formType === FormTypeMap.ASSIGN_PRICE) {
+        if (formType === FormTypeMap.ASSIGN_PRICE) {
           router.replace(
             buildUrl(Routes.REGISTRY_TASK_ACCRUAL, getId(browserStorageManager.get(EVENT_KEY)))
           );
           // Close search modal on success
-        } else if (props.formType === FormTypeMap.SEARCH) {
+        } else if (formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);
-        } else if (props.formType === FormTypeMap.INVOICE) {
+        } else if (formType === FormTypeMap.INVOICE) {
           // Redirect to invoice page on success
           // Need window.location.href to ensure the page is fully reloaded to fetch the new invoice data from the table
           window.location.href = buildUrl(Routes.BILLING_INVOICE);
@@ -467,6 +462,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       {!form.formState.isLoading &&
         renderFormField(
           props.entityType,
+          formType,
           formTemplate?.property.find(
             (node) =>
               node[TYPE_KEY].includes(PROPERTY_SHAPE_TYPE) &&
@@ -494,7 +490,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               )
           )
           .map((field, index) =>
-            renderFormField(props.entityType, field, form, index, billingParams)
+            renderFormField(props.entityType, formType, field, form, index, billingParams)
           )}
     </form>
   );
@@ -506,20 +502,21 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
  * This function dynamically generates the appropriate form field component (e.g., text input, dropdown, etc.)
  * based on the structure of the `field` parameter.
  *
- * @param entityType The type of entity being edited.
- * @param field      The configuration object defining the form field.
- * @param form       A `react-hook-form` object providing methods and state for managing the form.
- * @param currentIndex An index used to generate a unique key for the rendered form field element.
+ * @param {string} entityType The type of entity being edited.
+ * @param {FormType} formType The type of the form.
+ * @param {PropertyShapeOrGroup} field      The configuration object defining the form field.
+ * @param {UseFormReturn} form       A `react-hook-form` object providing methods and state for managing the form.
+ * @param {number} currentIndex An index used to generate a unique key for the rendered form field element.
  * @param {BillingEntityTypes} billingParams Optionally indicates the type of account and pricing.
  */
 export function renderFormField(
   entityType: string,
+  formType: FormType,
   field: PropertyShapeOrGroup,
   form: UseFormReturn,
   currentIndex: number,
-  billingParams: BillingEntityTypes,
+  billingParams: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): ReactNode {
-  const formType: FormType = form.getValues(FORM_STATES.FORM_TYPE);
   const disableAllInputs: boolean =
     formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE;
 

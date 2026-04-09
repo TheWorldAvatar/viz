@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import styles from "./field.module.css";
 
+import useFormSession from "hooks/form/useFormSession";
+import { useDictionary } from "hooks/useDictionary";
 import { FieldError, UseFormReturn, useWatch } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
-  FORM_STATES,
-  getRegisterOptions,
+  getRegisterOptions
 } from "ui/interaction/form/form-utils";
 import DateInput from "ui/interaction/input/date-input";
 import { getNormalizedDate, getUTCDate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
-import { useDictionary } from "hooks/useDictionary";
 
 interface FormDateTimePickerProps {
   field: PropertyShape;
@@ -32,6 +32,9 @@ export default function FormDateTimePicker(
   const dict = useDictionary();
   const dateType: string = "date";
   const timeType: string = "time";
+
+  const { formType } = useFormSession();
+
   const watchedDateValue: string = useWatch({
     control: props.form.control,
     name: props.field.fieldId
@@ -102,7 +105,7 @@ export default function FormDateTimePicker(
             props.field.fieldId,
             getRegisterOptions(
               props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE),
+              formType,
               dict
             )
           )}
@@ -130,7 +133,7 @@ export default function FormDateTimePicker(
             props.field.fieldId,
             getRegisterOptions(
               props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE),
+              formType,
               dict
             )
           )}

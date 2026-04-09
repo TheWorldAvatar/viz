@@ -65,23 +65,28 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
     case dict.title.cancelled.toLowerCase():
       statusTextColor = "var(--error-foreground)";
       statusBackgroundColor = "var(--error-background)";
+      statusBorderColor = "var(--error-border)";
       break;
     case dict.title.issue.toLowerCase():
       statusTextColor = "var(--warning-foreground)";
       statusBackgroundColor = "var(--warning-background)";
+      statusBorderColor = "var(--warning-border)";
       break;
     case dict.title.completed.toLowerCase():
       statusTextColor = "var(--success-foreground)";
       statusBackgroundColor = "var(--success-background)";
+      statusBorderColor = "var(--success-border)";
       break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
       statusTextColor = "var(--error-foreground)";
       statusBackgroundColor = "var(--error-background)";
+      statusBorderColor = "var(--error-border)";
       break;
     default:
       statusTextColor = "var(--neutral-foreground)";
       statusBackgroundColor = "var(--neutral-background)";
+      statusBorderColor = "var(--neutral-border)";
   }
 
   return (

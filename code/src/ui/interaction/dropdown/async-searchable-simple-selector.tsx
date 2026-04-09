@@ -18,6 +18,7 @@ interface AsyncSearchableSimpleSelectorProps {
     onChange: (_value: SelectOptionType | null) => void;
     isDisabled?: boolean;
     noOptionMessage?: string;
+    menuPortalTarget?: HTMLElement
 }
 
 /**
@@ -29,6 +30,7 @@ interface AsyncSearchableSimpleSelectorProps {
  * @param onChange Function called when a selection is made.
  * @param {boolean} isDisabled Optional flag to disable the selector.
  * @param {string} noOptionMessage Optional message to display when no options are available.
+ * @param {HTMLElement} menuPortalTarget Optional target element to attach the menu. May be undefined.
  */
 export default function AsyncSearchableSimpleSelector(
     props: Readonly<AsyncSearchableSimpleSelectorProps>
@@ -71,6 +73,7 @@ export default function AsyncSearchableSimpleSelector(
             value={selectedOption}
             onChange={handleChange}
             loadOptions={props.options}
+            menuPortalTarget={props.menuPortalTarget}
             defaultOptions
             isSearchable
             isDisabled={props.isDisabled}

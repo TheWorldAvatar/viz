@@ -1,5 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 
+import useFormSession from "hooks/form/useFormSession";
 import { BillingEntityTypes, FormFieldOptions, PropertyGroup, VALUE_KEY } from "types/form";
 import { parseWordsForLabels } from "utils/client-utils";
 import FormArray from "../field/array/array";
@@ -22,6 +23,7 @@ interface FormSectionProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormSection(props: Readonly<FormSectionProps>) {
+  const { formType } = useFormSession();
   return (
     <div className="p-2 md:p-6 flex flex-col justify-center mx-auto border-2 md:border border-border bg-background rounded-lg my-14 md:my-8">
       <h2 className=" text-xl md:text-2xl  font-bold">
@@ -42,7 +44,7 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
           />
         ) : (
           props.group.property.map((field, index) =>
-            renderFormField(props.entityType, field, props.form, index,
+            renderFormField(props.entityType, formType, field, props.form, index,
               props.billingStore,
             )
           )

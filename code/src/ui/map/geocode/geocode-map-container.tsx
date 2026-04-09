@@ -11,6 +11,7 @@ import { FORM_STATES, updateLatLong } from "ui/interaction/form/form-utils";
 import { MapSettingsProvider } from "ui/map/mapbox/map-settings-context";
 import MapboxMapComponent from "ui/map/mapbox/mapbox-container";
 import { isValidCoordinates } from "utils/client-utils";
+import useFormSession from "hooks/form/useFormSession";
 
 interface GeocodeMapContainerProps {
   form: UseFormReturn;
@@ -21,10 +22,10 @@ interface GeocodeMapContainerProps {
  * Renders the geocoding map based on form inputs.
  */
 export default function GeocodeMapContainer(props: GeocodeMapContainerProps) {
-  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
   const [map, setMap] = useState<Map>(null);
   const [marker, setMarker] = useState<Marker>(null);
 
+  const { formType } = useFormSession();
 
   // Monitor longitude and latitude values
   const control: Control = props.form.control;

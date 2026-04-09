@@ -1,13 +1,15 @@
+import useFormSession from "hooks/form/useFormSession";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
-import { FormTemplateType, PROPERTY_GROUP_TYPE, PROPERTY_SHAPE_TYPE, PropertyGroup, PropertyShape, TYPE_KEY, VALUE_KEY } from "types/form";
-import { FORM_STATES, updateLatLong } from "ui/interaction/form/form-utils";
+import { FormTemplateType, FormType, PROPERTY_GROUP_TYPE, PROPERTY_SHAPE_TYPE, PropertyGroup, PropertyShape, TYPE_KEY, VALUE_KEY } from "types/form";
+import { updateLatLong } from "ui/interaction/form/form-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { ExistingCoordinatesDescriptor, useExistingLocationCoordinates } from "./useExistingLocationCoordinates";
 
 export interface GeocodeTemplateDescriptor {
   isFetching: boolean;
+  formType: FormType;
   postalCodeShape: PropertyShape;
   addressShapes: PropertyShape[];
 }
@@ -27,8 +29,8 @@ export function useGeocodeTemplate(
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [defaultCoordinates, setDefaultCoordinates] = useState<string[]>(null);
   const [addressShapes, setAddressShapes] = useState<PropertyShape[]>([]);
+  const { formType } = useFormSession();
 
-  const formType: string = form.getValues(FORM_STATES.FORM_TYPE);
   const { isFetching: isFetchingExistingCoordinates, coordinates }: ExistingCoordinatesDescriptor = useExistingLocationCoordinates(Array.isArray(field.defaultValue)
     ? field.defaultValue?.[0].value
     : field.defaultValue?.value, formType);
@@ -118,6 +120,7 @@ export function useGeocodeTemplate(
 
   return {
     isFetching: isFetching || isFetchingExistingCoordinates,
+    formType,
     postalCodeShape,
     addressShapes,
   }

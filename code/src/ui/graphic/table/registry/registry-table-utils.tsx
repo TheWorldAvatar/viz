@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { ColumnDefinitionResponse } from "types/backend-agent";
 import {
   LifecycleStage,
   RegistryFieldValues,
@@ -16,12 +17,14 @@ import {
 import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
 import { XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
-import { ColumnDefinitionResponse } from "types/backend-agent";
 
-export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & { dataType: string };
+export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
+  dataType: string;
+  stage: string;
+};
 
 /**
  * Parses the column filters into URL parameters for API querying.
@@ -140,6 +143,7 @@ export function parseColumnsMetadata(
       accessorKey: col.value,
       header: title,
       dataType: col.type == "array" ? col.type : col.datatype,
+      stage: col.stage,
       cell: ({ getValue }) => {
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
@@ -253,6 +257,24 @@ export function translateLifecycleFields(field: string, titleDict: Record<string
     default:
       return field;
   }
+}
+
+/**
+ * Retrieves the record ID for a given row, prioritizing 'event_id', then 'id', and finally 'iri'.
+ *
+ * @param {FieldValues} row The row data.
+ * @returns {string} The record ID.
+ */
+export function getRowRecordId(row: FieldValues): string {
+  if (row.event_id) {
+    return getId(row.event_id);
+  }
+
+  if (row.id) {
+    return getId(row.id);
+  }
+
+  return getId(row.iri);
 }
 
 /**

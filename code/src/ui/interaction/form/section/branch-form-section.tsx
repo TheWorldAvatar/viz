@@ -21,6 +21,7 @@ import { parseWordsForLabels } from "utils/client-utils";
 import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 import { renderFormField } from "../form";
 import { FORM_STATES, parsePropertyShapeOrGroupList } from "../form-utils";
+import useFormSession from "hooks/form/useFormSession";
 
 interface BranchFormSectionProps {
   entityType: string;
@@ -41,7 +42,7 @@ export default function BranchFormSection(
   props: Readonly<BranchFormSectionProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
+  const { formType } = useFormSession();
   const [isSwitching, setIsSwitching] = useState<boolean>(false);
   // Define the state to store the selected value
   const [selectedModel, setSelectedModel] = useState<NodeShape>(formType == FormTypeMap.VIEW ? props.node[0] :
@@ -68,10 +69,9 @@ export default function BranchFormSection(
 
   // Handle change event for the branch selection
   const handleModelChange = (formOption: SelectOptionType) => {
-    const formType: string = props.form.getValues(FORM_STATES.FORM_TYPE);
     const newBranchName: string = formOption.value;
 
-    if (formType === FormTypeMap.EDIT) {
+    if (formType === FormTypeMap.EDIT || formType === FormTypeMap.MASS_EDIT) {
       //  branch_add is the new selection, branch_delete stays as original
       props.form.setValue(BRANCH_ADD, newBranchName);
       // branch_delete remains the original value (already set in useEffect)
@@ -102,7 +102,7 @@ export default function BranchFormSection(
     });
     // Update form branch fields and values
     const nodeState: FieldValues = {};
-    parsePropertyShapeOrGroupList(nodeState, matchingNode.property);
+    parsePropertyShapeOrGroupList(nodeState, formType, matchingNode.property);
     setSelectedModel(matchingNode);
     setTimeout(() => setIsSwitching(false), 250);
   };
@@ -122,8 +122,8 @@ export default function BranchFormSection(
             }
           }}
           isDisabled={
-            props.form.getValues(FORM_STATES.FORM_TYPE) == "delete" ||
-            props.form.getValues(FORM_STATES.FORM_TYPE) == "view"
+            formType == FormTypeMap.DELETE ||
+            formType == FormTypeMap.VIEW
           }
         />}
         <p className="text-md md:text-lg">
@@ -133,7 +133,7 @@ export default function BranchFormSection(
       </div>
       {isSwitching ? <LoadingSpinner isSmall={true} />
         : selectedModel?.property.map((field, index) => {
-          return renderFormField(props.entityType, field, props.form, index, props.billingStore);
+          return renderFormField(props.entityType, formType, field, props.form, index, props.billingStore);
         })}
     </>
   );

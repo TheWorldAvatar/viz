@@ -34,7 +34,7 @@ export default function InvoiceFormComponent(
     props: Readonly<InvoiceFormComponentProps>
 ) {
     return (
-        <FormSessionContextProvider entityType={props.entityType} accountType={props.accountType}>
+        <FormSessionContextProvider formType={FormTypeMap.INVOICE} entityType={props.entityType} accountType={props.accountType}>
             <InvoiceFormContents {...props} />
         </FormSessionContextProvider>
     );
@@ -80,7 +80,6 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         (<FormComponent
                             formRef={formRef}
                             entityType={FormTypeMap.INVOICE}
-                            formType={FormTypeMap.INVOICE}
                             accountType={props.accountType}
                             selectedRowIds={tableDescriptor.selectedRowIds}
                         />
