@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.1
+
+### Bug fixes
+
+- Fixed drag interactions with checkboxes
+- Fixed event propagations from mass edit fields to checkboxes
+
 ## 5.67.0
 
 ### Changes

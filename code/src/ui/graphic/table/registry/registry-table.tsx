@@ -47,9 +47,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
   const rowRefs: RefObject<TableRowHandle[]> = useRef<TableRowHandle[]>([]);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
-    props.tableDescriptor.table,
-    props.tableDescriptor.data,
-    props.tableDescriptor.setData
+    props.tableDescriptor,
+    rowRefs,
   );
 
   if (props.tableDescriptor.table.getVisibleLeafColumns().length > 0) {
