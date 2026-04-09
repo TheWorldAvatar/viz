@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.0
+
+### Changes
+
+- Added bulk assignment functionality supported by backend changes
+- Bump min version of `VisBackend Agent` from `v1.43.1` to `v1.44.0`
+
+### Bug fixes
+
+- Fixed an issue with the reschedule button not showing up due to bad condition
+
 ## 5.66.2
 
 ### Changes
