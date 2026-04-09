@@ -114,8 +114,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                     label={dict.action.dispatch}
                     variant="ghost"
                     disabled={isLoading}
-                    onClick={() => {
-                      onBulkEditSubmit();
+                    onClick={async () => {
+                      await onBulkEditSubmit();
                       tableDescriptor.table.resetRowSelection();
                       tableDescriptor.setIsBulkDispatchEdit(false);
                       props.triggerRefresh();
