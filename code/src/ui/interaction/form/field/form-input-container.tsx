@@ -31,7 +31,7 @@ export default function FormInputContainer(
   const { formType } = useFormSession();
 
   if (formType === FormTypeMap.MASS_EDIT) {
-    return props.children;
+    return <div onClick={(e) => e.stopPropagation()}>{props.children}</div>;
   }
 
   const labelClassNames: string = props.labelStyles?.join(" ");
