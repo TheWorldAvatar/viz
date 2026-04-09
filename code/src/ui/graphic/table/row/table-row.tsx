@@ -208,9 +208,11 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
           transition: transition,
         }}
         onClick={() => {
-          if (!isBulkEditMode) {
-            setIsBulkEditMode(true);
-            props.row.toggleSelected(true);
+          if (tableDescriptor.isBulkDispatchEdit) {
+            if (!isBulkEditMode) {
+              setIsBulkEditMode(true);
+            }
+            props.row.toggleSelected(!props.row.getIsSelected());
           }
         }}
         className={`border-b border-border text-left relative ${isDragging ? "z-10 opacity-70" : "z-0"} ${rowBackgroundClass}`}
@@ -270,7 +272,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             return <TableCell
               key={cell.id + index}
               width={cell.column.getSize()}
-              className={`${tableDescriptor.isBulkDispatchEdit && isBulkEditMode ? "cursor-default" : "cursor-pointer"}`}
+              className="cursor-pointer"
               onClick={tableDescriptor.isBulkDispatchEdit ? undefined : () => {
                 if (lifecycleStage == LifecycleStageMap.BILLABLE) {
                   const isSelected: boolean = props.row.getIsSelected();
