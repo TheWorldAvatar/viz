@@ -116,7 +116,6 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                     disabled={isLoading}
                     onClick={async () => {
                       await onBulkEditSubmit();
-                      tableDescriptor.table.resetRowSelection();
                       tableDescriptor.setIsBulkDispatchEdit(false);
                       props.triggerRefresh();
                     }}

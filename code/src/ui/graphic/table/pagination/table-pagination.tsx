@@ -32,6 +32,7 @@ export default function TablePagination() {
               value={tableDescriptor.pagination.pageSize}
               onChange={(e) => {
                 tableDescriptor.table.setPageSize(Number(e.target.value));
+                tableDescriptor.table.resetRowSelection();
               }}
               aria-label="Select page size"
             >
@@ -62,7 +63,10 @@ export default function TablePagination() {
             leftIcon="keyboard_double_arrow_left"
             size="icon"
             className="hidden! md:flex!"
-            onClick={() => tableDescriptor.table.setPageIndex(0)}
+            onClick={() => {
+              tableDescriptor.table.setPageIndex(0);
+              tableDescriptor.table.resetRowSelection();
+            }}
             disabled={tableDescriptor.pagination.pageIndex == 0}
             aria-label="Go to first page"
           />
@@ -70,7 +74,10 @@ export default function TablePagination() {
             variant="outline"
             leftIcon="keyboard_arrow_left"
             size="icon"
-            onClick={() => tableDescriptor.table.previousPage()}
+            onClick={() => {
+              tableDescriptor.table.previousPage();
+              tableDescriptor.table.resetRowSelection();
+            }}
             disabled={tableDescriptor.pagination.pageIndex == 0}
             aria-label="Go to previous page"
           />
@@ -78,7 +85,10 @@ export default function TablePagination() {
             variant="outline"
             leftIcon="keyboard_arrow_right"
             size="icon"
-            onClick={() => tableDescriptor.table.nextPage()}
+            onClick={() => {
+              tableDescriptor.table.nextPage();
+              tableDescriptor.table.resetRowSelection();
+            }}
             disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1}
             aria-label="Go to next page"
           />
@@ -87,7 +97,10 @@ export default function TablePagination() {
             leftIcon="keyboard_double_arrow_right"
             className="hidden! md:flex!"
             size="icon"
-            onClick={() => tableDescriptor.table.setPageIndex(lastPageIndex - 1)}
+            onClick={() => {
+              tableDescriptor.table.setPageIndex(lastPageIndex - 1);
+              tableDescriptor.table.resetRowSelection();
+            }}
             disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1}
             aria-label="Go to last page"
           />

@@ -68,6 +68,11 @@ export default function RegistryTableComponent(
     selectedDate,
   );
 
+  const triggerTableRefresh = () => {
+    triggerRefresh();
+    tableDescriptor.table.resetRowSelection();
+  }
+
   useEffect(() => {
     dispatch(addItem(tableRibbonContextItem));
   }, [dispatch, tableRibbonContextItem]);
@@ -75,7 +80,7 @@ export default function RegistryTableComponent(
   useEffect(() => {
     // Trigger refresh when back navigation occurs
     const handleHistoryChange = () => {
-      triggerRefresh();
+      triggerTableRefresh();
     };
     window.addEventListener("popstate", handleHistoryChange);
     return () => {
@@ -102,7 +107,7 @@ export default function RegistryTableComponent(
             setSelectedDate={setSelectedDate}
             lifecycleStage={props.lifecycleStage}
             instances={tableDescriptor.initialInstances}
-            triggerRefresh={triggerRefresh}
+            triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
           />}
       </div>
@@ -115,7 +120,7 @@ export default function RegistryTableComponent(
           disableRowAction={false}
           selectedDate={selectedDate}
           tableDescriptor={tableDescriptor}
-          triggerRefresh={triggerRefresh}
+          triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
         />
       ) : (
