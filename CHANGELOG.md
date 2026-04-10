@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.3
+
+### Bug fixes
+
+- Fixed optional arrays initialisation
+- Fixed to submit current id instead of a random id when continue work on next working day
+- Bump min version of `VisBackend Agent` from `v1.44.0` to `v1.44.2`
+
 ## 5.67.2
 
 ### Bug fixes
