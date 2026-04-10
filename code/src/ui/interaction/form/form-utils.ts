@@ -165,7 +165,7 @@ export function parsePropertyShapeOrGroupList(
             initialState,
             fieldsetName,
             true,
-            parseInt(updatedProp.minCount?.[VALUE_KEY])
+            parseInt(fieldset.minCount?.[VALUE_KEY] ?? "1")
           );
         }
         // Replace account or pricing field with the field ID so that we can still retrieve the old values
@@ -369,9 +369,7 @@ function initFormField(
     // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
       // Ensure the current field is optional
-      outputState[fieldId].push({
-        parsedFieldId: "",
-      });
+      outputState[fieldId] = [];
       // Terminate early
       return {
         ...field,
