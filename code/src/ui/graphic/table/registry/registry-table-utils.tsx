@@ -184,7 +184,7 @@ export function parseColumnsMetadata(
   }
   const configuredColumnMap: Map<string, TableColumnOption> = new Map(
     columnOptions.map((item, index) => [
-      translateLifecycleFields(item.name, titleDict),
+      item.name,
       { ...item, order: index }
     ])
   );

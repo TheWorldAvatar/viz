@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.2
+
+### Bug fixes
+
+- Fixed optional ontology selector to default to NA option
+- Fixed column setting override of default columns like last modified and schedule type
+
 ## 5.67.1
 
 ### Bug fixes
