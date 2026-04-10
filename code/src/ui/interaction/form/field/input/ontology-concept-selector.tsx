@@ -104,22 +104,28 @@ export default function OntologyConceptSelector(
           setConceptMappings(sortedConceptMappings);
 
           // Only auto-select default values if there's no existing value (e.g., from storage)
-
           const storedValue: string = browserStorageManager.get(props.field.name[VALUE_KEY]);
 
           // Only set a default value if there's no existing value (preserve stored values)
           if (!storedValue) {
+
             // First option should be set if available, else the first parent value should be prioritised
             const firstRootOption: OntologyConcept = sortedConceptMappings[ONTOLOGY_CONCEPT_ROOT][0];
-            props.form.setValue(props.field.fieldId, formType === FormTypeMap.ADD
-              // For add forms, default to default value if available, else, return undefined
-              ? Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value
-              // For every other form type, extract the parent option if available, else, default to base
-              : sortedConceptMappings[firstRootOption?.type.value]
-                ? sortedConceptMappings[firstRootOption.type.value][0]?.type
-                  ?.value
-                : firstRootOption?.type?.value
-            );
+
+            let value: string;
+            // For add forms, default to default value if available, else, return undefined
+            if (props.field.defaultValue) {
+              value = Array.isArray(props.field.defaultValue) ? props.field.defaultValue?.[0].value : props.field.defaultValue?.value;
+              // For every other form type, extract the parent option if available
+            } else if (sortedConceptMappings[firstRootOption?.type.value]) {
+              value = sortedConceptMappings[firstRootOption.type.value][0]?.type?.value;
+              // else, default to base
+            } else if (props.field.minCount?.[VALUE_KEY] == "0") {
+              value = "";
+            } else {
+              value = firstRootOption?.type?.value;
+            }
+            props.form.setValue(props.field.fieldId, value);
           } else {
             props.form.setValue(props.field.fieldId, storedValue);
           }
