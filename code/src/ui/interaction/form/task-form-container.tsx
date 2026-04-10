@@ -201,7 +201,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     );
 
     if (!response?.error && isDuplicate) {
-      response = await submitLifecycleAction(formData, "continue", true);
+      // Override id with the current ID based on path
+      response = await submitLifecycleAction({
+        ...formData,
+        id
+      }, "continue", true);
       setIsDuplicate(false);
     }
 
