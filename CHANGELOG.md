@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.4
+
+### Bug fixes
+
+- Fixed autofilled for the initial optional selector
+
 ## 5.67.3
 
 ### Bug fixes
