@@ -13,6 +13,7 @@ interface MultivalueDropdownProps {
   toggleAll?: boolean;
   isActive?: boolean;
   isClearable?: boolean;
+  ariaLabel?: string;
   controlledSelectedOptions?: SelectOptionType[];
   setControlledSelectedOptions?: React.Dispatch<
     React.SetStateAction<SelectOptionType[]>
@@ -27,6 +28,7 @@ interface MultivalueDropdownProps {
  * @param {boolean} toggleAll - Provides an additional option to select all options. Defaults to false.
  * @param {boolean} isActive - Renders different style to indicate the input is currently active. Defaults to false.
  * @param {boolean} isClearable - All values in the dropdown can be cleared with an additional input. Defaults to true.
+ * @param {string} ariaLabel - Optional parameter to set the aria-label attribute for accessibility.
  * @param {SelectOptionType[]} controlledSelectedOptions - Optional controlled state for the selected options.
  * @param setControlledSelectedOptions - Optional dispatch method to update selected options for further processing.
  */
@@ -124,6 +126,7 @@ export default function MultivalueSelector(
       isSearchable
       className="text-base"
       isClearable={props.isClearable ?? true}
+      aria-label={props.ariaLabel}
       styles={getCustomStyles()}
     />
   );

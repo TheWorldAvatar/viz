@@ -19,6 +19,7 @@ interface AsyncSearchableSimpleSelectorProps {
     isDisabled?: boolean;
     noOptionMessage?: string;
     menuPortalTarget?: HTMLElement
+    ariaLabel?: string;
 }
 
 /**
@@ -31,6 +32,7 @@ interface AsyncSearchableSimpleSelectorProps {
  * @param {boolean} isDisabled Optional flag to disable the selector.
  * @param {string} noOptionMessage Optional message to display when no options are available.
  * @param {HTMLElement} menuPortalTarget Optional target element to attach the menu. May be undefined.
+ * @param {string} ariaLabel Optional parameter to set the aria-label attribute for accessibility.
  */
 export default function AsyncSearchableSimpleSelector(
     props: Readonly<AsyncSearchableSimpleSelectorProps>
@@ -79,6 +81,7 @@ export default function AsyncSearchableSimpleSelector(
             isDisabled={props.isDisabled}
             noOptionsMessage={() => props.noOptionMessage ?? dict.message.noOptions}
             components={{ MenuList }}
+            aria-label={props.ariaLabel}
         />
     );
 }
