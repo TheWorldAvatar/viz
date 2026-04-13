@@ -119,9 +119,8 @@ export default function OntologyConceptSelector(
               // For every other form type, extract the parent option if available
             } else if (sortedConceptMappings[firstRootOption?.type.value]) {
               value = sortedConceptMappings[firstRootOption.type.value][0]?.type?.value;
-              // else, default to base
-            } else if (props.field.minCount?.[VALUE_KEY] == "0") {
-              value = "";
+              // For optional fields or add form types, it should default to undefined 
+            } else if (props.field.minCount?.[VALUE_KEY] == "0" || formType === FormTypeMap.ADD || formType === FormTypeMap.ADD_BILL || formType === FormTypeMap.ADD_PRICE) {
             } else {
               value = firstRootOption?.type?.value;
             }
