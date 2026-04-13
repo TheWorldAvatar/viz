@@ -54,6 +54,7 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
           isClearable={false}
           controlledSelectedOptions={selectedOptions}
           setControlledSelectedOptions={setSelectedOptions}
+          ariaLabel={dict.title.customiseCol}
         />
       </div>
     </div>

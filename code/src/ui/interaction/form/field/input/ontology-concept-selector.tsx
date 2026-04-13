@@ -205,6 +205,7 @@ export default function OntologyConceptSelector(
                 }}
                 isDisabled={props.options?.disabled}
                 reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
+                ariaLabel={props.field.name[VALUE_KEY]}
               />
             );
           }}
