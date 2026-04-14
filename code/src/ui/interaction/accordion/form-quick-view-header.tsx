@@ -88,6 +88,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
         iconSize="small"
         variant="outline"
         onClick={toggleContent}
+        aria-label={`Quick view ${props.fieldLabel ? `for ${props.fieldLabel}` : ""}`}
         aria-expanded={props.isOpen}
         aria-controls={`accordion-content-${props.id}`}
         className="text-xs"
