@@ -54,10 +54,17 @@ export function useTableData(
   const [data, setData] = useState<FieldValues[]>([]);
   const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
 
-  const isInitialLoad = useRef(true);
+  const [prevFlag, setPrevFlag] = useState(refreshFlag);
 
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
+
+    // Check if refreshFlag is going from true to false, if so, skip fetching data
+    const isResetting = prevFlag === true && refreshFlag === false;
+    setPrevFlag(refreshFlag); // Sync for next time
+
+    if (isResetting) return;
+
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
@@ -142,12 +149,7 @@ export function useTableData(
       }
     };
 
-    if (isInitialLoad.current || refreshFlag) {
-      // fetch data when the component first mounts or when refreshFlag is true
-      fetchData();
-      // After the first run, set the ref to false forever
-      isInitialLoad.current = false;
-    }
+    fetchData();
 
   }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, columnOptions, entityType]);
 
