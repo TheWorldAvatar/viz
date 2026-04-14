@@ -1,6 +1,6 @@
 import { ColumnFilter, PaginationState, SortingState } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
@@ -53,6 +53,9 @@ export function useTableData(
   const [totalCount, setTotalCount] = useState<number>(0);
   const [data, setData] = useState<FieldValues[]>([]);
   const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
+
+  const isInitialLoad = useRef(true);
+
   // A hook that refetches all data when the dialogs are closed
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -139,7 +142,13 @@ export function useTableData(
       }
     };
 
-    fetchData();
+    if (isInitialLoad.current || refreshFlag) {
+      // fetch data when the component first mounts or when refreshFlag is true
+      fetchData();
+      // After the first run, set the ref to false forever
+      isInitialLoad.current = false;
+    }
+
   }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, columnOptions, entityType]);
 
   return {
