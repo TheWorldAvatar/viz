@@ -118,6 +118,7 @@ export default function FormDateTimePicker(
             disableMobileView={true}
             disabled={props.options.disabled}
             required={!isOptionalDateField}
+            ariaLabel={props.field.name[VALUE_KEY]}
           />
         </div>
       ) : (

@@ -16,7 +16,7 @@ import Button from "ui/interaction/button";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
+import { extractDateDisplay, getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
@@ -142,6 +142,7 @@ function TaskFormContents() {
               placement="bottom"
               disableMobileView={true}
               disabled={isFetching || isLoading}
+              ariaLabel={`${dict.form.rescheduleDate} ${selectedDate ? extractDateDisplay(selectedDate, "single") : ""}`}
             />
           </div>
         )}

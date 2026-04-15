@@ -235,6 +235,35 @@ export function getNormalizedDate(date: Date): string {
 }
 
 /**
+ * Extracts and formats the display string for the target date(s) based on the specified mode.
+ *
+ * @param {Date | DateRange | Date[] | undefined} targetDate The target date, date range, or multiple dates.
+ * @param {"single" | "range" | "multiple"} mode The mode of the date input.
+ * @returns {string} The formatted string to display.
+ */
+
+export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined, mode: "single" | "range" | "multiple"): string => {
+  if (mode === "single") {
+    if (!targetDate) return "";
+    return getNormalizedDate(targetDate as Date);
+  }
+  if (mode === "multiple") {
+    const dates: Date[] = targetDate as Date[];
+    if (!Array.isArray(dates) || dates.length === 0) return "";
+    const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
+    const first: string = sortedDates[0].toLocaleDateString();
+    const last: string = sortedDates.at(-1).toLocaleDateString();
+    return dates.length === 1 ? first : `${first} - ${last}`;
+  }
+  // range mode
+  const targetDateRange: DateRange = targetDate as DateRange;
+  const fromDate: string = targetDateRange?.from?.toLocaleDateString();
+  const toDate: string = targetDateRange?.to?.toLocaleDateString();
+  return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
+};
+
+
+/**
  * Get the configuration for a toast notification.
  *
  * @param type The type of toast .

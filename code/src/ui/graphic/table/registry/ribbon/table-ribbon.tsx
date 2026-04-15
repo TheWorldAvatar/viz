@@ -18,6 +18,7 @@ import DateInput from "ui/interaction/input/date-input";
 import { buildUrl } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { extractDateDisplay } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -208,6 +209,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
                 disabledDates={getDisabledDates(props.lifecycleStage)}
+                ariaLabel={`${dict.message.pickDateRange} ${props.selectedDate ? extractDateDisplay(props.selectedDate, "range") : ""}`}
               />
             )}
           {(props.lifecycleStage == LifecycleStageMap.PENDING ||

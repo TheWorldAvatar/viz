@@ -15,7 +15,7 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
-import { getInitialDate, handleDownload } from "utils/client-utils";
+import { extractDateDisplay, getInitialDate, handleDownload } from "utils/client-utils";
 import { queryDefaultFileExportAPI, postFileUploadAPI } from "utils/internal-api-services";
 
 interface FileModalProps {
@@ -130,6 +130,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
                   setSelectedDateRange={setSelectedDate}
                   placement="bottom"
                   disableMobileView={true}
+                  ariaLabel={`${dict.message.pickDateRange} ${selectedDate ? extractDateDisplay(selectedDate, "range") : ""}`}
                 />
               </div>
             )}
