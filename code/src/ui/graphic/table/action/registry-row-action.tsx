@@ -394,7 +394,11 @@ export default function RegistryRowAction(
             className="w-full justify-start"
             label={dict.action.waiveBillable}
             disabled={isLoading}
-            onClick={onWaiveBillable}
+            onClick={() => {
+              markRowAsActive();
+              setIsActionMenuOpen(false);
+              navigateToDrawer(Routes.REGISTRY_TASK_WAIVE, recordId);
+            }}
           />}
           {isActionAllowed("VIEW_BILLABLES") && <Button
             variant="ghost"
