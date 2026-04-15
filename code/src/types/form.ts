@@ -168,9 +168,9 @@ interface JsonLdLiteral {
 export interface RegistryTaskOption {
   id: string;
   contract: string;
-  status: string;
   date: string;
-  scheduleType: string;
+  status?: string;
+  scheduleType?: string;
 }
 
 export type RegistryTaskType =
