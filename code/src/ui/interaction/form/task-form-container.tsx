@@ -154,7 +154,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     if (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.COMPLETE ||
       props.formType === FormTypeMap.ACCRUAL) {
       getFormTemplate(props.formType, id);
-    } else if (props.formType === FormTypeMap.REPORT || props.formType === FormTypeMap.CANCEL) {
+    } else if (props.formType === FormTypeMap.REPORT || props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.WAIVE) {
       getFormTemplate(props.formType);
     }
   }, [id, props.formType]);
@@ -194,6 +194,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
       } else if (props.formType === FormTypeMap.ACCRUAL) {
         action = "accrual";
+      } else if (props.formType === FormTypeMap.WAIVE) {
+        action = "waive";
       } else {
         return;
       }
@@ -349,7 +351,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           {/* Submit button - shown for non-view task types */}
           {(props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.COMPLETE ||
             props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.REPORT ||
-            props.formType === FormTypeMap.ACCRUAL
+            props.formType === FormTypeMap.ACCRUAL || props.formType === FormTypeMap.WAIVE
           ) && <Button
               leftIcon="send"
               label={dict.action.submit}
