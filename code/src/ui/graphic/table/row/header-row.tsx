@@ -146,7 +146,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                     )}
                   </>
                 )}
-                {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED) && (
+                {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED) 
+                  && !tableDescriptor.isBulkDispatchEdit && (
                   <Button
                     leftIcon="assignment_add"
                     label={dict.action.dispatch}
