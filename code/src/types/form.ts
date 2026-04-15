@@ -38,6 +38,7 @@ export const FormTypeMap = {
   COMPLETE: "complete",
   CANCEL: "cancel",
   REPORT: "report",
+  WAIVE: "waive",
   MASS_EDIT: "massedit",
   TERMINATE: "terminate",
   INVOICE: "invoice",
