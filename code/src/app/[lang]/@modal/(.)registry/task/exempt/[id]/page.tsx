@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the intercepted route for waiving a task through a modal.
+ * Displays the intercepted route for exempting a task from billing through a modal.
  */
 export default async function InterceptExemptTaskPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();

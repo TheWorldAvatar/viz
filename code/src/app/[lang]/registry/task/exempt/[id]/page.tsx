@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the form page for waiving a task.
+ * Displays the form page for exempting a task from billing.
  */
 export default async function ExemptFormPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();

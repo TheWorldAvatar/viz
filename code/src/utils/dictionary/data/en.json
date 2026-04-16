@@ -38,7 +38,7 @@
     "cancel": "Cancel",
     "report": "Report",
     "reviewBillable": "Review billables",
-    "exemptBillable": "Exempt billables",
+    "exemptBillable": "Exempt task from billing",
     "submit": "Submit",
     "reschedule": "Reschedule",
     "submitAndDuplicate": "Submit and duplicate",
