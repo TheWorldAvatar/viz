@@ -152,22 +152,6 @@ export default function RegistryRowAction(
     }
   };
 
-  const onExemptBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const reqBody: JsonObject = {
-      contract: getId(props.row.id),
-      id: recordId,
-      date: props.row.date,
-      remarks: "Billable has been exempted successfully!",
-    };
-    const url: string = makeInternalRegistryAPIwithParams(
-      InternalApiIdentifierMap.EVENT,
-      "service",
-      "exempt"
-    );
-    markRowAsActive();
-    submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
-  };
-
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
     props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
