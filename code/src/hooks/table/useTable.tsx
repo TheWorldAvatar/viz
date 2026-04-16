@@ -47,7 +47,7 @@ export interface TableDescriptor {
 * A custom hook to retrieve table data into functionalities for the registry table to function.
 *
 * @param {string} entityType Type of entity for rendering.
-* @param {boolean} refreshFlag Flag to trigger refresh when required.
+* @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
@@ -55,7 +55,7 @@ export interface TableDescriptor {
 */
 export function useTable(
   entityType: string,
-  refreshFlag: boolean,
+  refreshId: number,
   lifecycleStage: LifecycleStage,
   tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
@@ -75,7 +75,7 @@ export function useTable(
     entityType,
     sortParams,
     sorting,
-    refreshFlag,
+    refreshId,
     lifecycleStage,
     selectedDate,
     apiPagination,

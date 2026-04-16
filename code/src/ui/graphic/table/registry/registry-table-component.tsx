@@ -43,7 +43,7 @@ export default function RegistryTableComponent(
   const dict: Dictionary = useDictionary();
   const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
-  const { refreshFlag, triggerRefresh } = useOperationStatus();
+  const { refreshId, refreshFlag, triggerRefresh } = useOperationStatus();
   const [selectedDate, setSelectedDate] = useState<DateRange>(
     getInitialDateFromLifecycleStage(props.lifecycleStage)
   );
@@ -61,7 +61,7 @@ export default function RegistryTableComponent(
 
   const tableDescriptor: TableDescriptor = useTable(
     props.entityType,
-    refreshFlag,
+    refreshId,
     props.lifecycleStage,
     props.tableColumnOptions,
     null,
