@@ -118,7 +118,7 @@ export default function FormDateTimePicker(
             disableMobileView={true}
             disabled={props.options.disabled}
             required={!isOptionalDateField}
-            ariaLabel={props.field.name[VALUE_KEY]}
+            ariaLabel={`${dict.action.select} ${props.field.name[VALUE_KEY]}`}
           />
         </div>
       ) : (
@@ -129,7 +129,7 @@ export default function FormDateTimePicker(
             }`}
           type={inputType}
           readOnly={props.options?.disabled}
-          aria-label={props.field.name[VALUE_KEY]}
+          aria-label={`${dict.action.select} ${props.field.name[VALUE_KEY]}`}
           {...props.form.register(
             props.field.fieldId,
             getRegisterOptions(
