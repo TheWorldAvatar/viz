@@ -2,11 +2,13 @@
   "lang": "de",
   "action": {
     "add": "Hinzufügen",
+    "addItem": "{replace} hinzufügen",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
-    "addItem": "{replace} hinzufügen",
-    "edit": "Bearbeiten",
     "delete": "Löschen",
+    "deleteItem": "{replace} löschen",
+    "edit": "Bearbeiten",
+    "editItem": "{replace} bearbeiten",
     "dismiss": "Schließen",
     "view": "Anzeigen",
     "close": "Schließen",
@@ -60,7 +62,8 @@
     "showLess": "Weniger anzeigen",
     "addInvoice": "Rechnung hinzufügen",
     "bulkAssign": "Massenzuweisung",
-    "select": "Wählen"
+    "select": "Wählen",
+    "selectItem": "{replace} wählen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -132,8 +135,8 @@
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {
-    "title": "Versteckband",
-    "tooltip": "Band ein-/ausblenden"
+      "title": "Versteckband",
+      "tooltip": "Band ein-/ausblenden"
     }
   },
   "message": {
@@ -262,7 +265,7 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "quickView": "Schnellansicht",
-    "quickViewFor": "Schnellansicht für",
+    "quickViewFor": "Schnellansicht für {replace}",
     "serviceCharge": "Servicegebühren",
     "serviceCostBreakdown": "Aufschlüsselung der Servicekosten",
     "scheduleType": "Art des Zeitplans",

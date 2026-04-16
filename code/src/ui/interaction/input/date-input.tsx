@@ -34,7 +34,6 @@ interface DateInputProps {
   disabled?: boolean;
   disableMobileView?: boolean;
   required?: boolean;
-  ariaLabel?: string;
   mode: "single" | "range" | "multiple";
 }
 
@@ -48,7 +47,6 @@ interface DateInputProps {
  * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
  * @param {boolean} required Whether the date input is required or not. Only applicable in single date mode.
- * @param {string} ariaLabel The aria-label for the input button.
  * @param {"single" | "range" | "multiple"} mode The mode of the date input, either single date, date range or multiple dates.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
@@ -100,7 +98,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           variant="outline"
           leftIcon="date_range"
           tooltipText={dict.action.date}
-          aria-label={props.ariaLabel || displayedDateValues || dict.message.pickDateRange}
+          aria-label={displayedDateValues || dict.message.pickDateRange}
           {...popover.getReferenceProps()}
         />
       )}
@@ -134,7 +132,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               }
               {...popover.getReferenceProps()}
               disabled={props.disabled}
-              aria-label={props.ariaLabel || displayedDateValues || dict.message.pickDateRange}
+              aria-label={displayedDateValues || dict.message.pickDateRange}
             >
               {displayedDateValues}
             </button>

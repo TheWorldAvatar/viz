@@ -2,12 +2,14 @@
   "lang": "en",
   "action": {
     "add": "Add",
+    "addItem": "add {replace}",
     "assign": "Assign",
     "applyFilter": "Apply filter",
-    "addItem": "add {replace}",
     "delete": "Delete",
-    "dismiss": "Dismiss",
+    "deleteItem": "delete {replace}",
     "edit": "Edit",
+    "editItem": "edit {replace}",
+    "dismiss": "Dismiss",
     "view": "view",
     "close": "Close",
     "refresh": "Refresh",
@@ -60,7 +62,8 @@
     "showLess": "Show less",
     "addInvoice": "add invoice",
     "bulkAssign": "Bulk assignment",
-    "select": "Select"
+    "select": "Select",
+    "selectItem": "select {replace}"
   },
   "form": {
     "singleService": "Single Service",
@@ -262,7 +265,7 @@
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "quickView": "Quick view",
-    "quickViewFor": "Quick view for",
+    "quickViewFor": "Quick view for {replace}",
     "serviceCharge": "Service charges",
     "serviceCostBreakdown": "Service cost breakdown",
     "scheduleType": "schedule type",

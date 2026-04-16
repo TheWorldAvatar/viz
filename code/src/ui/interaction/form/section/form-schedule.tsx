@@ -14,6 +14,7 @@ import DateInput from "ui/interaction/input/date-input";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   getUTCDate,
+  interpolate,
   parseStringsForUrls,
   parseWordsForLabels,
 } from "utils/client-utils";
@@ -265,7 +266,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 }
               }}
               isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
-              ariaLabel={`${dict.action.select} ${parseWordsForLabels(dict.title.scheduleType)}`}
+              ariaLabel={interpolate(dict.action.selectItem, parseWordsForLabels(dict.title.scheduleType))}
             />
           </div>
           {selectedServiceOption === fixedService && (
