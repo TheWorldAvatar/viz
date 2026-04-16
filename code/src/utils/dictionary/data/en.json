@@ -59,7 +59,8 @@
     "showMore": "Show more",
     "showLess": "Show less",
     "addInvoice": "add invoice",
-    "bulkAssign": "Bulk assignment"
+    "bulkAssign": "Bulk assignment",
+    "select": "Select"
   },
   "form": {
     "singleService": "Single Service",

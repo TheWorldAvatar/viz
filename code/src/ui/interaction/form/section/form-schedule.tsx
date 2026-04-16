@@ -265,7 +265,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 }
               }}
               isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
-              ariaLabel={parseWordsForLabels(dict.title.scheduleType)}
+              ariaLabel={`${dict.action.select} ${parseWordsForLabels(dict.title.scheduleType)}`}
             />
           </div>
           {selectedServiceOption === fixedService && (

@@ -59,7 +59,8 @@
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
     "addInvoice": "Rechnung hinzufügen",
-    "bulkAssign": "Massenzuweisung"
+    "bulkAssign": "Massenzuweisung",
+    "select": "Wählen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
