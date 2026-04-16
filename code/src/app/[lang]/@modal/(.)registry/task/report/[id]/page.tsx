@@ -4,6 +4,7 @@ import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import { InterceptTaskFormContainerComponent } from "ui/interaction/form/task-form-container";
+import { FormTypeMap } from "types/form";
 
 /**
  * Set page metadata.
@@ -29,7 +30,7 @@ export default async function InterceptReportTaskPage() {
     return (
         <InterceptTaskFormContainerComponent
             entityType={entityType}
-            formType={"report"}
+            formType={FormTypeMap.REPORT}
         />
     );
 }
