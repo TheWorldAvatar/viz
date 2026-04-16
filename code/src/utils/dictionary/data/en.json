@@ -261,6 +261,7 @@
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "quickView": "Quick view",
+    "quickViewFor": "Quick view for",
     "serviceCharge": "Service charges",
     "serviceCostBreakdown": "Service cost breakdown",
     "scheduleType": "schedule type",

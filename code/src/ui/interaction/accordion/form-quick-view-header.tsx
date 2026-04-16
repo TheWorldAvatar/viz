@@ -19,7 +19,7 @@ interface FormQuickViewHeaderProps {
   entityType: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  fieldLabel?: string;
+  fieldLabel: string;
   accountId?: string;
   accountType?: string;
   pricingType?: string;
@@ -37,7 +37,7 @@ interface FormQuickViewHeaderProps {
  * @param {string} entityType - The type of entities.
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
- * @param {string} fieldLabel Optional parameter to specify the field name for more descriptive aria-labels on action buttons.
+ * @param {string} fieldLabel Parameter to specify the field name for more descriptive aria-labels on action buttons.
  * @param {string} accountId Optionally indicates the account ID.
  * @param {string} accountType Optionally indicates the type of account.
  * @param {string} pricingType Optionally indicates the type of pricing.
@@ -48,10 +48,6 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
   const { formType, saveCurrentSession } = useFormSession();
-
-  const addFieldLabelToAriaLabel = (ariaLabel: string): string => {
-    return props.fieldLabel ? `${ariaLabel} ${props.fieldLabel}` : ariaLabel;
-  }
 
   const toggleContent = (): void => {
     props.setIsOpen((prev) => !prev);
@@ -88,7 +84,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
         iconSize="small"
         variant="outline"
         onClick={toggleContent}
-        aria-label={`Quick view ${props.fieldLabel ? `for ${props.fieldLabel}` : ""}`}
+        aria-label={`${dict.title.quickViewFor} ${props.fieldLabel}`}
         aria-expanded={props.isOpen}
         aria-controls={`accordion-content-${props.id}`}
         className="text-xs"
@@ -102,7 +98,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             size="icon"
             iconSize="small"
             tooltipText={dict.action.add}
-            aria-label={addFieldLabelToAriaLabel(dict.action.add)}
+            aria-label={`${dict.action.add} ${props.fieldLabel}`}
             url={genSubEntityUrl("add", props.entityType)}
             softRedirect={true}
             variant="outline"
@@ -113,7 +109,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             size="icon"
             iconSize="small"
             tooltipText={dict.action.edit}
-            aria-label={addFieldLabelToAriaLabel(dict.action.edit)}
+            aria-label={`${dict.action.edit} ${props.fieldLabel}`}
             url={genSubEntityUrl(
               "edit",
               props.entityType,
@@ -128,7 +124,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             size="icon"
             iconSize="small"
             tooltipText={dict.action.delete}
-            aria-label={addFieldLabelToAriaLabel(dict.action.delete)}
+            aria-label={`${dict.action.delete} ${props.fieldLabel}`}
             url={genSubEntityUrl(
               "delete",
               props.entityType,

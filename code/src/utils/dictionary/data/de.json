@@ -261,6 +261,7 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "quickView": "Schnellansicht",
+    "quickViewFor": "Schnellansicht für",
     "serviceCharge": "Servicegebühren",
     "serviceCostBreakdown": "Aufschlüsselung der Servicekosten",
     "scheduleType": "Art des Zeitplans",
