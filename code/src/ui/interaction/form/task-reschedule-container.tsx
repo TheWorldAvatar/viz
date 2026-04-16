@@ -142,7 +142,6 @@ function TaskFormContents() {
               placement="bottom"
               disableMobileView={true}
               disabled={isFetching || isLoading}
-              ariaLabel={`${dict.form.rescheduleDate} ${selectedDate ? extractDateDisplay(selectedDate, "single") : ""}`}
             />
           </div>
         )}

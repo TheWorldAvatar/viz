@@ -281,7 +281,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 selectedDate={fixedDates}
                 setSelectedDates={handleFixedDatesChange}
                 disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
-                ariaLabel={dict.form.selectDates}
               />
               {fixedDates.length > 0 && (
                 <SelectedDatesDisplay

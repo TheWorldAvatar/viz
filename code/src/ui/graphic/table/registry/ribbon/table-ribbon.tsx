@@ -209,7 +209,6 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
                 disabledDates={getDisabledDates(props.lifecycleStage)}
-                ariaLabel={`${dict.message.pickDateRange} ${props.selectedDate ? extractDateDisplay(props.selectedDate, "range") : ""}`}
               />
             )}
           {(props.lifecycleStage == LifecycleStageMap.PENDING ||

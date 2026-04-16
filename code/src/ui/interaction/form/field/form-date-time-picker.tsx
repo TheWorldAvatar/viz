@@ -118,7 +118,7 @@ export default function FormDateTimePicker(
             disableMobileView={true}
             disabled={props.options.disabled}
             required={!isOptionalDateField}
-            ariaLabel={`${dict.action.select} ${props.field.name[VALUE_KEY]}`}
+            ariaLabel={!selectedDate ? `${dict.action.select} ${props.field.name[VALUE_KEY]}` : `${props.field.name[VALUE_KEY]}: ${selectedDate.toLocaleDateString()}`}
           />
         </div>
       ) : (

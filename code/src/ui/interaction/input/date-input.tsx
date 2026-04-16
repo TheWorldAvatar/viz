@@ -100,7 +100,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           variant="outline"
           leftIcon="date_range"
           tooltipText={dict.action.date}
-          aria-label={dict.action.date}
+          aria-label={props.ariaLabel || displayedDateValues || dict.message.pickDateRange}
           {...popover.getReferenceProps()}
         />
       )}
@@ -134,7 +134,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               }
               {...popover.getReferenceProps()}
               disabled={props.disabled}
-              aria-label={props.ariaLabel}
+              aria-label={props.ariaLabel || displayedDateValues || dict.message.pickDateRange}
             >
               {displayedDateValues}
             </button>

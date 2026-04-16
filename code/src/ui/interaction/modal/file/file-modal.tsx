@@ -130,7 +130,6 @@ export default function FileModal(props: Readonly<FileModalProps>) {
                   setSelectedDateRange={setSelectedDate}
                   placement="bottom"
                   disableMobileView={true}
-                  ariaLabel={`${dict.message.pickDateRange} ${selectedDate ? extractDateDisplay(selectedDate, "range") : ""}`}
                 />
               </div>
             )}
