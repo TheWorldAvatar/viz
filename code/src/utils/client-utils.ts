@@ -353,3 +353,13 @@ export function handleDownload(blob: Blob, fileName: string): void {
 export function buildUrl(...args: string[]): string {
   return args.join("/");
 };
+
+/**
+ * Injects a dynamic value into a translation string by replacing a specific placeholder - {replace}.
+ *
+ * @param text The localised string containing the `{replace}` placeholder.
+ * @param replacement The dynamic string to inject into the text.
+ */
+export function interpolate(text: string, replacement: string): string {
+  return text.replace("{replace}", replacement);
+};

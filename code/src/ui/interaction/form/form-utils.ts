@@ -24,7 +24,7 @@ import {
   TYPE_KEY,
   VALUE_KEY
 } from "types/form";
-import { REPLACE_DICT_KEY } from "utils/constants";
+import { interpolate } from "utils/client-utils";
 import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 import { SelectOptionType } from "../dropdown/simple-selector";
 
@@ -564,18 +564,12 @@ export function getRegisterOptions(
   if (field.minInclusive) {
     options.min = {
       value: Number(field.minInclusive[VALUE_KEY]),
-      message: dict.message.minInclusive.replace(
-        REPLACE_DICT_KEY,
-        field.minInclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.minInclusive, field.minInclusive[VALUE_KEY]),
     };
   } else if (field.minExclusive) {
     options.min = {
       value: Number(field.minExclusive[VALUE_KEY]) + 0.1,
-      message: dict.message.minExclusive.replace(
-        REPLACE_DICT_KEY,
-        field.minExclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.minExclusive, field.minExclusive[VALUE_KEY]),
     };
   }
 
@@ -583,37 +577,25 @@ export function getRegisterOptions(
   if (field.maxInclusive) {
     options.max = {
       value: Number(field.maxInclusive[VALUE_KEY]),
-      message: dict.message.maxInclusive.replace(
-        REPLACE_DICT_KEY,
-        field.maxInclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.maxInclusive, field.maxInclusive[VALUE_KEY]),
     };
   } else if (field.maxExclusive) {
     options.max = {
       value: Number(field.maxExclusive[VALUE_KEY]) + 0.1,
-      message: dict.message.maxExclusive.replace(
-        REPLACE_DICT_KEY,
-        field.maxExclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.maxExclusive, field.maxExclusive[VALUE_KEY]),
     };
   }
 
   if (field.minLength) {
     options.minLength = {
       value: Number(field.minLength[VALUE_KEY]),
-      message: dict.message.minLength.replace(
-        REPLACE_DICT_KEY,
-        field.minLength[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.minLength, field.minLength[VALUE_KEY]),
     };
   }
   if (field.maxLength) {
     options.maxLength = {
       value: Number(field.maxLength[VALUE_KEY]),
-      message: dict.message.maxLength.replace(
-        REPLACE_DICT_KEY,
-        field.maxLength[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.maxLength, field.maxLength[VALUE_KEY]),
     };
   }
 
@@ -623,10 +605,7 @@ export function getRegisterOptions(
     const msg: string =
       field.pattern[VALUE_KEY] === "^\\d+$"
         ? `${dict.message.numericalValuesOnly}`
-        : `${dict.message.patternFollowed.replace(
-          REPLACE_DICT_KEY,
-          field.pattern[VALUE_KEY]
-        )}`;
+        : `${interpolate(dict.message.patternFollowed, field.pattern[VALUE_KEY])}`;
     options.pattern = {
       value: new RegExp(field.pattern[VALUE_KEY]),
       message: msg,

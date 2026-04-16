@@ -5,7 +5,7 @@ import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import { formatDatetimeValue } from "ui/graphic/table/registry/registry-table-utils";
-import { REPLACE_DICT_KEY } from "utils/constants";
+import { interpolate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import Modal from "./modal";
 
@@ -62,7 +62,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                 <div className="flex justify-between items-center mb-4 md:mb-0">
                     <h1 className="text-lg font-semibold">{dict.title.history}</h1>
                     {!isLoading && <p className="text-base">
-                        {dictEntryMessage.replace(REPLACE_DICT_KEY, historyDetails?.length.toString())}
+                        {interpolate(dictEntryMessage, historyDetails?.length.toString())}
                     </p>}
                 </div>
                 {!isLoading && (

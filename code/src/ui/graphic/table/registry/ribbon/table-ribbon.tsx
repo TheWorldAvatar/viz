@@ -15,7 +15,7 @@ import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
-import { buildUrl } from "utils/client-utils";
+import { buildUrl, interpolate } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 
@@ -219,15 +219,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
                 leftIcon="add"
                 size="icon"
                 aria-label={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
-                  dict.action.addItem.replace(
-                    "{replace}",
-                    props.entityType.replace("_", " ")
-                  )}
+                  interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
                 tooltipText={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
-                  dict.action.addItem.replace(
-                    "{replace}",
-                    props.entityType.replace("_", " ")
-                  )}
+                  interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
                 onClick={() => {
                   browserStorageManager.clear();
                   resetFormSession();

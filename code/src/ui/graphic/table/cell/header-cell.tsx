@@ -11,6 +11,7 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import { interpolate } from "utils/client-utils";
 import TableCell from "./table-cell";
 
 interface HeaderCellProps {
@@ -99,7 +100,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               tooltipText={dict.action.filter}
               size="icon"
               className="ml-2"
-              aria-label={`${dict.action.filterBy.replace("{replace}", props.header.column.columnDef.header as string)}`}
+              aria-label={interpolate(dict.action.filterBy, props.header.column.columnDef.header as string)}
               aria-selected={isActiveFilter}
               isOpen={showFilterDropdown}
               setIsOpen={setShowFilterDropdown}

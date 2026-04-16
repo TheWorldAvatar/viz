@@ -16,6 +16,7 @@ import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { interpolate } from "utils/client-utils";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -70,7 +71,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     size="icon"
                     iconSize="small"
                     tooltipPosition="right"
-                    tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
+                    tooltipText={interpolate(dict.action.backTo, props.entityType)}
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
