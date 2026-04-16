@@ -1,15 +1,18 @@
 import { Header } from "@tanstack/react-table";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
+import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import useTableSession from "hooks/table/useTableSession";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
+import { Routes } from "io/config/routes";
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStageMap, RegistryTaskOption } from "types/form";
 import { JsonObject } from "types/json";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -17,6 +20,7 @@ import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
+import { BULK_IDENTIFIER } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
@@ -41,7 +45,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
   const dict: Dictionary = useDictionary();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
   const isPermitted = usePermissionGuard();
-  const { isLoading, startLoading, stopLoading } = useOperationStatus();
+  const { navigateToDrawer } = useDrawerNavigation();
+  const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
   const { recordType, lifecycleStage, tableDescriptor, isBulkActionPermitted, onBulkEditSubmit } = useTableSession();
   const numberOfSelectedRows: number = tableDescriptor.table.getSelectedRowModel().rows.length;
   const hasAmendedStatus: boolean = tableDescriptor.table.getSelectedRowModel().rows.some(
@@ -140,6 +145,28 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       />
                     )}
                   </>
+                )}
+                {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED) 
+                  && !tableDescriptor.isBulkDispatchEdit && (
+                  <Button
+                    leftIcon="assignment_add"
+                    label={dict.action.dispatch}
+                    variant="ghost"
+                    disabled={isLoading}
+                    onClick={() => {
+                      const tasks: RegistryTaskOption[] = [];
+                      tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
+                        tasks.push({
+                          id: getId(row.original.event_id),
+                          contract: row.original.id,
+                          date: row.original.date,
+                        }))
+                      browserStorageManager.clear();
+                      browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
+                      resetFormSession();
+                      navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, BULK_IDENTIFIER);
+                    }}
+                  />
                 )}
                 {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
                   <DraftTemplateButton

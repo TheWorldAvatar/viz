@@ -43,13 +43,13 @@ export default function InvoiceFormComponent(
 function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     const dict: Dictionary = useDictionary();
     const router = useRouter();
-    const { refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
+    const { refreshId, refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
     const { invoiceAccountFilter } = useFormSession();
 
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
-        refreshFlag,
+        refreshId,
         LifecycleStageMap.BILLABLE,
         props.tableColumnOptions,
         invoiceAccountFilter,

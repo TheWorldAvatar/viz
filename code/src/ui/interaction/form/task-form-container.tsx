@@ -11,6 +11,7 @@ import { useAttachmentCheck } from "hooks/form/useAttachmentCheck";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
+import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
@@ -31,6 +32,7 @@ import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
 import { compareDates, getAfterDelimiter, getId, parseWordsForLabels } from "utils/client-utils";
+import { BULK_IDENTIFIER } from "utils/constants";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
@@ -170,43 +172,60 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     formData: FieldValues
   ) => {
     startLoading();
-    let action = "";
-    if (props.formType === FormTypeMap.DISPATCH) {
-      action = "dispatch";
-      formData[FORM_STATES.ORDER] = 0;
-    } else if (props.formType === FormTypeMap.COMPLETE) {
-      if (isSaving) {
-        action = "saved";
-        setIsSaving(false);
+    let response: AgentResponseBody;
+    if (id != BULK_IDENTIFIER) {
+      let action = "";
+      if (props.formType === FormTypeMap.DISPATCH) {
+        action = "dispatch";
+        formData[FORM_STATES.ORDER] = 0;
+      } else if (props.formType === FormTypeMap.COMPLETE) {
+        if (isSaving) {
+          action = "saved";
+          setIsSaving(false);
+        } else {
+          action = "complete";
+        }
+        formData[FORM_STATES.ORDER] = 1;
+      } else if (props.formType === FormTypeMap.CANCEL) {
+        action = "cancel";
+        formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
+      } else if (props.formType === FormTypeMap.REPORT) {
+        action = "report";
+        formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
+      } else if (props.formType === FormTypeMap.ACCRUAL) {
+        action = "accrual";
       } else {
-        action = "complete";
+        return;
       }
-      formData[FORM_STATES.ORDER] = 1;
-    } else if (props.formType === FormTypeMap.CANCEL) {
-      action = "cancel";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
-    } else if (props.formType === FormTypeMap.REPORT) {
-      action = "report";
-      formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
-    } else if (props.formType === FormTypeMap.ACCRUAL) {
-      action = "accrual";
+
+      response = await submitLifecycleAction(
+        formData,
+        action,
+        props.formType !== FormTypeMap.DISPATCH && props.formType !== FormTypeMap.COMPLETE && props.formType !== FormTypeMap.ACCRUAL,
+      );
+
+      if (!response?.error && isDuplicate) {
+        // Override id with the current ID based on path
+        response = await submitLifecycleAction({
+          ...formData,
+          id
+        }, "continue", true);
+        setIsDuplicate(false);
+      }
     } else {
-      return;
-    }
-
-    let response: AgentResponseBody = await submitLifecycleAction(
-      formData,
-      action,
-      props.formType !== FormTypeMap.DISPATCH && props.formType !== FormTypeMap.COMPLETE && props.formType !== FormTypeMap.ACCRUAL,
-    );
-
-    if (!response?.error && isDuplicate) {
-      // Override id with the current ID based on path
-      response = await submitLifecycleAction({
-        ...formData,
-        id
-      }, "continue", true);
-      setIsDuplicate(false);
+      delete formData.id;
+      const currentTasks: FieldValues[] = (JSON.parse(browserStorageManager.get(FormTypeMap.MASS_EDIT)) as FieldValues[])
+        .map(task => {
+          return {
+            ...task,
+            ...formData
+          };
+        })
+      response = await queryInternalApi(
+        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", FormTypeMap.MASS_EDIT),
+        "PUT",
+        JSON.stringify({ items: currentTasks })
+      );
     }
 
     stopLoading();
