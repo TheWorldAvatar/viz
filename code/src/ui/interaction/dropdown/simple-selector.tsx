@@ -28,10 +28,11 @@ interface SimpleSelectorProps {
     _value: SelectValue<SelectOptionType>,
     _actionMeta: ActionMeta<SelectOptionType>
   ) => void;
+  ariaLabel: string;
   noOptionMessage?: string;
   isDisabled?: boolean;
   reqNotApplicableOption?: boolean;
-  ariaLabel?: string;
+
 }
 
 /**
@@ -40,10 +41,10 @@ interface SimpleSelectorProps {
  * @param {OptionsOrGroups<SelectOptionType, GroupBase<SelectOptionType>>} options The list of options to render.
  * @param {String} defaultVal The starting value of the selector.
  * @param onChange Function to handle the event when selecting a new element.
+ * @param {string} ariaLabel Parameter to set the aria-label attribute for accessibility.
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {boolean} isDisabled Optional parameter to disable the selector. Defaults to false.
  * @param {boolean} reqNotApplicableOption Optional parameter to enable the not applicable option. Defaults to false.
- * @param {string} ariaLabel Optional parameter to set the aria-label attribute for accessibility.
  */
 export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
   const dict: Dictionary = useDictionary();
