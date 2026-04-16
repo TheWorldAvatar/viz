@@ -19,6 +19,7 @@
     "overview": "Auftragsübersicht",
     "file": "Datei auswählen",
     "filter": "Filter",
+    "filterBy": "Filtern nach {replace}",
     "search": "Suchen",
     "showAll": "Alles anzeigen",
     "show": "Zeigen",

@@ -19,6 +19,7 @@
     "overview": "overview",
     "file": "Choose file",
     "filter": "Filter",
+    "filterBy": "Filter by {replace}",
     "search": "Search",
     "showAll": "Show all",
     "show": "Show",

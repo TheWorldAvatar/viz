@@ -99,7 +99,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               tooltipText={dict.action.filter}
               size="icon"
               className="ml-2"
-              aria-label={`${dict.action.filter} ${props.header.column.columnDef.header} ${isActiveFilter ? dict.title.active : ""}`}
+              aria-label={`${dict.action.filterBy.replace("{replace}", props.header.column.columnDef.header as string)}`}
+              aria-selected={isActiveFilter}
               isOpen={showFilterDropdown}
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
