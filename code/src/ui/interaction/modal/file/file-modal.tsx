@@ -15,8 +15,8 @@ import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
-import { extractDateDisplay, getInitialDate, handleDownload } from "utils/client-utils";
-import { queryDefaultFileExportAPI, postFileUploadAPI } from "utils/internal-api-services";
+import { getInitialDate, handleDownload } from "utils/client-utils";
+import { postFileUploadAPI, queryDefaultFileExportAPI } from "utils/internal-api-services";
 
 interface FileModalProps {
   url: string;

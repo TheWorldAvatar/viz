@@ -32,7 +32,6 @@ interface SimpleSelectorProps {
   noOptionMessage?: string;
   isDisabled?: boolean;
   reqNotApplicableOption?: boolean;
-
 }
 
 /**
