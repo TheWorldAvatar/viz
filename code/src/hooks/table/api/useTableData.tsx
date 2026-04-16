@@ -26,7 +26,7 @@ export interface TableDataDescriptor {
 * @param {string} entityType Type of entity for rendering.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
-* @param {boolean} refreshFlag Flag to trigger refresh when required.
+* @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
@@ -37,7 +37,7 @@ export function useTableData(
   entityType: string,
   sortParams: string,
   sorting: SortingState,
-  refreshFlag: boolean,
+  refreshId: number,
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   apiPagination: PaginationState,
@@ -140,7 +140,7 @@ export function useTableData(
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, columnOptions, entityType]);
+  }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType]);
 
   return {
     isLoading,
