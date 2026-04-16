@@ -23,13 +23,13 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Displays the intercepted route for waiving a task through a modal.
  */
-export default async function InterceptWaiveTaskPage() {
+export default async function InterceptExemptTaskPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
     return (
         <InterceptTaskFormContainerComponent
             entityType={entityType}
-            formType={"waive"}
+            formType={"exempt"}
         />
     );
 }

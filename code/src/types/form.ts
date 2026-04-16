@@ -38,7 +38,7 @@ export const FormTypeMap = {
   COMPLETE: "complete",
   CANCEL: "cancel",
   REPORT: "report",
-  WAIVE: "waive",
+  EXEMPT: "exempt",
   MASS_EDIT: "massedit",
   TERMINATE: "terminate",
   INVOICE: "invoice",
@@ -56,7 +56,7 @@ export const RegistryStatusMap = {
   BILLABLE_COMPLETED: "billablecompleted",
   BILLABLE_CANCELLED: "billablecancelled",
   BILLABLE_REPORTED: "billableissue",
-  BILLABLE_WAIVED: "billableWaived",
+  BILLABLE_EXEMPTED: "billableExempted",
   INVOICED: "invoiced",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];

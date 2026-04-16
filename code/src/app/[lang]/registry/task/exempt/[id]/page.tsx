@@ -23,13 +23,13 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Displays the form page for waiving a task.
  */
-export default async function WaiveFormPage() {
+export default async function ExemptFormPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
     return (
         <TaskFormContainerComponent
             entityType={entityType}
-            formType={"waive"}
+            formType={"exempt"}
         />
     );
 }

@@ -52,7 +52,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED],
     },
-    WAIVE_BILLABLES: {
+    EXEMPT_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
