@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.8
+
+### Changes
+
+- Improved accessibility by adding clear and descriptive aria-label attributes to interactive elements (e.g., inputs, buttons, dropdowns and controls).
+
 ## 5.67.7
 
 ### Changes

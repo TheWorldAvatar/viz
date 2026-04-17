@@ -2,11 +2,13 @@
   "lang": "de",
   "action": {
     "add": "Hinzufügen",
+    "addItem": "{replace} hinzufügen",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
-    "addItem": "{replace} hinzufügen",
-    "edit": "Bearbeiten",
     "delete": "Löschen",
+    "deleteItem": "{replace} löschen",
+    "edit": "Bearbeiten",
+    "editItem": "{replace} bearbeiten",
     "dismiss": "Schließen",
     "view": "Anzeigen",
     "close": "Schließen",
@@ -19,6 +21,7 @@
     "overview": "Auftragsübersicht",
     "file": "Datei auswählen",
     "filter": "Filter",
+    "filterBy": "Filtern nach {replace}",
     "search": "Suchen",
     "showAll": "Alles anzeigen",
     "show": "Zeigen",
@@ -58,7 +61,9 @@
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
     "addInvoice": "Rechnung hinzufügen",
-    "bulkAssign": "Massenzuweisung"
+    "bulkAssign": "Massenzuweisung",
+    "select": "Wählen",
+    "selectItem": "{replace} wählen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -130,8 +135,8 @@
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {
-    "title": "Versteckband",
-    "tooltip": "Band ein-/ausblenden"
+      "title": "Versteckband",
+      "tooltip": "Band ein-/ausblenden"
     }
   },
   "message": {
@@ -167,6 +172,7 @@
     "dragToReorder": "Zum Neusortieren ziehen",
     "na": "Nicht anwendbar",
     "pickDateRange": "Wählen Sie einen Zeitraum aus.",
+    "pickDateRangeFor": "Wähle einen Zeitraum für {replace} aus",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
     "typeFilter": "Filter nicht aufgeführt? Beginnen Sie mit der Eingabe...",
@@ -260,6 +266,7 @@
     "pendingDispatch": "Ausstehende Zuweisung",
     "pendingExecution": "Ausstehende Ausführung",
     "quickView": "Schnellansicht",
+    "quickViewFor": "Schnellansicht für {replace}",
     "serviceCharge": "Servicegebühren",
     "serviceCostBreakdown": "Aufschlüsselung der Servicekosten",
     "scheduleType": "Art des Zeitplans",

@@ -25,6 +25,7 @@ import {
   getRegisterOptions,
   parseConcepts
 } from "ui/interaction/form/form-utils";
+import { interpolate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import FormInputContainer from "../form-input-container";
 
@@ -204,6 +205,7 @@ export default function OntologyConceptSelector(
                 }}
                 isDisabled={props.options?.disabled}
                 reqNotApplicableOption={props.field.minCount?.[VALUE_KEY] === "0"}
+                ariaLabel={interpolate(dict.action.selectItem, props.field.name[VALUE_KEY])}
               />
             );
           }}

@@ -16,7 +16,7 @@ import DateInput from "ui/interaction/input/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { getInitialDate, handleDownload } from "utils/client-utils";
-import { queryDefaultFileExportAPI, postFileUploadAPI } from "utils/internal-api-services";
+import { postFileUploadAPI, queryDefaultFileExportAPI } from "utils/internal-api-services";
 
 interface FileModalProps {
   url: string;
@@ -126,6 +126,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
               <div className="relative w-fit">
                 <DateInput
                   mode="range"
+                  ariaLabel={dict.action.upload}
                   selectedDate={selectedDate}
                   setSelectedDateRange={setSelectedDate}
                   placement="bottom"

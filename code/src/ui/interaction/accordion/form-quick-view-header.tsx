@@ -8,7 +8,7 @@ import type React from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap } from "types/form";
-import { buildUrl } from "utils/client-utils";
+import { buildUrl, interpolate } from "utils/client-utils";
 import RedirectButton from "../action/redirect/redirect-button";
 import Button from "../button";
 
@@ -19,6 +19,7 @@ interface FormQuickViewHeaderProps {
   entityType: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fieldLabel: string;
   accountId?: string;
   accountType?: string;
   pricingType?: string;
@@ -36,6 +37,7 @@ interface FormQuickViewHeaderProps {
  * @param {string} entityType - The type of entities.
  * @param {boolean} isOpen - The show or hide state of the accordion.
  * @param setIsOpen - Updates the show or hide state of the accordion.
+ * @param {string} fieldLabel Parameter to specify the field name for more descriptive aria-labels on action buttons.
  * @param {string} accountId Optionally indicates the account ID.
  * @param {string} accountType Optionally indicates the type of account.
  * @param {string} pricingType Optionally indicates the type of pricing.
@@ -82,6 +84,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
         iconSize="small"
         variant="outline"
         onClick={toggleContent}
+        aria-label={interpolate(dict.title.quickViewFor, props.fieldLabel)}
         aria-expanded={props.isOpen}
         aria-controls={`accordion-content-${props.id}`}
         className="text-xs"
@@ -95,6 +98,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             size="icon"
             iconSize="small"
             tooltipText={dict.action.add}
+            aria-label={interpolate(dict.action.addItem, props.fieldLabel)}
             url={genSubEntityUrl("add", props.entityType)}
             softRedirect={true}
             variant="outline"
@@ -105,6 +109,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             size="icon"
             iconSize="small"
             tooltipText={dict.action.edit}
+            aria-label={interpolate(dict.action.editItem, props.fieldLabel)}
             url={genSubEntityUrl(
               "edit",
               props.entityType,
@@ -119,6 +124,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             size="icon"
             iconSize="small"
             tooltipText={dict.action.delete}
+            aria-label={interpolate(dict.action.deleteItem, props.fieldLabel)}
             url={genSubEntityUrl(
               "delete",
               props.entityType,

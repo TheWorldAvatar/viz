@@ -14,6 +14,7 @@ import {
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import {
   getId,
+  interpolate,
   parseStringsForUrls
 } from "utils/client-utils";
 import { getRegisterOptions } from "../form-utils";
@@ -105,6 +106,7 @@ export function DependentFormSection(
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
                   noOptionMessage={dict.message.noInstances}
                   menuPortalTarget={formType === FormTypeMap.MASS_EDIT ? document.body : undefined}
+                  ariaLabel={interpolate(dict.action.selectItem, label)}
                 />
               );
             }}
@@ -115,6 +117,7 @@ export function DependentFormSection(
           title={dict.title.quickView}
           selectedEntityId={selectedEntityId}
           entityType={queryEntityType}
+          fieldLabel={label}
           isOpen={isQuickViewOpen}
           setIsOpen={setIsQuickViewOpen}
           accountId={props.billingStore && getId(props.form.getValues(props.billingStore.accountField))}

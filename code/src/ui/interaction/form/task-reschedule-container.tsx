@@ -10,19 +10,19 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
+import { FormTypeMap } from "types/form";
 import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getNormalizedDate, interpolate, parseWordsForLabels } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
 import DateInput from "../input/date-input";
 import Tooltip from "../tooltip/tooltip";
-import { FormTypeMap } from "types/form";
 
 
 /**
@@ -123,7 +123,7 @@ function TaskFormContents() {
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {task?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {`${dict.message.rescheduleInstruction.replace("{replace}", task.date)}:`}
+            {`${interpolate(dict.message.rescheduleInstruction, task.date)}:`}
           </p>
         )}
         {(isFetching || refreshFlag) && <FormSkeleton />}
@@ -137,6 +137,7 @@ function TaskFormContents() {
             </label>
             <DateInput
               mode="single"
+              ariaLabel={dict.form.rescheduleDate}
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               placement="bottom"

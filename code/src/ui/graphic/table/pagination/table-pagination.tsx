@@ -3,6 +3,7 @@ import { useDictionary } from "hooks/useDictionary";
 
 import { Dictionary } from "types/dictionary";
 import Button from "ui/interaction/button";
+import { interpolate } from "utils/client-utils";
 
 const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
 
@@ -18,10 +19,10 @@ export default function TablePagination() {
   return (
     <div className="flex items-center justify-between p-2 bg-muted border-t border-border shrink-0">
       <div className="text-sm text-foreground">
-        {dict.message.numberOfRecords
-          .replace("{replace}", String(numberOfSelectedRows > 0 ? numberOfSelectedRows : Math.min(tableDescriptor.totalRows, tableDescriptor.table.getRowCount())))
-          .replace("{replacetotal}", String(tableDescriptor.totalRows)
-          )}
+        {interpolate(dict.message.numberOfRecords,
+          String(numberOfSelectedRows > 0 ? numberOfSelectedRows : Math.min(tableDescriptor.totalRows, tableDescriptor.table.getRowCount()))
+        ).replace("{replacetotal}", String(tableDescriptor.totalRows)
+        )}
       </div>
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-8">
@@ -49,11 +50,9 @@ export default function TablePagination() {
           </div>
 
           <span className="text-sm text-foreground">
-            {dict.message.page
-              .replace(
-                "{replace}",
-                String(tableDescriptor.pagination.pageIndex + 1)
-              ).replace("{replacecount}", String(lastPageIndex))}
+            {interpolate(dict.message.page,
+              String(tableDescriptor.pagination.pageIndex + 1)
+            ).replace("{replacecount}", String(lastPageIndex))}
           </span>
         </div>
 

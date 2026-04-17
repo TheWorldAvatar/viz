@@ -10,7 +10,7 @@ import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
-import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
+import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
 
@@ -282,10 +282,7 @@ function NavMenuContents(
             isMobile={props.isMobile}
             caption={
               props.isMenuExpanded
-                ? dict.nav.caption.generalReg.replace(
-                  "{replace}",
-                  parseWordsForLabels(path.type).toLowerCase()
-                )
+                ? interpolate(dict.nav.caption.generalReg, parseWordsForLabels(path.type).toLowerCase())
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}

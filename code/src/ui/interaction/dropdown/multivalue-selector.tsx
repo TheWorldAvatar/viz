@@ -10,6 +10,7 @@ import { parseWordsForLabels } from "utils/client-utils";
 interface MultivalueDropdownProps {
   title: string;
   options: SelectOptionType[];
+  ariaLabel: string;
   toggleAll?: boolean;
   isActive?: boolean;
   isClearable?: boolean;
@@ -24,6 +25,7 @@ interface MultivalueDropdownProps {
  *
  * @param {string} title - The display title for the input.
  * @param {SelectOptionType[]} options - Select options.
+ * @param {string} ariaLabel - Parameter to set the aria-label attribute for accessibility.
  * @param {boolean} toggleAll - Provides an additional option to select all options. Defaults to false.
  * @param {boolean} isActive - Renders different style to indicate the input is currently active. Defaults to false.
  * @param {boolean} isClearable - All values in the dropdown can be cleared with an additional input. Defaults to true.
@@ -124,6 +126,7 @@ export default function MultivalueSelector(
       isSearchable
       className="text-base"
       isClearable={props.isClearable ?? true}
+      aria-label={props.ariaLabel}
       styles={getCustomStyles()}
     />
   );

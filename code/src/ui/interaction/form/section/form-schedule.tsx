@@ -14,6 +14,7 @@ import DateInput from "ui/interaction/input/date-input";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   getUTCDate,
+  interpolate,
   parseStringsForUrls,
   parseWordsForLabels,
 } from "utils/client-utils";
@@ -233,7 +234,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
 
   return (
-    <div className="p-3 md:p-8 bg-background border-2 md:border-1 border-border rounded-lg my-4 mx-auto space-y-4">
+    <div className="p-3 md:p-8 bg-background border-2 md:border border-border rounded-lg my-4 mx-auto space-y-4">
       <h2 className="text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
@@ -265,6 +266,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 }
               }}
               isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
+              ariaLabel={interpolate(dict.action.selectItem, parseWordsForLabels(dict.title.scheduleType))}
             />
           </div>
           {selectedServiceOption === fixedService && (
@@ -277,6 +279,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </label>
               <DateInput
                 mode="multiple"
+                ariaLabel={dict.form.fixedService}
                 selectedDate={fixedDates}
                 setSelectedDates={handleFixedDatesChange}
                 disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
@@ -330,7 +333,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border-1 border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
+                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
                     } `}
                   step={"1"}
                   readOnly={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}

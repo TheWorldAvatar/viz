@@ -125,6 +125,7 @@ export default function BranchFormSection(
             formType == FormTypeMap.DELETE ||
             formType == FormTypeMap.VIEW
           }
+          ariaLabel={dict.message.branchInstruction}
         />}
         <p className="text-md md:text-lg">
           <b className="text-md md:text-lg">{dict.title.description}: </b>

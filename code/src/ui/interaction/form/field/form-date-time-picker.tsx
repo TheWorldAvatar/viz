@@ -9,7 +9,7 @@ import {
   getRegisterOptions
 } from "ui/interaction/form/form-utils";
 import DateInput from "ui/interaction/input/date-input";
-import { getNormalizedDate, getUTCDate } from "utils/client-utils";
+import { getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
 
 interface FormDateTimePickerProps {
@@ -112,6 +112,7 @@ export default function FormDateTimePicker(
         >
           <DateInput
             mode="single"
+            ariaLabel={props.field.name[VALUE_KEY]}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             placement="bottom"
@@ -128,7 +129,7 @@ export default function FormDateTimePicker(
             }`}
           type={inputType}
           readOnly={props.options?.disabled}
-          aria-label={props.field.name[VALUE_KEY]}
+          aria-label={interpolate(dict.action.selectItem, props.field.name[VALUE_KEY])}
           {...props.form.register(
             props.field.fieldId,
             getRegisterOptions(
