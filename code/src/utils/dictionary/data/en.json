@@ -172,6 +172,7 @@
     "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
     "pickDateRange": "Pick a date range.",
+    "pickDateRangeFor": "Pick a date range for {replace}",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
     "typeFilter": "Filter not listed? Start typing...",

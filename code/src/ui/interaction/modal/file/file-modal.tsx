@@ -126,6 +126,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
               <div className="relative w-fit">
                 <DateInput
                   mode="range"
+                  ariaLabel={dict.action.upload}
                   selectedDate={selectedDate}
                   setSelectedDateRange={setSelectedDate}
                   placement="bottom"

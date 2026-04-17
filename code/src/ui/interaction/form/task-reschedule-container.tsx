@@ -137,6 +137,7 @@ function TaskFormContents() {
             </label>
             <DateInput
               mode="single"
+              ariaLabel={dict.form.rescheduleDate}
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               placement="bottom"

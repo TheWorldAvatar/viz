@@ -279,6 +279,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </label>
               <DateInput
                 mode="multiple"
+                ariaLabel={dict.form.fixedService}
                 selectedDate={fixedDates}
                 setSelectedDates={handleFixedDatesChange}
                 disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}

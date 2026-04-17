@@ -172,6 +172,7 @@
     "dragToReorder": "Zum Neusortieren ziehen",
     "na": "Nicht anwendbar",
     "pickDateRange": "Wählen Sie einen Zeitraum aus.",
+    "pickDateRangeFor": "Wähle einen Zeitraum für {replace} aus",
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
     "typeFilter": "Filter nicht aufgeführt? Beginnen Sie mit der Eingabe...",

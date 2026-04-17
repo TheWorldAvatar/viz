@@ -109,10 +109,10 @@ export default function FormDateTimePicker(
               dict
             )
           )}
-          aria-label={props.field.name[VALUE_KEY]}
         >
           <DateInput
             mode="single"
+            ariaLabel={props.field.name[VALUE_KEY]}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             placement="bottom"
