@@ -16,6 +16,15 @@ export function makeInternalRegistryAPIwithParams(
 ): string {
   let searchParams: URLSearchParams;
   switch (internalIdentifier) {
+    case InternalApiIdentifierMap.ACCOUNT:
+      searchParams = new URLSearchParams({
+        type: params[0],
+        page: params[1] ?? null,
+        limit: params[2] ?? null,
+        sort_by: params[3] ?? null,
+        filters: params[4] ?? "",
+      });
+      break;
     case InternalApiIdentifierMap.ADDRESS:
       searchParams = new URLSearchParams({
         postal_code: params[0],

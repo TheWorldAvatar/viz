@@ -232,6 +232,14 @@ function makeExternalEndpoint(
   searchParams: URLSearchParams
 ): string {
   switch (slug) {
+    case InternalApiIdentifierMap.ACCOUNT: {
+      const type: string = searchParams.get("type");
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      const sortBy: string = searchParams.get("sort_by");
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      return `${agentBaseApi}/report/account?type=${type}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+    }
     case InternalApiIdentifierMap.ADDRESS: {
       const postalCode: string = searchParams.get("postal_code");
       const urlObj: URL = new URL(`${agentBaseApi}/location/addresses`);

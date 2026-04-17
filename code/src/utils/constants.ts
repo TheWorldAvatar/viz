@@ -5,3 +5,4 @@ export const XSD_TIME = "http://www.w3.org/2001/XMLSchema#time";
 export const BULK_IDENTIFIER= "bulk";
 export const DATE_KEY = "date";
 export const EVENT_KEY = "event";
+export const FLAG_KEY = "flag";
