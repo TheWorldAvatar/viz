@@ -152,22 +152,6 @@ export default function RegistryRowAction(
     }
   };
 
-  const onWaiveBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    const reqBody: JsonObject = {
-      contract: getId(props.row.id),
-      id: recordId,
-      date: props.row.date,
-      remarks: "Billable has been waived successfully!",
-    };
-    const url: string = makeInternalRegistryAPIwithParams(
-      InternalApiIdentifierMap.EVENT,
-      "service",
-      "waive"
-    );
-    markRowAsActive();
-    submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
-  };
-
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
     props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
@@ -386,15 +370,19 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={onReviewBillable}
           />}
-          {(isActionAllowed("WAIVE_BILLABLES")) && <Button
+          {(isActionAllowed("EXEMPT_BILLABLES")) && <Button
             variant="ghost"
             leftIcon="money_off"
             size="md"
             iconSize="medium"
             className="w-full justify-start"
-            label={dict.action.waiveBillable}
+            label={dict.action.exemptBillable}
             disabled={isLoading}
-            onClick={onWaiveBillable}
+            onClick={() => {
+              markRowAsActive();
+              setIsActionMenuOpen(false);
+              navigateToDrawer(Routes.REGISTRY_TASK_EXEMPT, recordId);
+            }}
           />}
           {isActionAllowed("VIEW_BILLABLES") && <Button
             variant="ghost"

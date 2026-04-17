@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { Modules, PageTitles } from "io/config/routes";
 import SettingsStore from "io/config/settings";
 import { NavBarItemSettings, UISettings } from "types/settings";
-import { InterceptTaskFormContainerComponent } from "ui/interaction/form/task-form-container";
+import { TaskFormContainerComponent } from "ui/interaction/form/task-form-container";
 import { FormTypeMap } from "types/form";
 
 /**
@@ -22,15 +22,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the intercepted route for completing a task through a modal.
+ * Displays the form page for exempting a task from billing.
  */
-export default async function InterceptCompleteTaskPage() {
+export default async function ExemptFormPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
     return (
-        <InterceptTaskFormContainerComponent
+        <TaskFormContainerComponent
             entityType={entityType}
-            formType={FormTypeMap.COMPLETE}
+            formType={FormTypeMap.EXEMPT}
         />
     );
 }

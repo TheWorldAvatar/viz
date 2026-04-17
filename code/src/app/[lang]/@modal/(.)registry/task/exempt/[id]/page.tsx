@@ -22,15 +22,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Displays the intercepted route for completing a task through a modal.
+ * Displays the intercepted route for exempting a task from billing through a modal.
  */
-export default async function InterceptCompleteTaskPage() {
+export default async function InterceptExemptTaskPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
     return (
         <InterceptTaskFormContainerComponent
             entityType={entityType}
-            formType={FormTypeMap.COMPLETE}
+            formType={FormTypeMap.EXEMPT}
         />
     );
 }

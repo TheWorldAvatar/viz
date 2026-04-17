@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.7
+
+### Changes
+
+- Return form for exempting task from billing
+
 ## 5.67.6
 
 ### Bug fix
