@@ -110,7 +110,6 @@ export function useTableData(
           );
         } else if (
           lifecycleStage == LifecycleStageMap.ACCOUNT) {
-            console.log(apiPagination)
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.ACCOUNT,
             entityType,
