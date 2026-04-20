@@ -73,7 +73,6 @@ export default function RegistryRowAction(
       "service",
       "commence"
     );
-    markRowAsActive();
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
@@ -88,7 +87,6 @@ export default function RegistryRowAction(
       "draft",
       "reset"
     );
-    markRowAsActive();
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
 
@@ -98,6 +96,7 @@ export default function RegistryRowAction(
     body: string
   ): Promise<void> => {
     startLoading();
+    markRowAsActive();
     const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body);
     setIsActionMenuOpen(false);
     stopLoading();
