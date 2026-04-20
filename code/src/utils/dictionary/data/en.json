@@ -22,6 +22,8 @@
     "file": "Choose file",
     "filter": "Filter",
     "filterBy": "Filter by {replace}",
+    "flag": "Flag overdue",
+    "flagResolution": "Resolve flag",
     "search": "Search",
     "showAll": "Show all",
     "show": "Show",

@@ -90,6 +90,17 @@ export default function RegistryRowAction(
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
 
+  const onUpdateAccountFlag: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const reqBody: JsonObject = {
+      id: recordId,
+    };
+    const url: string = makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.ACCOUNT,
+      "flag"
+    );
+    submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
+  };
+
   const submitPendingActions = async (
     url: string,
     method: "POST" | "PUT",
@@ -431,6 +442,16 @@ export default function RegistryRowAction(
               triggerRefresh={props.triggerRefresh}
             />
           }
+          {isActionAllowed("ACCOUNT_FLAG") && <Button
+            variant="ghost"
+            leftIcon="flag"
+            size="md"
+            iconSize="medium"
+            className="w-full justify-start"
+            label={props.row.flag === "true" ? dict.action.flagResolution : dict.action.flag}
+            disabled={isLoading}
+            onClick={onUpdateAccountFlag}
+          />}
         </div>
       </PopoverActionButton>
       {isOpenBillingModal && <BillingModal

@@ -234,6 +234,9 @@ function makeExternalEndpoint(
   switch (slug) {
     case InternalApiIdentifierMap.ACCOUNT: {
       const type: string = searchParams.get("type");
+      if (type == "flag") {
+        return `${agentBaseApi}/report/account/flag`;
+      }
       const page: string = searchParams.get("page");
       const limit: string = searchParams.get("limit");
       const sortBy: string = searchParams.get("sort_by");

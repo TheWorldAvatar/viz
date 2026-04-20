@@ -22,6 +22,8 @@
     "file": "Datei auswählen",
     "filter": "Filter",
     "filterBy": "Filtern nach {replace}",
+    "flag": "Flagge überfällig",
+    "flagResolution": "Flag aufheben",
     "search": "Suchen",
     "showAll": "Alles anzeigen",
     "show": "Zeigen",
