@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.67.9
+
+### Bug fix
+
+- Fixed row action permission guard with translations of status column
+
 ## 5.67.8
 
 ### Changes
