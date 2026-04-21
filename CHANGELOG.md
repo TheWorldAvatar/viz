@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.68.0
+
+### Changes
+
+- Added account flagging functionalities
+- Disabled contract creation for flagged accounts
+- Bump min version of `VisBackend Agent` from `v1.44.2` to `v1.45.0`
+
 ## 5.67.9
 
 ### Bug fix
