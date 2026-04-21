@@ -51,7 +51,7 @@ export default function RegistryRowAction(
       ? getId(props.row.id)
       : getId(props.row.iri);
   const dict: Dictionary = useDictionary();
-  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase());
+  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.status?.toLowerCase());
 
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
