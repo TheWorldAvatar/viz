@@ -144,6 +144,7 @@ export default function OntologyConceptSelector(
                 const formOption: SelectOptionType = {
                   value: childOption.type.value,
                   label: childOption.label.value,
+                  disabled: false,
                 };
                 formChildrenOptions.push(formOption);
               });
@@ -156,6 +157,7 @@ export default function OntologyConceptSelector(
               const formOption: SelectOptionType = {
                 value: option.type.value,
                 label: option.label.value,
+                disabled: false,
               };
               formOptions.push(formOption);
             }

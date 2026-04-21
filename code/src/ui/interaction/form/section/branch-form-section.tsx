@@ -56,6 +56,7 @@ export default function BranchFormSection(
       return {
         label: parseWordsForLabels(nodeShape?.label[VALUE_KEY]),
         value: nodeShape.label[VALUE_KEY],
+        disabled: false,
       };
     },
     []
