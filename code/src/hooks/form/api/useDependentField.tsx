@@ -11,6 +11,7 @@ import { findMatchingDropdownOptionValue, genDefaultSelectOption } from "ui/inte
 import { getAfterDelimiter, parseStringsForUrls } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import useFormSession from "../useFormSession";
+import { FLAG_EMOJI } from "utils/constants";
 
 interface UseDependentFieldDescriptor {
     selectedOption: SelectOptionType,
@@ -112,7 +113,7 @@ export function useDependentField(
                     entities = accountFilterOptions.map(option => {
                         return {
                             ...option,
-                            label: `${option.label} ${option.disabled ? "🚩" : ""}`,
+                            label: `${option.label} ${option.disabled ? FLAG_EMOJI : ""}`,
                         }
 
                     });

@@ -18,7 +18,7 @@ import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { FLAG_KEY, XSD_DATETIME } from "utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
@@ -133,7 +133,7 @@ export function parseColumnsMetadata(
   // Create column definitions based on available columns
   for (const col of columns) {
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
-    const title: string = col.value == FLAG_KEY ? "🚩" : parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
+    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
     const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
       title.length * 15,
       125
@@ -147,7 +147,7 @@ export function parseColumnsMetadata(
       cell: ({ getValue }) => {
         if (col.value == FLAG_KEY) {
           if (getValue() == "true") {
-            return "🚩";
+            return FLAG_EMOJI;
           }
           return "";
         }

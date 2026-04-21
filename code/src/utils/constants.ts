@@ -6,3 +6,4 @@ export const BULK_IDENTIFIER= "bulk";
 export const DATE_KEY = "date";
 export const EVENT_KEY = "event";
 export const FLAG_KEY = "flag";
+export const FLAG_EMOJI = "🚩";
