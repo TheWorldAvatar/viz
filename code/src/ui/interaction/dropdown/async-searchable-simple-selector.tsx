@@ -78,6 +78,7 @@ export default function AsyncSearchableSimpleSelector(
             menuPortalTarget={props.menuPortalTarget}
             defaultOptions
             isSearchable
+            isOptionDisabled={(option) => option.disabled}
             isDisabled={props.isDisabled}
             noOptionsMessage={() => props.noOptionMessage ?? dict.message.noOptions}
             components={{ MenuList }}

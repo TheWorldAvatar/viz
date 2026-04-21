@@ -5,7 +5,7 @@ import { browserStorageManager } from "state/browser-storage-manager";
 
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, ID_KEY, OntologyConcept, PropertyShape, SparqlResponseField, VALUE_KEY } from "types/form";
+import { FormTypeMap, ID_KEY, LifecycleStageMap, OntologyConcept, PropertyShape, SparqlResponseField, VALUE_KEY } from "types/form";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { findMatchingDropdownOptionValue, genDefaultSelectOption } from "ui/interaction/form/form-utils";
 import { getAfterDelimiter, parseStringsForUrls } from "utils/client-utils";
@@ -31,7 +31,7 @@ export function useDependentField(
     isArray: boolean,
 ): UseDependentFieldDescriptor {
     const dict: Dictionary = useDictionary();
-    const naOption: SelectOptionType = { value: "", label: dict.message.na };
+    const naOption: SelectOptionType = { value: "", label: dict.message.na, disabled: false };
 
     const isSectionOptional: boolean = field.minCount?.[VALUE_KEY] === "0";
     const parentField: string = field?.dependentOn?.[ID_KEY] ?? "";
@@ -46,7 +46,7 @@ export function useDependentField(
         control,
         name: parentField,
     });
-    const { formType } = useFormSession();
+    const { formType, accountType, isContractForm } = useFormSession();
 
     // An async method to retrieve the dependent entities options from the backend
     const getFieldOptions = async (inputValue: string): Promise<SelectOptionType[]> => {
@@ -98,8 +98,24 @@ export function useDependentField(
                     const results: Record<string, SparqlResponseField>[] = responseEntity.data?.items as Record<string, SparqlResponseField>[];
                     entities = results?.length > 0 ? [{
                         label: results[0].name.value,
-                        value: results[0].iri.value
+                        value: results[0].iri.value,
+                        disabled: false,
                     }] : [];
+                } else if (label == accountType && isContractForm) {
+                    const responseEntity: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+                        InternalApiIdentifierMap.FILTER,
+                        LifecycleStageMap.ACCOUNT,
+                        accountType,
+                        currentOption,
+                    ));
+                    const accountFilterOptions: SelectOptionType[] = responseEntity.data?.items as SelectOptionType[] ?? [];
+                    entities = accountFilterOptions.map(option => {
+                        return {
+                            ...option,
+                            label: `${option.label} ${option.disabled ? "🚩" : ""}`,
+                        }
+
+                    });
                 } else {
                     // If there is a search term, use it; otherwise, fetch initial results
                     const responseEntity: AgentResponseBody = await queryInternalApi(
@@ -169,7 +185,8 @@ export function useDependentField(
                             } else {
                                 entities.push({
                                     label: results[0].name?.value,
-                                    value: results[0].iri?.value
+                                    value: results[0].iri?.value,
+                                    disabled: true,
                                 });
                             }
                         }
@@ -194,6 +211,7 @@ export function useDependentField(
                     entities.unshift({
                         label: defaultSearchOption.label.value,
                         value: defaultSearchOption.type.value,
+                        disabled: false,
                     });
                     // Add the NA option at the start if this section can be optional
                 } else if (isSectionOptional) {
