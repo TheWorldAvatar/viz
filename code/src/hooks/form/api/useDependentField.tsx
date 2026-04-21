@@ -106,7 +106,7 @@ export function useDependentField(
                         InternalApiIdentifierMap.FILTER,
                         LifecycleStageMap.ACCOUNT,
                         accountType,
-                        currentOption,
+                        inputValue,
                     ));
                     const accountFilterOptions: SelectOptionType[] = responseEntity.data?.items as SelectOptionType[] ?? [];
                     entities = accountFilterOptions.map(option => {
