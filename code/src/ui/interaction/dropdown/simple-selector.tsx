@@ -14,6 +14,7 @@ import { selectorStyles } from "ui/css/selector-style";
 export type SelectOptionType = {
   label: string;
   value: string;
+  disabled: boolean;
 };
 
 type SelectValue<T extends SelectOptionType> =
@@ -47,7 +48,7 @@ interface SimpleSelectorProps {
  */
 export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
   const dict: Dictionary = useDictionary();
-  const naOption: SelectOptionType = { value: "", label: dict.message.na };
+  const naOption: SelectOptionType = { value: "", label: dict.message.na, disabled: false };
 
   // A function that adds the not applicable option at the start if required
   const addNAOption = (

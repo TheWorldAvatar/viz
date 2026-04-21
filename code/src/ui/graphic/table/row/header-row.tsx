@@ -20,7 +20,7 @@ import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
 import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
-import { BULK_IDENTIFIER } from "utils/constants";
+import { BULK_IDENTIFIER, FLAG_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
@@ -146,28 +146,28 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                     )}
                   </>
                 )}
-                {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED) 
+                {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED)
                   && !tableDescriptor.isBulkDispatchEdit && (
-                  <Button
-                    leftIcon="assignment_add"
-                    label={dict.action.dispatch}
-                    variant="ghost"
-                    disabled={isLoading}
-                    onClick={() => {
-                      const tasks: RegistryTaskOption[] = [];
-                      tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
-                        tasks.push({
-                          id: getId(row.original.event_id),
-                          contract: row.original.id,
-                          date: row.original.date,
-                        }))
-                      browserStorageManager.clear();
-                      browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
-                      resetFormSession();
-                      navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, BULK_IDENTIFIER);
-                    }}
-                  />
-                )}
+                    <Button
+                      leftIcon="assignment_add"
+                      label={dict.action.dispatch}
+                      variant="ghost"
+                      disabled={isLoading}
+                      onClick={() => {
+                        const tasks: RegistryTaskOption[] = [];
+                        tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
+                          tasks.push({
+                            id: getId(row.original.event_id),
+                            contract: row.original.id,
+                            date: row.original.date,
+                          }))
+                        browserStorageManager.clear();
+                        browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
+                        resetFormSession();
+                        navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, BULK_IDENTIFIER);
+                      }}
+                    />
+                  )}
                 {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
                   <DraftTemplateButton
                     rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
@@ -211,8 +211,8 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
             selectedDate={props.selectedDate}
             filters={tableDescriptor.filters}
             isEditable={tableDescriptor.isBulkDispatchEdit && colDef.stage === FormTypeMap.DISPATCH}
-            disableSort={colDef.dataType == "array"}
-            disableFilter={colDef.dataType == "array" ||
+            disableSort={colDef.dataType == "array" || colDef.dataType == FLAG_KEY}
+            disableFilter={colDef.dataType == "array" || colDef.dataType == FLAG_KEY ||
               (lifecycleStage == LifecycleStageMap.BILLABLE && header.id == props.accountType)}
           />
         );

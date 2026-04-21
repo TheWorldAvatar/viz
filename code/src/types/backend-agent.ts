@@ -44,6 +44,7 @@ export type HistoryDetails = {
 };
 
 export const InternalApiIdentifierMap = {
+  ACCOUNT: "account",
   ADDRESS: "address",
   BILL: "bill",
   CONCEPT: "concept",

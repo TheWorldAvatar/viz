@@ -95,7 +95,6 @@ export function useTableData(
           );
         } else if (
           lifecycleStage == LifecycleStageMap.GENERAL ||
-          lifecycleStage == LifecycleStageMap.ACCOUNT ||
           lifecycleStage == LifecycleStageMap.PRICING ||
           lifecycleStage == LifecycleStageMap.INVOICE) {
           url = makeInternalRegistryAPIwithParams(
@@ -104,6 +103,16 @@ export function useTableData(
             "true",
             null,
             null,
+            apiPagination.pageIndex.toString(),
+            apiPagination.pageSize.toString(),
+            sortParams,
+            filterParams,
+          );
+        } else if (
+          lifecycleStage == LifecycleStageMap.ACCOUNT) {
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.ACCOUNT,
+            entityType,
             apiPagination.pageIndex.toString(),
             apiPagination.pageSize.toString(),
             sortParams,

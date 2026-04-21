@@ -232,6 +232,17 @@ function makeExternalEndpoint(
   searchParams: URLSearchParams
 ): string {
   switch (slug) {
+    case InternalApiIdentifierMap.ACCOUNT: {
+      const type: string = searchParams.get("type");
+      if (type == "flag") {
+        return `${agentBaseApi}/report/account/flag`;
+      }
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      const sortBy: string = searchParams.get("sort_by");
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      return `${agentBaseApi}/report/account?type=${type}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+    }
     case InternalApiIdentifierMap.ADDRESS: {
       const postalCode: string = searchParams.get("postal_code");
       const urlObj: URL = new URL(`${agentBaseApi}/location/addresses`);
@@ -305,7 +316,6 @@ function makeExternalEndpoint(
         const sortBy: string = searchParams.get("sort_by");
         const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
-        // 
       } else if (identifier != "null") {
         url += `/${identifier}`;
         // For a subtype route, search field can be added
@@ -346,7 +356,7 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (type == LifecycleStageMap.ACCOUNT) {
-        return buildUrl(agentBaseApi, "report", `account?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
+        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;

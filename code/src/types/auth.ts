@@ -42,7 +42,11 @@ export interface ButtonPolicy {
 }
 
 export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
-    APPROVE_CONTRACT: {
+    ACCOUNT_FLAG: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.ACCOUNT],
+        status: [],
+    }, APPROVE_CONTRACT: {
         permission: "registryFullAccess",
         stage: [LifecycleStageMap.PENDING],
         status: [],

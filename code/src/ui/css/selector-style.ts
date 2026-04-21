@@ -86,11 +86,13 @@ export const selectorStyles: StylesConfig<
   option: (provided, { isDisabled, isSelected, isFocused }) => {
     return {
       ...provided,
-      backgroundColor: isFocused
-        ? "var(--background-tertiary)"
-        : isSelected
-          ? "var(--muted)"
-          : "var(--muted)",
+      backgroundColor: isDisabled ?
+        "var(--error-background)"
+        : isFocused
+          ? "var(--background-tertiary)"
+          : isSelected
+            ? "var(--muted)"
+            : "var(--muted)",
       color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",

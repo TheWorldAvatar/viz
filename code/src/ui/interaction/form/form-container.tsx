@@ -42,7 +42,7 @@ export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider formType={props.formType} entityType={props.entityType}>
+    <FormSessionContextProvider formType={props.formType} entityType={props.entityType} accountType={props.accountType} isContractForm={props.isPrimaryEntity}>
       <NavigationDrawer>
         <FormContents {...props} />
       </NavigationDrawer>
@@ -63,7 +63,7 @@ export function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider formType={props.formType} entityType={props.entityType}>
+    <FormSessionContextProvider formType={props.formType} entityType={props.entityType} accountType={props.accountType} isContractForm={props.isPrimaryEntity}>
       <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
         <FormContents {...props} />
       </section>

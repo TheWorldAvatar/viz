@@ -253,11 +253,11 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             </label>
             <SimpleSelector
               options={[
-                { label: singleService, value: singleService },
-                { label: regularService, value: regularService },
-                { label: alternateService, value: alternateService },
-                { label: perpetualService, value: perpetualService },
-                { label: fixedService, value: fixedService },
+                { label: singleService, value: singleService, disabled: false, },
+                { label: regularService, value: regularService, disabled: false, },
+                { label: alternateService, value: alternateService, disabled: false, },
+                { label: perpetualService, value: perpetualService, disabled: false, },
+                { label: fixedService, value: fixedService, disabled: false, },
               ]}
               defaultVal={selectedServiceOption}
               onChange={(selectedOption) => {

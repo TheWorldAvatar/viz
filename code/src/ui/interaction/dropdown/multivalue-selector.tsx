@@ -39,6 +39,7 @@ export default function MultivalueSelector(
   const selectAllOption: SelectOptionType = {
     label: parseWordsForLabels(dict.title.allCol),
     value: "select-all",
+    disabled: false,
   };
 
   const defaultOptions: SelectOptionType[] = props.toggleAll

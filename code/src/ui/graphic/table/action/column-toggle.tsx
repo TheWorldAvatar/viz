@@ -25,6 +25,7 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
   const options: SelectOptionType[] = props.columns.map((col) => ({
     label: parseWordsForLabels(translateLifecycleFields(col.id, dict.title)),
     value: col.id,
+    disabled: false,
   }));
 
   const [selectedOptions, setSelectedOptions] = useState<SelectOptionType[]>(props.columns
@@ -32,6 +33,7 @@ export default function ColumnToggle(props: Readonly<ColumnToggleProps>) {
     .map((col) => ({
       label: parseWordsForLabels(translateLifecycleFields(col.id, dict.title)),
       value: col.id,
+      disabled: false,
     })));
 
   useEffect(() => {
