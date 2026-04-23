@@ -6,11 +6,15 @@ import React from 'react';
 import { MapFeaturePayload } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
 import GroupDropdownField from 'ui/interaction/dropdown/group-dropdown';
-import { setSelectedFeature } from 'utils/client-utils';
+import { setSelectedFeature, highlightFeature } from 'utils/client-utils';
 import { useDictionary } from 'hooks/useDictionary';
+import { Map } from "mapbox-gl";
+import { DataStore } from 'io/data/data-store';
 
 interface FeatureSelectorProps {
   features: MapFeaturePayload[];
+  map: Map;
+  dataStore: DataStore;
 }
 
 /**
@@ -24,7 +28,8 @@ export default function FeatureSelector(props: Readonly<FeatureSelectorProps>) {
 
   const handleSelectorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedFeature: MapFeaturePayload = props.features.find((feature) => feature.name === event.target.value);
-    setSelectedFeature(selectedFeature, dispatch);
+    setSelectedFeature(selectedFeature, props.map, dispatch);
+    highlightFeature(selectedFeature, props.map, props.dataStore);
   };
 
   return (
