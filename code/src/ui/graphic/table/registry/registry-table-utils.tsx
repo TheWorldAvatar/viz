@@ -166,7 +166,8 @@ export function parseColumnsMetadata(
           return getAfterDelimiter(value, "/");
         }
 
-        if (col.value === titleDict.status) {
+        // Column header name is untranslated so we can directly compare to a string
+        if (col.value === "status") {
           return <StatusComponent status={value} />;
         }
 
