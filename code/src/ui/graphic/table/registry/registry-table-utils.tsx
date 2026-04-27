@@ -140,6 +140,7 @@ export function parseColumnsMetadata(
     );
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
     results.push({
+      id: col.value,
       accessorKey: col.value,
       header: title,
       dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
