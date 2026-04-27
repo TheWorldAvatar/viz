@@ -179,6 +179,7 @@ export default function RegistryRowAction(
         className="ml-2"
         isOpen={isActionMenuOpen}
         setIsOpen={setIsActionMenuOpen}
+        aria-label={`${dict.title.actions}, ${props.row.id || props.row.event_id || props.row.iri}`}
       >
         <div className="flex flex-col space-y-8 lg:space-y-4 ">
           {isSubmissionOrGeneralPage && (
