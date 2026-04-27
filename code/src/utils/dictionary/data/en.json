@@ -239,6 +239,7 @@
   },
   "title": {
     "actions": "Actions",
+    "bulkActions": "Bulk actions",
     "allCol": "Show All",
     "amount": "Amount",
     "blank": "(blank)",

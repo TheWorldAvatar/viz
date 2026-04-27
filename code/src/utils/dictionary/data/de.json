@@ -239,6 +239,7 @@
   },
   "title": {
     "actions": "Aktionen",
+    "bulkActions": "Massenaktionen",
     "allCol": "Alle anzeigen",
     "amount": "Betrag",
     "blank": "(leer)",
