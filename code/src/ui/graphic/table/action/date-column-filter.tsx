@@ -43,8 +43,22 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         }}
         tooltipText={dict.action.applyFilter}
         variant="primary"
-        className="h-full rounded-l-none w-12"
+        className="h-full rounded-none w-12"
         aria-label={interpolate(dict.action.filterBy, props.label)}
+      />
+      <Button
+        leftIcon="filter_list_off"
+        iconSize="medium"
+        size="icon"
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          props.onSubmission("");
+        }}
+        tooltipText={dict.action.clearFilter}
+        variant="destructive"
+        className="h-full rounded-l-none w-12"
+        aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
     </div>
   );
