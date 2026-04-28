@@ -243,8 +243,9 @@ export function getNormalizedDate(date: Date): string {
  */
 
 export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined, mode: "single" | "range" | "multiple"): string => {
+  if (!targetDate) return "";
+
   if (mode === "single") {
-    if (!targetDate) return "";
     return getNormalizedDate(targetDate as Date);
   }
   if (mode === "multiple") {
