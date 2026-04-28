@@ -18,7 +18,7 @@ import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
 import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, XSD_DATETIME } from "utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
@@ -138,6 +138,7 @@ export function parseColumnsMetadata(
       title.length * 15,
       125
     );
+    const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
     results.push({
       accessorKey: col.value,
@@ -160,6 +161,9 @@ export function parseColumnsMetadata(
         // Format datetime/date columns for display
         if (isDateTimeColumn) {
           return formatDatetimeValue(value);
+        }
+        if (isDateColumn) {
+          return formatDateValue(value);
         }
 
         if (isValidIRI(value)) {
@@ -246,6 +250,16 @@ export function getInitialColumnVisibilityState(
 export function formatDatetimeValue(value: string): string {
   return new Date(value).toLocaleString();
 }
+
+/**
+ * Formats a date value for display.
+ *
+ * @param {string} value The raw value from the backend.
+ */
+export function formatDateValue(value: string): string {
+  return new Date(value).toLocaleDateString();
+}
+
 
 /**
  * Parses the lifecycle field to their translations.
