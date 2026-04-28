@@ -60,6 +60,7 @@
     "clickDecrease": "Zum Verringern anklicken",
     "clearAllFilters": "Alle Filter löschen",
     "clearFilter": "Filter löschen",
+    "clearFilterFor": "Filter für {replace} löschen",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
     "addInvoice": "Rechnung hinzufügen",

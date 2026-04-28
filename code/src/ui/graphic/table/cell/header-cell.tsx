@@ -12,6 +12,9 @@ import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import { interpolate } from "utils/client-utils";
+import { XSD_DATE, XSD_DATETIME } from "utils/constants";
+import DateColumnFilter from "../action/date-column-filter";
+import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
 
 interface HeaderCellProps {
@@ -61,6 +64,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     currentFilters,
     props.filters,
   );
+  const columnDataType: string = (props.header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType;
+  const isDateColumn: boolean = columnDataType === XSD_DATE || columnDataType === XSD_DATETIME;
 
   return (
     <TableCell
@@ -106,11 +111,21 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
                 event.stopPropagation();
-                setTriggerFetch(!showFilterDropdown);
+                // Do not trigger fetch/loading state for date columns
+                if (!isDateColumn) {
+                  setTriggerFetch(!showFilterDropdown);
+                }
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              <SearchSelector
+              {isDateColumn ? <DateColumnFilter
+                label={props.header.id}
+                currentVal={props.header.column.getFilterValue() as string}
+                onSubmission={(dates: string) => {
+                  props.header.column.setFilterValue(dates);
+                  props.table.resetRowSelection();
+                  props.table.resetPageIndex();
+                }} /> : <SearchSelector
                 searchString={search}
                 options={options}
                 label={props.header.id}
@@ -122,7 +137,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.table.resetPageIndex();
                 }}
                 setSearchString={setSearch}
-              />
+              />}
               {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
             }
