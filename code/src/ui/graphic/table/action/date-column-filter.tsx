@@ -8,6 +8,7 @@ import { getNormalizedDate, interpolate } from "utils/client-utils";
 
 interface DateColumnFilterProps {
   label: string;
+  currentVal: string;
   onSubmission: (_dates: string) => void;
 }
 
@@ -15,11 +16,14 @@ interface DateColumnFilterProps {
  * A column filter component to filter the table by date.
  *
  * @param {string} label The name of the column.
+ * @param {string} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered date range.
  */
 export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
-  const [selectedDate, setSelectedDate] = useState<DateRange>(undefined);
+  const [from, to]: string[] = props.currentVal ? props.currentVal?.split("..") : [];
+  const [selectedDate, setSelectedDate] = useState<DateRange>(props.currentVal ?
+    { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
     <div className="flex">

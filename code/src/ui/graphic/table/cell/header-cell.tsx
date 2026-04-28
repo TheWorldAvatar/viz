@@ -120,6 +120,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             >
               {isDateColumn ? <DateColumnFilter
                 label={props.header.id}
+                currentVal={props.header.column.getFilterValue() as string}
                 onSubmission={(dates: string) => {
                   props.header.column.setFilterValue(dates);
                   props.table.resetRowSelection();
