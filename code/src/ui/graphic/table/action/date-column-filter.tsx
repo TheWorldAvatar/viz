@@ -2,10 +2,9 @@ import { useDictionary } from "hooks/useDictionary";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
-import { LifecycleStageMap } from "types/form";
 import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
-import { getInitialDateFromLifecycleStage, getNormalizedDate, interpolate } from "utils/client-utils";
+import { getNormalizedDate, interpolate } from "utils/client-utils";
 
 interface DateColumnFilterProps {
   label: string;
@@ -20,9 +19,7 @@ interface DateColumnFilterProps {
  */
 export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
-  const [selectedDate, setSelectedDate] = useState<DateRange>(
-    getInitialDateFromLifecycleStage(LifecycleStageMap.GENERAL)
-  );
+  const [selectedDate, setSelectedDate] = useState<DateRange>(undefined);
 
   return (
     <div className="flex">
@@ -57,6 +54,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         }}
         tooltipText={dict.action.clearFilter}
         variant="destructive"
+        disabled={!selectedDate}
         className="h-full rounded-l-none w-12"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
