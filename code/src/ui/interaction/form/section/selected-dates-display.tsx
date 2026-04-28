@@ -63,7 +63,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                 className="flex items-center justify-between border-b last:border-b-0 border-border"
                             >
                                 <div className="flex items-center ">
-                                    <span className="text-sm font-medium text-foreground">
+                                    <span aria-label={`${dict.form.dateSelected} ${date.toLocaleDateString()}`} className="text-sm font-medium text-foreground">
                                         {date.toLocaleDateString()}
                                     </span>
                                 </div>
