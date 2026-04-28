@@ -6,7 +6,7 @@
 
 ### Changes
 
-- Added role access to general registry paths set in ui settings
+- Added role access to general registry paths in configuration
 
 ## 5.69.0
 
