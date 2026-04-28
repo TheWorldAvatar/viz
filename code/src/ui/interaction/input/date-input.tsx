@@ -17,6 +17,7 @@ import {
   DateRange,
   DayPicker,
   getDefaultClassNames,
+  Modifiers
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
@@ -87,6 +88,14 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     root: `${defaultDayPickerClassNames.root} p-4`,
     chevron: "fill-foreground",
   };
+
+  const getDayButtonLabel = (date: Date, modifiers: Modifiers, dict: Dictionary): string => {
+    const formatted = date.toLocaleDateString();
+    let label = formatted;
+    if (modifiers.today) label = `${dict.form.today}, ${label}`;
+    if (modifiers.selected) label = interpolate(dict.message.selected, label);
+    return label;
+  }
 
   return (
     <div
@@ -179,6 +188,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                       range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
                     }}
                     required={true}
+                    labels={{
+                      labelDayButton: (date, modifiers) => getDayButtonLabel(date, modifiers, dict),
+                    }}
                   />
                 )}
                 {props.mode === "multiple" && (
@@ -190,6 +202,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     disabled={props.disabledDates || props.disabled}
                     classNames={dayPickerClassNames}
                     required={true}
+                    labels={{
+                      labelDayButton: (date, modifiers) => getDayButtonLabel(date, modifiers, dict),
+                    }}
                   />
                 )}
                 {props.mode === "single" && !props.disabled && (
@@ -201,6 +216,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     disabled={props.disabledDates}
                     classNames={dayPickerClassNames}
                     required={props.required ?? true}
+                    labels={{
+                      labelDayButton: (date, modifiers) => getDayButtonLabel(date, modifiers, dict),
+                    }}
                   />
                 )}
               </div>
