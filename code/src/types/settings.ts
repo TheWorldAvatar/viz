@@ -43,6 +43,7 @@ export interface ResourcesPathSettings {
   type: string;
   key?: string;
   icon?: string;
+  permission?: keyof HasPermissions;
 }
 
 export interface NavBarItemSettings {

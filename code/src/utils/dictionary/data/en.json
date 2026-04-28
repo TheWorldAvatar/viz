@@ -60,6 +60,7 @@
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters",
     "clearFilter": "Clear filter",
+    "clearFilterFor": "Clear filter for {replace}",
     "showMore": "Show more",
     "showLess": "Show less",
     "addInvoice": "add invoice",
@@ -138,8 +139,8 @@
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {
-    "title": "Hide ribbon",
-    "tooltip": "Show / hide ribbon"
+      "title": "Hide ribbon",
+      "tooltip": "Show / hide ribbon"
     }
   },
   "message": {

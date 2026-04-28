@@ -39,6 +39,10 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     if (filter.value === undefined || (filter.value as string[]).length === 0) {
       return "";
     }
+    // For date filters
+    if (typeof filter.value == "string") {
+      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
+    }
     const currentFilterValues: string[] = filter.value as string[];
     let filterParams: string[];
     if (currentFilterValues.includes(translatedBlankText)) {
@@ -46,7 +50,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     } else {
       filterParams = currentFilterValues;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`
+    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
 }
 
@@ -141,6 +145,7 @@ export function parseColumnsMetadata(
     const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
     results.push({
+      id: col.value,
       accessorKey: col.value,
       header: title,
       dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,

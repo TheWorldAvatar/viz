@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.69.1
+
+### Changes
+
+- Added role access to general registry paths in configuration
+
+## 5.69.0
+
+### Changes
+
+- Added date filters for date and date time columns
+- Bump min version of `VisBackend Agent` from `v1.45.0` to `v1.46.0`
+
 ## 5.68.1
 
 ### Bug fixes
