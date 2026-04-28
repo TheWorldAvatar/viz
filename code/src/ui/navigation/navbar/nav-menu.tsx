@@ -273,22 +273,27 @@ function NavMenuContents(
         )}
 
       {props.settings.modules.registry &&
-        props.settings.resources?.registry?.paths?.map((path, index) => (
-          <NavBarItem
-            key={path.type + index}
-            title={parseWordsForLabels(path.type)}
-            icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
-            url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
-            isMobile={props.isMobile}
-            caption={
-              props.isMenuExpanded
-                ? interpolate(dict.nav.caption.generalReg, parseWordsForLabels(path.type).toLowerCase())
-                : undefined
-            }
-            setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={props.isMenuExpanded}
-          />
-        ))}
+        props.settings.resources?.registry?.paths?.map((path, index) => {
+          if ( // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
+            // IF there is a permission set with authentication enabled, check if the user has the specified permission
+            (!path?.permission || isPermitted(path.permission))
+          ) {
+            return <NavBarItem
+              key={path.type + index}
+              title={parseWordsForLabels(path.type)}
+              icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
+              url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
+              isMobile={props.isMobile}
+              caption={
+                props.isMenuExpanded
+                  ? interpolate(dict.nav.caption.generalReg, parseWordsForLabels(path.type).toLowerCase())
+                  : undefined
+              }
+              setIsOpen={props.setIsMenuOpen}
+              isMenuExpanded={props.isMenuExpanded}
+            />
+          }
+        })}
 
       {props.settings.links?.map((externalLink, index) => {
         if (

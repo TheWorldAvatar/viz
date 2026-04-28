@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.69.1
+
+### Changes
+
+- Added role access to general registry paths in configuration
+
 ## 5.69.0
 
 ### Changes
