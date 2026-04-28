@@ -245,7 +245,7 @@ export function getNormalizedDate(date: Date): string {
 export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined, mode: "single" | "range" | "multiple"): string => {
   if (mode === "single") {
     if (!targetDate) return "";
-    return getNormalizedDate(targetDate as Date);
+    return (targetDate as Date).toLocaleDateString();
   }
   if (mode === "multiple") {
     const dates: Date[] = targetDate as Date[];
