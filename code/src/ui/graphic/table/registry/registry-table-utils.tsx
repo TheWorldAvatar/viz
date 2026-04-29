@@ -261,7 +261,7 @@ export function formatDatetimeValue(value: string): string {
  *
  * @param {string} value The raw value from the backend.
  */
-export function formatDateValue(value: string): string {
+function formatDateValue(value: string): string {
   return new Date(value).toLocaleDateString();
 }
 
