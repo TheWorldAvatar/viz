@@ -108,8 +108,7 @@
     "dateSelected": "ausgewähltes Datum",
     "datesSelected": "ausgewählte Daten",
     "rescheduleDate": "Termin verschieben",
-    "rescheduleDateDesc": "Wählen Sie einen neuen Termin für Ihren Service aus.",
-    "today": "Heute"
+    "rescheduleDateDesc": "Wählen Sie einen neuen Termin für Ihren Service aus."
   },
   "map": {
     "title": {
@@ -197,7 +196,6 @@
     "entry": "{replace} Eintrag",
     "entries": "{replace} Einträge",
     "noEntries": "Keine Einträge",
-    "selected": "{replace} ausgewählt",
     "collapseNavigation": "Navigation ausblenden",
     "expandNavigation": "Navigation erweitern",
     "closeMenu": "Menü schließen",
