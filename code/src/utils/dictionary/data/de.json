@@ -195,7 +195,11 @@
     "sort": "Klicken Sie auf eine Spaltenüberschrift, um aufsteigend oder absteigend zu sortieren. Um nach mehreren Spalten zu sortieren, halten Sie die Umschalttaste auf Ihrer Tastatur gedrückt und klicken Sie auf weitere Überschriften.",
     "entry": "{replace} Eintrag",
     "entries": "{replace} Einträge",
-    "noEntries": "Keine Einträge"
+    "noEntries": "Keine Einträge",
+    "collapseNavigation": "Navigation ausblenden",
+    "expandNavigation": "Navigation erweitern",
+    "closeMenu": "Menü schließen",
+    "openMenu": "Menü öffnen"
   },
   "nav": {
     "caption": {
@@ -208,6 +212,8 @@
       "help": "Hilfe für diese Webplattform"
     },
     "title": {
+      "primary": "Grundschule",
+      "tablePagination": "Paginierung von Tabellen",
       "home": "Startseite",
       "map": "Karte",
       "dashboard": "Analyse",
@@ -239,6 +245,7 @@
   },
   "title": {
     "actions": "Aktionen",
+    "bulkActions": "Massenaktionen",
     "allCol": "Alle anzeigen",
     "amount": "Betrag",
     "blank": "(leer)",

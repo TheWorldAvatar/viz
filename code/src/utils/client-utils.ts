@@ -235,6 +235,24 @@ export function getNormalizedDate(date: Date): string {
 }
 
 /**
+ * Formats a date string into a locale - specific format for display.
+ *
+ * @param { string | Date} value The raw value from the backend.
+ */
+export function formatDateValue(value: string | Date): string {
+  return new Date(value).toLocaleDateString();
+}
+
+/**
+ * Formats a datetime value for display.
+ *
+ * @param {string} value The raw value from the backend.
+ */
+export function formatDatetimeValue(value: string): string {
+  return new Date(value).toLocaleString();
+}
+
+/**
  * Extracts and formats the display string for the target date(s) based on the specified mode.
  *
  * @param {Date | DateRange | Date[] | undefined} targetDate The target date, date range, or multiple dates.
@@ -246,20 +264,20 @@ export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undef
   if (!targetDate) return "";
 
   if (mode === "single") {
-    return getNormalizedDate(targetDate as Date);
+    return formatDateValue(targetDate as Date);
   }
   if (mode === "multiple") {
     const dates: Date[] = targetDate as Date[];
     if (!Array.isArray(dates) || dates.length === 0) return "";
     const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
-    const first: string = sortedDates[0].toLocaleDateString();
-    const last: string = sortedDates.at(-1).toLocaleDateString();
+    const first: string = formatDateValue(sortedDates[0]);
+    const last: string = formatDateValue(sortedDates.at(-1));
     return dates.length === 1 ? first : `${first} - ${last}`;
   }
   // range mode
   const targetDateRange: DateRange = targetDate as DateRange;
-  const fromDate: string = targetDateRange?.from?.toLocaleDateString();
-  const toDate: string = targetDateRange?.to?.toLocaleDateString();
+  const fromDate: string = formatDateValue(targetDateRange?.from);
+  const toDate: string = formatDateValue(targetDateRange?.to);
   return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
 };
 
