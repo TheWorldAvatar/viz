@@ -6,6 +6,15 @@
 
 ### Changes
 
+- Accessiblity improvements: 
+- Standardized the date display format
+- Aria-labels on regsitry row actions, bulk approvement
+- Made the table pagination as a `nav` HTML element
+
+## 5.69.1
+
+### Changes
+
 - Added role access to general registry paths in configuration
 
 ## 5.69.0
