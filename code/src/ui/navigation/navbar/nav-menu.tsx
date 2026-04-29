@@ -37,6 +37,7 @@ interface NavMenuContentsProps extends NavMenuProps {
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
+  const dict: Dictionary = useDictionary();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
@@ -52,7 +53,9 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="mr-4 h-12 "
+          className="mr-4 h-12"
+          aria-expanded={isMenuOpen}
+          aria-label={isMenuOpen ? dict.message.closeMenu : dict.message.openMenu}
         >
           <NavMenuContents
             {...props}
@@ -142,6 +145,7 @@ function NavMenuContents(
 
   return (
     <nav
+      aria-label={dict.nav.title.primary}
       ref={navMenuRef}
       className={`${props.isMobile
         ? "flex gap-4 p-2 w-full"
@@ -160,6 +164,12 @@ function NavMenuContents(
               ? "ml-auto rounded-md"
               : "items-center !rounded-full"
             }`}
+          aria-label={
+            props.isMenuExpanded
+              ? dict.message.collapseNavigation
+              : dict.message.expandNavigation
+          }
+          aria-expanded={props.isMenuExpanded}
           onClick={props.handleMenuToggle}
         />
       )}

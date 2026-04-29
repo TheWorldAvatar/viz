@@ -197,7 +197,11 @@
     "entry": "{replace} entry",
     "entries": "{replace} entries",
     "noEntries": "No entries",
-    "selected": "{replace} selected"
+    "selected": "{replace} selected",
+    "collapseNavigation": "Collapse navigation",
+    "expandNavigation": "Expand navigation",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
   },
   "nav": {
     "caption": {
@@ -210,6 +214,7 @@
       "help": "Get help for this web platform"
     },
     "title": {
+      "primary": "Primary",
       "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",

@@ -197,7 +197,11 @@
     "entry": "{replace} Eintrag",
     "entries": "{replace} Einträge",
     "noEntries": "Keine Einträge",
-    "selected": "{replace} ausgewählt"
+    "selected": "{replace} ausgewählt",
+    "collapseNavigation": "Navigation ausblenden",
+    "expandNavigation": "Navigation erweitern",
+    "closeMenu": "Menü schließen",
+    "openMenu": "Menü öffnen"
   },
   "nav": {
     "caption": {
@@ -210,6 +214,7 @@
       "help": "Hilfe für diese Webplattform"
     },
     "title": {
+      "primary": "Grundschule",
       "home": "Startseite",
       "map": "Karte",
       "dashboard": "Analyse",
