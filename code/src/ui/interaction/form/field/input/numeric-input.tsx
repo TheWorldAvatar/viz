@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 
 import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
@@ -123,22 +123,26 @@ export default function NumericInputField(
 
   return (
     <div className="relative inline-block w-full">
-      <input
-        id={props.field.fieldId}
-        type="text"
-        inputMode={inputMode}
-        className={`${inputClassNames ?? ""} pr-20`}
-        placeholder={`${dict.action.edit} ${props.field.name[VALUE_KEY]}`}
-        onKeyDown={handleKeyDown}
-        aria-label={props.field.name[VALUE_KEY]}
-        {...props.form.register(
-          props.field.fieldId,
-          getRegisterOptions(
-            props.field,
-            formType,
-            dict
-          )
-        )}
+      <Controller
+        name={props.field.fieldId}
+        control={props.form.control}
+        rules={getRegisterOptions(props.field, formType, dict)}
+        render={({ field: { onChange, value } }) => {
+          const displayValue: string | number = dict.toNumberDisplay(value);
+          return <input
+            id={props.field.fieldId}
+            type="text"
+            inputMode={inputMode}
+            className={`${inputClassNames ?? ""} pr-20`}
+            placeholder={`${dict.action.edit} ${props.field.name[VALUE_KEY]}`}
+            value={displayValue}
+            onChange={(e) => {
+              onChange(dict.normaliseNumber(e.target.value));
+            }}
+            onKeyDown={handleKeyDown}
+            aria-label={props.field.name[VALUE_KEY]}
+          />
+        }}
       />
       <div className="flex absolute right-1 top-1/2 -translate-y-1/2 gap-px">
         <Button
