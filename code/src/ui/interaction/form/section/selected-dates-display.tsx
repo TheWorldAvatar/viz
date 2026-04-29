@@ -4,6 +4,7 @@ import { useState } from "react"
 import Button from "ui/interaction/button"
 import { useDictionary } from "hooks/useDictionary"
 import { Dictionary } from "types/dictionary"
+import { formatDateValue } from "utils/client-utils"
 
 interface SelectedDatesDisplayProps {
     dates: Date[]
@@ -63,8 +64,8 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                 className="flex items-center justify-between border-b last:border-b-0 border-border"
                             >
                                 <div className="flex items-center ">
-                                    <span aria-label={`${dict.form.dateSelected} ${date.toLocaleDateString()}`} className="text-sm font-medium text-foreground">
-                                        {date.toLocaleDateString()}
+                                    <span aria-label={`${dict.form.dateSelected} ${formatDateValue(date)}`} className="text-sm font-medium text-foreground">
+                                        {formatDateValue(date)}
                                     </span>
                                 </div>
                                 <Button
@@ -76,7 +77,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                     className="w-8 h-8 mb-1"
                                     onClick={() => handleRemoveDate(originalIndex)}
                                     disabled={props.disabled || props.dates.length === 1}
-                                    aria-label={`Remove date ${date.toLocaleDateString()}`}
+                                    aria-label={`Remove date ${formatDateValue(date)}`}
                                 />
                             </div>
                         ))}

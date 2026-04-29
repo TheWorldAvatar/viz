@@ -17,7 +17,7 @@ import {
 import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels, formatDateValue, formatDatetimeValue } from "utils/client-utils";
 import { FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -246,25 +246,6 @@ export function getInitialColumnVisibilityState(
   }
   return columnVisibilityState;
 }
-
-/**
- * Formats a datetime value for display.
- *
- * @param {string} value The raw value from the backend.
- */
-export function formatDatetimeValue(value: string): string {
-  return new Date(value).toLocaleString();
-}
-
-/**
- * Formats a date value for display.
- *
- * @param {string} value The raw value from the backend.
- */
-function formatDateValue(value: string): string {
-  return new Date(value).toLocaleDateString();
-}
-
 
 /**
  * Parses the lifecycle field to their translations.
