@@ -215,6 +215,7 @@
     },
     "title": {
       "primary": "Primary",
+      "tablePagination": "Table pagination",
       "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",

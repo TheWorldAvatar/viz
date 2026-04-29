@@ -215,6 +215,7 @@
     },
     "title": {
       "primary": "Grundschule",
+      "tablePagination": "Paginierung von Tabellen",
       "home": "Startseite",
       "map": "Karte",
       "dashboard": "Analyse",
