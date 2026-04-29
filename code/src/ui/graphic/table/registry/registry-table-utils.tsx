@@ -260,6 +260,10 @@ export function formatDatetimeValue(value: string): string {
  */
 export function translateLifecycleFields(field: string, titleDict: Record<string, string>): string {
   switch (field.toLowerCase()) {
+    case "date":
+      return titleDict.date;
+    case "event_id":
+      return titleDict.eventId;
     case "lastmodified":
       return titleDict.lastModified;
     case "scheduletype":
