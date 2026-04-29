@@ -181,8 +181,9 @@ function performIncrementDecrement(
   regexEx: string,
   isAddition: boolean
 ): number {
+  const parsedVal: number = isNaN(value) ? 0 : value;
   let result: number = computeIncrementDecrement(
-    Math.round(value / steps) * steps,
+    Math.round(parsedVal / steps) * steps,
     steps,
     scaleFactor,
     isAddition
