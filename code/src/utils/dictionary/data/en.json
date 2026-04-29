@@ -138,7 +138,7 @@
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {
-      "title": "Hide ribbon",
+      "title": "Show ribbon",
       "tooltip": "Show / hide ribbon"
     }
   },
@@ -216,7 +216,6 @@
       "accounts": "Accounts",
       "pricing": "Pricing",
       "activities": "Activities",
-      "submission": "Registry Submission",
       "help": "Help Centre",
       "invoice": "Invoices",
       "pending": "Pending",

@@ -65,14 +65,14 @@
     "showLess": "Weniger anzeigen",
     "addInvoice": "Rechnung hinzufügen",
     "bulkAssign": "Massenzuweisung",
-    "select": "Wählen",
+    "select": "Auswählen",
     "selectItem": "{replace} wählen"
   },
   "form": {
     "singleService": "Einzelner Dienst",
     "regularService": "Regelmäßiger Dienst",
     "alternateService": "Alternierender Dienst",
-    "perpetualService": "Dauer Dienst",
+    "perpetualService": "Dauerdienst",
     "fixedService": "Festtermin-Service",
     "singleServiceDesc": "Ein einmaliger Dienst (oder Einzelauftrag), der zum angegebenen Datum stattfindet.",
     "regularServiceDesc": "Ein Dienst (oder Dauerauftrag), der regelmäßig nach dem Zeitplan innerhalb des angegebenen Zeitraums stattfindet.",
@@ -87,9 +87,9 @@
     "endDateDesc": "Effektives Enddatum des Dienstes oder Gültig bis.",
     "timeSlot": "Zeitfenster",
     "from": "Von",
-    "fromTimeSlotDesc": "Startzeit des Dienstfensters",
+    "fromTimeSlotDesc": "Startzeit des Zeitfensters",
     "to": "Bis",
-    "toTimeSlotDesc": "Endzeitpunkt des Servicefensters",
+    "toTimeSlotDesc": "Endzeitpunkt des Zeitfensters",
     "sun": "Sonntag",
     "mon": "Montag",
     "tue": "Dienstag",
@@ -98,7 +98,7 @@
     "fri": "Freitag",
     "sat": "Samstag",
     "latDesc": "Der Breitengrad des",
-    "longDesc": "Der Längengrad der",
+    "longDesc": "Der Längengrad des",
     "searchStartTimeDesc": "Wählen Sie das Startdatum/die Startzeit für Ihre Suche.",
     "searchEndTimeDesc": "Wählen Sie das Enddatum/die Endzeit für Ihre Suche.",
     "min": "Min",
@@ -138,8 +138,8 @@
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {
-      "title": "Versteckband",
-      "tooltip": "Band ein-/ausblenden"
+      "title": "Menüband anzeigen",
+      "tooltip": "Menüband ein-/ausblenden"
     }
   },
   "message": {
@@ -154,7 +154,7 @@
     "dispatchInstruction": "Weisen Sie die Ressourcen für den geplanten Dienst am {date} zu",
     "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes (oder Auftrags) am {date} an",
     "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
-    "rescheduleInstruction": "Änderung einer zuvor geplanten Dienstleistung am {replace} beantragen",
+    "rescheduleInstruction": "Änderung einer bereits geplanten Dienstleistung am {replace} beantragen",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
@@ -179,7 +179,7 @@
     "noVisibleColumns": "Bitte wählen Sie mindestens eine Spalte zur Anzeige aus.",
     "noOptions": "Keine Optionen gefunden",
     "typeFilter": "Filter nicht aufgeführt? Beginnen Sie mit der Eingabe...",
-    "typeMore": "Mehr eingeben, um Ergebnisse einzugrenzen",
+    "typeMore": "Mehr eingeben, um die Ergebnisse einzugrenzen",
     "exportReport": "Exportbericht",
     "required": "Erforderlich",
     "minInclusive": "Bitte geben Sie eine Zahl ein, die {replace} oder größer ist!",
@@ -216,7 +216,6 @@
       "accounts": "Konten",
       "pricing": "Preise",
       "activities": "Aktivitäten",
-      "submission": "Einreichung des Registers",
       "help": "Hilfe-Center",
       "invoice": "Rechnungen",
       "pending": "Ausstehend",
@@ -225,8 +224,8 @@
       "outstanding": "Offen",
       "scheduled": "Eingeplant",
       "closed": "Geschlossen",
-      "jobs": "Stellenangebote",
-      "tasks": "Aufgaben"
+      "jobs": "Aufgaben",
+      "tasks": "Aufträge"
     },
     "tooltip": {
       "home": "Zurück zur Startseite",
@@ -245,8 +244,8 @@
     "blank": "(leer)",
     "customiseCol": "Spalten ein-/ausblenden",
     "description": "Beschreibung",
-    "lastModified": "Zuletzt Geändert",
-    "history": "Geschichte",
+    "lastModified": "Zuletzt geändert",
+    "history": "Historie",
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
     "active": "Aktiv",
