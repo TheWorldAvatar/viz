@@ -86,13 +86,13 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       // Determine the appropriate task route based on status and permissions
       let taskRoute: string;
       if (isPermitted("operation") &&
-        ((row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.NEW ||
-          ((row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.ASSIGNED &&
+        ((row.status as string).toLowerCase() === RegistryStatusMap.NEW ||
+          ((row.status as string).toLowerCase() === RegistryStatusMap.ASSIGNED &&
             lifecycleStage === LifecycleStageMap.SCHEDULED))
       ) {
         taskRoute = Routes.REGISTRY_TASK_DISPATCH;
       } else if (isPermitted("completeTask") &&
-        (row[dict.title.status] as string).toLowerCase() === RegistryStatusMap.ASSIGNED
+        (row.status as string).toLowerCase() === RegistryStatusMap.ASSIGNED
       ) {
         taskRoute = Routes.REGISTRY_TASK_COMPLETE;
       } else {
@@ -103,7 +103,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       if (isPermitted("invoice") &&
         [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED,
         RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED,
-        RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row[dict.title.status].toLowerCase())
+        RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row.status.toLowerCase())
       ) {
         browserStorageManager.set(EVENT_KEY, row.event_id)
         browserStorageManager.set(DATE_KEY, row.date)
