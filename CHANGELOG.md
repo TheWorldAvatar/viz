@@ -2,11 +2,23 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.70.0
+
+### Changes
+
+- Updated the German translations
+- Modify hide table ribbon to show instead
+- Enforce localised numeric inputs in the forms
+
+### Bug fixes
+
+- Fix onclick error in registry rows due to status translation
+
 ## 5.69.2
 
 ### Changes
 
-- Accessiblity improvements: 
+- Accessiblity improvements:
 - Standardized the date display format
 - Aria-labels on regsitry row actions, bulk approvement
 - Made the table pagination as a `nav` HTML element
