@@ -8,7 +8,7 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FileDownloadButton } from "ui/interaction/action/download/file-download";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
@@ -20,6 +20,7 @@ import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { execReviewBillableAction } from "../registry/registry-table-utils";
 
 
 interface RegistryRowActionProps {
@@ -137,29 +138,8 @@ export default function RegistryRowAction(
     markRowAsActive();
     browserStorageManager.clear();
     resetFormSession();
-    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id, props.row.date);
-    const body: AgentResponseBody = await queryInternalApi(url);
-    browserStorageManager.set(DATE_KEY, props.row.date);
-    browserStorageManager.set(EVENT_KEY, props.row.event_id);
-    try {
-      const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-        InternalApiIdentifierMap.FILTER,
-        LifecycleStageMap.ACCOUNT,
-        props.accountType,
-        props.row[props.accountType]
-      ));
-      const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-      // Set the account type in browser storage to match the values of the account type in the assign price form
-      browserStorageManager.set(props.accountType, options[0]?.value);
-    } catch (error) {
-      console.error("Error fetching instances", error);
-    }
     setIsActionMenuOpen(false);
-    if (body.data.message == "true") {
-      navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(props.row.event_id))
-    } else {
-      navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id));
-    }
+    await execReviewBillableAction(props.row, props.accountType, navigateToDrawer);
   };
 
   const isSubmissionOrGeneralPage: boolean =
