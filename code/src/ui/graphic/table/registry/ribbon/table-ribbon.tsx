@@ -245,6 +245,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
           <Button
             leftIcon="filter_list_off"
+            aria-label={dict.action.clearAllFilters}
             iconSize="medium"
             className="mt-1"
             disabled={props.tableDescriptor.filters.every((filter) => (filter?.value as string[])?.length == 0)}
