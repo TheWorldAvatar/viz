@@ -6,7 +6,7 @@
 
 ### Changes
 
-- Added accessibility name for the clear all filters button in the table ribbon
+- Allow users to recomplete a task even after it has been billed
 
 ## 5.70.0
 
