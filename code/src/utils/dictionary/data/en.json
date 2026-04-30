@@ -2,6 +2,7 @@
   "lang": "en-GB",
   "action": {
     "add": "Add",
+    "remove": "Remove",
     "addItem": "add {replace}",
     "assign": "Assign",
     "applyFilter": "Apply filter",

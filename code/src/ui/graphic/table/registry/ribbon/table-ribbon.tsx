@@ -255,6 +255,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             }}
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
+            aria-label={dict.action.clearAllFilters}
           />
           {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&

@@ -61,6 +61,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               <Button
                 size="icon"
                 leftIcon="add"
+                aria-label={`${dict.action.add} ${props.fieldId}`}
                 disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
@@ -71,6 +72,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             {fields.length > minArraySize && (
               <Button
                 leftIcon="remove"
+                aria-label={`${dict.action.remove} ${props.fieldId}`}
                 size="icon"
                 variant="destructive"
                 disabled={refreshFlag}
@@ -89,6 +91,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         <div className="flex flex-wrap gap-4  rounded-lg w-fit">
           {fields.map((field, index) => (
             <button
+              aria-label={`${dict.action.view} ${props.fieldId} ${index + 1}`}
               key={field.id}
               className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border border-border rounded-sm ${index === currentIndex ? "bg-primary " : ""
                 }`}
