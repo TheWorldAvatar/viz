@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.70.1
+
+### Changes
+
+- Allow users to recomplete a task even after it has been billed
+
 ## 5.70.0
 
 ### Changes
