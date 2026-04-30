@@ -8,17 +8,15 @@ import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FileDownloadButton } from "ui/interaction/action/download/file-download";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { execReviewBillableAction } from "../registry/registry-table-utils";
 
