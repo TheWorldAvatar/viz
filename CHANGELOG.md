@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.70.1
+
+### Changes
+
+- Added accessibility name for the clear all filters button in the table ribbon
+
 ## 5.70.0
 
 ### Changes
