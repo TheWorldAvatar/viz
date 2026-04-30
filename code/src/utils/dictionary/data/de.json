@@ -2,6 +2,7 @@
   "lang": "de",
   "action": {
     "add": "Hinzufügen",
+    "remove": "Entfernen",
     "addItem": "{replace} hinzufügen",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",

@@ -61,6 +61,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               <Button
                 size="icon"
                 leftIcon="add"
+                aria-label={`${dict.action.add} ${props.fieldId}`}
                 disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
@@ -71,6 +72,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
             {fields.length > minArraySize && (
               <Button
                 leftIcon="remove"
+                aria-label={`${dict.action.remove} ${props.fieldId}`}
                 size="icon"
                 variant="destructive"
                 disabled={refreshFlag}
