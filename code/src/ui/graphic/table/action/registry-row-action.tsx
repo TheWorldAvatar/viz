@@ -281,6 +281,9 @@ export default function RegistryRowAction(
                   setIsActionMenuOpen(false);
                   browserStorageManager.clear();
                   resetFormSession();
+                  // Set a flag to indicate if the bill has been accrued, which determines the next navigation action
+                  browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED,
+                    (props.row.status.toLowerCase() === RegistryStatusMap.BILLABLE_COMPLETED).toString());
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}

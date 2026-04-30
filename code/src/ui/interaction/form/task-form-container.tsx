@@ -238,7 +238,13 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     if (response && !response?.error) {
       handleDrawerClose(() => {
-        router.back();
+        // For completion of task if the bill is already accrued, navigate to accrual drawer
+        if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true") {
+          browserStorageManager.clear();
+          navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(id));
+        } else {
+          router.back();
+        }
       });
     }
   };
