@@ -3,6 +3,7 @@
   "action": {
     "add": "Hinzufügen",
     "addItem": "{replace} hinzufügen",
+    "adjustPricing": "Preis anpassen",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
     "delete": "Löschen",

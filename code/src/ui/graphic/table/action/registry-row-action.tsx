@@ -287,6 +287,16 @@ export default function RegistryRowAction(
               )}
             </>
           )}
+          {(isActionAllowed("ADJUST_PRICING")) && <RowActionButton
+            icon="price_change"
+            label={dict.action.adjustPricing}
+            disabled={isLoading}
+            onClick={() => {
+              handleClickRowAction();
+              // Get the id of the contract and avoid task id
+              navigateToDrawer(Routes.REGISTRY_ADJUST_PRICING, getId(props.row.id));
+            }}
+          />}
           {(isActionAllowed("REVIEW_BILLABLES")) && <RowActionButton
             icon="price_check"
             label={dict.action.reviewBillable}
