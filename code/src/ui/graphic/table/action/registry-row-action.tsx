@@ -1,18 +1,20 @@
 import { useRegistryRowPermissionGuard } from "hooks/auth/useRegistryRowPermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import { useReadAttachments } from "hooks/form/useReadAttachments";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
+import { AgentResponseBody, ContractDirectory, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FileDownloadButton } from "ui/interaction/action/download/file-download";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import ExternalRedirectButton from "ui/interaction/action/redirect/external-redirect-button";
 import { toast } from "ui/interaction/action/toast/toast";
 import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
@@ -54,9 +56,13 @@ export default function RegistryRowAction(
 
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
+  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+  const [isAttachmentViewerOpen, setIsAttachmentViewerOpen] = React.useState<boolean>(false);
 
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
-  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+  const contractDirectory: ContractDirectory = useReadAttachments((props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+    props.lifecycleStage === LifecycleStageMap.SCHEDULED || props.lifecycleStage === LifecycleStageMap.CLOSED) ?
+    getId(props.row.id) : "");
 
   /**
    * Performs these actions on every row click to reset states and mark row as active.
@@ -287,6 +293,29 @@ export default function RegistryRowAction(
               )}
             </>
           )}
+          {contractDirectory?.files.length > 0 && isActionAllowed("VIEW_FILES") &&
+            <PopoverActionButton
+              placement="bottom-end"
+              leftIcon="attach_file"
+              variant="ghost"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={dict.action.viewAttachment}
+              isOpen={isAttachmentViewerOpen}
+              setIsOpen={setIsAttachmentViewerOpen}
+              aria-label={`${dict.action.viewAttachment}, ${props.row.id}`}
+            >
+              {contractDirectory.files.map(file => {
+                return <ExternalRedirectButton
+                  key={file}
+                  label={file}
+                  variant="link"
+                  size="md"
+                  url={`${contractDirectory.url}/${file}`}
+                />
+              })}
+            </PopoverActionButton>}
           {(isActionAllowed("ADJUST_PRICING")) && <RowActionButton
             icon="price_change"
             label={dict.action.adjustPricing}
