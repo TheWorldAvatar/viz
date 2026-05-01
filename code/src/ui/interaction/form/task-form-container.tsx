@@ -7,12 +7,12 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
-import { useAttachmentCheck } from "hooks/form/useAttachmentCheck";
+import { useReadAttachments } from "hooks/form/useReadAttachments";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
+import { AgentResponseBody, ContractDirectory, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import {
   FormTemplateType,
@@ -110,7 +110,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const { task } = useTaskData(id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-  const { attachmentUrl, hasAttachment } = useAttachmentCheck(task?.contract);
+  const contractDirectory: ContractDirectory = useReadAttachments(task?.contract);
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -340,11 +340,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               onClick={triggerRefresh}
             />
           )}
-          {hasAttachment && <ExternalRedirectButton
+          {contractDirectory?.files.length > 0 && <ExternalRedirectButton
             leftIcon="attach_file"
             variant="outline"
             size="icon"
-            url={attachmentUrl}
+            url={contractDirectory.url}
             tooltipText={dict.action.viewAttachment}
           />}
         </div>

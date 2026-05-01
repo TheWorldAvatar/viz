@@ -1,5 +1,7 @@
+import fs from 'fs';
 import { NextRequest, NextResponse } from "next/server";
-import { UrlExistsResponse } from "types/backend-agent";
+import path from "path";
+import { ContractDirectory } from "types/backend-agent";
 import { buildUrl } from "utils/client-utils";
 import { getBackendApi } from "utils/internal-api-services";
 
@@ -9,19 +11,31 @@ import { getBackendApi } from "utils/internal-api-services";
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<UrlExistsResponse>> {
+): Promise<NextResponse<ContractDirectory>> {
   let url: string = "";
+  let fileList: string[] = [];
   try {
-
     const urlPrefix: string = getBackendApi("REGISTRY_TASK_ATTACHMENT");
     // Build url with id parameter
     const { id } = await params;
+
+    fileList = await getFiles(id);
     url = buildUrl(urlPrefix, id, "");
+
   } catch (_error) {
-    console.error("Ignoring attachment checks as no valid API is configured!");
+    console.warn("Ignoring attachment checks as no valid API is configured!");
     return NextResponse.json({
       url,
-      exists: false,
+      files: fileList,
+    });
+  }
+
+  // Early termination
+  if (fileList.length == 0) {
+    console.info("No files detected in directory...");
+    return NextResponse.json({
+      url,
+      files: fileList,
     });
   }
 
@@ -40,6 +54,17 @@ export async function GET(
 
   return NextResponse.json({
     url,
-    exists: response.ok,
+    files: response.ok ? fileList : [],
   });
+}
+
+/**
+ * Gets a list of files in the target directory of a specific contract.
+ * 
+ * @param id The identifier for the target directory for a specific contract 
+ */
+export async function getFiles(id: string) {
+  const contractDir: string = path.join(process.cwd(), "data", id);
+  if (!fs.existsSync(contractDir)) return [];
+  return fs.readdirSync(contractDir);
 }

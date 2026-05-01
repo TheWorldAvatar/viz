@@ -68,7 +68,7 @@ export const InternalApiIdentifierMap = {
 } as const;
 export type InternalApiIdentifier = typeof InternalApiIdentifierMap[keyof typeof InternalApiIdentifierMap];
 
-export type UrlExistsResponse = {
+export type ContractDirectory = {
   url: string;
-  exists: boolean;
+  files: string[];
 };
