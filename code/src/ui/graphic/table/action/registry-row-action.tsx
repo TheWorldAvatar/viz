@@ -14,11 +14,11 @@ import { FileDownloadButton } from "ui/interaction/action/download/file-download
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import { toast } from "ui/interaction/action/toast/toast";
-import Button from "ui/interaction/button";
 import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { execReviewBillableAction } from "../registry/registry-table-utils";
+import RowActionButton from "./row-action-button";
 
 
 interface RegistryRowActionProps {
@@ -162,12 +162,8 @@ export default function RegistryRowAction(
         <div className="flex flex-col space-y-8 lg:space-y-4 ">
           {isSubmissionOrGeneralPage && (
             <>
-              <Button
-                variant="ghost"
-                leftIcon="open_in_new"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              <RowActionButton
+                icon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   markRowAsActive();
@@ -178,12 +174,8 @@ export default function RegistryRowAction(
                 }}
               />
               {isActionAllowed("TERMINATE_CONTRACT") &&
-                <Button
-                  variant="ghost"
-                  leftIcon="block"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="block"
                   disabled={isLoading}
                   label={dict.action.terminate}
                   onClick={() => {
@@ -193,34 +185,23 @@ export default function RegistryRowAction(
                   }}
                 />}
               {isActionAllowed("APPROVE_CONTRACT") &&
-                <Button
-                  variant="ghost"
-                  leftIcon="done_outline"
+                <RowActionButton
+                  icon="done_outline"
                   disabled={isLoading}
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
                   label={dict.action.approve}
                   onClick={onApproval}
                 />}
               {isActionAllowed("RESUBMIT") &&
-                <Button
-                  variant="ghost"
-                  leftIcon="published_with_changes"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="published_with_changes"
                   disabled={isLoading}
                   label={dict.action.resubmit}
                   onClick={onResubmissionForApproval}
                 />
               }
-              {isActionAllowed("EDIT") && <Button
-                variant="ghost"
-                leftIcon="edit"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {isActionAllowed("EDIT") && <RowActionButton
+
+                icon="edit"
                 disabled={isLoading}
                 label={dict.action.edit}
                 onClick={() => {
@@ -231,12 +212,8 @@ export default function RegistryRowAction(
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
-              {isActionAllowed("DELETE") && <Button
-                variant="ghost"
-                leftIcon="delete"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {isActionAllowed("DELETE") && <RowActionButton
+                icon="delete"
                 disabled={isLoading}
                 label={dict.action.delete}
                 onClick={() => {
@@ -251,12 +228,8 @@ export default function RegistryRowAction(
           )}
           {!isSubmissionOrGeneralPage && (
             <>
-              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <Button
-                variant="ghost"
-                leftIcon="open_in_new"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <RowActionButton
+                icon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   markRowAsActive();
@@ -266,12 +239,8 @@ export default function RegistryRowAction(
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />}
-              {isActionAllowed("COMPLETE_TASK") && <Button
-                variant="ghost"
-                leftIcon="done_outline"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {isActionAllowed("COMPLETE_TASK") && <RowActionButton
+                icon="done_outline"
                 disabled={isLoading}
                 label={dict.action.complete}
                 onClick={() => {
@@ -285,13 +254,8 @@ export default function RegistryRowAction(
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
-              {isActionAllowed("ASSIGN_TASK") && <Button
-                variant="ghost"
-                leftIcon="assignment"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                disabled={isLoading}
+              {isActionAllowed("ASSIGN_TASK") && <RowActionButton
+                icon="assignment"
                 label={dict.action.dispatch}
                 onClick={() => {
                   markRowAsActive();
@@ -303,12 +267,8 @@ export default function RegistryRowAction(
               />}
               {isActionAllowed("RESCHEDULE_TASK") &&
                 props.row.scheduleType == dict.form.singleService && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="schedule"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
+                  <RowActionButton
+                    icon="schedule"
                     disabled={isLoading}
                     label={dict.action.reschedule}
                     onClick={() => {
@@ -319,12 +279,8 @@ export default function RegistryRowAction(
                   />
                 )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, true) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="cancel"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="cancel"
                   disabled={isLoading}
                   label={dict.action.cancel}
                   onClick={() => {
@@ -335,12 +291,8 @@ export default function RegistryRowAction(
                 />
               )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, false) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="report"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="report"
                   label={dict.action.report}
                   disabled={isLoading}
                   onClick={() => {
@@ -352,22 +304,14 @@ export default function RegistryRowAction(
               )}
             </>
           )}
-          {(isActionAllowed("REVIEW_BILLABLES")) && <Button
-            variant="ghost"
-            leftIcon="price_check"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
+          {(isActionAllowed("REVIEW_BILLABLES")) && <RowActionButton
+            icon="price_check"
             label={dict.action.reviewBillable}
             disabled={isLoading}
             onClick={onReviewBillable}
           />}
-          {(isActionAllowed("EXEMPT_BILLABLES")) && <Button
-            variant="ghost"
-            leftIcon="money_off"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
+          {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
+            icon="money_off"
             label={dict.action.exemptBillable}
             disabled={isLoading}
             onClick={() => {
@@ -376,12 +320,8 @@ export default function RegistryRowAction(
               navigateToDrawer(Routes.REGISTRY_TASK_EXEMPT, recordId);
             }}
           />}
-          {isActionAllowed("VIEW_BILLABLES") && <Button
-            variant="ghost"
-            leftIcon="monetization_on"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
+          {isActionAllowed("VIEW_BILLABLES") && <RowActionButton
+            icon="monetization_on"
             label={dict.action.viewServiceCost}
             disabled={isLoading}
             onClick={(e) => {
@@ -424,12 +364,8 @@ export default function RegistryRowAction(
               triggerRefresh={props.triggerRefresh}
             />
           }
-          {isActionAllowed("ACCOUNT_FLAG") && <Button
-            variant="ghost"
-            leftIcon="flag"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
+          {isActionAllowed("ACCOUNT_FLAG") && <RowActionButton
+            icon="flag"
             label={props.row.flag === "true" ? dict.action.flagResolution : dict.action.flag}
             disabled={isLoading}
             onClick={onUpdateAccountFlag}
