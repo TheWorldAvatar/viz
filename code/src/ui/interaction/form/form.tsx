@@ -153,9 +153,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
-    if (formType === FormTypeMap.ADJUST_PRICE) {
-      return;
-    }
     startLoading();
     let pendingResponse: AgentResponseBody;
 
@@ -295,6 +292,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
+      case FormTypeMap.ADJUST_PRICE: {
+        const pricingModels: string[] = parsePricingModels(formData, billingParams);
+        pendingResponse = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+          "PUT",
+          JSON.stringify({
+            id: formData.id,
+            pricing: pricingModels,
+          }));
+        break;
+      }
       case FormTypeMap.ASSIGN_PRICE: {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
         pendingResponse = await queryInternalApi(
@@ -337,16 +345,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               contract: props.primaryInstance,
             }));
           if (!pendingResponse.error && billingParams.pricingField in formData) {
-            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
-            parsePricingModels(formData, billingParams)?.forEach(async model =>
-              pendingResponse = await queryInternalApi(
-                url,
-                "PUT",
-                JSON.stringify({
-                  id: formData.id,
-                  pricing: model,
-                }))
-            )
+            const pricingModels: string[] = parsePricingModels(formData, billingParams);
+            pendingResponse = await queryInternalApi(
+              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+              "PUT",
+              JSON.stringify({
+                id: formData.id,
+                pricing: pricingModels,
+              }));
           }
         }
         break;
