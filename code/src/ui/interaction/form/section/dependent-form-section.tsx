@@ -68,10 +68,12 @@ export function DependentFormSection(
     isQuickViewOpen,
     setIsQuickViewOpen,
   } = useFormQuickView(currentOption, queryEntityType);
-
-  const disable: boolean = (fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount) ||
+  // Disables both selector and quick view actions
+  const disable: boolean = (fieldName in frozenFields && browserStorageManager.get(fieldName) !== undefined && frozenFields[fieldName] < formCount)
+    // Disable all inputs except the pricing field itself
+    || (formType == FormTypeMap.ADJUST_PRICE && props.billingStore.pricing != queryEntityType)
     // Disable account field on assign price form page
-    (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
+    || (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
 
   return (
     <div className="rounded-lg my-4">
