@@ -153,6 +153,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
   // A function to initiate the form submission process
   const onSubmit = form.handleSubmit(async (formData: FieldValues) => {
+    if (formType === FormTypeMap.ADJUST_PRICE) {
+      return;
+    }
     startLoading();
     let pendingResponse: AgentResponseBody;
 
@@ -517,8 +520,11 @@ export function renderFormField(
   currentIndex: number,
   billingParams: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): ReactNode {
-  const disableAllInputs: boolean =
-    formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE;
+  const disableAllInputs: boolean = formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE ||
+    // disable except if it is the pricing model field or group
+    (formType === FormTypeMap.ADJUST_PRICE && (billingParams.pricingField != (field as PropertyGroup).label?.[VALUE_KEY]
+      && billingParams.pricing != (field as PropertyShape).name?.[VALUE_KEY])
+    );
 
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;
