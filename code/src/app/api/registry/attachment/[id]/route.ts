@@ -20,7 +20,7 @@ export async function GET(
     const { id } = await params;
 
     fileList = await getFiles(id);
-    url = buildUrl(urlPrefix, id, "");
+    url = buildUrl(urlPrefix, id);
 
   } catch (_error) {
     console.warn("Ignoring attachment checks as no valid API is configured!");
