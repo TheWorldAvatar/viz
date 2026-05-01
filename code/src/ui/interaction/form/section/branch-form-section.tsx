@@ -45,9 +45,10 @@ export default function BranchFormSection(
   const { formType } = useFormSession();
   const [isSwitching, setIsSwitching] = useState<boolean>(false);
   // Define the state to store the selected value
-  const [selectedModel, setSelectedModel] = useState<NodeShape>(formType == FormTypeMap.VIEW ? props.node[0] :
-    props.node.find((node) =>
-      node.label[VALUE_KEY] === props.form.getValues(formType == FormTypeMap.DELETE ? BRANCH_DELETE : BRANCH_ADD))
+  const [selectedModel, setSelectedModel] = useState<NodeShape>(
+    formType == FormTypeMap.VIEW || formType == FormTypeMap.ADJUST_PRICE ? props.node[0] :
+      props.node.find((node) =>
+        node.label[VALUE_KEY] === props.form.getValues(formType == FormTypeMap.DELETE ? BRANCH_DELETE : BRANCH_ADD))
   );
 
   // Declare a function to transform node shape to a form option
@@ -124,7 +125,8 @@ export default function BranchFormSection(
           }}
           isDisabled={
             formType == FormTypeMap.DELETE ||
-            formType == FormTypeMap.VIEW
+            formType == FormTypeMap.VIEW ||
+            formType == FormTypeMap.ADJUST_PRICE
           }
           ariaLabel={dict.message.branchInstruction}
         />}

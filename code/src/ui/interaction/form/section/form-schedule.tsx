@@ -65,9 +65,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const fixedService: string = dict.form.fixedService;
   const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
   const { formType } = useFormSession();
-  const isDisabledOption: { disabled: boolean } = {
-    disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
-  };
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fixedDates, setFixedDates] = useState<Date[]>(entryDates?.length > 0
     ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString))) : [new Date()]);
@@ -265,7 +262,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   handleServiceChange(selectedOption?.value);
                 }
               }}
-              isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
+              isDisabled={props.options?.disabled}
               ariaLabel={interpolate(dict.action.selectItem, parseWordsForLabels(dict.title.scheduleType))}
             />
           </div>
@@ -305,7 +302,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 order: 0,
               }}
               form={props.form}
-              options={isDisabledOption}
+              options={props.options}
             />
           )}
           {selectedServiceOption != singleService &&
@@ -322,7 +319,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   order: 0,
                 }}
                 form={props.form}
-                options={isDisabledOption}
+                options={props.options}
               />
             )}
           {selectedServiceOption === regularService && (
@@ -350,7 +347,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                       field={dayOfWeek}
                       label={daysOfWeekLabel[index]}
                       form={props.form}
-                      options={isDisabledOption}
+                      options={props.options}
                     />
                   );
                 })}
@@ -370,7 +367,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 order: 0,
               }}
               form={props.form}
-              options={isDisabledOption}
+              options={props.options}
             />
             <FormFieldComponent
               field={{
@@ -383,7 +380,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 order: 1,
               }}
               form={props.form}
-              options={isDisabledOption}
+              options={props.options}
             />
           </div>
         </>

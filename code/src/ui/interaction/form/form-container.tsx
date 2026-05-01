@@ -144,9 +144,9 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
-        ).toUpperCase()} ${parseWordsForLabels(props.entityType)
-          .toUpperCase()
-          .replace("_", " ")}`}</h1>
+        ).toUpperCase()} ${props.formType == FormTypeMap.ADJUST_PRICE ? "" :
+          parseWordsForLabels(props.entityType).replace("_", " ").toUpperCase()
+          }`}</h1>
       </header>
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {refreshFlag ? <FormSkeleton /> :
