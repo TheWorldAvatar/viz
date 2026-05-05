@@ -1,8 +1,10 @@
 "use client";
 
 import { useDictionary } from "hooks/useDictionary";
+import { Assets } from "io/config/assets";
 import { ContractDirectory } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
+import IconComponent from "ui/graphic/icon/icon";
 import ExternalRedirectButton from "ui/interaction/action/redirect/external-redirect-button";
 
 interface FileMenuProps {
@@ -22,7 +24,11 @@ export default function FileMenu(props: Readonly<FileMenuProps>) {
             <ul>
                 {
                     props.directory.files.map(file => {
-                        return <li key={file.name} >
+                        return <li key={file.name} className="flex w-full py-1.5">
+                            <IconComponent
+                                icon={getFileIcon(file.ext)}
+                                classes="max-h-8 w-auto"
+                            />
                             <ExternalRedirectButton
                                 label={file.name}
                                 variant="link"
@@ -35,4 +41,29 @@ export default function FileMenu(props: Readonly<FileMenuProps>) {
             </ul>
         </section>
     )
+}
+
+function getFileIcon(ext: string): string {
+    switch (ext) {
+        case ".doc":
+        case ".docx":
+            return Assets.FILE_DOC;
+        case ".htm":
+        case ".html":
+            return Assets.FILE_HTML;
+        case ".jpg":
+            return Assets.FILE_JPG;
+        case ".pdf":
+            return Assets.FILE_PDF;
+        case ".png":
+            return Assets.FILE_PNG;
+        case ".txt":
+            return Assets.FILE_TXT;
+        case ".xls":
+        case ".xlsx":
+            return Assets.FILE_XLS;
+        default:
+            return Assets.FILE_DEFAULT;
+
+    }
 }
