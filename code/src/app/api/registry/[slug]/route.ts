@@ -526,6 +526,17 @@ async function sendRequest(
 }
 
 async function handleExternalBadRequest(res: Response, url: string): Promise<NextResponse<AgentResponseBody>> {
+  if (res.status === 401) {
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: {
+          code: res.status,
+          message: "Unauthorised",
+        }
+      }
+    );
+  }
   const resBody: AgentResponseBody = await res.json();
 
   console.error(
