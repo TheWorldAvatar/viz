@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.71.3
+
+### Bug fixes
+
+- Fixed to log unauthorised requests
+
 ## 5.71.2
 
 ### Bug fixes

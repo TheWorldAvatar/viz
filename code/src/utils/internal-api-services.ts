@@ -178,7 +178,11 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
     };
   }
   const res = await fetch(url, requestParams);
-  return await res.json();
+  const response: AgentResponseBody = await res.json();
+  if (response.error && response.error?.code === 401) {
+    console.error("401 Unauthorised");
+  }
+  return response;
 }
 
 export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlExistsResponse> {
