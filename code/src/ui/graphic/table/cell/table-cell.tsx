@@ -1,11 +1,12 @@
 import React from "react";
+import { TableCellTag } from "types/table";
 
 export interface TableCellProps {
   width?: number;
   className?: string;
   children?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLTableCellElement>;
-  as?: "td" | "th";
+  as?: TableCellTag;
 }
 
 /**
@@ -14,11 +15,11 @@ export interface TableCellProps {
  * @param {number} width The width of the table cell.
  * @param {string} className Optional additional CSS classes for the cell.
  * @param {React.ReactNode} children The content of the cell.
- * @param onClick The optional on click event handler for the cell.
- * @param as The HTML element to render, either "td" or "th". Defaults to "td".
+ * @param  onClick The optional on click event handler for the cell.
+ * @param {TableCellTag} as The HTML element to render, either "td" or "th". Defaults to "td".
  */
 export default function TableCell(props: Readonly<TableCellProps>) {
-  const CellTag = props.as ?? "td";
+  const CellTag: TableCellTag = props.as ?? "td";
   return (
     <CellTag
       style={{

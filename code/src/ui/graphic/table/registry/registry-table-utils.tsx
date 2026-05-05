@@ -23,7 +23,7 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { DATE_KEY, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { APPROX_CHAR_WIDTH_PX, DATE_KEY, DEFAULT_MAX_LENGTH_CHARACTERS, EVENT_KEY, EXPANSION_FACTOR, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -152,8 +152,8 @@ export function parseColumnsMetadata(
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
 
     const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
-    const effectiveWidth = configuredWidth ?? minWidth;
-    const maxLengthText: number = calculateMaxCharLengthFromWidth(effectiveWidth);
+    const effectiveWidth: number = configuredWidth ?? minWidth;
+    const maxTextLength: number = calculateMaxCharLengthFromWidth(effectiveWidth);
 
     results.push({
       id: col.value,
@@ -170,7 +170,7 @@ export function parseColumnsMetadata(
         }
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
-          return <ArrayTextCell fields={arrayFields} maxLengthText={maxLengthText} />
+          return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
         }
         const value: string = getValue() as string;
         if (!value) return "";
@@ -192,7 +192,7 @@ export function parseColumnsMetadata(
         }
 
         return (
-          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxLengthText={maxLengthText} />
+          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxTextLength={maxTextLength} />
         );
       },
       filterFn: multiSelectFilter,
@@ -341,13 +341,6 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
  * @returns {number} The maximum number of characters to display before truncation.
  */
 function calculateMaxCharLengthFromWidth(width: number | undefined): number {
-  const DEFAULT_MAX_LENGTH_CHARACTERS = 25;
-  const APPROX_CHAR_WIDTH_PX = 8;
-  // The expansion factor is a tunable parameter that determines how many characters to show based on the column width.
-  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
-  // The higher the factor, the more characters will be shown before truncation, but this runs the risk of breaking the layout if too high and the text is too long
-  const EXPANSION_FACTOR = 6;
-
   if (width === undefined) {
     return DEFAULT_MAX_LENGTH_CHARACTERS;
   }
