@@ -15,5 +15,5 @@ export const APPROX_CHAR_WIDTH_PX = 8;
 
 // The expansion factor is a tunable parameter that determines how many characters to show based on the column width.
 // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
-// The higher the factor, the more characters will be shown before truncation, but this runs the risk of breaking the layout if too high and the text is too long
+// The higher the factor, the more characters will be shown before truncation
 export const EXPANSION_FACTOR = 6;
