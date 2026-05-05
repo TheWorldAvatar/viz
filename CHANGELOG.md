@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.71.2
+
+### Bug fixes
+
+- Fixed an issue with the initial visibility state that reads from the table column settings, where the column names were being translated before being set as keys in the visibility state object, thus not matching with the column keys and not applying the visibility settings as expected.
+
 ## 5.71.1
 
 ### Changes
