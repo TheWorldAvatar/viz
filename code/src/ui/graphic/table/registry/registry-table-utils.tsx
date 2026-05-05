@@ -23,7 +23,7 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { APPROX_CHAR_WIDTH_PX, DATE_KEY, DEFAULT_MAX_LENGTH_CHARACTERS, EVENT_KEY, EXPANSION_FACTOR, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -342,10 +342,14 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
  */
 function calculateMaxCharLengthFromWidth(width: number | undefined): number {
   if (width === undefined) {
-    return DEFAULT_MAX_LENGTH_CHARACTERS;
+    return DEFAULT_MAX_CHARACTER_LENGTH;
   }
-  const estimatedLength: number = Math.floor((width / APPROX_CHAR_WIDTH_PX) * EXPANSION_FACTOR);
-  return Math.max(estimatedLength, DEFAULT_MAX_LENGTH_CHARACTERS);
+  // 8 is the approximate width of a character in pixels, used to estimate how many characters can fit in a given column width
+  // 6 is the expansion factor that determines how many characters to show based on the column width.
+  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
+  // The higher the factor, the more characters will be shown before truncation
+  const estimatedLength: number = Math.floor((width / 8) * 6);
+  return Math.max(estimatedLength, DEFAULT_MAX_CHARACTER_LENGTH);
 }
 
 /**
