@@ -21,6 +21,7 @@ import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { execReviewBillableAction } from "../registry/registry-table-utils";
 import RowActionButton from "./row-action-button";
+import FileMenu from "ui/interaction/menu/file/file-menu";
 
 
 interface RegistryRowActionProps {
@@ -306,15 +307,7 @@ export default function RegistryRowAction(
               setIsOpen={setIsAttachmentViewerOpen}
               aria-label={`${dict.action.viewAttachment}, ${props.row.id}`}
             >
-              {contractDirectory.files.map(file => {
-                return <ExternalRedirectButton
-                  key={file.name}
-                  label={file.name}
-                  variant="link"
-                  size="md"
-                  url={`${contractDirectory.url}/${file.name}`}
-                />
-              })}
+              <FileMenu directory={contractDirectory} />
             </PopoverActionButton>}
           {(isActionAllowed("ADJUST_PRICING")) && <RowActionButton
             icon="price_change"

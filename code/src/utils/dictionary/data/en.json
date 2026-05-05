@@ -254,6 +254,7 @@
     "date": "Date",
     "description": "Description",
     "eventId": "Event ID",
+    "files": "Files",
     "lastModified": "Last modified",
     "history": "History",
     "available": "available",

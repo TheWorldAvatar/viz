@@ -254,6 +254,7 @@
     "date": "Datum",
     "description": "Beschreibung",
     "eventId": "Ereignis ID",
+    "files": "Dateien",
     "lastModified": "Zuletzt geändert",
     "history": "Historie",
     "available": "Verfügbar",
