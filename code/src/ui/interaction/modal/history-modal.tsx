@@ -4,8 +4,7 @@ import { AgentResponseBody, HistoryDetails, InternalApiIdentifierMap } from "typ
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { formatDatetimeValue } from "ui/graphic/table/registry/registry-table-utils";
-import { interpolate } from "utils/client-utils";
+import { interpolate, formatDatetimeValue } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import Modal from "./modal";
 

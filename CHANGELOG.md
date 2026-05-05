@@ -2,6 +2,52 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.70.1
+
+### Changes
+
+- Allow users to recomplete a task even after it has been billed
+
+## 5.70.0
+
+### Changes
+
+- Updated the German translations
+- Modify hide table ribbon to show instead
+- Enforce localised numeric inputs in the forms
+
+### Bug fixes
+
+- Fix onclick error in registry rows due to status translation
+
+## 5.69.2
+
+### Changes
+
+- Accessiblity improvements:
+- Standardized the date display format
+- Aria-labels on regsitry row actions, bulk approvement
+- Made the table pagination as a `nav` HTML element
+
+## 5.69.1
+
+### Changes
+
+- Added role access to general registry paths in configuration
+
+## 5.69.0
+
+### Changes
+
+- Added date filters for date and date time columns
+- Bump min version of `VisBackend Agent` from `v1.45.0` to `v1.46.0`
+
+## 5.68.1
+
+### Bug fixes
+
+- Fix translations for the status column to show the translated status component
+
 ## 5.68.0
 
 ### Changes

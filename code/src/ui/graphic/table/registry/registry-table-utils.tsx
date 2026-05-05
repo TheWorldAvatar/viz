@@ -5,20 +5,26 @@ import {
   SortingState,
   VisibilityState
 } from "@tanstack/react-table";
+import { Routes } from "io/config/routes";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { ColumnDefinitionResponse } from "types/backend-agent";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "types/backend-agent";
 import {
+  FormTypeMap,
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
 import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, XSD_DATETIME } from "utils/constants";
+import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { DATE_KEY, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
@@ -39,6 +45,10 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     if (filter.value === undefined || (filter.value as string[]).length === 0) {
       return "";
     }
+    // For date filters
+    if (typeof filter.value == "string") {
+      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
+    }
     const currentFilterValues: string[] = filter.value as string[];
     let filterParams: string[];
     if (currentFilterValues.includes(translatedBlankText)) {
@@ -46,7 +56,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     } else {
       filterParams = currentFilterValues;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`
+    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
 }
 
@@ -138,6 +148,7 @@ export function parseColumnsMetadata(
       title.length * 15,
       125
     );
+    const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
 
     // Calculate maxLengthText based on configured width, or use default
@@ -146,6 +157,7 @@ export function parseColumnsMetadata(
     const maxLengthText: number = calculateMaxCharLengthFromWidth(effectiveWidth);
 
     results.push({
+      id: col.value,
       accessorKey: col.value,
       header: title,
       dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
@@ -167,12 +179,16 @@ export function parseColumnsMetadata(
         if (isDateTimeColumn) {
           return formatDatetimeValue(value);
         }
+        if (isDateColumn) {
+          return formatDateValue(value);
+        }
 
         if (isValidIRI(value)) {
           return getAfterDelimiter(value, "/");
         }
 
-        if (col.value === titleDict.status) {
+        // Column header name is untranslated so we can directly compare to a string
+        if (col.value === "status") {
           return <StatusComponent status={value} />;
         }
 
@@ -233,15 +249,6 @@ export function getInitialColumnVisibilityState(
 }
 
 /**
- * Formats a datetime value for display.
- *
- * @param {string} value The raw value from the backend.
- */
-export function formatDatetimeValue(value: string): string {
-  return new Date(value).toLocaleString();
-}
-
-/**
  * Parses the lifecycle field to their translations.
  *
  * @param {string} field Name of field from backend to be translated.
@@ -249,6 +256,10 @@ export function formatDatetimeValue(value: string): string {
  */
 export function translateLifecycleFields(field: string, titleDict: Record<string, string>): string {
   switch (field.toLowerCase()) {
+    case "date":
+      return titleDict.date;
+    case "event_id":
+      return titleDict.eventId;
     case "lastmodified":
       return titleDict.lastModified;
     case "scheduletype":
@@ -381,3 +392,40 @@ export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
   }
   return undefined;
 }
+
+/**
+ * Executes the review billable action which checks if the bill is already accrued or not and navigates to the correct drawer.
+ *
+ * @param {FieldValues} row The row data.
+ * @param {string} accountType The account type.
+ * @param navigateToDrawer The function to navigate to the drawer.
+ */
+export async function execReviewBillableAction(
+  row: FieldValues,
+  accountType: string,
+  navigateToDrawer: (...urlParts: string[]) => void,
+): Promise<void> {
+  const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
+  const body: AgentResponseBody = await queryInternalApi(url);
+  browserStorageManager.set(DATE_KEY, row.date);
+  browserStorageManager.set(EVENT_KEY, row.event_id);
+  try {
+    const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.FILTER,
+      LifecycleStageMap.ACCOUNT,
+      accountType,
+      row[accountType]
+    ));
+    const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+    // Set the account type in browser storage to match the values of the account type in the assign price form
+    browserStorageManager.set(accountType, options[0]?.value);
+  } catch (error) {
+    console.error("Error fetching instances", error);
+  }
+  if (body.data.message == "true") {
+    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+  } else {
+    navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
+  }
+}
+

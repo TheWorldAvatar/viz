@@ -1,5 +1,5 @@
 {
-  "lang": "en",
+  "lang": "en-GB",
   "action": {
     "add": "Add",
     "addItem": "add {replace}",
@@ -60,6 +60,7 @@
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters",
     "clearFilter": "Clear filter",
+    "clearFilterFor": "Clear filter for {replace}",
     "showMore": "Show more",
     "showLess": "Show less",
     "addInvoice": "add invoice",
@@ -137,8 +138,8 @@
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {
-    "title": "Hide ribbon",
-    "tooltip": "Show / hide ribbon"
+      "title": "Show ribbon",
+      "tooltip": "Show / hide ribbon"
     }
   },
   "message": {
@@ -194,7 +195,11 @@
     "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers.",
     "entry": "{replace} entry",
     "entries": "{replace} entries",
-    "noEntries": "No entries"
+    "noEntries": "No entries",
+    "collapseNavigation": "Collapse navigation",
+    "expandNavigation": "Expand navigation",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
   },
   "nav": {
     "caption": {
@@ -207,6 +212,8 @@
       "help": "Get help for this web platform"
     },
     "title": {
+      "primary": "Primary",
+      "tablePagination": "Table pagination",
       "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
@@ -215,7 +222,6 @@
       "accounts": "Accounts",
       "pricing": "Pricing",
       "activities": "Activities",
-      "submission": "Registry Submission",
       "help": "Help Centre",
       "invoice": "Invoices",
       "pending": "Pending",
@@ -239,11 +245,14 @@
   },
   "title": {
     "actions": "Actions",
+    "bulkActions": "Bulk actions",
     "allCol": "Show All",
     "amount": "Amount",
     "blank": "(blank)",
     "customiseCol": "Show/Hide Columns",
+    "date": "Date",
     "description": "Description",
+    "eventId": "Event ID",
     "lastModified": "Last modified",
     "history": "History",
     "available": "available",

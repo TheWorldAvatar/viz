@@ -19,4 +19,6 @@ export type Dictionary = {
     tooltip: Record<string, string>;
   };
   title: Record<string, string>;
+  toNumberDisplay?: (value: string | number | null | undefined) => string;
+  normaliseNumber?: (value: string) => string;
 };
