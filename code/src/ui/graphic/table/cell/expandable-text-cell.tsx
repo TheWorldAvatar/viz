@@ -5,7 +5,7 @@ import Button from "ui/interaction/button";
 
 interface ExpandableTextCellProps {
     text: string;
-    maxLengthText?: number;
+    maxTextLength?: number;
     overrideExpansion: boolean;
 }
 
@@ -14,15 +14,15 @@ interface ExpandableTextCellProps {
  * Text is truncated if it exceeds the maxLengthText value.
  *
  * @param {string} text The full text content.
- * @param {number} maxLengthText (Optional) The maximum text length before truncation.
+ * @param {number} maxTextLength (Optional) The maximum text length before truncation.
  * @param {boolean} overrideExpansion Flag to override text expansion behavior.
  */
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const maxLengthText: number = props.maxLengthText ?? 100;
+    const maxTextLength: number = props.maxTextLength ?? 100;
     const dict: Dictionary = useDictionary();
 
-    if (props.text.length <= maxLengthText || props.overrideExpansion) {
+    if (props.text.length <= maxTextLength || props.overrideExpansion) {
         return <div className="text-foreground">{props.text}</div>;
     }
 
@@ -31,7 +31,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
             <div className={`text-foreground whitespace-pre-wrap ${props.text.length > 200 ?
                 "w-[400px] lg:w-[500px] break-words" :
                 "w-fit"}`}>
-                {isExpanded ? props.text : `${props.text.substring(0, props.text.length > 200 ? 50 : maxLengthText)}...`}
+                {isExpanded ? props.text : `${props.text.substring(0, props.text.length > 200 ? 50 : maxTextLength)}...`}
             </div>
             <Button
                 onClick={(e) => {
