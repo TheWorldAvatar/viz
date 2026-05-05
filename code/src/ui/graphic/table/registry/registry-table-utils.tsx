@@ -139,6 +139,12 @@ export function parseColumnsMetadata(
       125
     );
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
+
+    // Calculate maxLengthText based on configured width, or use default
+    const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
+    const effectiveWidth = configuredWidth ?? minWidth;
+    const maxLengthText: number = calculateMaxCharLengthFromWidth(effectiveWidth);
+
     results.push({
       accessorKey: col.value,
       header: title,
@@ -153,7 +159,7 @@ export function parseColumnsMetadata(
         }
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
-          return <ArrayTextCell fields={arrayFields} />
+          return <ArrayTextCell fields={arrayFields} maxLengthText={maxLengthText} />
         }
         const value: string = getValue() as string;
         if (!value) return "";
@@ -171,11 +177,11 @@ export function parseColumnsMetadata(
         }
 
         return (
-          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxLengthText={25} />
+          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxLengthText={maxLengthText} />
         );
       },
       filterFn: multiSelectFilter,
-      size: minWidth,
+      size: effectiveWidth,
       enableSorting: true,
       sortDescFirst: true,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
@@ -203,17 +209,6 @@ export function parseColumnsMetadata(
       const indexB: number = configuredColumnMap.get(accessorKeyB)?.order ?? Infinity;
       return indexA - indexB;
     })
-    .map((column) => {
-      const accessorKey: string = (column as { accessorKey?: string }).accessorKey;
-      const configuredWidth: number = configuredColumnMap.get(accessorKey)?.width;
-      if (configuredWidth === undefined) {
-        return column;
-      }
-      return {
-        ...column,
-        size: configuredWidth,
-      };
-    });
 }
 
 /**
@@ -326,6 +321,28 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
     default:
       return field;
   }
+}
+
+/**
+ * Calculates the maximum text length to display in a cell based on column width.
+ * Uses tunable width-to-character estimation so truncation can be less aggressive.
+ *
+ * @param {number} width The column width in pixels.
+ * @returns {number} The maximum number of characters to display before truncation.
+ */
+function calculateMaxCharLengthFromWidth(width: number | undefined): number {
+  const DEFAULT_MAX_LENGTH_CHARACTERS = 25;
+  const APPROX_CHAR_WIDTH_PX = 8;
+  // The expansion factor is a tunable parameter that determines how many characters to show based on the column width.
+  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
+  // The higher the factor, the more characters will be shown before truncation, but this runs the risk of breaking the layout if too high and the text is too long
+  const EXPANSION_FACTOR = 6;
+
+  if (width === undefined) {
+    return DEFAULT_MAX_LENGTH_CHARACTERS;
+  }
+  const estimatedLength: number = Math.floor((width / APPROX_CHAR_WIDTH_PX) * EXPANSION_FACTOR);
+  return Math.max(estimatedLength, DEFAULT_MAX_LENGTH_CHARACTERS);
 }
 
 /**
