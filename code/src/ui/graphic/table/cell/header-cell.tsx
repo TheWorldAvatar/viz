@@ -16,6 +16,7 @@ import { XSD_DATE, XSD_DATETIME } from "utils/constants";
 import DateColumnFilter from "../action/date-column-filter";
 import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
+import { TableCellTagMap } from "types/table";
 
 interface HeaderCellProps {
   type: string;
@@ -69,7 +70,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
 
   return (
     <TableCell
-      as="th"
+      as={TableCellTagMap.TH}
       width={props.header.getSize()}
       className={`${props.isEditable ? "bg-success-background text-success-foreground" : ""} 
       font-semibold text-left border-b border-border`}

@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCellTag } from "types/table";
+import { TableCellTag, TableCellTagMap } from "types/table";
 
 export interface TableCellProps {
   width?: number;
@@ -19,7 +19,7 @@ export interface TableCellProps {
  * @param {TableCellTag} as The HTML element to render, either "td" or "th". Defaults to "td".
  */
 export default function TableCell(props: Readonly<TableCellProps>) {
-  const CellTag: TableCellTag = props.as ?? "td";
+  const CellTag: TableCellTag = props.as ?? TableCellTagMap.TD;
   return (
     <CellTag
       style={{
