@@ -2,6 +2,21 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.71.0
+
+### Changes
+
+- Added new pages to edit only pricing model but view other contract details
+- Added functionality to adjust pricing model for an ongoing contract
+- Code improvements
+- Bump min version of `VisBackend Agent` from `v1.46.0` to `v1.48.0`
+
+## 5.70.2
+
+### Changes
+
+- Added accessibility name for clear all filters button in the table ribbon
+
 ## 5.70.1
 
 ### Changes
