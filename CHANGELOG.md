@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.71.1
+
+### Changes
+
+- Added a function that calculates the maximum text length to display in a cell based on column width
+- Adjusted table cell padding 
+- Removed the whitespace-nowrap class to allow text to wrap in the cells
+
 ## 5.71.0
 
 ### Changes
