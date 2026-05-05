@@ -308,11 +308,11 @@ export default function RegistryRowAction(
             >
               {contractDirectory.files.map(file => {
                 return <ExternalRedirectButton
-                  key={file}
-                  label={file}
+                  key={file.name}
+                  label={file.name}
                   variant="link"
                   size="md"
-                  url={`${contractDirectory.url}/${file}`}
+                  url={`${contractDirectory.url}/${file.name}`}
                 />
               })}
             </PopoverActionButton>}

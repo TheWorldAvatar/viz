@@ -126,3 +126,8 @@ type FillLegend = {
 
 export type MapboxCredentials = { username: string, token: string }
 
+export type FileEntry = {
+  name: string;
+  ext: string;
+  size: string;
+};
