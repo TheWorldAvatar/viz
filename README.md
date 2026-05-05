@@ -39,7 +39,7 @@ Additionally, there is a tutorial in the [example](./example/) directory, includ
 Specific endpoints must be set as environment variables in order for the viz to call the right endpoints on the serverside. These endpoints are all optional and if left blank, will not execute the associated calls.
 
 1) `REGISTRY_BACKEND_URL`: Sets the endpoint to the `VizBackendAgent` endpoint eg `https://example.org/vis-backend-agent` (close it without /) to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](./doc/form.md).
-2) `REGISTRY_TASK_ATTACHMENT_URL`: Sets the endpoint to the target attachment directory for each registry task
+2) `REGISTRY_TASK_ATTACHMENT_URL`: Sets the host endpoint for registry task attachments; The underlying files **MUST** reside in the `{current working directory}/data` directory. For containersed environments, use a volume mount to link your local data to this path
 3) `FILE_EXPORTER_URL`: Sets the endpoint to the file exporter service
 
 ## 2. Development
@@ -91,9 +91,9 @@ For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAva
 
 - `redis_password` only if redis is required
 
-1. Copy the [custom visualisation service config](./example/vip.json) to the `stack-manager/inputs/config/services` directory
-2. In the stack config file, `visualisation` is included as part of the `services` `includes` list
-3. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
+2. Copy the [custom visualisation service config](./viz.json) to the `stack-manager/inputs/config/services` directory
+3. In the stack config file, ensure that `visualisation` is included as part of the `services` `includes` list
+4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
 
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above.
@@ -101,10 +101,11 @@ For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAva
 > [!NOTE]
 > For typical self-hosted TWA deployment, `ASSET_PREFIX` must contain both the top level nginx path, and the stack level nginx path. e.g. if the app is deployed in a stack at `theworldavatar.io/demos/app`, then `ASSET_PREFIX` should be set to `demos/app/visualisation` to account for the `visualisation` path added by the stack level nginx.
 
-1. Specify the directory holding the configuration files that should be mapped to a volume called `webspace` or your preference
-2. Populate this directory with your require visualisation configuration files
-3. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables at `docker-compose.yml` if required.
-4. Start the stack as per usual
+5. Specify the directory holding the configuration files that should be mapped to a volume called `vis-files` or your preference
+6. Specify the directory holding the task attachments files should be mapped to a volume called `attachments` or your preference. Do NOT change the target path.
+7. Populate these directories with your required visualisation configuration files
+8. Set up the [authorisation server](#4-authorisation) and update the relevant environment variables if required. Users must mount a `keycloak.json` to the target `/twa/keycloak.json`.
+9. Start the stack as per usual
 
 > Custom Service
 
