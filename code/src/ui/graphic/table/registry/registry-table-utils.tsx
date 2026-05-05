@@ -151,7 +151,6 @@ export function parseColumnsMetadata(
     const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
 
-    // Calculate maxLengthText based on configured width, or use default
     const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
     const effectiveWidth = configuredWidth ?? minWidth;
     const maxLengthText: number = calculateMaxCharLengthFromWidth(effectiveWidth);
