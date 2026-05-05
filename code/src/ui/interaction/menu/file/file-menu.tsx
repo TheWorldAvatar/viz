@@ -20,21 +20,30 @@ export default function FileMenu(props: Readonly<FileMenuProps>) {
     const dict: Dictionary = useDictionary();
     return (
         <section role="dialog">
-            <h3 className="text-base font-semibold px-4 py-1 my-1 border-b border-border">{dict.title.files}</h3>
+            <span className="flex justify-between items-center text-base font-semibold pl-4 pr-6 py-1 my-1 border-b border-border">
+                <h3>
+                    {dict.title.file}
+                </h3>
+                <h3>
+                    {dict.title.size}
+                </h3>
+            </span>
             <ul>
                 {
                     props.directory.files.map(file => {
-                        return <li key={file.name} className="flex w-full py-1.5">
+                        return <li key={file.name} className="flex justify-between items-center w-full py-1.5 px-2">
                             <IconComponent
                                 icon={getFileIcon(file.ext)}
-                                classes="max-h-8 w-auto"
+                                classes="h-9 md:h-8 w-8"
                             />
                             <ExternalRedirectButton
                                 label={file.name}
                                 variant="link"
                                 size="md"
+                                className="block! text-left! truncate! max-w-50 "
                                 url={`${props.directory.url}/${file.name}`}
                             />
+                            <p>{file.size}</p>
                         </li>
                     })
                 }

@@ -142,7 +142,7 @@ export default function Button({
               }
             </span>
           )}
-          <span>{children || label}</span>
+          <span className="truncate">{children || label}</span>
           {!loading && rightIcon && (
             <span
               className={`${hasMobileIcon ? "flex" : "hidden md:flex"
