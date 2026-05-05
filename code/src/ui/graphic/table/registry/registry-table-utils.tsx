@@ -231,17 +231,15 @@ export function parseColumnsMetadata(
  * Columns with `visible: false` are hidden; all others default to visible.
  *
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
- * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(
   columnOptions: TableColumnOption[],
-  titleDict: Record<string, string>
 ): VisibilityState {
   if (!columnOptions || columnOptions.length === 0) return {};
   const columnVisibilityState: VisibilityState = {};
   for (const item of columnOptions) {
     if (item.visible === false) {
-      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
+      columnVisibilityState[item.name] = false;
     }
   }
   return columnVisibilityState;
