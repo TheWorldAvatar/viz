@@ -28,7 +28,7 @@ export default function FileMenu(props: Readonly<FileMenuProps>) {
                     {dict.title.size}
                 </h3>
             </span>
-            <ul className="max-h-[75vh] overflow-y-auto">
+            <ul className="max-h-[25vh] md:max-h-[75vh] overflow-y-auto">
                 {
                     props.directory.files.map(file => {
                         return <li key={file.name} className="flex justify-between items-center w-full py-1.5 px-2">
