@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.0
+
+### Changes
+
+- Extended task attachment checks into a new attachment viewer
+- Attachment viewer shows file list and redirects on click
+
 ## 5.71.3
 
 ### Bug fixes
