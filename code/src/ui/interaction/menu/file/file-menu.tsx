@@ -53,7 +53,7 @@ export default function FileMenu(props: Readonly<FileMenuProps>) {
 }
 
 function getFileIcon(ext: string): string {
-    switch (ext) {
+    switch (ext.toLowerCase()) {
         case ".doc":
         case ".docx":
             return Assets.FILE_DOC;
