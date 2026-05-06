@@ -1,6 +1,6 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { DateRange } from "react-day-picker";
-import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, ContractDirectory } from "types/backend-agent";
 import { FORM_IDENTIFIER, FormTemplateType, FormType } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getUTCDate, parseStringsForUrls } from "./client-utils";
@@ -185,7 +185,7 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
   return response;
 }
 
-export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlExistsResponse> {
+export async function queryRegistryAttachmentAPI(contract: string): Promise<ContractDirectory> {
   const url: string = `${prefixedRegistryURL}attachment/${contract}`
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);
