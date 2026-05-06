@@ -39,7 +39,7 @@ Additionally, there is a tutorial in the [example](./example/) directory, includ
 Specific endpoints must be set as environment variables in order for the viz to call the right endpoints on the serverside. These endpoints are all optional and if left blank, will not execute the associated calls.
 
 1) `REGISTRY_BACKEND_URL`: Sets the endpoint to the `VizBackendAgent` endpoint eg `https://example.org/vis-backend-agent` (close it without /) to generate a form template, csv template, and retrieve data from the knowledge graph. The form template for generating the form UI must follow the template listed in [this document](./doc/form.md).
-2) `REGISTRY_TASK_ATTACHMENT_URL`: Sets the host endpoint for registry task attachments; The underlying files **MUST** reside in the `{current working directory}/data` directory. For containersed environments, use a volume mount to link your local data to this path
+2) `REGISTRY_TASK_ATTACHMENT_URL`: Optional to set the host endpoint for registry task attachments and enable attachment viewer; The underlying files **MUST** reside in the `{current working directory}/data` directory. For containerised environments, use a volume mount to link your local data to this path
 3) `FILE_EXPORTER_URL`: Sets the endpoint to the file exporter service
 
 ## 2. Development
@@ -87,10 +87,7 @@ To view the example configuration, simply run `docker compose up` in this direct
 
 For deployment on the [TWA stack](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Deploy/stacks/dynamic/stack-manager), please spin up the stack with the `visualisation` service as documented [here](https://github.com/cambridge-cares/TheWorldAvatar/tree/main/Deploy/stacks/dynamic/stack-manager#example---including-a-visualisation). The key steps are as follows:
 
-1. The `mapbox_username` and `mapbox_api_key` are available as Docker secrets
-
-- `redis_password` only if redis is required
-
+1. Add `mapbox_username` and `mapbox_api_key`as Docker secrets. Add `redis_password` only if redis is required
 2. Copy the [custom visualisation service config](./viz.json) to the `stack-manager/inputs/config/services` directory
 3. In the stack config file, ensure that `visualisation` is included as part of the `services` `includes` list
 4. If the app will be running behind nginx at somewhere other than a top level domain, specify that path as an `ASSET_PREFIX` environment variable in the service spec file. e.g. if your app will be hosted at `subdomain.theworldavatar.io/my/viz/app`, then set `ASSET_PREFIX` to `/my/viz/app` in `visualisation.json`, and nginx should point directly to the `host:port` running the docker container of your app.
