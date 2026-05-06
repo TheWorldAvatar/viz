@@ -48,7 +48,7 @@ export async function GET(
   const bearerToken = req.headers.get("x-bearer-token");
 
   const response = await fetch(url, {
-    method: "HEAD", headers: {
+    method: "GET", headers: {
       ...(acceptLanguageHeader && { "Accept-Language": acceptLanguageHeader }),
       ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
     },
