@@ -10,22 +10,19 @@ import { Routes } from "io/config/routes";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
 import { FormTemplateType, FormTypeMap, LifecycleStageMap, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryStatusMap, TYPE_KEY, VALUE_KEY } from "types/form";
 import Button from "ui/interaction/button";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { parsePropertyShapeOrGroupList } from "ui/interaction/form/form-utils";
 import Checkbox from "ui/interaction/input/checkbox";
 import { getId } from "utils/client-utils";
-import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
-import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
+import { queryInternalTaskFormTemplate } from "utils/internal-api-services";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
-import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
+import { EnhancedColumnDef, execReviewBillableAction, getRowRecordId } from "../registry/registry-table-utils";
 
 interface TableRowProps {
   id: string;
@@ -105,28 +102,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED,
         RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row.status.toLowerCase())
       ) {
-        browserStorageManager.set(EVENT_KEY, row.event_id)
-        browserStorageManager.set(DATE_KEY, row.date)
-        const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
-        const body: AgentResponseBody = await queryInternalApi(url);
-        try {
-          const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.FILTER,
-            LifecycleStageMap.ACCOUNT,
-            props.accountType,
-            row[props.accountType]
-          ));
-          const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-          // Set the account type in browser storage to match the values of the account type in the assign price form
-          browserStorageManager.set(props.accountType, options[0]?.value);
-        } catch (error) {
-          console.error("Error fetching instances", error);
-        }
-        if (body.data.message == "true") {
-          navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, recordId);
-        } else {
-          navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
-        }
+        await execReviewBillableAction(row, props.accountType, navigateToDrawer);
       } else {
         navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
       }

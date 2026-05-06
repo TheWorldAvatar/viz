@@ -5,20 +5,26 @@ import {
   SortingState,
   VisibilityState
 } from "@tanstack/react-table";
+import { Routes } from "io/config/routes";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { ColumnDefinitionResponse } from "types/backend-agent";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "types/backend-agent";
 import {
+  FormTypeMap,
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
 import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, getId, isValidIRI, parseWordsForLabels, formatDateValue, formatDatetimeValue } from "utils/client-utils";
-import { FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
@@ -144,6 +150,11 @@ export function parseColumnsMetadata(
     );
     const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
+
+    const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
+    const effectiveWidth: number = configuredWidth ?? minWidth;
+    const maxTextLength: number = calculateMaxCharLengthFromWidth(effectiveWidth);
+
     results.push({
       id: col.value,
       accessorKey: col.value,
@@ -159,7 +170,7 @@ export function parseColumnsMetadata(
         }
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
-          return <ArrayTextCell fields={arrayFields} />
+          return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
         }
         const value: string = getValue() as string;
         if (!value) return "";
@@ -181,11 +192,11 @@ export function parseColumnsMetadata(
         }
 
         return (
-          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxLengthText={25} />
+          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxTextLength={maxTextLength} />
         );
       },
       filterFn: multiSelectFilter,
-      size: minWidth,
+      size: effectiveWidth,
       enableSorting: true,
       sortDescFirst: true,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
@@ -213,17 +224,6 @@ export function parseColumnsMetadata(
       const indexB: number = configuredColumnMap.get(accessorKeyB)?.order ?? Infinity;
       return indexA - indexB;
     })
-    .map((column) => {
-      const accessorKey: string = (column as { accessorKey?: string }).accessorKey;
-      const configuredWidth: number = configuredColumnMap.get(accessorKey)?.width;
-      if (configuredWidth === undefined) {
-        return column;
-      }
-      return {
-        ...column,
-        size: configuredWidth,
-      };
-    });
 }
 
 /**
@@ -231,17 +231,15 @@ export function parseColumnsMetadata(
  * Columns with `visible: false` are hidden; all others default to visible.
  *
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
- * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(
   columnOptions: TableColumnOption[],
-  titleDict: Record<string, string>
 ): VisibilityState {
   if (!columnOptions || columnOptions.length === 0) return {};
   const columnVisibilityState: VisibilityState = {};
   for (const item of columnOptions) {
     if (item.visible === false) {
-      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
+      columnVisibilityState[item.name] = false;
     }
   }
   return columnVisibilityState;
@@ -334,6 +332,25 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
 }
 
 /**
+ * Calculates the maximum text length to display in a cell based on column width.
+ * Uses tunable width-to-character estimation so truncation can be less aggressive.
+ *
+ * @param {number} width The column width in pixels.
+ * @returns {number} The maximum number of characters to display before truncation.
+ */
+function calculateMaxCharLengthFromWidth(width: number | undefined): number {
+  if (width === undefined) {
+    return DEFAULT_MAX_CHARACTER_LENGTH;
+  }
+  // 8 is the approximate width of a character in pixels, used to estimate how many characters can fit in a given column width
+  // 6 is the expansion factor that determines how many characters to show based on the column width.
+  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
+  // The higher the factor, the more characters will be shown before truncation
+  const estimatedLength: number = Math.floor((width / 8) * 6);
+  return Math.max(estimatedLength, DEFAULT_MAX_CHARACTER_LENGTH);
+}
+
+/**
  * Builds a custom filter function to filter for multiple values when selected.
  *
  * @param {string} translatedBlankText The translated blank text.
@@ -369,3 +386,40 @@ export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
   }
   return undefined;
 }
+
+/**
+ * Executes the review billable action which checks if the bill is already accrued or not and navigates to the correct drawer.
+ *
+ * @param {FieldValues} row The row data.
+ * @param {string} accountType The account type.
+ * @param navigateToDrawer The function to navigate to the drawer.
+ */
+export async function execReviewBillableAction(
+  row: FieldValues,
+  accountType: string,
+  navigateToDrawer: (...urlParts: string[]) => void,
+): Promise<void> {
+  const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
+  const body: AgentResponseBody = await queryInternalApi(url);
+  browserStorageManager.set(DATE_KEY, row.date);
+  browserStorageManager.set(EVENT_KEY, row.event_id);
+  try {
+    const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.FILTER,
+      LifecycleStageMap.ACCOUNT,
+      accountType,
+      row[accountType]
+    ));
+    const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+    // Set the account type in browser storage to match the values of the account type in the assign price form
+    browserStorageManager.set(accountType, options[0]?.value);
+  } catch (error) {
+    console.error("Error fetching instances", error);
+  }
+  if (body.data.message == "true") {
+    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+  } else {
+    navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
+  }
+}
+

@@ -292,6 +292,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         }
         break;
       }
+      case FormTypeMap.ADJUST_PRICE: {
+        const pricingModels: string[] = parsePricingModels(formData, billingParams);
+        pendingResponse = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+          "PUT",
+          JSON.stringify({
+            id: formData.id,
+            pricing: pricingModels,
+          }));
+        break;
+      }
       case FormTypeMap.ASSIGN_PRICE: {
         formData["pricing"] = formData[props.entityType.replace("_", " ")];
         pendingResponse = await queryInternalApi(
@@ -334,16 +345,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               contract: props.primaryInstance,
             }));
           if (!pendingResponse.error && billingParams.pricingField in formData) {
-            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
-            parsePricingModels(formData, billingParams)?.forEach(async model =>
-              pendingResponse = await queryInternalApi(
-                url,
-                "PUT",
-                JSON.stringify({
-                  id: formData.id,
-                  pricing: model,
-                }))
-            )
+            const pricingModels: string[] = parsePricingModels(formData, billingParams);
+            pendingResponse = await queryInternalApi(
+              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
+              "PUT",
+              JSON.stringify({
+                id: formData.id,
+                pricing: pricingModels,
+              }));
           }
         }
         break;
@@ -517,8 +526,11 @@ export function renderFormField(
   currentIndex: number,
   billingParams: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
 ): ReactNode {
-  const disableAllInputs: boolean =
-    formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE;
+  const disableAllInputs: boolean = formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE ||
+    // disable except if it is the pricing model field or group
+    (formType === FormTypeMap.ADJUST_PRICE && (billingParams.pricingField != (field as PropertyGroup).label?.[VALUE_KEY]
+      && billingParams.pricing != (field as PropertyShape).name?.[VALUE_KEY])
+    );
 
   if (field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE)) {
     const fieldset: PropertyGroup = field as PropertyGroup;

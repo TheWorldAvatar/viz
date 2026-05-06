@@ -5,12 +5,14 @@ import ExpandableTextCell from "./expandable-text-cell";
 
 interface ArrayTextCellProps {
     fields: Record<string, string>[];
+    maxTextLength: number;
 }
 
 /**
  * This component renders an array text cell that allows users to switch between array item.
  *
  * @param {Record<string, string>[]} fields A list of fields to display.
+ * @param {number} maxTextLength maximum length of text to display before truncation.
  */
 export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
     const [currentFieldValue, setCurrentFieldValue] = useState<number>(0);
@@ -52,7 +54,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 <ExpandableTextCell
                     key={nestedField}
                     text={parseWordsForLabels(nestedField) + ": " + props.fields[currentFieldValue][nestedField]}
-                    maxLengthText={35}
+                    maxTextLength={props.maxTextLength}
                     overrideExpansion={false}
                 />
             ))}

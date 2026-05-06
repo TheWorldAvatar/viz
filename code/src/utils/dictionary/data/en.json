@@ -4,6 +4,7 @@
     "add": "Add",
     "remove": "Remove",
     "addItem": "add {replace}",
+    "adjustPricing": "Adjust pricing",
     "assign": "Assign",
     "applyFilter": "Apply filter",
     "delete": "Delete",
