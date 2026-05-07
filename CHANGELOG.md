@@ -2,6 +2,19 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.1
+
+### Bug Fixes
+
+- Fixed an issue with the show more button not showing in the table cells when the text is too long, due to a wrong condition
+
+## 5.72.0
+
+### Changes
+
+- Extended task attachment checks into a new attachment viewer
+- Attachment viewer shows file list and redirects on click
+
 ## 5.71.3
 
 ### Bug fixes
