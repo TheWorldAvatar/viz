@@ -153,7 +153,7 @@ export function parseColumnsMetadata(
 
     const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
-    const maxTextLength: number = calculateMaxCharLengthFromWidth(effectiveWidth);
+    const maxTextLength: number = calculateMaxCharLengthFromWidth(configuredWidth);
 
     results.push({
       id: col.value,
@@ -346,7 +346,7 @@ function calculateMaxCharLengthFromWidth(width: number | undefined): number {
   // 6 is the expansion factor that determines how many characters to show based on the column width.
   // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
   // The higher the factor, the more characters will be shown before truncation
-  const estimatedLength: number = Math.floor((width / 8) * 6);
+  const estimatedLength: number = Math.floor((width / 8) * 3);
   return Math.max(estimatedLength, DEFAULT_MAX_CHARACTER_LENGTH);
 }
 
