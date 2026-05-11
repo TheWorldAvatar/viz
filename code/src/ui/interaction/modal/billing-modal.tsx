@@ -91,7 +91,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
 
                             <div className="flex items-center justify-end gap-10 mt-2 p-2 border-t border-border">
                                 <p>{dict.title.total}</p>
-                                <p className="font-bold">${costDetails?.amount}</p>
+                                <p data-testid="billing-total" className="font-bold">${costDetails?.amount}</p>
                             </div>
                         </div>
                     ) : (
