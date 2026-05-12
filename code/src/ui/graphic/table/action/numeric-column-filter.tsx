@@ -95,18 +95,38 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
   return (
     <div className="flex flex-col w-62 gap-2">
-      <SimpleSelector
-        options={operators}
-        defaultVal={selectedOperator1}
-        onChange={(selected) => {
-          if (selected) {
-            setSelectedOperator1((selected as SelectOptionType).value as ComparisonOperator);
-            setValue2(null);
-            setError(null);
-          }
-        }}
-        ariaLabel={interpolate(dict.action.selectItem, "operator")}
-      />
+      <div className="flex w-62">
+        <div className="w-100">
+          <SimpleSelector
+            options={operators}
+            defaultVal={selectedOperator1}
+            onChange={(selected) => {
+              if (selected) {
+                setSelectedOperator1((selected as SelectOptionType).value as ComparisonOperator);
+                setValue2(null);
+                setError(null);
+              }
+            }}
+            ariaLabel={interpolate(dict.action.selectItem, "operator")}
+          />
+        </div>
+        <Button
+          leftIcon="filter_alt"
+          iconSize="medium"
+          size="icon"
+          variant="primary"
+          className="h-full rounded-none w-12"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handleFilter();
+          }}
+          tooltipText={dict.action.applyFilter}
+          disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
+          aria-label={interpolate(dict.action.filterBy, props.label)}
+        />
+      </div>
+      {error && <div className="text-red-500 text-sm">{error}</div>}
       <div className="relative">
         <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
           <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
@@ -177,22 +197,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           </div>
         </>
       )}
-      {error && <div className="text-red-500 text-sm">{error}</div>}
-      <Button
-        leftIcon="filter_alt"
-        iconSize="medium"
-        variant="primary"
-        className="w-full mt-1"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          handleFilter();
-        }}
-        disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
-        aria-label={interpolate(dict.action.filterBy, props.label)}
-      >
-        {dict.action.filter}
-      </Button>
     </div>
   );
 }
