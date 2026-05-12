@@ -25,21 +25,22 @@ interface NumericColumnFilterProps {
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
   const initialFilterState: string[] = getInitialNumericFilter(props.currentVal);
+  // Use between when there is more than 2 by default
+  const hasBetweenComparisonOperator: boolean = initialFilterState?.length > 2;
   const [error, setError] = useState<string | null>(null);
 
   const [value1, setValue1] = useState<number | null>(initialFilterState ? parseFloat(initialFilterState[1]) : null);
-  const [value2, setValue2] = useState<number | null>(initialFilterState?.length > 1 ? parseFloat(initialFilterState[2]) : null);
+  const [value2, setValue2] = useState<number | null>(hasBetweenComparisonOperator ? parseFloat(initialFilterState[2]) : null);
 
   const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>(
-    // Use between when there is more than 2 by efault
-    initialFilterState?.length > 1 ? ComparisonOperatorMap.BETWEEN
+    hasBetweenComparisonOperator ? ComparisonOperatorMap.BETWEEN
       : initialFilterState ?
         ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap]
         // Default
         : ComparisonOperatorMap.EQUALS);
 
   const [betweenOption, setBetweenOption] = useState<BetweenComparisonOption>(
-    initialFilterState?.length > 1 && (ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap] == ComparisonOperatorMap.GREATER_THAN) ?
+    hasBetweenComparisonOperator && (ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap] == ComparisonOperatorMap.GREATER_THAN) ?
       BetweenComparisonOptionMap.EXCLUSIVE :
       BetweenComparisonOptionMap.INCLUSIVE);
 
