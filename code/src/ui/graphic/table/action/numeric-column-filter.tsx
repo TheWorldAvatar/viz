@@ -2,6 +2,7 @@ import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { useState } from "react";
 import { Dictionary } from "types/dictionary";
+import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "types/table";
 import Button from "ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 
@@ -9,10 +10,6 @@ interface NumericColumnFilterProps {
   label: string;
   onSubmission: (_options: string[]) => void;
 }
-
-type ComparisonOperator = | "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "between"
-type BetweenOptions = "inclusive" | "exclusive";
-
 
 /**
  * A numeric column filter component that allows filtering table data using one or two
@@ -25,31 +22,31 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   const dict: Dictionary = useDictionary();
   const [value1, setValue1] = useState<number | null>(null);
   const [value2, setValue2] = useState<number | null>(null);
-  const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>("eq");
-  const [betweenOption, setBetweenOption] = useState<BetweenOptions>("inclusive");
+  const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>(ComparisonOperatorMap.EQUALS);
+  const [betweenOption, setBetweenOption] = useState<BetweenComparisonOption>(BetweenComparisonOptionMap.INCLUSIVE);
   const [error, setError] = useState<string | null>(null);
 
   const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
   const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
-  const isBetweenFirst: boolean = selectedOperator1 === "between";
+  const isBetweenFirst: boolean = selectedOperator1 === ComparisonOperatorMap.BETWEEN;
 
   const operators: SelectOptionType[] = [
-    { value: "eq", label: dict.title.equal, disabled: false, },
-    { value: "neq", label: dict.title.notEqual, disabled: false, },
-    { value: "gt", label: dict.title.greaterThan, disabled: false, },
-    { value: "gte", label: dict.title.greaterThanOrEqual, disabled: false, },
-    { value: "lt", label: dict.title.lessThan, disabled: false, },
-    { value: "lte", label: dict.title.lessThanOrEqual, disabled: false, },
-    { value: "between", label: dict.title.between, disabled: false, },
+    { value: ComparisonOperatorMap.EQUALS, label: dict.title.equal, disabled: false, },
+    { value: ComparisonOperatorMap.NOT_EQUALS, label: dict.title.notEqual, disabled: false, },
+    { value: ComparisonOperatorMap.GREATER_THAN, label: dict.title.greaterThan, disabled: false, },
+    { value: ComparisonOperatorMap.GREATER_THAN_OR_EQUALS_TO, label: dict.title.greaterThanOrEqual, disabled: false, },
+    { value: ComparisonOperatorMap.LESS_THAN, label: dict.title.lessThan, disabled: false, },
+    { value: ComparisonOperatorMap.LESS_THAN_OR_EQUALS_TO, label: dict.title.lessThanOrEqual, disabled: false, },
+    { value: ComparisonOperatorMap.BETWEEN, label: dict.title.between, disabled: false, },
   ]
 
   const handleFilter = (): void => {
     if (!hasFirstValue) return;
     setError(null);
 
-    const isInvalidRange = betweenOption === "exclusive" ? value2! <= value1! : value2! < value1!;
+    const isInvalidRange = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? value2! <= value1! : value2! < value1!;
     if (isBetweenFirst && hasSecondValue && isInvalidRange) {
-      setError(betweenOption === "exclusive"
+      setError(betweenOption === BetweenComparisonOptionMap.EXCLUSIVE
         ? "For 'between' (exclusive), the second value must be strictly greater than the first value."
         : "For 'between' (inclusive), the second value must be greater than or equal to the first value."
       );
@@ -59,8 +56,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
     const filterInfo: string[] = [];
 
     if (isBetweenFirst && hasSecondValue) {
-      const lowerOp: Extract<ComparisonOperator, "gt" | "gte"> = betweenOption === "exclusive" ? "gt" : "gte";
-      const upperOp: Extract<ComparisonOperator, "lt" | "lte"> = betweenOption === "exclusive" ? "lt" : "lte";
+      const lowerOp: Extract<ComparisonOperator, "gt" | "gte"> = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? ComparisonOperatorMap.GREATER_THAN : ComparisonOperatorMap.GREATER_THAN_OR_EQUALS_TO;
+      const upperOp: Extract<ComparisonOperator, "lt" | "lte"> = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? ComparisonOperatorMap.LESS_THAN : ComparisonOperatorMap.LESS_THAN_OR_EQUALS_TO;
       // Results in: ["gte10", "lte20"]
       filterInfo.push(`${lowerOp}${value1}`);
       filterInfo.push(`${upperOp}${value2}`);
