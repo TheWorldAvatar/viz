@@ -55,7 +55,7 @@ function Toast(props: Readonly<ToastProps>) {
     >
       <div className="flex mr-3">
         <Icon
-          className={`material-symbols-outlined flex-shrink-0 mt-0.5 ${toastConfig.animate} ${toastConfig.text}`}
+          className={`material-symbols-outlined shrink-0 mt-0.5 ${toastConfig.animate} ${toastConfig.text}`}
         >
           {toastConfig.icon}
         </Icon>

@@ -1,34 +1,36 @@
-import SettingsStore from "io/config/settings";
 import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
 import { buildUrl } from "utils/client-utils";
+import { getBackendApi } from "utils/internal-api-services";
 import { logColours } from "utils/logColours";
 
-const agentBaseApi: string = await SettingsStore.getRegistryURL();
 const apiVersion: string = "5.30.5";
+const internalApiIdentifierSet: ReadonlySet<string> = new Set(Object.values(InternalApiIdentifierMap));
+
+function parseInternalApiIdentifier(slug: string): InternalApiIdentifier | null {
+  return internalApiIdentifierSet.has(slug) ? (slug as InternalApiIdentifier) : null;
+}
 
 /**
  * GET request handler
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
     return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
     );
   }
-
-  // Generate API url and parameters based on the slug
-  const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
 
   if (!url) {
     return NextResponse.json(
@@ -71,18 +73,8 @@ export async function GET(
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
-    return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
-    );
-  }
-
   const body = await parseBody(req);
   if (!body) {
     return NextResponse.json(
@@ -91,10 +83,18 @@ export async function POST(
     );
   }
 
-  // Generate API url and parameters based on the slug
-  const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
+  }
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -121,18 +121,8 @@ export async function POST(
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
-    return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
-    );
-  }
-
   const body = await parseBody(req);
   if (!body) {
     return NextResponse.json(
@@ -141,10 +131,18 @@ export async function PUT(
     );
   }
 
-  // Generate API url and parameters based on the slug
-  const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
+    return NextResponse.json(
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
+    );
+  }
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -170,22 +168,20 @@ export async function PUT(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: InternalApiIdentifier }> }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse<AgentResponseBody>> {
-  if (!agentBaseApi) {
+  const { slug: rawSlug } = await params;
+  const slug = parseInternalApiIdentifier(rawSlug);
+  if (!slug) {
     return NextResponse.json(
-      {
-        apiVersion,
-        error: { code: 400, message: "Missing registry url in settings." },
-      },
-      { status: 400 }
+      { apiVersion, error: { code: 404, message: "This API does not exist." } },
+      { status: 404 }
     );
   }
-
-  // Generate API url and parameters based on the slug
-  const { slug } = await params;
-  const { searchParams } = new URL(req.url);
-  const url: string = makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  const url: string | NextResponse<AgentResponseBody> = genApiEndpoint(slug, req);
+  if (url instanceof NextResponse) {
+    return url;
+  }
   if (!url) {
     return NextResponse.json(
       { apiVersion, error: { code: 404, message: "This API does not exist." } },
@@ -205,12 +201,48 @@ export async function DELETE(
   return NextResponse.json(responseBody);
 }
 
+/**
+ * Generates the API endpoint and parameters based on the slug and search params from the request.
+ *
+ * @param {InternalApiIdentifier} slug An identifier for the specific API call.
+ * @param {NextRequest} req Request object to extract search params and headers.
+ */
+function genApiEndpoint(
+  slug: InternalApiIdentifier,
+  req: NextRequest
+): string | NextResponse<AgentResponseBody> {
+  try {
+    const agentBaseApi: string = getBackendApi("REGISTRY_BACKEND");
+    const { searchParams } = new URL(req.url);
+    return makeExternalEndpoint(agentBaseApi, slug, searchParams);
+  } catch {
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: { code: 503, message: "Backend service not configured for registry." },
+      },
+      { status: 503 }
+    );
+  }
+}
+
 function makeExternalEndpoint(
   agentBaseApi: string,
   slug: InternalApiIdentifier,
   searchParams: URLSearchParams
 ): string {
   switch (slug) {
+    case InternalApiIdentifierMap.ACCOUNT: {
+      const type: string = searchParams.get("type");
+      if (type == "flag") {
+        return `${agentBaseApi}/report/account/flag`;
+      }
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      const sortBy: string = searchParams.get("sort_by");
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      return `${agentBaseApi}/report/account?type=${type}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+    }
     case InternalApiIdentifierMap.ADDRESS: {
       const postalCode: string = searchParams.get("postal_code");
       const urlObj: URL = new URL(`${agentBaseApi}/location/addresses`);
@@ -232,7 +264,8 @@ function makeExternalEndpoint(
       if (type == FormTypeMap.ASSIGN_PRICE) {
         if (searchParams.get("id") != "null") {
           const id: string = searchParams.get("id");
-          return buildUrl(agentBaseApi, "report", "contract", "pricing", encodeURIComponent(id));
+          const date: string = searchParams.get("date");
+          return buildUrl(agentBaseApi, "report", "contract", "pricing", `${encodeURIComponent(id)}?date=${date}`);
         }
         return buildUrl(agentBaseApi, "report", "contract", "pricing");
       }
@@ -267,43 +300,6 @@ function makeExternalEndpoint(
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/status/${id}`;
     }
-    case InternalApiIdentifierMap.COUNT: {
-      const type: string = searchParams.get("type");
-      const lifecycle: string = searchParams.get("lifecycle");
-      if (lifecycle == "null") {
-        const filters: string = encodeFilters(searchParams.get("filters"), "?");
-        return `${agentBaseApi}/${type}/count${filters}`;
-      }
-      const filters: string = encodeFilters(searchParams.get("filters"));
-      if (lifecycle == LifecycleStageMap.BILLABLE) {
-        return `${agentBaseApi}/report/account/tasks/count?type=${type}${filters}`;
-      }
-      if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
-        let stagePath: string;
-        if (lifecycle === "pending") {
-          stagePath = "draft";
-        } else if (lifecycle === "active") {
-          stagePath = "service";
-        } else if (lifecycle === "archive") {
-          stagePath = "archive";
-        } else {
-          throw Error("Invalid stage");
-        }
-        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}${filters}`;
-      }
-      let params: string = "";
-      if (lifecycle == "scheduled" || lifecycle == "closed" || lifecycle == "activity") {
-        const startDate: string = searchParams.get("start_date");
-        const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
-        const endDate: string = searchParams.get("end_date");
-        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
-        params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
-      }
-      if (lifecycle == "activity") {
-        return `${agentBaseApi}/report/bill/count?type=${type}${params}${filters}`;
-      }
-      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
-    }
     case InternalApiIdentifierMap.INSTANCES: {
       const type: string = searchParams.get("type");
       const requireLabel: string = searchParams.get("label");
@@ -320,7 +316,6 @@ function makeExternalEndpoint(
         const sortBy: string = searchParams.get("sort_by");
         const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
-        // 
       } else if (identifier != "null") {
         url += `/${identifier}`;
         // For a subtype route, search field can be added
@@ -344,6 +339,9 @@ function makeExternalEndpoint(
       const stage = searchParams.get("stage");
       const eventType = searchParams.get("type");
       const identifier = searchParams.get("identifier");
+      if (stage == "service" && eventType == FormTypeMap.MASS_EDIT) {
+        return `${agentBaseApi}/contracts/service/dispatch/bulk`;
+      }
       let url: string = `${agentBaseApi}/contracts/${stage}/${eventType}`;
       if (identifier != "null") {
         url += `/${identifier}`;
@@ -358,7 +356,7 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (type == LifecycleStageMap.ACCOUNT) {
-        return buildUrl(agentBaseApi, "report", `account?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
+        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
@@ -528,6 +526,17 @@ async function sendRequest(
 }
 
 async function handleExternalBadRequest(res: Response, url: string): Promise<NextResponse<AgentResponseBody>> {
+  if (res.status === 401) {
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: {
+          code: res.status,
+          message: "Unauthorised",
+        }
+      }
+    );
+  }
   const resBody: AgentResponseBody = await res.json();
 
   console.error(

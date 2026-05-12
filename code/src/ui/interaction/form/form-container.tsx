@@ -42,7 +42,7 @@ export function InterceptFormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider entityType={props.entityType}>
+    <FormSessionContextProvider formType={props.formType} entityType={props.entityType} accountType={props.accountType} isContractForm={props.isPrimaryEntity}>
       <NavigationDrawer>
         <FormContents {...props} />
       </NavigationDrawer>
@@ -63,10 +63,10 @@ export function FormContainerComponent(
   props: Readonly<FormContainerComponentProps>
 ) {
   return (
-    <FormSessionContextProvider entityType={props.entityType}>
-      <div className=" flex flex-col w-full h-full mt-0  xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
+    <FormSessionContextProvider formType={props.formType} entityType={props.entityType} accountType={props.accountType} isContractForm={props.isPrimaryEntity}>
+      <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
         <FormContents {...props} />
-      </div>
+      </section>
     </FormSessionContextProvider>
   );
 }
@@ -138,31 +138,30 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
 
   return (
     <>
-      <section
+      <header
         className={`flex justify-between items-center text-foreground p-1 mt-5 mb-0.5  shrink-0`}
       >
         <h1 className="text-xl font-bold">{`${translateFormType(
           props.formType,
           dict
-        ).toUpperCase()} ${parseWordsForLabels(props.entityType)
-          .toUpperCase()
-          .replace("_", " ")}`}</h1>
-      </section>
-      <div className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
+        ).toUpperCase()} ${props.formType == FormTypeMap.ADJUST_PRICE ? "" :
+          parseWordsForLabels(props.entityType).replace("_", " ").toUpperCase()
+          }`}</h1>
+      </header>
+      <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {refreshFlag ? <FormSkeleton /> :
           (<FormComponent
             formRef={formRef}
             entityType={props.entityType}
-            formType={props.formType}
             primaryInstance={status?.data?.id}
             isPrimaryEntity={props.isPrimaryEntity}
             accountType={props.accountType}
             pricingType={props.pricingType}
           />
           )}
-      </div>
+      </section>
 
-      <section className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
+      <footer className="flex items-start 2xl:items-center justify-between p-2  sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
         {!formRef.current?.formState?.isSubmitting && (
           <Button
             leftIcon="cached"
@@ -241,7 +240,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
             />
           )}
         </div>
-      </section>
+      </footer>
     </ >
   );
 }

@@ -22,7 +22,7 @@ export default function FormErrorComponent(
   return (
     <>
       {props.error && (
-        <p className="text-red-600 text-lg mt-4">{`*${message}`}</p>
+        <p className="text-destructive text-lg mt-4">{`*${message}`}</p>
       )}
     </>
   );

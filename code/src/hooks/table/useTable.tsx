@@ -7,7 +7,8 @@ import {
   PaginationState,
   SortingState,
   Table,
-  useReactTable
+  useReactTable,
+  VisibilityState
 } from "@tanstack/react-table";
 import { useDictionary } from "hooks/useDictionary";
 import { useEffect, useState } from "react";
@@ -15,17 +16,19 @@ import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, RegistryFieldValues } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import {
-  genSortParams
+  genSortParams,
+  getInitialColumnVisibilityState
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
-import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   isLoading: boolean;
+  isBulkDispatchEdit: boolean;
+  setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
   initialInstances: RegistryFieldValues[];
@@ -44,38 +47,40 @@ export interface TableDescriptor {
 * A custom hook to retrieve table data into functionalities for the registry table to function.
 *
 * @param {string} entityType Type of entity for rendering.
-* @param {boolean} refreshFlag Flag to trigger refresh when required.
+* @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
-* @param {TableColumnOrderSettings} tableColumnOrderConfig Configuration for table column order.
+* @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
 * @param {DateRange} selectedDate Optional to put the currently selected date.
 */
 export function useTable(
   entityType: string,
-  refreshFlag: boolean,
+  refreshId: number,
   lifecycleStage: LifecycleStage,
-  tableColumnOrder: TableColumnOrderSettings,
+  tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<FieldValues[]>([]);
+  const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const { isLoading, tableData, initialInstances } = useTableData(
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
+
+  const { isLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
-    refreshFlag,
+    refreshId,
     lifecycleStage,
     selectedDate,
     apiPagination,
     columnFilters,
-    tableColumnOrder,
+    tableColumnOptions,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -85,10 +90,10 @@ export function useTable(
     setSortParams(params);
   };
 
-  useEffect(() => {
-    setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
-  }, [tableData, pagination.pageIndex]);
 
+  useEffect(() => {
+    setCurrentDataView(data?.slice(startIndex, startIndex + pagination.pageSize));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -121,7 +126,23 @@ export function useTable(
       ? updater(columnFilters)
       : updater;
 
-    const activeNewFilters: ColumnFilter[] = newFilters.filter(filter => !!filter.value);
+    // In JS, an empty array is truthy, so we need to filter out the filters with empty array
+    // or empty string value to get the actual active filters.
+    const activeNewFilters: ColumnFilter[] = newFilters.filter((filter) => {
+      if (filter.value === null || filter.value === undefined) {
+        return false;
+      }
+
+      if (Array.isArray(filter.value)) {
+        return filter.value.length > 0;
+      }
+
+      if (typeof filter.value === "string") {
+        return filter.value.trim().length > 0;
+      }
+
+      return true;
+    });
 
     // Limit to maximum 3 active filters at a time 
     if (activeNewFilters.length > 3) {
@@ -137,20 +158,22 @@ export function useTable(
   };
 
   const table: Table<FieldValues> = useReactTable({
-    data,
-    columns: tableData?.columns,
+    data: currentDataView,
+    columns,
     state: {
       columnFilters,
+      columnVisibility,
       pagination,
       sorting,
     },
     manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    rowCount: rowCounts.filter,
+    rowCount: selectedCount,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange,
+    onColumnVisibilityChange: setColumnVisibility,
     onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -159,13 +182,15 @@ export function useTable(
 
   return {
     isLoading,
+    isBulkDispatchEdit,
+    setIsBulkDispatchEdit,
     table,
-    data,
-    setData,
+    data: currentDataView,
+    setData: setCurrentDataView,
     initialInstances,
     pagination,
     apiPagination,
-    totalRows: rowCounts.total,
+    totalRows: totalCount,
     filters: columnFilters,
     setFilters: setColumnFilters,
     sortParams,

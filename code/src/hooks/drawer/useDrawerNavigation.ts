@@ -21,10 +21,10 @@ export function useDrawerNavigation() {
         const url: string = buildUrl(...urlParts);
         // If any drawers are opened, replace current drawer
         if (isAnyDrawerOpen) {
-            router.replace(url);
+            router.replace(url, { scroll: false });
         } else {
             // If no drawers are opened, directly open new route
-            router.push(url);
+            router.push(url, { scroll: false });
         }
     };
 

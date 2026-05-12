@@ -6,11 +6,9 @@ import { selectIsLoading, selectToastId, setLoading, setToastId } from 'state/lo
 import { Dictionary } from 'types/dictionary';
 import { toast } from "ui/interaction/action/toast/toast";
 import { useDictionary } from './useDictionary';
-import useRefresh from './useRefresh';
+import useRefresh, { useRefreshReturn } from './useRefresh';
 
-interface useOperationStatusReturn {
-  refreshFlag: boolean;
-  triggerRefresh: () => void;
+interface useOperationStatusReturn extends useRefreshReturn {
   isLoading: boolean;
   startLoading: () => void;
   stopLoading: () => void;
@@ -25,7 +23,7 @@ const useOperationStatus = (): useOperationStatusReturn => {
   const dispatch = useDispatch();
   const isLoading: boolean = useSelector(selectIsLoading);
   const toastId: number | string = useSelector(selectToastId);
-  const { refreshFlag, triggerRefresh } = useRefresh(500);
+  const useRefreshReturn: useRefreshReturn = useRefresh(500);
 
   const startLoading = () => {
     const id: number | string = toast(dict.message.processingRequest, "loading");
@@ -43,7 +41,7 @@ const useOperationStatus = (): useOperationStatusReturn => {
     dispatch(setFrozenFields({}));
   };
 
-  return { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading, resetFormSession };
+  return { ...useRefreshReturn, isLoading, startLoading, stopLoading, resetFormSession };
 };
 
 export default useOperationStatus;

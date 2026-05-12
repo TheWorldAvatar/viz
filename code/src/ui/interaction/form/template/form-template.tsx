@@ -1,7 +1,7 @@
 import useFormSession from 'hooks/form/useFormSession';
 import React, { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
-import { PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
+import { FormTypeMap, PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from 'types/form';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
@@ -23,19 +23,18 @@ interface FormComponentProps {
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const { addFrozenFields, loadPreviousSession, setFieldIdNameMapping } = useFormSession();
+  const { formType, addFrozenFields, loadPreviousSession, setFieldIdNameMapping } = useFormSession();
 
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
     defaultValues: async (): Promise<FieldValues> => {
       // All forms will require an ID to be assigned
       const initialState: FieldValues = {
-        formType: 'edit', // DEFAULT TO EDIT TYPE
         lockField: [] // An array that stores all fields that should be locked (disabled)
       };
 
       const fieldIdMapping: Record<string, string> = {};
-      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, props.fields, fieldIdMapping);
+      const fields: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(initialState, formType, props.fields, fieldIdMapping);
 
       if (initialState.lockField.length > 0) {
         addFrozenFields(initialState.lockField);
@@ -56,7 +55,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
         <LoadingSpinner isSmall={false} /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
           .map((formField, index) => {
-            return renderFormField(props.entityType, formField, form, index, { account: "", accountField: "", pricing: "", pricingField: "" })
+            return renderFormField(props.entityType, FormTypeMap.EDIT, formField, form, index)
           })}
     </form>
   );

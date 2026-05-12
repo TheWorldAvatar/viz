@@ -6,6 +6,7 @@ import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import { interpolate } from "utils/client-utils";
 
 
 export type NavBarItemType = "default" | "file" | "date";
@@ -52,22 +53,21 @@ export function NavBarItem(
     <Tooltip
       text={
         props.tooltip ??
-        dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)
+        interpolate(dict.nav.tooltip.landingRedirect, props.title)
       }
       placement={"left"}
     >
       <div
         className={`${props.isMobile
-          ? "gap-4"
+          ? "p-1.5 gap-4"
           : props.isMenuExpanded
-            ? "mt-4 w-full max-w-full gap-2"
-            : "mt-4 w-16 rounded-md"
-          } flex h-fit cursor-pointer items-center  p-1.5  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700`}
+            ? "p-4 gap-4"
+            : "p-3 rounded-full"
+          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring`}
         onClick={props.handleClick ?? handleClick}
       >
         <div
-          className={`${props.isMobile ? "" : "w-18"
-            } flex items-center justify-center`}
+          className={"flex items-center justify-center"}
         >
           <Icon
             sx={{
@@ -81,13 +81,13 @@ export function NavBarItem(
         </div>
         <div className="flex flex-1 flex-col">
           <h3
-            className={`text-foreground text-base font-bold  ${props.isMenuExpanded ? "" : "hidden"
+            className={`text-foreground text-base font-bold ${props.isMenuExpanded ? "" : "hidden"
               }`}
           >
             {props.title}
           </h3>
           {!props.isMobile && props.isMenuExpanded && (
-            <p className="text-sm text-gray-500 dark:text-foreground/85 break-words hyphens-auto">
+            <p className="text-sm text-muted-foreground wrap-break-word hyphens-auto">
               {props.caption}
             </p>
           )}

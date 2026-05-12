@@ -28,6 +28,7 @@ export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",
   ADD_PRICE: "addprice",
+  ADJUST_PRICE: "adjustprice",
   ASSIGN_PRICE: "assignprice",
   DELETE: "delete",
   EDIT: "edit",
@@ -38,6 +39,8 @@ export const FormTypeMap = {
   COMPLETE: "complete",
   CANCEL: "cancel",
   REPORT: "report",
+  EXEMPT: "exempt",
+  MASS_EDIT: "massedit",
   TERMINATE: "terminate",
   INVOICE: "invoice",
 } as const;
@@ -54,6 +57,7 @@ export const RegistryStatusMap = {
   BILLABLE_COMPLETED: "billablecompleted",
   BILLABLE_CANCELLED: "billablecancelled",
   BILLABLE_REPORTED: "billableissue",
+  BILLABLE_EXEMPTED: "billableExempted",
   INVOICED: "invoiced",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
@@ -72,8 +76,9 @@ export interface FormFieldOptions {
 
 export type RegistryFieldValues = Record<
   string,
-  SparqlResponseField | SparqlResponseField[]
+  SparqlResponseField | RegistryFieldValues[]
 >;
+export type RegistryFlatFieldValues = Record<string, string | Record<string, string>[]>;
 
 export type OntologyConceptMappings = Record<string, OntologyConcept[]>;
 
@@ -165,9 +170,9 @@ interface JsonLdLiteral {
 export interface RegistryTaskOption {
   id: string;
   contract: string;
-  status: string;
   date: string;
-  scheduleType: string;
+  status?: string;
+  scheduleType?: string;
 }
 
 export type RegistryTaskType =

@@ -2,10 +2,11 @@ import styles from "./field.module.css";
 
 import { FieldError, UseFormRegisterReturn, UseFormReturn } from "react-hook-form";
 
+import useFormSession from "hooks/form/useFormSession";
+import { useDictionary } from "hooks/useDictionary";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
-  FORM_STATES,
-  getRegisterOptions,
+  getRegisterOptions
 } from "ui/interaction/form/form-utils";
 import FormInputContainer from "./form-input-container";
 import NumericInputField from "./input/numeric-input";
@@ -24,6 +25,7 @@ export interface InputFieldProps {
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormInputField(props: Readonly<InputFieldProps>) {
+  const dict = useDictionary();
   const inputClassNames: string = props.options?.inputStyle?.join(" ");
   // Disabled inputs should provide only text input
   const inputMode: "none" | "text" | "numeric" | "decimal" = props.options
@@ -35,7 +37,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
         ? "numeric"
         : "decimal";
 
-
+  const { formType } = useFormSession();
 
   const isMultiline: boolean = props.field.singleLine?.[VALUE_KEY] === "false";
 
@@ -46,7 +48,7 @@ export default function FormInputField(props: Readonly<InputFieldProps>) {
     "aria-label": props.field.name[VALUE_KEY],
     ...props.form.register(
       props.field.fieldId,
-      getRegisterOptions(props.field, props.form.getValues(FORM_STATES.FORM_TYPE))
+      getRegisterOptions(props.field, formType, dict)
     ),
   };
 

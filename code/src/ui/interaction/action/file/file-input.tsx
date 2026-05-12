@@ -27,12 +27,12 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
     <div>
       <label
         htmlFor="file-upload"
-        className={`cursor-pointer flex items-center w-full max-w-md py-2 px-4 rounded-lg bg-blue-50 dark:bg-background dark:border-blue-400 border border-blue-200 shadow-xs`}
+        className={`cursor-pointer flex items-center w-full max-w-md py-2 px-4 rounded-lg bg-info-background border border-info-border shadow-xs`}
       >
-        <Icon className="material-symbols-outlined text-blue-600 dark:text-blue-400 ">
+        <Icon className="material-symbols-outlined text-info-foreground">
           attach_file
         </Icon>
-        <p className="ml-2 text-blue-700 dark:text-blue-400 text-base truncate">
+        <p className="ml-2 text-info-foreground text-base truncate">
           {currentFiles ? currentFiles[0]?.name : dict.message.noFileChosen}
         </p>
         <input

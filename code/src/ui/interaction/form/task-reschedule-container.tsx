@@ -10,13 +10,14 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
+import { FormTypeMap } from "types/form";
 import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getNormalizedDate, interpolate, parseWordsForLabels } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
@@ -29,7 +30,7 @@ import Tooltip from "../tooltip/tooltip";
  */
 export function InterceptTaskRescheduleComponent() {
   return (
-    <FormSessionContextProvider entityType="reschedule">
+    <FormSessionContextProvider formType={FormTypeMap.EDIT} entityType="reschedule">
       <NavigationDrawer>
         <TaskFormContents />
       </NavigationDrawer>
@@ -42,11 +43,9 @@ export function InterceptTaskRescheduleComponent() {
  */
 export function TaskRescheduleComponent() {
   return (
-    <FormSessionContextProvider entityType="reschedule">
-      <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
-        <TaskFormContents />
-      </div>
-    </FormSessionContextProvider>
+    <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
+      <TaskFormContents />
+    </section>
   );
 }
 
@@ -110,8 +109,7 @@ function TaskFormContents() {
 
   return (
     <>
-      {/* Header */}
-      <section className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5 shrink-0">
+      <header className="flex justify-between items-center text-nowrap text-foreground p-1 mt-10 mb-0.5 shrink-0">
         <h1 className="text-xl font-bold">
           {parseWordsForLabels(dict.title.actions)}
         </h1>
@@ -120,12 +118,12 @@ function TaskFormContents() {
             {task.date}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
-      </section>
+      </header>
       {/* Scrollable Content */}
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {task?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {`${dict.message.rescheduleInstruction.replace("{replace}", task.date)}:`}
+            {`${interpolate(dict.message.rescheduleInstruction, task.date)}:`}
           </p>
         )}
         {(isFetching || refreshFlag) && <FormSkeleton />}
@@ -139,6 +137,7 @@ function TaskFormContents() {
             </label>
             <DateInput
               mode="single"
+              ariaLabel={dict.form.rescheduleDate}
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               placement="bottom"
@@ -148,8 +147,7 @@ function TaskFormContents() {
           </div>
         )}
       </section >
-      {/* Footer */}
-      <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4" >
+      <footer className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5 2xl:mb-4 2xl:mt-4" >
         <div className="flex gap-2.5">
           <Button
             leftIcon="cached"
@@ -175,7 +173,7 @@ function TaskFormContents() {
             onClick={() => taskSubmitAction()}
           />
         </div>
-      </section >
+      </footer >
     </>
   );
 }

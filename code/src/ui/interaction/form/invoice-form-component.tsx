@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 import { Dictionary } from "types/dictionary";
 import { FormTypeMap, LifecycleStageMap } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import ColumnToggle from "ui/graphic/table/action/column-toggle";
 import RegistryTable from "ui/graphic/table/registry/registry-table";
 import { FormComponent } from "ui/interaction/form/form";
@@ -16,11 +16,12 @@ import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { interpolate } from "utils/client-utils";
 
 interface InvoiceFormComponentProps {
     entityType: string;
     accountType: string;
-    tableColumnOrder: TableColumnOrderSettings;
+    tableColumnOptions: TableColumnOption[];
 }
 
 /**
@@ -28,13 +29,13 @@ interface InvoiceFormComponentProps {
  *
  * @param {string} entityType The type of entity.
  * @param {string} accountType The type of account.
- * @param {TableColumnOrderSettings} tableColumnOrder The column order settings for the registry table.
+ * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function InvoiceFormComponent(
     props: Readonly<InvoiceFormComponentProps>
 ) {
     return (
-        <FormSessionContextProvider entityType={props.entityType} accountType={props.accountType}>
+        <FormSessionContextProvider formType={FormTypeMap.INVOICE} entityType={props.entityType} accountType={props.accountType}>
             <InvoiceFormContents {...props} />
         </FormSessionContextProvider>
     );
@@ -43,15 +44,15 @@ export default function InvoiceFormComponent(
 function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     const dict: Dictionary = useDictionary();
     const router = useRouter();
-    const { refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
+    const { refreshId, refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
     const { invoiceAccountFilter } = useFormSession();
 
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
-        refreshFlag,
+        refreshId,
         LifecycleStageMap.BILLABLE,
-        props.tableColumnOrder,
+        props.tableColumnOptions,
         invoiceAccountFilter,
     );
     const onSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -61,8 +62,8 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     };
 
     return (
-        <div className="flex flex-col w-full h-full mx-auto pt-4 pb-8 px-4 gap-5 md:px-8 bg-muted justify-between">
-            <header className={`flex flex-row gap-4 text-foreground justify-between`}>
+        <section className="flex flex-col h-full w-full mx-auto px-4 gap-5 md:px-8 bg-muted justify-between">
+            <header className={`flex flex-row gap-4 pt-10 text-foreground items-baseline`}>
                 <Button
                     leftIcon="arrow_back"
                     variant="outline"
@@ -70,21 +71,21 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     size="icon"
                     iconSize="small"
                     tooltipPosition="right"
-                    tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
+                    tooltipText={interpolate(dict.action.backTo, props.entityType)}
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
-            <div className="flex-1 overflow-y-auto">
-                {refreshFlag ? <FormSkeleton /> :
-                    (<FormComponent
-                        formRef={formRef}
-                        entityType={FormTypeMap.INVOICE}
-                        formType={FormTypeMap.INVOICE}
-                        accountType={props.accountType}
-                        selectedRowIds={tableDescriptor.selectedRowIds}
-                    />
-                    )}
-
+            <div className="grow overflow-y-auto">
+                <div className="w-full xl:max-w-xl">
+                    {refreshFlag ? <FormSkeleton /> :
+                        (<FormComponent
+                            formRef={formRef}
+                            entityType={FormTypeMap.INVOICE}
+                            accountType={props.accountType}
+                            selectedRowIds={tableDescriptor.selectedRowIds}
+                        />
+                        )}
+                </div>
                 {invoiceAccountFilter && <section>
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (
@@ -110,7 +111,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     </div>}
                 </section>}
             </div>
-            <section className="bg-muted flex items-center justify-between">
+            <footer className="bg-muted flex items-center justify-between">
                 {!formRef.current?.formState?.isSubmitting && (
                     <Button
                         leftIcon="cached"
@@ -131,7 +132,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         onClick={onSubmit}
                     />
                 </div>
-            </section>
-        </div>
+            </footer>
+        </section>
     );
 }

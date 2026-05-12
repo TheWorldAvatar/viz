@@ -1,5 +1,3 @@
-import styles from "../form.module.css";
-
 import { UseFormReturn } from "react-hook-form";
 
 import { Dictionary } from "types/dictionary";
@@ -22,10 +20,10 @@ export default function FormSearchPeriod(
   const dict: Dictionary = useDictionary();
   return (
     <fieldset
-      className={styles["form-fieldset"]}
+      className="border border-border"
       style={{ marginBottom: "1rem" }}
     >
-      <legend className={styles["form-fieldset-label"]}>{dict.title.searchPeriod}</legend>
+      <legend className="mx-1 my-0 p-1 font-bold text-[var(--font-size-secondary-text)]">{dict.title.searchPeriod}</legend>
       <FormFieldComponent
         field={{
           "@id": "string",

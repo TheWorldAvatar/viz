@@ -2,25 +2,35 @@ import {
   ColumnDef,
   ColumnFilter,
   FilterFnOption,
-  SortingState
+  SortingState,
+  VisibilityState
 } from "@tanstack/react-table";
+import { Routes } from "io/config/routes";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "types/backend-agent";
 import {
+  FormTypeMap,
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
+  RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
-import { TableColumnOrderSettings } from "types/settings";
+import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { XSD_DATETIME } from "utils/constants";
+import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import ArrayTextCell from "../cell/array-text-cell";
 
-export type TableData = {
-  data: FieldValues[];
-  columns: ColumnDef<FieldValues>[];
-}
+export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
+  dataType: string;
+  stage: string;
+};
 
 /**
  * Parses the column filters into URL parameters for API querying.
@@ -35,6 +45,10 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     if (filter.value === undefined || (filter.value as string[]).length === 0) {
       return "";
     }
+    // For date filters
+    if (typeof filter.value == "string") {
+      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
+    }
     const currentFilterValues: string[] = filter.value as string[];
     let filterParams: string[];
     if (currentFilterValues.includes(translatedBlankText)) {
@@ -42,7 +56,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     } else {
       filterParams = currentFilterValues;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`
+    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
 }
 
@@ -50,166 +64,185 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
  * Parses raw data from API into table data format suitable for rendering.
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
+ * @param {SortingState} sorting Current sorting state.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], titleDict: Record<string, string>): TableData {
-  const results: TableData = {
-    data: [],
-    columns: [],
-  };
+export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState,
+  titleDict: Record<string, string>): FieldValues[] {
+  const data: FieldValues[] = [];
   if (instances?.length > 0) {
-    const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
-    const columnNames: string[] = [];
-    // Track column dataTypes 
-    const columnDataTypes: Record<string, string> = {};
-
     instances.forEach(instance => {
-      const flattenInstance: Record<string, string> = {};
-      const fields: string[] = Object.keys(instance);
-
-      fields.forEach((field, index) => {
-        const fieldValue: SparqlResponseField | SparqlResponseField[] = instance[field];
-        let firstValue: SparqlResponseField;
-
-        if (Array.isArray(fieldValue)) {
-          firstValue = fieldValue[0];
-        } else {
-          firstValue = fieldValue;
-        }
-
-        flattenInstance[field] = firstValue?.value;
-
-        const normalizedField: string = parseLifecycleFieldsToTranslations(field, flattenInstance, titleDict);
-
-        // Store the dataType using the normalized field name only if not already stored
-        if (firstValue?.dataType && !columnDataTypes[normalizedField]) {
-          columnDataTypes[normalizedField] = firstValue.dataType;
-        }
-
-        if (!columnNames.includes(normalizedField)) {
-          // Insert at the current index if possible, else push to end
-          const insertIndex: number = Math.min(index, columnNames.length);
-          columnNames.splice(insertIndex, 0, normalizedField);
-        }
-      });
-
-      results.data.push(flattenInstance);
+      const flatInstance: RegistryFlatFieldValues = flattenInstance(instance, titleDict);
+      data.push(flatInstance);
     });
+  }
+  return data.sort((a: FieldValues, b: FieldValues): number => {
+    for (const sort of sorting) {
+      const field: string = sort.id;
+      const valA: string = a[field];
+      const valB: string = b[field];
+      // For null, undefined, or empty values, 
+      // A comes last if descending, and first if ascending
+      if (!valA) return sort.desc ? 1 : -1;
+      // B comes first if descending, and last if ascending
+      if (!valB) return sort.desc ? -1 : 1;
 
-    // Create column definitions based on available columns
-    for (const col of columnNames) {
-      const title: string = parseWordsForLabels(col);
-      const minWidth: number = Math.max(
-        title.length * 15,
-        125
-      );
-      const dataType: string = columnDataTypes[col];
-      const isDateTimeColumn: boolean = dataType === XSD_DATETIME;
-      results.columns.push({
-        accessorKey: col,
-        header: title,
-        cell: ({ getValue }) => {
-          const value: string = getValue() as string;
-          if (!value) return "";
-
-          // Format datetime/date columns for display
-          if (isDateTimeColumn) {
-            return formatDatetimeValue(value);
-          }
-
-          if (isValidIRI(value)) {
-            return getAfterDelimiter(value, "/");
-          }
-
-          if (col === titleDict.status) {
-            return <StatusComponent status={value} />;
-          }
-
-          return (
-            <ExpandableTextCell overrideExpansion={results.columns.length <= 2} text={value} maxLengthText={25} />
-          );
-        },
-        filterFn: multiSelectFilter,
-        size: minWidth,
-        enableSorting: true,
-        sortDescFirst: true,
-        sortingFn: isDateTimeColumn ? "datetime" : undefined,
-      });
+      const comparison: number = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
+      // Only returns the comparison if they are not equal on this sort field
+      // A user may have multiple fields to sort, and if they are equal on this field, 
+      // we must continue with the other fields to compare
+      if (comparison !== 0) {
+        return sort.desc ? -comparison : comparison;
+      }
     }
-  }
-  return results;
-}
-
-
-/**
- * Applies the configured column order to the given columns.
- *
- * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
- * @param {TableColumnOrderSettings} config Configuration for table column order.
- * @param {string} entityType Type of entity for rendering.
- * @param {Record<string, string>} titleDict The translations for the dict.title path.
- */
-
-export function applyConfiguredColumnOrder(
-  columns: ColumnDef<FieldValues>[],
-  config: TableColumnOrderSettings,
-  entityType: string,
-  lifecycleStage: LifecycleStage,
-  titleDict: Record<string, string>,
-): ColumnDef<FieldValues>[] {
-  const configuredOrder: string[] = config[entityType] || config[lifecycleStage];
-  if (!configuredOrder || configuredOrder.length === 0) return columns;
-
-  if (columns.length !== configuredOrder.length) {
-    console.warn("Configured column order does not match the number of columns available.");
-  }
-
-  const orderMap: Map<string, number> = new Map(configuredOrder.map((id, index) => [translateLifecycleFields(id, titleDict), index]));
-
-  return columns.sort((a, b) => {
-    const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
-    const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
-    const indexA: number = orderMap.get(accessorKeyA) ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
-    const indexB: number = orderMap.get(accessorKeyB) ?? Infinity;
-    return indexA - indexB;
+    // If all fields are equal, there is no need to reorder
+    return 0;
   });
 }
 
 /**
- * Formats a datetime value for display.
+ * Flattens the instance to a string instead of SparqlResponseField.
  *
- * @param {string} value The raw value from the backend.
+ * @param {RegistryFieldValues} instance The original column definitions.
+ * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
-export function formatDatetimeValue(value: string): string {
-  return new Date(value).toLocaleString();
+function flattenInstance(
+  instance: RegistryFieldValues,
+  titleDict: Record<string, string>
+): RegistryFlatFieldValues {
+  const flatInstance: RegistryFlatFieldValues = {};
+  const instanceFields: string[] = Object.keys(instance);
+
+  instanceFields.forEach((instanceField) => {
+    const instanceValue: SparqlResponseField | RegistryFieldValues[] = instance[instanceField];
+    if (Array.isArray(instanceValue)) {
+      // For array fields, only display array field, subfields need not be parsed
+      flatInstance[instanceField] = instanceValue.map((nestedFields) =>
+        flattenInstance(nestedFields, titleDict)) as Record<string, string>[];
+    } else {
+      flatInstance[instanceField] = instanceValue?.value;
+    }
+  });
+  return flatInstance;
 }
 
 /**
- * Parses the lifecycle field to their translations.
+ * Parses the column metadata to include both configured order as well as the column definitions.
  *
- * @param {string} field Name of field from backend to be translated.
- * @param {Record<string, string>} outputRow The row data being built.
+ * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
-export function parseLifecycleFieldsToTranslations(field: string, outputRow: Record<string, string>, titleDict: Record<string, string>): string {
-  const currentVal: string = outputRow[field];
-  // Delete unmodified field first before adding the translation
-  switch (field.toLowerCase()) {
-    case "lastmodified":
-      delete outputRow[field];
-      outputRow[titleDict.lastModified] = currentVal; // Keep raw ISO date for sorting
-      return titleDict.lastModified;
-    case "scheduletype":
-      delete outputRow[field];
-      outputRow[titleDict.scheduleType] = currentVal;
-      return titleDict.scheduleType;
-    case "status":
-      delete outputRow[field];
-      outputRow[titleDict.status] = currentVal;
-      return titleDict.status;
-    default:
-      return field;
+export function parseColumnsMetadata(
+  columns: ColumnDefinitionResponse[],
+  columnOptions: TableColumnOption[],
+  titleDict: Record<string, string>,
+): EnhancedColumnDef<FieldValues>[] {
+  const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
+  const results: EnhancedColumnDef<FieldValues>[] = [];
+  // Create column definitions based on available columns
+  for (const col of columns) {
+    // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
+    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
+    const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
+      title.length * 15,
+      125
+    );
+    const isDateColumn: boolean = col.datatype === XSD_DATE;
+    const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
+
+    const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
+    const effectiveWidth: number = configuredWidth ?? minWidth;
+    const maxTextLength: number = calculateMaxCharLengthFromWidth(configuredWidth);
+
+    results.push({
+      id: col.value,
+      accessorKey: col.value,
+      header: title,
+      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
+      stage: col.stage,
+      cell: ({ getValue }) => {
+        if (col.value == FLAG_KEY) {
+          if (getValue() == "true") {
+            return FLAG_EMOJI;
+          }
+          return "";
+        }
+        if (Array.isArray(getValue())) {
+          const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
+          return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
+        }
+        const value: string = getValue() as string;
+        if (!value) return "";
+        // Format datetime/date columns for display
+        if (isDateTimeColumn) {
+          return formatDatetimeValue(value);
+        }
+        if (isDateColumn) {
+          return formatDateValue(value);
+        }
+
+        if (isValidIRI(value)) {
+          return getAfterDelimiter(value, "/");
+        }
+
+        // Column header name is untranslated so we can directly compare to a string
+        if (col.value === "status") {
+          return <StatusComponent status={value} />;
+        }
+
+        return (
+          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxTextLength={maxTextLength} />
+        );
+      },
+      filterFn: multiSelectFilter,
+      size: effectiveWidth,
+      enableSorting: true,
+      sortDescFirst: true,
+      sortingFn: isDateTimeColumn ? "datetime" : undefined,
+    });
   }
+
+  // Sort by settings if set in the viz
+  if (!columnOptions || columnOptions.length === 0) return results;
+
+  if (columns.length !== columnOptions.length) {
+    console.warn("Configured column order does not match the number of columns available.");
+  }
+  const configuredColumnMap: Map<string, TableColumnOption> = new Map(
+    columnOptions.map((item, index) => [
+      item.name,
+      { ...item, order: index }
+    ])
+  );
+
+  return results
+    .sort((a, b) => {
+      const accessorKeyA: string = (a as { accessorKey?: string }).accessorKey;
+      const accessorKeyB: string = (b as { accessorKey?: string }).accessorKey;
+      const indexA: number = configuredColumnMap.get(accessorKeyA)?.order ?? Infinity; // Use Infinity to ensure any unconfigured columns go to the end
+      const indexB: number = configuredColumnMap.get(accessorKeyB)?.order ?? Infinity;
+      return indexA - indexB;
+    })
+}
+
+/**
+ * Builds the initial column visibility state from the column options config.
+ * Columns with `visible: false` are hidden; all others default to visible.
+ *
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
+ */
+export function getInitialColumnVisibilityState(
+  columnOptions: TableColumnOption[],
+): VisibilityState {
+  if (!columnOptions || columnOptions.length === 0) return {};
+  const columnVisibilityState: VisibilityState = {};
+  for (const item of columnOptions) {
+    if (item.visible === false) {
+      columnVisibilityState[item.name] = false;
+    }
+  }
+  return columnVisibilityState;
 }
 
 /**
@@ -220,6 +253,10 @@ export function parseLifecycleFieldsToTranslations(field: string, outputRow: Rec
  */
 export function translateLifecycleFields(field: string, titleDict: Record<string, string>): string {
   switch (field.toLowerCase()) {
+    case "date":
+      return titleDict.date;
+    case "event_id":
+      return titleDict.eventId;
     case "lastmodified":
       return titleDict.lastModified;
     case "scheduletype":
@@ -229,6 +266,24 @@ export function translateLifecycleFields(field: string, titleDict: Record<string
     default:
       return field;
   }
+}
+
+/**
+ * Retrieves the record ID for a given row, prioritizing 'event_id', then 'id', and finally 'iri'.
+ *
+ * @param {FieldValues} row The row data.
+ * @returns {string} The record ID.
+ */
+export function getRowRecordId(row: FieldValues): string {
+  if (row.event_id) {
+    return getId(row.event_id);
+  }
+
+  if (row.id) {
+    return getId(row.id);
+  }
+
+  return getId(row.iri);
 }
 
 /**
@@ -266,7 +321,7 @@ export function genSortParams(currentSort: SortingState, titleDict: Record<strin
 export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<string, string>): string {
   switch (field.toLowerCase()) {
     case titleDict.lastModified.toLowerCase():
-      return "lastModified";
+      return "lastmodified";
     case titleDict.scheduleType.toLowerCase():
       return "scheduleType";
     case titleDict.status.toLowerCase():
@@ -274,6 +329,25 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
     default:
       return field;
   }
+}
+
+/**
+ * Calculates the maximum text length to display in a cell based on column width.
+ * Uses tunable width-to-character estimation so truncation can be less aggressive.
+ *
+ * @param {number} width The column width in pixels.
+ * @returns {number} The maximum number of characters to display before truncation.
+ */
+function calculateMaxCharLengthFromWidth(width: number | undefined): number {
+  if (width === undefined) {
+    return DEFAULT_MAX_CHARACTER_LENGTH;
+  }
+  // 8 is the approximate width of a character in pixels, used to estimate how many characters can fit in a given column width
+  // 6 is the expansion factor that determines how many characters to show based on the column width.
+  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
+  // The higher the factor, the more characters will be shown before truncation
+  const estimatedLength: number = Math.floor((width / 8) * 1.5);
+  return Math.max(estimatedLength, DEFAULT_MAX_CHARACTER_LENGTH);
 }
 
 /**
@@ -312,3 +386,40 @@ export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
   }
   return undefined;
 }
+
+/**
+ * Executes the review billable action which checks if the bill is already accrued or not and navigates to the correct drawer.
+ *
+ * @param {FieldValues} row The row data.
+ * @param {string} accountType The account type.
+ * @param navigateToDrawer The function to navigate to the drawer.
+ */
+export async function execReviewBillableAction(
+  row: FieldValues,
+  accountType: string,
+  navigateToDrawer: (...urlParts: string[]) => void,
+): Promise<void> {
+  const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
+  const body: AgentResponseBody = await queryInternalApi(url);
+  browserStorageManager.set(DATE_KEY, row.date);
+  browserStorageManager.set(EVENT_KEY, row.event_id);
+  try {
+    const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.FILTER,
+      LifecycleStageMap.ACCOUNT,
+      accountType,
+      row[accountType]
+    ));
+    const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+    // Set the account type in browser storage to match the values of the account type in the assign price form
+    browserStorageManager.set(accountType, options[0]?.value);
+  } catch (error) {
+    console.error("Error fetching instances", error);
+  }
+  if (body.data.message == "true") {
+    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+  } else {
+    navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
+  }
+}
+

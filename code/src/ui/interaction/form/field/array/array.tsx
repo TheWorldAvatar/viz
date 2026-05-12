@@ -4,10 +4,12 @@ import { FieldValues, useFieldArray, UseFormReturn } from "react-hook-form";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import { BillingEntityTypes, FormFieldOptions, PropertyShape } from "types/form";
+import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import { DependentFormSection } from "ui/interaction/form/section/dependent-form-section";
 import { genEmptyArrayRow } from "../../form-utils";
 import FormFieldComponent from "../form-field";
+import useRefresh from "hooks/useRefresh";
 
 export interface FormArrayProps {
   fieldId: string;
@@ -15,7 +17,7 @@ export interface FormArrayProps {
   maxSize: number;
   fieldConfigs: PropertyShape[];
   form: UseFormReturn;
-  billingStore?: BillingEntityTypes;
+  billingStore: BillingEntityTypes;
   options?: FormFieldOptions;
 }
 
@@ -28,12 +30,13 @@ export interface FormArrayProps {
  * @param {number} maxSize The maximum size of the array.
  * @param {PropertyShape[]} fieldConfigs The list of SHACL shape property for this field.
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
- * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
+ * @param {BillingEntityTypes} billingStore Stores the type of account and pricing.
  * @param {FormFieldOptions} options Configuration options for the field.
  */
 export default function FormArray(props: Readonly<FormArrayProps>) {
   // Controls which form array item is currently being displayed
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const { refreshFlag, triggerRefresh } = useRefresh(150);
   const dict: Dictionary = useDictionary();
   // Min size defaults to 1. Users can only set it as 0 or 1
   const minArraySize: number =
@@ -51,41 +54,43 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
 
   return (
     <div className="flex flex-col ">
-      <div className="flex flex-col justify-start items-start gap-4 my-4">
-        <div className="flex flex-row items-center justify-start gap-2">
-          {!props.options?.disabled &&
-            (Number.isNaN(props.maxSize) || fields.length < props.maxSize) && (
+      <div className="flex flex-col justify-start items-start gap-2 my-2">
+        {!props.options?.disabled &&
+          (<div className="flex flex-row items-center justify-start gap-2">
+            {(Number.isNaN(props.maxSize) || fields.length < props.maxSize) && (
               <Button
                 size="icon"
                 leftIcon="add"
+                disabled={refreshFlag}
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   append(emptyRow);
                 }}
               />
             )}
-          {!props.options?.disabled && fields.length > minArraySize && (
-            <Button
-              leftIcon="remove"
-              size="icon"
-              variant="destructive"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                remove(currentIndex);
-                // Adjust current index
-                if (currentIndex >= fields.length - 1) {
-                  setCurrentIndex(Math.max(0, fields.length - 2));
-                }
-              }}
-            />
-          )}
-        </div>
-
+            {fields.length > minArraySize && (
+              <Button
+                leftIcon="remove"
+                size="icon"
+                variant="destructive"
+                disabled={refreshFlag}
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  triggerRefresh();
+                  remove(currentIndex);
+                  // Adjust current index
+                  if (currentIndex >= fields.length - 1) {
+                    setCurrentIndex(Math.max(0, fields.length - 2));
+                  }
+                }}
+              />
+            )}
+          </div>)}
         <div className="flex flex-wrap gap-4  rounded-lg w-fit">
-          {Array.from({ length: fields.length }, (_, index) => (
+          {fields.map((field, index) => (
             <button
-              key={index}
-              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border-1 border-border rounded-sm ${index === currentIndex ? "bg-primary " : ""
+              key={field.id}
+              className={`cursor-pointer h-8 w-8 flex justify-center items-center text-sm m-0 text-foreground border border-border rounded-sm ${index === currentIndex ? "bg-primary " : ""
                 }`}
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
@@ -98,41 +103,47 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         </div>
       </div>
 
+
       <div className="bg-background flex flex-col w-full p-2 rounded-lg">
-        {fields.length == 0 && <p>{dict.message.arrayInstruction}</p>}
-        {fields.length > 0 &&
-          props.fieldConfigs.map((config, index) => {
-            const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
-            return (
-              <div
-                key={`field-${currentIndex}-${index}`}
-                className="flex-1 whitespace-nowrap"
-              >
-                {config.class && (
-                  <DependentFormSection
-                    dependentProp={{
-                      ...config,
-                      fieldId: fieldId,
-                      group: { "@id": props.fieldId },
-                    }}
-                    form={props.form}
-                    billingStore={props.billingStore}
-                    isArray={true}
-                  />
-                )}
-                {!config.class && (
-                  <FormFieldComponent
-                    field={{
-                      ...config,
-                      fieldId: fieldId,
-                    }}
-                    form={props.form}
-                    options={props.options}
-                  />
-                )}
-              </div>
-            );
-          })}
+        {refreshFlag && <LoadingSpinner isSmall={false} />}
+        {!refreshFlag && (
+          <>
+            {fields.length == 0 && <p>{props.options?.disabled ? dict.message.emptySection : dict.message.arrayInstruction}</p>}
+            {fields.length > 0 &&
+              props.fieldConfigs.map((config, index) => {
+                const fieldId = `${props.fieldId}.${currentIndex}.${config.fieldId}`;
+                return (
+                  <div
+                    key={`field-${fields[currentIndex]?.id}-${index}`}
+                    className="flex-1 whitespace-nowrap"
+                  >
+                    {config.class && (
+                      <DependentFormSection
+                        dependentProp={{
+                          ...config,
+                          fieldId: fieldId,
+                          group: { "@id": props.fieldId },
+                        }}
+                        form={props.form}
+                        billingStore={props.billingStore}
+                        isArray={true}
+                      />
+                    )}
+                    {!config.class && (
+                      <FormFieldComponent
+                        field={{
+                          ...config,
+                          fieldId: fieldId,
+                        }}
+                        form={props.form}
+                        options={props.options}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+          </>
+        )}
       </div>
     </div>
   );

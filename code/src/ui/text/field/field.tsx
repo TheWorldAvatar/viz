@@ -16,7 +16,7 @@ export default function TextField(props: Readonly<TextFieldProps>) {
       <h4 className="flex-shrink-0 w-28 sm:w-32 text-sm sm:text-base font-semibold text-foreground capitalize">
         {props.label}
       </h4>
-      <p className="min-w-0 flex-1 text-wrap hyphens-auto break-all text-sm text-gray-600 dark:text-gray-300">
+      <p className="min-w-0 flex-1 text-wrap hyphens-auto break-all text-sm text-muted-foreground">
         {props.content}
       </p>
     </div>

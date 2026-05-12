@@ -41,7 +41,7 @@ export default function FormInputMinMaxField(
             className={props.options?.labelStyle.join(" ")}
             htmlFor={minFieldId}
           >
-            <p className={"text-gray-600 text-sm"}>{dict.form.min}:</p>
+            <p className={"text-muted-foreground text-sm"}>{dict.form.min}:</p>
           </label>
           <NumericInputField
             field={{
@@ -57,7 +57,7 @@ export default function FormInputMinMaxField(
             className={props.options?.labelStyle.join(" ")}
             htmlFor={maxFieldId}
           >
-            <p className={"text-gray-600 text-sm"}>{dict.form.max}:</p>
+            <p className={"text-muted-foreground text-sm"}>{dict.form.max}:</p>
           </label>
           <NumericInputField
             field={{

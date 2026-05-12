@@ -16,9 +16,7 @@ import {
 import { Dictionary } from "types/dictionary";
 import {
   LifecycleStage,
-  LifecycleStageMap,
-  RegistryFieldValues,
-  SparqlResponseField,
+  LifecycleStageMap
 } from "types/form";
 import { JsonObject } from "types/json";
 import { ToastConfig, ToastType } from "types/toast";
@@ -129,7 +127,7 @@ export function getId(input: string): string {
  * @param {string} iri input iri.
  */
 export function isValidIRI(iri: string): boolean {
-  // eslint-disable-next-line
+
   const iriPattern = /^(https?|ftp|mailto|file|data|irc|tel|urn|uuid|doi):((\/\/[^\/?#]*)?[^?#]*)(\?[^#]*)?(#.*)?$/i;
   return iriPattern.test(iri);
 }
@@ -145,61 +143,6 @@ export function getAfterDelimiter(str: string, delimiter: string): string {
 }
 
 /**
- * Get the value from the target SPARQL response.
- *
- * @param {SparqlResponseField} response The target SPARQL response.
- */
-export function getSparqlResponseValue(response: SparqlResponseField): string {
-  return response.value;
-}
-
-/**
- * Extract the target field as a Response Field Object from the response.
- *
- * @param {RegistryFieldValues} response The response.
- * @param {string} field The target field of interest.
- * @param {boolean} getFirstArrayField Optional indicator to retrieve the first array field if required.
- */
-export function extractResponseField(
-  response: RegistryFieldValues,
-  field: string,
-  getFirstArrayField?: boolean
-): SparqlResponseField {
-  if (Array.isArray(response[field])) {
-    if (getFirstArrayField) {
-      return response[field][0];
-    } else {
-      console.warn(
-        `Detected that field ${field} is an array! Skipping field...`
-      );
-      return null;
-    }
-  } else {
-    return response[field];
-  }
-}
-
-/**
- * Extract the target field as an array of Response Field Objects from the response.
- * Returns an empty array if the field is not found or not an array.
- *
- * @param {RegistryFieldValues} response The response.
- * @param {string} field The target field of interest.
- */
-export function extractResponseFieldArray(
-  response: RegistryFieldValues,
-  field: string
-): SparqlResponseField[] {
-  if (Array.isArray(response[field])) {
-    return response[field];
-  } else if (response[field]) {
-    // If it's a single value, wrap it in an array
-    return [response[field]];
-  }
-  return [];
-}
-
-/**
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
@@ -211,11 +154,12 @@ export function getInitialDateFromLifecycleStage(
   const initialDate: Date = new Date();
 
   if (lifecycleStage === LifecycleStageMap.SCHEDULED) {
-    // For scheduled: start with tomorrow since today and past are disabled , and set the end date to four weeks from initial date
-    const fourWeeksFromInitialDate: Date = new Date();
+    // For scheduled: start with tomorrow since today and past are disabled, and set the end date to 7 days from initial date
     initialDate.setDate(initialDate.getDate() + 1);
-    fourWeeksFromInitialDate.setDate(initialDate.getDate() + 28);
-    return { from: initialDate, to: fourWeeksFromInitialDate };
+    // we need to set the end date starting point as the initial date starting point
+    const endDate: Date = new Date(initialDate);
+    endDate.setDate(initialDate.getDate() + 7);
+    return { from: initialDate, to: endDate };
     // For closed tasks, set the date range to the current month
   } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
     // Get the first day of the current month
@@ -291,6 +235,54 @@ export function getNormalizedDate(date: Date): string {
 }
 
 /**
+ * Formats a date string into a locale - specific format for display.
+ *
+ * @param { string | Date} value The raw value from the backend.
+ */
+export function formatDateValue(value: string | Date): string {
+  return new Date(value).toLocaleDateString();
+}
+
+/**
+ * Formats a datetime value for display.
+ *
+ * @param {string} value The raw value from the backend.
+ */
+export function formatDatetimeValue(value: string): string {
+  return new Date(value).toLocaleString();
+}
+
+/**
+ * Extracts and formats the display string for the target date(s) based on the specified mode.
+ *
+ * @param {Date | DateRange | Date[] | undefined} targetDate The target date, date range, or multiple dates.
+ * @param {"single" | "range" | "multiple"} mode The mode of the date input.
+ * @returns {string} The formatted string to display.
+ */
+
+export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined, mode: "single" | "range" | "multiple"): string => {
+  if (!targetDate) return "";
+
+  if (mode === "single") {
+    return formatDateValue(targetDate as Date);
+  }
+  if (mode === "multiple") {
+    const dates: Date[] = targetDate as Date[];
+    if (!Array.isArray(dates) || dates.length === 0) return "";
+    const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
+    const first: string = formatDateValue(sortedDates[0]);
+    const last: string = formatDateValue(sortedDates.at(-1));
+    return dates.length === 1 ? first : `${first} - ${last}`;
+  }
+  // range mode
+  const targetDateRange: DateRange = targetDate as DateRange;
+  const fromDate: string = formatDateValue(targetDateRange?.from);
+  const toDate: string = formatDateValue(targetDateRange?.to);
+  return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
+};
+
+
+/**
  * Get the configuration for a toast notification.
  *
  * @param type The type of toast .
@@ -307,17 +299,17 @@ export function getToastConfig(type: ToastType, dict: Dictionary): ToastConfig {
       };
     case "success":
       return {
-        bg: "bg-status-success-bg",
+        bg: "bg-success-background",
         border: "border-green-200",
-        text: "text-status-success-text",
+        text: "text-success-foreground",
         icon: "check_circle",
         title: dict.title.success,
       };
     case "error":
       return {
-        bg: "bg-status-error-bg",
+        bg: "bg-error-background",
         border: "border-red-200",
-        text: "text-status-error-text",
+        text: "text-error-foreground",
         icon: "error",
         title: dict.title.error,
       };
@@ -353,7 +345,23 @@ export function isValidCoordinates(lng: number, lat: number): boolean {
   );
 };
 
+/**
+ * Handles the download of a Blob object.
+ *
+ * @param blob The Blob object to download.
+ * @param fileName The name of the file to be downloaded.
+ */
+export function handleDownload(blob: Blob, fileName: string): void {
+  const url: string = window.URL.createObjectURL(blob);
+  const link: HTMLAnchorElement = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
 
+  link.parentNode?.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
 
 /**
  * Builds a URL by concatenating the provided arguments with '/' as a separator.
@@ -363,4 +371,14 @@ export function isValidCoordinates(lng: number, lat: number): boolean {
 
 export function buildUrl(...args: string[]): string {
   return args.join("/");
+};
+
+/**
+ * Injects a dynamic value into a translation string by replacing a specific placeholder - {replace}.
+ *
+ * @param text The localised string containing the `{replace}` placeholder.
+ * @param replacement The dynamic string to inject into the text.
+ */
+export function interpolate(text: string, replacement: string): string {
+  return text.replace("{replace}", replacement);
 };

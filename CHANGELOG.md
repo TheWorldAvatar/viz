@@ -2,6 +2,409 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.2
+
+### Bug Fixes
+
+- Fixed bulk edit failure with active filters
+
+## 5.72.1
+
+### Bug Fixes
+
+- Fixed an issue with the show more button not showing in the table cells when the text is too long, due to a wrong condition
+
+## 5.72.0
+
+### Changes
+
+- Extended task attachment checks into a new attachment viewer
+- Attachment viewer shows file list and redirects on click
+
+## 5.71.3
+
+### Bug fixes
+
+- Fixed to log unauthorised requests
+
+## 5.71.2
+
+### Bug fixes
+
+- Fixed an issue with the initial visibility state that reads from the table column settings, where the column names were being translated before being set as keys in the visibility state object, thus not matching with the column keys and not applying the visibility settings as expected.
+
+## 5.71.1
+
+### Changes
+
+- Added a function that calculates the maximum text length to display in a cell based on column width
+- Adjusted table cell padding 
+- Removed the whitespace-nowrap class to allow text to wrap in the cells
+
+## 5.71.0
+
+### Changes
+
+- Added new pages to edit only pricing model but view other contract details
+- Added functionality to adjust pricing model for an ongoing contract
+- Code improvements
+- Bump min version of `VisBackend Agent` from `v1.46.0` to `v1.48.0`
+
+## 5.70.2
+
+### Changes
+
+- Added accessibility name for clear all filters button in the table ribbon
+
+## 5.70.1
+
+### Changes
+
+- Allow users to recomplete a task even after it has been billed
+
+## 5.70.0
+
+### Changes
+
+- Updated the German translations
+- Modify hide table ribbon to show instead
+- Enforce localised numeric inputs in the forms
+
+### Bug fixes
+
+- Fix onclick error in registry rows due to status translation
+
+## 5.69.2
+
+### Changes
+
+- Accessiblity improvements:
+- Standardized the date display format
+- Aria-labels on regsitry row actions, bulk approvement
+- Made the table pagination as a `nav` HTML element
+
+## 5.69.1
+
+### Changes
+
+- Added role access to general registry paths in configuration
+
+## 5.69.0
+
+### Changes
+
+- Added date filters for date and date time columns
+- Bump min version of `VisBackend Agent` from `v1.45.0` to `v1.46.0`
+
+## 5.68.1
+
+### Bug fixes
+
+- Fix translations for the status column to show the translated status component
+
+## 5.68.0
+
+### Changes
+
+- Added account flagging functionalities
+- Disabled contract creation for flagged accounts
+- Bump min version of `VisBackend Agent` from `v1.44.2` to `v1.45.0`
+
+## 5.67.9
+
+### Bug fix
+
+- Fixed row action permission guard with translations of status column
+
+## 5.67.8
+
+### Changes
+
+- Improved accessibility by adding clear and descriptive aria-label attributes to interactive elements (e.g., inputs, buttons, dropdowns and controls).
+
+## 5.67.7
+
+### Changes
+
+- Return form for exempting task from billing
+
+## 5.67.6
+
+### Bug fix
+
+- Reduce the number of API calls by the table on refresh to one
+
+## 5.67.5
+
+### Changes
+
+- Added bulk assignment functionality through form
+
+## 5.67.4
+
+### Bug fixes
+
+- Fixed autofilled for the initial optional selector
+
+## 5.67.3
+
+### Bug fixes
+
+- Fixed optional arrays initialisation
+- Fixed to submit current id instead of a random id when continue work on next working day
+- Bump min version of `VisBackend Agent` from `v1.44.0` to `v1.44.2`
+
+## 5.67.2
+
+### Bug fixes
+
+- Fixed optional ontology selector to default to NA option
+- Fixed column setting override of default columns like last modified and schedule type
+
+## 5.67.1
+
+### Bug fixes
+
+- Fixed drag interactions with checkboxes
+- Fixed event propagations from mass edit fields to checkboxes
+
+## 5.67.0
+
+### Changes
+
+- Added bulk assignment functionality supported by backend changes
+- Bump min version of `VisBackend Agent` from `v1.43.1` to `v1.44.0`
+
+### Bug fixes
+
+- Fixed an issue with the reschedule button not showing up due to bad condition
+
+## 5.66.2
+
+### Changes
+
+- Removed axios library as a dependancy
+
+## 5.66.1
+
+### Changes
+
+- added new row action for waiving billables of closed tasks
+- Bump min version of `VisBackend Agent` from `v1.43.0` to `v1.43.1`
+
+## 5.66.0
+
+### Changes
+
+- Removed get count calls to work with the count in the main route
+- Updated to work with the new column metadata returned from backend
+- Bump min version of `VisBackend Agent` from `v1.42.1` to `v1.43.0`
+
+## 5.65.4
+
+### Changes
+
+- Added a row visual clue to indicate which row was clicked on and whcih row was checked (checkbox) in the registry table. This allows users to have a better experience when navigating through the table and easily identify which row they are interacting with (opened side panel or checked checkbox).
+
+## 5.65.3
+
+### Bug fixes
+
+- Fixed an issue with the scheduled task date range where the initial date was not being set to tomorrow's date as expected. This was because we were not starting the end date from the initial date.
+
+## 5.65.2
+
+### Changes
+
+- Changed how the table column settings are applied. Now the column settings are applied based on the entity type and lifecycle stage directly from the route level.
+- This improves the performance of the table as it reduces the number of times the column settings are applied.
+
+## 5.65.1
+
+### Bug fixes
+
+- Fixed the optional field array mechanism for a pricing field when set
+
+## 5.65.0
+
+### Changes
+
+- Upadted table column settings to include width and visiblity options for each column
+- Now the table column settings file is optional and if you want to use it , you have to specify the file name in the ui-settings.json file under `resources.registry.settings`
+- Updated table settings documentation
+
+## 5.64.9
+
+### Changes
+
+- Changed the default date range for scheduled task to 7 days in future
+
+## 5.64.8
+
+### Changes
+
+- Allowed to edit pricing models
+- Changed the code so only one pricing model can be assigned to a contract at ADD form. Same for EDIT form.
+- When billing a task , you can assaign a new pricing model and view all the pricing models for this contract in VIEW form.
+- Bump min version of `VisBackend Agent` from `v1.41.0` to `v1.42.1`
+
+## 5.64.7
+
+### Bug Fixes
+
+- Fixed response toast in assign pricing form to display error when required and skip validity check afterwards
+
+## 5.64.6
+
+### Bug fixes
+
+- Fixed an issue with the UI not showing the correct array item when removing an item from the array form field.
+
+## 5.64.5
+
+### Changes
+
+- Disabled sorting on table columns that have array values
+
+## 5.64.4
+
+### Bug Fixes
+
+- Fixed an issue with table column filter count not resetting after a filter is cleared, which was causing the filter count to be incorrect when you clear a filter and select a new filter without refreshing the page.
+
+## 5.64.3
+
+### Bug Fixes
+
+- Fixed an issue where the mobile navigation was not showing at the map page
+
+## 5.64.2
+
+### Changes
+
+- Changed side panel openning from edit to view on row click for active and archive lifecycle stages.
+
+## 5.64.1
+
+### Changes
+
+- Updated the table UX experience. The scrolling of the table now happens only inside the table, not having to scroll on the outer page as well. This allows users to have a better experience when navigating through the table.
+- The horizontal scrollbar in the table is now always visible
+- Added the ability to hide the table ribbon from the context menu.
+
+## 5.64.0
+
+### Changes
+
+- Update pricing route changes to work with new backend requirements
+- Update the design of an empty array in view forms
+- Add checks for valid pricing model when assigning pricing before redirecting to billables form
+- Bump min version of `VisBackend Agent` from `v1.40.0` to `v1.41.0`
+
+### Bug Fixes
+
+- Fixes the wrong redirect for pricing model when called within an array
+
+## 5.63.4
+
+### Changes
+
+- Made date inputs in the forms optional
+- Fixed an issue where on initial render the default value was not being set for the date inputs
+
+## 5.63.3
+
+### Changes
+
+- Redesigned the add invoice page inputs so they dont take the whole width of the page on a desktop view
+
+## 5.63.2
+
+### Changes
+
+- Standardised the colour scheme
+- Removed unused colour variables and replaced them with the new ones according to the design tokens
+- Made a colour usage table in the README.md file to document the new colour variables and their intended use cases
+
+## 5.63.1
+
+- Further small dependabot bumps
+
+## 5.63.0
+
+- Several major vesion dependency bumps incl node and Next
+- Update ESLint config and fix new highlighted lint errors
+
+## 5.62.3
+
+### Bug Fixes
+
+- Fixes the issue with the table being scrolled down when side panel is triggered
+
+## 5.62.2
+
+### Changes
+
+- UI/UX improvements: Fixed an issue with the table not responding when the side navigation is toggled. Fixed table scrollbar overflowing issues.
+
+## 5.62.1
+
+### Changes
+
+- Resolved the visibility of external file upload and export endpoints to all users on client-side
+
+## 5.62.0
+
+### Changes
+
+- Added file exporting capabilities for invoices
+- Added file exporter url env variable
+
+## 5.61.0
+
+### Changes
+
+- Refactor registry urls to be set as an environment variable instead of the `ui-settings.json`
+- Affects the default registry and registry task attachment url
+
+## 5.60.5
+
+### Bug fixes
+
+- Fixed an issue with the table not refreshing when a new invoice is added.
+
+## 5.60.4
+
+### Changes
+
+- Added view service cost in table for the invoice form
+
+## 5.60.3
+
+### Bug fixes
+
+- Parses the array fields in the registry table and display them in a new manner
+- Disable filters for array columns
+- Extended column type definition to include datatype
+- Fixed end dates display in the schedule form
+
+## 5.60.2
+
+### Bug fixes
+
+- Fixed an issue with the select all checkbox in the add invoice table not selecting all rows as expected.
+
+## 5.60.1
+
+### Changes
+
+- Changed side nav menu, body, and footer to utilise flexbox css
+- Align remaining components with required css changes
+
+### Bug Fixes
+
+- Fixed hidden submit button in invoice form for some resolutions
+
 ## 5.60.0
 
 ### Changes

@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 
-import { Icon } from "@mui/material";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
 import { OptionalPage } from "io/config/optional-pages";
@@ -11,21 +10,23 @@ import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
-import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
-import { NavBarItem, NavBarItemType } from "./navbar-item";
+import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
+import { NavBarItem } from "./navbar-item";
+import Button from "ui/interaction/button";
+
 
 export interface NavMenuProps {
   pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
-  setContentWidthClass?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface NavMenuContentsProps extends NavMenuProps {
-  setFileUploadEndpoint: React.Dispatch<React.SetStateAction<string>>;
-  setFileModalType: React.Dispatch<React.SetStateAction<NavBarItemType>>;
+  setFileModalSettings: React.Dispatch<React.SetStateAction<NavBarItemSettings>>;
   setIsFileUploadModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isMenuExpanded?: boolean;
   setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  handleMenuToggle?: () => void;
 }
 
 /**
@@ -36,14 +37,15 @@ interface NavMenuContentsProps extends NavMenuProps {
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
+  const dict: Dictionary = useDictionary();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [fileUploadEndpoint, setFileUploadEndpoint] = useState<string>("");
-  const [fileModalType, setFileModalType] = useState<NavBarItemType>("default");
+  const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
+  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
 
   if (props.isMobile) {
     return (
-      <div className="flex mr-1.5">
+      <nav className="flex mr-1.5">
         <PopoverActionButton
           variant="ghost"
           leftIcon="menu"
@@ -51,45 +53,49 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="mr-4 w-12 h-12 "
+          className="mr-4 h-12"
+          aria-expanded={isMenuOpen}
+          aria-label={isMenuOpen ? dict.message.closeMenu : dict.message.openMenu}
         >
           <NavMenuContents
             {...props}
-            setFileUploadEndpoint={setFileUploadEndpoint}
-            setFileModalType={setFileModalType}
+            isMenuExpanded={isMenuExpanded}
+            setFileModalSettings={setFileModalSettings}
             setIsFileUploadModalOpen={setIsFileModalOpen}
             setIsMenuOpen={setIsMenuOpen}
           />
         </PopoverActionButton>
         {isFileModalOpen && (
           <FileModal
-            url={fileUploadEndpoint}
-            type={fileModalType}
+            url={fileModalSettings?.url}
+            type={fileModalSettings?.type}
             isOpen={isFileModalOpen}
             setIsOpen={setIsFileModalOpen}
           />
         )}
-      </div>
+      </nav>
     );
   }
 
   return (
-    <>
+    <div className={`${isMenuExpanded ? "w-3/16" : "w-1/15"} overflow-y-auto bg-muted border-r-border border-r hidden xl:block transition-all duration-200 ease-in-out`}>
       <NavMenuContents
         {...props}
-        setFileUploadEndpoint={setFileUploadEndpoint}
-        setFileModalType={setFileModalType}
+        isMenuExpanded={isMenuExpanded}
+        setFileModalSettings={setFileModalSettings}
         setIsFileUploadModalOpen={setIsFileModalOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        handleMenuToggle={() => setIsMenuExpanded(!isMenuExpanded)}
       />
       {isFileModalOpen && (
         <FileModal
-          url={fileUploadEndpoint}
-          type={fileModalType}
+          url={fileModalSettings?.url}
+          type={fileModalSettings?.type}
           isOpen={isFileModalOpen}
           setIsOpen={setIsFileModalOpen}
         />
       )}
-    </>
+    </div>
   );
 }
 /**
@@ -106,10 +112,6 @@ function NavMenuContents(
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
-  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
-  const [navMenuWidthClass, setNavMenuWidthClass] = useState<string>(
-    "w-[16vw] xl:w-[18vw] 2xl:w-[16vw]"
-  );
   const navMenuRef = useRef<HTMLDivElement>(null);
 
   // Retrieve links
@@ -131,64 +133,55 @@ function NavMenuContents(
   );
 
   function createHandleFileClick(
-    url: string,
-    type: NavBarItemType
+    settings: NavBarItemSettings
   ): React.MouseEventHandler<HTMLDivElement> {
     return (event: React.MouseEvent<HTMLDivElement>): void => {
       event.preventDefault();
-      props.setFileUploadEndpoint(url);
       props.setIsFileUploadModalOpen(true);
-      props.setFileModalType(type);
+      props.setFileModalSettings(settings);
       props.setIsMenuOpen?.(false);
     };
   }
 
-  const handleMenuToggle = () => {
-    if (isMenuExpanded) {
-      setNavMenuWidthClass("w-[6vw]");
-      props.setContentWidthClass("w-[calc(100vw-6vw)]");
-    } else {
-      setNavMenuWidthClass("w-[16vw] xl:w-[18vw] 2xl:w-[16vw]");
-      props.setContentWidthClass(
-        "w-[calc(100vw-16vw)] xl:w-[calc(100vw-18vw)] 2xl:w-[calc(100vw-16vw)]"
-      );
-    }
-
-    setIsMenuExpanded(!isMenuExpanded);
-  };
-
   return (
-    <div
+    <nav
+      aria-label={dict.nav.title.primary}
       ref={navMenuRef}
       className={`${props.isMobile
         ? "flex gap-4 p-2 w-full"
-        : "bg-muted border-r-border hidden items-center gap-6 overflow-x-hidden overflow-y-auto border-r pb-20"
+        : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
-      ${navMenuWidthClass}
-      xl:flex flex-col ${isMenuExpanded ? "items-stretch" : "items-center"
-        }  transition-all duration-200 ease-in-out `}
+      xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
+        }`}
     >
       {!props.isMobile && (
-        <button
-          className={`flex cursor-pointer mt-4  p-4  transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-zinc-700 ${isMenuExpanded
-            ? "mr-2 self-end rounded-md -mb-8 "
-            : " justify-center items-center rounded-full -mb-4"
+        <Button
+          variant="ghost"
+          size="icon"
+          leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
+          className={`!flex mt-4 p-7 
+            ${props.isMenuExpanded
+              ? "ml-auto rounded-md"
+              : "items-center !rounded-full"
             }`}
-          onClick={handleMenuToggle}
-        >
-          <Icon className="material-symbols-outlined">
-            {isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-          </Icon>
-        </button>
+          aria-label={
+            props.isMenuExpanded
+              ? dict.message.collapseNavigation
+              : dict.message.expandNavigation
+          }
+          aria-expanded={props.isMenuExpanded}
+          onClick={props.handleMenuToggle}
+        />
       )}
       {props.settings?.modules?.landing && (
+
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
           url={Routes.HOME}
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
 
@@ -201,8 +194,8 @@ function NavMenuContents(
             icon={page.thumbnail ?? "info"}
             url={`${ASSET_PREFIX}/${page.slug}`}
             isMobile={props.isMobile}
-            caption={isMenuExpanded ? page.description : undefined}
-            isMenuExpanded={isMenuExpanded}
+            caption={props.isMenuExpanded ? page.description : undefined}
+            isMenuExpanded={props.isMenuExpanded}
             setIsOpen={props.setIsMenuOpen}
           />
         ))}
@@ -215,11 +208,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? mapLinkProps?.caption ?? dict.nav.caption.map
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
       {props.settings?.modules?.dashboard && (
@@ -230,11 +223,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? dashboardLinkProps?.caption ?? dict.nav.caption.dashboard
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
       {props.settings?.modules?.billing && isPermitted("invoice") && (
@@ -245,11 +238,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? billingLinkProps?.caption ?? dict.nav.caption.billing
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
       {props.settings?.modules?.help && (
@@ -260,11 +253,11 @@ function NavMenuContents(
           isMobile={props.isMobile}
           setIsOpen={props.setIsMenuOpen}
           caption={
-            isMenuExpanded
+            props.isMenuExpanded
               ? helpLinkProps?.caption ?? dict.nav.caption.help
               : undefined
           }
-          isMenuExpanded={isMenuExpanded}
+          isMenuExpanded={props.isMenuExpanded}
         />
       )}
 
@@ -280,35 +273,37 @@ function NavMenuContents(
             }
             isMobile={props.isMobile}
             caption={
-              isMenuExpanded
+              props.isMenuExpanded
                 ? registryLinkProps?.caption ?? dict.nav.caption.registry
                 : undefined
             }
             setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={isMenuExpanded}
+            isMenuExpanded={props.isMenuExpanded}
           />
         )}
 
       {props.settings.modules.registry &&
-        props.settings.resources?.registry?.paths?.map((path, index) => (
-          <NavBarItem
-            key={path.type + index}
-            title={parseWordsForLabels(path.type)}
-            icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
-            url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
-            isMobile={props.isMobile}
-            caption={
-              isMenuExpanded
-                ? dict.nav.caption.generalReg.replace(
-                  "{replace}",
-                  parseWordsForLabels(path.type).toLowerCase()
-                )
-                : undefined
-            }
-            setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={isMenuExpanded}
-          />
-        ))}
+        props.settings.resources?.registry?.paths?.map((path, index) => {
+          if ( // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
+            // IF there is a permission set with authentication enabled, check if the user has the specified permission
+            (!path?.permission || isPermitted(path.permission))
+          ) {
+            return <NavBarItem
+              key={path.type + index}
+              title={parseWordsForLabels(path.type)}
+              icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
+              url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
+              isMobile={props.isMobile}
+              caption={
+                props.isMenuExpanded
+                  ? interpolate(dict.nav.caption.generalReg, parseWordsForLabels(path.type).toLowerCase())
+                  : undefined
+              }
+              setIsOpen={props.setIsMenuOpen}
+              isMenuExpanded={props.isMenuExpanded}
+            />
+          }
+        })}
 
       {props.settings.links?.map((externalLink, index) => {
         if (
@@ -330,18 +325,21 @@ function NavMenuContents(
                   ? dict.nav.tooltip.fileUpload
                   : undefined
               }
-              caption={isMenuExpanded ? externalLink.caption : undefined}
+              caption={props.isMenuExpanded ? externalLink.caption : undefined}
               setIsOpen={props.setIsMenuOpen}
               handleClick={
                 !externalLink.type || externalLink.type === "default"
                   ? undefined
-                  : createHandleFileClick(externalLink.url, externalLink.type)
+                  : createHandleFileClick({
+                    ...externalLink,
+                    url: index.toString(), // Pass index as string to identify which link was clicked
+                  })
               }
-              isMenuExpanded={isMenuExpanded}
+              isMenuExpanded={props.isMenuExpanded}
             />
           );
         }
       })}
-    </div>
+    </nav>
   );
 }

@@ -10,6 +10,6 @@ interface ErrorComponentProps {
  */
 export default function ErrorComponent(props: Readonly<ErrorComponentProps>) {
   return (
-    <p className="my-2 text-sm md:text-lg text-red-600">{`*${props.message}`}</p>
+    <p className="my-2 text-sm md:text-lg text-destructive">{`*${props.message}`}</p>
   );
 }

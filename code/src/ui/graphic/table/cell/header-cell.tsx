@@ -11,9 +11,14 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import { interpolate } from "utils/client-utils";
+import { XSD_DATE, XSD_DATETIME } from "utils/constants";
+import DateColumnFilter from "../action/date-column-filter";
+import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
 import NumericColumnFilter from "../action/numeric-column-filter";
 import { XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
+import { TableCellTagMap } from "types/table";
 
 interface HeaderCellProps {
   type: string;
@@ -21,7 +26,9 @@ interface HeaderCellProps {
   header: Header<FieldValues, unknown>;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
+  isEditable: boolean;
   disableFilter: boolean;
+  disableSort: boolean;
   filters: ColumnFilter[];
   initialInstances: RegistryFieldValues[]
 }
@@ -34,12 +41,13 @@ interface HeaderCellProps {
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
+ * @param {boolean} isEditable Determines if the cell is editable.
  * @param {boolean} disableFilter Disables the filters when set to true.
+ * @param {boolean} disableSort Disables sorting when set to true.
  * @param {ColumnFilter[]} filters Filter state for the entire table.
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
   const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
@@ -60,41 +68,32 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     currentFilters,
     props.filters,
   );
-
-  const columnField: SparqlResponseField | SparqlResponseField[] = props.initialInstances
-    ?.find(instance => instance?.[props.header.id.toLowerCase()])
-    ?.[props.header.id.toLowerCase()];
-
-  const columnDataType = Array.isArray(columnField) ? columnField[0]?.dataType : columnField?.dataType;
+  const columnDataType: string = (props.header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType;
+  const isDateColumn: boolean = columnDataType === XSD_DATE || columnDataType === XSD_DATETIME;
 
   const showNumericFilter: boolean = columnDataType === XSD_DECIMAL || columnDataType === XSD_INTEGER;
 
   return (
     <TableCell
+      as={TableCellTagMap.TH}
       width={props.header.getSize()}
-      className={"bg-muted font-semibold text-foreground text-left border-b border-border"}
+      className={`${props.isEditable ? "bg-success-background text-success-foreground" : ""} 
+      font-semibold text-left border-b border-border`}
     >
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <Tooltip text={dict.message.sort} placement="top-start">
+            <Tooltip text={props.disableSort ? "" : dict.message.sort} placement="top-start">
               <div
-                className={`flex items-center gap-2 ${props.header.column.getCanSort()
-                  ? "cursor-pointer select-none"
-                  : ""
-                  }`}
-                onClick={props.header.column.getToggleSortingHandler()}
-                aria-label={
-                  props.header.column.getCanSort()
-                    ? `Sort by ${props.header.column.columnDef.header}`
-                    : undefined
-                }
+                className={`flex items-center gap-2 ${props.disableSort ? "select-none" : "cursor-pointer"}`}
+                onClick={!props.disableSort ? props.header.column.getToggleSortingHandler() : undefined}
+                aria-label={props.header.column.columnDef.header as string}
               >
                 {flexRender(
                   props.header.column.columnDef.header,
                   props.header.getContext()
                 )}
-                {{
+                {!props.disableSort && ({
                   asc: (
                     <Icon className="material-symbols-outlined">arrow_upward</Icon>
                   ),
@@ -103,7 +102,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                       arrow_downward
                     </Icon>
                   ),
-                }[props.header.column.getIsSorted() as string] ?? null}
+                }[props.header.column.getIsSorted() as string] ?? null)}
               </div>
             </Tooltip>
             {!props.disableFilter && <PopoverActionButton
@@ -113,11 +112,16 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               tooltipText={dict.action.filter}
               size="icon"
               className="ml-2"
+              aria-label={interpolate(dict.action.filterBy, props.header.column.columnDef.header as string)}
+              aria-selected={isActiveFilter}
               isOpen={showFilterDropdown}
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
                 event.stopPropagation();
-                setTriggerFetch(!showFilterDropdown);
+                // Do not trigger fetch/loading state for date columns
+                if (!isDateColumn) {
+                  setTriggerFetch(!showFilterDropdown);
+                }
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
@@ -131,8 +135,15 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                     props.table.resetPageIndex();
                   }}
                 />
-              ) : (
-                <SearchSelector
+              ) :
+                isDateColumn ? <DateColumnFilter
+                  label={props.header.id}
+                  currentVal={props.header.column.getFilterValue() as string}
+                  onSubmission={(dates: string) => {
+                    props.header.column.setFilterValue(dates);
+                    props.table.resetRowSelection();
+                    props.table.resetPageIndex();
+                  }} /> : <SearchSelector
                   searchString={search}
                   options={options}
                   label={props.header.id}
@@ -145,7 +156,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   }}
                   setSearchString={setSearch}
                 />
-              )}
+              }
               {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
             }

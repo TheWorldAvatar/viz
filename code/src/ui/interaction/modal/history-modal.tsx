@@ -4,8 +4,7 @@ import { AgentResponseBody, HistoryDetails, InternalApiIdentifierMap } from "typ
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
-import { formatDatetimeValue } from "ui/graphic/table/registry/registry-table-utils";
-import { REPLACE_DICT_KEY } from "utils/constants";
+import { interpolate, formatDatetimeValue } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import Modal from "./modal";
 
@@ -62,7 +61,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                 <div className="flex justify-between items-center mb-4 md:mb-0">
                     <h1 className="text-lg font-semibold">{dict.title.history}</h1>
                     {!isLoading && <p className="text-base">
-                        {dictEntryMessage.replace(REPLACE_DICT_KEY, historyDetails?.length.toString())}
+                        {interpolate(dictEntryMessage, historyDetails?.length.toString())}
                     </p>}
                 </div>
                 {!isLoading && (
@@ -77,7 +76,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                             </thead>
                             <tbody className="divide-y divide-border/50">
                                 {historyDetails.length > 0 ? historyDetails.map((history, index) => (
-                                    <tr key={index} className="text-base text-muted-foreground hover:bg-muted/30 ">
+                                    <tr key={index} className="text-base text-muted-foreground hover:bg-ring/50">
                                         <td className="py-3 px-2">{formatDatetimeValue(history?.timestamp?.value)}</td>
                                         <td className="py-3 px-2">{history?.user?.value ?? "-"}</td>
                                         <td className="py-3 px-2">{history?.message?.value}</td>

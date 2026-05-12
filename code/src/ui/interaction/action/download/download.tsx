@@ -1,11 +1,11 @@
 "use client";
 
-import { Dictionary } from "types/dictionary";
-import { RegistryFieldValues } from "types/form";
-import { extractResponseField } from "utils/client-utils";
 import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
+import { RegistryFieldValues, SparqlResponseField } from "types/form";
 
 import Button, { ButtonProps } from "ui/interaction/button";
+import { handleDownload } from "utils/client-utils";
 
 interface DownloadButtonProps extends ButtonProps {
   instances: RegistryFieldValues[];
@@ -33,8 +33,8 @@ export function DownloadButton({
     csvRows.push(headers.join(",")); // Add headers
 
     for (const row of instances) {
-      const values = headers.map(
-        (header) => extractResponseField(row, header)?.value ?? ""
+      const values: string[] = headers.map(
+        (header) => !Array.isArray(row[header]) ? (row[header] as SparqlResponseField)?.value : ""
       );
       csvRows.push(values.join(","));
     }
@@ -42,18 +42,7 @@ export function DownloadButton({
     const blob: Blob = new Blob([csvRows.join("\n")], {
       type: "text/csv;charset=utf-8;",
     });
-    const url: string = URL.createObjectURL(blob);
-
-    // Create a temporary anchor element to activate download
-    const a: HTMLAnchorElement = document.createElement("a");
-    a.href = url;
-    a.download = "export.csv";
-    document.body.appendChild(a);
-    // Trigger the download manually
-    a.click();
-    a.remove();
-    // Cleanup: Revoke the Object URL after the download
-    window.URL.revokeObjectURL(url);
+    handleDownload(blob, "export.csv");
   };
 
   return (

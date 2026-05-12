@@ -21,21 +21,29 @@ export type UISettings = {
   },
   links?: NavBarItemSettings[],
   resources?: {
-    [key: 'scenario' | 'registry' | 'registry-attachment' | 'dashboard' | "billing" | string]: {
-      url: string;
+    [key: 'scenario' | 'registry' | 'dashboard' | "billing" | string]: {
+      url?: string;
       data?: string;
+      settings?: string;
       paths?: ResourcesPathSettings[];
     };
   }
 }
 
-export type TableColumnOrderSettings = Record<string, string[]>;
+export type TableColumnOption = {
+  name: string;
+  width?: number;
+  visible?: boolean;
+  order?: number;
+};
 
+export type TableColumnSettings = Record<string, TableColumnOption[]>;
 
 export interface ResourcesPathSettings {
   type: string;
   key?: string;
   icon?: string;
+  permission?: keyof HasPermissions;
 }
 
 export interface NavBarItemSettings {
@@ -118,3 +126,8 @@ type FillLegend = {
 
 export type MapboxCredentials = { username: string, token: string }
 
+export type FileEntry = {
+  name: string;
+  ext: string;
+  size: string;
+};

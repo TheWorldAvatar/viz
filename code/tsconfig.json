@@ -1,42 +1,48 @@
 {
-    "compilerOptions": {
-        "baseUrl": "src",
-        "target": "esnext",
-        "module": "esnext",
-        "allowJs": true,
-        "sourceMap": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "noEmit": true,
-        "esModuleInterop": true,
-        "moduleResolution": "Node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "preserve",
-        "incremental": true,
-        "strictNullChecks": false,
-        "typeRoots": ["node_modules/@types"],
-        "types": ["node", "jest"],
-        "lib": [
-            "dom",
-            "dom.iterable",
-            "esnext"
-        ],
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ]
-    },
-    "include": [
-        "next-env.d.ts",
-        "**/*.ts",
-        "**/*.tsx", 
-        ".next/types/**/*.ts",
-        "api/files/[name].js",
-        "server.js"
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "esnext",
+    "module": "esnext",
+    "allowJs": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "strictNullChecks": false,
+    "typeRoots": [
+      "node_modules/@types"
     ],
-    "exclude": [
-        "node_modules"
+    "types": [
+      "node",
+      "jest"
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
     ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "api/files/[name].js",
+    "server.js",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
