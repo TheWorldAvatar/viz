@@ -6,9 +6,11 @@ import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator
 import Button from "ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { interpolate } from "utils/client-utils";
+import { getInitialNumericFilter } from "../registry/registry-table-utils";
 
 interface NumericColumnFilterProps {
   label: string;
+  currentVal: string[];
   onSubmission: (_options: string[]) => void;
 }
 
@@ -17,15 +19,30 @@ interface NumericColumnFilterProps {
  * numeric comparison conditions combined with AND/OR logic.
  *
  * @param {string} label The name of the column.
+ * @param {string[]} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered options.
  */
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
-  const [value1, setValue1] = useState<number | null>(null);
-  const [value2, setValue2] = useState<number | null>(null);
-  const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>(ComparisonOperatorMap.EQUALS);
-  const [betweenOption, setBetweenOption] = useState<BetweenComparisonOption>(BetweenComparisonOptionMap.INCLUSIVE);
+  const initialFilterState: string[] = getInitialNumericFilter(props.currentVal);
   const [error, setError] = useState<string | null>(null);
+
+  const [value1, setValue1] = useState<number | null>(initialFilterState ? parseFloat(initialFilterState[1]) : null);
+  const [value2, setValue2] = useState<number | null>(initialFilterState?.length > 1 ? parseFloat(initialFilterState[2]) : null);
+
+  const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>(
+    // Use between when there is more than 2 by efault
+    initialFilterState?.length > 1 ? ComparisonOperatorMap.BETWEEN
+      : initialFilterState ?
+        ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap]
+        // Default
+        : ComparisonOperatorMap.EQUALS);
+
+  const [betweenOption, setBetweenOption] = useState<BetweenComparisonOption>(
+    initialFilterState?.length > 1 && (ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap] == ComparisonOperatorMap.GREATER_THAN) ?
+      BetweenComparisonOptionMap.EXCLUSIVE :
+      BetweenComparisonOptionMap.INCLUSIVE);
+
 
   const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
   const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);

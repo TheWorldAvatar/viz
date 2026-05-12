@@ -124,6 +124,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             >
               {isNumericColumn && <NumericColumnFilter
                 label={props.header.id}
+                currentVal={props.header.column.getFilterValue() as string[]}
                 onSubmission={(selectedOptions: string[]) => {
                   props.header.column.setFilterValue(selectedOptions);
                   props.table.resetRowSelection();
