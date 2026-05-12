@@ -9,7 +9,7 @@ import {
   getRegisterOptions
 } from "ui/interaction/form/form-utils";
 import DateInput from "ui/interaction/input/date-input";
-import { getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
+import { getLocaleDatePattern, getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
 
 interface FormDateTimePickerProps {
@@ -54,13 +54,13 @@ export default function FormDateTimePicker(
   let inputType: string;
   if (props.field.datatype === dateType) {
     inputType = dateType;
-    formatLabel = "YYYY/MM/DD";
+    formatLabel = getLocaleDatePattern();
   } else if (props.field.datatype === timeType) {
     inputType = timeType;
     formatLabel = "HH:MM";
   } else {
     inputType = "datetime-local";
-    formatLabel = "DD/MM/YYYY HH:MM";
+    formatLabel = `${getLocaleDatePattern()} HH:MM`;
   }
   const isOptionalDateField: boolean =
     inputType === dateType && Number(props.field.minCount?.[VALUE_KEY]) === 0;
