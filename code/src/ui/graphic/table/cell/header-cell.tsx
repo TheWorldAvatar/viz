@@ -115,8 +115,8 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
                 event.stopPropagation();
-                // Do not trigger fetch/loading state for date columns
-                if (!isDateColumn) {
+                // Do not trigger fetch/loading state for date or numeric columns
+                if (!isDateColumn && !isNumericColumn) {
                   setTriggerFetch(!showFilterDropdown);
                 }
                 setShowFilterDropdown(!showFilterDropdown);
