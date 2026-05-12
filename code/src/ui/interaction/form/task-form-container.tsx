@@ -30,7 +30,7 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { compareDates, getAfterDelimiter, getId, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue } from "utils/client-utils";
 import { BULK_IDENTIFIER } from "utils/constants";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
@@ -277,7 +277,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         </h1>
         {task?.date && (
           <h2 className="text-base md:text-lg md:mr-8">
-            {task.date}: {getTranslatedStatusLabel(task?.status, dict)}
+            {formatDateValue(task.date)}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
       </section>
@@ -288,13 +288,13 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <p className="text-lg mb-4 whitespace-pre-line">
             {props.formType === FormTypeMap.COMPLETE && dict.message.completeInstruction}
             {props.formType === FormTypeMap.DISPATCH &&
-              `${dict.message.dispatchInstruction} ${task.date}:`}
+              `${dict.message.dispatchInstruction} ${formatDateValue(task.date)}:`}
             {props.formType === FormTypeMap.CANCEL &&
-              `${dict.message.cancelInstruction} ${task.date}:`}
+              `${dict.message.cancelInstruction} ${formatDateValue(task.date)}:`}
             {props.formType === FormTypeMap.REPORT &&
               `${dict.message.reportInstruction.replace(
                 "{date}",
-                task.date
+                formatDateValue(task.date)
               )}`}
           </p>
         )}
