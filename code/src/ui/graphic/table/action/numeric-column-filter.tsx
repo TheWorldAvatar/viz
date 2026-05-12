@@ -5,6 +5,7 @@ import { Dictionary } from "types/dictionary";
 import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "types/table";
 import Button from "ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import { interpolate } from "utils/client-utils";
 
 interface NumericColumnFilterProps {
   label: string;
@@ -28,7 +29,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
   const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
   const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
-  const isBetweenFirst: boolean = selectedOperator1 === ComparisonOperatorMap.BETWEEN;
+  const isBetweenComparisonOperator: boolean = selectedOperator1 === ComparisonOperatorMap.BETWEEN;
 
   const operators: SelectOptionType[] = [
     { value: ComparisonOperatorMap.EQUALS, label: dict.title.equal, disabled: false, },
@@ -43,30 +44,30 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   const handleFilter = (): void => {
     if (!hasFirstValue) return;
     setError(null);
+    const queryParams: string[] = [];
 
-    const isInvalidRange = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? value2! <= value1! : value2! < value1!;
-    if (isBetweenFirst && hasSecondValue && isInvalidRange) {
-      setError(betweenOption === BetweenComparisonOptionMap.EXCLUSIVE
-        ? "For 'between' (exclusive), the second value must be strictly greater than the first value."
-        : "For 'between' (inclusive), the second value must be greater than or equal to the first value."
-      );
-      return;
-    }
+    // For between comparisons, two params should be pushed
+    if (isBetweenComparisonOperator && hasSecondValue) {
+      // Validation step
+      if (betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? value2! <= value1! : value2! < value1!) {
+        setError(betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ?
+          dict.message.invalidExclusiveRange :
+          dict.message.invalidInclusiveRange
+        );
+        return;
+      }
 
-    const filterInfo: string[] = [];
-
-    if (isBetweenFirst && hasSecondValue) {
       const lowerOp: Extract<ComparisonOperator, "gt" | "gte"> = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? ComparisonOperatorMap.GREATER_THAN : ComparisonOperatorMap.GREATER_THAN_OR_EQUALS_TO;
       const upperOp: Extract<ComparisonOperator, "lt" | "lte"> = betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? ComparisonOperatorMap.LESS_THAN : ComparisonOperatorMap.LESS_THAN_OR_EQUALS_TO;
-      // Results in: ["gte10", "lte20"]
-      filterInfo.push(`${lowerOp}${value1}`);
-      filterInfo.push(`${upperOp}${value2}`);
+      queryParams.push(`${lowerOp}${value1}`);
+      queryParams.push(`${upperOp}${value2}`);
+
+      // All other comparisons should only contain one param
     } else {
-      // Results in: ["eq500"]
-      filterInfo.push(`${selectedOperator1}${value1}`);
+      queryParams.push(`${selectedOperator1}${value1}`);
     }
 
-    props.onSubmission(filterInfo);
+    props.onSubmission(queryParams);
   }
 
   const blockInvalidNumberKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,7 +88,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             setError(null);
           }
         }}
-        ariaLabel="test"
+        ariaLabel={interpolate(dict.action.selectItem, "operator")}
       />
       <div className="relative">
         <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
@@ -100,8 +101,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           inputMode="decimal"
           className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
           value={value1 ?? ""}
-          placeholder={isBetweenFirst ? dict.form.from : dict.title.value}
-          aria-label={`${isBetweenFirst ? "Lower bound" : "Filter value"} for ${props.label}`}
+          placeholder={isBetweenComparisonOperator ? dict.form.from : dict.title.value}
+          aria-label={interpolate(isBetweenComparisonOperator ? dict.title.lowerBoundFor : dict.title.filterInputFor, props.label)}
           onKeyDown={blockInvalidNumberKeys}
           onChange={(e) => {
             const value = e.currentTarget.valueAsNumber;
@@ -110,7 +111,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         />
       </div>
 
-      {isBetweenFirst && (
+      {isBetweenComparisonOperator && (
         <>
           <div className="relative">
             <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
@@ -123,7 +124,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
               className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
               value={value2 ?? ""}
               placeholder={dict.form.to}
-              aria-label={`Upper bound for ${props.label}`}
+              aria-label={interpolate(dict.title.upperBoundFor, props.label)}
               onKeyDown={blockInvalidNumberKeys}
               onChange={(e) => {
                 const value = e.currentTarget.valueAsNumber;
@@ -161,6 +162,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
       )}
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <Button
+        leftIcon="filter_alt"
+        iconSize="medium"
         variant="primary"
         className="w-full mt-1"
         onClick={(event) => {
@@ -168,8 +171,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           event.stopPropagation();
           handleFilter();
         }}
-        disabled={isBetweenFirst ? !hasFirstValue || !hasSecondValue : !hasFirstValue}
-        aria-label={`Apply numeric filter for ${props.label}`}
+        disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
+        aria-label={interpolate(dict.action.filterBy, props.label)}
       >
         {dict.action.filter}
       </Button>
