@@ -2,6 +2,26 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.4
+
+### Bug Fixes
+
+- Disable tracking for price adjustments when editing contracts
+- Bump min version of `VisBackend Agent` from `v1.48.0` to `v1.50.3`
+
+## 5.72.3
+
+### Bug Fixes
+
+- Standardise all date format to use date locale format
+- Fix date format hints to dynamically follow date locale format
+
+## 5.72.2
+
+### Bug Fixes
+
+- Fixed bulk edit failure with active filters
+
 ## 5.72.1
 
 ### Bug Fixes

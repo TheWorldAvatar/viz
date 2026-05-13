@@ -7,6 +7,7 @@ import { FormTypeMap } from "types/form";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import Modal from "./modal";
 import LoadingSpinner from "ui/graphic/loader/spinner";
+import { formatDateValue } from "utils/client-utils";
 
 
 interface BillingModalProps {
@@ -51,7 +52,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
             <div className="flex flex-col p-2 w-full max-w-2xl mx-auto mt-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-foreground">{dict.title.serviceCostBreakdown}</h2>
-                    <p className="text-foreground">{props.date}</p>
+                    <p className="text-foreground">{formatDateValue(props.date)}</p>
                 </div>
                 <div>
                     <div className="flex items-center justify-between mt-4 bg-ring p-2.5 rounded-sm">
