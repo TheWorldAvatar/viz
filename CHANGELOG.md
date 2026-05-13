@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.5
+
+### Changes
+
+- Modified default start and end time of schedules
+
 ## 5.72.4
 
 ### Bug Fixes
