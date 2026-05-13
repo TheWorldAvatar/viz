@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.6
+
+### Changes
+
+- Added aria-labels to the add and remove buttons for array form fields, as well as the view button for the array items
+- added aria-labelledby to section element in the form section
+- added daa-testid to total amount in the billing modal for testing purposes
+
 ## 5.72.5
 
 ### Changes
