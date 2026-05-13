@@ -300,6 +300,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           JSON.stringify({
             id: formData.id,
             pricing: pricingModels,
+            disableTracking: false,
           }));
         break;
       }
@@ -352,6 +353,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               JSON.stringify({
                 id: formData.id,
                 pricing: pricingModels,
+                disableTracking: true,
               }));
           }
         }
