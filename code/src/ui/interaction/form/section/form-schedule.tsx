@@ -92,8 +92,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       if (formType != FormTypeMap.ADD && formType != FormTypeMap.SEARCH) {
         // defaults
         let recurrence: number = 0;
-        let defaultTimeSlotStart: string = "00:00";
-        let defaultTimeSlotEnd: string = "23:59";
 
         const fields: RegistryFieldValues = await fetch(
           makeInternalRegistryAPIwithParams(
@@ -134,13 +132,13 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           );
         }
 
-        defaultTimeSlotStart = getDefaultVal(
+        const defaultTimeSlotStart = getDefaultVal(
           FORM_STATES.TIME_SLOT_START,
           (fields["start_time"] as SparqlResponseField)?.value,
           formType
         ).toString();
 
-        defaultTimeSlotEnd = getDefaultVal(
+        const defaultTimeSlotEnd = getDefaultVal(
           FORM_STATES.TIME_SLOT_END,
           (fields["end_time"] as SparqlResponseField)?.value,
           formType
