@@ -253,6 +253,33 @@ export function formatDatetimeValue(value: string): string {
 }
 
 /**
+ * Retrieves the locale-specific date format string.
+ * This is used for displaying date format hints to users in forms.
+ * 
+ * @returns {string} The locale-specific date format pattern (e.g. "DD/MM/YYYY" or "MM/DD/YYYY").
+ */
+
+export function getLocaleDatePattern(): string {
+  const parts: Intl.DateTimeFormatPart[] = new Intl.DateTimeFormat().formatToParts(new Date());
+  return parts
+    .map((part) => {
+      switch (part.type) {
+        case "day":
+          return "DD";
+        case "month":
+          return "MM";
+        case "year":
+          return "YYYY";
+        case "literal":
+          return part.value;
+        default:
+          return "";
+      }
+    })
+    .join("");
+}
+
+/**
  * Extracts and formats the display string for the target date(s) based on the specified mode.
  *
  * @param {Date | DateRange | Date[] | undefined} targetDate The target date, date range, or multiple dates.
