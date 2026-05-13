@@ -91,7 +91,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
   return (
     <div className="flex flex-col w-62 gap-2">
-      <div className="flex w-62">
+      <div className="flex w-62 space-x-1">
         <div className="w-100">
           <SimpleSelector
             options={operators}
@@ -111,7 +111,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           iconSize="medium"
           size="icon"
           variant="primary"
-          className="h-full rounded-none w-12"
+          className="h-full w-12"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
