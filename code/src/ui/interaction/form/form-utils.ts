@@ -395,8 +395,8 @@ function initFormField(
     "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" &&
     formType == FormTypeMap.ADD) {
     outputState[FORM_STATES.RECURRENCE] = 0;
-    outputState[FORM_STATES.TIME_SLOT_START] = "00:00";
-    outputState[FORM_STATES.TIME_SLOT_END] = "23:59";
+    outputState[FORM_STATES.TIME_SLOT_START] = "09:00";
+    outputState[FORM_STATES.TIME_SLOT_END] = "18:00";
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue)
       ? field.defaultValue?.value
