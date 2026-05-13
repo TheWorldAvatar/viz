@@ -436,7 +436,7 @@ export function getInitialNumericFilter(
   if (!inputs) return null;
   const initialFilters: string[] = [];
   inputs.forEach(input => {
-    const match: RegExpMatchArray = input.match(/^([a-z]+)(\d+)$/);
+    const match: RegExpMatchArray = input.match(/^([a-z]+)(\d*\.?\d+)$/);
     if (match) {
       const operatorValue: string = match[1];
       const numericValue: string = match[2];
