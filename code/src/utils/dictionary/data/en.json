@@ -2,7 +2,9 @@
   "lang": "en-GB",
   "action": {
     "add": "Add",
+    "remove": "Remove",
     "addItem": "add {replace}",
+    "removeItem": "remove {replace}",
     "adjustPricing": "Adjust pricing",
     "assign": "Assign",
     "applyFilter": "Apply filter",
@@ -12,6 +14,7 @@
     "editItem": "edit {replace}",
     "dismiss": "Dismiss",
     "view": "view",
+    "viewItem": "view {replace}",
     "close": "Close",
     "refresh": "Refresh",
     "backTo": "back to {replace}s",

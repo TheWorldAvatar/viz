@@ -2,7 +2,9 @@
   "lang": "de",
   "action": {
     "add": "Hinzufügen",
+    "remove": "Entfernen",
     "addItem": "{replace} hinzufügen",
+    "removeItem": "{replace} entfernen",
     "adjustPricing": "Preis anpassen",
     "assign": "Zuweisen",
     "applyFilter": "Filter anwenden",
@@ -12,6 +14,7 @@
     "editItem": "{replace} bearbeiten",
     "dismiss": "Schließen",
     "view": "Anzeigen",
+    "viewItem": "{replace} anzeigen",
     "close": "Schließen",
     "refresh": "Aktualisieren",
     "backTo": "Zurück zur {replace}",
