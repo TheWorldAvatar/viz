@@ -5,9 +5,9 @@ import { Dictionary } from "types/dictionary";
 import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "types/table";
 import Button from "ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import NumberInput from "ui/interaction/input/number-input";
 import { interpolate } from "utils/client-utils";
 import { getInitialNumericFilter } from "../registry/registry-table-utils";
-import NumberInput from "ui/interaction/input/number-input";
 
 interface NumericColumnFilterProps {
   label: string;
@@ -89,12 +89,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
     props.onSubmission(queryParams);
   }
 
-  const blockInvalidNumberKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (["e", "E", "+"].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
   return (
     <div className="flex flex-col w-62 gap-2">
       <div className="flex w-62">
@@ -140,7 +134,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           value={value1}
           placeholder={isBetweenComparisonOperator ? dict.form.from : dict.title.value}
           aria-label={interpolate(isBetweenComparisonOperator ? dict.title.lowerBoundFor : dict.title.filterInputFor, props.label)}
-          onKeyDown={blockInvalidNumberKeys}
           onInputChange={setValue1}
         />
       </div>
@@ -158,7 +151,6 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
               value={value2}
               placeholder={dict.form.to}
               aria-label={interpolate(dict.title.upperBoundFor, props.label)}
-              onKeyDown={blockInvalidNumberKeys}
               onInputChange={setValue2}
             />
           </div>
