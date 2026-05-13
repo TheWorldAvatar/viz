@@ -7,6 +7,7 @@ import Button from "ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import { interpolate } from "utils/client-utils";
 import { getInitialNumericFilter } from "../registry/registry-table-utils";
+import NumberInput from "ui/interaction/input/number-input";
 
 interface NumericColumnFilterProps {
   label: string;
@@ -29,8 +30,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   const hasBetweenComparisonOperator: boolean = initialFilterState?.length > 2;
   const [error, setError] = useState<string | null>(null);
 
-  const [value1, setValue1] = useState<number | null>(initialFilterState ? parseFloat(initialFilterState[1]) : null);
-  const [value2, setValue2] = useState<number | null>(hasBetweenComparisonOperator ? parseFloat(initialFilterState[2]) : null);
+  const [value1, setValue1] = useState<string | null>(initialFilterState ? initialFilterState[1] : null);
+  const [value2, setValue2] = useState<string | null>(hasBetweenComparisonOperator ? initialFilterState[2] : null);
 
   const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>(
     hasBetweenComparisonOperator ? ComparisonOperatorMap.BETWEEN
@@ -132,20 +133,15 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
           <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
         </span>
-        <input
+        <NumberInput
           autoFocus
-          type="number"
-          step="0.01"
           inputMode="decimal"
           className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-          value={value1 ?? ""}
+          value={value1}
           placeholder={isBetweenComparisonOperator ? dict.form.from : dict.title.value}
           aria-label={interpolate(isBetweenComparisonOperator ? dict.title.lowerBoundFor : dict.title.filterInputFor, props.label)}
           onKeyDown={blockInvalidNumberKeys}
-          onChange={(e) => {
-            const value = e.currentTarget.valueAsNumber;
-            setValue1(Number.isNaN(value) ? null : value);
-          }}
+          onInputChange={setValue1}
         />
       </div>
 
@@ -155,19 +151,15 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
               <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
             </span>
-            <input
-              type="number"
-              step="0.01"
+            <NumberInput
+              autoFocus
               inputMode="decimal"
               className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
-              value={value2 ?? ""}
+              value={value2}
               placeholder={dict.form.to}
               aria-label={interpolate(dict.title.upperBoundFor, props.label)}
               onKeyDown={blockInvalidNumberKeys}
-              onChange={(e) => {
-                const value = e.currentTarget.valueAsNumber;
-                setValue2(Number.isNaN(value) ? null : value);
-              }}
+              onInputChange={setValue2}
             />
           </div>
           <div className="flex items-center justify-center gap-2 py-1">

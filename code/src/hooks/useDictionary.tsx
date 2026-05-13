@@ -18,7 +18,7 @@ export const useDictionary = () => {
     }, [dict.lang]
     );
 
-    const toNumberDisplay = useCallback((value: string | number | null | undefined): string => {
+    const toNumberDisplay = useCallback((value: string | number | readonly string[] | null | undefined): string => {
         if (value === null || value === undefined) { return ""; }
         // Replace default decimal separator with the translated separator
         return value.toString().replace(numberSeparators[3], numberSeparators[1]);

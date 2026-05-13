@@ -9,6 +9,7 @@ import Button from "ui/interaction/button";
 import {
   getRegisterOptions
 } from "ui/interaction/form/form-utils";
+import NumberInput from "ui/interaction/input/number-input";
 
 export interface NumericInputFieldProps {
   field: PropertyShape;
@@ -128,19 +129,15 @@ export default function NumericInputField(
         control={props.form.control}
         rules={getRegisterOptions(props.field, formType, dict)}
         render={({ field: { onChange, value } }) => {
-          const displayValue: string | number = dict.toNumberDisplay(value);
-          return <input
+          return <NumberInput
             id={props.field.fieldId}
-            type="text"
             inputMode={inputMode}
             className={`${inputClassNames ?? ""} pr-20`}
             placeholder={`${dict.action.edit} ${props.field.name[VALUE_KEY]}`}
-            value={displayValue}
-            onChange={(e) => {
-              onChange(dict.normaliseNumber(e.target.value));
-            }}
+            value={value}
             onKeyDown={handleKeyDown}
             aria-label={props.field.name[VALUE_KEY]}
+            onInputChange={onChange}
           />
         }}
       />
