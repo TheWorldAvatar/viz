@@ -125,12 +125,12 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <div className="relative">
         <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-          <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
+          <Icon className="material-symbols-outlined text-lg! leading-none">search</Icon>
         </span>
         <NumberInput
           autoFocus
           inputMode="decimal"
-          className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+          className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
           value={value1}
           placeholder={isBetweenComparisonOperator ? dict.form.from : dict.title.value}
           aria-label={interpolate(isBetweenComparisonOperator ? dict.title.lowerBoundFor : dict.title.filterInputFor, props.label)}
@@ -142,12 +142,12 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         <>
           <div className="relative">
             <span className="absolute left-2 inset-y-0 flex items-center text-muted-foreground">
-              <Icon className="material-symbols-outlined !text-lg leading-none">search</Icon>
+              <Icon className="material-symbols-outlined text-lg! leading-none">search</Icon>
             </span>
             <NumberInput
               autoFocus
               inputMode="decimal"
-              className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-[2px]"
+              className="border border-border rounded pl-8 pr-3 py-2 w-full outline-none focus-visible:ring-zinc-400 focus-visible:ring-2"
               value={value2}
               placeholder={dict.form.to}
               aria-label={interpolate(dict.title.upperBoundFor, props.label)}
@@ -159,9 +159,9 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
               id="inclusive"
               type="radio"
               name="between-option"
-              value="inclusive"
-              checked={betweenOption === "inclusive"}
-              onChange={() => setBetweenOption("inclusive")}
+              value={BetweenComparisonOptionMap.INCLUSIVE}
+              checked={betweenOption === BetweenComparisonOptionMap.INCLUSIVE}
+              onChange={() => setBetweenOption(BetweenComparisonOptionMap.INCLUSIVE)}
               className="accent-foreground"
             />
             <label htmlFor="inclusive" className="text-sm">
@@ -171,9 +171,9 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
               id="exclusive"
               type="radio"
               name="between-option"
-              value="exclusive"
-              checked={betweenOption === "exclusive"}
-              onChange={() => setBetweenOption("exclusive")}
+              value={BetweenComparisonOptionMap.EXCLUSIVE}
+              checked={betweenOption === BetweenComparisonOptionMap.EXCLUSIVE}
+              onChange={() => setBetweenOption(BetweenComparisonOptionMap.EXCLUSIVE)}
               className="accent-foreground"
             />
             <label htmlFor="exclusive" className=" text-sm">
