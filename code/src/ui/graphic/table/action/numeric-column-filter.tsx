@@ -68,7 +68,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
     // For between comparisons, two params should be pushed
     if (isBetweenComparisonOperator && hasSecondValue) {
       // Validation step
-      if (betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? value2! <= value1! : value2! < value1!) {
+      if (betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ? Number(value2!) <= Number(value1!) : Number(value2!) < Number(value1!)) {
         setError(betweenOption === BetweenComparisonOptionMap.EXCLUSIVE ?
           dict.message.invalidExclusiveRange :
           dict.message.invalidInclusiveRange
