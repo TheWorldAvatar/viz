@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
 import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
+import { selectItem, toggleItem } from "state/context-menu-slice";
 import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
@@ -113,6 +115,9 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
   const navMenuRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const ribbonState = useSelector(selectItem("table-ribbon"));
+  const mapRibbonState = useSelector(selectItem("ribbon"));
 
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -159,10 +164,10 @@ function NavMenuContents(
           variant="ghost"
           size="icon"
           leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-          className={`!flex mt-4 p-7 
+          className={`flex! mt-4 p-7 
             ${props.isMenuExpanded
               ? "ml-auto rounded-md"
-              : "items-center !rounded-full"
+              : "items-center rounded-full!"
             }`}
           aria-label={
             props.isMenuExpanded
@@ -340,6 +345,24 @@ function NavMenuContents(
           );
         }
       })}
+      {props.isMobile && ribbonState != null && (
+        <NavBarItem
+          tooltip={dict.context.tableRibbon.title}
+          title={dict.context.tableRibbon.title}
+          icon={ribbonState.toggled ? "check_box" : "check_box_outline_blank"}
+          isMobile={props.isMobile}
+          handleClick={() => dispatch(toggleItem(ribbonState.id))}
+        />
+      )}
+      {props.isMobile && mapRibbonState != null && (
+        <NavBarItem
+          tooltip={dict.context.controlRibbon.title}
+          title={dict.context.controlRibbon.title}
+          icon={mapRibbonState.toggled ? "check_box" : "check_box_outline_blank"}
+          isMobile={props.isMobile}
+          handleClick={() => dispatch(toggleItem(mapRibbonState.id))}
+        />
+      )}
     </nav>
   );
 }
