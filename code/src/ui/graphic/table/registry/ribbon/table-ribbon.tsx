@@ -15,9 +15,9 @@ import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
 import DateInput from "ui/interaction/input/date-input";
+import { buildUrl, interpolate } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { buildUrl } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
@@ -205,6 +205,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             props.lifecycleStage == LifecycleStageMap.CLOSED) && (
               <DateInput
                 mode="range"
+                ariaLabel={dict.nav.title.tasks}
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
                 disabledDates={getDisabledDates(props.lifecycleStage)}
@@ -218,11 +219,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               <Button
                 leftIcon="add"
                 size="icon"
+                aria-label={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
+                  interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
                 tooltipText={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
-                  dict.action.addItem.replace(
-                    "{replace}",
-                    props.entityType.replace("_", " ")
-                  )}
+                  interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
                 onClick={() => {
                   browserStorageManager.clear();
                   resetFormSession();
@@ -245,6 +245,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
           <Button
             leftIcon="filter_list_off"
+            aria-label={dict.action.clearAllFilters}
             iconSize="medium"
             className="mt-1"
             disabled={props.tableDescriptor.filters.every((filter) => (filter?.value as string[])?.length == 0)}
@@ -256,6 +257,21 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
           />
+          {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+            props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
+            <Button
+              size="icon"
+              leftIcon={props.tableDescriptor.isBulkDispatchEdit ? "edit_off" : "edit"}
+              onClick={() => {
+                props.tableDescriptor.table.resetRowSelection();
+                props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit);
+                if (props.tableDescriptor.isBulkDispatchEdit) {
+                  props.triggerRefresh();
+                }
+              }}
+              tooltipText={dict.action.bulkAssign}
+              variant="outline"
+            />}
           {isPermitted("export") && <DownloadButton instances={props.instances} />}
           <Button
             size="icon"

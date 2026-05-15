@@ -73,6 +73,7 @@ Note that resources are optional and their configuration options can differ from
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
     - `icon`: Optional parameter to display an icon from the icon library.
+    - `permission`: Optional parameter to set the permission required in order to view the registry page on the nav bar IF authentication is enabled.
 - Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
     - `type`: Must be either `account`, `pricing`, or `activity`

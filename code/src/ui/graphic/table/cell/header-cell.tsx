@@ -11,7 +11,12 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
+import { interpolate } from "utils/client-utils";
+import { XSD_DATE, XSD_DATETIME } from "utils/constants";
+import DateColumnFilter from "../action/date-column-filter";
+import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
+import { TableCellTagMap } from "types/table";
 
 interface HeaderCellProps {
   type: string;
@@ -19,6 +24,7 @@ interface HeaderCellProps {
   header: Header<FieldValues, unknown>;
   lifecycleStage: LifecycleStage;
   selectedDate: DateRange;
+  isEditable: boolean;
   disableFilter: boolean;
   disableSort: boolean;
   filters: ColumnFilter[];
@@ -32,6 +38,7 @@ interface HeaderCellProps {
  * @param { Header<FieldValues, unknown>} header The header object in Tanstack for further interactions.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {DateRange} selectedDate The currently selected date.
+ * @param {boolean} isEditable Determines if the cell is editable.
  * @param {boolean} disableFilter Disables the filters when set to true.
  * @param {boolean} disableSort Disables sorting when set to true.
  * @param {ColumnFilter[]} filters Filter state for the entire table.
@@ -58,11 +65,15 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     currentFilters,
     props.filters,
   );
+  const columnDataType: string = (props.header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType;
+  const isDateColumn: boolean = columnDataType === XSD_DATE || columnDataType === XSD_DATETIME;
 
   return (
     <TableCell
+      as={TableCellTagMap.TH}
       width={props.header.getSize()}
-      className={"bg-background font-semibold text-foreground text-left border-b border-border"}
+      className={`${props.isEditable ? "bg-success-background text-success-foreground" : ""} 
+      font-semibold text-left border-b border-border`}
     >
       {props.header.isPlaceholder ? null : (
         <div className="flex flex-col gap-2">
@@ -96,15 +107,27 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               tooltipText={dict.action.filter}
               size="icon"
               className="ml-2"
+              aria-label={interpolate(dict.action.filterBy, props.header.column.columnDef.header as string)}
+              aria-selected={isActiveFilter}
               isOpen={showFilterDropdown}
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
                 event.stopPropagation();
-                setTriggerFetch(!showFilterDropdown);
+                // Do not trigger fetch/loading state for date columns
+                if (!isDateColumn) {
+                  setTriggerFetch(!showFilterDropdown);
+                }
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              <SearchSelector
+              {isDateColumn ? <DateColumnFilter
+                label={props.header.id}
+                currentVal={props.header.column.getFilterValue() as string}
+                onSubmission={(dates: string) => {
+                  props.header.column.setFilterValue(dates);
+                  props.table.resetRowSelection();
+                  props.table.resetPageIndex();
+                }} /> : <SearchSelector
                 searchString={search}
                 options={options}
                 label={props.header.id}
@@ -116,7 +139,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.table.resetPageIndex();
                 }}
                 setSearchString={setSearch}
-              />
+              />}
               {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
             }

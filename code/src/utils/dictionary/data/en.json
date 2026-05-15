@@ -1,14 +1,20 @@
 {
-  "lang": "en",
+  "lang": "en-GB",
   "action": {
     "add": "Add",
+    "remove": "Remove",
+    "addItem": "add {replace}",
+    "removeItem": "remove {replace}",
+    "adjustPricing": "Adjust pricing",
     "assign": "Assign",
     "applyFilter": "Apply filter",
-    "addItem": "add {replace}",
     "delete": "Delete",
-    "dismiss": "Dismiss",
+    "deleteItem": "delete {replace}",
     "edit": "Edit",
+    "editItem": "edit {replace}",
+    "dismiss": "Dismiss",
     "view": "view",
+    "viewItem": "view {replace}",
     "close": "Close",
     "refresh": "Refresh",
     "backTo": "back to {replace}s",
@@ -19,6 +25,9 @@
     "overview": "overview",
     "file": "Choose file",
     "filter": "Filter",
+    "filterBy": "Filter by {replace}",
+    "flag": "Flag overdue",
+    "flagResolution": "Resolve flag",
     "search": "Search",
     "showAll": "Show all",
     "show": "Show",
@@ -38,6 +47,7 @@
     "cancel": "Cancel",
     "report": "Report",
     "reviewBillable": "Review billables",
+    "exemptBillable": "Exempt task from billing",
     "submit": "Submit",
     "reschedule": "Reschedule",
     "submitAndDuplicate": "Submit and duplicate",
@@ -54,9 +64,13 @@
     "clickDecrease": "Click to decrease",
     "clearAllFilters": "Clear all filters",
     "clearFilter": "Clear filter",
+    "clearFilterFor": "Clear filter for {replace}",
     "showMore": "Show more",
     "showLess": "Show less",
-    "addInvoice": "add invoice"
+    "addInvoice": "add invoice",
+    "bulkAssign": "Bulk assignment",
+    "select": "Select",
+    "selectItem": "select {replace}"
   },
   "form": {
     "singleService": "Single Service",
@@ -128,8 +142,8 @@
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {
-    "title": "Show ribbon",
-    "tooltip": "Show / hide ribbon"
+      "title": "Show ribbon",
+      "tooltip": "Show / hide ribbon"
     }
   },
   "message": {
@@ -165,6 +179,7 @@
     "dragToReorder": "Drag to reorder",
     "na": "Not applicable",
     "pickDateRange": "Pick a date range.",
+    "pickDateRangeFor": "Pick a date range for {replace}",
     "noVisibleColumns": "Please select at least one column to display.",
     "noOptions": "No options found",
     "typeFilter": "Filter not listed? Start typing...",
@@ -184,7 +199,11 @@
     "sort": "Click a column header to sort ascending or descending. To sort by multiple columns, hold the Shift key on your keyboard and click additional headers.",
     "entry": "{replace} entry",
     "entries": "{replace} entries",
-    "noEntries": "No entries"
+    "noEntries": "No entries",
+    "collapseNavigation": "Collapse navigation",
+    "expandNavigation": "Expand navigation",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
   },
   "nav": {
     "caption": {
@@ -197,6 +216,8 @@
       "help": "Get help for this web platform"
     },
     "title": {
+      "primary": "Primary",
+      "tablePagination": "Table pagination",
       "home": "Home",
       "map": "Map",
       "dashboard": "Analyse",
@@ -205,7 +226,6 @@
       "accounts": "Accounts",
       "pricing": "Pricing",
       "activities": "Activities",
-      "submission": "Registry Submission",
       "help": "Help Centre",
       "invoice": "Invoices",
       "pending": "Pending",
@@ -229,11 +249,15 @@
   },
   "title": {
     "actions": "Actions",
+    "bulkActions": "Bulk actions",
     "allCol": "Show All",
     "amount": "Amount",
     "blank": "(blank)",
     "customiseCol": "Show/Hide Columns",
+    "date": "Date",
     "description": "Description",
+    "eventId": "Event ID",
+    "file": "File",
     "lastModified": "Last modified",
     "history": "History",
     "available": "available",
@@ -250,6 +274,7 @@
     "billableCancelled": "billable (cancelled)",
     "billableCompleted": "billable (completed)",
     "billableIssue": "billable (issue)",
+    "billableExempted": "exempted",
     "invoiced": "invoiced",
     "item": "Item",
     "rescinded": "rescinded",
@@ -257,11 +282,13 @@
     "pendingDispatch": "pending dispatch",
     "pendingExecution": "pending execution",
     "quickView": "Quick view",
+    "quickViewFor": "Quick view for {replace}",
     "serviceCharge": "Service charges",
     "serviceCostBreakdown": "Service cost breakdown",
     "scheduleType": "schedule type",
     "searchCriteria": "SEARCH CRITERIA",
     "searchPeriod": "Search Period",
+    "size": "Size",
     "status": "status",
     "success": "Success",
     "total": "Total",

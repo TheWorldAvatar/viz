@@ -10,13 +10,14 @@ import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
+import { FormTypeMap } from "types/form";
 import { JsonObject } from "types/json";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import Button from "ui/interaction/button";
 import NavigationDrawer from "ui/interaction/drawer/navigation-drawer";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { getAfterDelimiter, getNormalizedDate, parseWordsForLabels } from "utils/client-utils";
+import { getAfterDelimiter, getNormalizedDate, interpolate, parseWordsForLabels, formatDateValue } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
@@ -29,7 +30,7 @@ import Tooltip from "../tooltip/tooltip";
  */
 export function InterceptTaskRescheduleComponent() {
   return (
-    <FormSessionContextProvider entityType="reschedule">
+    <FormSessionContextProvider formType={FormTypeMap.EDIT} entityType="reschedule">
       <NavigationDrawer>
         <TaskFormContents />
       </NavigationDrawer>
@@ -42,11 +43,9 @@ export function InterceptTaskRescheduleComponent() {
  */
 export function TaskRescheduleComponent() {
   return (
-    <FormSessionContextProvider entityType="reschedule">
-      <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
-        <TaskFormContents />
-      </section>
-    </FormSessionContextProvider>
+    <section className="flex flex-col w-full h-full xl:w-[50vw] xl:h-[85vh] mx-auto justify-between px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4  ">
+      <TaskFormContents />
+    </section>
   );
 }
 
@@ -116,7 +115,7 @@ function TaskFormContents() {
         </h1>
         {task?.date && (
           <h2 className="text-base md:text-lg md:mr-8">
-            {task.date}: {getTranslatedStatusLabel(task?.status, dict)}
+            {formatDateValue(task.date)}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
       </header>
@@ -124,7 +123,7 @@ function TaskFormContents() {
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {task?.date && (
           <p className="text-lg mb-4 whitespace-pre-line">
-            {`${dict.message.rescheduleInstruction.replace("{replace}", task.date)}:`}
+            {`${interpolate(dict.message.rescheduleInstruction, formatDateValue(task.date))}:`}
           </p>
         )}
         {(isFetching || refreshFlag) && <FormSkeleton />}
@@ -138,6 +137,7 @@ function TaskFormContents() {
             </label>
             <DateInput
               mode="single"
+              ariaLabel={dict.form.rescheduleDate}
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               placement="bottom"

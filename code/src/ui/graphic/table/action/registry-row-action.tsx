@@ -1,25 +1,27 @@
 import { useRegistryRowPermissionGuard } from "hooks/auth/useRegistryRowPermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
+import { useReadAttachments } from "hooks/form/useReadAttachments";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
-import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
+import { AgentResponseBody, ContractDirectory, InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "types/form";
+import { LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "types/form";
 import { JsonObject } from "types/json";
 import { FileDownloadButton } from "ui/interaction/action/download/file-download";
 import DraftTemplateButton from "ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import ExternalRedirectButton from "ui/interaction/action/redirect/external-redirect-button";
 import { toast } from "ui/interaction/action/toast/toast";
-import Button from "ui/interaction/button";
-import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import BillingModal from "ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "utils/client-utils";
-import { DATE_KEY, EVENT_KEY } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
+import { execReviewBillableAction } from "../registry/registry-table-utils";
+import RowActionButton from "./row-action-button";
+import FileMenu from "ui/interaction/menu/file/file-menu";
 
 
 interface RegistryRowActionProps {
@@ -51,16 +53,29 @@ export default function RegistryRowAction(
       ? getId(props.row.id)
       : getId(props.row.iri);
   const dict: Dictionary = useDictionary();
-  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.[dict.title.status]?.toLowerCase());
+  const isActionAllowed = useRegistryRowPermissionGuard(props.lifecycleStage, props.row?.status?.toLowerCase());
 
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
+  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+  const [isAttachmentViewerOpen, setIsAttachmentViewerOpen] = React.useState<boolean>(false);
 
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
-  const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+  const contractDirectory: ContractDirectory = useReadAttachments((props.lifecycleStage === LifecycleStageMap.OUTSTANDING ||
+    props.lifecycleStage === LifecycleStageMap.SCHEDULED || props.lifecycleStage === LifecycleStageMap.CLOSED) ?
+    getId(props.row.id) : "");
 
-  const markRowAsActive = (): void => {
+  /**
+   * Performs these actions on every row click to reset states and mark row as active.
+   */
+  const handleClickRowAction = (): void => {
+    // Mark row as action
     props.setActiveRowId?.(recordId);
+    // Reset states
+    browserStorageManager.clear();
+    resetFormSession();
+    // Close menu
+    setIsActionMenuOpen(false);
   };
 
   const onApproval: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -73,7 +88,6 @@ export default function RegistryRowAction(
       "service",
       "commence"
     );
-    markRowAsActive();
     submitPendingActions(url, "POST", JSON.stringify({ ...reqBody }));
   };
 
@@ -88,7 +102,17 @@ export default function RegistryRowAction(
       "draft",
       "reset"
     );
-    markRowAsActive();
+    submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
+  };
+
+  const onUpdateAccountFlag: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const reqBody: JsonObject = {
+      id: recordId,
+    };
+    const url: string = makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.ACCOUNT,
+      "flag"
+    );
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };
 
@@ -98,8 +122,8 @@ export default function RegistryRowAction(
     body: string
   ): Promise<void> => {
     startLoading();
+    handleClickRowAction();
     const customAgentResponse: AgentResponseBody = await queryInternalApi(url, method, body);
-    setIsActionMenuOpen(false);
     stopLoading();
     toast(
       customAgentResponse?.data?.message || customAgentResponse?.error?.message,
@@ -124,32 +148,8 @@ export default function RegistryRowAction(
   };
 
   const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    markRowAsActive();
-    browserStorageManager.clear();
-    resetFormSession();
-    const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, props.row.id, props.row.date);
-    const body: AgentResponseBody = await queryInternalApi(url);
-    browserStorageManager.set(DATE_KEY, props.row.date);
-    browserStorageManager.set(EVENT_KEY, props.row.event_id);
-    try {
-      const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-        InternalApiIdentifierMap.FILTER,
-        LifecycleStageMap.ACCOUNT,
-        props.accountType,
-        props.row[props.accountType]
-      ));
-      const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-      // Set the account type in browser storage to match the values of the account type in the assign price form
-      browserStorageManager.set(props.accountType, options[0]?.value);
-    } catch (error) {
-      console.error("Error fetching instances", error);
-    }
-    setIsActionMenuOpen(false);
-    if (body.data.message == "true") {
-      navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(props.row.event_id))
-    } else {
-      navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(props.row.id));
-    }
+    handleClickRowAction();
+    await execReviewBillableAction(props.row, props.accountType, navigateToDrawer);
   };
 
   const isSubmissionOrGeneralPage: boolean =
@@ -169,92 +169,60 @@ export default function RegistryRowAction(
         className="ml-2"
         isOpen={isActionMenuOpen}
         setIsOpen={setIsActionMenuOpen}
+        aria-label={`${dict.title.actions}, ${props.row.id}`}
       >
         <div className="flex flex-col space-y-8 lg:space-y-4 ">
           {isSubmissionOrGeneralPage && (
             <>
-              <Button
-                variant="ghost"
-                leftIcon="open_in_new"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              <RowActionButton
+                icon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
-                  markRowAsActive();
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.clear();
-                  resetFormSession();
+                  handleClickRowAction();
                   handleClickView();
                 }}
               />
               {isActionAllowed("TERMINATE_CONTRACT") &&
-                <Button
-                  variant="ghost"
-                  leftIcon="block"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="block"
                   disabled={isLoading}
                   label={dict.action.terminate}
                   onClick={() => {
-                    markRowAsActive();
-                    setIsActionMenuOpen(false);
+                    handleClickRowAction();
                     navigateToDrawer(Routes.REGISTRY_TERMINATE, props.recordType, recordId);
                   }}
                 />}
               {isActionAllowed("APPROVE_CONTRACT") &&
-                <Button
-                  variant="ghost"
-                  leftIcon="done_outline"
+                <RowActionButton
+                  icon="done_outline"
                   disabled={isLoading}
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
                   label={dict.action.approve}
                   onClick={onApproval}
                 />}
               {isActionAllowed("RESUBMIT") &&
-                <Button
-                  variant="ghost"
-                  leftIcon="published_with_changes"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="published_with_changes"
                   disabled={isLoading}
                   label={dict.action.resubmit}
                   onClick={onResubmissionForApproval}
                 />
               }
-              {isActionAllowed("EDIT") && <Button
-                variant="ghost"
-                leftIcon="edit"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {isActionAllowed("EDIT") && <RowActionButton
+
+                icon="edit"
                 disabled={isLoading}
                 label={dict.action.edit}
                 onClick={() => {
-                  markRowAsActive();
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.clear();
-                  resetFormSession();
+                  handleClickRowAction();
                   navigateToDrawer(Routes.REGISTRY_EDIT, props.recordType, recordId);
                 }}
               />}
-              {isActionAllowed("DELETE") && <Button
-                variant="ghost"
-                leftIcon="delete"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {isActionAllowed("DELETE") && <RowActionButton
+                icon="delete"
                 disabled={isLoading}
                 label={dict.action.delete}
                 onClick={() => {
-                  markRowAsActive();
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.clear();
-                  resetFormSession();
+                  handleClickRowAction();
                   navigateToDrawer(Routes.REGISTRY_DELETE, props.recordType, recordId);
                 }}
               />}
@@ -262,120 +230,112 @@ export default function RegistryRowAction(
           )}
           {!isSubmissionOrGeneralPage && (
             <>
-              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <Button
-                variant="ghost"
-                leftIcon="open_in_new"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {props.lifecycleStage !== LifecycleStageMap.BILLABLE && <RowActionButton
+                icon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
-                  markRowAsActive();
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.clear();
-                  resetFormSession();
+                  handleClickRowAction();
                   navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
                 }}
               />}
-              {isActionAllowed("COMPLETE_TASK") && <Button
-                variant="ghost"
-                leftIcon="done_outline"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
+              {isActionAllowed("COMPLETE_TASK") && <RowActionButton
+                icon="done_outline"
                 disabled={isLoading}
                 label={dict.action.complete}
                 onClick={() => {
-                  markRowAsActive();
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.clear();
-                  resetFormSession();
+                  handleClickRowAction();
+                  // Set a flag to indicate if the bill has been accrued, which determines the next navigation action
+                  browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED,
+                    (props.row.status.toLowerCase() === RegistryStatusMap.BILLABLE_COMPLETED).toString());
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
                 }}
               />}
-              {isActionAllowed("ASSIGN_TASK") && <Button
-                variant="ghost"
-                leftIcon="assignment"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                disabled={isLoading}
+              {isActionAllowed("ASSIGN_TASK") && <RowActionButton
+                icon="assignment"
                 label={dict.action.dispatch}
                 onClick={() => {
-                  markRowAsActive();
-                  setIsActionMenuOpen(false);
-                  browserStorageManager.clear();
-                  resetFormSession();
+                  handleClickRowAction();
                   navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
                 }}
               />}
               {isActionAllowed("RESCHEDULE_TASK") &&
-                props.row[dict.title.scheduleType] == dict.form.singleService && (
-                  <Button
-                    variant="ghost"
-                    leftIcon="schedule"
-                    size="md"
-                    iconSize="medium"
-                    className="w-full justify-start"
+                props.row.scheduleType == dict.form.singleService && (
+                  <RowActionButton
+                    icon="schedule"
                     disabled={isLoading}
                     label={dict.action.reschedule}
                     onClick={() => {
-                      markRowAsActive();
-                      setIsActionMenuOpen(false);
+                      handleClickRowAction();
                       navigateToDrawer(Routes.REGISTRY_TASK_RESCHEDULE, recordId);
                     }}
                   />
                 )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, true) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="cancel"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="cancel"
                   disabled={isLoading}
                   label={dict.action.cancel}
                   onClick={() => {
-                    markRowAsActive();
-                    setIsActionMenuOpen(false);
+                    handleClickRowAction();
                     navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
                   }}
                 />
               )}
               {isActionAllowed("CANCEL_OR_REPORT_TASK") && compareDates(props.row?.date, false) && (
-                <Button
-                  variant="ghost"
-                  leftIcon="report"
-                  size="md"
-                  iconSize="medium"
-                  className="w-full justify-start"
+                <RowActionButton
+                  icon="report"
                   label={dict.action.report}
                   disabled={isLoading}
                   onClick={() => {
-                    markRowAsActive();
-                    setIsActionMenuOpen(false);
+                    handleClickRowAction();
                     navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
                   }}
                 />
               )}
             </>
           )}
-          {(isActionAllowed("REVIEW_BILLABLES")) && <Button
-            variant="ghost"
-            leftIcon="price_check"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
+          {contractDirectory?.files.length > 0 && isActionAllowed("VIEW_FILES") &&
+            <PopoverActionButton
+              placement="bottom-end"
+              leftIcon="attach_file"
+              variant="ghost"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              label={dict.action.viewAttachment}
+              isOpen={isAttachmentViewerOpen}
+              setIsOpen={setIsAttachmentViewerOpen}
+              aria-label={`${dict.action.viewAttachment}, ${props.row.id}`}
+            >
+              <FileMenu directory={contractDirectory} />
+            </PopoverActionButton>}
+          {(isActionAllowed("ADJUST_PRICING")) && <RowActionButton
+            icon="price_change"
+            label={dict.action.adjustPricing}
+            disabled={isLoading}
+            onClick={() => {
+              handleClickRowAction();
+              // Get the id of the contract and avoid task id
+              navigateToDrawer(Routes.REGISTRY_ADJUST_PRICING, getId(props.row.id));
+            }}
+          />}
+          {(isActionAllowed("REVIEW_BILLABLES")) && <RowActionButton
+            icon="price_check"
             label={dict.action.reviewBillable}
             disabled={isLoading}
             onClick={onReviewBillable}
           />}
-          {isActionAllowed("VIEW_BILLABLES") && <Button
-            variant="ghost"
-            leftIcon="monetization_on"
-            size="md"
-            iconSize="medium"
-            className="w-full justify-start"
+          {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
+            icon="money_off"
+            label={dict.action.exemptBillable}
+            disabled={isLoading}
+            onClick={() => {
+              handleClickRowAction();
+              navigateToDrawer(Routes.REGISTRY_TASK_EXEMPT, recordId);
+            }}
+          />}
+          {isActionAllowed("VIEW_BILLABLES") && <RowActionButton
+            icon="monetization_on"
             label={dict.action.viewServiceCost}
             disabled={isLoading}
             onClick={(e) => {
@@ -418,6 +378,12 @@ export default function RegistryRowAction(
               triggerRefresh={props.triggerRefresh}
             />
           }
+          {isActionAllowed("ACCOUNT_FLAG") && <RowActionButton
+            icon="flag"
+            label={props.row.flag === "true" ? dict.action.flagResolution : dict.action.flag}
+            disabled={isLoading}
+            onClick={onUpdateAccountFlag}
+          />}
         </div>
       </PopoverActionButton>
       {isOpenBillingModal && <BillingModal

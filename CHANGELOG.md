@@ -2,6 +2,230 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.7
+
+### Changes
+
+- Added clear all filter button in the invoice form table ribbon
+
+## 5.72.6
+
+### Changes
+
+- Added aria-labels to the add and remove buttons for array form fields, as well as the view button for the array items
+- added aria-labelledby to section element in the form section
+- added daa-testid to total amount in the billing modal for testing purposes
+
+## 5.72.5
+
+### Changes
+
+- Modified default start and end time of schedules
+
+## 5.72.4
+
+### Bug Fixes
+
+- Disable tracking for price adjustments when editing contracts
+- Bump min version of `VisBackend Agent` from `v1.48.0` to `v1.50.3`
+
+## 5.72.3
+
+### Bug Fixes
+
+- Standardise all date format to use date locale format
+- Fix date format hints to dynamically follow date locale format
+
+## 5.72.2
+
+### Bug Fixes
+
+- Fixed bulk edit failure with active filters
+
+## 5.72.1
+
+### Bug Fixes
+
+- Fixed an issue with the show more button not showing in the table cells when the text is too long, due to a wrong condition
+
+## 5.72.0
+
+### Changes
+
+- Extended task attachment checks into a new attachment viewer
+- Attachment viewer shows file list and redirects on click
+
+## 5.71.3
+
+### Bug fixes
+
+- Fixed to log unauthorised requests
+
+## 5.71.2
+
+### Bug fixes
+
+- Fixed an issue with the initial visibility state that reads from the table column settings, where the column names were being translated before being set as keys in the visibility state object, thus not matching with the column keys and not applying the visibility settings as expected.
+
+## 5.71.1
+
+### Changes
+
+- Added a function that calculates the maximum text length to display in a cell based on column width
+- Adjusted table cell padding 
+- Removed the whitespace-nowrap class to allow text to wrap in the cells
+
+## 5.71.0
+
+### Changes
+
+- Added new pages to edit only pricing model but view other contract details
+- Added functionality to adjust pricing model for an ongoing contract
+- Code improvements
+- Bump min version of `VisBackend Agent` from `v1.46.0` to `v1.48.0`
+
+## 5.70.2
+
+### Changes
+
+- Added accessibility name for clear all filters button in the table ribbon
+
+## 5.70.1
+
+### Changes
+
+- Allow users to recomplete a task even after it has been billed
+
+## 5.70.0
+
+### Changes
+
+- Updated the German translations
+- Modify hide table ribbon to show instead
+- Enforce localised numeric inputs in the forms
+
+### Bug fixes
+
+- Fix onclick error in registry rows due to status translation
+
+## 5.69.2
+
+### Changes
+
+- Accessiblity improvements:
+- Standardized the date display format
+- Aria-labels on regsitry row actions, bulk approvement
+- Made the table pagination as a `nav` HTML element
+
+## 5.69.1
+
+### Changes
+
+- Added role access to general registry paths in configuration
+
+## 5.69.0
+
+### Changes
+
+- Added date filters for date and date time columns
+- Bump min version of `VisBackend Agent` from `v1.45.0` to `v1.46.0`
+
+## 5.68.1
+
+### Bug fixes
+
+- Fix translations for the status column to show the translated status component
+
+## 5.68.0
+
+### Changes
+
+- Added account flagging functionalities
+- Disabled contract creation for flagged accounts
+- Bump min version of `VisBackend Agent` from `v1.44.2` to `v1.45.0`
+
+## 5.67.9
+
+### Bug fix
+
+- Fixed row action permission guard with translations of status column
+
+## 5.67.8
+
+### Changes
+
+- Improved accessibility by adding clear and descriptive aria-label attributes to interactive elements (e.g., inputs, buttons, dropdowns and controls).
+
+## 5.67.7
+
+### Changes
+
+- Return form for exempting task from billing
+
+## 5.67.6
+
+### Bug fix
+
+- Reduce the number of API calls by the table on refresh to one
+
+## 5.67.5
+
+### Changes
+
+- Added bulk assignment functionality through form
+
+## 5.67.4
+
+### Bug fixes
+
+- Fixed autofilled for the initial optional selector
+
+## 5.67.3
+
+### Bug fixes
+
+- Fixed optional arrays initialisation
+- Fixed to submit current id instead of a random id when continue work on next working day
+- Bump min version of `VisBackend Agent` from `v1.44.0` to `v1.44.2`
+
+## 5.67.2
+
+### Bug fixes
+
+- Fixed optional ontology selector to default to NA option
+- Fixed column setting override of default columns like last modified and schedule type
+
+## 5.67.1
+
+### Bug fixes
+
+- Fixed drag interactions with checkboxes
+- Fixed event propagations from mass edit fields to checkboxes
+
+## 5.67.0
+
+### Changes
+
+- Added bulk assignment functionality supported by backend changes
+- Bump min version of `VisBackend Agent` from `v1.43.1` to `v1.44.0`
+
+### Bug fixes
+
+- Fixed an issue with the reschedule button not showing up due to bad condition
+
+## 5.66.2
+
+### Changes
+
+- Removed axios library as a dependancy
+
+## 5.66.1
+
+### Changes
+
+- added new row action for waiving billables of closed tasks
+- Bump min version of `VisBackend Agent` from `v1.43.0` to `v1.43.1`
+
 ## 5.66.0
 
 ### Changes

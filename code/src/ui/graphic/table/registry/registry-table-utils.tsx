@@ -5,23 +5,32 @@ import {
   SortingState,
   VisibilityState
 } from "@tanstack/react-table";
+import { Routes } from "io/config/routes";
 import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
+import { browserStorageManager } from "state/browser-storage-manager";
+import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "types/backend-agent";
 import {
+  FormTypeMap,
   LifecycleStage,
+  LifecycleStageMap,
   RegistryFieldValues,
   RegistryFlatFieldValues,
   SparqlResponseField
 } from "types/form";
 import { TableColumnOption } from "types/settings";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
+import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
-import { getAfterDelimiter, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { XSD_DATETIME } from "utils/constants";
+import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
-import { ColumnDefinitionResponse } from "types/backend-agent";
 
-export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & { dataType: string };
+export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
+  dataType: string;
+  stage: string;
+};
 
 /**
  * Parses the column filters into URL parameters for API querying.
@@ -36,6 +45,10 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     if (filter.value === undefined || (filter.value as string[]).length === 0) {
       return "";
     }
+    // For date filters
+    if (typeof filter.value == "string") {
+      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
+    }
     const currentFilterValues: string[] = filter.value as string[];
     let filterParams: string[];
     if (currentFilterValues.includes(translatedBlankText)) {
@@ -43,7 +56,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     } else {
       filterParams = currentFilterValues;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`
+    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
 }
 
@@ -130,20 +143,34 @@ export function parseColumnsMetadata(
   // Create column definitions based on available columns
   for (const col of columns) {
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
-    const title: string = parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
-    const minWidth: number = Math.max(
+    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
+    const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
       title.length * 15,
       125
     );
+    const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
+
+    const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
+    const effectiveWidth: number = configuredWidth ?? minWidth;
+    const maxTextLength: number = calculateMaxCharLengthFromWidth(configuredWidth);
+
     results.push({
+      id: col.value,
       accessorKey: col.value,
       header: title,
-      dataType: col.type == "array" ? col.type : col.datatype,
+      dataType: col.value == FLAG_KEY ? col.value : col.type == "array" ? col.type : col.datatype,
+      stage: col.stage,
       cell: ({ getValue }) => {
+        if (col.value == FLAG_KEY) {
+          if (getValue() == "true") {
+            return FLAG_EMOJI;
+          }
+          return "";
+        }
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
-          return <ArrayTextCell fields={arrayFields} />
+          return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
         }
         const value: string = getValue() as string;
         if (!value) return "";
@@ -151,21 +178,25 @@ export function parseColumnsMetadata(
         if (isDateTimeColumn) {
           return formatDatetimeValue(value);
         }
+        if (isDateColumn) {
+          return formatDateValue(value);
+        }
 
         if (isValidIRI(value)) {
           return getAfterDelimiter(value, "/");
         }
 
-        if (col.value === titleDict.status) {
+        // Column header name is untranslated so we can directly compare to a string
+        if (col.value === "status") {
           return <StatusComponent status={value} />;
         }
 
         return (
-          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxLengthText={25} />
+          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxTextLength={maxTextLength} />
         );
       },
       filterFn: multiSelectFilter,
-      size: minWidth,
+      size: effectiveWidth,
       enableSorting: true,
       sortDescFirst: true,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
@@ -180,7 +211,7 @@ export function parseColumnsMetadata(
   }
   const configuredColumnMap: Map<string, TableColumnOption> = new Map(
     columnOptions.map((item, index) => [
-      translateLifecycleFields(item.name, titleDict),
+      item.name,
       { ...item, order: index }
     ])
   );
@@ -193,17 +224,6 @@ export function parseColumnsMetadata(
       const indexB: number = configuredColumnMap.get(accessorKeyB)?.order ?? Infinity;
       return indexA - indexB;
     })
-    .map((column) => {
-      const accessorKey: string = (column as { accessorKey?: string }).accessorKey;
-      const configuredWidth: number = configuredColumnMap.get(accessorKey)?.width;
-      if (configuredWidth === undefined) {
-        return column;
-      }
-      return {
-        ...column,
-        size: configuredWidth,
-      };
-    });
 }
 
 /**
@@ -211,29 +231,18 @@ export function parseColumnsMetadata(
  * Columns with `visible: false` are hidden; all others default to visible.
  *
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
- * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
 export function getInitialColumnVisibilityState(
   columnOptions: TableColumnOption[],
-  titleDict: Record<string, string>
 ): VisibilityState {
   if (!columnOptions || columnOptions.length === 0) return {};
   const columnVisibilityState: VisibilityState = {};
   for (const item of columnOptions) {
     if (item.visible === false) {
-      columnVisibilityState[translateLifecycleFields(item.name, titleDict)] = false;
+      columnVisibilityState[item.name] = false;
     }
   }
   return columnVisibilityState;
-}
-
-/**
- * Formats a datetime value for display.
- *
- * @param {string} value The raw value from the backend.
- */
-export function formatDatetimeValue(value: string): string {
-  return new Date(value).toLocaleString();
 }
 
 /**
@@ -244,6 +253,10 @@ export function formatDatetimeValue(value: string): string {
  */
 export function translateLifecycleFields(field: string, titleDict: Record<string, string>): string {
   switch (field.toLowerCase()) {
+    case "date":
+      return titleDict.date;
+    case "event_id":
+      return titleDict.eventId;
     case "lastmodified":
       return titleDict.lastModified;
     case "scheduletype":
@@ -253,6 +266,24 @@ export function translateLifecycleFields(field: string, titleDict: Record<string
     default:
       return field;
   }
+}
+
+/**
+ * Retrieves the record ID for a given row, prioritizing 'event_id', then 'id', and finally 'iri'.
+ *
+ * @param {FieldValues} row The row data.
+ * @returns {string} The record ID.
+ */
+export function getRowRecordId(row: FieldValues): string {
+  if (row.event_id) {
+    return getId(row.event_id);
+  }
+
+  if (row.id) {
+    return getId(row.id);
+  }
+
+  return getId(row.iri);
 }
 
 /**
@@ -301,6 +332,25 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
 }
 
 /**
+ * Calculates the maximum text length to display in a cell based on column width.
+ * Uses tunable width-to-character estimation so truncation can be less aggressive.
+ *
+ * @param {number} width The column width in pixels.
+ * @returns {number} The maximum number of characters to display before truncation.
+ */
+function calculateMaxCharLengthFromWidth(width: number | undefined): number {
+  if (width === undefined) {
+    return DEFAULT_MAX_CHARACTER_LENGTH;
+  }
+  // 8 is the approximate width of a character in pixels, used to estimate how many characters can fit in a given column width
+  // 6 is the expansion factor that determines how many characters to show based on the column width.
+  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
+  // The higher the factor, the more characters will be shown before truncation
+  const estimatedLength: number = Math.floor((width / 8) * 1.5);
+  return Math.max(estimatedLength, DEFAULT_MAX_CHARACTER_LENGTH);
+}
+
+/**
  * Builds a custom filter function to filter for multiple values when selected.
  *
  * @param {string} translatedBlankText The translated blank text.
@@ -336,3 +386,40 @@ export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
   }
   return undefined;
 }
+
+/**
+ * Executes the review billable action which checks if the bill is already accrued or not and navigates to the correct drawer.
+ *
+ * @param {FieldValues} row The row data.
+ * @param {string} accountType The account type.
+ * @param navigateToDrawer The function to navigate to the drawer.
+ */
+export async function execReviewBillableAction(
+  row: FieldValues,
+  accountType: string,
+  navigateToDrawer: (...urlParts: string[]) => void,
+): Promise<void> {
+  const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
+  const body: AgentResponseBody = await queryInternalApi(url);
+  browserStorageManager.set(DATE_KEY, row.date);
+  browserStorageManager.set(EVENT_KEY, row.event_id);
+  try {
+    const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.FILTER,
+      LifecycleStageMap.ACCOUNT,
+      accountType,
+      row[accountType]
+    ));
+    const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
+    // Set the account type in browser storage to match the values of the account type in the assign price form
+    browserStorageManager.set(accountType, options[0]?.value);
+  } catch (error) {
+    console.error("Error fetching instances", error);
+  }
+  if (body.data.message == "true") {
+    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+  } else {
+    navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
+  }
+}
+

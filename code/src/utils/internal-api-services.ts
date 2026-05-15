@@ -1,6 +1,7 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { DateRange } from "react-day-picker";
-import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, ContractDirectory } from "types/backend-agent";
+import { FORM_IDENTIFIER, FormTemplateType, FormType } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getUTCDate, parseStringsForUrls } from "./client-utils";
 
@@ -15,6 +16,15 @@ export function makeInternalRegistryAPIwithParams(
 ): string {
   let searchParams: URLSearchParams;
   switch (internalIdentifier) {
+    case InternalApiIdentifierMap.ACCOUNT:
+      searchParams = new URLSearchParams({
+        type: params[0],
+        page: params[1] ?? null,
+        limit: params[2] ?? null,
+        sort_by: params[3] ?? null,
+        filters: params[4] ?? "",
+      });
+      break;
     case InternalApiIdentifierMap.ADDRESS:
       searchParams = new URLSearchParams({
         postal_code: params[0],
@@ -168,14 +178,39 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
     };
   }
   const res = await fetch(url, requestParams);
-  return await res.json();
+  const response: AgentResponseBody = await res.json();
+  if (response.error && response.error?.code === 401) {
+    console.error("401 Unauthorised");
+  }
+  return response;
 }
 
-export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlExistsResponse> {
+export async function queryRegistryAttachmentAPI(contract: string): Promise<ContractDirectory> {
   const url: string = `${prefixedRegistryURL}attachment/${contract}`
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);
   return await res.json();
+}
+
+/**
+ * Query for the task form template via the internal API.
+ * 
+ * @param {FormType} eventType The type of event.
+ * @param {string} targetId Optional identifier for the target resource. Defaults to form.
+ */
+export async function queryInternalTaskFormTemplate(
+  eventType: FormType,
+  targetId?: string
+): Promise<FormTemplateType> {
+  const resBody: AgentResponseBody = await queryInternalApi(
+    makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.EVENT,
+      "service",
+      eventType,
+      targetId ?? FORM_IDENTIFIER
+    )
+  );
+  return resBody.data?.items?.[0] as FormTemplateType;
 }
 
 /**

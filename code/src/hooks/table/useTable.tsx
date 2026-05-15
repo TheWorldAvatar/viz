@@ -27,6 +27,8 @@ import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   isLoading: boolean;
+  isBulkDispatchEdit: boolean;
+  setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
   initialInstances: RegistryFieldValues[];
@@ -45,7 +47,7 @@ export interface TableDescriptor {
 * A custom hook to retrieve table data into functionalities for the registry table to function.
 *
 * @param {string} entityType Type of entity for rendering.
-* @param {boolean} refreshFlag Flag to trigger refresh when required.
+* @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
@@ -53,7 +55,7 @@ export interface TableDescriptor {
 */
 export function useTable(
   entityType: string,
-  refreshFlag: boolean,
+  refreshId: number,
   lifecycleStage: LifecycleStage,
   tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
@@ -62,17 +64,18 @@ export function useTable(
   const dict: Dictionary = useDictionary();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
   const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions, dict.title));
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
   const { isLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
-    refreshFlag,
+    refreshId,
     lifecycleStage,
     selectedDate,
     apiPagination,
@@ -179,6 +182,8 @@ export function useTable(
 
   return {
     isLoading,
+    isBulkDispatchEdit,
+    setIsBulkDispatchEdit,
     table,
     data: currentDataView,
     setData: setCurrentDataView,

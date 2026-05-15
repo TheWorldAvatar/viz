@@ -24,14 +24,13 @@ import {
   TYPE_KEY,
   VALUE_KEY
 } from "types/form";
-import { REPLACE_DICT_KEY } from "utils/constants";
+import { interpolate } from "utils/client-utils";
 import { BRANCH_ADD, BRANCH_DELETE } from "utils/internal-api-services";
 import { SelectOptionType } from "../dropdown/simple-selector";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
   IRI: "iri",
-  FORM_TYPE: "formType",
   CONTRACT: "contract",
   ORDER: "order",
   REMARKS: "remarks",
@@ -93,6 +92,7 @@ export function isFieldMappable(fieldShape: PropertyShape): boolean {
  * Parses a list of property shape or group into a format compliant with the viz.
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
+ * @param {FormType} formType The type of the form.
  * @param {PropertyShapeOrGroup} fields Target list of field configurations for parsing.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  * @param {Record<string, string>} fieldIdMapping Optionally stores the mapping between translated and original field IDs.
@@ -101,6 +101,7 @@ export function isFieldMappable(fieldShape: PropertyShape): boolean {
  */
 export function parsePropertyShapeOrGroupList(
   initialState: FieldValues,
+  formType: FormType,
   fields: PropertyShapeOrGroup[],
   fieldIdMapping?: Record<string, string>,
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
@@ -117,7 +118,7 @@ export function parsePropertyShapeOrGroupList(
       const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
       const isAddOrEditPricingGroup: boolean = isPrimaryEntity && billingTypes.pricing &&
         fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " ")) &&
-        (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT);
+        (formType == FormTypeMap.ADD || formType == FormTypeMap.EDIT);
       if (isFieldsetArray && isAddOrEditPricingGroup) {
         fieldset.maxCount = {
           ...fieldset.maxCount,
@@ -160,10 +161,11 @@ export function parsePropertyShapeOrGroupList(
           }
           return initFormField(
             updatedProp,
+            formType,
             initialState,
             fieldsetName,
             true,
-            parseInt(updatedProp.minCount?.[VALUE_KEY])
+            parseInt(fieldset.minCount?.[VALUE_KEY] ?? "1")
           );
         }
         // Replace account or pricing field with the field ID so that we can still retrieve the old values
@@ -175,7 +177,7 @@ export function parsePropertyShapeOrGroupList(
         if (isFieldMappable(updatedProp)) {
           fieldIdMapping[fieldId] = updatedProp.name[VALUE_KEY];
         }
-        return initFormField(updatedProp, initialState, fieldId);
+        return initFormField(updatedProp, formType, initialState, fieldId);
       });
       // Update the property group with updated properties
       return {
@@ -190,7 +192,7 @@ export function parsePropertyShapeOrGroupList(
       const isFieldShapeArray: boolean = !shape.maxCount || parseInt(shape.maxCount?.[VALUE_KEY]) > 1;
       const isPricingField: boolean = billingTypes.pricing && shape.name?.[VALUE_KEY] === billingTypes.pricing.replace("_", " ");
       const fieldShape: PropertyShape =
-        isPrimaryEntity && isFieldShapeArray && (initialState.formType == FormTypeMap.ADD || initialState.formType == FormTypeMap.EDIT) && isPricingField
+        isPrimaryEntity && isFieldShapeArray && (formType == FormTypeMap.ADD || formType == FormTypeMap.EDIT) && isPricingField
           ? {
             ...shape,
             maxCount: {
@@ -210,6 +212,7 @@ export function parsePropertyShapeOrGroupList(
         }
         return initFormField(
           fieldShape,
+          formType,
           initialState,
           fieldShape.name[VALUE_KEY],
           true,
@@ -222,6 +225,7 @@ export function parsePropertyShapeOrGroupList(
       }
       return initFormField(
         fieldShape,
+        formType,
         initialState,
         fieldShape.name[VALUE_KEY],
       );
@@ -233,12 +237,14 @@ export function parsePropertyShapeOrGroupList(
  * Parses the branches into a format compliant with the viz as well as initialise the initial state.
  *
  * @param {FieldValues} initialState The initial state to store any field configuration.
+ * @param {FormType} formType The type of the form.
  * @param {NodeShape[]} nodeShapes The target list of branches and their shapes.
  * @param {BillingEntityTypes} billingTypes Optionally indicates the type of account and pricing.
  * @param {Record<string, string>} fieldIdMapping Stores the mapping between translated and original field IDs.
  */
 export function parseBranches(
   initialState: FieldValues,
+  formType: FormType,
   nodeShapes: NodeShape[],
   billingTypes: BillingEntityTypes = { account: "", accountField: "", pricing: "", pricingField: "" },
   fieldIdMapping: Record<string, string>,
@@ -251,7 +257,7 @@ export function parseBranches(
   const results: NodeShape[] = [];
   nodeShapes.forEach((shape) => {
     const nodeState: FieldValues = {};
-    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, shape.property, fieldIdMapping, billingTypes);
+    const parsedShapeProperties: PropertyShapeOrGroup[] = parsePropertyShapeOrGroupList(nodeState, formType, shape.property, fieldIdMapping, billingTypes);
     nodeStates.push(nodeState);
     results.push({
       ...shape,
@@ -261,7 +267,7 @@ export function parseBranches(
   // Find the best matched node states with non-empty values and null values
   let nodeWithMostNonEmpty: NodeShape = results[0];
   let nodeStateWithMostNonEmpty: FieldValues = nodeStates[0];
-  if (initialState.formType != FormTypeMap.ADD) {
+  if (formType != FormTypeMap.ADD) {
     let maxNonEmptyCount: number = 0;
     let minNullCount: number = 0;
     nodeStates.forEach((nodeState, index) => {
@@ -302,18 +308,18 @@ export function parseBranches(
     });
   }
   // Initalise branch fields based on the best matched node state and the form type
-  if (initialState.formType === FormTypeMap.DELETE) {
+  if (formType === FormTypeMap.DELETE) {
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
-  } else if (initialState.formType === FormTypeMap.EDIT || initialState.formType === FormTypeMap.ACCRUAL ||
-    initialState.formType === FormTypeMap.DISPATCH || initialState.formType === FormTypeMap.COMPLETE ||
-    initialState.formType === FormTypeMap.CANCEL || initialState.formType === FormTypeMap.REPORT ||
-    initialState.formType === FormTypeMap.TERMINATE) {
+  } else if (formType === FormTypeMap.EDIT || formType === FormTypeMap.ACCRUAL ||
+    formType === FormTypeMap.DISPATCH || formType === FormTypeMap.COMPLETE ||
+    formType === FormTypeMap.CANCEL || formType === FormTypeMap.REPORT ||
+    formType === FormTypeMap.TERMINATE || formType === FormTypeMap.MASS_EDIT) {
     // Set both values - branch_add for new, branch_delete for original
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
     initialState[BRANCH_DELETE] = nodeWithMostNonEmpty.label[VALUE_KEY];
-  } else if (initialState.formType === FormTypeMap.ADD || initialState.formType === FormTypeMap.ADD_BILL ||
-    initialState.formType === FormTypeMap.ADD_PRICE || initialState.formType === FormTypeMap.ASSIGN_PRICE ||
-    initialState.formType === FormTypeMap.INVOICE) {
+  } else if (formType === FormTypeMap.ADD || formType === FormTypeMap.ADD_BILL ||
+    formType === FormTypeMap.ADD_PRICE || formType === FormTypeMap.ASSIGN_PRICE ||
+    formType === FormTypeMap.INVOICE) {
     initialState[BRANCH_ADD] = nodeWithMostNonEmpty.label[VALUE_KEY];
   }
   for (const field in nodeStateWithMostNonEmpty) {
@@ -328,6 +334,7 @@ export function parseBranches(
  * as well as append the field ID based on the input.
  *
  * @param {PropertyShape} field The data model for the field of interest.
+ * @param {FormType} formType The type of the form.
  * @param {FieldValues} outputState The current state storing existing form values.
  * @param {string} fieldId The field ID that should be generated.
  * @param {boolean} isArray Optional boolean to indicate if the field is an array.
@@ -335,6 +342,7 @@ export function parseBranches(
  */
 function initFormField(
   field: PropertyShape,
+  formType: FormType,
   outputState: FieldValues,
   fieldId: string,
   isArray?: boolean,
@@ -361,9 +369,7 @@ function initFormField(
     // For an optional field array with no default/pre-existing value
     if (minArraySize == 0 && !field.defaultValue) {
       // Ensure the current field is optional
-      outputState[fieldId].push({
-        parsedFieldId: "",
-      });
+      outputState[fieldId] = [];
       // Terminate early
       return {
         ...field,
@@ -387,10 +393,10 @@ function initFormField(
     }
   } else if (field.class?.[ID_KEY] ===
     "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" &&
-    outputState.formType == FormTypeMap.ADD) {
+    formType == FormTypeMap.ADD) {
     outputState[FORM_STATES.RECURRENCE] = 0;
-    outputState[FORM_STATES.TIME_SLOT_START] = "00:00";
-    outputState[FORM_STATES.TIME_SLOT_END] = "23:59";
+    outputState[FORM_STATES.TIME_SLOT_START] = "09:00";
+    outputState[FORM_STATES.TIME_SLOT_END] = "18:00";
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue)
       ? field.defaultValue?.value
@@ -406,7 +412,7 @@ function initFormField(
     outputState[fieldId] = getDefaultVal(
       fieldId,
       defaultVal,
-      outputState.formType
+      formType
     );
   }
   // Update property shape with field ID property
@@ -537,7 +543,7 @@ function updateDependentProperty(
  */
 export function getRegisterOptions(
   field: PropertyShape,
-  formType: string,
+  formType: FormType,
   dict: Dictionary
 ): RegisterOptions {
   const options: RegisterOptions = {};
@@ -545,7 +551,7 @@ export function getRegisterOptions(
   // The field is required if this is currently not the search form and SHACL defines them as optional
   // Also required for start and end search period
   if (
-    (formType != "search" &&
+    (formType != FormTypeMap.SEARCH &&
       Number(field.minCount?.[VALUE_KEY]) === 1 &&
       Number(field.maxCount?.[VALUE_KEY]) === 1) ||
     field.fieldId == FORM_STATES.START_TIME_PERIOD ||
@@ -558,18 +564,12 @@ export function getRegisterOptions(
   if (field.minInclusive) {
     options.min = {
       value: Number(field.minInclusive[VALUE_KEY]),
-      message: dict.message.minInclusive.replace(
-        REPLACE_DICT_KEY,
-        field.minInclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.minInclusive, field.minInclusive[VALUE_KEY]),
     };
   } else if (field.minExclusive) {
     options.min = {
       value: Number(field.minExclusive[VALUE_KEY]) + 0.1,
-      message: dict.message.minExclusive.replace(
-        REPLACE_DICT_KEY,
-        field.minExclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.minExclusive, field.minExclusive[VALUE_KEY]),
     };
   }
 
@@ -577,37 +577,25 @@ export function getRegisterOptions(
   if (field.maxInclusive) {
     options.max = {
       value: Number(field.maxInclusive[VALUE_KEY]),
-      message: dict.message.maxInclusive.replace(
-        REPLACE_DICT_KEY,
-        field.maxInclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.maxInclusive, field.maxInclusive[VALUE_KEY]),
     };
   } else if (field.maxExclusive) {
     options.max = {
       value: Number(field.maxExclusive[VALUE_KEY]) + 0.1,
-      message: dict.message.maxExclusive.replace(
-        REPLACE_DICT_KEY,
-        field.maxExclusive[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.maxExclusive, field.maxExclusive[VALUE_KEY]),
     };
   }
 
   if (field.minLength) {
     options.minLength = {
       value: Number(field.minLength[VALUE_KEY]),
-      message: dict.message.minLength.replace(
-        REPLACE_DICT_KEY,
-        field.minLength[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.minLength, field.minLength[VALUE_KEY]),
     };
   }
   if (field.maxLength) {
     options.maxLength = {
       value: Number(field.maxLength[VALUE_KEY]),
-      message: dict.message.maxLength.replace(
-        REPLACE_DICT_KEY,
-        field.maxLength[VALUE_KEY]
-      ),
+      message: interpolate(dict.message.maxLength, field.maxLength[VALUE_KEY]),
     };
   }
 
@@ -617,10 +605,7 @@ export function getRegisterOptions(
     const msg: string =
       field.pattern[VALUE_KEY] === "^\\d+$"
         ? `${dict.message.numericalValuesOnly}`
-        : `${dict.message.patternFollowed.replace(
-          REPLACE_DICT_KEY,
-          field.pattern[VALUE_KEY]
-        )}`;
+        : `${interpolate(dict.message.patternFollowed, field.pattern[VALUE_KEY])}`;
     options.pattern = {
       value: new RegExp(field.pattern[VALUE_KEY]),
       message: msg,
@@ -833,6 +818,8 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
     case FormTypeMap.ADD_BILL:
     case FormTypeMap.ADD_PRICE:
       return dict.action.add;
+    case FormTypeMap.ADJUST_PRICE:
+      return dict.action.adjustPricing;
     case FormTypeMap.EDIT:
       return dict.action.edit;
     case FormTypeMap.ASSIGN_PRICE:

@@ -235,6 +235,81 @@ export function getNormalizedDate(date: Date): string {
 }
 
 /**
+ * Formats a date string into a locale - specific format for display.
+ *
+ * @param { string | Date} value The raw value from the backend.
+ */
+export function formatDateValue(value: string | Date): string {
+  return new Date(value).toLocaleDateString();
+}
+
+/**
+ * Formats a datetime value for display.
+ *
+ * @param {string} value The raw value from the backend.
+ */
+export function formatDatetimeValue(value: string): string {
+  return new Date(value).toLocaleString();
+}
+
+/**
+ * Retrieves the locale-specific date format string.
+ * This is used for displaying date format hints to users in forms.
+ * 
+ * @returns {string} The locale-specific date format pattern (e.g. "DD/MM/YYYY" or "MM/DD/YYYY").
+ */
+
+export function getLocaleDatePattern(): string {
+  const parts: Intl.DateTimeFormatPart[] = new Intl.DateTimeFormat().formatToParts(new Date());
+  return parts
+    .map((part) => {
+      switch (part.type) {
+        case "day":
+          return "DD";
+        case "month":
+          return "MM";
+        case "year":
+          return "YYYY";
+        case "literal":
+          return part.value;
+        default:
+          return "";
+      }
+    })
+    .join("");
+}
+
+/**
+ * Extracts and formats the display string for the target date(s) based on the specified mode.
+ *
+ * @param {Date | DateRange | Date[] | undefined} targetDate The target date, date range, or multiple dates.
+ * @param {"single" | "range" | "multiple"} mode The mode of the date input.
+ * @returns {string} The formatted string to display.
+ */
+
+export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined, mode: "single" | "range" | "multiple"): string => {
+  if (!targetDate) return "";
+
+  if (mode === "single") {
+    return formatDateValue(targetDate as Date);
+  }
+  if (mode === "multiple") {
+    const dates: Date[] = targetDate as Date[];
+    if (!Array.isArray(dates) || dates.length === 0) return "";
+    const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
+    const first: string = formatDateValue(sortedDates[0]);
+    const last: string = formatDateValue(sortedDates.at(-1));
+    return dates.length === 1 ? first : `${first} - ${last}`;
+  }
+  // range mode
+  const targetDateRange: DateRange = targetDate as DateRange;
+  const fromDate: string = formatDateValue(targetDateRange?.from);
+  const toDate: string = formatDateValue(targetDateRange?.to);
+  return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
+};
+
+
+/**
  * Get the configuration for a toast notification.
  *
  * @param type The type of toast .
@@ -323,4 +398,14 @@ export function handleDownload(blob: Blob, fileName: string): void {
 
 export function buildUrl(...args: string[]): string {
   return args.join("/");
+};
+
+/**
+ * Injects a dynamic value into a translation string by replacing a specific placeholder - {replace}.
+ *
+ * @param text The localised string containing the `{replace}` placeholder.
+ * @param replacement The dynamic string to inject into the text.
+ */
+export function interpolate(text: string, replacement: string): string {
+  return text.replace("{replace}", replacement);
 };

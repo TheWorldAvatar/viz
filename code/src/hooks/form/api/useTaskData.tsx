@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent";
 import { RegistryTaskOption, SparqlResponseField } from "types/form";
+import { BULK_IDENTIFIER } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 interface UseTaskDataResult {
@@ -46,7 +47,7 @@ export function useTaskData(
             }
         };
 
-        if (id) {
+        if (id && id != BULK_IDENTIFIER) {
             fetchTask();
         }
     }, [id, setIsFetching]);

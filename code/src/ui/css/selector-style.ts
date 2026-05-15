@@ -36,7 +36,7 @@ export const selectorStyles: StylesConfig<
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     borderRadius: "0.2rem",
     margin: "0.25rem 0",
-    minWidth: "100%",
+    minWidth: "fit-content",
     border: "1px solid var(--border)",
     zIndex: 99999,
     overflow: "visible",
@@ -86,11 +86,13 @@ export const selectorStyles: StylesConfig<
   option: (provided, { isDisabled, isSelected, isFocused }) => {
     return {
       ...provided,
-      backgroundColor: isFocused
-        ? "var(--background-tertiary)"
-        : isSelected
-          ? "var(--muted)"
-          : "var(--muted)",
+      backgroundColor: isDisabled ?
+        "var(--error-background)"
+        : isFocused
+          ? "var(--background-tertiary)"
+          : isSelected
+            ? "var(--muted)"
+            : "var(--muted)",
       color: "var(--foreground)",
       fontWeight: isSelected ? "600" : "400",
       cursor: isDisabled ? "not-allowed" : "default",

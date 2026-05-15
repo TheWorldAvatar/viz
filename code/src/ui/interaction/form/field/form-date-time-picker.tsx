@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import styles from "./field.module.css";
 
+import useFormSession from "hooks/form/useFormSession";
+import { useDictionary } from "hooks/useDictionary";
 import { FieldError, UseFormReturn, useWatch } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
-  FORM_STATES,
-  getRegisterOptions,
+  getRegisterOptions
 } from "ui/interaction/form/form-utils";
 import DateInput from "ui/interaction/input/date-input";
-import { getNormalizedDate, getUTCDate } from "utils/client-utils";
+import { getLocaleDatePattern, getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
-import { useDictionary } from "hooks/useDictionary";
 
 interface FormDateTimePickerProps {
   field: PropertyShape;
@@ -32,6 +32,9 @@ export default function FormDateTimePicker(
   const dict = useDictionary();
   const dateType: string = "date";
   const timeType: string = "time";
+
+  const { formType } = useFormSession();
+
   const watchedDateValue: string = useWatch({
     control: props.form.control,
     name: props.field.fieldId
@@ -51,13 +54,13 @@ export default function FormDateTimePicker(
   let inputType: string;
   if (props.field.datatype === dateType) {
     inputType = dateType;
-    formatLabel = "YYYY/MM/DD";
+    formatLabel = getLocaleDatePattern();
   } else if (props.field.datatype === timeType) {
     inputType = timeType;
     formatLabel = "HH:MM";
   } else {
     inputType = "datetime-local";
-    formatLabel = "DD/MM/YYYY HH:MM";
+    formatLabel = `${getLocaleDatePattern()} HH:MM`;
   }
   const isOptionalDateField: boolean =
     inputType === dateType && Number(props.field.minCount?.[VALUE_KEY]) === 0;
@@ -102,13 +105,14 @@ export default function FormDateTimePicker(
             props.field.fieldId,
             getRegisterOptions(
               props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE),
+              formType,
               dict
             )
           )}
         >
           <DateInput
             mode="single"
+            ariaLabel={props.field.name[VALUE_KEY]}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             placement="bottom"
@@ -125,12 +129,12 @@ export default function FormDateTimePicker(
             }`}
           type={inputType}
           readOnly={props.options?.disabled}
-          aria-label={props.field.name[VALUE_KEY]}
+          aria-label={interpolate(dict.action.selectItem, props.field.name[VALUE_KEY])}
           {...props.form.register(
             props.field.fieldId,
             getRegisterOptions(
               props.field,
-              props.form.getValues(FORM_STATES.FORM_TYPE),
+              formType,
               dict
             )
           )}

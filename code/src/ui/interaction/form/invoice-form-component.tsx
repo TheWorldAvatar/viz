@@ -16,6 +16,7 @@ import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { interpolate } from "utils/client-utils";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -34,7 +35,7 @@ export default function InvoiceFormComponent(
     props: Readonly<InvoiceFormComponentProps>
 ) {
     return (
-        <FormSessionContextProvider entityType={props.entityType} accountType={props.accountType}>
+        <FormSessionContextProvider formType={FormTypeMap.INVOICE} entityType={props.entityType} accountType={props.accountType}>
             <InvoiceFormContents {...props} />
         </FormSessionContextProvider>
     );
@@ -43,13 +44,13 @@ export default function InvoiceFormComponent(
 function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     const dict: Dictionary = useDictionary();
     const router = useRouter();
-    const { refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
+    const { refreshId, refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
     const { invoiceAccountFilter } = useFormSession();
 
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
-        refreshFlag,
+        refreshId,
         LifecycleStageMap.BILLABLE,
         props.tableColumnOptions,
         invoiceAccountFilter,
@@ -70,7 +71,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     size="icon"
                     iconSize="small"
                     tooltipPosition="right"
-                    tooltipText={dict.action.backTo.replace("{replace}", props.entityType)}
+                    tooltipText={interpolate(dict.action.backTo, props.entityType)}
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>
@@ -80,19 +81,33 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         (<FormComponent
                             formRef={formRef}
                             entityType={FormTypeMap.INVOICE}
-                            formType={FormTypeMap.INVOICE}
                             accountType={props.accountType}
                             selectedRowIds={tableDescriptor.selectedRowIds}
                         />
                         )}
                 </div>
                 {invoiceAccountFilter && <section>
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
+                    <div className="flex flex-col md:flex-row gap-2 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (
                             <ColumnToggle
                                 columns={tableDescriptor.table.getAllLeafColumns()}
                             />
                         )}
+                        {tableDescriptor.data?.length > 0 && (
+                            <Button
+                                leftIcon="filter_list_off"
+                                aria-label={dict.action.clearAllFilters}
+                                iconSize="medium"
+                                className="mt-1"
+                                disabled={tableDescriptor.filters.every((filter) => filter.id === invoiceAccountFilter.id || (filter.value as string[])?.length === 0)}
+                                size="icon"
+                                onClick={() => {
+                                    tableDescriptor.table.resetColumnFilters();
+                                    tableDescriptor.table.resetRowSelection();
+                                }}
+                                tooltipText={dict.action.clearAllFilters}
+                                variant="destructive"
+                            />)}
                     </div>
                     {!refreshFlag && !tableDescriptor.isLoading && <div>
                         {tableDescriptor.data?.length > 0 && (

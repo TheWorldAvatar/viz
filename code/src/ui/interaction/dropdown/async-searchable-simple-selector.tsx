@@ -16,8 +16,10 @@ interface AsyncSearchableSimpleSelectorProps {
     options: (_inputValue: string) => Promise<SelectOptionType[]>;
     initialValue: SelectOptionType;
     onChange: (_value: SelectOptionType | null) => void;
+    ariaLabel: string;
     isDisabled?: boolean;
     noOptionMessage?: string;
+    menuPortalTarget?: HTMLElement
 }
 
 /**
@@ -27,8 +29,10 @@ interface AsyncSearchableSimpleSelectorProps {
  * @param options A function to return options as a promise based on the search value.
  * @param {SelectOptionType} initialValue The initial option.
  * @param onChange Function called when a selection is made.
+ * @param {string} ariaLabel Parameter to set the aria-label attribute for accessibility.
  * @param {boolean} isDisabled Optional flag to disable the selector.
  * @param {string} noOptionMessage Optional message to display when no options are available.
+ * @param {HTMLElement} menuPortalTarget Optional target element to attach the menu. May be undefined.
  */
 export default function AsyncSearchableSimpleSelector(
     props: Readonly<AsyncSearchableSimpleSelectorProps>
@@ -71,11 +75,14 @@ export default function AsyncSearchableSimpleSelector(
             value={selectedOption}
             onChange={handleChange}
             loadOptions={props.options}
+            menuPortalTarget={props.menuPortalTarget}
             defaultOptions
             isSearchable
+            isOptionDisabled={(option) => option.disabled}
             isDisabled={props.isDisabled}
             noOptionsMessage={() => props.noOptionMessage ?? dict.message.noOptions}
             components={{ MenuList }}
+            aria-label={props.ariaLabel}
         />
     );
 }
