@@ -10,11 +10,13 @@ import { Dictionary } from 'types/dictionary';
 import { TimeSeries } from 'types/timeseries';
 import LoadingSpinner from 'ui/graphic/loader/spinner';
 import FeatureSelector from 'ui/interaction/dropdown/feature-selector';
-import { setSelectedFeature } from 'utils/client-utils';
+import { setSelectedFeature, highlightFeature } from 'utils/client-utils';
 import { useDictionary } from 'hooks/useDictionary';
 import AttributeRoot from './attribute-root';
 import InfoTabs from './info-tabs';
 import TimeSeriesPanel from './time-series-panel';
+import { Map } from "mapbox-gl";
+import { DataStore } from 'io/data/data-store';
 
 interface InfoTreeProps {
   attributes: AttributeGroup;
@@ -27,6 +29,8 @@ interface InfoTreeProps {
     setActiveTab: React.Dispatch<React.SetStateAction<number>>;
   };
   features: MapFeaturePayload[];
+  map: Map;
+  dataStore: DataStore;
 }
 
 /**
@@ -72,10 +76,11 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
 
     // If there are multiple features clicked, activate feature selector to choose only one
     if (props.features.length > 1) {
-      return <FeatureSelector features={props.features} />;
+      return <FeatureSelector features={props.features} map={props.map} dataStore={props.dataStore} />;
     } else if (props.features.length === 1) {
       // When only feature is available, set its properties
-      setSelectedFeature(props.features[0], dispatch);
+      setSelectedFeature(props.features[0], props.map, dispatch);
+      highlightFeature(props.features[0], props.map, props.dataStore);
     }
     // If active tab is 0, render the Metadata Tree
     if (props.attributes && props.activeTab.index === 0) {

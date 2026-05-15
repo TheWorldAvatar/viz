@@ -31,7 +31,7 @@ interface LayerTreeEntryProps {
   layer: MapLayer;
   depth: number;
   currentGrouping: string;
-  handleLayerVisibility: (_layerIds: string, _isVisible: boolean) => void;
+  handleLayerVisibility: (_layer: MapLayer, _isVisible: boolean) => void;
 }
 
 /**
@@ -90,9 +90,9 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         currentGroupingView === ""
           ? beforeVisibleState
           : layer.grouping === currentGroupingView
-          ? isExpanded
-          : true;
-      toggleMapLayerVisibility(layer.ids, visibleState);
+            ? isExpanded
+            : true;
+      toggleMapLayerVisibility(layer, visibleState);
     });
   };
 
@@ -122,13 +122,19 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
    * Currently visible layers will become hidden.
    * Currently hidden layers will become shown.
    */
-  const toggleMapLayerVisibility = (layerIds: string, isVisible: boolean) => {
+  const toggleMapLayerVisibility = (layer: MapLayer, isVisible: boolean) => {
     // Split layer IDs in case there are multiple
-    layerIds.split(" ").forEach((id) => {
+    layer.ids.forEach((id) => {
       if (isVisible) {
         props.map?.setLayoutProperty(id, "visibility", "none");
       } else {
         props.map?.setLayoutProperty(id, "visibility", "visible");
+      }
+    });
+
+    layer.highlightLayerIds.forEach((id) => {
+      if (isVisible) {
+        props.map?.setLayoutProperty(id, "visibility", "none");
       }
     });
   };
@@ -141,7 +147,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
       // This state should be the inverse of the toggled state
       // If we want to switch off the layer, it should start as true
       const visibleState: boolean = layer.grouping !== currentView;
-      toggleMapLayerVisibility(layer.ids, visibleState);
+      toggleMapLayerVisibility(layer, visibleState);
     });
     // Reorder the groupings so that the selected grouping is always first and this state is saved
     const selectedIndex = groupings.indexOf(currentView);
@@ -164,7 +170,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
   /** A method to open the search modal on click.
    */
   const openSearchModal = () => {
-    const layerIds: string[] = group.layers.map((layer) => layer.ids);
+    const layerIds: string[] = group.layers.map((layer) => layer.ids).flat();
     // Add filter layer IDs
     dispatch(setFilterLayerIds(layerIds));
     // Reset filtered features state when opened
@@ -225,10 +231,10 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
         )}
       </div>
 
-      {/* Conditionally show subgroups when expanded */}
+      {/* Conditionally show subgroups when expanded, highlight layers are hidden */}
       {isExpanded && (
         <div className={styles.treeEntryContent}>
-          {group.layers.map((layer) => {
+          {group.layers.filter(layer => !layer.isAHighlightLayer).map((layer) => {
             if (
               groupings.length === 0 ||
               layer.grouping === currentGroupingView
@@ -274,7 +280,7 @@ export default function LayerTreeHeader(props: Readonly<LayerTreeHeaderProps>) {
  */
 function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
   const layer: MapLayer = props.layer;
-  const firstLayerId: string = layer.ids.split(" ")[0];
+  const firstLayerId: string = layer.ids[0];
   // Size of left hand indentation
   const spacing: string = props.depth * 0.8 + "rem";
 
@@ -292,7 +298,7 @@ function LayerTreeEntry(props: Readonly<LayerTreeEntryProps>) {
    */
   const toggleLayerVisibility = () => {
     // Toggle visibility on the map based on current state
-    props.handleLayerVisibility(layer.ids, isVisible);
+    props.handleLayerVisibility(layer, isVisible);
     // Get current visibility state of the layer after any toggling
     setIsVisible(
       props.map?.getLayoutProperty(firstLayerId, "visibility") === "visible"

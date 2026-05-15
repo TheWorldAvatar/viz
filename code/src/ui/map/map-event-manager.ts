@@ -66,6 +66,7 @@ export default class MapEventManager {
             name: twaFeature.properties.name ?? (twaFeature.id !== undefined ? "Feature #" + twaFeature.id : "Feature"),
             stack: dataStore?.getStackEndpoint(feature.source), // Store the associated stack if available
             layer: dataStore?.getLayerWithID(feature.layer.id)?.name, // Store the layer's public-facing name
+            layerId: feature.layer.id, // used to highlight feature from the correct layer
           };
         });
 
@@ -129,13 +130,13 @@ export default class MapEventManager {
     const map: mapboxgl.Map = this.map;
     dataStore?.getLayerList().map(layer => {
       if (layer.hasInjectableProperty(Interactions.HOVER)) {
-        const hoverProperty = layer.getInjectableProperty(Interactions.HOVER).style ;
+        const hoverProperty = layer.getInjectableProperty(Interactions.HOVER).style;
         // Updates the conditional paint property with the IRI of the currently hovering feature
         this.addEventListener({ type: "mousemove", target: this.map }, (event) => {
           const e = event as MapMouseEvent;
           const feature = map.queryRenderedFeatures(e.point)[0];
           const twaFeature = feature as unknown as TWAFeature;
-          const prevIri: string = hoverProperty[1][2] as string; 
+          const prevIri: string = hoverProperty[1][2] as string;
           if (twaFeature.properties?.iri != prevIri) {
             hoverProperty[1][2] = twaFeature.properties?.iri as string;
           }
