@@ -163,6 +163,8 @@
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",
     "invalidPricingModelInstructions": "Das Preismodell wurde erfolgreich hinzugefügt, aber das Aufgabendatum liegt außerhalb des gültigen Zeitraums. Bitte weisen Sie für diesen Zeitraum ein gültiges Preismodell zu.",
+    "invalidExclusiveRange": "Ungültiger Bereich! Der zweite Wert muss streng größer sein als der erste.",
+    "invalidInclusiveRange": "Ungültiger Bereich! Der zweite Wert muss streng größer oder gleich dem ersten sein.",
     "loading": "Wird geladen, bitte warten...",
     "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein oder wählen Sie einen Ort auf der Karte aus.",
     "noData": "Keine Daten verfügbar",
@@ -258,6 +260,7 @@
     "description": "Beschreibung",
     "eventId": "Ereignis ID",
     "file": "Datei",
+    "filterInputFor": "Filter-Eingabe für {replace}",
     "lastModified": "Zuletzt geändert",
     "history": "Historie",
     "available": "Verfügbar",
@@ -283,6 +286,8 @@
     "pendingExecution": "Ausstehende Ausführung",
     "quickView": "Schnellansicht",
     "quickViewFor": "Schnellansicht für {replace}",
+    "lowerBoundFor": "Untergrenze für {replace}",
+    "upperBoundFor": "Obergrenze für {replace}",
     "serviceCharge": "Servicegebühren",
     "serviceCostBreakdown": "Aufschlüsselung der Servicekosten",
     "scheduleType": "Art des Zeitplans",
@@ -294,6 +299,16 @@
     "total": "insgesamt",
     "user": "Benutzer",
     "error": "Fehlerhaft (Übermittlung war fehlerhaft)",
-    "loading": "Laden"
+    "loading": "Laden",
+    "equal": "Gleich",
+    "notEqual": "Ist nicht gleich",
+    "greaterThan": "Größer als",
+    "greaterThanOrEqual": "Größer als oder gleich",
+    "lessThan": "Weniger als",
+    "lessThanOrEqual": "Kleiner oder gleich",
+    "between": "Zwischen",
+    "inclusive": "Inklusiv",
+    "exclusive": "Exklusiv",
+    "value": "Wert"
   }
 }
