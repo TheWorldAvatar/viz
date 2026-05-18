@@ -12,11 +12,11 @@ import { TableColumnOption } from "types/settings";
 import ColumnToggle from "ui/graphic/table/action/column-toggle";
 import RegistryTable from "ui/graphic/table/registry/registry-table";
 import { FormComponent } from "ui/interaction/form/form";
+import { interpolate } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { interpolate } from "utils/client-utils";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -93,21 +93,20 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                                 columns={tableDescriptor.table.getAllLeafColumns()}
                             />
                         )}
-                        {tableDescriptor.data?.length > 0 && (
-                            <Button
-                                leftIcon="filter_list_off"
-                                aria-label={dict.action.clearAllFilters}
-                                iconSize="medium"
-                                className="mt-1"
-                                disabled={tableDescriptor.filters.every((filter) => filter.id === invoiceAccountFilter.id || (filter.value as string[])?.length === 0)}
-                                size="icon"
-                                onClick={() => {
-                                    tableDescriptor.table.resetColumnFilters();
-                                    tableDescriptor.table.resetRowSelection();
-                                }}
-                                tooltipText={dict.action.clearAllFilters}
-                                variant="destructive"
-                            />)}
+                        <Button
+                            leftIcon="filter_list_off"
+                            aria-label={dict.action.clearAllFilters}
+                            iconSize="medium"
+                            className="mt-1"
+                            disabled={tableDescriptor.filters.every((filter) => filter.id === invoiceAccountFilter.id || (filter.value as string[])?.length === 0)}
+                            size="icon"
+                            onClick={() => {
+                                tableDescriptor.table.resetColumnFilters();
+                                tableDescriptor.table.resetRowSelection();
+                            }}
+                            tooltipText={dict.action.clearAllFilters}
+                            variant="destructive"
+                        />
                     </div>
                     {!refreshFlag && !tableDescriptor.isLoading && <div>
                         {tableDescriptor.data?.length > 0 && (
