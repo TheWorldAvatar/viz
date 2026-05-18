@@ -1,12 +1,13 @@
 "use client";
 
 import Icon from '@mui/material/Icon';
+import { ContextItemType } from 'types/context-menu';
 import Tooltip from 'ui/interaction/tooltip/tooltip';
 
 export interface ContextItemDefinition {
     name: string,
     description?: string,
-    id: string
+    id: ContextItemType,
     toggled?: boolean,
     callback?: (_id: string) => void
 }

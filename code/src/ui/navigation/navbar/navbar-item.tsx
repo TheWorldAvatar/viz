@@ -21,6 +21,7 @@ export interface NavBarItemProps {
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   handleClick?: React.MouseEventHandler<HTMLDivElement>;
   isMenuExpanded?: boolean;
+  className?: string;
 }
 
 /**
@@ -34,6 +35,9 @@ export interface NavBarItemProps {
  * @param {string} caption Optional description text. Ignored in mobile mode.
  * @param setIsOpen Optional dispatch function for setting the open state.
  * @param handleClick Overrides the default redirect event behaviour on click.
+ * @param {boolean} isMenuExpanded Indicates if the menu is expanded, which may affect styling and caption visibility.
+ * @param {string} className Optional additional class names for styling.
+ * 
  */
 export function NavBarItem(
   props: Readonly<NavBarItemProps>
@@ -63,7 +67,7 @@ export function NavBarItem(
           : props.isMenuExpanded
             ? "p-4 gap-4"
             : "p-3 rounded-full"
-          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring`}
+          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring ${props.className ?? ""}`}
         onClick={props.handleClick ?? handleClick}
       >
         <div

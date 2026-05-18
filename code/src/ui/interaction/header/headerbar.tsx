@@ -14,6 +14,7 @@ import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavMenu } from "ui/navigation/navbar/nav-menu";
 import { usePathname } from "next/navigation";
+import { ContextItemMap } from "types/context-menu";
 
 interface HeaderBarProps {
   pages: OptionalPage[];
@@ -33,7 +34,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
     return {
       name: contextDict.navBar.title,
       description: contextDict.navBar.tooltip,
-      id: "navbar",
+      id: ContextItemMap.NAVBAR,
       toggled: true,
     };
   }, []);

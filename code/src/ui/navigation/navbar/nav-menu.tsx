@@ -15,6 +15,7 @@ import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
+import { ContextItemMap } from "types/context-menu";
 
 
 export interface NavMenuProps {
@@ -116,8 +117,8 @@ function NavMenuContents(
   const isPermitted = usePermissionGuard();
   const navMenuRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const ribbonState = useSelector(selectItem("table-ribbon"));
-  const mapRibbonState = useSelector(selectItem("ribbon"));
+  const ribbonState = useSelector(selectItem(ContextItemMap.TABLE_RIBBON));
+  const mapRibbonState = useSelector(selectItem(ContextItemMap.MAP_CONTROLS_RIBBON));
 
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -356,6 +357,7 @@ function NavMenuContents(
       )}
       {props.isMobile && mapRibbonState != null && (
         <NavBarItem
+          className="flex xl:hidden"
           tooltip={dict.context.controlRibbon.title}
           title={dict.context.controlRibbon.title}
           icon={mapRibbonState.toggled ? "check_box" : "check_box_outline_blank"}

@@ -20,6 +20,7 @@ import {
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+import { ContextItemMap } from "types/context-menu";
 
 
 interface RegistryTableComponentProps {
@@ -52,7 +53,7 @@ export default function RegistryTableComponent(
     return {
       name: dict.context.tableRibbon.title,
       description: dict.context.tableRibbon.tooltip,
-      id: "table-ribbon",
+      id: ContextItemMap.TABLE_RIBBON,
       toggled: true,
     };
   }, [dict]);

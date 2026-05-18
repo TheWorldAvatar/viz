@@ -29,6 +29,7 @@ import { scenarioTypeIcon } from '../modal/scenario';
 import RibbonComponentClick from './components/ribbon-component-click';
 import RibbonComponentOptions from './components/ribbon-component-options';
 import RibbonComponentToggle from './components/ribbon-component-toggle';
+import { ContextItemMap } from 'types/context-menu';
 
 // Type definition for Ribbon parameters
 export interface RibbonProps {
@@ -50,7 +51,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
     return {
       name: dict.context.controlRibbon.title,
       description: dict.context.controlRibbon.tooltip,
-      id: "ribbon",
+      id: ContextItemMap.MAP_CONTROLS_RIBBON,
       toggled: true,
     };
   }, []);
