@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
@@ -43,6 +43,17 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
   const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
 
+  useLayoutEffect(() => {
+    const stored: string | null = localStorage.getItem("viz:nav-menu-expanded");
+    if (stored !== null) setIsMenuExpanded(stored === "true");
+  }, []);
+
+  const handleMenuToggle = () => {
+    const next: boolean = !isMenuExpanded;
+    setIsMenuExpanded(next);
+    localStorage.setItem("viz:nav-menu-expanded", String(next));
+  };
+
   if (props.isMobile) {
     return (
       <nav className="flex mr-1.5">
@@ -59,7 +70,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         >
           <NavMenuContents
             {...props}
-            isMenuExpanded={isMenuExpanded}
+            isMenuExpanded={true}
             setFileModalSettings={setFileModalSettings}
             setIsFileUploadModalOpen={setIsFileModalOpen}
             setIsMenuOpen={setIsMenuOpen}
@@ -85,7 +96,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         setFileModalSettings={setFileModalSettings}
         setIsFileUploadModalOpen={setIsFileModalOpen}
         setIsMenuOpen={setIsMenuOpen}
-        handleMenuToggle={() => setIsMenuExpanded(!isMenuExpanded)}
+        handleMenuToggle={handleMenuToggle}
       />
       {isFileModalOpen && (
         <FileModal
