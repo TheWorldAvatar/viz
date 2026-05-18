@@ -87,12 +87,27 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         )}
                 </div>
                 {invoiceAccountFilter && <section>
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
+                    <div className="flex flex-col md:flex-row gap-2 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (
                             <ColumnToggle
                                 columns={tableDescriptor.table.getAllLeafColumns()}
                             />
                         )}
+                        {tableDescriptor.data?.length > 0 && (
+                            <Button
+                                leftIcon="filter_list_off"
+                                aria-label={dict.action.clearAllFilters}
+                                iconSize="medium"
+                                className="mt-1"
+                                disabled={tableDescriptor.filters.every((filter) => filter.id === invoiceAccountFilter.id || (filter.value as string[])?.length === 0)}
+                                size="icon"
+                                onClick={() => {
+                                    tableDescriptor.table.resetColumnFilters();
+                                    tableDescriptor.table.resetRowSelection();
+                                }}
+                                tooltipText={dict.action.clearAllFilters}
+                                variant="destructive"
+                            />)}
                     </div>
                     {!refreshFlag && !tableDescriptor.isLoading && <div>
                         {tableDescriptor.data?.length > 0 && (

@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.72.7
+
+### Changes
+
+- Added clear all filter button in the invoice form table ribbon
+
 ## 5.72.6
 
 ### Changes
