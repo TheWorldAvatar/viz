@@ -10,7 +10,7 @@ import styles from './ribbon.module.css';
 import { addItem, selectItem } from 'state/context-menu-slice';
 import { getScenarioName, getScenarioType } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
-import { ImageryOption, MapSettings } from 'types/settings';
+import { ImageryOption, MapSettings, ContextItemMap } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
 import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
 import {
@@ -29,7 +29,6 @@ import { scenarioTypeIcon } from '../modal/scenario';
 import RibbonComponentClick from './components/ribbon-component-click';
 import RibbonComponentOptions from './components/ribbon-component-options';
 import RibbonComponentToggle from './components/ribbon-component-toggle';
-import { ContextItemMap } from 'types/context-menu';
 
 // Type definition for Ribbon parameters
 export interface RibbonProps {

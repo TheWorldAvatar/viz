@@ -8,13 +8,13 @@ import { OptionalPage } from "io/config/optional-pages";
 import { Routes } from "io/config/routes";
 import { useEffect, useMemo } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
-import { UISettings } from "types/settings";
+import { UISettings, ContextItemMap } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavMenu } from "ui/navigation/navbar/nav-menu";
 import { usePathname } from "next/navigation";
-import { ContextItemMap } from "types/context-menu";
+
 
 interface HeaderBarProps {
   pages: OptionalPage[];

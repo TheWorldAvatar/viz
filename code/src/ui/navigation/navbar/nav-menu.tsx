@@ -9,13 +9,14 @@ import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
 import { selectItem, toggleItem } from "state/context-menu-slice";
 import { Dictionary } from "types/dictionary";
-import { NavBarItemSettings, UISettings } from "types/settings";
+import { NavBarItemSettings, UISettings, ContextItemMap } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
-import { ContextItemMap } from "types/context-menu";
+import { ReduxState } from "app/store";
+import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 
 
 export interface NavMenuProps {
@@ -117,8 +118,8 @@ function NavMenuContents(
   const isPermitted = usePermissionGuard();
   const navMenuRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const ribbonState = useSelector(selectItem(ContextItemMap.TABLE_RIBBON));
-  const mapRibbonState = useSelector(selectItem(ContextItemMap.MAP_CONTROLS_RIBBON));
+  const tableRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.TABLE_RIBBON));
+  const mapRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.MAP_CONTROLS_RIBBON));
 
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -346,13 +347,13 @@ function NavMenuContents(
           );
         }
       })}
-      {props.isMobile && ribbonState != null && (
+      {props.isMobile && tableRibbonState != null && (
         <NavBarItem
           tooltip={dict.context.tableRibbon.title}
           title={dict.context.tableRibbon.title}
-          icon={ribbonState.toggled ? "check_box" : "check_box_outline_blank"}
+          icon={tableRibbonState.toggled ? "check_box" : "check_box_outline_blank"}
           isMobile={props.isMobile}
-          handleClick={() => dispatch(toggleItem(ribbonState.id))}
+          handleClick={() => dispatch(toggleItem(tableRibbonState.id))}
         />
       )}
       {props.isMobile && mapRibbonState != null && (
