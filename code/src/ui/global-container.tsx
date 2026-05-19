@@ -30,7 +30,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const [popup, setPopup] = useState<boolean>(false);
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
-  const { contextMenuVisible, x: contextMenuX, y: contextMenuY, closeContextMenu } = useContextMenu();
+  const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -70,7 +70,6 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
         <ContextMenu
           x={contextMenuX}
           y={contextMenuY}
-          onClose={closeContextMenu}
         />
       )}
     </Provider>

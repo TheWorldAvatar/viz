@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
 import { connect } from 'react-redux';
-
 import { ReduxState } from 'app/store';
 import { addItem, removeItem, toggleItem } from 'state/context-menu-slice';
 import ContextItem, { ContextItemDefinition } from './context-item';
@@ -11,7 +9,6 @@ import ContextItem, { ContextItemDefinition } from './context-item';
 interface ContextMenuProps {
   x: number,
   y: number,
-  onClose: () => void,
   items?: ContextItemDefinition[],
   addItem?: (_item: ContextItemDefinition) => void,
   toggleItem?: (id: string) => void
@@ -25,21 +22,9 @@ interface ContextMenuProps {
  * the global Redux state so it that it persists across the application lifecycle.
  */
 function ContextMenu(props: Readonly<ContextMenuProps>) {
-
-  useEffect(() => {
-    const handleLeftClick = () => {
-      props.onClose();
-    };
-    document.addEventListener("click", handleLeftClick);
-    return () => {
-      document.removeEventListener("click", handleLeftClick);
-    };
-  }, []);
-
   if (props.items == null || props.items.length === 0) {
     return null;
   }
-
   return (
     <div
       className="absolute min-w-50 flex flex-col p-2.5 z-1000 bg-muted border border-border rounded shadow-lg"

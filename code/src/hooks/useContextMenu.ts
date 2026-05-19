@@ -1,45 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 interface useContextMenuReturn {
   contextMenuVisible: boolean;
   x: number;
   y: number;
-  closeContextMenu: () => void;
 }
 
 /**
  * Opens a page-level context menu on the window `contextmenu` event (desktop mouse right click)
  */
 export function useContextMenu(): useContextMenuReturn {
-  const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number; }>({ x: 0, y: 0 });
-
-  const openContextMenuAtPageCoords = useCallback((x: number, y: number) => {
-    setContextMenuVisible(true);
-    setContextMenuPosition({ x, y });
-  }, []);
-
-  const closeContextMenu = () => setContextMenuVisible(false);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      openContextMenuAtPageCoords(e.pageX, e.pageY);
+      setContextMenu({ x: e.pageX, y: e.pageY });
     };
-
     window.addEventListener("contextmenu", handleContextMenu);
-    return () => {
-      window.removeEventListener("contextmenu", handleContextMenu);;
-    };
-  }, [openContextMenuAtPageCoords]);
+    return () => window.removeEventListener("contextmenu", handleContextMenu);
+  }, []);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [contextMenu]);
 
   return {
-    contextMenuVisible,
-    x: contextMenuPosition.x,
-    y: contextMenuPosition.y,
-    closeContextMenu,
+    contextMenuVisible: contextMenu !== null,
+    x: contextMenu?.x,
+    y: contextMenu?.y,
   };
 }
