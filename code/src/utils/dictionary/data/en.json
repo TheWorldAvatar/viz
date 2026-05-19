@@ -162,6 +162,8 @@
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",
+    "invalidExclusiveRange": "Invalid range! Second value must be strictly greater than the first.",
+    "invalidInclusiveRange": "Invalid range! Second value must be strictly greater than or equal to the first.",
     "invalidPricingModelInstructions": "The pricing model has been successfully added but the task date is outside its valid range. Please reassign a valid pricing model for this period.",
     "loading": "Loading, please wait...",
     "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually or select a location from the map.",
@@ -258,6 +260,7 @@
     "description": "Description",
     "eventId": "Event ID",
     "file": "File",
+    "filterInputFor": "Filter input for {replace}",
     "lastModified": "Last modified",
     "history": "History",
     "available": "available",
@@ -283,6 +286,8 @@
     "pendingExecution": "pending execution",
     "quickView": "Quick view",
     "quickViewFor": "Quick view for {replace}",
+    "lowerBoundFor": "Lower bound for {replace}",
+    "upperBoundFor": "Upper bound for {replace}",
     "serviceCharge": "Service charges",
     "serviceCostBreakdown": "Service cost breakdown",
     "scheduleType": "schedule type",
@@ -294,6 +299,16 @@
     "total": "Total",
     "user": "User",
     "error": "Error",
-    "loading": "Loading"
+    "loading": "Loading",
+    "equal": "Equals",
+    "notEqual": "Does not equal",
+    "greaterThan": "Greater than",
+    "greaterThanOrEqual": "Greater than or equal to",
+    "lessThan": "Less than",
+    "lessThanOrEqual": "Less than or equal to",
+    "between": "Between",
+    "inclusive": "Inclusive",
+    "exclusive": "Exclusive",
+    "value": "Value"
   }
 }
