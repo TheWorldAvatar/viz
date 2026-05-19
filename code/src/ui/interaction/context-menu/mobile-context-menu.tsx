@@ -33,6 +33,7 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
             )}
             {mapRibbonState != null && (
                 <ContextItem
+                    className='flex xl:hidden'
                     name={dict.context.controlRibbon.title}
                     description={dict.context.controlRibbon.tooltip}
                     id={mapRibbonState.id}

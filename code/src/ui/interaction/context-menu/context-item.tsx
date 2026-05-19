@@ -10,6 +10,7 @@ export interface ContextItemDefinition {
     id: ContextItemType,
     toggled?: boolean,
     callback?: (_id: string) => void
+    className?: string
 }
 
 export default function ContextItem(props: Readonly<ContextItemDefinition>) {
@@ -21,7 +22,7 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
     // Return item for rendering
     return (
         <Tooltip text={props.description} placement="bottom-start">
-            <div className="w-full h-9 px-1 flex justify-center items-center cursor-pointer align-middle hover:bg-ring" onClick={handleClick}>
+            <div className={`w-full h-9 px-1 flex justify-center items-center cursor-pointer align-middle hover:bg-ring ${props.className || ''}`} onClick={handleClick}>
                 <span className="flex-1 text-sm">{props.name}</span>
                 {props.toggled != null &&
                     <Icon className="w-auto h-full  flex text-center justify-center items-center material-symbols-outlined">
