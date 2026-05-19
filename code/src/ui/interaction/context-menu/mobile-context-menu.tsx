@@ -21,7 +21,7 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
     if (!props.isMobile) return null;
 
     return (
-        <div className=''>
+        <div className="mt-auto pt-4 border-t border-border flex flex-col gap-2">
             {tableRibbonState != null && (
                 <ContextItem
                     name={dict.context.tableRibbon.title}
