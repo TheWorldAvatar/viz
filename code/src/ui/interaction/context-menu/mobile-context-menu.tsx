@@ -33,8 +33,8 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
             )}
             {mapRibbonState != null && (
                 <ContextItem
-                    name={dict.context.controlsRibbon.title}
-                    description={dict.context.controlsRibbon.tooltip}
+                    name={dict.context.controlRibbon.title}
+                    description={dict.context.controlRibbon.tooltip}
                     id={mapRibbonState.id}
                     toggled={mapRibbonState.toggled}
                     callback={() => dispatch(toggleItem(mapRibbonState.id))}
