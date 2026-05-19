@@ -1,22 +1,19 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDictionary } from "hooks/useDictionary";
 import { OptionalPage } from "io/config/optional-pages";
 import { Modules, Routes } from "io/config/routes";
-import { selectItem, toggleItem } from "state/context-menu-slice";
 import { Dictionary } from "types/dictionary";
-import { NavBarItemSettings, UISettings, ContextItemMap } from "types/settings";
+import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
-import { ReduxState } from "app/store";
-import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
+import MobileContextMenu from "ui/interaction/context-menu/mobile-context-menu";
 
 
 export interface NavMenuProps {
@@ -117,10 +114,6 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
   const navMenuRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
-  const tableRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.TABLE_RIBBON));
-  const mapRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.MAP_CONTROLS_RIBBON));
-
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.DASHBOARD
@@ -347,25 +340,7 @@ function NavMenuContents(
           );
         }
       })}
-      {props.isMobile && tableRibbonState != null && (
-        <NavBarItem
-          tooltip={dict.context.tableRibbon.title}
-          title={dict.context.tableRibbon.title}
-          icon={tableRibbonState.toggled ? "check_box" : "check_box_outline_blank"}
-          isMobile={props.isMobile}
-          handleClick={() => dispatch(toggleItem(tableRibbonState.id))}
-        />
-      )}
-      {props.isMobile && mapRibbonState != null && (
-        <NavBarItem
-          className="flex xl:hidden"
-          tooltip={dict.context.controlRibbon.title}
-          title={dict.context.controlRibbon.title}
-          icon={mapRibbonState.toggled ? "check_box" : "check_box_outline_blank"}
-          isMobile={props.isMobile}
-          handleClick={() => dispatch(toggleItem(mapRibbonState.id))}
-        />
-      )}
+      <MobileContextMenu isMobile={props.isMobile} />
     </nav>
   );
 }

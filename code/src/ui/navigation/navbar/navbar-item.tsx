@@ -15,7 +15,7 @@ export interface NavBarItemProps {
   title: string;
   icon: string;
   isMobile: boolean;
-  url?: string;
+  url: string;
   tooltip?: string;
   caption?: string;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,7 +30,7 @@ export interface NavBarItemProps {
  * @param {string} title Title.
  * @param {string} icon Icon to display.
  * @param {boolean} isMobile Indicates if the design should be in mobile mode.
- * @param {string} Optional url Redirects to this url when clicked.
+ * @param {string} url Redirects to this url when clicked.
  * @param {string} tooltip Overrides the existing tooltip text to this url when clicked.
  * @param {string} caption Optional description text. Ignored in mobile mode.
  * @param setIsOpen Optional dispatch function for setting the open state.
