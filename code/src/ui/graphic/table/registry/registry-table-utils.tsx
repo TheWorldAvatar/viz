@@ -19,6 +19,7 @@ import {
   SparqlResponseField
 } from "types/form";
 import { TableColumnOption } from "types/settings";
+import { ComparisonOperatorMap } from "types/table";
 import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
@@ -423,3 +424,46 @@ export async function execReviewBillableAction(
   }
 }
 
+/**
+ * Retrieve the initial numeric filter operator and values based on the input.
+ * For between, the array will be of size 3, while everything else is size 2.
+ *
+ * @param {string[]} input The current list of filter values.
+ */
+export function getInitialNumericFilter(
+  inputs: string[],
+): string[] {
+  if (!inputs) return null;
+  const initialFilters: string[] = [];
+  inputs.forEach(input => {
+    const match: RegExpMatchArray = input.match(/^([a-z]+)(\d*\.?\d+)$/);
+    if (match) {
+      const operatorValue: string = match[1];
+      const numericValue: string = match[2];
+
+      const operatorKey: string = getOperatorKeyByValue(operatorValue);
+
+      // Only add operator if no output has been given
+      if (initialFilters.length == 0) {
+        // Its easy to guess which is between and not
+        initialFilters.push(operatorKey);
+      }
+      // Numeric values must always be return
+      initialFilters.push(numericValue);
+    }
+  });
+  return initialFilters;
+}
+
+/**
+ * Retrieve the operator key based on the value.
+ *
+ * @param {string} value The target value.
+ */
+export function getOperatorKeyByValue(
+  value: string,
+): string {
+  return Object.entries(ComparisonOperatorMap).find(
+    ([_key, val]) => val === value
+  )?.[0];
+}
