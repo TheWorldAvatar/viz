@@ -5,6 +5,7 @@ import { selectItem, toggleItem } from 'state/context-menu-slice';
 import { ContextItemMap } from 'types/settings';
 import { useDictionary } from 'hooks/useDictionary';
 import { Dictionary } from 'types/dictionary';
+import { usePathname } from "next/navigation";
 
 import ContextItem, { ContextItemDefinition } from './context-item';
 
@@ -14,6 +15,7 @@ interface MobileContextMenuProps {
 
 export default function MobileContextMenu(props: Readonly<MobileContextMenuProps>) {
     const dict: Dictionary = useDictionary();
+    const pathname = usePathname();
     const dispatch = useDispatch();
     const tableRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.TABLE_RIBBON));
     const mapRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.MAP_CONTROLS_RIBBON));
@@ -22,7 +24,7 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
     if (tableRibbonState == null && mapRibbonState == null) return null;
 
     return (
-        <div className="mt-auto pt-4 border-t border-border flex flex-col gap-2">
+        <div className={`mt-auto pt-4 border-t border-border flex flex-col gap-2 ${pathname.endsWith("map") && tableRibbonState == null ? "xl:hidden" : ""}`}>
             {tableRibbonState != null && (
                 <ContextItem
                     name={dict.context.tableRibbon.title}
