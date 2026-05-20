@@ -8,12 +8,13 @@ import { OptionalPage } from "io/config/optional-pages";
 import { Routes } from "io/config/routes";
 import { useEffect, useMemo } from "react";
 import { addItem, selectItem } from "state/context-menu-slice";
-import { UISettings } from "types/settings";
+import { UISettings, ContextItemMap } from "types/settings";
 import IconComponent from "ui/graphic/icon/icon";
 import KeycloakUserButton from "ui/interaction/auth/keycloak-user-button";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import { NavMenu } from "ui/navigation/navbar/nav-menu";
 import { usePathname } from "next/navigation";
+
 
 interface HeaderBarProps {
   pages: OptionalPage[];
@@ -33,7 +34,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
     return {
       name: contextDict.navBar.title,
       description: contextDict.navBar.tooltip,
-      id: "navbar",
+      id: ContextItemMap.NAVBAR,
       toggled: true,
     };
   }, []);
@@ -58,7 +59,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <header
       id="headerbar"
-      className="bg-muted border-b-border z-999 flex h-[8dvh] items-center justify-between overflow-hidden border-b"
+      className="bg-muted border-b-border z-999 flex h-[8dvh] items-center justify-between overflow-hidden border-b fade-in-on-motion"
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (

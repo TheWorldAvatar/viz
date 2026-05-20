@@ -1,7 +1,13 @@
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 
-export type ScreenType = "mobile" | "tablet" | "desktop";
+export const ScreenTypeMap = {
+  MOBILE: "mobile",
+  TABLET: "tablet",
+  DESKTOP: "desktop",
+} as const;
+
+export type ScreenType = typeof ScreenTypeMap[keyof typeof ScreenTypeMap];
 
 /**
  * Interface of default settings for landing page.
@@ -131,3 +137,11 @@ export type FileEntry = {
   ext: string;
   size: string;
 };
+
+export const ContextItemMap = {
+  NAVBAR: "navbar",
+  TABLE_RIBBON: "registry-table-ribbon",
+  MAP_CONTROLS_RIBBON: "map-controls-ribbon",
+} as const;
+
+export type ContextItemType = typeof ContextItemMap[keyof typeof ContextItemMap];

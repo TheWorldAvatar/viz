@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "state/context-menu-slice";
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
-import { TableColumnOption } from "types/settings";
+import { TableColumnOption, ContextItemMap } from "types/settings";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
@@ -20,6 +20,7 @@ import {
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
+
 
 
 interface RegistryTableComponentProps {
@@ -52,7 +53,7 @@ export default function RegistryTableComponent(
     return {
       name: dict.context.tableRibbon.title,
       description: dict.context.tableRibbon.tooltip,
-      id: "table-ribbon",
+      id: ContextItemMap.TABLE_RIBBON,
       toggled: true,
     };
   }, [dict]);

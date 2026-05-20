@@ -20,7 +20,7 @@ import {
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
-import { ScreenType } from "types/settings";
+import { ScreenType, ScreenTypeMap } from "types/settings";
 import Button from "ui/interaction/button";
 import { extractDateDisplay, interpolate } from "utils/client-utils";
 import CustomYearsDropdown from "./CustomYearsDropdown";
@@ -95,7 +95,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       ref={popover.refs.setReference}
       className="flex items-center gap-2 relative"
     >
-      {!props.disableMobileView && screenType === "mobile" && (
+      {!props.disableMobileView && screenType === ScreenTypeMap.MOBILE && (
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -107,7 +107,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           {...popover.getReferenceProps()}
         />
       )}
-      {(props.disableMobileView || screenType != "mobile") && (
+      {(props.disableMobileView || screenType !== ScreenTypeMap.MOBILE) && (
         <div className="flex items-center w-full">
           <div className="relative w-full">
             <Icon

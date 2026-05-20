@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.1
+
+### Changes
+
+- Added a new mobile context menu which allows for users to access the context menu items on mobile. The mobile context menu is located inside the navogation menu on mobile (the hamburger menu) and is only visible on mobile screens. This allows users to have access to the context menu items on mobile devices, which was not possible before.
+
 ## 5.73.0
 
 ### Changes

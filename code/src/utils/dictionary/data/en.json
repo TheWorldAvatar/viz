@@ -142,8 +142,8 @@
       "tooltip": "Show / hide navigation"
     },
     "tableRibbon": {
-      "title": "Show ribbon",
-      "tooltip": "Show / hide ribbon"
+      "title": "Show table ribbon",
+      "tooltip": "Show / hide table ribbon"
     }
   },
   "message": {
@@ -310,6 +310,7 @@
     "inclusive": "Inclusive",
     "exclusive": "Exclusive",
     "value": "Value",
+    "settings": "Settings",
     "today": "Today"
   }
 }
