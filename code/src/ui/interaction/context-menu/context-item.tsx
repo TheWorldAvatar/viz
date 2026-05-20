@@ -25,12 +25,12 @@ export default function ContextItem(props: Readonly<ContextItemDefinition>) {
 
     const item = (
         <div
-            className={`w-full h-9 px-1 flex justify-center items-center cursor-pointer align-middle hover:bg-ring ${props.className || ""}`}
+            className={`w-full h-fit py-1 px-1 flex items-center gap-3 cursor-pointer hover:bg-ring ${props.className || ""}`}
             onClick={handleClick}
         >
             <span className="flex-1 text-sm">{props.name}</span>
             {props.toggled != null && (
-                <Icon className="w-auto h-full  flex text-center justify-center items-center material-symbols-outlined">
+                <Icon className="material-symbols-outlined shrink-0">
                     {props.toggled ? "check_box" : "check_box_outline_blank"}
                 </Icon>
             )}

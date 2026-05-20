@@ -148,7 +148,7 @@ function NavMenuContents(
       aria-label={dict.nav.title.primary}
       ref={navMenuRef}
       className={`${props.isMobile
-        ? "flex gap-4 p-2 w-full max-h-[60dvh] overflow-y-auto"
+        ? "flex gap-4 p-2 max-w-3xs max-h-[60dvh] overflow-y-auto"
         : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
       xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"

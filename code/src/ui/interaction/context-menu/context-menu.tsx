@@ -27,7 +27,7 @@ function ContextMenu(props: Readonly<ContextMenuProps>) {
   }
   return (
     <div
-      className="absolute min-w-50 flex flex-col p-2.5 z-1000 bg-muted border border-border rounded shadow-lg"
+      className="absolute min-w-50 max-w-3xs flex flex-col p-2.5 z-1000 bg-muted border border-border rounded shadow-lg"
       style={{
         position: "absolute",
         top: `${props.y}px`,
