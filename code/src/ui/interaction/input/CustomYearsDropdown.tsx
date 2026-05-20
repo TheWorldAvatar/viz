@@ -4,21 +4,18 @@ import { useState } from "react";
 import { DropdownOption, DropdownProps } from "react-day-picker";
 import { YEARS_PER_PAGE } from "utils/constants";
 import Button from "../button";
-import { Dictionary } from "types/dictionary";
-import { useDictionary } from "hooks/useDictionary";
 
 // Custom dropdown component for selecting years in react-day-picker
 // This component implements pagination to show a range of years, with buttons to navigate to the next/previous range.
 export default function CustomYearsDropdown(props: DropdownProps) {
-    const dict: Dictionary = useDictionary();
     const popover = usePopover("bottom-start");
     const transition = useTransitionStyles(popover.context, { duration: 150 });
     const selectedYear: number = Number(props.value);
-    const todayYear: number = new Date().getFullYear();
+    const currentYear: number = new Date().getFullYear();
     const { setIsOpen } = popover;
 
     // Page starts at the currently selected year, or today if no year is selected
-    const [pageStart, setPageStart] = useState(selectedYear || todayYear);
+    const [pageStart, setPageStart] = useState(selectedYear || currentYear);
     const years: number[] = Array.from({ length: YEARS_PER_PAGE }, (_, i) => pageStart + i);
 
     const selectYear = (year: number) => {
@@ -97,17 +94,6 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                                         );
                                     })}
                                 </div>
-                                <Button
-                                    variant="info"
-                                    size="xs"
-                                    onClick={() => {
-                                        setPageStart(todayYear);
-                                        selectYear(todayYear);
-                                    }}
-                                    className="mt-2 w-full h-8 text-sm"
-                                >
-                                    {dict.title.today}
-                                </Button>
                             </div>
                         </div>
                     </FloatingFocusManager>
