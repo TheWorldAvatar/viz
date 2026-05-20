@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.2
+
+### Changes
+
+- Implemented a custom dropdown components for selecting months and years in the date input fields, replacing the default dropdowns provided by react-day-picker. This allows for a more customised and consistent design across the application, as well as improved accessibility and usability for users when selecting months and years in date inputs.
+
 ## 5.73.1
 
 ### Changes
