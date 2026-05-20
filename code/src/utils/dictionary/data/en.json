@@ -309,6 +309,7 @@
     "between": "Between",
     "inclusive": "Inclusive",
     "exclusive": "Exclusive",
-    "value": "Value"
+    "value": "Value",
+    "today": "Today"
   }
 }
