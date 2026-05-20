@@ -142,8 +142,8 @@
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {
-      "title": "Menüband anzeigen",
-      "tooltip": "Menüband ein-/ausblenden"
+      "title": "Tabellenband anzeigen",
+      "tooltip": "Tabellenband ein-/ausblenden"
     }
   },
   "message": {
@@ -309,6 +309,7 @@
     "between": "Zwischen",
     "inclusive": "Inklusiv",
     "exclusive": "Exklusiv",
-    "value": "Wert"
+    "value": "Wert",
+    "settings": "Einstellungen"
   }
 }
