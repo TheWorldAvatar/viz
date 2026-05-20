@@ -90,7 +90,7 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                                                 variant={isSelected ? "info" : "ghost"}
                                                 disabled={isDisabled}
                                                 onClick={() => selectYear(year)}
-                                                className={`w-full h-9  text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                                                className={`w-full h-10  text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                                             >
                                                 {year}
                                             </Button>

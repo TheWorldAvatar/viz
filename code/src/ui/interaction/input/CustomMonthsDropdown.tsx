@@ -44,7 +44,7 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
                         >
                             <div
                                 style={transition.styles}
-                                className="w-72 p-3 bg-muted rounded-lg shadow-md border border-border"
+                                className="w-70 p-3 bg-muted rounded-lg shadow-md border border-border"
                             >
                                 <div className="grid grid-cols-3 gap-2">
                                     {props.options?.map((option: DropdownOption) => {
@@ -58,7 +58,7 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
                                                 variant={isSelected ? "info" : "ghost"}
                                                 disabled={isDisabled}
                                                 onClick={() => selectMonth(Number(option.value))}
-                                                className={`w-full h-10 px-10 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                                                className={`w-full h-10 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                                             >
                                                 {option.label}
                                             </Button>
