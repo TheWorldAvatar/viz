@@ -7,7 +7,8 @@ import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import { interpolate } from "utils/client-utils";
-
+import { useScreenType } from "hooks/useScreenType";
+import { ScreenType, ScreenTypeMap } from "types/settings";
 
 export type NavBarItemType = "default" | "file" | "date";
 
@@ -37,12 +38,14 @@ export interface NavBarItemProps {
  * @param handleClick Overrides the default redirect event behaviour on click.
  * @param {boolean} isMenuExpanded Indicates if the menu is expanded, which may affect styling and caption visibility.
  * @param {string} className Optional additional class names for styling.
- * 
+ *
  */
 export function NavBarItem(
   props: Readonly<NavBarItemProps>
 ): React.ReactElement {
   const dict: Dictionary = useDictionary();
+  const screenType: ScreenType = useScreenType();
+  const isDesktop: boolean = screenType === ScreenTypeMap.DESKTOP;
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (
     event: React.MouseEvent<HTMLDivElement>
@@ -53,6 +56,47 @@ export function NavBarItem(
     window.location.href = props.url;
   };
 
+  const item = (
+    <div
+      className={`${props.isMobile
+        ? "p-1.5 gap-4"
+        : props.isMenuExpanded
+          ? "p-4 gap-4"
+          : "p-3 rounded-full"
+        } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring ${props.className ?? ""}`}
+      onClick={props.handleClick ?? handleClick}
+    >
+      <div className={"flex items-center justify-center"}>
+        <Icon
+          sx={{
+            color: "#16687B",
+          }}
+          fontSize={props.isMobile ? "medium" : "large"}
+          className="material-symbols-outlined"
+        >
+          {props.icon}
+        </Icon>
+      </div>
+      <div className="flex flex-1 flex-col">
+        <h3
+          className={`text-foreground text-base font-bold ${props.isMenuExpanded || props.isMobile ? "" : "hidden"
+            }`}
+        >
+          {props.title}
+        </h3>
+        {!props.isMobile && props.isMenuExpanded && (
+          <p className="text-sm text-muted-foreground wrap-break-word hyphens-auto">
+            {props.caption}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  if (!isDesktop) {
+    return item;
+  }
+
   return (
     <Tooltip
       text={
@@ -61,42 +105,7 @@ export function NavBarItem(
       }
       placement={"left"}
     >
-      <div
-        className={`${props.isMobile
-          ? "p-1.5 gap-4"
-          : props.isMenuExpanded
-            ? "p-4 gap-4"
-            : "p-3 rounded-full"
-          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring ${props.className ?? ""}`}
-        onClick={props.handleClick ?? handleClick}
-      >
-        <div
-          className={"flex items-center justify-center"}
-        >
-          <Icon
-            sx={{
-              color: "#16687B",
-            }}
-            fontSize={props.isMobile ? "medium" : "large"}
-            className="material-symbols-outlined"
-          >
-            {props.icon}
-          </Icon>
-        </div>
-        <div className="flex flex-1 flex-col">
-          <h3
-            className={`text-foreground text-base font-bold ${props.isMenuExpanded || props.isMobile ? "" : "hidden"
-              }`}
-          >
-            {props.title}
-          </h3>
-          {!props.isMobile && props.isMenuExpanded && (
-            <p className="text-sm text-muted-foreground wrap-break-word hyphens-auto">
-              {props.caption}
-            </p>
-          )}
-        </div>
-      </div>
+      {item}
     </Tooltip>
   );
 }

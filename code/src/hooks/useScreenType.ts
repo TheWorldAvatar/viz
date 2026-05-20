@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { ScreenType } from "types/settings";
+import { ScreenType, ScreenTypeMap } from "types/settings";
 
 /* A custom hook to get screen type based on current screen sizes
   *
   */
 export const useScreenType = (): ScreenType => {
-  const [screenType, setScreenType] = useState<ScreenType>("mobile");
+  const [screenType, setScreenType] = useState<ScreenType>(ScreenTypeMap.MOBILE);
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
 
       if (width < 768) {
-        setScreenType("mobile");
+        setScreenType(ScreenTypeMap.MOBILE);
       } else if (width < 1024) {
-        setScreenType("tablet");
+        setScreenType(ScreenTypeMap.TABLET);
       } else {
-        setScreenType("desktop");
+        setScreenType(ScreenTypeMap.DESKTOP);
       }
     };
 

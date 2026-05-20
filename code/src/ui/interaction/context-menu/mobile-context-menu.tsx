@@ -19,6 +19,7 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
     const mapRibbonState: ContextItemDefinition = useSelector(selectItem(ContextItemMap.MAP_CONTROLS_RIBBON));
 
     if (!props.isMobile) return null;
+    if (tableRibbonState == null && mapRibbonState == null) return null;
 
     return (
         <div className="mt-auto pt-4 border-t border-border flex flex-col gap-2">

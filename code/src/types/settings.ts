@@ -1,7 +1,13 @@
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
 
-export type ScreenType = "mobile" | "tablet" | "desktop";
+export const ScreenTypeMap = {
+  MOBILE: "mobile",
+  TABLET: "tablet",
+  DESKTOP: "desktop",
+} as const;
+
+export type ScreenType = typeof ScreenTypeMap[keyof typeof ScreenTypeMap];
 
 /**
  * Interface of default settings for landing page.
