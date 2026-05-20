@@ -26,15 +26,15 @@ export default function MobileContextMenu(props: Readonly<MobileContextMenuProps
 
     return (
         <div className={`mt-auto pt-5 border-t border-border flex flex-col gap-2 p-2 ${pathname.endsWith("map") && tableRibbonState == null ? "xl:hidden" : ""}`}>
-            <div className='flex items-center gap-1.5 mb-1'>
+            <div className='flex items-center gap-3 mb-1'>
                 <Icon sx={{
                     color: "#16687B",
                 }} className="material-symbols-outlined shrink-0">
-                    {"visibility"}
+                    {"settings"}
                 </Icon>
-                <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                    {dict.action.view}
-                </p>
+                <h3 className="text-base font-bold text-foreground">
+                    {dict.title.settings}
+                </h3>
             </div>
             <div className="flex flex-col gap-2">
                 {tableRibbonState != null && (
