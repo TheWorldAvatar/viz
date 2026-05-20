@@ -21,7 +21,7 @@ import { getAfterDelimiter, getNormalizedDate, interpolate, parseWordsForLabels,
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import { toast } from "../action/toast/toast";
-import DateInput from "../input/date-input";
+import DateInput from "../input/date/date-input";
 import Tooltip from "../tooltip/tooltip";
 
 

@@ -23,8 +23,8 @@ import { Dictionary } from "types/dictionary";
 import { ScreenType, ScreenTypeMap } from "types/settings";
 import Button from "ui/interaction/button";
 import { extractDateDisplay, interpolate } from "utils/client-utils";
-import CustomYearsDropdown from "./CustomYearsDropdown";
-import CustomMonthsDropdown from "./CustomMonthsDropdown";
+import CustomYearsDropdown from "./custom-years-dropdown";
+import CustomMonthsDropdown from "./custom-months-dropdown";
 
 interface DateInputProps {
   selectedDate: Date | DateRange | Date[] | undefined;

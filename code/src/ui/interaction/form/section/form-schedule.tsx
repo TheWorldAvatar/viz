@@ -10,7 +10,7 @@ import { Dictionary } from "types/dictionary";
 import { FormFieldOptions, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
-import DateInput from "ui/interaction/input/date-input";
+import DateInput from "ui/interaction/input/date/date-input";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   getUTCDate,
