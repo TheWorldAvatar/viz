@@ -30,7 +30,7 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue, interpolate } from "utils/client-utils";
 import { BULK_IDENTIFIER } from "utils/constants";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
@@ -288,14 +288,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <p className="text-lg mb-4 whitespace-pre-line">
             {props.formType === FormTypeMap.COMPLETE && dict.message.completeInstruction}
             {props.formType === FormTypeMap.DISPATCH &&
-              `${dict.message.dispatchInstruction} ${formatDateValue(task.date)}:`}
+              interpolate(dict.message.dispatchInstruction, formatDateValue(task.date))}
             {props.formType === FormTypeMap.CANCEL &&
-              `${dict.message.cancelInstruction} ${formatDateValue(task.date)}:`}
+              interpolate(dict.message.cancelInstruction, formatDateValue(task.date))}
             {props.formType === FormTypeMap.REPORT &&
-              `${dict.message.reportInstruction.replace(
-                "{date}",
-                formatDateValue(task.date)
-              )}`}
+              interpolate(dict.message.reportInstruction, formatDateValue(task.date))}
           </p>
         )}
 
