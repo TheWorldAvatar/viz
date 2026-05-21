@@ -138,7 +138,7 @@ export function useTableData(
         const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(
           res.data?.columns,
           columnOptions,
-          dict.title,
+          dict,
         );
         setData(parsedData);
         setColumns(columns);
