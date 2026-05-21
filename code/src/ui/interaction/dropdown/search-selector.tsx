@@ -92,7 +92,8 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         {props.showOptions && !refreshFlag && props.options.map((option, index) => (
           <SelectOption
             key={option + index}
-            option={props.label === dict.title.status ? dict.title[option.toLowerCase()] : option}
+            option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
+              props.label === "scheduleType" ? dict.form[option] : option}
             labelComponent={props.label === "status" ? <StatusComponent status={option} /> : null}
             initialChecked={selectedOptions.includes(option)}
             onClick={() => {
