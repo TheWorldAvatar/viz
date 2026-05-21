@@ -297,6 +297,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 fieldId: FORM_STATES.START_DATE,
                 datatype: "date",
                 description: { "@value": dict.form.startDateDesc },
+                defaultValue: { value: "tomorrow", type: "date", dataType: "date", lang: "" },
                 order: 0,
               }}
               form={props.form}
@@ -314,6 +315,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   fieldId: FORM_STATES.END_DATE,
                   datatype: "date",
                   description: { "@value": dict.form.endDateDesc },
+                  defaultValue: { value: "tomorrow", type: "date", dataType: "date", lang: "" },
                   order: 0,
                 }}
                 form={props.form}

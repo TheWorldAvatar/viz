@@ -6,7 +6,8 @@ import { useDictionary } from "hooks/useDictionary";
 import { FieldError, UseFormReturn, useWatch } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
 import {
-  getRegisterOptions
+  getRegisterOptions,
+  resolveShaclDefaultDateValue,
 } from "ui/interaction/form/form-utils";
 import DateInput from "ui/interaction/input/date/date-input";
 import { getLocaleDatePattern, getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
@@ -34,6 +35,9 @@ export default function FormDateTimePicker(
   const timeType: string = "time";
 
   const { formType } = useFormSession();
+  const defaultValue: string | undefined = !Array.isArray(props.field.defaultValue)
+    ? props.field.defaultValue?.value
+    : undefined;
 
   const watchedDateValue: string = useWatch({
     control: props.form.control,
@@ -44,6 +48,7 @@ export default function FormDateTimePicker(
       if (props.field.datatype !== dateType) return new Date();
       const formValue: string = props.form.getValues(props.field.fieldId);
       if (!formValue) {
+        if (defaultValue) return new Date(resolveShaclDefaultDateValue(defaultValue));
         return Number(props.field.minCount?.[VALUE_KEY]) === 0 ? undefined : new Date();
       }
       return new Date(formValue);

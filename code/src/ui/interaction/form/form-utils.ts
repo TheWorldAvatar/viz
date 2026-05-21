@@ -423,6 +423,25 @@ function initFormField(
 }
 
 /**
+ * Resolves the default date value based on the SHACL specification.
+ * The dates needs to resolve into backend-compatible ISO date strings (YYYY-MM-DD).
+ *
+ * @param {string} value The default date value to resolve.
+ * @returns {string} The resolved default date value.
+ */
+export function resolveShaclDefaultDateValue(value: string): string {
+  if (value === "startOfYear") {
+    return `${new Date().getFullYear()}-01-01`;
+  }
+  if (value === "tomorrow") {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  }
+  return value;
+}
+
+/**
  * Get the default value based on the inputs. If default value is given, this will be return, otherwise,
  * it depends on the field name.
  *
@@ -482,7 +501,7 @@ export function getDefaultVal(
     return !!defaultValue;
   }
   // Returns the default value if passed, or else, empty string
-  return defaultValue ? defaultValue : "";
+  return defaultValue ? resolveShaclDefaultDateValue(defaultValue) : "";
 }
 
 /**
