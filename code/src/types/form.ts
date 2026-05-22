@@ -184,3 +184,11 @@ export type RegistryTaskType =
 
 export type QuickViewGroupings = Record<string, QuickViewFields>;
 export type QuickViewFields = Record<string, SparqlResponseField[]>;
+
+
+export const ShaclDefaultDateValueMap = {
+  START_OF_YEAR: "startOfYear",
+  TOMORROW: "tomorrow",
+} as const;
+
+export type ShaclDefaultDateValue = typeof ShaclDefaultDateValueMap[keyof typeof ShaclDefaultDateValueMap];

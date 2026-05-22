@@ -35,9 +35,9 @@ export default function FormDateTimePicker(
   const timeType: string = "time";
 
   const { formType } = useFormSession();
-  const defaultValue: string | undefined = !Array.isArray(props.field.defaultValue)
-    ? props.field.defaultValue?.value
-    : undefined;
+  const defaultValue: string | undefined = Array.isArray(props.field.defaultValue)
+    ? props.field.defaultValue?.[0]?.value
+    : props.field.defaultValue?.value;
 
   const watchedDateValue: string = useWatch({
     control: props.form.control,

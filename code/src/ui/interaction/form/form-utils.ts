@@ -20,6 +20,7 @@ import {
   PropertyShapeOrGroup,
   QuickViewFields,
   QuickViewGroupings,
+  ShaclDefaultDateValueMap,
   SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY
@@ -430,10 +431,10 @@ function initFormField(
  * @returns {string} The resolved default date value.
  */
 export function resolveShaclDefaultDateValue(value: string): string {
-  if (value === "startOfYear") {
+  if (value === ShaclDefaultDateValueMap.START_OF_YEAR) {
     return `${new Date().getFullYear()}-01-01`;
   }
-  if (value === "tomorrow") {
+  if (value === ShaclDefaultDateValueMap.TOMORROW) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split("T")[0];
