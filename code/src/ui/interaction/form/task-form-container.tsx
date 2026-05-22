@@ -353,7 +353,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               onClick={() => {
                 if (
                   props.formType === FormTypeMap.COMPLETE &&
-                  task?.scheduleType === dict.form.perpetualService
+                  task?.scheduleType === "perpetualService"
                 ) {
                   setIsDuplicate(true);
                 }
@@ -435,7 +435,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 {/* Submit and Duplicate button - shown for complete task type */}
                 {isPermitted("completeAndDuplicateTask") &&
                   props.formType === FormTypeMap.COMPLETE &&
-                  task?.scheduleType !== dict.form.perpetualService && (
+                  task?.scheduleType !== "perpetualService" && (
                     <Button
                       leftIcon="schedule_send"
                       variant="secondary"

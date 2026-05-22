@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.5
+
+### Bug Fixes
+
+- Fix logics that depends on schedule type to check value against key
+
 ## 5.73.4
 
 ### Changes
