@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.4
+
+### Changes
+
+- Updated start date and end date in the add job form to default to tomorrow's date
+- Updated start date in the add pricing model form to 1st of January the current year
+- Updated logic for special date default values that are set in the SHACL `startOfYear`, `startOfMonth`, and `tomorrow`
+- Updated `form.md` docs to reflect the new special date default values and how to update if a new value is added in SHACL
+
 ## 5.73.3
 
 ### Bug Fixes

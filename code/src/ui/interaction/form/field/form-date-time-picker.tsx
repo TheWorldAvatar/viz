@@ -5,9 +5,7 @@ import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import { FieldError, UseFormReturn, useWatch } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
-import {
-  getRegisterOptions
-} from "ui/interaction/form/form-utils";
+import { getRegisterOptions } from "ui/interaction/form/form-utils";
 import DateInput from "ui/interaction/input/date/date-input";
 import { getLocaleDatePattern, getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
@@ -17,7 +15,6 @@ interface FormDateTimePickerProps {
   form: UseFormReturn;
   options?: FormFieldOptions;
 }
-
 
 /**
  * This component renders a date time picker for the form.
