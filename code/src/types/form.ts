@@ -186,6 +186,9 @@ export type QuickViewGroupings = Record<string, QuickViewFields>;
 export type QuickViewFields = Record<string, SparqlResponseField[]>;
 
 
+
+// If a new SHACL default date value is added,
+// add it here and update resolveShaclDefaultDateValue in ui/interaction/form/form-utils.ts:433
 export const ShaclDefaultDateValueMap = {
   START_OF_YEAR: "startOfYear",
   TOMORROW: "tomorrow",
