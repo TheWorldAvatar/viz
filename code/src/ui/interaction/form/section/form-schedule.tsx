@@ -7,7 +7,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
+import { FormFieldOptions, FormTypeMap, RegistryFieldValues, ShaclDefaultDateValueMap, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import DateInput from "ui/interaction/input/date/date-input";
@@ -176,6 +176,15 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
         props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
         props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
+      } else if (formType == FormTypeMap.ADD) {
+        props.form.setValue(
+          FORM_STATES.START_DATE,
+          getDefaultVal(
+            FORM_STATES.START_DATE,
+            ShaclDefaultDateValueMap.TOMORROW,
+            formType
+          )
+        );
       }
       setIsLoading(false);
     };
@@ -214,8 +223,24 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       } else if (value === singleService) {
         props.form.setValue(FORM_STATES.RECURRENCE, 0);
       } else if (value === alternateService) {
+        props.form.setValue(
+          FORM_STATES.END_DATE,
+          getDefaultVal(
+            FORM_STATES.END_DATE,
+            ShaclDefaultDateValueMap.TOMORROW,
+            formType
+          )
+        );
         props.form.setValue(FORM_STATES.RECURRENCE, -1);
       } else {
+        props.form.setValue(
+          FORM_STATES.END_DATE,
+          getDefaultVal(
+            FORM_STATES.END_DATE,
+            ShaclDefaultDateValueMap.TOMORROW,
+            formType
+          )
+        );
         props.form.setValue(FORM_STATES.RECURRENCE, 1);
       }
     }
