@@ -27,6 +27,7 @@ import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValid
 import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
+import { Dictionary } from "types/dictionary";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
   dataType: string;
@@ -132,19 +133,19 @@ function flattenInstance(
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
- * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {Dictionary} dict The translations.
  */
 export function parseColumnsMetadata(
   columns: ColumnDefinitionResponse[],
   columnOptions: TableColumnOption[],
-  titleDict: Record<string, string>,
+  dict: Dictionary,
 ): EnhancedColumnDef<FieldValues>[] {
-  const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
+  const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(dict.title.blank);
   const results: EnhancedColumnDef<FieldValues>[] = [];
   // Create column definitions based on available columns
   for (const col of columns) {
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
-    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
+    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
     const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
       title.length * 15,
       125
@@ -173,7 +174,7 @@ export function parseColumnsMetadata(
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
           return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
         }
-        const value: string = getValue() as string;
+        let value: string = getValue() as string;
         if (!value) return "";
         // Format datetime/date columns for display
         if (isDateTimeColumn) {
@@ -188,7 +189,9 @@ export function parseColumnsMetadata(
         }
 
         // Column header name is untranslated so we can directly compare to a string
-        if (col.value === "status") {
+        if (col.value === "scheduleType") {
+          value = dict.form[value];
+        } else if (col.value === "status") {
           return <StatusComponent status={value} />;
         }
 

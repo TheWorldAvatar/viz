@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.3
+
+### Bug Fixes
+
+- Fix translations of schedule type for registry table filter and display
+- Fix translation of form instruction for task actions
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.51.0` to `v1.51.3`
+
 ## 5.73.2
 
 ### Changes
