@@ -136,6 +136,21 @@ The following fields are optional utility fields that does not affect the catego
 4. `step`: Defines the increment between valid numbers for a numeric input field.
    - When combined with the `pattern` attribute, it enforces specific format requirements. For example, with the pattern `\.(00|15|30|45|60)$` and a `0.05` step, the field will increment to the nearest value matching the pattern within that step. Ensure the `step` value does not exceed the pattern's granularity; `0.15` steps would fail to meet the `\.(00|15|30|45|60)$` pattern, while `0.01` steps are inefficient.
 
+#### Special date default values
+
+For date fields, the `sh:defaultValue` property in the SHACL file can be set to a special string token instead of a fixed date. The viz platform will resolve these tokens to a computed date at runtime. The currently supported tokens are:
+
+| String value in SHACL | Resolves to |
+|---|---|
+| `"startOfYear"` | First day of the current year (`YYYY-01-01`) |
+| `"startOfMonth"` | First day of the current month (`YYYY-MM-01`) |
+| `"tomorrow"` | The next calendar day |
+
+
+> If a new default date token is introduced in a SHACL file, two changes are required in the viz codebase:
+> 1. Add the new token string to `ShaclDefaultDateValueMap` in [code/src/types/form.ts](../code/src/types/form.ts).
+> 2. Add the corresponding resolution logic to the `getDefaultVal` function in [code/src/ui/interaction/form/form-utils.ts](../code/src/ui/interaction/form/form-utils.ts).
+
 ### 2.3. Form validation
 
 For form validation purposes, several SHACL restrictions can also be utilised in the following combinations:
