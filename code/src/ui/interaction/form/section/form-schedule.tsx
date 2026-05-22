@@ -7,7 +7,7 @@ import { useDictionary } from "hooks/useDictionary";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, FormTypeMap, RegistryFieldValues, ShaclDefaultDateValueMap, SparqlResponseField } from "types/form";
+import { FormFieldOptions, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
 import DateInput from "ui/interaction/input/date/date-input";
@@ -49,6 +49,8 @@ export const daysOfWeek: string[] = [
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const dict: Dictionary = useDictionary();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
   const daysOfWeekLabel: string[] = [
     dict.form.sun,
     dict.form.mon,
@@ -297,7 +299,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 fieldId: FORM_STATES.START_DATE,
                 datatype: "date",
                 description: { "@value": dict.form.startDateDesc },
-                defaultValue: { value: ShaclDefaultDateValueMap.TOMORROW, type: "date", dataType: "date", lang: "" },
                 order: 0,
               }}
               form={props.form}
@@ -315,7 +316,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   fieldId: FORM_STATES.END_DATE,
                   datatype: "date",
                   description: { "@value": dict.form.endDateDesc },
-                  defaultValue: { value: ShaclDefaultDateValueMap.TOMORROW, type: "date", dataType: "date", lang: "" },
                   order: 0,
                 }}
                 form={props.form}

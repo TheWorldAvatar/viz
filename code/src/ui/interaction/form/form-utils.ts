@@ -423,24 +423,6 @@ function initFormField(
   };
 }
 
-/**
- * Resolves the default date value based on the SHACL specification.
- * The dates needs to resolve into backend-compatible ISO date strings (YYYY-MM-DD).
- *
- * @param {string} value The default date value to resolve.
- * @returns {string} The resolved default date value.
- */
-export function resolveShaclDefaultDateValue(value: string): string {
-  if (value === ShaclDefaultDateValueMap.START_OF_YEAR) {
-    return `${new Date().getFullYear()}-01-01`;
-  }
-  if (value === ShaclDefaultDateValueMap.TOMORROW) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split("T")[0];
-  }
-  return value;
-}
 
 /**
  * Get the default value based on the inputs. If default value is given, this will be return, otherwise,
@@ -501,8 +483,14 @@ export function getDefaultVal(
     // Default value can be null, and should return false if null
     return !!defaultValue;
   }
+  if (defaultValue === ShaclDefaultDateValueMap.START_OF_YEAR) {
+    return `${new Date().getFullYear()}-01-01`;
+  }
+  if (defaultValue === ShaclDefaultDateValueMap.START_OF_MONTH) {
+    return `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-01`;
+  }
   // Returns the default value if passed, or else, empty string
-  return defaultValue ? resolveShaclDefaultDateValue(defaultValue) : "";
+  return defaultValue ? defaultValue : "";
 }
 
 /**
