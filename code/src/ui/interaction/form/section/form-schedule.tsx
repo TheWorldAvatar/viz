@@ -68,8 +68,11 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
   const { formType } = useFormSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fixedDates, setFixedDates] = useState<Date[]>(entryDates?.length > 0
-    ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString))) : [new Date()]);
+  const [fixedDates, setFixedDates] = useState<Date[]>(
+    entryDates?.length > 0
+      ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString)))
+      : [tomorrow]
+  );
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.ENTRY_DATES)?.length > 0
@@ -210,10 +213,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
     if (value === fixedService) {
-      // Ensure at least today's date is set for fixed service
-      const datesToSet: Date[] = fixedDates.length > 0 ? fixedDates : [new Date()];
-      if (fixedDates.length === 0) setFixedDates(datesToSet);
-      props.form.setValue(FORM_STATES.ENTRY_DATES, datesToSet);
+      props.form.setValue(FORM_STATES.ENTRY_DATES, fixedDates);
     } else {
       // Clear entry dates for all non-fixed services
       props.form.setValue(FORM_STATES.ENTRY_DATES, undefined);
