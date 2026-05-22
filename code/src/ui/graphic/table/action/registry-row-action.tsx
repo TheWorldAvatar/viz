@@ -259,7 +259,7 @@ export default function RegistryRowAction(
                 }}
               />}
               {isActionAllowed("RESCHEDULE_TASK") &&
-                props.row.scheduleType == dict.form.singleService && (
+                props.row.scheduleType == "singleService" && (
                   <RowActionButton
                     icon="schedule"
                     disabled={isLoading}
