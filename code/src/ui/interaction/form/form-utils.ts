@@ -488,13 +488,9 @@ export function getDefaultVal(
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split("T")[0];
-  }
-
-  if (defaultValue === ShaclDefaultDateValueMap.START_OF_YEAR) {
+  } else if (defaultValue === ShaclDefaultDateValueMap.START_OF_YEAR) {
     return `${new Date().getFullYear()}-01-01`;
-  }
-
-  if (defaultValue === ShaclDefaultDateValueMap.START_OF_MONTH) {
+  } else if (defaultValue === ShaclDefaultDateValueMap.START_OF_MONTH) {
     return `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-01`;
   }
   // Returns the default value if passed, or else, empty string
