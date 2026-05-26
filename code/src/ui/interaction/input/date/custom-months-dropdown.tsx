@@ -2,10 +2,13 @@ import { FloatingFocusManager, FloatingPortal, useTransitionStyles } from "@floa
 import { usePopover } from "hooks/float/usePopover";
 import { DropdownOption, DropdownProps } from "react-day-picker";
 import Button from "../../button";
+import { useDictionary } from "hooks/useDictionary";
+import { Dictionary } from "types/dictionary";
 
 // Custom dropdown component for selecting months in react-day-picker
 // Renders a 3x4 grid of localized month names
 export default function CustomMonthsDropdown(props: DropdownProps) {
+    const dict: Dictionary = useDictionary();
     const popover = usePopover("bottom-start");
     const transition = useTransitionStyles(popover.context, { duration: 150 });
     const selectedMonth: number = Number(props.value);
@@ -31,6 +34,7 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
                 ref={popover.refs.setReference}
                 {...popover.getReferenceProps()}
                 className="text-sm"
+                aria-label={`${dict.form.month}, ${selectedLabel}`}
             >
                 {selectedLabel}
             </Button>

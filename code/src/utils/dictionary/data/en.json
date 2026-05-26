@@ -70,7 +70,9 @@
     "addInvoice": "add invoice",
     "bulkAssign": "Bulk assignment",
     "select": "Select",
-    "selectItem": "select {replace}"
+    "selectItem": "select {replace}",
+    "nextYears": "Next years",
+    "previousYears": "Previous years"
   },
   "form": {
     "singleService": "Single Service",
@@ -112,7 +114,9 @@
     "dateSelected": "date selected",
     "datesSelected": "dates selected",
     "rescheduleDate": "Reschedule Date",
-    "rescheduleDateDesc": "Select a new date for your service"
+    "rescheduleDateDesc": "Select a new date for your service",
+    "month": "Month",
+    "year": "Year"
   },
   "map": {
     "title": {
