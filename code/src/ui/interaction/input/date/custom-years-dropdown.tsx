@@ -6,6 +6,7 @@ import { YEARS_PER_PAGE } from "utils/constants";
 import Button from "../../button";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
+import Tooltip from "ui/interaction/tooltip/tooltip";
 
 // Custom dropdown component for selecting years in react-day-picker
 // This component implements pagination to show a range of years, with buttons to navigate to the next/previous range.
@@ -60,22 +61,26 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                                         {pageStart} - {pageStart + YEARS_PER_PAGE - 1}
                                     </span>
                                     <div className="flex gap-1">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            leftIcon="keyboard_arrow_up"
-                                            iconSize="small"
-                                            onClick={() => setPageStart(pageStart - YEARS_PER_PAGE)}
-                                            aria-label={dict.action.previousYears}
-                                        />
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            iconSize="small"
-                                            leftIcon="keyboard_arrow_down"
-                                            onClick={() => setPageStart(pageStart + YEARS_PER_PAGE)}
-                                            aria-label={dict.action.nextYears}
-                                        />
+                                        <Tooltip text={dict.action.previousYears} placement="top">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                leftIcon="keyboard_arrow_up"
+                                                iconSize="small"
+                                                onClick={() => setPageStart(pageStart - YEARS_PER_PAGE)}
+                                                aria-label={dict.action.previousYears}
+                                            />
+                                        </Tooltip>
+                                        <Tooltip text={dict.action.nextYears} placement="top">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                iconSize="small"
+                                                leftIcon="keyboard_arrow_down"
+                                                onClick={() => setPageStart(pageStart + YEARS_PER_PAGE)}
+                                                aria-label={dict.action.nextYears}
+                                            />
+                                        </Tooltip>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-4 gap-2">

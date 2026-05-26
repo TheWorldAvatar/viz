@@ -4,6 +4,8 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import { useTooltip } from "hooks/float/useTooltip";
+import { useScreenType } from "hooks/useScreenType";
+import { ScreenType, ScreenTypeMap } from "types/settings";
 
 export interface TooltipProps {
   text: string;
@@ -19,6 +21,8 @@ export interface TooltipProps {
  */
 export default function Tooltip(props: Readonly<TooltipProps>) {
   const tooltip = useTooltip(props.placement);
+  const screenType: ScreenType = useScreenType();
+  const isDesktop: boolean = screenType === ScreenTypeMap.DESKTOP;
   const transition = useTransitionStyles(tooltip.context, {
     duration: 200,
     initial: {
@@ -26,6 +30,11 @@ export default function Tooltip(props: Readonly<TooltipProps>) {
       transform: "scale(0.9)",
     },
   });
+
+  if (!isDesktop) {
+    return props.children;
+  }
+
   return (
     <>
       <div ref={tooltip.refs.setReference} {...tooltip.getReferenceProps()}>
@@ -47,7 +56,7 @@ export default function Tooltip(props: Readonly<TooltipProps>) {
                 style={{
                   ...transition.styles,
                 }}
-                className="box-border p-2 max-w-[160px] md:max-w-md break-words bg-muted text-sm border-1 border-border text-foreground rounded-md shadow-sm"
+                className="box-border p-2 max-w-40 md:max-w-md wrap-break-word bg-muted text-sm border border-border text-foreground rounded-md shadow-sm"
               >
                 {props.text}
               </div>
