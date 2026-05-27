@@ -13,6 +13,7 @@ interface PopoverActionButtonProps extends ButtonProps {
   children: React.ReactNode;
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose?: () => void;
   placement?: Placement;
 }
 
@@ -22,6 +23,7 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param {ReactNode} children Children elements that are shown in the popover floating element.
  * @param {boolean} isOpen Optional state for popover.
  * @param setIsOpen Optional dispatch action to control the open state of popover.
+ * @param onClose Optional actions to perform on close.
  * @param {Placement} placement Optional position of popover.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
@@ -37,6 +39,7 @@ export default function PopoverActionButton({
   children,
   isOpen,
   setIsOpen,
+  onClose,
   placement,
   leftIcon,
   rightIcon,
@@ -48,7 +51,7 @@ export default function PopoverActionButton({
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
-  const popover = usePopover(placement, isOpen, setIsOpen);
+  const popover = usePopover(placement, isOpen, setIsOpen, onClose);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
     initial: {

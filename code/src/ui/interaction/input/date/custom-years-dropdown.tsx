@@ -1,11 +1,11 @@
+import { useDictionary } from "hooks/useDictionary";
 import { useState } from "react";
 import { DropdownOption, DropdownProps } from "react-day-picker";
+import { Dictionary } from "types/dictionary";
+import PopoverActionButton from "ui/interaction/action/popover/popover-button";
+import Tooltip from "ui/interaction/tooltip/tooltip";
 import { YEARS_PER_PAGE } from "utils/constants";
 import Button from "../../button";
-import { useDictionary } from "hooks/useDictionary";
-import { Dictionary } from "types/dictionary";
-import Tooltip from "ui/interaction/tooltip/tooltip";
-import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 
 // Custom dropdown component for selecting years in react-day-picker
 // This component implements pagination to show a range of years, with buttons to navigate to the next/previous range.
@@ -39,6 +39,7 @@ export default function CustomYearsDropdown(props: DropdownProps) {
             aria-label={`${dict.form.year}, ${selectedYear}`}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
+            onClose={() => setPageStart(selectedYear ?? currentYear)}
         >
             <div className="flex items-center justify-between mb-3 px-1">
                 <span className="text-base font-semibold text-foreground">
