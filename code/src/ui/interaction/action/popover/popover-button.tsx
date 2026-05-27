@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  FloatingFocusManager,
   FloatingPortal,
   Placement,
   useTransitionStyles,
@@ -81,25 +82,28 @@ export default function PopoverActionButton({
       </div>
       {popover.isOpen && (
         <FloatingPortal>
-          <div
-            ref={popover.refs.setFloating}
-            style={{
-              ...popover.floatingStyles,
-              zIndex: 999998, // Second highest z-index so it is below the tooltips
-            }}
-            {...popover.getFloatingProps()}
-          >
+          <FloatingFocusManager context={popover.context} modal={false}>
             <div
+              ref={popover.refs.setFloating}
               style={{
-                ...transition.styles,
+                ...popover.floatingStyles,
+                zIndex: 999998, // Second highest z-index so it is below the tooltips
               }}
-              className="flex flex-col gap-y-[0.5rem] p-2 bg-muted border-1 border-border rounded-lg shadow-md"
+              {...popover.getFloatingProps()}
             >
-              {children}
+              <div
+                style={{
+                  ...transition.styles,
+                }}
+                className="flex flex-col gap-y-2 p-2 bg-muted border border-border rounded-lg shadow-md"
+              >
+                {children}
+              </div>
             </div>
-          </div>
-        </FloatingPortal>
-      )}
+          </FloatingFocusManager>
+        </FloatingPortal >
+      )
+      }
     </>
   );
 }
