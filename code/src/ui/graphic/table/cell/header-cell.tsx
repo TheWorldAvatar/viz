@@ -6,7 +6,7 @@ import { Dictionary } from "types/dictionary";
 
 import { useFilterOptions } from "hooks/table/api/useFilterOptions";
 import { DateRange } from "react-day-picker";
-import { LifecycleStage, RegistryFieldValues } from "types/form";
+import { LifecycleStage } from "types/form";
 import { TableCellTagMap } from "types/table";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
