@@ -134,7 +134,7 @@ export function useTableData(
         setSelectedCount(res.data?.currentItemCount);
         setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
-        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title);
+        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
         const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(
           res.data?.columns,
           columnOptions,
