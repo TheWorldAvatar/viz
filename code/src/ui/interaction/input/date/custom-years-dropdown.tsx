@@ -1,6 +1,6 @@
 import { FloatingFocusManager, FloatingPortal, useTransitionStyles } from "@floating-ui/react";
 import { usePopover } from "hooks/float/usePopover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DropdownOption, DropdownProps } from "react-day-picker";
 import { YEARS_PER_PAGE } from "utils/constants";
 import Button from "../../button";
@@ -29,6 +29,12 @@ export default function CustomYearsDropdown(props: DropdownProps) {
         } as React.ChangeEvent<HTMLSelectElement>);
         setIsOpen(false);
     };
+
+    // If an year is selected, start from that year when the menu is open again
+    // If not date is selected, default to the page of the current year
+    useEffect(() => {
+        if (popover.isOpen) setPageStart(selectedYear || currentYear);
+    }, [popover.isOpen, selectedYear, currentYear]);
 
     return (
         <>
@@ -93,10 +99,11 @@ export default function CustomYearsDropdown(props: DropdownProps) {
                                                 key={year}
                                                 size="xs"
                                                 aria-label={String(year)}
+                                                aria-pressed={isSelected}
                                                 variant={isSelected ? "info" : "ghost"}
                                                 disabled={isDisabled}
                                                 onClick={() => selectYear(year)}
-                                                className={`w-full h-10  text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                                                className={`w-full min-h-12 min-w-12 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                                             >
                                                 {year}
                                             </Button>

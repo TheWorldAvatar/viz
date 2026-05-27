@@ -59,10 +59,11 @@ export default function CustomMonthsDropdown(props: DropdownProps) {
                                                 key={option.value}
                                                 size="xs"
                                                 aria-label={option.label}
+                                                aria-pressed={isSelected}
                                                 variant={isSelected ? "info" : "ghost"}
                                                 disabled={isDisabled}
                                                 onClick={() => selectMonth(Number(option.value))}
-                                                className={`w-full h-10 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                                                className={`w-full min-w-12 min-h-12 text-sm ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                                             >
                                                 {option.label}
                                             </Button>
