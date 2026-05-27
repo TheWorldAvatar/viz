@@ -22,7 +22,6 @@ export interface TooltipProps {
 export default function Tooltip(props: Readonly<TooltipProps>) {
   const tooltip = useTooltip(props.placement);
   const screenType: ScreenType = useScreenType();
-  const isDesktop: boolean = screenType === ScreenTypeMap.DESKTOP;
   const transition = useTransitionStyles(tooltip.context, {
     duration: 200,
     initial: {
@@ -31,7 +30,7 @@ export default function Tooltip(props: Readonly<TooltipProps>) {
     },
   });
 
-  if (!isDesktop) {
+  if (screenType !== ScreenTypeMap.DESKTOP) {
     return props.children;
   }
 
