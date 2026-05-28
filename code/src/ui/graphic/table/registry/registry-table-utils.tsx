@@ -10,6 +10,7 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
 import {
   FormTypeMap,
   LifecycleStage,
@@ -24,10 +25,9 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
-import { Dictionary } from "types/dictionary";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
   dataType: string;
@@ -70,7 +70,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState,
-  titleDict: Record<string, string>): FieldValues[] {
+  titleDict: Record<string, string>, columns: ColumnDefinitionResponse[]): FieldValues[] {
   const data: FieldValues[] = [];
   if (instances?.length > 0) {
     instances.forEach(instance => {
@@ -89,7 +89,21 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       // B comes first if descending, and last if ascending
       if (!valB) return sort.desc ? -1 : 1;
 
-      const comparison: number = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
+      const dataType: string = columns.find(column => column?.value === sort?.id).datatype;
+      let comparison: number = 0;
+      if (dataType === XSD_DECIMAL || dataType === XSD_INTEGER) {
+        const numA: number = Number(valA);
+        const numB: number = Number(valB);
+        comparison = numA - numB;
+      }
+      else if (dataType === XSD_DATE || dataType === XSD_DATETIME) {
+        const dateA: number = new Date(valA).getTime();
+        const dateB: number = new Date(valB).getTime();
+        comparison = dateA - dateB;
+      }
+      else {
+        comparison = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
+      }
       // Only returns the comparison if they are not equal on this sort field
       // A user may have multiple fields to sort, and if they are equal on this field, 
       // we must continue with the other fields to compare
