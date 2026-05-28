@@ -1,4 +1,3 @@
-
 import { useDictionary } from "hooks/useDictionary";
 import { useRef } from "react";
 import { Dictionary } from "types/dictionary";

@@ -70,7 +70,9 @@
     "addInvoice": "Rechnung hinzufügen",
     "bulkAssign": "Massenzuweisung",
     "select": "Auswählen",
-    "selectItem": "{replace} wählen"
+    "selectItem": "{replace} wählen",
+    "nextYears": "Nächstes Jahr",
+    "previousYears": "Vorherige Jahre"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -112,7 +114,9 @@
     "dateSelected": "ausgewähltes Datum",
     "datesSelected": "ausgewählte Daten",
     "rescheduleDate": "Termin verschieben",
-    "rescheduleDateDesc": "Wählen Sie einen neuen Termin für Ihren Service aus."
+    "rescheduleDateDesc": "Wählen Sie einen neuen Termin für Ihren Service aus.",
+    "month": "Monat",
+    "year": "Jahr"
   },
   "map": {
     "title": {

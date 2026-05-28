@@ -2,6 +2,15 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.6
+
+### Changes
+
+- Provided aria labels for: month and year selection menu in the react-day-picker component
+- Changed tooltip not to render on mobile design
+- Replaced the month and year custom components with Popoveractionbutton
+
+
 ## 5.73.5
 
 ### Bug Fixes
