@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.7
+
+### Bug Fixes
+
+- Fixed non-string sorting for dates and numbers
+
 ## 5.73.6
 
 ### Changes
@@ -9,7 +15,6 @@
 - Provided aria labels for: month and year selection menu in the react-day-picker component
 - Changed tooltip not to render on mobile design
 - Replaced the month and year custom components with Popoveractionbutton
-
 
 ## 5.73.5
 
@@ -126,7 +131,7 @@
 ### Changes
 
 - Added a function that calculates the maximum text length to display in a cell based on column width
-- Adjusted table cell padding 
+- Adjusted table cell padding
 - Removed the whitespace-nowrap class to allow text to wrap in the cells
 
 ## 5.71.0
