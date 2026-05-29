@@ -221,19 +221,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case FormTypeMap.ADD: {
-        // Add entity via API route
-        pendingResponse = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
-          "POST",
-          JSON.stringify(formData));
-
-        // For registry's primary entity, a draft lifecycle must also be generated
-        if (props.isPrimaryEntity && !pendingResponse.error) {
+        if (props.isPrimaryEntity) {
+          // Primary entity: create the contract AND draft its lifecycle in one backend call
           pendingResponse = await queryInternalApi(
-            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft/new"),
             "POST",
             JSON.stringify({
-              contract: pendingResponse.data?.id,
+              type: props.entityType,   // backend reads this to instantiate the contract
               ...formData,
             }));
           if (!pendingResponse.error && formData[billingParams.pricingField]) {
@@ -248,6 +242,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
                 }))
             )
           }
+        } else {
+          // Non-primary entity: just create the instance without a draft contract
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
+            "POST",
+            JSON.stringify(formData));
         }
         break;
       }
