@@ -23,8 +23,9 @@ interface DateColumnFilterProps {
 export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
   const [from, to]: string[] = props.currentVal ? props.currentVal?.split("..") : [];
-  const [isOptional, setIsOptional] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<DateRange>(props.currentVal ?
+
+  const [isOptional, setIsOptional] = useState<boolean>(props.currentVal?.includes("null"));
+  const [selectedDate, setSelectedDate] = useState<DateRange>(props.currentVal && props.currentVal != "null" ?
     { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
@@ -43,7 +44,11 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            props.onSubmission(`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`);
+            let input: string = selectedDate ? `${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}` : "";
+            if (isOptional) {
+              input = input ? `${input}..null` : "null";
+            }
+            props.onSubmission(input);
           }}
           tooltipText={dict.action.applyFilter}
           variant="primary"
