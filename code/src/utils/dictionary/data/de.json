@@ -109,6 +109,7 @@
     "searchEndTimeDesc": "Wählen Sie das Enddatum/die Endzeit für Ihre Suche.",
     "min": "Min",
     "max": "Max",
+    "includeBlanks": "Leerzeichen einbeziehen",
     "selectDates": "Daten auswählen",
     "selectDatesDesc": "Sie können mehrere einzelne Daten auswählen. Das Datumsfeld zeigt den Beginn und das Ende des ausgewählten Zeitraums an, während alle Daten innerhalb dieses Zeitraums darunter aufgelistet sind.",
     "dateSelected": "ausgewähltes Datum",

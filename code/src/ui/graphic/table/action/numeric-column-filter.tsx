@@ -5,6 +5,7 @@ import { Dictionary } from "types/dictionary";
 import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "types/table";
 import Button from "ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
+import Checkbox from "ui/interaction/input/checkbox";
 import NumberInput from "ui/interaction/input/number-input";
 import { interpolate } from "utils/client-utils";
 import { getInitialNumericFilter } from "../registry/registry-table-utils";
@@ -30,6 +31,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   const hasBetweenComparisonOperator: boolean = initialFilterState?.length > 2;
   const [error, setError] = useState<string | null>(null);
 
+  const [isOptional, setIsOptional] = useState<boolean>(false);
   const [value1, setValue1] = useState<string | null>(initialFilterState ? initialFilterState[1] : null);
   const [value2, setValue2] = useState<string | null>(hasBetweenComparisonOperator ? initialFilterState[2] : null);
 
@@ -182,6 +184,15 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           </div>
         </>
       )}
+      <Checkbox
+        label={dict.form.includeBlanks}
+        aria-label={dict.form.includeBlanks}
+        className="cursor-pointer"
+        checked={isOptional}
+        handleChange={(checked) => {
+          setIsOptional(checked);
+        }}
+      />
     </div>
   );
 }
