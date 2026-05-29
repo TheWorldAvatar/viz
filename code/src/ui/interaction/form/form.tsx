@@ -222,28 +222,17 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormTypeMap.ADD: {
         if (props.isPrimaryEntity) {
-          // Primary entity: create the contract AND draft its lifecycle in one backend call
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft/new"),
             "POST",
             JSON.stringify({
-              type: props.entityType,   // backend reads this to instantiate the contract
+              type: props.entityType,
               ...formData,
+              ...(formData[billingParams.pricingField]
+                ? { pricing: parsePricingModels(formData, billingParams) }
+                : {}),
             }));
-          if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
-            parsePricingModels(formData, billingParams)?.forEach(async model =>
-              pendingResponse = await queryInternalApi(
-                url,
-                "POST",
-                JSON.stringify({
-                  id: formData.id,
-                  pricing: model,
-                }))
-            )
-          }
         } else {
-          // Non-primary entity: just create the instance without a draft contract
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
             "POST",
