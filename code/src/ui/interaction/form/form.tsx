@@ -318,33 +318,25 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case FormTypeMap.EDIT: {
-        // Update entity via API route
-        pendingResponse = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INSTANCES,
-            props.entityType,
-            "false",
-            formData.id
-          ), "PUT", JSON.stringify(formData));
-        if (props.isPrimaryEntity && !pendingResponse.error) {
+        if (props.isPrimaryEntity) {
+          // update entity + re-draft lifecycle + update pricing in one call
           pendingResponse = await queryInternalApi(
-            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft/new"),
             "PUT",
             JSON.stringify({
               ...formData,
+              type: props.entityType,
               contract: props.primaryInstance,
+              ...(billingParams.pricingField in formData
+                ? { pricing: parsePricingModels(formData, billingParams) }
+                : {}),
             }));
-          if (!pendingResponse.error && billingParams.pricingField in formData) {
-            const pricingModels: string[] = parsePricingModels(formData, billingParams);
-            pendingResponse = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              "PUT",
-              JSON.stringify({
-                id: formData.id,
-                pricing: pricingModels,
-                disableTracking: true,
-              }));
-          }
+        } else {
+          // non-primary entity
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(
+              InternalApiIdentifierMap.INSTANCES, props.entityType, "false", formData.id
+            ), "PUT", JSON.stringify(formData));
         }
         break;
       }
