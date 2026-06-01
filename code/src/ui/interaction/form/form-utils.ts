@@ -624,7 +624,7 @@ export function getRegisterOptions(
     };
   }
 
-  // Trim whitespace for string fields before validation and submission
+  // Trim leading and trailing whitespace for string fields before validation and submission
   if (field.datatype === "string") {
     options.setValueAs = (value: string | null | undefined) =>
       typeof value === "string" ? value.trim() : value;
