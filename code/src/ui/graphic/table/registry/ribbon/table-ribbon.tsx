@@ -22,6 +22,7 @@ import { getDisabledDates } from "../registry-table-utils";
 interface TableRibbonProps {
   path: string;
   entityType: string;
+  disableDateFilter: boolean;
   selectedDate: DateRange;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
@@ -35,6 +36,7 @@ interface TableRibbonProps {
  *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
+ * @param {boolean} disableDateFilter Indicates if the date filter should be disabled.
  * @param {DateRange} selectedDate The selected date range object with 'from' and 'to' date strings.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
@@ -202,7 +204,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         }
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-            props.lifecycleStage == LifecycleStageMap.CLOSED) && (
+            (props.lifecycleStage == LifecycleStageMap.CLOSED && !props.disableDateFilter)) && (
               <DateInput
                 mode="range"
                 ariaLabel={dict.nav.title.tasks}
