@@ -146,11 +146,13 @@ export function getAfterDelimiter(str: string, delimiter: string): string {
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
+ * @param {boolean} disableDateFilter Indicates if the date filter should be disabled.
  */
 export function getInitialDateFromLifecycleStage(
-  lifecycleStage: LifecycleStage
+  lifecycleStage: LifecycleStage,
+  disableDateFilter: boolean,
 ): DateRange {
-  // For closed and other stages: start with today
+  // For other stages: start with today
   const initialDate: Date = new Date();
 
   if (lifecycleStage === LifecycleStageMap.SCHEDULED) {
@@ -162,6 +164,10 @@ export function getInitialDateFromLifecycleStage(
     return { from: initialDate, to: endDate };
     // For closed tasks, set the date range to the current month
   } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
+    // When disabled, get the maximum possible range
+    if (disableDateFilter) {
+      return { from: new Date("1950-01-01"), to: new Date("2100-12-31") };
+    }
     // Get the first day of the current month
     const startOfMonth: Date = new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
     // Get the last day of the current month by passing the 0th day of the next month
