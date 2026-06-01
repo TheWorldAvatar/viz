@@ -45,8 +45,12 @@ export default function RegistryTableComponent(
   const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshId, refreshFlag, triggerRefresh } = useOperationStatus();
+
+  const filterOption: TableColumnOption = props.tableColumnOptions.find(option => option.name === "filter");
+  const disableDateFilter: boolean = filterOption ? !filterOption.visible : false;
+
   const [selectedDate, setSelectedDate] = useState<DateRange>(
-    getInitialDateFromLifecycleStage(props.lifecycleStage)
+    getInitialDateFromLifecycleStage(props.lifecycleStage, disableDateFilter)
   );
 
   const tableRibbonContextItem: ContextItemDefinition = useMemo(() => {
@@ -104,6 +108,7 @@ export default function RegistryTableComponent(
           <TableRibbon
             path={pathNameEnd}
             entityType={props.entityType}
+            disableDateFilter={disableDateFilter}
             selectedDate={selectedDate as DateRange}
             setSelectedDate={setSelectedDate}
             lifecycleStage={props.lifecycleStage}
