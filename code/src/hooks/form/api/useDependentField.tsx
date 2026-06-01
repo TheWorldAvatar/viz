@@ -180,6 +180,7 @@ export function useDependentField(
                         if (results?.length > 0) {
                             // The existing saved option's parent does not match the current parent option
                             // reset to default NA or undefined dependending on whether it is optional
+                            // Note that the parent field name must match the field on the instance
                             if (parentField && results[0][field?.dependentOn?.label].value !== currentParentOption) {
                                 defaultId = isSectionOptional ? naOption.value : undefined;
                                 // Add the existing option if it should be shown
