@@ -402,6 +402,7 @@ Each table key maps to an array of column configuration objects. The supported o
 - `name` (required): The backend column identifier.
 - `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
 - `visible` (optional): Hides or shows the column at the start. Default to `true` if not set explicitly. Set to `false` to hide the column.
+- `sorting` (optional): Pre-sorts the table by this column on load. Accepted values are `"asc"` (ascending) or `"desc"` (descending). A maximum of 3 columns per table can have sorting configured; if more are provided, the application will throw an error at startup.
 
 Additional notes:
 
@@ -433,8 +434,9 @@ Example:
   ],
   "scheduled": [
     { "name": "status" },
-    { "name": "client" },
-    { "name": "driver" }
+    { "name": "client", "sorting": "asc" },
+    { "name": "driver" },
+    { "name": "start_date", "width": 60, "sorting": "desc" }
   ]
 }
 ```

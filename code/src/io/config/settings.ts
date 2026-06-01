@@ -99,7 +99,19 @@ export default class SettingsStore {
     const registrySettingsFile: string | undefined = uiSettings.resources?.registry?.settings;
     if (registrySettingsFile) {
       const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
-      this.TABLE_COLUMN_SETTINGS = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
+      const settings: TableColumnSettings = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
+      const MAX_SORT_COLUMNS = 3;
+      for (const [group, columns] of Object.entries(settings)) {
+        const sortingColumns: TableColumnOption[] = columns.filter(col => col.sorting != null);
+        if (sortingColumns.length > MAX_SORT_COLUMNS) {
+          throw new Error(
+            `[ERROR] ${registrySettingsFile}: ` +
+            `"${group}" table has ${sortingColumns.length} columns with sorting configured but the maximum is ${MAX_SORT_COLUMNS}. ` +
+            `Sorting defined on: ${sortingColumns.map(col => col.name).join(", ")}`
+          );
+        }
+      }
+      this.TABLE_COLUMN_SETTINGS = settings;
     }
   }
 

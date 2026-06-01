@@ -264,6 +264,35 @@ export function getInitialColumnVisibilityState(
 }
 
 /**
+ * Builds the initial sorting state from the column options config.
+ * Columns with a `sorting` value are included; all others are excluded.
+ *
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
+ */
+
+export function getInitialSortingState(columnOptions: TableColumnOption[]): SortingState {
+  if (!columnOptions || columnOptions.length === 0) return [];
+  return columnOptions
+    .filter(item => item.sorting != null)
+    .slice(0, 3)
+    .map(item => ({ id: item.name, desc: item.sorting === "desc" }));
+}
+
+/**
+ * Builds the initial sort URL parameter string from the column options config.
+ * Uses original field names directly — no dict needed for config-defined sorts.
+ *
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
+ */
+export function getInitialSortParams(columnOptions: TableColumnOption[]): string {
+  const sortable: TableColumnOption[] = columnOptions?.filter(item => item.sorting != null).slice(0, 3);
+  if (!sortable || sortable.length === 0) return "%2Bid";
+  return sortable
+    .map(item => (item.sorting === "desc" ? "-" : "%2B") + item.name)
+    .join(",");
+}
+
+/**
  * Parses the lifecycle field to their translations.
  *
  * @param {string} field Name of field from backend to be translated.
