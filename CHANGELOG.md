@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.73.8
+
+### Changes
+
+- Allow developers to configure if date range is shown for closed tasks
+
 ## 5.73.7
 
 ### Bug Fixes
