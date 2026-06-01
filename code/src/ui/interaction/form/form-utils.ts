@@ -624,6 +624,12 @@ export function getRegisterOptions(
     };
   }
 
+  // Trim whitespace for string fields before validation and submission
+  if (field.datatype === "string") {
+    options.setValueAs = (value: string | null | undefined) =>
+      typeof value === "string" ? value.trim() : value;
+  }
+
   // Validate that the input is a number for decimal and integer types
   if (field.datatype === "integer") {
     options.pattern = {
