@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.1
+
+### Changes
+
+- Prevented submission of whitespace-only post code input in the geocoder form section
+- Trimmed leading and trailing whitespace from post code input in the geocoder form section before validation and submission. This ensures that accidental spaces do not cause validation errors or issues with geocoding.
+- Removed address shape from the geocoder form section 
+
 ## 5.75.0
 
 ### Changes
