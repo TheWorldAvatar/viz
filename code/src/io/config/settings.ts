@@ -9,6 +9,7 @@ import { LifecycleStageMap } from 'types/form';
 import { JsonObject } from 'types/json';
 import { DataSettings, MapSettings, TableColumnOption, TableColumnSettings, UISettings } from 'types/settings';
 import { logColours } from 'utils/logColours';
+import { MAX_SORT_COLUMNS } from "utils/constants";
 
 /**
  * Handles the retrieval and storage of settings from the user provided configuration files.
@@ -100,7 +101,6 @@ export default class SettingsStore {
     if (registrySettingsFile) {
       const tableColumnSettingsFile: string = path.join(process.cwd(), "public/config", registrySettingsFile);
       const settings: TableColumnSettings = this.readFile<TableColumnSettings>(tableColumnSettingsFile);
-      const MAX_SORT_COLUMNS = 3;
       for (const [group, columns] of Object.entries(settings)) {
         const sortingColumns: TableColumnOption[] = columns.filter(col => col.sorting != null);
         if (sortingColumns.length > MAX_SORT_COLUMNS) {

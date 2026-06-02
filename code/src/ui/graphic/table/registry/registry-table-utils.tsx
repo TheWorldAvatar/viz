@@ -25,7 +25,7 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, MAX_SORT_COLUMNS, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -274,7 +274,7 @@ export function getInitialSortingState(columnOptions: TableColumnOption[]): Sort
   if (!columnOptions || columnOptions.length === 0) return [];
   return columnOptions
     .filter(item => item.sorting != null)
-    .slice(0, 3)
+    .slice(0, MAX_SORT_COLUMNS)
     .map(item => ({ id: item.name, desc: item.sorting === "desc" }));
 }
 
@@ -285,7 +285,7 @@ export function getInitialSortingState(columnOptions: TableColumnOption[]): Sort
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
  */
 export function getInitialSortParams(columnOptions: TableColumnOption[]): string {
-  const sortable: TableColumnOption[] = columnOptions?.filter(item => item.sorting != null).slice(0, 3);
+  const sortable: TableColumnOption[] = columnOptions?.filter(item => item.sorting != null);
   if (!sortable || sortable.length === 0) return "%2Bid";
   return sortable
     .map(item => (item.sorting === "desc" ? "-" : "%2B") + item.name)
