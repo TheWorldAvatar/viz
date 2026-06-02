@@ -111,7 +111,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   const {
     hasNoAddressFound,
     showAddressOptions,
-    showAddressShapes,
     addresses,
     selectAddress,
     onGeocoding,
@@ -176,17 +175,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   {String.fromCharCode(62)} {address.block}{" "}
                   {parseWordsForLabels(address.street)}, {address.city}
                 </button>
-              ))}
-            </div>
-          )}
-          {addressShapes.length > 0 && showAddressShapes && (
-            <div className="flex flex-wrap w-full p-0 m-0">
-              {addressShapes.map((shape, index) => (
-                <FormFieldComponent
-                  key={shape.fieldId + index}
-                  field={shape}
-                  form={props.form}
-                />
               ))}
             </div>
           )}
