@@ -105,6 +105,9 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     addressShapes,
   }: GeocodeTemplateDescriptor = useGeocodeTemplate(props.field, props.form);
 
+  // Make UI reactive to postal code changes
+  const watchedPostalCode = props.form.watch(postalCodeShape?.fieldId || "") as string | undefined;
+
   const {
     hasNoAddressFound,
     showAddressOptions,
@@ -138,7 +141,14 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   leftIcon="place"
                   size="icon"
                   tooltipText={dict.action.selectLocation}
-                  onClick={() => onGeocoding(props.form.getValues())}
+                  disabled={!watchedPostalCode || watchedPostalCode.trim() === ""}
+                  onClick={() => {
+                    // Trim the postal code to prevent submitting with whitespace,
+                    // which would cause an error in geocoding API
+                    const trimmedPostalCode: string = watchedPostalCode.trim();
+                    props.form.setValue(postalCodeShape.fieldId, trimmedPostalCode);
+                    onGeocoding(props.form.getValues());
+                  }}
                   type="button"
                 />
               </div>
