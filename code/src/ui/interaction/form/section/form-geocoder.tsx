@@ -129,13 +129,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
 
       {!isFetching && (
         <>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-start gap-2">
             {postalCodeShape && (
               <FormFieldComponent field={postalCodeShape} form={props.form} />
             )}
-
             {(formType == "add" || formType == "edit") && (
-              <div className="flex mt-12">
+              <div className="mt-12 shrink-0">
                 <Button
                   leftIcon="place"
                   size="icon"
@@ -155,7 +154,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
 
           {hasNoAddressFound && (
-            <div className="m-2">
+            <div>
               <ErrorComponent message={dict.message.noAddressFound} />
             </div>
           )}
@@ -164,7 +163,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               {addresses.map((address, index) => (
                 <button
                   key={address.street + index}
-                  className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+                  className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border border-border rounded-lg hover:bg-primary transition-colors duration-200"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                     // Prevent form submission
                     event.preventDefault();
