@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.74.0
+
+### Changes
+
+- Prevented submission of whitespace-only form inputs
+- Trimmed leading and trailing whitespace from all form inputs before validation and submission.
+
 ## 5.73.9
 
 ### Bug Fixes
