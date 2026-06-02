@@ -19,7 +19,9 @@ import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { TableColumnOption } from "types/settings";
 import {
   genSortParams,
-  getInitialColumnVisibilityState
+  getInitialColumnVisibilityState,
+  getInitialSortingState,
+  getInitialSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
@@ -62,10 +64,10 @@ export function useTable(
   selectedDate?: DateRange,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
-  const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
+  const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
