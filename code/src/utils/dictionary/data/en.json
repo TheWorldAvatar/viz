@@ -170,7 +170,7 @@
     "invalidInclusiveRange": "Invalid range! Second value must be strictly greater than or equal to the first.",
     "invalidPricingModelInstructions": "The pricing model has been successfully added but the task date is outside its valid range. Please reassign a valid pricing model for this period.",
     "loading": "Loading, please wait...",
-    "noAddressFound": "No address found! The postal code may be incorrect. Please enter the address manually or select a location from the map.",
+    "noAddressFound": "No address found! The postal code may be incorrect. Please check the postal code or select a location from the map.",
     "noData": "No data available",
     "noInstances": "No instances available. Please create a new instance.",
     "noResultFound": "No results found",
