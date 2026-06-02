@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.0
+
+### Changes
+
+- Submits the same task ID on submission of task actions
+
 ## 5.74.1
 
 ### Changes

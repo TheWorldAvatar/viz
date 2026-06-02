@@ -252,7 +252,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     action: string,
     isPost: boolean
   ) => {
-    // Add contract and date field
+    // Add current task id, contract, and date field
+    formData[FORM_STATES.ID] = task.id;
     formData[FORM_STATES.CONTRACT] = task.contract;
     formData[FORM_STATES.DATE] = task.date;
 
