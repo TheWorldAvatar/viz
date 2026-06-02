@@ -46,7 +46,7 @@ export default function RegistryTableComponent(
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshId, refreshFlag, triggerRefresh } = useOperationStatus();
 
-  const filterOption: TableColumnOption = props.tableColumnOptions.find(option => option.name === "filter");
+  const filterOption: TableColumnOption = props.tableColumnOptions?.find(option => option.name === "filter");
   const disableDateFilter: boolean = filterOption ? !filterOption.visible : false;
 
   const [selectedDate, setSelectedDate] = useState<DateRange>(
