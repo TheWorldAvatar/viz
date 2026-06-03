@@ -223,11 +223,11 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       case FormTypeMap.ADD: {
         if (props.isPrimaryEntity) {
           if (!!formData[billingParams.pricingField]) {
-            formData["pricing"] = parsePricingModels(formData, billingParams);
+            formData["pricing"] = parsePricingModels(formData, billingParams)[0];
           }
           formData["type"] = props.entityType;
           pendingResponse = await queryInternalApi(
-            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft/new"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "POST",
             JSON.stringify(formData));
         } else {
@@ -318,17 +318,15 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       case FormTypeMap.EDIT: {
         if (props.isPrimaryEntity) {
           // update entity + re-draft lifecycle + update pricing in one call
+          formData["type"] = props.entityType;
+          formData["contract"] = props.primaryInstance;
+          if (billingParams.pricingField in formData) {
+            formData["pricing"] = parsePricingModels(formData, billingParams);
+          }
           pendingResponse = await queryInternalApi(
-            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft/new"),
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "PUT",
-            JSON.stringify({
-              ...formData,
-              type: props.entityType,
-              contract: props.primaryInstance,
-              ...(billingParams.pricingField in formData
-                ? { pricing: parsePricingModels(formData, billingParams) }
-                : {}),
-            }));
+            JSON.stringify(formData));
         } else {
           // non-primary entity
           pendingResponse = await queryInternalApi(
