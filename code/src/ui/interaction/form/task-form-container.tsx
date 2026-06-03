@@ -354,6 +354,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               onClick={() => {
                 if (
                   props.formType === FormTypeMap.COMPLETE &&
+                  task?.status != RegistryStatusMap.COMPLETED &&
                   task?.scheduleType === "perpetualService"
                 ) {
                   setIsDuplicate(true);
