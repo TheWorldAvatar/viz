@@ -78,8 +78,13 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       data.push(flatInstance);
     });
   }
+  const hasEventId: boolean = columns?.some(col => col?.value === "event_id");
+  const defaultSorting: SortingState = hasEventId
+    ? [{ id: "id", desc: false }, { id: "event_id", desc: false }]
+    : [{ id: "id", desc: false }];
+  const activeSorting: SortingState = sorting.length > 0 ? sorting : defaultSorting;
   return data.sort((a: FieldValues, b: FieldValues): number => {
-    for (const sort of sorting) {
+    for (const sort of activeSorting) {
       const field: string = sort.id;
       const valA: string = a[field];
       const valB: string = b[field];
