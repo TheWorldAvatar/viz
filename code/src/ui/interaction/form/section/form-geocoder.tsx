@@ -105,10 +105,12 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
     addressShapes,
   }: GeocodeTemplateDescriptor = useGeocodeTemplate(props.field, props.form);
 
+  // Make UI reactive to postal code changes
+  const watchedPostalCode = props.form.watch(postalCodeShape?.fieldId || "") as string | undefined;
+
   const {
     hasNoAddressFound,
     showAddressOptions,
-    showAddressShapes,
     addresses,
     selectAddress,
     onGeocoding,
@@ -127,18 +129,24 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
 
       {!isFetching && (
         <>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-start gap-2">
             {postalCodeShape && (
               <FormFieldComponent field={postalCodeShape} form={props.form} />
             )}
-
             {(formType == "add" || formType == "edit") && (
-              <div className="flex mt-12">
+              <div className="mt-12 shrink-0">
                 <Button
                   leftIcon="place"
                   size="icon"
                   tooltipText={dict.action.selectLocation}
-                  onClick={() => onGeocoding(props.form.getValues())}
+                  disabled={!watchedPostalCode || watchedPostalCode.trim() === ""}
+                  onClick={() => {
+                    // Trim the postal code to prevent submitting with whitespace,
+                    // which would cause an error in geocoding API
+                    const trimmedPostalCode: string = watchedPostalCode.trim();
+                    props.form.setValue(postalCodeShape.fieldId, trimmedPostalCode);
+                    onGeocoding(props.form.getValues());
+                  }}
                   type="button"
                 />
               </div>
@@ -146,7 +154,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
 
           {hasNoAddressFound && (
-            <div className="m-2">
+            <div>
               <ErrorComponent message={dict.message.noAddressFound} />
             </div>
           )}
@@ -155,7 +163,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               {addresses.map((address, index) => (
                 <button
                   key={address.street + index}
-                  className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border-1 border-border rounded-lg hover:bg-primary transition-colors duration-200"
+                  className="cursor-pointer overflow-hidden whitespace-nowrap flex text-center w-fit p-2 text-base md:text-lg text-foreground bg-background border border-border rounded-lg hover:bg-primary transition-colors duration-200"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                     // Prevent form submission
                     event.preventDefault();
@@ -166,17 +174,6 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
                   {String.fromCharCode(62)} {address.block}{" "}
                   {parseWordsForLabels(address.street)}, {address.city}
                 </button>
-              ))}
-            </div>
-          )}
-          {addressShapes.length > 0 && showAddressShapes && (
-            <div className="flex flex-wrap w-full p-0 m-0">
-              {addressShapes.map((shape, index) => (
-                <FormFieldComponent
-                  key={shape.fieldId + index}
-                  field={shape}
-                  form={props.form}
-                />
               ))}
             </div>
           )}

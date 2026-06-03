@@ -170,7 +170,7 @@
     "invalidExclusiveRange": "Ungültiger Bereich! Der zweite Wert muss streng größer sein als der erste.",
     "invalidInclusiveRange": "Ungültiger Bereich! Der zweite Wert muss streng größer oder gleich dem ersten sein.",
     "loading": "Wird geladen, bitte warten...",
-    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein oder wählen Sie einen Ort auf der Karte aus.",
+    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte überprüfe die Postleitzahl oder wähle einen Ort auf der Karte aus.",
     "noData": "Keine Daten verfügbar",
     "noInstances": "Keine Instanzen verfügbar. Bitte erstellen Sie eine neue Instanz.",
     "noResultFound": "Keine Ergebnisse gefunden",

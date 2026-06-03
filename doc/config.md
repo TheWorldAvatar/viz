@@ -402,12 +402,14 @@ Each table key maps to an array of column configuration objects. The supported o
 - `name` (required): The backend column identifier.
 - `width` (optional): Default width of the column in pixels. If not set, the column width will be determined by the platform's default settings.
 - `visible` (optional): Hides or shows the column at the start. Default to `true` if not set explicitly. Set to `false` to hide the column.
+- `sorting` (optional): Pre-sorts the table by this column on load. Accepted values are `"asc"` (ascending) or `"desc"` (descending). A maximum of 3 columns per table can have sorting configured.
 
 Additional notes:
 
 - Any columns not listed remain available and fall back to the platform's default ordering and sizing.
 - You can provide as little as a single column ID. The columns you list will be shown first (in the order you list them); all other columns will still be shown after that, in the backend-provided default order.
 - Only existing column names are applied. Unknown `name` values are ignored.
+- You may disable the date filter on the **closed task page** by adding `{ "name": "filter", "visible": false }` to the `closed` key
 
 Example:
 
@@ -433,8 +435,9 @@ Example:
   ],
   "scheduled": [
     { "name": "status" },
-    { "name": "client" },
-    { "name": "driver" }
+    { "name": "client", "sorting": "asc" },
+    { "name": "driver" },
+    { "name": "start_date", "width": 60, "sorting": "desc" }
   ]
 }
 ```

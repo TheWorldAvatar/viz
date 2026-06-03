@@ -41,6 +41,7 @@ export type TableColumnOption = {
   width?: number;
   visible?: boolean;
   order?: number;
+  sorting?: "asc" | "desc";
 };
 
 export type TableColumnSettings = Record<string, TableColumnOption[]>;

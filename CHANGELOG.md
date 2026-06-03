@@ -2,6 +2,45 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.1
+
+### Changes
+
+- Prevented submission of whitespace-only post code input in the geocoder form section
+- Trimmed leading and trailing whitespace from post code input in the geocoder form section before validation and submission. This ensures that accidental spaces do not cause validation errors or issues with geocoding.
+- Removed address shape from the geocoder form section 
+
+## 5.75.0
+
+### Changes
+
+- Submits the same task ID on submission of task actions
+
+## 5.74.1
+
+### Changes
+
+- Implement a sorting property in the table column settings so that the current table can be pre sorted when loaded.
+
+## 5.74.0
+
+### Changes
+
+- Prevented submission of whitespace-only form inputs
+- Trimmed leading and trailing whitespace from all form inputs before validation and submission.
+
+## 5.73.9
+
+### Bug Fixes
+
+- Fixed compilation error
+
+## 5.73.8
+
+### Changes
+
+- Allow developers to configure if date range is shown for closed tasks
+
 ## 5.73.7
 
 ### Bug Fixes
