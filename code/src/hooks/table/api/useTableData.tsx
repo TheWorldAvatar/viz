@@ -65,7 +65,7 @@ export function useTableData(
 
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      setIsBackgroundLoading(false);
+      setIsBackgroundLoading(true);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
 
       const buildApiUrl = (page: string, limit: string): string => {
@@ -103,7 +103,6 @@ export function useTableData(
         setData(currentParsedData);
         setColumns(columns);
         setIsLoading(false);
-        setIsBackgroundLoading(true);
 
         // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
         const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()));
