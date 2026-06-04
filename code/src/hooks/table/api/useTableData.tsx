@@ -33,7 +33,7 @@ export interface TableDataDescriptor {
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
 * @param {TableColumnOption[]} columnOptions Configuration for table columns options.
-* @param {number} firstPageSize Number of records to fetch immediately for the first visible page.
+* @param {number} firstVisiblePageSize Number of records to fetch immediately for the first visible page.
 */
 export function useTableData(
   entityType: string,
@@ -45,7 +45,7 @@ export function useTableData(
   apiPagination: PaginationState,
   filters: ColumnFilter[],
   columnOptions: TableColumnOption[],
-  firstPageSize: number,
+  firstVisiblePageSize: number,
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -85,10 +85,10 @@ export function useTableData(
         // For page sizes equal and above 50, a full batch call is executed
         // For page sizes below 50, calls are executed in two requests to improve first visible page's performance
         // The speed difference above 50 is no longer significant enough to demand these changes
-        const currentPage: string = firstPageSize >= 50 ? apiPagination.pageIndex.toString() : (apiPagination.pageIndex * (apiPagination.pageSize / firstPageSize)).toString();
-        const apiUrl: string = buildApiUrl(currentPage, firstPageSize >= 50 ?
-          apiPagination.pageSize.toString() : firstPageSize.toString());
-        if (firstPageSize < 50) {
+        const currentPage: string = firstVisiblePageSize >= 50 ? apiPagination.pageIndex.toString() : (apiPagination.pageIndex * (apiPagination.pageSize / firstVisiblePageSize)).toString();
+        const apiUrl: string = buildApiUrl(currentPage, firstVisiblePageSize >= 50 ?
+          apiPagination.pageSize.toString() : firstVisiblePageSize.toString());
+        if (firstVisiblePageSize < 50) {
           setIsBackgroundLoading(true);
         }
         const res: AgentResponseBody = await queryInternalApi(apiUrl, undefined, undefined, controller.signal);
@@ -101,7 +101,7 @@ export function useTableData(
         setData(parsedData);
         setColumns(columns);
         setIsLoading(false);
-        if (firstPageSize < 50) {
+        if (firstVisiblePageSize < 50) {
           // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
           const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
           const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
@@ -122,7 +122,7 @@ export function useTableData(
 
     fetchData();
     return () => { controller.abort(); };
-  }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType, firstPageSize]);
+  }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType, firstVisiblePageSize]);
 
   return {
     isLoading,
