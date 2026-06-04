@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.3
+
+### Changes
+
+- Combined 3 separate API calls for primary entity (instance creation, draft contract, assigning pricing model) into one API call. This optimizes the process of creating a new job request by reducing the number of API calls, thus improving performance and speed.
+- Bump min version of `VisBackend Agent` from `v1.52.2` to `v1.53.0`
+
 ## 5.75.2
 
 ### Bug Fixes
