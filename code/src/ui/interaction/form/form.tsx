@@ -317,9 +317,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       }
       case FormTypeMap.EDIT: {
         if (props.isPrimaryEntity) {
-          // update entity + re-draft lifecycle + update pricing in one call
           formData["type"] = props.entityType;
-          formData["contract"] = props.primaryInstance;
           if (billingParams.pricingField in formData) {
             formData["pricing"] = parsePricingModels(formData, billingParams);
           }
@@ -328,7 +326,6 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             "PUT",
             JSON.stringify(formData));
         } else {
-          // non-primary entity
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(
               InternalApiIdentifierMap.INSTANCES, props.entityType, "false", formData.id
