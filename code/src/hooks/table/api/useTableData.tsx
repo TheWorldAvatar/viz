@@ -111,7 +111,11 @@ export function useTableData(
           setIsBackgroundLoading(false);
         }
       } catch (error) {
-        if ((error as DOMException).name === "AbortError") return;
+        if ((error as DOMException).name === "AbortError") {
+          setIsLoading(false);
+          setIsBackgroundLoading(false);
+          return;
+        }
         console.error("Error fetching instances", error);
       }
     };
