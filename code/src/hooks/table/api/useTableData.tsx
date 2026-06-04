@@ -63,7 +63,6 @@ export function useTableData(
 
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
-      setIsBackgroundLoading(true);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
 
       const buildApiUrl = (page: string, limit: string): string => {
@@ -83,31 +82,42 @@ export function useTableData(
       };
 
       try {
-        // Current: fetch only the first visible page to unblock the UI immediately
-        const currentPage: string = (apiPagination.pageIndex * (apiPagination.pageSize / firstPageSize)).toString();
-        const currentRes: AgentResponseBody = await queryInternalApi(buildApiUrl(currentPage, firstPageSize.toString()), undefined, undefined, controller.signal);
+        if (firstPageSize >= 50) {
+          // Single call for large page sizes — fetch the full batch directly
+          const res: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
+          const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+          const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+          const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(res.data?.columns, columnOptions, dict);
+          setSelectedCount(res.data?.currentItemCount);
+          setTotalCount(res.data?.totalItems);
+          setInitialInstances(instances);
+          setData(parsedData);
+          setColumns(columns);
+          setIsLoading(false);
+        } else {
+          // Two-call approach for small page sizes: unblock UI with first page, then fetch full batch in background
+          setIsBackgroundLoading(true);
+          // Current: fetch only the first visible page to unblock the UI immediately
+          const currentPage: string = (apiPagination.pageIndex * (apiPagination.pageSize / firstPageSize)).toString();
+          const currentRes: AgentResponseBody = await queryInternalApi(buildApiUrl(currentPage, firstPageSize.toString()), undefined, undefined, controller.signal);
+          const currentInstances: RegistryFieldValues[] = (currentRes.data?.items as RegistryFieldValues[]) ?? [];
+          const currentParsedData: FieldValues[] = parseDataForTable(currentInstances, sorting, dict.title, currentRes.data?.columns);
+          const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(currentRes.data?.columns, columnOptions, dict);
+          setSelectedCount(currentRes.data?.currentItemCount);
+          setTotalCount(currentRes.data?.totalItems);
+          setInitialInstances(currentInstances);
+          setData(currentParsedData);
+          setColumns(columns);
+          setIsLoading(false);
 
-        const currentInstances: RegistryFieldValues[] = (currentRes.data?.items as RegistryFieldValues[]) ?? [];
-        const currentParsedData: FieldValues[] = parseDataForTable(currentInstances, sorting, dict.title, currentRes.data?.columns);
-        const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(
-          currentRes.data?.columns,
-          columnOptions,
-          dict,
-        );
-        setSelectedCount(currentRes.data?.currentItemCount);
-        setTotalCount(currentRes.data?.totalItems);
-        setInitialInstances(currentInstances);
-        setData(currentParsedData);
-        setColumns(columns);
-        setIsLoading(false);
-
-        // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
-        const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
-        const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
-        const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
-        setInitialInstances(cappedRemainderInstances);
-        setData(cappedRemainderParsedData);
-        setIsBackgroundLoading(false);
+          // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
+          const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
+          const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
+          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
+          setInitialInstances(cappedRemainderInstances);
+          setData(cappedRemainderParsedData);
+          setIsBackgroundLoading(false);
+        }
       } catch (error) {
         if ((error as DOMException).name === "AbortError") return;
         console.error("Error fetching instances", error);
