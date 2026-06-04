@@ -66,7 +66,7 @@ export default function TablePagination() {
               tableDescriptor.table.setPageIndex(0);
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == 0}
+            disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to first page"
           />
           <Button
@@ -77,7 +77,7 @@ export default function TablePagination() {
               tableDescriptor.table.previousPage();
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == 0}
+            disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to previous page"
           />
           <Button
@@ -88,7 +88,7 @@ export default function TablePagination() {
               tableDescriptor.table.nextPage();
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1}
+            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to next page"
           />
           <Button
@@ -100,7 +100,7 @@ export default function TablePagination() {
               tableDescriptor.table.setPageIndex(lastPageIndex - 1);
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1}
+            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to last page"
           />
         </div>

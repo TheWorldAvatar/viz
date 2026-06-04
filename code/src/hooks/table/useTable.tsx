@@ -29,6 +29,7 @@ import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   isLoading: boolean;
+  isBackgroundLoading: boolean;
   isBulkDispatchEdit: boolean;
   setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
@@ -73,7 +74,7 @@ export function useTable(
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { isLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
+  const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
@@ -83,6 +84,7 @@ export function useTable(
     apiPagination,
     columnFilters,
     tableColumnOptions,
+    pagination.pageSize,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -184,6 +186,7 @@ export function useTable(
 
   return {
     isLoading,
+    isBackgroundLoading,
     isBulkDispatchEdit,
     setIsBulkDispatchEdit,
     table,

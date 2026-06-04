@@ -161,8 +161,8 @@ export function makeInternalRegistryAPIwithParams(
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
 }
 
-export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">, body?: string): Promise<AgentResponseBody> {
-  let requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
+export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">, body?: string, signal?: AbortSignal): Promise<AgentResponseBody> {
+  let requestParams: RequestInit = { cache: "no-store", credentials: "same-origin", signal };
   if (method == "DELETE") {
     requestParams = {
       ...requestParams,

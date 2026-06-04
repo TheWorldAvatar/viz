@@ -52,8 +52,13 @@ export async function GET(
         ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
       },
       cache: "no-store",
+      signal: req.signal,
     });
   } catch (error) {
+    if ((error as DOMException).name === "ResponseAborted") {
+      console.log(`[API] Request aborted by client: ${url}`);
+      return new NextResponse(null, { status: 499 });
+    }
     return NextResponse.json(handleFetchFailure(url, error));
   }
 

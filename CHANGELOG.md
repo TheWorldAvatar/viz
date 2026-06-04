@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.4
+
+### Changes
+
+- Changed table pagination API requests to improve performance 
+- For page sizes equal and above 50, a full batch call is executed
+- For page sizes below 50, calls are executed in two requests to improve first visible page's performance
+
 ## 5.75.3
 
 ### Changes
