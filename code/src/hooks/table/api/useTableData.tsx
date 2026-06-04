@@ -91,15 +91,16 @@ export function useTableData(
         if (cancelled) return;
 
         const currentInstances: RegistryFieldValues[] = (currentRes.data?.items as RegistryFieldValues[]) ?? [];
-        setSelectedCount(currentRes.data?.currentItemCount);
-        setTotalCount(currentRes.data?.totalItems);
-        setInitialInstances(currentInstances);
-        setData(parseDataForTable(currentInstances, sorting, dict.title, currentRes.data?.columns));
+        const currentParsedData: FieldValues[] = parseDataForTable(currentInstances, sorting, dict.title, currentRes.data?.columns);
         const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(
           currentRes.data?.columns,
           columnOptions,
           dict,
         );
+        setSelectedCount(currentRes.data?.currentItemCount);
+        setTotalCount(currentRes.data?.totalItems);
+        setInitialInstances(currentInstances);
+        setData(currentParsedData);
         setColumns(columns);
         setIsLoading(false);
         setIsBackgroundLoading(true);
@@ -109,8 +110,9 @@ export function useTableData(
         if (cancelled) return;
 
         const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
+        const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
         setInitialInstances(cappedRemainderInstances);
-        setData(parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns));
+        setData(cappedRemainderParsedData);
         setIsBackgroundLoading(false);
       } catch (error) {
         console.error("Error fetching instances", error);
