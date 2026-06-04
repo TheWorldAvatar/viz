@@ -12,7 +12,7 @@ import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface TableDataDescriptor {
-  isFirstPageLoading: boolean;
+  isLoading: boolean;
   isBackgroundLoading: boolean;
   selectedCount: number;
   totalCount: number;
@@ -48,7 +48,7 @@ export function useTableData(
   firstPageSize: number,
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
-  const [isFirstPageLoading, setIsFirstPageLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isBackgroundLoading, setIsBackgroundLoading] = useState<boolean>(false);
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
@@ -64,7 +64,7 @@ export function useTableData(
     let cancelled: boolean = false;
 
     const fetchData = async (): Promise<void> => {
-      setIsFirstPageLoading(true);
+      setIsLoading(true);
       setIsBackgroundLoading(false);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
 
@@ -101,7 +101,7 @@ export function useTableData(
           dict,
         );
         setColumns(columns);
-        setIsFirstPageLoading(false);
+        setIsLoading(false);
         setIsBackgroundLoading(true);
 
         // Phase 2: fetch the full batch in the background so subsequent pages are instant
@@ -123,7 +123,7 @@ export function useTableData(
   }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType, firstPageSize]);
 
   return {
-    isFirstPageLoading,
+    isLoading,
     isBackgroundLoading,
     data,
     columns,

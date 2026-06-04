@@ -74,7 +74,7 @@ export function useTable(
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { isFirstPageLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
+  const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
@@ -185,7 +185,7 @@ export function useTable(
   });
 
   return {
-    isLoading: isFirstPageLoading,
+    isLoading,
     isBackgroundLoading,
     isBulkDispatchEdit,
     setIsBulkDispatchEdit,
