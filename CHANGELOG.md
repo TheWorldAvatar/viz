@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.2
+
+### Bug Fixes
+
+- Disable duplication of closed completed tasks when recompleting
+
 ## 5.75.1
 
 ### Changes
