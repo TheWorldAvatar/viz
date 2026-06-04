@@ -109,7 +109,6 @@ export function useTableData(
         if (cancelled) return;
 
         const phase2Instances: RegistryFieldValues[] = (phase2Res.data?.items as RegistryFieldValues[]) ?? [];
-        setSelectedCount(phase2Res.data?.currentItemCount);
         setInitialInstances(phase2Instances);
         setData(parseDataForTable(phase2Instances, sorting, dict.title, phase2Res.data?.columns));
         setIsBackgroundLoading(false);
