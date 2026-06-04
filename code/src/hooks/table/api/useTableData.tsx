@@ -59,9 +59,7 @@ export function useTableData(
   const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
 
   useEffect(() => {
-    // Prevents a stale fetch (e.g. from a previous filter/sort) from overwriting state
-    // after deps change mid-flight (Between first call and second API call). Cleanup sets this to true, causing in-progress awaits to bail out.
-    let cancelled: boolean = false;
+    const controller: AbortController = new AbortController();
 
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
@@ -87,8 +85,7 @@ export function useTableData(
       try {
         // Current: fetch only the first visible page to unblock the UI immediately
         const currentPage: string = (apiPagination.pageIndex * (apiPagination.pageSize / firstPageSize)).toString();
-        const currentRes: AgentResponseBody = await queryInternalApi(buildApiUrl(currentPage, firstPageSize.toString()));
-        if (cancelled) return;
+        const currentRes: AgentResponseBody = await queryInternalApi(buildApiUrl(currentPage, firstPageSize.toString()), undefined, undefined, controller.signal);
 
         const currentInstances: RegistryFieldValues[] = (currentRes.data?.items as RegistryFieldValues[]) ?? [];
         const currentParsedData: FieldValues[] = parseDataForTable(currentInstances, sorting, dict.title, currentRes.data?.columns);
@@ -105,8 +102,7 @@ export function useTableData(
         setIsLoading(false);
 
         // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
-        const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()));
-        if (cancelled) return;
+        const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
 
         const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
         const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
@@ -114,12 +110,13 @@ export function useTableData(
         setData(cappedRemainderParsedData);
         setIsBackgroundLoading(false);
       } catch (error) {
+        if ((error as DOMException).name === "AbortError") return;
         console.error("Error fetching instances", error);
       }
     };
 
     fetchData();
-    return () => { cancelled = true; };
+    return () => { controller.abort(); };
   }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType, firstPageSize]);
 
   return {
