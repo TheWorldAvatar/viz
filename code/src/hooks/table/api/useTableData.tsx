@@ -103,7 +103,6 @@ export function useTableData(
 
         // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
         const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
-
         const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
         const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
         setInitialInstances(cappedRemainderInstances);
