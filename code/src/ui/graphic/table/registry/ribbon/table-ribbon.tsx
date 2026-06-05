@@ -140,7 +140,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         )}
       <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-2 flex-wrap">
         {(props.lifecycleStage === LifecycleStageMap.GENERAL || isBillingStage) &&
-          <p>{props.message}</p>}
+          <p className="max-w-lg">{props.message}</p>}
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
           <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border`}>
             {isContractRegistry && <RedirectButton
