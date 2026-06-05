@@ -27,6 +27,7 @@ interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
+  message?: string;
   tableColumnOptions: TableColumnOption[];
 }
 
@@ -36,6 +37,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
+ * @param {string} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function RegistryTableComponent(
@@ -115,6 +117,7 @@ export default function RegistryTableComponent(
             instances={tableDescriptor.initialInstances}
             triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
+            message={props.message}
           />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (

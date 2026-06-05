@@ -39,8 +39,10 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
   if (uiSettings.modules.registry) {
     // Stage should be pending for the main data
     let lifecycleStage: LifecycleStage;
+    let caption: string;
     if (uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == decodedType)) {
       lifecycleStage = LifecycleStageMap.GENERAL;
+      caption = uiSettings.resources?.registry?.paths?.find(path => parseStringsForUrls(path.type) == decodedType).caption;
     } else if (uiSettings.resources?.registry?.data) {
       lifecycleStage = LifecycleStageMap.PENDING;
     } else {
@@ -50,6 +52,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
     return (
       <RegistryTableComponent
         entityType={decodedType}
+        message={caption}
         lifecycleStage={lifecycleStage}
         tableColumnOptions={tableColumnSettings}
       />

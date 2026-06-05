@@ -50,6 +50,7 @@ export interface ResourcesPathSettings {
   type: string;
   key?: string;
   icon?: string;
+  caption?: string;
   permission?: keyof HasPermissions;
 }
 
