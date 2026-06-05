@@ -8,9 +8,9 @@ import { useEffect, useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "state/context-menu-slice";
-import { Dictionary } from "types/dictionary";
+import { Dictionary, LanguageDictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
-import { TableColumnOption, ContextItemMap } from "types/settings";
+import { ContextItemMap, TableColumnOption } from "types/settings";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
@@ -27,7 +27,7 @@ interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
-  message?: string;
+  message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
 }
 
@@ -37,7 +37,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
- * @param {string} message Optional value to display a user-defined message at the table ribbon.
+ * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function RegistryTableComponent(
@@ -117,7 +117,7 @@ export default function RegistryTableComponent(
             instances={tableDescriptor.initialInstances}
             triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
-            message={props.message}
+            message={dict.translate(props.message)}
           />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (

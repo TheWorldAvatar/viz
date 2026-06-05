@@ -7,6 +7,7 @@ import { LifecycleStage, LifecycleStageMap } from 'types/form';
 import { NavBarItemSettings, TableColumnOption, UISettings } from 'types/settings';
 import RegistryTableComponent from 'ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from 'utils/client-utils';
+import { LanguageDictionary } from 'types/dictionary';
 
 interface GeneralRegistryPageProps {
   params: Promise<{
@@ -39,7 +40,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
   if (uiSettings.modules.registry) {
     // Stage should be pending for the main data
     let lifecycleStage: LifecycleStage;
-    let caption: string;
+    let caption: LanguageDictionary;
     if (uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == decodedType)) {
       lifecycleStage = LifecycleStageMap.GENERAL;
       caption = uiSettings.resources?.registry?.paths?.find(path => parseStringsForUrls(path.type) == decodedType).caption;

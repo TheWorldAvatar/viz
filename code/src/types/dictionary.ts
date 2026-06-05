@@ -3,8 +3,11 @@ type contextMenuDictItem = {
   tooltip: string;
 };
 
+export type SupportedLanguage = "en" | "en-GB" | "de";
+export type LanguageDictionary = Record<SupportedLanguage, string>;
+
 export type Dictionary = {
-  lang: string;
+  lang: SupportedLanguage;
   action: Record<string, string>;
   form: Record<string, string>;
   map: {
@@ -19,6 +22,7 @@ export type Dictionary = {
     tooltip: Record<string, string>;
   };
   title: Record<string, string>;
+  translate: (value: LanguageDictionary) => string;
   toNumberDisplay?: (value: string | number | readonly string[] | null | undefined) => string;
   normaliseNumber?: (value: string) => string;
 };
