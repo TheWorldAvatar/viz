@@ -22,7 +22,7 @@ export type Dictionary = {
     tooltip: Record<string, string>;
   };
   title: Record<string, string>;
-  translate: (value: LanguageDictionary) => string;
+  translate?: (value: LanguageDictionary) => string;
   toNumberDisplay?: (value: string | number | readonly string[] | null | undefined) => string;
   normaliseNumber?: (value: string) => string;
 };
