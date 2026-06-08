@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.5
+
+### Bug Fixes
+
+- Fixed the bug where the Add Invoice table is not preserving the pre-existing client filter when filters are cleared.
+
 ## 5.75.4
 
 ### Changes
