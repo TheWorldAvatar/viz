@@ -3,9 +3,9 @@ import { Dictionary } from "types/dictionary";
 
 const dictionaries: Record<string, () => Promise<Dictionary>> = {
   de: () =>
-    import("utils/dictionary/data/de.json").then((module) => module.default),
+    import("utils/dictionary/data/de.json").then((module) => module.default as Dictionary),
   en: () =>
-    import("utils/dictionary/data/en.json").then((module) => module.default),
+    import("utils/dictionary/data/en.json").then((module) => module.default as Dictionary),
 };
 
 export const getDictionary = async (locale: string): Promise<Dictionary> =>

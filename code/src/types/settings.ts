@@ -1,5 +1,6 @@
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
+import { LanguageDictionary } from "./dictionary";
 
 export const ScreenTypeMap = {
   MOBILE: "mobile",
@@ -50,6 +51,7 @@ export interface ResourcesPathSettings {
   type: string;
   key?: string;
   icon?: string;
+  caption?: LanguageDictionary;
   permission?: keyof HasPermissions;
 }
 

@@ -29,6 +29,7 @@ interface TableRibbonProps {
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
+  message?: string;
 }
 
 /**
@@ -43,6 +44,7 @@ interface TableRibbonProps {
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
@@ -136,8 +138,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           </div>
         </div>
         )}
-      <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
-      items-end md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-2 flex-wrap">
+        {(props.lifecycleStage === LifecycleStageMap.GENERAL || isBillingStage) &&
+          <p className="max-w-4xl border-l-4 border-primary pl-3 mb-4">{props.message}</p>}
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
           <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border`}>
             {isContractRegistry && <RedirectButton

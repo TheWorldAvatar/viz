@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useContext, useMemo } from 'react';
-import { Dictionary } from 'types/dictionary';
+import { Dictionary, LanguageDictionary, SupportedLanguage } from 'types/dictionary';
 import { DictionaryContext } from '../utils/dictionary/DictionaryContext';
 
 export const useDictionary = () => {
@@ -42,10 +42,17 @@ export const useDictionary = () => {
         return cleanVal;
     }, [numberSeparators]);
 
+    const translate = useCallback((value: LanguageDictionary): string => {
+        if (value === null || value === undefined) { return ""; }
+        const lang: SupportedLanguage = dict.lang == "en-GB" ? "en" : dict.lang;
+        return value[lang];
+    }, [dict.lang]);
+
     return {
         ...dict,
         toNumberDisplay,
         normaliseNumber,
+        translate,
     };
 };
 

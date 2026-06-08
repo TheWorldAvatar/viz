@@ -59,7 +59,7 @@ The `config/ui-settings.json` file provides general settings for the platform. T
   - `resourceName`: indicates the type of resource required - dashboard, scenario, registry, billing
     - `url`: optional that is only used with scenario and dashboard resources
     - `data`: optional dataset indicator that is only used with scenario and registry resources to target the required dataset
-    - `paths`: optional array of strings to denote the names of the registry resources
+    - `paths`: optional array of configuration options for the registry resources
 
 Note that resources are optional and their configuration options can differ from each other. Please note the list of available resources and their possible options as follows:
 
@@ -72,6 +72,7 @@ Note that resources are optional and their configuration options can differ from
   - `settings`: OPTIONAL: Name of the table settings JSON file in `config/` (for example `table-column-settings.json`) to configure default registry table columns, widths, visibility, etc. .
   - `paths`: OPTIONAL: An array of the entities of interest to view their records within the registry. Each entity must be configured as a JSON object format:
     - `type`: The entity of interest, that is mapped to the backend; Users must only use either white spaces or `_` to separate the words.
+    - `caption`: Optional language dictionary to display a message on the table for the general registries. Only `en` and `de` are permitted at this moment.
     - `icon`: Optional parameter to display an icon from the icon library.
     - `permission`: Optional parameter to set the permission required in order to view the registry page on the nav bar IF authentication is enabled.
 - Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
@@ -116,7 +117,17 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
     "registry": {
       "data": "type", // Specify only the type to reach the registry page of interest
       "settings": "table-column-settings.json", // Optional table column settings file in /config
-      "paths": ["resource one", "resource two"] // Specify the resource names on the backend
+      "paths": [{
+          "type": "resource_one", // resource name from backend
+          "icon": "people",
+          "caption": { // A caption dictionary to display table message
+            "en": "Example", // Only shows up on german site
+            "de": "Beispiel" // Only shows up on german site
+            },
+          "permission": "operation" // only for users with operation permissions
+        },{
+          "type": "resource_two" // resource name from backend     
+        }]
     },
     "scenario": {
       "url": "https://theworldavatar.io/demos/credo-ofwat/central/CentralStackAgent", // Edit scenario url here
