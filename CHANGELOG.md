@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.5
+
+### Changes
+
+- Introduced captions for general registry pages
+
 ## 5.75.4
 
 ### Changes
