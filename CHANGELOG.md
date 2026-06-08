@@ -4,9 +4,9 @@
 
 ## 5.75.5
 
-### Changes
+### Bug Fixes
 
-- Introduced captions for general registry pages
+- Fixed the bug where the Add Invoice table is not preserving the pre-existing client filter when filters are cleared.
 
 ## 5.75.4
 
