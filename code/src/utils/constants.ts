@@ -12,3 +12,6 @@ export const FLAG_KEY: string = "flag";
 export const FLAG_EMOJI: string = "🚩";
 
 export const DEFAULT_MAX_CHARACTER_LENGTH: number = 25;
+export const YEARS_PER_PAGE: number = 12;
+
+export const MAX_SORT_COLUMNS: number = 3;

@@ -13,6 +13,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/inter
 
 export interface TableDataDescriptor {
   isLoading: boolean;
+  isBackgroundLoading: boolean;
   selectedCount: number;
   totalCount: number;
   data: FieldValues[];
@@ -22,7 +23,7 @@ export interface TableDataDescriptor {
 
 /**
 * A custom hook to retrieve the total row count.
-* 
+*
 * @param {string} entityType Type of entity for rendering.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
@@ -32,6 +33,7 @@ export interface TableDataDescriptor {
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
 * @param {TableColumnOption[]} columnOptions Configuration for table columns options.
+* @param {number} firstVisiblePageSize Number of records to fetch immediately for the first visible page.
 */
 export function useTableData(
   entityType: string,
@@ -42,10 +44,12 @@ export function useTableData(
   selectedDate: DateRange,
   apiPagination: PaginationState,
   filters: ColumnFilter[],
-  columnOptions: TableColumnOption[]
+  columnOptions: TableColumnOption[],
+  firstVisiblePageSize: number,
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState<boolean>(false);
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);
@@ -53,106 +57,77 @@ export function useTableData(
   const [totalCount, setTotalCount] = useState<number>(0);
   const [data, setData] = useState<FieldValues[]>([]);
   const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
-  // A hook that refetches all data when the dialogs are closed
+
   useEffect(() => {
+    const controller: AbortController = new AbortController();
+
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
-      try {
-        let instances: RegistryFieldValues[] = [];
-        let url: string;
+
+      const buildApiUrl = (page: string, limit: string): string => {
         if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
-          url = makeInternalRegistryAPIwithParams(
-            lifecycleStage,
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
+          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INVOICEABLE,
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
-        } else if (
-          lifecycleStage == LifecycleStageMap.SCHEDULED ||
-          lifecycleStage == LifecycleStageMap.CLOSED
-        ) {
-          url = makeInternalRegistryAPIwithParams(
-            lifecycleStage,
-            entityType,
-            getUTCDate(selectedDate.from).getTime().toString(),
-            getUTCDate(selectedDate.to).getTime().toString(),
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
-        } else if (
-          lifecycleStage == LifecycleStageMap.GENERAL ||
-          lifecycleStage == LifecycleStageMap.PRICING ||
-          lifecycleStage == LifecycleStageMap.INVOICE) {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INSTANCES,
-            entityType,
-            "true",
-            null,
-            null,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
-        } else if (
-          lifecycleStage == LifecycleStageMap.ACCOUNT) {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.ACCOUNT,
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || lifecycleStage == LifecycleStageMap.CLOSED) {
+          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.GENERAL || lifecycleStage == LifecycleStageMap.PRICING || lifecycleStage == LifecycleStageMap.INVOICE) {
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, entityType, "true", null, null, page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.ACCOUNT) {
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.ACCOUNT, entityType, page, limit, sortParams, filterParams);
         } else {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.CONTRACTS,
-            lifecycleStage.toString(),
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONTRACTS, lifecycleStage.toString(), entityType, page, limit, sortParams, filterParams);
         }
-        const res: AgentResponseBody = await queryInternalApi(url);
-        instances = (res.data?.items as RegistryFieldValues[]) ?? [];
+      };
+
+      try {
+        // For page sizes equal and above 50, a full batch call is executed
+        // For page sizes below 50, calls are executed in two requests to improve first visible page's performance
+        // The speed difference above 50 is no longer significant enough to demand these changes
+        const currentPage: string = firstVisiblePageSize >= 50 ? apiPagination.pageIndex.toString() : (apiPagination.pageIndex * (apiPagination.pageSize / firstVisiblePageSize)).toString();
+        const apiUrl: string = buildApiUrl(currentPage, firstVisiblePageSize >= 50 ?
+          apiPagination.pageSize.toString() : firstVisiblePageSize.toString());
+        if (firstVisiblePageSize < 50) {
+          setIsBackgroundLoading(true);
+        }
+        const res: AgentResponseBody = await queryInternalApi(apiUrl, undefined, undefined, controller.signal);
+        const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+        const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(res.data?.columns, columnOptions, dict);
         setSelectedCount(res.data?.currentItemCount);
         setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
-        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title);
-        const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(
-          res.data?.columns,
-          columnOptions,
-          dict.title,
-        );
         setData(parsedData);
         setColumns(columns);
         setIsLoading(false);
+        if (firstVisiblePageSize < 50) {
+          // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
+          const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
+          const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
+          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
+          setInitialInstances(cappedRemainderInstances);
+          setData(cappedRemainderParsedData);
+          setIsBackgroundLoading(false);
+        }
       } catch (error) {
+        if ((error as DOMException).name === "AbortError") {
+          if (firstVisiblePageSize < 50) {
+            setIsBackgroundLoading(false);
+          }
+          return;
+        }
         console.error("Error fetching instances", error);
       }
     };
 
     fetchData();
-  }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType]);
+    return () => { controller.abort(); };
+  }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType, firstVisiblePageSize]);
 
   return {
     isLoading,
+    isBackgroundLoading,
     data,
     columns,
     selectedCount,

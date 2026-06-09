@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  FloatingFocusManager,
   FloatingPortal,
   Placement,
   useTransitionStyles,
@@ -13,6 +14,7 @@ interface PopoverActionButtonProps extends ButtonProps {
   children: React.ReactNode;
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose?: () => void;
   placement?: Placement;
 }
 
@@ -22,6 +24,7 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param {ReactNode} children Children elements that are shown in the popover floating element.
  * @param {boolean} isOpen Optional state for popover.
  * @param setIsOpen Optional dispatch action to control the open state of popover.
+ * @param onClose Optional actions to perform on close.
  * @param {Placement} placement Optional position of popover.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
@@ -37,6 +40,7 @@ export default function PopoverActionButton({
   children,
   isOpen,
   setIsOpen,
+  onClose,
   placement,
   leftIcon,
   rightIcon,
@@ -48,7 +52,7 @@ export default function PopoverActionButton({
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
-  const popover = usePopover(placement, isOpen, setIsOpen);
+  const popover = usePopover(placement, isOpen, setIsOpen, onClose);
   const transition = useTransitionStyles(popover.context, {
     duration: 200,
     initial: {
@@ -78,25 +82,28 @@ export default function PopoverActionButton({
       </div>
       {popover.isOpen && (
         <FloatingPortal>
-          <div
-            ref={popover.refs.setFloating}
-            style={{
-              ...popover.floatingStyles,
-              zIndex: 999998, // Second highest z-index so it is below the tooltips
-            }}
-            {...popover.getFloatingProps()}
-          >
+          <FloatingFocusManager context={popover.context} modal={false}>
             <div
+              ref={popover.refs.setFloating}
               style={{
-                ...transition.styles,
+                ...popover.floatingStyles,
+                zIndex: 999998, // Second highest z-index so it is below the tooltips
               }}
-              className="flex flex-col gap-y-[0.5rem] p-2 bg-muted border-1 border-border rounded-lg shadow-md"
+              {...popover.getFloatingProps()}
             >
-              {children}
+              <div
+                style={{
+                  ...transition.styles,
+                }}
+                className="flex flex-col gap-y-2 p-2 bg-muted border border-border rounded-lg shadow-md"
+              >
+                {children}
+              </div>
             </div>
-          </div>
-        </FloatingPortal>
-      )}
+          </FloatingFocusManager>
+        </FloatingPortal >
+      )
+      }
     </>
   );
 }

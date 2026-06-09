@@ -8,9 +8,9 @@ import { useEffect, useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "state/context-menu-slice";
-import { Dictionary } from "types/dictionary";
+import { Dictionary, LanguageDictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "types/form";
-import { TableColumnOption } from "types/settings";
+import { ContextItemMap, TableColumnOption } from "types/settings";
 import { ContextItemDefinition } from "ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
@@ -22,10 +22,12 @@ import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
 
 
+
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
+  message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
 }
 
@@ -35,6 +37,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
+ * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  */
 export default function RegistryTableComponent(
@@ -44,15 +47,19 @@ export default function RegistryTableComponent(
   const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshId, refreshFlag, triggerRefresh } = useOperationStatus();
+
+  const filterOption: TableColumnOption = props.tableColumnOptions?.find(option => option.name === "filter");
+  const disableDateFilter: boolean = filterOption ? !filterOption.visible : false;
+
   const [selectedDate, setSelectedDate] = useState<DateRange>(
-    getInitialDateFromLifecycleStage(props.lifecycleStage)
+    getInitialDateFromLifecycleStage(props.lifecycleStage, disableDateFilter)
   );
 
   const tableRibbonContextItem: ContextItemDefinition = useMemo(() => {
     return {
       name: dict.context.tableRibbon.title,
       description: dict.context.tableRibbon.tooltip,
-      id: "table-ribbon",
+      id: ContextItemMap.TABLE_RIBBON,
       toggled: true,
     };
   }, [dict]);
@@ -89,7 +96,7 @@ export default function RegistryTableComponent(
   }, []);
 
   return (
-    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 h-full min-h-0 flex flex-col">
+    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">
       <div className="rounded-lg pb-4">
         <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
           {props.lifecycleStage === LifecycleStageMap.ACCOUNT ||
@@ -103,12 +110,14 @@ export default function RegistryTableComponent(
           <TableRibbon
             path={pathNameEnd}
             entityType={props.entityType}
+            disableDateFilter={disableDateFilter}
             selectedDate={selectedDate as DateRange}
             setSelectedDate={setSelectedDate}
             lifecycleStage={props.lifecycleStage}
             instances={tableDescriptor.initialInstances}
             triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
+            message={dict.translate(props.message)}
           />}
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (

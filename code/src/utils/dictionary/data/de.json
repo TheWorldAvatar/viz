@@ -70,7 +70,9 @@
     "addInvoice": "Rechnung hinzufügen",
     "bulkAssign": "Massenzuweisung",
     "select": "Auswählen",
-    "selectItem": "{replace} wählen"
+    "selectItem": "{replace} wählen",
+    "nextYears": "Nächstes Jahr",
+    "previousYears": "Vorherige Jahre"
   },
   "form": {
     "singleService": "Einzelner Dienst",
@@ -112,7 +114,9 @@
     "dateSelected": "ausgewähltes Datum",
     "datesSelected": "ausgewählte Daten",
     "rescheduleDate": "Termin verschieben",
-    "rescheduleDateDesc": "Wählen Sie einen neuen Termin für Ihren Service aus."
+    "rescheduleDateDesc": "Wählen Sie einen neuen Termin für Ihren Service aus.",
+    "month": "Monat",
+    "year": "Jahr"
   },
   "map": {
     "title": {
@@ -142,8 +146,8 @@
       "tooltip": "Navigationsleiste ein-/ausblenden"
     },
     "tableRibbon": {
-      "title": "Menüband anzeigen",
-      "tooltip": "Menüband ein-/ausblenden"
+      "title": "Tabellenband anzeigen",
+      "tooltip": "Tabellenband ein-/ausblenden"
     }
   },
   "message": {
@@ -155,9 +159,9 @@
     "branchInstruction": "Wählen Sie die beste Kategorie für Ihre Anfrage",
     "registryInstruction": "Klicken Sie auf einen beliebigen Datensatz in der Tabelle, um seine Zusammenfassung anzuzeigen",
     "completeInstruction": "Um den Dienst abzuschließen, geben Sie bitte die folgenden Details ein:",
-    "dispatchInstruction": "Weisen Sie die Ressourcen für den geplanten Dienst am {date} zu",
-    "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes (oder Auftrags) am {date} an",
-    "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {date}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
+    "dispatchInstruction": "Weisen Sie die Ressourcen für den geplanten Dienst am {replace} zu:",
+    "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes (oder Auftrags) am {replace} an:",
+    "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {replace}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
     "rescheduleInstruction": "Änderung einer bereits geplanten Dienstleistung am {replace} beantragen",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
@@ -166,7 +170,7 @@
     "invalidExclusiveRange": "Ungültiger Bereich! Der zweite Wert muss streng größer sein als der erste.",
     "invalidInclusiveRange": "Ungültiger Bereich! Der zweite Wert muss streng größer oder gleich dem ersten sein.",
     "loading": "Wird geladen, bitte warten...",
-    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte geben Sie die Adresse manuell ein oder wählen Sie einen Ort auf der Karte aus.",
+    "noAddressFound": "Keine Adresse gefunden! Die Postleitzahl ist möglicherweise falsch. Bitte überprüfe die Postleitzahl oder wähle einen Ort auf der Karte aus.",
     "noData": "Keine Daten verfügbar",
     "noInstances": "Keine Instanzen verfügbar. Bitte erstellen Sie eine neue Instanz.",
     "noResultFound": "Keine Ergebnisse gefunden",
@@ -309,6 +313,7 @@
     "between": "Zwischen",
     "inclusive": "Inklusiv",
     "exclusive": "Exklusiv",
-    "value": "Wert"
+    "value": "Wert",
+    "settings": "Einstellungen"
   }
 }

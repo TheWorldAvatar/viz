@@ -13,6 +13,7 @@ import FileModal from "ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
+import MobileContextMenu from "ui/interaction/context-menu/mobile-context-menu";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -118,7 +119,6 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
   const navMenuRef = useRef<HTMLDivElement>(null);
-
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.DASHBOARD
@@ -153,7 +153,7 @@ function NavMenuContents(
       aria-label={dict.nav.title.primary}
       ref={navMenuRef}
       className={`${props.isMobile
-        ? "flex gap-4 p-2 w-full"
+        ? "flex gap-4 p-2 max-w-3xs max-h-[60dvh] overflow-y-auto"
         : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
       xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
@@ -164,10 +164,10 @@ function NavMenuContents(
           variant="ghost"
           size="icon"
           leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-          className={`!flex mt-4 p-7 
+          className={`flex! mt-4 p-7 
             ${props.isMenuExpanded
               ? "ml-auto rounded-md"
-              : "items-center !rounded-full"
+              : "items-center rounded-full!"
             }`}
           aria-label={
             props.isMenuExpanded
@@ -179,7 +179,6 @@ function NavMenuContents(
         />
       )}
       {props.settings?.modules?.landing && (
-
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
@@ -345,6 +344,7 @@ function NavMenuContents(
           );
         }
       })}
+      <MobileContextMenu isMobile={props.isMobile} />
     </nav>
   );
 }

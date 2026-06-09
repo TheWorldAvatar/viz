@@ -3,7 +3,7 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Dictionary } from "types/dictionary";
 import Button from "ui/interaction/button";
-import DateInput from "ui/interaction/input/date-input";
+import DateInput from "ui/interaction/input/date/date-input";
 import { getNormalizedDate, interpolate } from "utils/client-utils";
 
 interface DateColumnFilterProps {

@@ -2,6 +2,130 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.75.6
+
+### Changes
+
+- Introduced captions for general registry pages
+
+## 5.75.5
+
+### Bug Fixes
+
+- Fixed the bug where the Add Invoice table is not preserving the pre-existing client filter when filters are cleared.
+
+## 5.75.4
+
+### Changes
+
+- Changed table pagination API requests to improve performance 
+- For page sizes equal and above 50, a full batch call is executed
+- For page sizes below 50, calls are executed in two requests to improve first visible page's performance
+
+## 5.75.3
+
+### Changes
+
+- Combined 3 separate API calls for primary entity (instance creation, draft contract, assigning pricing model) into one API call. This optimizes the process of creating a new job request by reducing the number of API calls, thus improving performance and speed.
+- Bump min version of `VisBackend Agent` from `v1.52.2` to `v1.53.0`
+
+## 5.75.2
+
+### Bug Fixes
+
+- Disable duplication of closed completed tasks when recompleting
+
+## 5.75.1
+
+### Changes
+
+- Prevented submission of whitespace-only post code input in the geocoder form section
+- Trimmed leading and trailing whitespace from post code input in the geocoder form section before validation and submission. This ensures that accidental spaces do not cause validation errors or issues with geocoding.
+- Removed address shape from the geocoder form section 
+
+## 5.75.0
+
+### Changes
+
+- Submits the same task ID on submission of task actions
+
+## 5.74.1
+
+### Changes
+
+- Implement a sorting property in the table column settings so that the current table can be pre sorted when loaded.
+
+## 5.74.0
+
+### Changes
+
+- Prevented submission of whitespace-only form inputs
+- Trimmed leading and trailing whitespace from all form inputs before validation and submission.
+
+## 5.73.9
+
+### Bug Fixes
+
+- Fixed compilation error
+
+## 5.73.8
+
+### Changes
+
+- Allow developers to configure if date range is shown for closed tasks
+
+## 5.73.7
+
+### Bug Fixes
+
+- Fixed non-string sorting for dates and numbers
+
+## 5.73.6
+
+### Changes
+
+- Provided aria labels for: month and year selection menu in the react-day-picker component
+- Changed tooltip not to render on mobile design
+- Replaced the month and year custom components with Popoveractionbutton
+
+## 5.73.5
+
+### Bug Fixes
+
+- Fix logics that depends on schedule type to check value against key
+
+## 5.73.4
+
+### Changes
+
+- Updated start date and end date in the add job form to default to tomorrow's date
+- Updated start date in the add pricing model form to 1st of January the current year
+- Updated logic for special date default values that are set in the SHACL `startOfYear`, `startOfMonth`, and `tomorrow`
+- Updated `form.md` docs to reflect the new special date default values and how to update if a new value is added in SHACL
+
+## 5.73.3
+
+### Bug Fixes
+
+- Fix translations of schedule type for registry table filter and display
+- Fix translation of form instruction for task actions
+
+### Changes
+
+- Bump min version of `VisBackend Agent` from `v1.51.0` to `v1.51.3`
+
+## 5.73.2
+
+### Changes
+
+- Implemented a custom dropdown components for selecting months and years in the date input fields, replacing the default dropdowns provided by react-day-picker. This allows for a more customised and consistent design across the application, as well as improved accessibility and usability for users when selecting months and years in date inputs.
+
+## 5.73.1
+
+### Changes
+
+- Added a new mobile context menu which allows for users to access the context menu items on mobile. The mobile context menu is located inside the navogation menu on mobile (the hamburger menu) and is only visible on mobile screens. This allows users to have access to the context menu items on mobile devices, which was not possible before.
+
 ## 5.73.0
 
 ### Changes
@@ -79,7 +203,7 @@
 ### Changes
 
 - Added a function that calculates the maximum text length to display in a cell based on column width
-- Adjusted table cell padding 
+- Adjusted table cell padding
 - Removed the whitespace-nowrap class to allow text to wrap in the cells
 
 ## 5.71.0

@@ -10,6 +10,7 @@ import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "types/backend-agent";
+import { Dictionary } from "types/dictionary";
 import {
   FormTypeMap,
   LifecycleStage,
@@ -24,7 +25,7 @@ import ExpandableTextCell from "ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "ui/interaction/dropdown/simple-selector";
 import StatusComponent from "ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "utils/client-utils";
-import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME } from "utils/constants";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -69,7 +70,7 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState,
-  titleDict: Record<string, string>): FieldValues[] {
+  titleDict: Record<string, string>, columns: ColumnDefinitionResponse[]): FieldValues[] {
   const data: FieldValues[] = [];
   if (instances?.length > 0) {
     instances.forEach(instance => {
@@ -77,8 +78,13 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       data.push(flatInstance);
     });
   }
+  const hasEventId: boolean = columns?.some(col => col?.value === "event_id");
+  const defaultSorting: SortingState = hasEventId
+    ? [{ id: "id", desc: false }, { id: "event_id", desc: false }]
+    : [{ id: "id", desc: false }];
+  const activeSorting: SortingState = sorting.length > 0 ? sorting : defaultSorting;
   return data.sort((a: FieldValues, b: FieldValues): number => {
-    for (const sort of sorting) {
+    for (const sort of activeSorting) {
       const field: string = sort.id;
       const valA: string = a[field];
       const valB: string = b[field];
@@ -88,7 +94,21 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       // B comes first if descending, and last if ascending
       if (!valB) return sort.desc ? -1 : 1;
 
-      const comparison: number = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
+      const dataType: string = columns.find(column => column?.value === sort?.id).datatype;
+      let comparison: number = 0;
+      if (dataType === XSD_DECIMAL || dataType === XSD_INTEGER) {
+        const numA: number = Number(valA);
+        const numB: number = Number(valB);
+        comparison = numA - numB;
+      }
+      else if (dataType === XSD_DATE || dataType === XSD_DATETIME) {
+        const dateA: number = new Date(valA).getTime();
+        const dateB: number = new Date(valB).getTime();
+        comparison = dateA - dateB;
+      }
+      else {
+        comparison = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
+      }
       // Only returns the comparison if they are not equal on this sort field
       // A user may have multiple fields to sort, and if they are equal on this field, 
       // we must continue with the other fields to compare
@@ -132,19 +152,19 @@ function flattenInstance(
  *
  * @param {ColumnDef<FieldValues>[]} columns The original column definitions.
  * @param {TableColumnOption[]} columnOptions Configuration for table column options.
- * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {Dictionary} dict The translations.
  */
 export function parseColumnsMetadata(
   columns: ColumnDefinitionResponse[],
   columnOptions: TableColumnOption[],
-  titleDict: Record<string, string>,
+  dict: Dictionary,
 ): EnhancedColumnDef<FieldValues>[] {
-  const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(titleDict.blank);
+  const multiSelectFilter: FilterFnOption<FieldValues> = buildMultiFilterFnOption(dict.title.blank);
   const results: EnhancedColumnDef<FieldValues>[] = [];
   // Create column definitions based on available columns
   for (const col of columns) {
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
-    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, titleDict));
+    const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
     const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
       title.length * 15,
       125
@@ -173,7 +193,7 @@ export function parseColumnsMetadata(
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
           return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
         }
-        const value: string = getValue() as string;
+        let value: string = getValue() as string;
         if (!value) return "";
         // Format datetime/date columns for display
         if (isDateTimeColumn) {
@@ -188,7 +208,9 @@ export function parseColumnsMetadata(
         }
 
         // Column header name is untranslated so we can directly compare to a string
-        if (col.value === "status") {
+        if (col.value === "scheduleType") {
+          value = dict.form[value];
+        } else if (col.value === "status") {
           return <StatusComponent status={value} />;
         }
 
@@ -244,6 +266,34 @@ export function getInitialColumnVisibilityState(
     }
   }
   return columnVisibilityState;
+}
+
+/**
+ * Builds the initial sorting state from the column options config.
+ * Columns with a `sorting` value are included; all others are excluded.
+ *
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
+ */
+
+export function getInitialSortingState(columnOptions: TableColumnOption[]): SortingState {
+  if (!columnOptions || columnOptions.length === 0) return [];
+  return columnOptions
+    .filter(item => item.sorting != null)
+    .map(item => ({ id: item.name, desc: item.sorting === "desc" }));
+}
+
+/**
+ * Builds the initial sort URL parameter string from the column options config.
+ * Uses original field names directly — no dict needed for config-defined sorts.
+ *
+ * @param {TableColumnOption[]} columnOptions Configuration for table column options.
+ */
+export function getInitialSortParams(columnOptions: TableColumnOption[]): string {
+  const sortable: TableColumnOption[] = columnOptions?.filter(item => item.sorting != null);
+  if (!sortable || sortable.length === 0) return "%2Bid";
+  return sortable
+    .map(item => (item.sorting === "desc" ? "-" : "%2B") + item.name)
+    .join(",");
 }
 
 /**

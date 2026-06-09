@@ -1,13 +1,25 @@
 import { autoUpdate, ElementProps, flip, offset, Placement, shift, useClick, useDismiss, useFloating, useFocus, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
 import React, { useState } from "react";
 
-export function usePopover(placement: Placement = "top", isControlledOpen?: boolean, setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
+export function usePopover(
+    placement: Placement = "top",
+    isControlledOpen?: boolean,
+    setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>,
+    onClose?: () => void,) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open);
+        setIsControlledOpen?.(open);
+        if (!open) {
+            onClose?.();
+        }
+    };
 
     const floatingProps = useFloating({
         placement: placement,
         open: isControlledOpen ?? isOpen,
-        onOpenChange: setIsControlledOpen ?? setIsOpen,
+        onOpenChange: handleOpenChange,
         whileElementsMounted: autoUpdate,
         middleware: [
             offset(8),
@@ -27,7 +39,7 @@ export function usePopover(placement: Placement = "top", isControlledOpen?: bool
     return React.useMemo(
         () => ({
             isOpen: isControlledOpen ?? isOpen,
-            setIsOpen: setIsControlledOpen ?? setIsOpen,
+            setIsOpen: handleOpenChange,
             context,
             ...interactions,
             ...floatingProps

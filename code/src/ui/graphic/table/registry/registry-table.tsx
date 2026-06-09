@@ -59,7 +59,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableDescriptor={props.tableDescriptor}
         rowRefs={rowRefs}
       >
-        <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-full min-h-0">
+        <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
             <DndContext
               collisionDetection={closestCenter}

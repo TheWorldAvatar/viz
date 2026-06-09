@@ -30,7 +30,7 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue, interpolate } from "utils/client-utils";
 import { BULK_IDENTIFIER } from "utils/constants";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
@@ -252,7 +252,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     action: string,
     isPost: boolean
   ) => {
-    // Add contract and date field
+    // Add current task id, contract, and date field
+    formData[FORM_STATES.ID] = task.id;
     formData[FORM_STATES.CONTRACT] = task.contract;
     formData[FORM_STATES.DATE] = task.date;
 
@@ -288,14 +289,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <p className="text-lg mb-4 whitespace-pre-line">
             {props.formType === FormTypeMap.COMPLETE && dict.message.completeInstruction}
             {props.formType === FormTypeMap.DISPATCH &&
-              `${dict.message.dispatchInstruction} ${formatDateValue(task.date)}:`}
+              interpolate(dict.message.dispatchInstruction, formatDateValue(task.date))}
             {props.formType === FormTypeMap.CANCEL &&
-              `${dict.message.cancelInstruction} ${formatDateValue(task.date)}:`}
+              interpolate(dict.message.cancelInstruction, formatDateValue(task.date))}
             {props.formType === FormTypeMap.REPORT &&
-              `${dict.message.reportInstruction.replace(
-                "{date}",
-                formatDateValue(task.date)
-              )}`}
+              interpolate(dict.message.reportInstruction, formatDateValue(task.date))}
           </p>
         )}
 
@@ -356,7 +354,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               onClick={() => {
                 if (
                   props.formType === FormTypeMap.COMPLETE &&
-                  task?.scheduleType === dict.form.perpetualService
+                  task?.status != RegistryStatusMap.COMPLETED &&
+                  task?.scheduleType === "perpetualService"
                 ) {
                   setIsDuplicate(true);
                 }
@@ -438,7 +437,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 {/* Submit and Duplicate button - shown for complete task type */}
                 {isPermitted("completeAndDuplicateTask") &&
                   props.formType === FormTypeMap.COMPLETE &&
-                  task?.scheduleType !== dict.form.perpetualService && (
+                  task?.scheduleType !== "perpetualService" && (
                     <Button
                       leftIcon="schedule_send"
                       variant="secondary"
