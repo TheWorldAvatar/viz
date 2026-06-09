@@ -5,6 +5,7 @@
 import "ui/css/globals.css";
 
 import localFont from "next/font/local";
+import { cookies } from "next/headers";
 import React from "react";
 import OptionalPages, { OptionalPage } from "io/config/optional-pages";
 import SettingsStore from "io/config/settings";
@@ -67,6 +68,8 @@ export default async function RootLayout({
   const { lang } = await params;
   const dictionary: Dictionary = await getDictionary(lang);
   const pages: OptionalPage[] = OptionalPages.getAllPages();
+  const cookieStore = await cookies();
+  const defaultMenuExpanded: boolean = cookieStore.get("viz:side-menu-expanded")?.value !== "false";
 
   // Root element containing all children.
   return (
@@ -74,7 +77,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <DictionaryProvider dictionary={dictionary}>
           <SessionInfoProvider>
-            <GlobalContainer pages={pages} settings={uiSettings}>
+            <GlobalContainer pages={pages} settings={uiSettings} defaultMenuExpanded={defaultMenuExpanded}>
               {children}
               {modal}
               <Toaster duration={Infinity} />

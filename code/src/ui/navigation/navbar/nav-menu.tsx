@@ -15,11 +15,11 @@ import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
 import MobileContextMenu from "ui/interaction/context-menu/mobile-context-menu";
 
-
 export interface NavMenuProps {
   pages: OptionalPage[];
   settings: UISettings;
   isMobile: boolean;
+  defaultMenuExpanded?: boolean;
 }
 
 interface NavMenuContentsProps extends NavMenuProps {
@@ -36,13 +36,14 @@ interface NavMenuContentsProps extends NavMenuProps {
  * @param {OptionalPage[]} pages Additional pages to be redirected.
  * @param {UISettings} settings Settings declared in the user configuration Title.
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
+ * @param {boolean} defaultMenuExpanded [Optional] Indicates if the menu should be expanded by default (for desktop mode).
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const dict: Dictionary = useDictionary();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
-  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
+  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(props.defaultMenuExpanded ?? true);
 
   if (props.isMobile) {
     return (
@@ -60,7 +61,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         >
           <NavMenuContents
             {...props}
-            isMenuExpanded={isMenuExpanded}
+            isMenuExpanded={true}
             setFileModalSettings={setFileModalSettings}
             setIsFileUploadModalOpen={setIsFileModalOpen}
             setIsMenuOpen={setIsMenuOpen}
@@ -86,7 +87,11 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         setFileModalSettings={setFileModalSettings}
         setIsFileUploadModalOpen={setIsFileModalOpen}
         setIsMenuOpen={setIsMenuOpen}
-        handleMenuToggle={() => setIsMenuExpanded(!isMenuExpanded)}
+        handleMenuToggle={() => {
+          const next: boolean = !isMenuExpanded;
+          setIsMenuExpanded(next);
+          document.cookie = `viz:side-menu-expanded=${next}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
+        }}
       />
       {isFileModalOpen && (
         <FileModal

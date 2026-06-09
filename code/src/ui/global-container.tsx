@@ -20,6 +20,7 @@ import Footer from "./text/footer";
 interface GlobalContainerProps {
   pages: OptionalPage[];
   settings: UISettings;
+  defaultMenuExpanded: boolean;
   children?: React.ReactNode;
 }
 
@@ -51,6 +52,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
               pages={props.pages}
               settings={props.settings}
               isMobile={false}
+              defaultMenuExpanded={props.defaultMenuExpanded}
             />
           )}
           <div className="flex flex-col flex-1 min-h-0 min-w-0 bg-muted h-full box-border">
