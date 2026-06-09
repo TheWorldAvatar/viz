@@ -221,33 +221,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case FormTypeMap.ADD: {
-        // Add entity via API route
-        pendingResponse = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
-          "POST",
-          JSON.stringify(formData));
-
-        // For registry's primary entity, a draft lifecycle must also be generated
-        if (props.isPrimaryEntity && !pendingResponse.error) {
+        if (props.isPrimaryEntity) {
+          if (!!formData[billingParams.pricingField]) {
+            formData["pricing"] = parsePricingModels(formData, billingParams)[0];
+          }
+          formData["type"] = props.entityType;
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "POST",
-            JSON.stringify({
-              contract: pendingResponse.data?.id,
-              ...formData,
-            }));
-          if (!pendingResponse.error && formData[billingParams.pricingField]) {
-            const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE);
-            parsePricingModels(formData, billingParams)?.forEach(async model =>
-              pendingResponse = await queryInternalApi(
-                url,
-                "POST",
-                JSON.stringify({
-                  id: formData.id,
-                  pricing: model,
-                }))
-            )
-          }
+            JSON.stringify(formData));
+        } else {
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, props.entityType),
+            "POST",
+            JSON.stringify(formData));
         }
         break;
       }
@@ -329,33 +316,20 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case FormTypeMap.EDIT: {
-        // Update entity via API route
-        pendingResponse = await queryInternalApi(
-          makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INSTANCES,
-            props.entityType,
-            "false",
-            formData.id
-          ), "PUT", JSON.stringify(formData));
-        if (props.isPrimaryEntity && !pendingResponse.error) {
+        if (props.isPrimaryEntity) {
+          formData["type"] = props.entityType;
+          if (billingParams.pricingField in formData) {
+            formData["pricing"] = parsePricingModels(formData, billingParams);
+          }
           pendingResponse = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, "contracts/draft"),
             "PUT",
-            JSON.stringify({
-              ...formData,
-              contract: props.primaryInstance,
-            }));
-          if (!pendingResponse.error && billingParams.pricingField in formData) {
-            const pricingModels: string[] = parsePricingModels(formData, billingParams);
-            pendingResponse = await queryInternalApi(
-              makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
-              "PUT",
-              JSON.stringify({
-                id: formData.id,
-                pricing: pricingModels,
-                disableTracking: true,
-              }));
-          }
+            JSON.stringify(formData));
+        } else {
+          pendingResponse = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(
+              InternalApiIdentifierMap.INSTANCES, props.entityType, "false", formData.id
+            ), "PUT", JSON.stringify(formData));
         }
         break;
       }

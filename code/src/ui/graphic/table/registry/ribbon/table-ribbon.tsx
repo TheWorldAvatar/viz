@@ -22,12 +22,14 @@ import { getDisabledDates } from "../registry-table-utils";
 interface TableRibbonProps {
   path: string;
   entityType: string;
+  disableDateFilter: boolean;
   selectedDate: DateRange;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
+  message?: string;
 }
 
 /**
@@ -35,12 +37,14 @@ interface TableRibbonProps {
  *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
+ * @param {boolean} disableDateFilter Indicates if the date filter should be disabled.
  * @param {DateRange} selectedDate The selected date range object with 'from' and 'to' date strings.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
@@ -134,8 +138,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           </div>
         </div>
         )}
-      <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
-      items-end md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-2 flex-wrap">
+        {(props.lifecycleStage === LifecycleStageMap.GENERAL || isBillingStage) &&
+          <p className="max-w-4xl border-l-4 border-primary pl-3 mb-4">{props.message}</p>}
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
           <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border`}>
             {isContractRegistry && <RedirectButton
@@ -202,7 +207,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         }
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-            props.lifecycleStage == LifecycleStageMap.CLOSED) && (
+            (props.lifecycleStage == LifecycleStageMap.CLOSED && !props.disableDateFilter)) && (
               <DateInput
                 mode="range"
                 ariaLabel={dict.nav.title.tasks}
