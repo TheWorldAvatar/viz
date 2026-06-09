@@ -7,7 +7,6 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionGuard } from "hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "hooks/form/api/useTaskData";
-import { useAttachmentCheck } from "hooks/form/useAttachmentCheck";
 import { useDictionary } from "hooks/useDictionary";
 import useOperationStatus from "hooks/useOperationStatus";
 import { Routes } from "io/config/routes";
@@ -31,12 +30,11 @@ import { FORM_STATES } from "ui/interaction/form/form-utils";
 import FormSkeleton from "ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "ui/text/status/status";
-import { compareDates, getAfterDelimiter, getId, parseWordsForLabels } from "utils/client-utils";
+import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue, interpolate } from "utils/client-utils";
 import { BULK_IDENTIFIER } from "utils/constants";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
-import ExternalRedirectButton from "../action/redirect/external-redirect-button";
 
 interface TaskFormContainerComponentProps {
   entityType: string;
@@ -110,7 +108,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const { task } = useTaskData(id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
-  const { attachmentUrl, hasAttachment } = useAttachmentCheck(task?.contract);
 
   // Declare a function to get the previous event occurrence enum based on the current status.
   const getPrevEventOccurrenceEnum = useCallback(
@@ -238,7 +235,13 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     if (response && !response?.error) {
       handleDrawerClose(() => {
-        router.back();
+        // For completion of task if the bill is already accrued, navigate to accrual drawer
+        if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true") {
+          browserStorageManager.clear();
+          navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(id));
+        } else {
+          router.back();
+        }
       });
     }
   };
@@ -249,7 +252,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     action: string,
     isPost: boolean
   ) => {
-    // Add contract and date field
+    // Add current task id, contract, and date field
+    formData[FORM_STATES.ID] = task.id;
     formData[FORM_STATES.CONTRACT] = task.contract;
     formData[FORM_STATES.DATE] = task.date;
 
@@ -274,7 +278,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         </h1>
         {task?.date && (
           <h2 className="text-base md:text-lg md:mr-8">
-            {task.date}: {getTranslatedStatusLabel(task?.status, dict)}
+            {formatDateValue(task.date)}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
       </section>
@@ -285,14 +289,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           <p className="text-lg mb-4 whitespace-pre-line">
             {props.formType === FormTypeMap.COMPLETE && dict.message.completeInstruction}
             {props.formType === FormTypeMap.DISPATCH &&
-              `${dict.message.dispatchInstruction} ${task.date}:`}
+              interpolate(dict.message.dispatchInstruction, formatDateValue(task.date))}
             {props.formType === FormTypeMap.CANCEL &&
-              `${dict.message.cancelInstruction} ${task.date}:`}
+              interpolate(dict.message.cancelInstruction, formatDateValue(task.date))}
             {props.formType === FormTypeMap.REPORT &&
-              `${dict.message.reportInstruction.replace(
-                "{date}",
-                task.date
-              )}`}
+              interpolate(dict.message.reportInstruction, formatDateValue(task.date))}
           </p>
         )}
 
@@ -334,13 +335,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               onClick={triggerRefresh}
             />
           )}
-          {hasAttachment && <ExternalRedirectButton
-            leftIcon="attach_file"
-            variant="outline"
-            size="icon"
-            url={attachmentUrl}
-            tooltipText={dict.action.viewAttachment}
-          />}
         </div>
         {formRef.current?.formState?.isSubmitting && (
           <LoadingSpinner isSmall={false} />
@@ -360,7 +354,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
               onClick={() => {
                 if (
                   props.formType === FormTypeMap.COMPLETE &&
-                  task?.scheduleType === dict.form.perpetualService
+                  task?.status != RegistryStatusMap.COMPLETED &&
+                  task?.scheduleType === "perpetualService"
                 ) {
                   setIsDuplicate(true);
                 }
@@ -442,7 +437,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
                 {/* Submit and Duplicate button - shown for complete task type */}
                 {isPermitted("completeAndDuplicateTask") &&
                   props.formType === FormTypeMap.COMPLETE &&
-                  task?.scheduleType !== dict.form.perpetualService && (
+                  task?.scheduleType !== "perpetualService" && (
                     <Button
                       leftIcon="schedule_send"
                       variant="secondary"

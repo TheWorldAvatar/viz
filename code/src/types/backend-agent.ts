@@ -1,5 +1,6 @@
 import { EVENT_KEY } from "utils/constants";
 import { SparqlResponseField } from "./form";
+import { FileEntry } from "./settings";
 
 export const BackendApis = {
   REGISTRY_BACKEND: process.env.REGISTRY_BACKEND_URL,
@@ -68,7 +69,7 @@ export const InternalApiIdentifierMap = {
 } as const;
 export type InternalApiIdentifier = typeof InternalApiIdentifierMap[keyof typeof InternalApiIdentifierMap];
 
-export type UrlExistsResponse = {
+export type ContractDirectory = {
   url: string;
-  exists: boolean;
+  files: FileEntry[];
 };

@@ -7,10 +7,10 @@ import { useDictionary } from "hooks/useDictionary";
 import { browserStorageManager } from "state/browser-storage-manager";
 import { InternalApiIdentifierMap } from "types/backend-agent";
 import { Dictionary } from "types/dictionary";
-import { FormFieldOptions, FormTypeMap, RegistryFieldValues, SparqlResponseField } from "types/form";
+import { FormFieldOptions, FormTypeMap, RegistryFieldValues, ShaclDefaultDateValueMap, SparqlResponseField } from "types/form";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import SimpleSelector from "ui/interaction/dropdown/simple-selector";
-import DateInput from "ui/interaction/input/date-input";
+import DateInput from "ui/interaction/input/date/date-input";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import {
   getUTCDate,
@@ -49,6 +49,8 @@ export const daysOfWeek: string[] = [
  */
 export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const dict: Dictionary = useDictionary();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
   const daysOfWeekLabel: string[] = [
     dict.form.sun,
     dict.form.mon,
@@ -65,12 +67,12 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const fixedService: string = dict.form.fixedService;
   const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
   const { formType } = useFormSession();
-  const isDisabledOption: { disabled: boolean } = {
-    disabled: formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE,
-  };
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fixedDates, setFixedDates] = useState<Date[]>(entryDates?.length > 0
-    ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString))) : [new Date()]);
+  const [fixedDates, setFixedDates] = useState<Date[]>(
+    entryDates?.length > 0
+      ? entryDates.map((dateString: string) => getUTCDate(new Date(dateString)))
+      : [tomorrow]
+  );
   // Define the state to store the selected value
   const [selectedServiceOption, setSelectedServiceOption] = useState<string>(
     props.form.getValues(FORM_STATES.ENTRY_DATES)?.length > 0
@@ -95,8 +97,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       if (formType != FormTypeMap.ADD && formType != FormTypeMap.SEARCH) {
         // defaults
         let recurrence: number = 0;
-        let defaultTimeSlotStart: string = "00:00";
-        let defaultTimeSlotEnd: string = "23:59";
 
         const fields: RegistryFieldValues = await fetch(
           makeInternalRegistryAPIwithParams(
@@ -137,13 +137,13 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
           );
         }
 
-        defaultTimeSlotStart = getDefaultVal(
+        const defaultTimeSlotStart = getDefaultVal(
           FORM_STATES.TIME_SLOT_START,
           (fields["start_time"] as SparqlResponseField)?.value,
           formType
         ).toString();
 
-        defaultTimeSlotEnd = getDefaultVal(
+        const defaultTimeSlotEnd = getDefaultVal(
           FORM_STATES.TIME_SLOT_END,
           (fields["end_time"] as SparqlResponseField)?.value,
           formType
@@ -179,6 +179,15 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
         props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
         props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
+      } else if (formType == FormTypeMap.ADD) {
+        props.form.setValue(
+          FORM_STATES.START_DATE,
+          getDefaultVal(
+            FORM_STATES.START_DATE,
+            ShaclDefaultDateValueMap.TOMORROW,
+            formType
+          )
+        );
       }
       setIsLoading(false);
     };
@@ -204,10 +213,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   // Handle change event for the select input
   const handleServiceChange = (value: string) => {
     if (value === fixedService) {
-      // Ensure at least today's date is set for fixed service
-      const datesToSet: Date[] = fixedDates.length > 0 ? fixedDates : [new Date()];
-      if (fixedDates.length === 0) setFixedDates(datesToSet);
-      props.form.setValue(FORM_STATES.ENTRY_DATES, datesToSet);
+      props.form.setValue(FORM_STATES.ENTRY_DATES, fixedDates);
     } else {
       // Clear entry dates for all non-fixed services
       props.form.setValue(FORM_STATES.ENTRY_DATES, undefined);
@@ -217,8 +223,24 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       } else if (value === singleService) {
         props.form.setValue(FORM_STATES.RECURRENCE, 0);
       } else if (value === alternateService) {
+        props.form.setValue(
+          FORM_STATES.END_DATE,
+          getDefaultVal(
+            FORM_STATES.END_DATE,
+            ShaclDefaultDateValueMap.TOMORROW,
+            formType
+          )
+        );
         props.form.setValue(FORM_STATES.RECURRENCE, -1);
       } else {
+        props.form.setValue(
+          FORM_STATES.END_DATE,
+          getDefaultVal(
+            FORM_STATES.END_DATE,
+            ShaclDefaultDateValueMap.TOMORROW,
+            formType
+          )
+        );
         props.form.setValue(FORM_STATES.RECURRENCE, 1);
       }
     }
@@ -265,7 +287,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   handleServiceChange(selectedOption?.value);
                 }
               }}
-              isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
+              isDisabled={props.options?.disabled}
               ariaLabel={interpolate(dict.action.selectItem, parseWordsForLabels(dict.title.scheduleType))}
             />
           </div>
@@ -305,7 +327,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 order: 0,
               }}
               form={props.form}
-              options={isDisabledOption}
+              options={props.options}
             />
           )}
           {selectedServiceOption != singleService &&
@@ -322,7 +344,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   order: 0,
                 }}
                 form={props.form}
-                options={isDisabledOption}
+                options={props.options}
               />
             )}
           {selectedServiceOption === regularService && (
@@ -350,7 +372,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                       field={dayOfWeek}
                       label={daysOfWeekLabel[index]}
                       form={props.form}
-                      options={isDisabledOption}
+                      options={props.options}
                     />
                   );
                 })}
@@ -370,7 +392,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 order: 0,
               }}
               form={props.form}
-              options={isDisabledOption}
+              options={props.options}
             />
             <FormFieldComponent
               field={{
@@ -383,7 +405,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 order: 1,
               }}
               form={props.form}
-              options={isDisabledOption}
+              options={props.options}
             />
           </div>
         </>

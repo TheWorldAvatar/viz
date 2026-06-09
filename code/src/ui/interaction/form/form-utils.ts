@@ -20,6 +20,7 @@ import {
   PropertyShapeOrGroup,
   QuickViewFields,
   QuickViewGroupings,
+  ShaclDefaultDateValueMap,
   SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY
@@ -395,8 +396,8 @@ function initFormField(
     "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule" &&
     formType == FormTypeMap.ADD) {
     outputState[FORM_STATES.RECURRENCE] = 0;
-    outputState[FORM_STATES.TIME_SLOT_START] = "00:00";
-    outputState[FORM_STATES.TIME_SLOT_END] = "23:59";
+    outputState[FORM_STATES.TIME_SLOT_START] = "09:00";
+    outputState[FORM_STATES.TIME_SLOT_END] = "18:00";
   } else {
     let defaultVal: string = !Array.isArray(field.defaultValue)
       ? field.defaultValue?.value
@@ -421,6 +422,7 @@ function initFormField(
     fieldId: parsedFieldId,
   };
 }
+
 
 /**
  * Get the default value based on the inputs. If default value is given, this will be return, otherwise,
@@ -480,6 +482,16 @@ export function getDefaultVal(
     }
     // Default value can be null, and should return false if null
     return !!defaultValue;
+  }
+
+  if (defaultValue === ShaclDefaultDateValueMap.TOMORROW) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  } else if (defaultValue === ShaclDefaultDateValueMap.START_OF_YEAR) {
+    return `${new Date().getFullYear()}-01-01`;
+  } else if (defaultValue === ShaclDefaultDateValueMap.START_OF_MONTH) {
+    return `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-01`;
   }
   // Returns the default value if passed, or else, empty string
   return defaultValue ? defaultValue : "";
@@ -610,6 +622,12 @@ export function getRegisterOptions(
       value: new RegExp(field.pattern[VALUE_KEY]),
       message: msg,
     };
+  }
+
+  // Trim leading and trailing whitespace for string fields before validation and submission
+  if (field.datatype === "string") {
+    options.setValueAs = (value: string | null | undefined) =>
+      typeof value === "string" ? value.trim() : value;
   }
 
   // Validate that the input is a number for decimal and integer types
@@ -818,6 +836,8 @@ export function translateFormType(input: FormType, dict: Dictionary): string {
     case FormTypeMap.ADD_BILL:
     case FormTypeMap.ADD_PRICE:
       return dict.action.add;
+    case FormTypeMap.ADJUST_PRICE:
+      return dict.action.adjustPricing;
     case FormTypeMap.EDIT:
       return dict.action.edit;
     case FormTypeMap.ASSIGN_PRICE:

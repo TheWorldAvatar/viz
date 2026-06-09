@@ -52,8 +52,13 @@ export async function GET(
         ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
       },
       cache: "no-store",
+      signal: req.signal,
     });
   } catch (error) {
+    if ((error as DOMException).name === "ResponseAborted") {
+      console.log(`[API] Request aborted by client: ${url}`);
+      return new NextResponse(null, { status: 499 });
+    }
     return NextResponse.json(handleFetchFailure(url, error));
   }
 
@@ -526,6 +531,17 @@ async function sendRequest(
 }
 
 async function handleExternalBadRequest(res: Response, url: string): Promise<NextResponse<AgentResponseBody>> {
+  if (res.status === 401) {
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: {
+          code: res.status,
+          message: "Unauthorised",
+        }
+      }
+    );
+  }
   const resBody: AgentResponseBody = await res.json();
 
   console.error(

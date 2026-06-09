@@ -1,6 +1,6 @@
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { DateRange } from "react-day-picker";
-import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, UrlExistsResponse } from "types/backend-agent";
+import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, ContractDirectory } from "types/backend-agent";
 import { FORM_IDENTIFIER, FormTemplateType, FormType } from "types/form";
 import { toast } from "ui/interaction/action/toast/toast";
 import { getUTCDate, parseStringsForUrls } from "./client-utils";
@@ -161,8 +161,8 @@ export function makeInternalRegistryAPIwithParams(
   return `${prefixedRegistryURL}${internalIdentifier}?${searchParams.toString()}`;
 }
 
-export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">, body?: string): Promise<AgentResponseBody> {
-  let requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
+export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "HEAD" | "OPTIONS" | "PATCH">, body?: string, signal?: AbortSignal): Promise<AgentResponseBody> {
+  let requestParams: RequestInit = { cache: "no-store", credentials: "same-origin", signal };
   if (method == "DELETE") {
     requestParams = {
       ...requestParams,
@@ -178,10 +178,14 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
     };
   }
   const res = await fetch(url, requestParams);
-  return await res.json();
+  const response: AgentResponseBody = await res.json();
+  if (response.error && response.error?.code === 401) {
+    console.error("401 Unauthorised");
+  }
+  return response;
 }
 
-export async function queryRegistryAttachmentAPI(contract: string): Promise<UrlExistsResponse> {
+export async function queryRegistryAttachmentAPI(contract: string): Promise<ContractDirectory> {
   const url: string = `${prefixedRegistryURL}attachment/${contract}`
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
   const res = await fetch(url, requestParams);

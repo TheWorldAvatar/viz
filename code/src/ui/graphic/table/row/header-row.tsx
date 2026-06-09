@@ -108,9 +108,10 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
               leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
               variant="ghost"
               size="icon"
-              tooltipText={dict.title.actions}
+              tooltipText={dict.title.bulkActions}
               isOpen={isActionMenuOpen}
               setIsOpen={setIsActionMenuOpen}
+              aria-label={dict.title.bulkActions}
             >
               <div className="flex flex-col space-y-3">
                 {

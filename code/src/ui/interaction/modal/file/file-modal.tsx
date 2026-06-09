@@ -12,7 +12,7 @@ import LoadingSpinner from "ui/graphic/loader/spinner";
 import FileInputButton from "ui/interaction/action/file/file-input";
 import { toast } from "ui/interaction/action/toast/toast";
 import Button from "ui/interaction/button";
-import DateInput from "ui/interaction/input/date-input";
+import DateInput from "ui/interaction/input/date/date-input";
 import Modal from "ui/interaction/modal/modal";
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { getInitialDate, handleDownload } from "utils/client-utils";

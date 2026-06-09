@@ -146,11 +146,13 @@ export function getAfterDelimiter(str: string, delimiter: string): string {
  * Extract the inital date based on the current lifecycle stage.
  *
  * @param {LifecycleStage} lifecycleStage The lifecycle stage of interest.
+ * @param {boolean} disableDateFilter Indicates if the date filter should be disabled.
  */
 export function getInitialDateFromLifecycleStage(
-  lifecycleStage: LifecycleStage
+  lifecycleStage: LifecycleStage,
+  disableDateFilter: boolean,
 ): DateRange {
-  // For closed and other stages: start with today
+  // For other stages: start with today
   const initialDate: Date = new Date();
 
   if (lifecycleStage === LifecycleStageMap.SCHEDULED) {
@@ -162,6 +164,10 @@ export function getInitialDateFromLifecycleStage(
     return { from: initialDate, to: endDate };
     // For closed tasks, set the date range to the current month
   } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
+    // When disabled, get the maximum possible range
+    if (disableDateFilter) {
+      return { from: new Date("1950-01-01"), to: new Date("2100-12-31") };
+    }
     // Get the first day of the current month
     const startOfMonth: Date = new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
     // Get the last day of the current month by passing the 0th day of the next month
@@ -235,6 +241,51 @@ export function getNormalizedDate(date: Date): string {
 }
 
 /**
+ * Formats a date string into a locale - specific format for display.
+ *
+ * @param { string | Date} value The raw value from the backend.
+ */
+export function formatDateValue(value: string | Date): string {
+  return new Date(value).toLocaleDateString();
+}
+
+/**
+ * Formats a datetime value for display.
+ *
+ * @param {string} value The raw value from the backend.
+ */
+export function formatDatetimeValue(value: string): string {
+  return new Date(value).toLocaleString();
+}
+
+/**
+ * Retrieves the locale-specific date format string.
+ * This is used for displaying date format hints to users in forms.
+ * 
+ * @returns {string} The locale-specific date format pattern (e.g. "DD/MM/YYYY" or "MM/DD/YYYY").
+ */
+
+export function getLocaleDatePattern(): string {
+  const parts: Intl.DateTimeFormatPart[] = new Intl.DateTimeFormat().formatToParts(new Date());
+  return parts
+    .map((part) => {
+      switch (part.type) {
+        case "day":
+          return "DD";
+        case "month":
+          return "MM";
+        case "year":
+          return "YYYY";
+        case "literal":
+          return part.value;
+        default:
+          return "";
+      }
+    })
+    .join("");
+}
+
+/**
  * Extracts and formats the display string for the target date(s) based on the specified mode.
  *
  * @param {Date | DateRange | Date[] | undefined} targetDate The target date, date range, or multiple dates.
@@ -243,22 +294,23 @@ export function getNormalizedDate(date: Date): string {
  */
 
 export const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined, mode: "single" | "range" | "multiple"): string => {
+  if (!targetDate) return "";
+
   if (mode === "single") {
-    if (!targetDate) return "";
-    return getNormalizedDate(targetDate as Date);
+    return formatDateValue(targetDate as Date);
   }
   if (mode === "multiple") {
     const dates: Date[] = targetDate as Date[];
     if (!Array.isArray(dates) || dates.length === 0) return "";
     const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
-    const first: string = sortedDates[0].toLocaleDateString();
-    const last: string = sortedDates.at(-1).toLocaleDateString();
+    const first: string = formatDateValue(sortedDates[0]);
+    const last: string = formatDateValue(sortedDates.at(-1));
     return dates.length === 1 ? first : `${first} - ${last}`;
   }
   // range mode
   const targetDateRange: DateRange = targetDate as DateRange;
-  const fromDate: string = targetDateRange?.from?.toLocaleDateString();
-  const toDate: string = targetDateRange?.to?.toLocaleDateString();
+  const fromDate: string = formatDateValue(targetDateRange?.from);
+  const toDate: string = formatDateValue(targetDateRange?.to);
   return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
 };
 

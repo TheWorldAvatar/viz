@@ -12,11 +12,11 @@ import { TableColumnOption } from "types/settings";
 import ColumnToggle from "ui/graphic/table/action/column-toggle";
 import RegistryTable from "ui/graphic/table/registry/registry-table";
 import { FormComponent } from "ui/interaction/form/form";
+import { interpolate } from "utils/client-utils";
 import { FormSessionContextProvider } from "utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { interpolate } from "utils/client-utils";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -87,12 +87,26 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                         )}
                 </div>
                 {invoiceAccountFilter && <section>
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-end mb-4 mt-4">
+                    <div className="flex flex-col md:flex-row gap-2 items-center justify-end mb-4 mt-4">
                         {tableDescriptor.data?.length > 0 && (
                             <ColumnToggle
                                 columns={tableDescriptor.table.getAllLeafColumns()}
                             />
                         )}
+                        <Button
+                            leftIcon="filter_list_off"
+                            aria-label={dict.action.clearAllFilters}
+                            iconSize="medium"
+                            className="mt-1"
+                            disabled={tableDescriptor.filters.every((filter) => filter.id === invoiceAccountFilter.id || (filter.value as string[])?.length === 0)}
+                            size="icon"
+                            onClick={() => {
+                                tableDescriptor.setFilters([invoiceAccountFilter]);
+                                tableDescriptor.table.resetRowSelection();
+                            }}
+                            tooltipText={dict.action.clearAllFilters}
+                            variant="destructive"
+                        />
                     </div>
                     {!refreshFlag && !tableDescriptor.isLoading && <div>
                         {tableDescriptor.data?.length > 0 && (

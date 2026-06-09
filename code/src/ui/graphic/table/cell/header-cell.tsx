@@ -7,11 +7,16 @@ import { Dictionary } from "types/dictionary";
 import { useFilterOptions } from "hooks/table/api/useFilterOptions";
 import { DateRange } from "react-day-picker";
 import { LifecycleStage } from "types/form";
+import { TableCellTagMap } from "types/table";
 import LoadingSpinner from "ui/graphic/loader/spinner";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import SearchSelector from "ui/interaction/dropdown/search-selector";
 import Tooltip from "ui/interaction/tooltip/tooltip";
 import { interpolate } from "utils/client-utils";
+import { XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "utils/constants";
+import DateColumnFilter from "../action/date-column-filter";
+import NumericColumnFilter from "../action/numeric-column-filter";
+import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
 
 interface HeaderCellProps {
@@ -61,9 +66,13 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
     currentFilters,
     props.filters,
   );
+  const columnDataType: string = (props.header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType;
+  const isDateColumn: boolean = columnDataType === XSD_DATE || columnDataType === XSD_DATETIME;
+  const isNumericColumn: boolean = columnDataType === XSD_DECIMAL || columnDataType === XSD_INTEGER;
 
   return (
     <TableCell
+      as={TableCellTagMap.TH}
       width={props.header.getSize()}
       className={`${props.isEditable ? "bg-success-background text-success-foreground" : ""} 
       font-semibold text-left border-b border-border`}
@@ -106,11 +115,32 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
                 event.stopPropagation();
-                setTriggerFetch(!showFilterDropdown);
+                // Do not trigger fetch/loading state for date or numeric columns
+                if (!isDateColumn && !isNumericColumn) {
+                  setTriggerFetch(!showFilterDropdown);
+                }
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              <SearchSelector
+              {isNumericColumn && <NumericColumnFilter
+                label={props.header.id}
+                currentVal={props.header.column.getFilterValue() as string[]}
+                onSubmission={(selectedOptions: string[]) => {
+                  props.header.column.setFilterValue(selectedOptions);
+                  props.table.resetRowSelection();
+                  props.table.resetPageIndex();
+                }}
+              />}
+              {isDateColumn && <DateColumnFilter
+                label={props.header.id}
+                currentVal={props.header.column.getFilterValue() as string}
+                onSubmission={(dates: string) => {
+                  props.header.column.setFilterValue(dates);
+                  props.table.resetRowSelection();
+                  props.table.resetPageIndex();
+                }}
+              />}
+              {!(isDateColumn || isNumericColumn) && <SearchSelector
                 searchString={search}
                 options={options}
                 label={props.header.id}
@@ -122,7 +152,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.table.resetPageIndex();
                 }}
                 setSearchString={setSearch}
-              />
+              />}
               {isLoading && <LoadingSpinner isSmall={true} />}
             </PopoverActionButton>
             }

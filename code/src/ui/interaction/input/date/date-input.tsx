@@ -20,9 +20,11 @@ import {
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
-import { ScreenType } from "types/settings";
+import { ScreenType, ScreenTypeMap } from "types/settings";
 import Button from "ui/interaction/button";
 import { extractDateDisplay, interpolate } from "utils/client-utils";
+import CustomYearsDropdown from "./custom-years-dropdown";
+import CustomMonthsDropdown from "./custom-months-dropdown";
 
 interface DateInputProps {
   selectedDate: Date | DateRange | Date[] | undefined;
@@ -93,7 +95,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       ref={popover.refs.setReference}
       className="flex items-center gap-2 relative"
     >
-      {!props.disableMobileView && screenType === "mobile" && (
+      {!props.disableMobileView && screenType === ScreenTypeMap.MOBILE && (
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -105,7 +107,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           {...popover.getReferenceProps()}
         />
       )}
-      {(props.disableMobileView || screenType != "mobile") && (
+      {(props.disableMobileView || screenType !== ScreenTypeMap.MOBILE) && (
         <div className="flex items-center w-full">
           <div className="relative w-full">
             <Icon
@@ -170,6 +172,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     selected={props.selectedDate as DateRange}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
+                    captionLayout="dropdown"
+                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
+                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
                     classNames={{
                       ...dayPickerClassNames,
                       selected: "bg-gray-200 dark:bg-zinc-800",
@@ -179,28 +184,46 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                       range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
                     }}
                     required={true}
+                    components={{
+                      YearsDropdown: CustomYearsDropdown,
+                      MonthsDropdown: CustomMonthsDropdown,
+                    }}
                   />
                 )}
                 {props.mode === "multiple" && (
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="multiple"
+                    captionLayout="dropdown"
+                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
+                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
                     selected={props.selectedDate as Date[]}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates || props.disabled}
                     classNames={dayPickerClassNames}
                     required={true}
+                    components={{
+                      YearsDropdown: CustomYearsDropdown,
+                      MonthsDropdown: CustomMonthsDropdown,
+                    }}
                   />
                 )}
                 {props.mode === "single" && !props.disabled && (
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="single"
+                    captionLayout="dropdown"
+                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
+                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
                     selected={props.selectedDate as Date | undefined}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
                     classNames={dayPickerClassNames}
                     required={props.required ?? true}
+                    components={{
+                      YearsDropdown: CustomYearsDropdown,
+                      MonthsDropdown: CustomMonthsDropdown,
+                    }}
                   />
                 )}
               </div>

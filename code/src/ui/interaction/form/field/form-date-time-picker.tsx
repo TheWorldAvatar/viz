@@ -5,11 +5,9 @@ import useFormSession from "hooks/form/useFormSession";
 import { useDictionary } from "hooks/useDictionary";
 import { FieldError, UseFormReturn, useWatch } from "react-hook-form";
 import { FormFieldOptions, PropertyShape, VALUE_KEY } from "types/form";
-import {
-  getRegisterOptions
-} from "ui/interaction/form/form-utils";
-import DateInput from "ui/interaction/input/date-input";
-import { getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
+import { getRegisterOptions } from "ui/interaction/form/form-utils";
+import DateInput from "ui/interaction/input/date/date-input";
+import { getLocaleDatePattern, getNormalizedDate, getUTCDate, interpolate } from "utils/client-utils";
 import FormInputContainer from "./form-input-container";
 
 interface FormDateTimePickerProps {
@@ -17,7 +15,6 @@ interface FormDateTimePickerProps {
   form: UseFormReturn;
   options?: FormFieldOptions;
 }
-
 
 /**
  * This component renders a date time picker for the form.
@@ -54,13 +51,13 @@ export default function FormDateTimePicker(
   let inputType: string;
   if (props.field.datatype === dateType) {
     inputType = dateType;
-    formatLabel = "YYYY/MM/DD";
+    formatLabel = getLocaleDatePattern();
   } else if (props.field.datatype === timeType) {
     inputType = timeType;
     formatLabel = "HH:MM";
   } else {
     inputType = "datetime-local";
-    formatLabel = "DD/MM/YYYY HH:MM";
+    formatLabel = `${getLocaleDatePattern()} HH:MM`;
   }
   const isOptionalDateField: boolean =
     inputType === dateType && Number(props.field.minCount?.[VALUE_KEY]) === 0;

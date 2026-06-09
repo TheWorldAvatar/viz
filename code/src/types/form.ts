@@ -28,6 +28,7 @@ export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",
   ADD_PRICE: "addprice",
+  ADJUST_PRICE: "adjustprice",
   ASSIGN_PRICE: "assignprice",
   DELETE: "delete",
   EDIT: "edit",
@@ -183,3 +184,15 @@ export type RegistryTaskType =
 
 export type QuickViewGroupings = Record<string, QuickViewFields>;
 export type QuickViewFields = Record<string, SparqlResponseField[]>;
+
+
+
+// If a new SHACL default date value is added,
+// add it here and update getDefaultVal in ui/interaction/form/form-utils.ts:433
+export const ShaclDefaultDateValueMap = {
+  START_OF_YEAR: "startOfYear",
+  START_OF_MONTH: "startOfMonth",
+  TOMORROW: "tomorrow",
+} as const;
+
+export type ShaclDefaultDateValue = typeof ShaclDefaultDateValueMap[keyof typeof ShaclDefaultDateValueMap];

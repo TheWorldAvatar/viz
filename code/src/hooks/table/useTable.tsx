@@ -19,7 +19,9 @@ import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { TableColumnOption } from "types/settings";
 import {
   genSortParams,
-  getInitialColumnVisibilityState
+  getInitialColumnVisibilityState,
+  getInitialSortingState,
+  getInitialSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
@@ -27,6 +29,7 @@ import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   isLoading: boolean;
+  isBackgroundLoading: boolean;
   isBulkDispatchEdit: boolean;
   setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
@@ -62,16 +65,16 @@ export function useTable(
   selectedDate?: DateRange,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
-  const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
+  const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions, dict.title));
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { isLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
+  const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
@@ -81,6 +84,7 @@ export function useTable(
     apiPagination,
     columnFilters,
     tableColumnOptions,
+    pagination.pageSize,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -182,6 +186,7 @@ export function useTable(
 
   return {
     isLoading,
+    isBackgroundLoading,
     isBulkDispatchEdit,
     setIsBulkDispatchEdit,
     table,

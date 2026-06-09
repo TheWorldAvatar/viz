@@ -27,7 +27,7 @@ const useTableSession = (): useTableSessionReturn => {
     const onBulkEditSubmit = async () => {
         startLoading();
         const allData: FieldValues[] = tableSession.rowRefs.current
-            .filter(row => Object.keys(row.getRowData()).length > 0)
+            .filter(row => !!row && Object.keys(row.getRowData()).length > 0)
             .map(row => row.getRowData());
         const response: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", FormTypeMap.MASS_EDIT),

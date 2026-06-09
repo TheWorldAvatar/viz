@@ -51,6 +51,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.PENDING],
         status: [],
     },
+    ADJUST_PRICING: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED],
+    },
     REVIEW_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED],
@@ -65,6 +70,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],
         status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED, RegistryStatusMap.INVOICED],
+    },
+    VIEW_FILES: {
+        permission: "operation",
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
+        status: [],
     },
     VIEW_INVOICE: {
         permission: "invoice",
@@ -110,7 +120,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     COMPLETE_TASK: {
         permission: "completeTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.CLOSED],
-        status: [RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED],
+        status: [RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
     },
     RESCHEDULE_TASK: {
         permission: "rescheduleTask",

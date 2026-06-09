@@ -17,7 +17,7 @@ export default function TablePagination() {
   const numberOfSelectedRows: number = tableDescriptor.table.getSelectedRowModel().rows.length;
   const lastPageIndex: number = Math.ceil(tableDescriptor.table.getRowCount() / tableDescriptor.pagination.pageSize);
   return (
-    <div className="flex items-center justify-between p-2 bg-muted border-t border-border shrink-0">
+    <nav aria-label={dict.nav.title.tablePagination} className="flex items-center justify-between p-2 bg-muted border-t border-border shrink-0">
       <div className="text-sm text-foreground">
         {interpolate(dict.message.numberOfRecords,
           String(numberOfSelectedRows > 0 ? numberOfSelectedRows : Math.min(tableDescriptor.totalRows, tableDescriptor.table.getRowCount()))
@@ -27,15 +27,15 @@ export default function TablePagination() {
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-8">
           <div className="hidden md:flex items-center gap-2">
-            <span>{dict.message.rowsPerPage}</span>
+            <label htmlFor="rows-per-page">{dict.message.rowsPerPage}</label>
             <select
+              id="rows-per-page"
               className="px-2 py-1.5 border border-border rounded bg-background"
               value={tableDescriptor.pagination.pageSize}
               onChange={(e) => {
                 tableDescriptor.table.setPageSize(Number(e.target.value));
                 tableDescriptor.table.resetRowSelection();
               }}
-              aria-label="Select page size"
             >
               {PAGE_SIZE_OPTIONS.map((pageSize) => (
                 <option
@@ -66,7 +66,7 @@ export default function TablePagination() {
               tableDescriptor.table.setPageIndex(0);
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == 0}
+            disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to first page"
           />
           <Button
@@ -77,7 +77,7 @@ export default function TablePagination() {
               tableDescriptor.table.previousPage();
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == 0}
+            disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to previous page"
           />
           <Button
@@ -88,7 +88,7 @@ export default function TablePagination() {
               tableDescriptor.table.nextPage();
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1}
+            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to next page"
           />
           <Button
@@ -100,11 +100,11 @@ export default function TablePagination() {
               tableDescriptor.table.setPageIndex(lastPageIndex - 1);
               tableDescriptor.table.resetRowSelection();
             }}
-            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1}
+            disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to last page"
           />
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
