@@ -6,20 +6,21 @@ import { Icon } from "@mui/material";
 import { useDictionary } from "hooks/useDictionary";
 import { Dictionary } from "types/dictionary";
 import Tooltip from "ui/interaction/tooltip/tooltip";
-
+import { interpolate } from "utils/client-utils";
 
 export type NavBarItemType = "default" | "file" | "date";
 
 export interface NavBarItemProps {
   title: string;
   icon: string;
-  url: string;
   isMobile: boolean;
+  url: string;
   tooltip?: string;
   caption?: string;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   handleClick?: React.MouseEventHandler<HTMLDivElement>;
   isMenuExpanded?: boolean;
+  className?: string;
 }
 
 /**
@@ -27,12 +28,15 @@ export interface NavBarItemProps {
  *
  * @param {string} title Title.
  * @param {string} icon Icon to display.
- * @param {string} url Redirects to this url when clicked.
  * @param {boolean} isMobile Indicates if the design should be in mobile mode.
+ * @param {string} url Redirects to this url when clicked.
  * @param {string} tooltip Overrides the existing tooltip text to this url when clicked.
  * @param {string} caption Optional description text. Ignored in mobile mode.
  * @param setIsOpen Optional dispatch function for setting the open state.
  * @param handleClick Overrides the default redirect event behaviour on click.
+ * @param {boolean} isMenuExpanded Indicates if the menu is expanded, which may affect styling and caption visibility.
+ * @param {string} className Optional additional class names for styling.
+ *
  */
 export function NavBarItem(
   props: Readonly<NavBarItemProps>
@@ -52,7 +56,7 @@ export function NavBarItem(
     <Tooltip
       text={
         props.tooltip ??
-        dict.nav.tooltip.landingRedirect.replace("{replace}", props.title)
+        interpolate(dict.nav.tooltip.landingRedirect, props.title)
       }
       placement={"left"}
     >
@@ -62,12 +66,10 @@ export function NavBarItem(
           : props.isMenuExpanded
             ? "p-4 gap-4"
             : "p-3 rounded-full"
-          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring`}
+          } flex h-fit cursor-pointer items-center transition-colors duration-200 hover:bg-ring ${props.className ?? ""}`}
         onClick={props.handleClick ?? handleClick}
       >
-        <div
-          className={"flex items-center justify-center"}
-        >
+        <div className={"flex items-center justify-center"}>
           <Icon
             sx={{
               color: "#16687B",
@@ -80,7 +82,7 @@ export function NavBarItem(
         </div>
         <div className="flex flex-1 flex-col">
           <h3
-            className={`text-foreground text-base font-bold ${props.isMenuExpanded ? "" : "hidden"
+            className={`text-foreground text-base font-bold ${props.isMenuExpanded || props.isMobile ? "" : "hidden"
               }`}
           >
             {props.title}

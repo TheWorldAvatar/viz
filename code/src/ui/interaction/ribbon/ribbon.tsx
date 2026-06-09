@@ -10,7 +10,7 @@ import styles from './ribbon.module.css';
 import { addItem, selectItem } from 'state/context-menu-slice';
 import { getScenarioName, getScenarioType } from 'state/map-feature-slice';
 import { Dictionary } from 'types/dictionary';
-import { ImageryOption, MapSettings } from 'types/settings';
+import { ImageryOption, MapSettings, ContextItemMap } from 'types/settings';
 import IconComponent from 'ui/graphic/icon/icon';
 import { ContextItemDefinition } from 'ui/interaction/context-menu/context-item';
 import {
@@ -50,7 +50,7 @@ export default function Ribbon(props: Readonly<RibbonProps>) {
     return {
       name: dict.context.controlRibbon.title,
       description: dict.context.controlRibbon.tooltip,
-      id: "ribbon",
+      id: ContextItemMap.MAP_CONTROLS_RIBBON,
       toggled: true,
     };
   }, []);

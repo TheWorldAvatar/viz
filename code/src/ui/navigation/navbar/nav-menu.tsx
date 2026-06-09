@@ -10,9 +10,10 @@ import { Dictionary } from "types/dictionary";
 import { NavBarItemSettings, UISettings } from "types/settings";
 import PopoverActionButton from "ui/interaction/action/popover/popover-button";
 import FileModal from "ui/interaction/modal/file/file-modal";
-import { parseStringsForUrls, parseWordsForLabels } from "utils/client-utils";
+import { parseStringsForUrls, parseWordsForLabels, interpolate } from "utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "ui/interaction/button";
+import MobileContextMenu from "ui/interaction/context-menu/mobile-context-menu";
 
 
 export interface NavMenuProps {
@@ -37,6 +38,7 @@ interface NavMenuContentsProps extends NavMenuProps {
  * @param {boolean} isMobile Indicates if the menu should be in mobile mode.
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
+  const dict: Dictionary = useDictionary();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
@@ -52,7 +54,9 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="mr-4 h-12 "
+          className="mr-4 h-12"
+          aria-expanded={isMenuOpen}
+          aria-label={isMenuOpen ? dict.message.closeMenu : dict.message.openMenu}
         >
           <NavMenuContents
             {...props}
@@ -110,7 +114,6 @@ function NavMenuContents(
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
   const navMenuRef = useRef<HTMLDivElement>(null);
-
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
     (link) => link.url === Modules.DASHBOARD
@@ -142,9 +145,10 @@ function NavMenuContents(
 
   return (
     <nav
+      aria-label={dict.nav.title.primary}
       ref={navMenuRef}
       className={`${props.isMobile
-        ? "flex gap-4 p-2 w-full"
+        ? "flex gap-4 p-2 max-w-3xs max-h-[60dvh] overflow-y-auto"
         : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
       xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
@@ -155,16 +159,21 @@ function NavMenuContents(
           variant="ghost"
           size="icon"
           leftIcon={props.isMenuExpanded ? "keyboard_tab_rtl" : "keyboard_tab"}
-          className={`!flex mt-4 p-7 
+          className={`flex! mt-4 p-7 
             ${props.isMenuExpanded
               ? "ml-auto rounded-md"
-              : "items-center !rounded-full"
+              : "items-center rounded-full!"
             }`}
+          aria-label={
+            props.isMenuExpanded
+              ? dict.message.collapseNavigation
+              : dict.message.expandNavigation
+          }
+          aria-expanded={props.isMenuExpanded}
           onClick={props.handleMenuToggle}
         />
       )}
       {props.settings?.modules?.landing && (
-
         <NavBarItem
           title={dict.nav.title.home}
           icon="home"
@@ -273,25 +282,27 @@ function NavMenuContents(
         )}
 
       {props.settings.modules.registry &&
-        props.settings.resources?.registry?.paths?.map((path, index) => (
-          <NavBarItem
-            key={path.type + index}
-            title={parseWordsForLabels(path.type)}
-            icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
-            url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
-            isMobile={props.isMobile}
-            caption={
-              props.isMenuExpanded
-                ? dict.nav.caption.generalReg.replace(
-                  "{replace}",
-                  parseWordsForLabels(path.type).toLowerCase()
-                )
-                : undefined
-            }
-            setIsOpen={props.setIsMenuOpen}
-            isMenuExpanded={props.isMenuExpanded}
-          />
-        ))}
+        props.settings.resources?.registry?.paths?.map((path, index) => {
+          if ( // When authentication is disabled OR no permission is set for this button in the UI-Settings, all users can view and access these buttons
+            // IF there is a permission set with authentication enabled, check if the user has the specified permission
+            (!path?.permission || isPermitted(path.permission))
+          ) {
+            return <NavBarItem
+              key={path.type + index}
+              title={parseWordsForLabels(path.type)}
+              icon={path.icon ?? registryLinkProps?.icon ?? "table_chart"}
+              url={`${Routes.REGISTRY_GENERAL}/${parseStringsForUrls(path.type)}`}
+              isMobile={props.isMobile}
+              caption={
+                props.isMenuExpanded
+                  ? interpolate(dict.nav.caption.generalReg, parseWordsForLabels(path.type).toLowerCase())
+                  : undefined
+              }
+              setIsOpen={props.setIsMenuOpen}
+              isMenuExpanded={props.isMenuExpanded}
+            />
+          }
+        })}
 
       {props.settings.links?.map((externalLink, index) => {
         if (
@@ -328,6 +339,7 @@ function NavMenuContents(
           );
         }
       })}
+      <MobileContextMenu isMobile={props.isMobile} />
     </nav>
   );
 }

@@ -1,7 +1,7 @@
 import { DragEndEvent, KeyboardSensor, MouseSensor, SensorDescriptor, SensorOptions, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { Table } from "@tanstack/react-table";
-import { FieldValues } from "react-hook-form";
+import { TableRowHandle } from "ui/graphic/table/row/table-row";
+import { TableDescriptor } from "./useTable";
 
 export interface DragAndDropDescriptor {
   dataIds: UniqueIdentifier[];
@@ -12,17 +12,15 @@ export interface DragAndDropDescriptor {
 /**
  * A custom hook to set up any drag and drop functionalities.
  *
- * @param {Table<FieldValues>} table - The core tanstack table model.
- * @param {FieldValues[]} data - The initial data to retrieve their unique identifiers.
- * @param setData - A dispatch method to update the table data.
+ * @param {TableDescriptor} tableDescriptor - The table descriptor containing functionalities like the table and initial data.
+ * @param {React.RefObject<TableRowHandle[]>} selectedRows - Stores the currently selected rows in bulk edit mode.
  */
 export function useTableDnd(
-  table: Table<FieldValues>,
-  data: FieldValues[],
-  setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
+  tableDescriptor: TableDescriptor,
+  selectedRows: React.RefObject<TableRowHandle[]>,
 ): DragAndDropDescriptor {
   // Data IDs to maintain the order of rows during drag and drop
-  const dataIds: UniqueIdentifier[] = data.map((row, index) => row.id + index) ?? [];
+  const dataIds: UniqueIdentifier[] = tableDescriptor.data.map((row, index) => row.id + index) ?? [];
 
   const sensors: SensorDescriptor<SensorOptions>[] = useSensors(
     useSensor(MouseSensor, {}),
@@ -33,9 +31,11 @@ export function useTableDnd(
   // This function updates the data order (row order) based on the drag and drop interaction
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
+    selectedRows.current = [];
+    tableDescriptor.table.resetRowSelection();
     if (active && over && active.id !== over.id) {
-      const currentPageIndex: number = table.getState().pagination.pageIndex;
-      setData((prev) => {
+      const currentPageIndex: number = tableDescriptor.table.getState().pagination.pageIndex;
+      tableDescriptor.setData((prev) => {
         const oldIndex: number = dataIds.findIndex(
           (record) => record == active.id
         );
@@ -46,7 +46,7 @@ export function useTableDnd(
         // A better solution is that pagination is stored in a state outside of this component and
         // we need to change the default pagination functionality in Tanstack as it is the source of this issue
         setTimeout(() => {
-          table.setPageIndex(currentPageIndex);
+          tableDescriptor.table.setPageIndex(currentPageIndex);
         }, 0);
         return arrayMove(prev, oldIndex, newIndex);
       });

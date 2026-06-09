@@ -10,6 +10,11 @@
             "Type": "volume",
             "Source": "vis-files",
             "Target": "/twa/public"
+          },
+          {
+            "Type": "bind",
+            "Source": "attachments",
+            "Target": "/twa/data"
           }
         ],
         "Env": [

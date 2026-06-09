@@ -14,20 +14,22 @@ import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/fo
 import { DownloadButton } from "ui/interaction/action/download/download";
 import RedirectButton from "ui/interaction/action/redirect/redirect-button";
 import Button from "ui/interaction/button";
-import DateInput from "ui/interaction/input/date-input";
+import DateInput from "ui/interaction/input/date/date-input";
+import { buildUrl, interpolate } from "utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
-import { buildUrl } from "utils/client-utils";
 
 interface TableRibbonProps {
   path: string;
   entityType: string;
+  disableDateFilter: boolean;
   selectedDate: DateRange;
   lifecycleStage: LifecycleStage;
   instances: RegistryFieldValues[];
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
+  message?: string;
 }
 
 /**
@@ -35,12 +37,14 @@ interface TableRibbonProps {
  *
  * @param {string} path The current path name after the last /.
  * @param {string} entityType The type of entity.
+ * @param {boolean} disableDateFilter Indicates if the date filter should be disabled.
  * @param {DateRange} selectedDate The selected date range object with 'from' and 'to' date strings.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {RegistryFieldValues[]} instances The target instances to export into csv.
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
   const dict: Dictionary = useDictionary();
@@ -134,8 +138,9 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           </div>
         </div>
         )}
-      <div className={`flex ${isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) ? "justify-between" : "justify-end"} 
-      items-end md:gap-2 lg:gap-0 mt-2 flex-wrap`}>
+      <div className="flex justify-between items-end md:gap-2 lg:gap-0 mt-2 flex-wrap">
+        {(props.lifecycleStage === LifecycleStageMap.GENERAL || isBillingStage) &&
+          <p className="max-w-4xl border-l-4 border-primary pl-3 mb-4">{props.message}</p>}
         {isPermitted("registryFullAccess") && (isContractRegistry || isTaskRegistry) &&
           <div className={`flex flex-wrap sm:flex-nowrap bg-ring rounded-lg border border-border divide-x divide-border`}>
             {isContractRegistry && <RedirectButton
@@ -202,9 +207,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
         }
         <div className="flex items-end flex-wrap gap-2 mt-2 md:mt-0">
           {(props.lifecycleStage == LifecycleStageMap.SCHEDULED ||
-            props.lifecycleStage == LifecycleStageMap.CLOSED) && (
+            (props.lifecycleStage == LifecycleStageMap.CLOSED && !props.disableDateFilter)) && (
               <DateInput
                 mode="range"
+                ariaLabel={dict.nav.title.tasks}
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
                 disabledDates={getDisabledDates(props.lifecycleStage)}
@@ -218,11 +224,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               <Button
                 leftIcon="add"
                 size="icon"
+                aria-label={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
+                  interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
                 tooltipText={props.lifecycleStage === LifecycleStageMap.INVOICE ? dict.action.addInvoice :
-                  dict.action.addItem.replace(
-                    "{replace}",
-                    props.entityType.replace("_", " ")
-                  )}
+                  interpolate(dict.action.addItem, props.entityType.replace("_", " "))}
                 onClick={() => {
                   browserStorageManager.clear();
                   resetFormSession();
@@ -245,6 +250,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
           )}
           <Button
             leftIcon="filter_list_off"
+            aria-label={dict.action.clearAllFilters}
             iconSize="medium"
             className="mt-1"
             disabled={props.tableDescriptor.filters.every((filter) => (filter?.value as string[])?.length == 0)}
@@ -256,6 +262,21 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
           />
+          {(props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
+            props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
+            <Button
+              size="icon"
+              leftIcon={props.tableDescriptor.isBulkDispatchEdit ? "edit_off" : "edit"}
+              onClick={() => {
+                props.tableDescriptor.table.resetRowSelection();
+                props.tableDescriptor.setIsBulkDispatchEdit(!props.tableDescriptor.isBulkDispatchEdit);
+                if (props.tableDescriptor.isBulkDispatchEdit) {
+                  props.triggerRefresh();
+                }
+              }}
+              tooltipText={dict.action.bulkAssign}
+              variant="outline"
+            />}
           {isPermitted("export") && <DownloadButton instances={props.instances} />}
           <Button
             size="icon"

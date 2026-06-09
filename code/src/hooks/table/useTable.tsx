@@ -19,15 +19,19 @@ import { LifecycleStage, RegistryFieldValues } from "types/form";
 import { TableColumnOption } from "types/settings";
 import {
   genSortParams,
-  getInitialColumnVisibilityState
+  getInitialColumnVisibilityState,
+  getInitialSortingState,
+  getInitialSortParams
 } from "ui/graphic/table/registry/registry-table-utils";
 import { toast } from "ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
-import { RowCounts, useTotalRowCount } from "./api/useTotalRowCount";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
   isLoading: boolean;
+  isBackgroundLoading: boolean;
+  isBulkDispatchEdit: boolean;
+  setIsBulkDispatchEdit: React.Dispatch<React.SetStateAction<boolean>>,
   table: Table<FieldValues>;
   data: FieldValues[];
   initialInstances: RegistryFieldValues[];
@@ -46,7 +50,7 @@ export interface TableDescriptor {
 * A custom hook to retrieve table data into functionalities for the registry table to function.
 *
 * @param {string} entityType Type of entity for rendering.
-* @param {boolean} refreshFlag Flag to trigger refresh when required.
+* @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
 * @param {ColumnFilter} invoiceAccountFilter Additional invoice filter.
@@ -54,32 +58,33 @@ export interface TableDescriptor {
 */
 export function useTable(
   entityType: string,
-  refreshFlag: boolean,
+  refreshId: number,
   lifecycleStage: LifecycleStage,
   tableColumnOptions: TableColumnOption[],
   invoiceAccountFilter: ColumnFilter,
   selectedDate?: DateRange,
 ): TableDescriptor {
   const dict: Dictionary = useDictionary();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
-  const [sortParams, setSortParams] = useState<string>(genSortParams(sorting, dict.title));
+  const [isBulkDispatchEdit, setIsBulkDispatchEdit] = useState<boolean>(false);
+  const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<FieldValues[]>([]);
+  const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
-  const rowCounts: RowCounts = useTotalRowCount(entityType, refreshFlag, lifecycleStage, selectedDate, columnFilters);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions, dict.title));
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
 
-  const { isLoading, tableData, initialInstances } = useTableData(
+  const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
     sortParams,
     sorting,
-    refreshFlag,
+    refreshId,
     lifecycleStage,
     selectedDate,
     apiPagination,
     columnFilters,
     tableColumnOptions,
+    pagination.pageSize,
   );
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
@@ -91,8 +96,8 @@ export function useTable(
 
 
   useEffect(() => {
-    setData(tableData?.data.slice(startIndex, startIndex + pagination.pageSize));
-  }, [tableData, pagination.pageIndex]);
+    setCurrentDataView(data?.slice(startIndex, startIndex + pagination.pageSize));
+  }, [data, pagination.pageIndex]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -157,8 +162,8 @@ export function useTable(
   };
 
   const table: Table<FieldValues> = useReactTable({
-    data,
-    columns: tableData?.columns,
+    data: currentDataView,
+    columns,
     state: {
       columnFilters,
       columnVisibility,
@@ -168,7 +173,7 @@ export function useTable(
     manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    rowCount: rowCounts.filter,
+    rowCount: selectedCount,
     maxMultiSortColCount: 3,
     onPaginationChange,
     onColumnFiltersChange,
@@ -181,13 +186,16 @@ export function useTable(
 
   return {
     isLoading,
+    isBackgroundLoading,
+    isBulkDispatchEdit,
+    setIsBulkDispatchEdit,
     table,
-    data,
-    setData,
+    data: currentDataView,
+    setData: setCurrentDataView,
     initialInstances,
     pagination,
     apiPagination,
-    totalRows: rowCounts.total,
+    totalRows: totalCount,
     filters: columnFilters,
     setFilters: setColumnFilters,
     sortParams,

@@ -30,7 +30,7 @@ const useFormSession = (): useFormSessionReturn => {
     if (!formSession) {
         throw new Error("useFormSession must be used within a FormSessionContextProvider");
     }
-    const excludedFields: string[] = [FORM_STATES.FORM_TYPE, FORM_STATES.ID];
+    const excludedFields: string[] = [FORM_STATES.ID];
     const invoiceAccountFilter: ColumnFilter = useSelector(selectInvoiceAccountFilter);
     const formCount: number = useSelector(selectFormCount);
     const frozenFields: Record<string, number> = useSelector(selectFrozenFields);

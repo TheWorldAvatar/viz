@@ -7,163 +7,131 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "types/backend-agent
 import { Dictionary } from "types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "types/form";
 import { TableColumnOption } from "types/settings";
-import { applyConfiguredColumnOrder, EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseDataForTable, TableData } from "ui/graphic/table/registry/registry-table-utils";
+import { EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "utils/internal-api-services";
 
 export interface TableDataDescriptor {
   isLoading: boolean;
-  tableData: TableData;
+  isBackgroundLoading: boolean;
+  selectedCount: number;
+  totalCount: number;
+  data: FieldValues[];
+  columns: EnhancedColumnDef<FieldValues>[];
   initialInstances: RegistryFieldValues[];
 }
 
 /**
 * A custom hook to retrieve the total row count.
-* 
+*
 * @param {string} entityType Type of entity for rendering.
 * @param {string} sortParams List of parameters for sorting.
 * @param {SortingState} sorting Current sorting state.
-* @param {boolean} refreshFlag Flag to trigger refresh when required.
+* @param {number} refreshId Flag to refetch data when refresh is triggered.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {PaginationState} apiPagination The pagination state for API query.
 * @param { ColumnFilter[]} filters The current filters set.
 * @param {TableColumnOption[]} columnOptions Configuration for table columns options.
+* @param {number} firstVisiblePageSize Number of records to fetch immediately for the first visible page.
 */
 export function useTableData(
   entityType: string,
   sortParams: string,
   sorting: SortingState,
-  refreshFlag: boolean,
+  refreshId: number,
   lifecycleStage: LifecycleStage,
   selectedDate: DateRange,
   apiPagination: PaginationState,
   filters: ColumnFilter[],
-  columnOptions: TableColumnOption[]
+  columnOptions: TableColumnOption[],
+  firstVisiblePageSize: number,
 ): TableDataDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState<boolean>(false);
   const [initialInstances, setInitialInstances] = useState<
     RegistryFieldValues[]
   >([]);
-  const [data, setData] = useState<
-    TableData
-  >({ data: [], columns: [] });
-  // A hook that refetches all data when the dialogs are closed
+  const [selectedCount, setSelectedCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [data, setData] = useState<FieldValues[]>([]);
+  const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
+
   useEffect(() => {
+    const controller: AbortController = new AbortController();
+
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
-      try {
-        let instances: RegistryFieldValues[] = [];
-        let url: string;
+
+      const buildApiUrl = (page: string, limit: string): string => {
         if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
-          url = makeInternalRegistryAPIwithParams(
-            lifecycleStage,
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
+          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INVOICEABLE,
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
-        } else if (
-          lifecycleStage == LifecycleStageMap.SCHEDULED ||
-          lifecycleStage == LifecycleStageMap.CLOSED
-        ) {
-          url = makeInternalRegistryAPIwithParams(
-            lifecycleStage,
-            entityType,
-            getUTCDate(selectedDate.from).getTime().toString(),
-            getUTCDate(selectedDate.to).getTime().toString(),
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
-        } else if (
-          lifecycleStage == LifecycleStageMap.GENERAL ||
-          lifecycleStage == LifecycleStageMap.ACCOUNT ||
-          lifecycleStage == LifecycleStageMap.PRICING ||
-          lifecycleStage == LifecycleStageMap.INVOICE) {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.INSTANCES,
-            entityType,
-            "true",
-            null,
-            null,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || lifecycleStage == LifecycleStageMap.CLOSED) {
+          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.GENERAL || lifecycleStage == LifecycleStageMap.PRICING || lifecycleStage == LifecycleStageMap.INVOICE) {
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, entityType, "true", null, null, page, limit, sortParams, filterParams);
+        } else if (lifecycleStage == LifecycleStageMap.ACCOUNT) {
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.ACCOUNT, entityType, page, limit, sortParams, filterParams);
         } else {
-          url = makeInternalRegistryAPIwithParams(
-            InternalApiIdentifierMap.CONTRACTS,
-            lifecycleStage.toString(),
-            entityType,
-            apiPagination.pageIndex.toString(),
-            apiPagination.pageSize.toString(),
-            sortParams,
-            filterParams,
-          );
+          return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.CONTRACTS, lifecycleStage.toString(), entityType, page, limit, sortParams, filterParams);
         }
-        const res: AgentResponseBody = await queryInternalApi(url);
-        instances = (res.data?.items as RegistryFieldValues[]) ?? [];
+      };
 
+      try {
+        // For page sizes equal and above 50, a full batch call is executed
+        // For page sizes below 50, calls are executed in two requests to improve first visible page's performance
+        // The speed difference above 50 is no longer significant enough to demand these changes
+        const currentPage: string = firstVisiblePageSize >= 50 ? apiPagination.pageIndex.toString() : (apiPagination.pageIndex * (apiPagination.pageSize / firstVisiblePageSize)).toString();
+        const apiUrl: string = buildApiUrl(currentPage, firstVisiblePageSize >= 50 ?
+          apiPagination.pageSize.toString() : firstVisiblePageSize.toString());
+        if (firstVisiblePageSize < 50) {
+          setIsBackgroundLoading(true);
+        }
+        const res: AgentResponseBody = await queryInternalApi(apiUrl, undefined, undefined, controller.signal);
+        const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+        const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(res.data?.columns, columnOptions, dict);
+        setSelectedCount(res.data?.currentItemCount);
+        setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
-        const parsedData: TableData = parseDataForTable(instances, dict.title);
-        const orderedColumns: EnhancedColumnDef<FieldValues>[] = applyConfiguredColumnOrder(
-          parsedData.columns,
-          columnOptions,
-          dict.title,
-        );
-        setData({
-          ...parsedData,
-          columns: orderedColumns,
-          data: parsedData.data.sort((a: FieldValues, b: FieldValues): number => {
-            for (const sort of sorting) {
-              const field: string = sort.id;
-              const valA: string = a[field];
-              const valB: string = b[field];
-              // For null, undefined, or empty values, 
-              // A comes last if descending, and first if ascending
-              if (!valA) return sort.desc ? 1 : -1;
-              // B comes first if descending, and last if ascending
-              if (!valB) return sort.desc ? -1 : 1;
-
-              const comparison: number = valA.localeCompare(valB, undefined, { sensitivity: 'base' });
-              // Only returns the comparison if they are not equal on this sort field
-              // A user may have multiple fields to sort, and if they are equal on this field, 
-              // we must continue with the other fields to compare
-              if (comparison !== 0) {
-                return sort.desc ? -comparison : comparison;
-              }
-            }
-            // If all fields are equal, there is no need to reorder
-            return 0;
-          })
-        });
+        setData(parsedData);
+        setColumns(columns);
         setIsLoading(false);
+        if (firstVisiblePageSize < 50) {
+          // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
+          const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
+          const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
+          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
+          setInitialInstances(cappedRemainderInstances);
+          setData(cappedRemainderParsedData);
+          setIsBackgroundLoading(false);
+        }
       } catch (error) {
+        if ((error as DOMException).name === "AbortError") {
+          if (firstVisiblePageSize < 50) {
+            setIsBackgroundLoading(false);
+          }
+          return;
+        }
         console.error("Error fetching instances", error);
       }
     };
 
     fetchData();
-  }, [selectedDate, refreshFlag, apiPagination, sortParams, filters, columnOptions, entityType]);
+    return () => { controller.abort(); };
+  }, [selectedDate, refreshId, apiPagination, sortParams, filters, columnOptions, entityType, firstVisiblePageSize]);
 
   return {
     isLoading,
-    tableData: data,
+    isBackgroundLoading,
+    data,
+    columns,
+    selectedCount,
+    totalCount,
     initialInstances,
   };
 }
