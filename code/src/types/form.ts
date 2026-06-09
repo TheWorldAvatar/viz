@@ -28,6 +28,7 @@ export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",
   ADD_PRICE: "addprice",
+  ADJUST_PRICE: "adjustprice",
   ASSIGN_PRICE: "assignprice",
   DELETE: "delete",
   EDIT: "edit",
@@ -38,6 +39,8 @@ export const FormTypeMap = {
   COMPLETE: "complete",
   CANCEL: "cancel",
   REPORT: "report",
+  EXEMPT: "exempt",
+  MASS_EDIT: "massedit",
   TERMINATE: "terminate",
   INVOICE: "invoice",
 } as const;
@@ -54,6 +57,7 @@ export const RegistryStatusMap = {
   BILLABLE_COMPLETED: "billablecompleted",
   BILLABLE_CANCELLED: "billablecancelled",
   BILLABLE_REPORTED: "billableissue",
+  BILLABLE_EXEMPTED: "billableExempted",
   INVOICED: "invoiced",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
@@ -166,9 +170,9 @@ interface JsonLdLiteral {
 export interface RegistryTaskOption {
   id: string;
   contract: string;
-  status: string;
   date: string;
-  scheduleType: string;
+  status?: string;
+  scheduleType?: string;
 }
 
 export type RegistryTaskType =
@@ -180,3 +184,15 @@ export type RegistryTaskType =
 
 export type QuickViewGroupings = Record<string, QuickViewFields>;
 export type QuickViewFields = Record<string, SparqlResponseField[]>;
+
+
+
+// If a new SHACL default date value is added,
+// add it here and update getDefaultVal in ui/interaction/form/form-utils.ts:433
+export const ShaclDefaultDateValueMap = {
+  START_OF_YEAR: "startOfYear",
+  START_OF_MONTH: "startOfMonth",
+  TOMORROW: "tomorrow",
+} as const;
+
+export type ShaclDefaultDateValue = typeof ShaclDefaultDateValueMap[keyof typeof ShaclDefaultDateValueMap];

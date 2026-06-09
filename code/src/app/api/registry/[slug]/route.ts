@@ -52,8 +52,13 @@ export async function GET(
         ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
       },
       cache: "no-store",
+      signal: req.signal,
     });
   } catch (error) {
+    if ((error as DOMException).name === "ResponseAborted") {
+      console.log(`[API] Request aborted by client: ${url}`);
+      return new NextResponse(null, { status: 499 });
+    }
     return NextResponse.json(handleFetchFailure(url, error));
   }
 
@@ -232,6 +237,17 @@ function makeExternalEndpoint(
   searchParams: URLSearchParams
 ): string {
   switch (slug) {
+    case InternalApiIdentifierMap.ACCOUNT: {
+      const type: string = searchParams.get("type");
+      if (type == "flag") {
+        return `${agentBaseApi}/report/account/flag`;
+      }
+      const page: string = searchParams.get("page");
+      const limit: string = searchParams.get("limit");
+      const sortBy: string = searchParams.get("sort_by");
+      const filters: string = encodeFilters(searchParams.get("filters"));
+      return `${agentBaseApi}/report/account?type=${type}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+    }
     case InternalApiIdentifierMap.ADDRESS: {
       const postalCode: string = searchParams.get("postal_code");
       const urlObj: URL = new URL(`${agentBaseApi}/location/addresses`);
@@ -289,43 +305,6 @@ function makeExternalEndpoint(
       const id: string = searchParams.get("id");
       return `${agentBaseApi}/contracts/status/${id}`;
     }
-    case InternalApiIdentifierMap.COUNT: {
-      const type: string = searchParams.get("type");
-      const lifecycle: string = searchParams.get("lifecycle");
-      if (lifecycle == "null") {
-        const filters: string = encodeFilters(searchParams.get("filters"), "?");
-        return `${agentBaseApi}/${type}/count${filters}`;
-      }
-      const filters: string = encodeFilters(searchParams.get("filters"));
-      if (lifecycle == LifecycleStageMap.BILLABLE) {
-        return `${agentBaseApi}/report/account/tasks/count?type=${type}${filters}`;
-      }
-      if (lifecycle == "pending" || lifecycle == "active" || lifecycle == "archive") {
-        let stagePath: string;
-        if (lifecycle === "pending") {
-          stagePath = "draft";
-        } else if (lifecycle === "active") {
-          stagePath = "service";
-        } else if (lifecycle === "archive") {
-          stagePath = "archive";
-        } else {
-          throw Error("Invalid stage");
-        }
-        return `${agentBaseApi}/contracts/${stagePath}/count?type=${type}${filters}`;
-      }
-      let params: string = "";
-      if (lifecycle == "scheduled" || lifecycle == "closed" || lifecycle == "activity") {
-        const startDate: string = searchParams.get("start_date");
-        const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
-        const endDate: string = searchParams.get("end_date");
-        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
-        params += `&startTimestamp=${unixTimestampStartDate}&endTimestamp=${unixTimestampEndDate}`;
-      }
-      if (lifecycle == "activity") {
-        return `${agentBaseApi}/report/bill/count?type=${type}${params}${filters}`;
-      }
-      return `${agentBaseApi}/contracts/service/${lifecycle}/count?type=${type}${params}${filters}`;
-    }
     case InternalApiIdentifierMap.INSTANCES: {
       const type: string = searchParams.get("type");
       const requireLabel: string = searchParams.get("label");
@@ -342,7 +321,6 @@ function makeExternalEndpoint(
         const sortBy: string = searchParams.get("sort_by");
         const filters: string = encodeFilters(searchParams.get("filters"));
         url += `/label?page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
-        // 
       } else if (identifier != "null") {
         url += `/${identifier}`;
         // For a subtype route, search field can be added
@@ -366,6 +344,9 @@ function makeExternalEndpoint(
       const stage = searchParams.get("stage");
       const eventType = searchParams.get("type");
       const identifier = searchParams.get("identifier");
+      if (stage == "service" && eventType == FormTypeMap.MASS_EDIT) {
+        return `${agentBaseApi}/contracts/service/dispatch/bulk`;
+      }
       let url: string = `${agentBaseApi}/contracts/${stage}/${eventType}`;
       if (identifier != "null") {
         url += `/${identifier}`;
@@ -380,7 +361,7 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (type == LifecycleStageMap.ACCOUNT) {
-        return buildUrl(agentBaseApi, "report", `account?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
+        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
@@ -550,6 +531,17 @@ async function sendRequest(
 }
 
 async function handleExternalBadRequest(res: Response, url: string): Promise<NextResponse<AgentResponseBody>> {
+  if (res.status === 401) {
+    return NextResponse.json(
+      {
+        apiVersion,
+        error: {
+          code: res.status,
+          message: "Unauthorised",
+        }
+      }
+    );
+  }
   const resBody: AgentResponseBody = await res.json();
 
   console.error(

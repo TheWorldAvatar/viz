@@ -20,12 +20,16 @@ import {
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
 import { Dictionary } from "types/dictionary";
-import { ScreenType } from "types/settings";
+import { ScreenType, ScreenTypeMap } from "types/settings";
 import Button from "ui/interaction/button";
-import { getNormalizedDate } from "utils/client-utils";
+import { extractDateDisplay, interpolate } from "utils/client-utils";
+import CustomYearsDropdown from "./custom-years-dropdown";
+import CustomMonthsDropdown from "./custom-months-dropdown";
 
 interface DateInputProps {
   selectedDate: Date | DateRange | Date[] | undefined;
+  mode: "single" | "range" | "multiple";
+  ariaLabel: string;
   setSelectedDate?: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   setSelectedDates?: React.Dispatch<React.SetStateAction<Date[]>>;
@@ -34,12 +38,13 @@ interface DateInputProps {
   disabled?: boolean;
   disableMobileView?: boolean;
   required?: boolean;
-  mode: "single" | "range" | "multiple";
 }
 
 /** A component to display a date range input
  *
  * @param {Date | DateRange} selectedDate A controlled selected date range.
+ * @param {"single" | "range" | "multiple"} mode The mode of the date input, either single date, date range or multiple dates.
+ * @param {string} ariaLabel The field name for aria-label.
  * @param setSelectedDate An optional controlled dispatch method to update selected date.
  * @param setSelectedDateRange An optional controlled dispatch method to update selected date range.
  * @param {Placement} placement Optional placement position for the calendar view.
@@ -47,34 +52,14 @@ interface DateInputProps {
  * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
  * @param {boolean} required Whether the date input is required or not. Only applicable in single date mode.
- * @param {"single" | "range" | "multiple"} mode The mode of the date input, either single date, date range or multiple dates.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
   const id: string = useId();
   const dict: Dictionary = useDictionary();
   const screenType: ScreenType = useScreenType();
   const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
-
-  const extractDateDisplay = (targetDate: Date | DateRange | Date[] | undefined): string => {
-    if (props.mode === "single") {
-      if (!targetDate) return "";
-      return getNormalizedDate(targetDate as Date);
-    }
-    if (props.mode === "multiple") {
-      const dates: Date[] = targetDate as Date[];
-      if (!Array.isArray(dates) || dates.length === 0) return "";
-      const sortedDates: Date[] = [...dates].sort((a, b) => a.getTime() - b.getTime());
-      const first: string = sortedDates[0].toLocaleDateString();
-      const last: string = sortedDates.at(-1).toLocaleDateString();
-      return dates.length === 1 ? first : `${first} - ${last}`;
-    }
-    // range mode
-    const targetDateRange: DateRange = targetDate as DateRange;
-    const fromDate: string = targetDateRange?.from?.toLocaleDateString();
-    const toDate: string = targetDateRange?.to?.toLocaleDateString();
-    return `${fromDate}${fromDate != toDate ? " - " + toDate : ""}`;
-  };
-  const displayedDateValues: string = extractDateDisplay(props.selectedDate);
+  const displayedDateValues: string = extractDateDisplay(props.selectedDate, props.mode);
+  const arialDescriptionId: string = `${props.ariaLabel}-current-value`;
 
   const popover = usePopover(props.placement);
   const transition = useTransitionStyles(popover.context, {
@@ -110,7 +95,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       ref={popover.refs.setReference}
       className="flex items-center gap-2 relative"
     >
-      {!props.disableMobileView && screenType === "mobile" && (
+      {!props.disableMobileView && screenType === ScreenTypeMap.MOBILE && (
         <Button
           id={`${id}-mobile`}
           type="button"
@@ -118,10 +103,11 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           variant="outline"
           leftIcon="date_range"
           tooltipText={dict.action.date}
+          aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
           {...popover.getReferenceProps()}
         />
       )}
-      {(props.disableMobileView || screenType != "mobile") && (
+      {(props.disableMobileView || screenType !== ScreenTypeMap.MOBILE) && (
         <div className="flex items-center w-full">
           <div className="relative w-full">
             <Icon
@@ -151,8 +137,12 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               }
               {...popover.getReferenceProps()}
               disabled={props.disabled}
+              aria-label={interpolate(dict.message.pickDateRangeFor, props.ariaLabel)}
+              aria-describedby={arialDescriptionId}
             >
-              {displayedDateValues}
+              <span id={arialDescriptionId}>
+                {displayedDateValues}
+              </span>
             </button>
           </div>
         </div>
@@ -182,6 +172,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                     selected={props.selectedDate as DateRange}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
+                    captionLayout="dropdown"
+                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
+                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
                     classNames={{
                       ...dayPickerClassNames,
                       selected: "bg-gray-200 dark:bg-zinc-800",
@@ -191,28 +184,46 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                       range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
                     }}
                     required={true}
+                    components={{
+                      YearsDropdown: CustomYearsDropdown,
+                      MonthsDropdown: CustomMonthsDropdown,
+                    }}
                   />
                 )}
                 {props.mode === "multiple" && (
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="multiple"
+                    captionLayout="dropdown"
+                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
+                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
                     selected={props.selectedDate as Date[]}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates || props.disabled}
                     classNames={dayPickerClassNames}
                     required={true}
+                    components={{
+                      YearsDropdown: CustomYearsDropdown,
+                      MonthsDropdown: CustomMonthsDropdown,
+                    }}
                   />
                 )}
                 {props.mode === "single" && !props.disabled && (
                   <DayPicker
                     locale={dict.lang === "de" ? de : enGB}
                     mode="single"
+                    captionLayout="dropdown"
+                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
+                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
                     selected={props.selectedDate as Date | undefined}
                     onSelect={handleDateSelect}
                     disabled={props.disabledDates}
                     classNames={dayPickerClassNames}
                     required={props.required ?? true}
+                    components={{
+                      YearsDropdown: CustomYearsDropdown,
+                      MonthsDropdown: CustomMonthsDropdown,
+                    }}
                   />
                 )}
               </div>

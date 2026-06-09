@@ -42,20 +42,39 @@ export interface ButtonPolicy {
 }
 
 export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
-    APPROVE_CONTRACT: {
+    ACCOUNT_FLAG: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.ACCOUNT],
+        status: [],
+    }, APPROVE_CONTRACT: {
         permission: "registryFullAccess",
         stage: [LifecycleStageMap.PENDING],
         status: [],
+    },
+    ADJUST_PRICING: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED],
     },
     REVIEW_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED],
     },
+    EXEMPT_BILLABLES: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
+    },
     VIEW_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],
         status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED, RegistryStatusMap.INVOICED],
+    },
+    VIEW_FILES: {
+        permission: "operation",
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
+        status: [],
     },
     VIEW_INVOICE: {
         permission: "invoice",
@@ -101,7 +120,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     COMPLETE_TASK: {
         permission: "completeTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.CLOSED],
-        status: [RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED],
+        status: [RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
     },
     RESCHEDULE_TASK: {
         permission: "rescheduleTask",

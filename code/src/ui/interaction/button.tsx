@@ -16,7 +16,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   | "outline"
   | "ghost"
   | "active";
-  size?: "sm" | "md" | "lg" | "default" | "icon";
+  size?: "xs" | "sm" | "md" | "lg" | "default" | "icon";
   leftIcon?: "string" | React.ReactNode;
   rightIcon?: "string" | React.ReactNode;
   iconSize?: "inherit" | "medium" | "small" | "large";
@@ -26,6 +26,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tooltipPosition?: Placement;
   disabled?: boolean;
   hasMobileIcon?: boolean;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -59,6 +60,7 @@ export default function Button({
   tooltipText,
   tooltipPosition = "top", // Default tooltip position
   hasMobileIcon = true,
+  ref,
   ...props
 }: Readonly<ButtonProps>) {
   // Base styles for the button, applied to all variants and sizes
@@ -87,6 +89,7 @@ export default function Button({
 
   // Define styles for each size
   const sizeStyles = {
+    xs: "h-7 rounded-md gap-1 px-2 has-[>svg]:px-1.5",
     sm: "h-9 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
     md: "px-4 py-2 text-base",
     default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -96,6 +99,7 @@ export default function Button({
 
   // Define spacing between icons based on size
   const iconSpacing = {
+    xs: "space-x-1",
     sm: "space-x-1",
     md: "space-x-1.5",
     default: "space-x-2",
@@ -120,6 +124,7 @@ export default function Button({
   return (
     <Tooltip text={tooltipText} placement={tooltipPosition}>
       <button
+        ref={ref}
         className={buttonClasses}
         disabled={disabled || loading}
         onClick={!disabled && !loading ? onClick : undefined}
@@ -142,7 +147,7 @@ export default function Button({
               }
             </span>
           )}
-          <span>{children || label}</span>
+          <span className="truncate">{children || label}</span>
           {!loading && rightIcon && (
             <span
               className={`${hasMobileIcon ? "flex" : "hidden md:flex"

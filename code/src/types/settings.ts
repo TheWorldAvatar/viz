@@ -1,7 +1,14 @@
 import { NavBarItemType } from "ui/navigation/navbar/navbar-item";
 import { HasPermissions } from "./auth";
+import { LanguageDictionary } from "./dictionary";
 
-export type ScreenType = "mobile" | "tablet" | "desktop";
+export const ScreenTypeMap = {
+  MOBILE: "mobile",
+  TABLET: "tablet",
+  DESKTOP: "desktop",
+} as const;
+
+export type ScreenType = typeof ScreenTypeMap[keyof typeof ScreenTypeMap];
 
 /**
  * Interface of default settings for landing page.
@@ -35,6 +42,7 @@ export type TableColumnOption = {
   width?: number;
   visible?: boolean;
   order?: number;
+  sorting?: "asc" | "desc";
 };
 
 export type TableColumnSettings = Record<string, TableColumnOption[]>;
@@ -43,6 +51,8 @@ export interface ResourcesPathSettings {
   type: string;
   key?: string;
   icon?: string;
+  caption?: LanguageDictionary;
+  permission?: keyof HasPermissions;
 }
 
 export interface NavBarItemSettings {
@@ -125,3 +135,16 @@ type FillLegend = {
 
 export type MapboxCredentials = { username: string, token: string }
 
+export type FileEntry = {
+  name: string;
+  ext: string;
+  size: string;
+};
+
+export const ContextItemMap = {
+  NAVBAR: "navbar",
+  TABLE_RIBBON: "registry-table-ribbon",
+  MAP_CONTROLS_RIBBON: "map-controls-ribbon",
+} as const;
+
+export type ContextItemType = typeof ContextItemMap[keyof typeof ContextItemMap];
