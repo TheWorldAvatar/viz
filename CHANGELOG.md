@@ -2,13 +2,6 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
-## 5.75.7
-
-### Chores
-
-- Dependabot update #638 
-- Bump docker/login-action from 3 to 4
-
 ## 5.75.6
 
 ### Changes
