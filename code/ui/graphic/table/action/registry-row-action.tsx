@@ -14,7 +14,6 @@ import { JsonObject } from "@/types/json";
 import { FileDownloadButton } from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
-import ExternalRedirectButton from "@/ui/interaction/action/redirect/external-redirect-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, parseWordsForLabels } from "@/utils/client-utils";

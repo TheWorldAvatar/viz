@@ -20,7 +20,7 @@ import SimpleSelector, {
 import { parseWordsForLabels } from "@/utils/client-utils";
 import { BRANCH_ADD, BRANCH_DELETE } from "@/utils/internal-api-services";
 import { renderFormField } from "../form";
-import { FORM_STATES, parsePropertyShapeOrGroupList } from "../form-utils";
+import { parsePropertyShapeOrGroupList } from "../form-utils";
 import useFormSession from "@/hooks/form/useFormSession";
 
 interface BranchFormSectionProps {
