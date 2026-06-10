@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.76.0
+
+### Changes
+
+- Dependabot updates #739
+- Removed src folder and moved everything inside the code folder
+- Removed baseUrl from `code/tsconfig.json`
+- Changed moduleResoloution to "bundle" in `code/tsconfig.json`
+- Added TypeScript path alias `@/*` in `code/tsconfig.json` to resolve imports from the project root
+
 ## 5.75.6
 
 ### Changes
