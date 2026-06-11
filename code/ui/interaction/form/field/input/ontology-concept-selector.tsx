@@ -62,9 +62,14 @@ export default function OntologyConceptSelector(
   >([]);
 
   // Retrieve the matching concept from the mappings
-  const selectedOption: OntologyConcept = useMemo(() => {
-    return getMatchingConcept(conceptMappings, currentOption);
-  }, [conceptMappings, currentOption]);
+  const selectedOption: OntologyConcept | undefined = useMemo(() => {
+    const res = getMatchingConcept(conceptMappings, currentOption);
+    if (!res) {
+      props.form.setValue(props.field.fieldId, "");
+      return undefined;
+    }
+    return res;
+  }, [conceptMappings, currentOption, props.field.fieldId, props.form]);
 
   // A hook that fetches all concepts for select input on first render
   useEffect(() => {
