@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.76.1
+
+### Bug Fixes
+
+- Fixed an issue with the form branching where in edit forms where chaning a branch was not resetting the value. This allowed to submit incorrect values.
+
 ## 5.76.0
 
 ### Changes
