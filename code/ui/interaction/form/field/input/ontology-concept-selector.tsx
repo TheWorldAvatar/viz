@@ -63,7 +63,7 @@ export default function OntologyConceptSelector(
 
   // Retrieve the matching concept from the mappings
   const selectedOption: OntologyConcept | undefined = useMemo(() => {
-    const res = getMatchingConcept(conceptMappings, currentOption);
+    const res: OntologyConcept = getMatchingConcept(conceptMappings, currentOption);
     if (!res) {
       props.form.setValue(props.field.fieldId, "");
       return undefined;
