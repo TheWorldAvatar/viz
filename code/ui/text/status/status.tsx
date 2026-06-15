@@ -1,0 +1,106 @@
+import { useDictionary } from "@/hooks/useDictionary";
+import { Dictionary } from "@/types/dictionary";
+import { RegistryStatusMap } from "@/types/form";
+import { parseWordsForLabels } from "@/utils/client-utils";
+
+interface StatusComponentProps {
+  status: string;
+}
+
+export function getTranslatedStatusLabel(
+  status: string,
+  dict: Dictionary
+): string {
+  switch (status.toLowerCase()) {
+    case "available":
+      return dict.title.available;
+    case "unavailable":
+      return dict.title.unavailable;
+    case "active":
+      return dict.title.active;
+    case RegistryStatusMap.ASSIGNED:
+      return dict.title.assigned;
+    case RegistryStatusMap.COMPLETED:
+      return dict.title.completed;
+    case "cancelled":
+      return dict.title.cancelled;
+    case RegistryStatusMap.NEW:
+      return dict.title.new;
+    case RegistryStatusMap.BILLABLE_CANCELLED:
+    case RegistryStatusMap.BILLABLE_COMPLETED:
+    case RegistryStatusMap.BILLABLE_REPORTED:
+      return dict.title.accrued;
+    case "issue":
+      return dict.title.issue;
+    case "rescinded":
+      return dict.title.rescinded;
+    case "terminated":
+      return dict.title.terminated;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Renders the status with a circle indicator.
+ *
+ * @param {string} status The untranslated status key. Status will be translated within this component.
+ */
+export default function StatusComponent(props: Readonly<StatusComponentProps>) {
+  let statusTextColor: string;
+  let statusBackgroundColor: string;
+  let statusBorderColor: string;
+  const dict: Dictionary = useDictionary();
+
+  const statusVal: string = dict.title[props.status.replace(/^[A-Z]/, (firstChar) => firstChar.toLowerCase())] ?? props.status;
+  switch (statusVal.toLowerCase()) {
+    case dict.title.available.toLowerCase():
+    case dict.title.active.toLowerCase():
+    case dict.title.new.toLowerCase():
+      statusTextColor = "var(--info-foreground)";
+      statusBackgroundColor = "var(--info-background)";
+      statusBorderColor = "var(--info-border)";
+      break;
+    case dict.title.unavailable.toLowerCase():
+    case dict.title.cancelled.toLowerCase():
+      statusTextColor = "var(--error-foreground)";
+      statusBackgroundColor = "var(--error-background)";
+      statusBorderColor = "var(--error-border)";
+      break;
+    case dict.title.issue.toLowerCase():
+      statusTextColor = "var(--warning-foreground)";
+      statusBackgroundColor = "var(--warning-background)";
+      statusBorderColor = "var(--warning-border)";
+      break;
+    case dict.title.completed.toLowerCase():
+      statusTextColor = "var(--success-foreground)";
+      statusBackgroundColor = "var(--success-background)";
+      statusBorderColor = "var(--success-border)";
+      break;
+    case dict.title.rescinded.toLowerCase():
+    case dict.title.terminated.toLowerCase():
+      statusTextColor = "var(--error-foreground)";
+      statusBackgroundColor = "var(--error-background)";
+      statusBorderColor = "var(--error-border)";
+      break;
+    default:
+      statusTextColor = "var(--neutral-foreground)";
+      statusBackgroundColor = "var(--neutral-background)";
+      statusBorderColor = "var(--neutral-border)";
+  }
+
+  return (
+    <span className="flex justify-center items-center">
+      <p
+        className="text-lg px-8 py-1 rounded-4xl"
+        style={{
+          color: statusTextColor,
+          backgroundColor: statusBackgroundColor,
+          border: `1px solid ${statusBorderColor ?? 'transparent'}`
+        }}
+      >
+        {parseWordsForLabels(statusVal)}
+      </p>
+    </span>
+  );
+}
