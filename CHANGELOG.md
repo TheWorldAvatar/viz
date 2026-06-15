@@ -2,6 +2,94 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.76.1
+
+### Bug Fixes
+
+- Fixed an issue with the form branching where in edit forms where chaning a branch was not resetting the value. This allowed to submit incorrect values.
+
+## 5.76.0
+
+### Changes
+
+- Dependabot updates #739
+- Removed src folder and moved everything inside the code folder
+- Removed baseUrl from `code/tsconfig.json`
+- Changed moduleResoloution to "bundle" in `code/tsconfig.json`
+- Added TypeScript path alias `@/*` in `code/tsconfig.json` to resolve imports from the project root
+
+## 5.75.6
+
+### Changes
+
+- Introduced captions for general registry pages
+
+## 5.75.5
+
+### Bug Fixes
+
+- Fixed the bug where the Add Invoice table is not preserving the pre-existing client filter when filters are cleared.
+
+## 5.75.4
+
+### Changes
+
+- Changed table pagination API requests to improve performance 
+- For page sizes equal and above 50, a full batch call is executed
+- For page sizes below 50, calls are executed in two requests to improve first visible page's performance
+
+## 5.75.3
+
+### Changes
+
+- Combined 3 separate API calls for primary entity (instance creation, draft contract, assigning pricing model) into one API call. This optimizes the process of creating a new job request by reducing the number of API calls, thus improving performance and speed.
+- Bump min version of `VisBackend Agent` from `v1.52.2` to `v1.53.0`
+
+## 5.75.2
+
+### Bug Fixes
+
+- Disable duplication of closed completed tasks when recompleting
+
+## 5.75.1
+
+### Changes
+
+- Prevented submission of whitespace-only post code input in the geocoder form section
+- Trimmed leading and trailing whitespace from post code input in the geocoder form section before validation and submission. This ensures that accidental spaces do not cause validation errors or issues with geocoding.
+- Removed address shape from the geocoder form section 
+
+## 5.75.0
+
+### Changes
+
+- Submits the same task ID on submission of task actions
+
+## 5.74.1
+
+### Changes
+
+- Implement a sorting property in the table column settings so that the current table can be pre sorted when loaded.
+
+## 5.74.0
+
+### Changes
+
+- Prevented submission of whitespace-only form inputs
+- Trimmed leading and trailing whitespace from all form inputs before validation and submission.
+
+## 5.73.9
+
+### Bug Fixes
+
+- Fixed compilation error
+
+## 5.73.8
+
+### Changes
+
+- Allow developers to configure if date range is shown for closed tasks
+
 ## 5.73.7
 
 ### Bug Fixes
