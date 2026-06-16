@@ -475,21 +475,22 @@ export async function execReviewBillableAction(
 }
 
 /**
- * Retrieve the initial numeric filter operator and values based on the input.
+ * Retrieve the initial filter operator and values based on the input.
  * For between, the array will be of size 3, while everything else is size 2.
+ * Handles numeric (e.g. "eq9.45") and HH:mm time (e.g. "eq09:45") values.
  *
- * @param {string[]} input The current list of filter values.
+ * @param {string[]} inputs The current list of filter values.
  */
-export function getInitialNumericFilter(
+export function getInitialFilters(
   inputs: string[],
 ): string[] {
   if (!inputs) return null;
   const initialFilters: string[] = [];
   inputs.forEach(input => {
-    const match: RegExpMatchArray = input.match(/^([a-z]+)(\d*\.?\d+)$/);
+    const match: RegExpMatchArray = input.match(/^([a-z]+)(\d{2}:\d{2}|\d*\.?\d+)$/);
     if (match) {
       const operatorValue: string = match[1];
-      const numericValue: string = match[2];
+      const value: string = match[2];
 
       const operatorKey: string = getOperatorKeyByValue(operatorValue);
 
@@ -498,8 +499,8 @@ export function getInitialNumericFilter(
         // Its easy to guess which is between and not
         initialFilters.push(operatorKey);
       }
-      // Numeric values must always be return
-      initialFilters.push(numericValue);
+      // Values must always be returned
+      initialFilters.push(value);
     }
   });
   return initialFilters;
