@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - code/**
-      - code/* 
+      - code/*
       - Dockerfile
   workflow_run:
     workflows: ["Check Version"]
@@ -27,7 +27,7 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 #v4 <- pinned commit for safety
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 #v6 <- pinned commit for safety
         with:
           version: 10.2.1
 
@@ -40,7 +40,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: code 
+        working-directory: code
 
       - name: Lint TypeScript code
         run: pnpm lint
