@@ -7,7 +7,7 @@ import Button from "@/ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import NumberInput from "@/ui/interaction/input/number-input";
 import { interpolate } from "@/utils/client-utils";
-import { getInitialNumericFilter } from "../registry/registry-table-utils";
+import { getInitialFilters } from "../registry/registry-table-utils";
 
 interface NumericColumnFilterProps {
   label: string;
@@ -25,17 +25,17 @@ interface NumericColumnFilterProps {
  */
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
-  const initialFilterState: string[] = getInitialNumericFilter(props.currentVal);
+  const initialFilterState: string[] = getInitialFilters(props.currentVal);
   // Use between when there is more than 2 by default
   const hasBetweenComparisonOperator: boolean = initialFilterState?.length > 2;
   const [error, setError] = useState<string | null>(null);
 
-  const [value1, setValue1] = useState<string | null>(initialFilterState ? initialFilterState[1] : null);
+  const [value1, setValue1] = useState<string | null>(initialFilterState?.length ? initialFilterState[1] : null);
   const [value2, setValue2] = useState<string | null>(hasBetweenComparisonOperator ? initialFilterState[2] : null);
 
-  const [selectedOperator1, setSelectedOperator1] = useState<ComparisonOperator>(
+  const [selectedOperator, setSelectedOperator] = useState<ComparisonOperator>(
     hasBetweenComparisonOperator ? ComparisonOperatorMap.BETWEEN
-      : initialFilterState ?
+      : initialFilterState?.length ?
         ComparisonOperatorMap[initialFilterState[0] as keyof typeof ComparisonOperatorMap]
         // Default
         : ComparisonOperatorMap.EQUALS);
@@ -48,7 +48,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
   const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
   const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
-  const isBetweenComparisonOperator: boolean = selectedOperator1 === ComparisonOperatorMap.BETWEEN;
+  const isBetweenComparisonOperator: boolean = selectedOperator === ComparisonOperatorMap.BETWEEN;
 
   const operators: SelectOptionType[] = [
     { value: ComparisonOperatorMap.EQUALS, label: dict.title.equal, disabled: false, },
@@ -83,10 +83,18 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
 
       // All other comparisons should only contain one param
     } else {
-      queryParams.push(`${selectedOperator1}${value1}`);
+      queryParams.push(`${selectedOperator}${value1}`);
     }
 
     props.onSubmission(queryParams);
+  }
+
+  const handleClearFilter = (): void => {
+    setValue1(null);
+    setValue2(null);
+    setError(null);
+    setSelectedOperator(ComparisonOperatorMap.EQUALS);
+    props.onSubmission([]);
   }
 
   return (
@@ -95,10 +103,10 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
         <div className="w-100">
           <SimpleSelector
             options={operators}
-            defaultVal={selectedOperator1}
+            defaultVal={selectedOperator}
             onChange={(selected) => {
               if (selected) {
-                setSelectedOperator1((selected as SelectOptionType).value as ComparisonOperator);
+                setSelectedOperator((selected as SelectOptionType).value as ComparisonOperator);
                 setValue2(null);
                 setError(null);
               }
@@ -120,6 +128,21 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           tooltipText={dict.action.applyFilter}
           disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
           aria-label={interpolate(dict.action.filterBy, props.label)}
+        />
+        <Button
+          leftIcon="filter_list_off"
+          iconSize="medium"
+          size="icon"
+          variant="destructive"
+          className="h-full w-12"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handleClearFilter();
+          }}
+          tooltipText={dict.action.clearFilter}
+          disabled={!hasFirstValue && !props.currentVal?.length}
+          aria-label={interpolate(dict.action.clearFilterFor, props.label)}
         />
       </div>
       {error && <div className="text-red-500 text-sm">{error}</div>}
@@ -176,7 +199,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
               onChange={() => setBetweenOption(BetweenComparisonOptionMap.EXCLUSIVE)}
               className="accent-foreground"
             />
-            <label htmlFor="exclusive" className=" text-sm">
+            <label htmlFor="exclusive" className="text-sm">
               {dict.title.exclusive}
             </label>
           </div>
