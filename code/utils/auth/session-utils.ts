@@ -18,6 +18,7 @@ const hasPermitionsInitial: HasPermissions = {
   reportTask: false,
   rescheduleTask: false,
   saveTask: false,
+  viewAttachment: false,
 };
 
 export function parsePermissions(roles: string[]): PermissionScheme {
@@ -68,6 +69,9 @@ export function parsePermissions(roles: string[]): PermissionScheme {
   }
   if (roles.includes("save")) {
     permissionScheme.hasPermissions.saveTask = true;
+  }
+  if (roles.includes("attachment-viewer")) {
+    permissionScheme.hasPermissions.viewAttachment = true;
   }
   return permissionScheme;
 }
