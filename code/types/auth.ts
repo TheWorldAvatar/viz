@@ -31,6 +31,7 @@ export type HasPermissions = {
     reportTask: boolean;
     rescheduleTask: boolean;
     saveTask: boolean;
+    viewAttachment: boolean;
 };
 
 export type PermissionType = keyof HasPermissions;
@@ -72,7 +73,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED, RegistryStatusMap.INVOICED],
     },
     VIEW_FILES: {
-        permission: "operation",
+        permission: "viewAttachment",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
         status: [],
     },
