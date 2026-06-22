@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.76.4
+
+### Changes
+
+- Added a new role to view attachments separately
+
 ## 5.76.3
 
 ### Changes
