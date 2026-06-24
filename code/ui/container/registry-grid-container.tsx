@@ -9,7 +9,6 @@ import { Dictionary } from "@/types/dictionary";
 import { RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
-  getId,
   parseWordsForLabels
 } from "@/utils/client-utils";
 import { useEffect } from "react";
@@ -65,7 +64,7 @@ export default function RegistryGridComponent(
                 browserStorageManager.clear();
                 resetFormSession();
                 browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
-                navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, getId(instance?.event_id));
+                navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, instance?.event_id);
               }}
             />}
           />)}

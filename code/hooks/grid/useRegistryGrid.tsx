@@ -1,5 +1,5 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { AgentResponseBody } from "@/types/backend-agent";
+import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
@@ -12,9 +12,10 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/int
 import {
     SortingState
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import useOperationStatus from "../useOperationStatus";
+import { getId } from "@/utils/client-utils";
 
 export interface GridDescriptor {
     isLoading: boolean;
@@ -26,16 +27,17 @@ export interface GridDescriptor {
  * A custom hook to retrieve grid data into functionalities for the registry.
  *
  * @param {string} entityType Type of entity for rendering.
- * @param {TableColumnOption[]} tableColumnOptions Table column settings.
+ * @param {TableColumnOption[]} mobileFieldOptions Options for the mobile fields.
  */
 export function useRegistryGrid(
     entityType: string,
-    tableColumnOptions: TableColumnOption[],
+    mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
     const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
-    const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
-    const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
+    const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
+    const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(mobileFieldOptions));
+    const [sortParams, setSortParams] = useState<string>(getInitialSortParams(mobileFieldOptions));
     const [data, setData] = useState<FieldValues[]>([]);
 
     useEffect(() => {
@@ -44,7 +46,21 @@ export function useRegistryGrid(
             const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "20", "50", sortParams, "");
             const res: AgentResponseBody = await queryInternalApi(apiUrl);
             const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
-            const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+            let parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+            parsedData = parsedData.map(instance => {
+                if (!mobileFields.current) return instance;
+                return {
+                    id: instance.id,
+                    event_id: getId(instance.event_id),
+                    date: instance.date,
+                    status: instance.status,
+                    ...Object.fromEntries(
+                        // Filter out undefined fields
+                        mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
+                            .map(field => [field, instance[field as keyof typeof instance]])
+                    )
+                }
+            });
             setData(parsedData);
             stopLoading();
         };

@@ -27,7 +27,8 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default function RegistryMobileOutstandingTaskPage() {
     const uiSettings: UISettings = SettingsStore.getUISettings();
-    const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(uiSettings.resources?.registry?.data, LifecycleStageMap.OUTSTANDING);
+    const tableColumnSettings: TableColumnOption[] = SettingsStore.getTableColumnSettings(
+        uiSettings.resources?.registry?.data, "mobile");
     if (uiSettings.modules.registry && uiSettings.resources?.registry?.data) {
         return (
             <RegistryGridComponent
