@@ -14,10 +14,12 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
     isLoading: boolean;
     data: FieldValues[];
+    resetFormSession: () => void;
 }
 
 /**
@@ -31,20 +33,20 @@ export function useRegistryGrid(
     tableColumnOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
     const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(tableColumnOptions));
     const [sortParams, setSortParams] = useState<string>(getInitialSortParams(tableColumnOptions));
     const [data, setData] = useState<FieldValues[]>([]);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            setIsLoading(true);
+            startLoading();
             const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "20", "50", sortParams, "");
             const res: AgentResponseBody = await queryInternalApi(apiUrl);
             const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
             const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
             setData(parsedData);
-            setIsLoading(false);
+            stopLoading();
         };
 
         fetchData();
@@ -52,6 +54,7 @@ export function useRegistryGrid(
 
     return {
         isLoading,
-        data
+        data,
+        resetFormSession,
     };
 }

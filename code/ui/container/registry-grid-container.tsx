@@ -3,7 +3,6 @@
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useRegistryGrid } from "@/hooks/grid/useRegistryGrid";
 import { useDictionary } from "@/hooks/useDictionary";
-import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
@@ -14,7 +13,6 @@ import {
   parseWordsForLabels
 } from "@/utils/client-utils";
 import { useEffect } from "react";
-import LoadingSpinner from "../graphic/loader/spinner";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
 
@@ -33,8 +31,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isLoading, data } = useRegistryGrid(props.entityType, props.tableColumnOptions);
-  const { resetFormSession } = useOperationStatus();
+  const { isLoading, data, resetFormSession } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
@@ -53,26 +50,25 @@ export default function RegistryGridComponent(
         {parseWordsForLabels(props.entityType)}
       </h1>
       <div className="py-4 px-2 md:py-2.5 md:px-8 flex flex-col gap-5 md:h-full md:min-h-0">
-        {isLoading ? <LoadingSpinner isSmall={false} />
-          : data.map((instance, index) =>
-            <Card
-              key={index}
-              data={instance}
-              action={<Button
-                variant="ghost"
-                size="md"
-                iconSize="medium"
-                className="w-full justify-start"
-                leftIcon="done_outline"
-                label={dict.action.complete}
-                onClick={() => {
-                  browserStorageManager.clear();
-                  resetFormSession();
-                  browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
-                  navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, getId(instance?.event_id));
-                }}
-              />}
-            />)}
+        {!isLoading && data.map((instance, index) =>
+          <Card
+            key={index}
+            data={instance}
+            action={<Button
+              variant="ghost"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              leftIcon="done_outline"
+              label={dict.action.complete}
+              onClick={() => {
+                browserStorageManager.clear();
+                resetFormSession();
+                browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
+                navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, getId(instance?.event_id));
+              }}
+            />}
+          />)}
       </div>
     </div>
   );
