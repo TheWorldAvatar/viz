@@ -9,12 +9,14 @@ import { FieldValues } from "react-hook-form";
 
 interface CardProps {
     data: FieldValues;
+    action?: React.ReactNode;
 }
 
 /**
  * This component renders a card component.
  *
  * @param {FieldValues} data Contains the content to render. Must have id, date, and status.
+ * @param {React.ReactNode} action An action component to render.
  */
 export default function Card(props: Readonly<CardProps>) {
     const dict: Dictionary = useDictionary();
@@ -29,6 +31,7 @@ export default function Card(props: Readonly<CardProps>) {
             <p className="text-base pb-4">
                 {props.data.date}
             </p>
+            {props.action}
             {Object.entries(props.data).map(([key, value], index) => {
                 return <p key={key + index} className="rounded text-wrap py-2 px-4 bg-background">
                     {`${parseWordsForLabels(translateLifecycleFields(key, dict.title))}: ${value}`}
