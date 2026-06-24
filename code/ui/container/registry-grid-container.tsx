@@ -14,6 +14,7 @@ import {
 import { useEffect } from "react";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
+import StatusComponent from "../text/status/status";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -49,10 +50,22 @@ export default function RegistryGridComponent(
         {parseWordsForLabels(props.entityType)}
       </h1>
       <div className="py-4 px-2 md:py-2.5 md:px-8 flex flex-col gap-5 md:h-full md:min-h-0">
-        {!isLoading && data.map((instance, index) =>
-          <Card
+        {!isLoading && data.map((instance, index) => {
+          const { id, date, event_id, status, ...displayFields } = instance;
+          return <Card
             key={index}
-            data={instance}
+            data={displayFields}
+            header={<>
+              <h3 className="text-lg">
+                {`# ${id}`}
+              </h3>
+              <div className="flex justify-start">
+                <StatusComponent status={status} />
+              </div>
+              <p className="text-base pb-4">
+                {date}
+              </p>
+            </>}
             action={<Button
               variant="ghost"
               size="md"
@@ -64,10 +77,11 @@ export default function RegistryGridComponent(
                 browserStorageManager.clear();
                 resetFormSession();
                 browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
-                navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, instance?.event_id);
+                navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
               }}
             />}
-          />)}
+          />
+        })}
       </div>
     </div>
   );
