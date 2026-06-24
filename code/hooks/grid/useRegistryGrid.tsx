@@ -43,7 +43,7 @@ export function useRegistryGrid(
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             startLoading();
-            const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "20", "50", getInitialSortParams([]), "");
+            const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "0", "50", getInitialSortParams([]), "");
             const res: AgentResponseBody = await queryInternalApi(apiUrl);
             const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
             let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
