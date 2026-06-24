@@ -38,17 +38,15 @@ export function useRegistryGrid(
     const { isLoading, refreshId, startLoading, stopLoading, resetFormSession, triggerRefresh } = useOperationStatus();
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
-    const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(mobileFieldOptions));
-    const [sortParams, setSortParams] = useState<string>(getInitialSortParams(mobileFieldOptions));
     const [data, setData] = useState<FieldValues[]>([]);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             startLoading();
-            const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "20", "50", sortParams, "");
+            const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "20", "50", getInitialSortParams([]), "");
             const res: AgentResponseBody = await queryInternalApi(apiUrl);
             const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
-            let parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+            let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
             parsedData = parsedData.map(instance => {
                 if (!mobileFields.current) return instance;
                 return {
@@ -68,7 +66,7 @@ export function useRegistryGrid(
         };
 
         fetchData();
-    }, [sortParams, entityType, refreshId]);
+    }, [entityType, refreshId]);
 
     return {
         isLoading,
