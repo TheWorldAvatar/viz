@@ -1,14 +1,16 @@
 "use client";
 
+import { usePopover } from "@/hooks/float/usePopover";
+import { useScreenType } from "@/hooks/useScreenType";
+import { ScreenType, ScreenTypeMap } from "@/types/settings";
+import Button, { ButtonProps } from "@/ui/interaction/button";
 import {
   FloatingFocusManager,
   FloatingPortal,
   Placement,
   useTransitionStyles,
 } from "@floating-ui/react";
-import { usePopover } from "@/hooks/float/usePopover";
 import React from "react";
-import Button, { ButtonProps } from "@/ui/interaction/button";
 
 interface PopoverActionButtonProps extends ButtonProps {
   children: React.ReactNode;
@@ -19,7 +21,8 @@ interface PopoverActionButtonProps extends ButtonProps {
 }
 
 /**
- * A clickable button that acts as an anchor for the popover floating element.
+ * A clickable button that acts as an anchor for the popover floating element. 
+ * Note the open floating element will render differently for mobile.
  *
  * @param {ReactNode} children Children elements that are shown in the popover floating element.
  * @param {boolean} isOpen Optional state for popover.
@@ -52,14 +55,33 @@ export default function PopoverActionButton({
   ...rest
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
+  const screenType: ScreenType = useScreenType();
+
   const popover = usePopover(placement, isOpen, setIsOpen, onClose);
   const transition = useTransitionStyles(popover.context, {
-    duration: 200,
-    initial: {
+    duration: screenType == ScreenTypeMap.MOBILE ? 400 : 200,
+    initial: screenType == ScreenTypeMap.MOBILE ? {
+      opacity: 0,
+      transform: "translateY(100%)",
+    } : {
       opacity: 0,
       transform: "scale(0.9)",
     },
   });
+  const floatingStyles: React.CSSProperties = screenType == ScreenTypeMap.MOBILE
+    ? {
+      position: "fixed",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      // Second highest z-index so it is below the tooltips
+      zIndex: 999998,
+    }
+    : {
+      ...popover.floatingStyles,
+      // Second highest z-index so it is below the tooltips
+      zIndex: 999998,
+    };
 
   if (validChildren.length === 0) {
     return null;
@@ -85,17 +107,15 @@ export default function PopoverActionButton({
           <FloatingFocusManager context={popover.context} modal={false}>
             <div
               ref={popover.refs.setFloating}
-              style={{
-                ...popover.floatingStyles,
-                zIndex: 999998, // Second highest z-index so it is below the tooltips
-              }}
+              style={floatingStyles}
               {...popover.getFloatingProps()}
             >
               <div
                 style={{
                   ...transition.styles,
                 }}
-                className="flex flex-col gap-y-2 p-2 bg-muted border border-border rounded-lg shadow-md"
+                className={`flex flex-col gap-y-2 p-2 bg-muted border border-border shadow-md
+                  ${screenType == ScreenTypeMap.MOBILE ? "rounded-t-lg" : "rounded-lg"}`}
               >
                 {children}
               </div>
