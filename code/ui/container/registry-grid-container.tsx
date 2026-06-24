@@ -67,7 +67,8 @@ export default function RegistryGridComponent(
                 {date}
               </p>
             </>}
-            action={<Button
+            actions={[<Button
+              key={index + dict.action.complete}
               variant="ghost"
               size="md"
               iconSize="medium"
@@ -80,7 +81,21 @@ export default function RegistryGridComponent(
                 browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
                 navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
               }}
-            />}
+            />,
+            <Button
+              key={index + dict.action.view}
+              variant="ghost"
+              size="md"
+              iconSize="medium"
+              className="w-full justify-start"
+              leftIcon="open_in_new"
+              label={parseWordsForLabels(dict.action.view)}
+              onClick={() => {
+                browserStorageManager.clear();
+                resetFormSession();
+                navigateToDrawer(Routes.REGISTRY_TASK_VIEW, event_id);
+              }}
+            />]}
           />
         })}
       </div>
