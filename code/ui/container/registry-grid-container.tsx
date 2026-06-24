@@ -31,12 +31,13 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isLoading, data, resetFormSession } = useRegistryGrid(props.entityType, props.tableColumnOptions);
+  const { isLoading, data, resetFormSession, triggerRefresh } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
     const handleHistoryChange = () => {
+      triggerRefresh();
     };
     window.addEventListener("popstate", handleHistoryChange);
     return () => {

@@ -1,5 +1,5 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
+import { AgentResponseBody } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
@@ -8,6 +8,7 @@ import {
     getInitialSortParams,
     parseDataForTable
 } from "@/ui/graphic/table/registry/registry-table-utils";
+import { getId } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import {
     SortingState
@@ -15,12 +16,12 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import useOperationStatus from "../useOperationStatus";
-import { getId } from "@/utils/client-utils";
 
 export interface GridDescriptor {
     isLoading: boolean;
     data: FieldValues[];
     resetFormSession: () => void;
+    triggerRefresh: () => void;
 }
 
 /**
@@ -34,7 +35,8 @@ export function useRegistryGrid(
     mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
-    const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
+    const { isLoading, refreshId, startLoading, stopLoading, resetFormSession, triggerRefresh } = useOperationStatus();
+
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [sorting, setSorting] = useState<SortingState>(getInitialSortingState(mobileFieldOptions));
     const [sortParams, setSortParams] = useState<string>(getInitialSortParams(mobileFieldOptions));
@@ -66,11 +68,12 @@ export function useRegistryGrid(
         };
 
         fetchData();
-    }, [sortParams, entityType]);
+    }, [sortParams, entityType, refreshId]);
 
     return {
         isLoading,
         data,
         resetFormSession,
+        triggerRefresh,
     };
 }
