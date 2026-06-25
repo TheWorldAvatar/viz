@@ -186,6 +186,8 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         onClick={() => {
           if (tableDescriptor.isBulkDispatchEdit && !isBulkEditMode) {
             setIsBulkEditMode(true);
+            // Selection only on first click
+            props.row.toggleSelected(!props.row.getIsSelected());
           }
         }}
         className={`border-b border-border text-left relative ${isDragging ? "z-10 opacity-70" : "z-0"} ${rowBackgroundClass}`}
