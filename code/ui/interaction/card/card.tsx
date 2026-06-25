@@ -37,14 +37,38 @@ export default function Card(props: Readonly<CardProps>) {
                 width: "100%",
                 transform: `translateY(${props.virtualItem.start}px)`,
             }}
-            className="border border-border bg-ring rounded p-3 accent-black dark:accent-white max-w-[90vw]">
-            {props.header}
-            {props.actions}
-            {Object.entries(props.data).map(([key, value], index) => {
-                return <p key={key + index} className="rounded text-wrap py-2 px-4 bg-background">
-                    {`${parseWordsForLabels(translateLifecycleFields(key, dict.title))}: ${value}`}
-                </p>
-            })}
+            className="p-2 max-w-[90vw]">
+            <div className="overflow-hidden rounded-md border border-border bg-background">
+                {props.header && (
+                    <div className="border-b border-border px-4 pt-4 pb-3 bg-ring">
+                        {props.header}
+                    </div>
+                )}
+                <dl>
+                    {Object.entries(props.data).map(([key, value], index) => (
+                        <div key={key + index} className="flex items-start justify-between gap-4 px-4 py-2.5">
+                            <dt className="shrink-0 text-muted-foreground">
+                                {parseWordsForLabels(translateLifecycleFields(key, dict.title))}
+                            </dt>
+                            <dd className="min-w-0 wrap-break-word text-right font-medium">
+                                {`${value}`}
+                            </dd>
+                        </div>
+                    ))}
+                </dl>
+                {props.actions && props.actions.length > 0 && (
+                    <div className="flex items-stretch border-t border-border">
+                        {props.actions.map((action, index) => (
+                            <div
+                                key={index}
+                                className="flex flex-1 items-center justify-center py-1.5 border-border bg-ring not-first:border-l"
+                            >
+                                {action}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

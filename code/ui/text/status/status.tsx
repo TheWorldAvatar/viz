@@ -5,6 +5,7 @@ import { parseWordsForLabels } from "@/utils/client-utils";
 
 interface StatusComponentProps {
   status: string;
+  size?: "sm" | "default";
 }
 
 export function getTranslatedStatusLabel(
@@ -89,10 +90,15 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBorderColor = "var(--neutral-border)";
   }
 
+  const sizeStyles: string =
+    props.size === "sm"
+      ? "text-sm px-3 py-0.5"
+      : "text-lg px-8 py-1";
+
   return (
     <span className="flex justify-center items-center">
       <p
-        className="text-lg px-8 py-1 rounded-4xl"
+        className={`${sizeStyles} rounded-4xl`}
         style={{
           color: statusTextColor,
           backgroundColor: statusBackgroundColor,

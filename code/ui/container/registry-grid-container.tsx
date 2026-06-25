@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
 import StatusComponent from "../text/status/status";
+import { Icon } from "@mui/material";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -71,24 +72,29 @@ export default function RegistryGridComponent(
               ref={rowVirtualizer.measureElement}
               data={displayFields}
               virtualItem={virtualItem}
-              header={<>
-                <h3 className="text-lg">
-                  {`# ${id}`}
-                </h3>
-                <div className="flex justify-start">
-                  <StatusComponent status={status} />
+              header={<div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="min-w-0 wrap-break-word text-sm tracking-tight">
+                    {`# ${id}`}
+                  </h3>
+                  <div className="shrink-0">
+                    <StatusComponent status={status} size="sm" />
+                  </div>
                 </div>
-                <p className="text-base pb-4">
+                <p className="font-semibold gap-1 flex items-center">
+                  <Icon fontSize="small" className="material-symbols-outlined ">
+                    {"calendar_month"}
+                  </Icon>
                   {date}
                 </p>
-              </>}
+              </div>}
               actions={[<Button
                 key={virtualItem.key + dict.action.complete}
                 variant="ghost"
                 size="md"
                 iconSize="medium"
-                className="w-full justify-start"
                 leftIcon="done_outline"
+                className="text-green-800 dark:text-green-600"
                 label={dict.action.complete}
                 onClick={() => {
                   browserStorageManager.clear();
@@ -102,7 +108,6 @@ export default function RegistryGridComponent(
                 variant="ghost"
                 size="md"
                 iconSize="medium"
-                className="w-full justify-start"
                 leftIcon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
