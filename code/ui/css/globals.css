@@ -17,6 +17,13 @@
     /* Default border colour */
     --border: #a5a5b3;
 
+    /* Card colours */
+    --card: #ffffff;
+    --card-foreground: #30363d;
+    --card-header: #f4f4f6;
+    --card-footer: #fafafb;
+    --card-border: #cfcfd8;
+
     /* Primary action: for main CTA buttons/links and key user actions */
     --primary: #82b29a;
     --primary-foreground: #0d1117;
@@ -92,6 +99,13 @@
     --muted-foreground: #c7c7cf;
 
     --border: #6b6b78;
+
+     /* Card colours */
+    --card: #1d1d1d;
+    --card-foreground: #fafafa;
+    --card-header: #262626;
+    --card-footer: #1a1a1a;
+    --card-border: #333333;
 
     --primary: #4f7a5f;
     --primary-foreground: #0d1117;
@@ -178,6 +192,11 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-header: var(--card-header);
+  --color-card-footer: var(--card-footer);
+  --color-card-border: var(--card-border);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);

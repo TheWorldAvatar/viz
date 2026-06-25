@@ -38,9 +38,9 @@ export default function Card(props: Readonly<CardProps>) {
                 transform: `translateY(${props.virtualItem.start}px)`,
             }}
             className="p-2 max-w-[90vw]">
-            <div className="overflow-hidden rounded-md border border-border bg-background">
+            <div className="overflow-hidden rounded-md border border-card-border bg-card text-card-foreground">
                 {props.header && (
-                    <div className="border-b border-border px-4 pt-4 pb-3 bg-ring">
+                    <div className="border-b border-card-border px-4 pt-4 pb-3 bg-card-header">
                         {props.header}
                     </div>
                 )}
@@ -68,11 +68,11 @@ export default function Card(props: Readonly<CardProps>) {
                     })}
                 </dl>
                 {props.actions && props.actions.length > 0 && (
-                    <div className="flex items-stretch border-t border-border">
+                    <div className="flex items-stretch border-t border-card-border bg-card-footer">
                         {props.actions.map((action, index) => (
                             <div
                                 key={index}
-                                className="flex flex-1 items-center justify-center py-1.5 border-border bg-ring not-first:border-l"
+                                className="flex flex-1 items-center justify-center py-1.5 border-card-border not-first:border-l"
                             >
                                 {action}
                             </div>

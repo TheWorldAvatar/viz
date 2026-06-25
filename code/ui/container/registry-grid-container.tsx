@@ -94,7 +94,6 @@ export default function RegistryGridComponent(
                 size="md"
                 iconSize="medium"
                 leftIcon="done_outline"
-                className="text-green-800 dark:text-green-600"
                 label={dict.action.complete}
                 onClick={() => {
                   browserStorageManager.clear();
