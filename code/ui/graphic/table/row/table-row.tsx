@@ -1,14 +1,9 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { flexRender, Row } from "@tanstack/react-table";
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { FormTemplateType, FormTypeMap, LifecycleStageMap, PROPERTY_GROUP_TYPE, PropertyGroup, PropertyShape, PropertyShapeOrGroup, RegistryStatusMap, TYPE_KEY, VALUE_KEY } from "@/types/form";
@@ -18,6 +13,11 @@ import Checkbox from "@/ui/interaction/input/checkbox";
 import { getId } from "@/utils/client-utils";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { flexRender, Row } from "@tanstack/react-table";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
@@ -184,10 +184,9 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
           transition: transition,
         }}
         onClick={() => {
-          if (tableDescriptor.isBulkDispatchEdit) {
-            if (!isBulkEditMode) {
-              setIsBulkEditMode(true);
-            }
+          if (tableDescriptor.isBulkDispatchEdit && !isBulkEditMode) {
+            setIsBulkEditMode(true);
+            // Selection only on first click
             props.row.toggleSelected(!props.row.getIsSelected());
           }
         }}

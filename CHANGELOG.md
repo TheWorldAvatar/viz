@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.76.5
+
+### Changes
+
+- Remove row selection on click in mass assignment mode
+- Disable mass assignment functionality for non operation users
+
 ## 5.76.4
 
 ### Changes
