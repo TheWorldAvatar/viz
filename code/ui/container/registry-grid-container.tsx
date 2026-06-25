@@ -45,8 +45,9 @@ export default function RegistryGridComponent(
     };
   }, []);
 
+  // Ensure height of container is full for virtualiser to function
   return (
-    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">
+    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col h-full min-h-0">
       <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
         {parseWordsForLabels(props.entityType)}
       </h1>

@@ -51,7 +51,7 @@ export function useRegistryGrid(
         count: hasMore ? data.length + 1 : data.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
-        overscan: GRID_LIMIT,
+        overscan: 15, // Low value to prevent auto-trigger the bottom row
         useFlushSync: false,
     });
 
@@ -59,9 +59,6 @@ export function useRegistryGrid(
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             const lastVirtualItem: VirtualItem = virtualItems[virtualItems.length - 1];
-            // Initial render with no virtual items should fail quietly
-            if (virtualItems.length === 0) return;
-
             // Fetches the next range when it hits the threshold because there is one more virtual item than data
             if (lastVirtualItem.index >= data.length) {
                 setIsFetching(true);
@@ -95,7 +92,7 @@ export function useRegistryGrid(
         }
 
         // Only fetch data if there are no ongoing fetches, and there are more data to fetch
-        if (!isFetching && hasMore) {
+        if (!isFetching && hasMore && virtualItems.length > 0) {
             fetchData();
         }
     }, [entityType, refreshId, virtualItems]);
