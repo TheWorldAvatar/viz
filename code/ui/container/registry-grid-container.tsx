@@ -74,15 +74,15 @@ export default function RegistryGridComponent(
               virtualItem={virtualItem}
               header={<div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="min-w-0 wrap-break-word text-sm tracking-tight">
+                  <h3 className="min-w-0 wrap-break-word text-sm font-semibold tracking-tight">
                     {`# ${id}`}
                   </h3>
                   <div className="shrink-0">
                     <StatusComponent status={status} size="sm" />
                   </div>
                 </div>
-                <p className="font-semibold gap-1 flex items-center">
-                  <Icon fontSize="small" className="material-symbols-outlined ">
+                <p className="flex items-center gap-1 text-card-foreground">
+                  <Icon fontSize="small" className="material-symbols-outlined">
                     {"calendar_month"}
                   </Icon>
                   {date}

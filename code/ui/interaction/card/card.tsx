@@ -37,7 +37,7 @@ export default function Card(props: Readonly<CardProps>) {
                 width: "100%",
                 transform: `translateY(${props.virtualItem.start}px)`,
             }}
-            className="p-2 max-w-[90vw]">
+            className="px-1.5 py-3 max-w-[90vw]">
             <div className="overflow-hidden rounded-md border border-card-border bg-card text-card-foreground">
                 {props.header && (
                     <div className="border-b border-card-border px-4 pt-4 pb-3 bg-card-header">
@@ -72,7 +72,7 @@ export default function Card(props: Readonly<CardProps>) {
                         {props.actions.map((action, index) => (
                             <div
                                 key={index}
-                                className="flex flex-1 items-center justify-center py-1.5 border-card-border not-first:border-l"
+                                className="flex flex-1 items-center justify-center px-2 py-2.5 border-card-border not-first:border-l"
                             >
                                 {action}
                             </div>
