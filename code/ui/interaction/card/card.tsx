@@ -45,16 +45,27 @@ export default function Card(props: Readonly<CardProps>) {
                     </div>
                 )}
                 <dl>
-                    {Object.entries(props.data).map(([key, value], index) => (
-                        <div key={key + index} className="flex items-start justify-between gap-4 px-4 py-2.5">
-                            <dt className="shrink-0 text-muted-foreground">
-                                {parseWordsForLabels(translateLifecycleFields(key, dict.title))}
-                            </dt>
-                            <dd className="min-w-0 wrap-break-word text-right font-medium">
-                                {`${value}`}
-                            </dd>
-                        </div>
-                    ))}
+                    {Object.entries(props.data).map(([key, value], index) => {
+                        // For long values, stack the label above a full-width, left-aligned value instead.
+                        const isLongValue: boolean = value.length > 40;
+                        return (
+                            <div
+                                key={key + index}
+                                className={isLongValue
+                                    ? "flex flex-col gap-1 px-4 py-2.5"
+                                    : "flex items-start justify-between gap-4 px-4 py-2.5"}
+                            >
+                                <dt className="shrink-0 text-muted-foreground">
+                                    {parseWordsForLabels(translateLifecycleFields(key, dict.title))}
+                                </dt>
+                                <dd className={isLongValue
+                                    ? "wrap-break-word font-medium"
+                                    : "min-w-0 wrap-break-word text-right font-medium"}>
+                                    {`${value}`}
+                                </dd>
+                            </div>
+                        );
+                    })}
                 </dl>
                 {props.actions && props.actions.length > 0 && (
                     <div className="flex items-stretch border-t border-border">
