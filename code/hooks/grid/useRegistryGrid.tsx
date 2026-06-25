@@ -4,25 +4,26 @@ import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
-    getInitialSortingState,
     getInitialSortParams,
     parseDataForTable
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getId } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import {
-    SortingState
-} from "@tanstack/react-table";
+import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
-    isLoading: boolean;
+    parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
+    virtualItems: VirtualItem[];
+    rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element>;
     resetFormSession: () => void;
     triggerRefresh: () => void;
 }
+
+const GRID_LIMIT: number = 50;
 
 /**
  * A custom hook to retrieve grid data into functionalities for the registry.
@@ -35,42 +36,75 @@ export function useRegistryGrid(
     mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
-    const { isLoading, refreshId, startLoading, stopLoading, resetFormSession, triggerRefresh } = useOperationStatus();
+    const { refreshId, resetFormSession, triggerRefresh } = useOperationStatus();
+
+    const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+    const [page, setPage] = useState<number>(0);
+    const [isFetching, setIsFetching] = useState<boolean>(false);
+    const [hasMore, setHasMore] = useState<boolean>(true);
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [data, setData] = useState<FieldValues[]>([]);
 
+    const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
+        // If there is always more, virtual items must be 1 more to trigger the refetch
+        count: hasMore ? data.length + 1 : data.length,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 80,
+        overscan: GRID_LIMIT,
+        useFlushSync: false,
+    });
+
+    const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            startLoading();
-            const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, "0", "50", getInitialSortParams([]), "");
-            const res: AgentResponseBody = await queryInternalApi(apiUrl);
-            const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
-            let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
-            parsedData = parsedData.map(instance => {
-                if (!mobileFields.current) return instance;
-                return {
-                    id: instance.id,
-                    event_id: getId(instance.event_id),
-                    date: instance.date,
-                    status: instance.status,
-                    ...Object.fromEntries(
-                        // Filter out undefined fields
-                        mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
-                            .map(field => [field, instance[field as keyof typeof instance]])
-                    )
-                }
-            });
-            setData(parsedData);
-            stopLoading();
-        };
+            const lastVirtualItem: VirtualItem = virtualItems[virtualItems.length - 1];
+            // Initial render with no virtual items should fail quietly
+            if (virtualItems.length === 0) return;
 
-        fetchData();
-    }, [entityType, refreshId]);
+            // Fetches the next range when it hits the threshold because there is one more virtual item than data
+            if (lastVirtualItem.index >= data.length) {
+                setIsFetching(true);
+                const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, page.toString(), GRID_LIMIT.toString(), getInitialSortParams([]), "");
+                const res: AgentResponseBody = await queryInternalApi(apiUrl);
+                const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+
+                let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
+                parsedData = parsedData.map(instance => {
+                    if (!mobileFields.current) return instance;
+                    return {
+                        id: instance.id,
+                        event_id: getId(instance.event_id),
+                        date: instance.date,
+                        status: instance.status,
+                        ...Object.fromEntries(
+                            // Filter out undefined fields
+                            mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
+                                .map(field => [field, instance[field as keyof typeof instance]])
+                        )
+                    }
+                });
+                // If total length is smaller than size, there are no more instances to render
+                if (parsedData.length < GRID_LIMIT) {
+                    setHasMore(false);
+                }
+                setData((prev) => [...prev, ...parsedData]);
+                setPage((prev) => prev + 1);
+                setIsFetching(false);
+            };
+        }
+
+        // Only fetch data if there are no ongoing fetches, and there are more data to fetch
+        if (!isFetching && hasMore) {
+            fetchData();
+        }
+    }, [entityType, refreshId, virtualItems]);
 
     return {
-        isLoading,
+        parentRef,
         data,
+        virtualItems,
+        rowVirtualizer,
         resetFormSession,
         triggerRefresh,
     };

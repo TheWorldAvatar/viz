@@ -31,7 +31,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isLoading, data, resetFormSession, triggerRefresh } = useRegistryGrid(props.entityType, props.tableColumnOptions);
+  const { parentRef, data, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
@@ -50,55 +50,70 @@ export default function RegistryGridComponent(
       <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
         {parseWordsForLabels(props.entityType)}
       </h1>
-      <div className="py-4 px-2 md:py-2.5 md:px-8 flex flex-col gap-5 md:h-full md:min-h-0">
-        {!isLoading && data.map((instance, index) => {
-          const { id, date, event_id, status, ...displayFields } = instance;
-          return <Card
-            key={index}
-            data={displayFields}
-            header={<>
-              <h3 className="text-lg">
-                {`# ${id}`}
-              </h3>
-              <div className="flex justify-start">
-                <StatusComponent status={status} />
-              </div>
-              <p className="text-base pb-4">
-                {date}
-              </p>
-            </>}
-            actions={[<Button
-              key={index + dict.action.complete}
-              variant="ghost"
-              size="md"
-              iconSize="medium"
-              className="w-full justify-start"
-              leftIcon="done_outline"
-              label={dict.action.complete}
-              onClick={() => {
-                browserStorageManager.clear();
-                resetFormSession();
-                browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
-                navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
-              }}
-            />,
-            <Button
-              key={index + dict.action.view}
-              variant="ghost"
-              size="md"
-              iconSize="medium"
-              className="w-full justify-start"
-              leftIcon="open_in_new"
-              label={parseWordsForLabels(dict.action.view)}
-              onClick={() => {
-                browserStorageManager.clear();
-                resetFormSession();
-                navigateToDrawer(Routes.REGISTRY_TASK_VIEW, event_id);
-              }}
-            />]}
-          />
-        })}
-      </div>
+      {/** The virtualiser requires flex-1 height and overflow y in parent ref; it also requires an inner canvas container */}
+      <section ref={parentRef} className="py-4 px-2 md:py-2.5 md:px-8 flex-1 overflow-y-auto min-h-0 w-full">
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {data.length > 0 && virtualItems.map((virtualItem) => {
+            const isLoaderRow: boolean = virtualItem.index >= data.length;
+            if (isLoaderRow) {
+              return;
+            }
+            const { id, date, event_id, status, ...displayFields } = data[virtualItem.index];
+            return <Card
+              key={virtualItem.key}
+              ref={rowVirtualizer.measureElement}
+              data={displayFields}
+              virtualItem={virtualItem}
+              header={<>
+                <h3 className="text-lg">
+                  {`# ${id}`}
+                </h3>
+                <div className="flex justify-start">
+                  <StatusComponent status={status} />
+                </div>
+                <p className="text-base pb-4">
+                  {date}
+                </p>
+              </>}
+              actions={[<Button
+                key={virtualItem.key + dict.action.complete}
+                variant="ghost"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                leftIcon="done_outline"
+                label={dict.action.complete}
+                onClick={() => {
+                  browserStorageManager.clear();
+                  resetFormSession();
+                  browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
+                  navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
+                }}
+              />,
+              <Button
+                key={virtualItem.key + dict.action.view}
+                variant="ghost"
+                size="md"
+                iconSize="medium"
+                className="w-full justify-start"
+                leftIcon="open_in_new"
+                label={parseWordsForLabels(dict.action.view)}
+                onClick={() => {
+                  browserStorageManager.clear();
+                  resetFormSession();
+                  navigateToDrawer(Routes.REGISTRY_TASK_VIEW, event_id);
+                }}
+              />]}
+            />
+          })}
+        </div>
+      </section>
     </div>
   );
 }
