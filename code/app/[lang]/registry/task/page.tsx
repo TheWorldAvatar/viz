@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 
 import { Modules, PageTitles, Routes } from '@/io/config/routes';
 import SettingsStore from '@/io/config/settings';
-import { LifecycleStageMap } from '@/types/form';
 import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryGridComponent from '@/ui/container/registry-grid-container';
 
