@@ -13,6 +13,7 @@ import {
   parseWordsForLabels
 } from "@/utils/client-utils";
 import { Icon } from "@mui/material";
+import { ColumnFilter } from "@tanstack/react-table";
 import { useEffect } from "react";
 import Accordion from "../interaction/accordion/accordion";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
@@ -39,6 +40,7 @@ export default function RegistryGridComponent(
   const { parentRef, data, columns, filters, virtualItems, rowVirtualizer,
     resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
+  const hasNoActiveFilters: boolean = filters.every((filter) => (filter?.value as string[])?.length == 0);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
@@ -61,7 +63,7 @@ export default function RegistryGridComponent(
         {data.length > 0 && <PopoverActionButton
           placement="bottom"
           leftIcon="filter_list"
-          variant="ghost"
+          variant={hasNoActiveFilters ? "ghost" : "secondary"}
           tooltipText={dict.action.filter}
           size="icon"
           aria-label={dict.action.filter}
@@ -73,7 +75,7 @@ export default function RegistryGridComponent(
               aria-label={dict.action.clearAllFilters}
               iconSize="medium"
               className="mt-1"
-              disabled={filters.every((filter) => (filter?.value as string[])?.length == 0)}
+              disabled={hasNoActiveFilters}
               size="icon"
               onClick={() => resetFilters()}
               tooltipText={dict.action.clearAllFilters}
@@ -82,14 +84,18 @@ export default function RegistryGridComponent(
           </section>
           <section className="h-full max-h-100 overflow-y-auto">
             {columns.map((column, index) => {
+              const colId: string = column.header.toString();
+              const targetFilter: ColumnFilter = filters.find(filter => filter.id === colId.toLowerCase());
+              const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
               return <Accordion
-                id={column.header.toString()}
-                title={column.header.toString()}
                 key={index}
+                id={colId}
+                title={colId}
+                isActive={currentFilter.length > 0}
               >
                 <RegistryFilter
                   type={props.entityType}
-                  name={column.header.toString()}
+                  name={colId}
                   fieldType={column.dataType}
                   lifecycleStage={LifecycleStageMap.OUTSTANDING}
                   selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}

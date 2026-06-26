@@ -8,6 +8,7 @@ interface AccordionProps {
     id: string;
     title: string;
     children: React.ReactNode;
+    isActive?: boolean;
 }
 
 /** 
@@ -16,6 +17,7 @@ interface AccordionProps {
  * @param {string} id - The unique ID for the form accordion.
  * @param {string} title - The label for the trigger button.
  * @param children - A list of components to render as the accordion's body
+ * @param {boolean} isActive - Uses an active variant for the accordion trigger if true.
  **/
 export default function Accordion(props: Readonly<AccordionProps>) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -28,12 +30,12 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                 leftIcon={isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
                 size="sm"
                 iconSize="small"
-                variant="outline"
+                variant={props.isActive ? "secondary" :"outline"}
                 onClick={(): void => setIsOpen((prev) => !prev)}
                 aria-label={props.title}
                 aria-expanded={isOpen}
                 aria-controls={`accordion-content-${props.id}`}
-                className="w-[90vw] ml-1 justify-start "
+                className="w-[90vw] ml-1 justify-start"
             >
                 {props.title}
             </Button>
