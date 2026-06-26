@@ -22,6 +22,8 @@ export interface GridDescriptor {
     parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
+    selectedCount: number;
+    totalCount: number;
     filters: ColumnFilter[];
     virtualItems: VirtualItem[];
     rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element>;
@@ -48,6 +50,8 @@ export function useRegistryGrid(
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     const [page, setPage] = useState<number>(0);
+    const [selectedCount, setSelectedCount] = useState<number>(0);
+    const [totalCount, setTotalCount] = useState<number>(0);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -132,6 +136,8 @@ export function useRegistryGrid(
                 if (parsedData.length < GRID_LIMIT) {
                     setHasMore(false);
                 }
+                setSelectedCount(res.data?.currentItemCount);
+                setTotalCount(res.data?.totalItems);
                 setData((prev) => [...prev, ...parsedData]);
                 setPage((prev) => prev + 1);
                 setIsFetching(false);
@@ -148,6 +154,8 @@ export function useRegistryGrid(
         parentRef,
         data,
         columns,
+        selectedCount,
+        totalCount,
         filters,
         virtualItems,
         rowVirtualizer,

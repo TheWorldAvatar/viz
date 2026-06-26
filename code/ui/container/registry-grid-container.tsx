@@ -10,6 +10,7 @@ import { LifecycleStageMap, RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
   getInitialDateFromLifecycleStage,
+  interpolate,
   parseWordsForLabels
 } from "@/utils/client-utils";
 import { Icon } from "@mui/material";
@@ -37,7 +38,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { parentRef, data, columns, filters, virtualItems, rowVirtualizer,
+  const { parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
     resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
   const hasNoActiveFilters: boolean = filters.every((filter) => (filter?.value as string[])?.length == 0);
@@ -55,7 +56,7 @@ export default function RegistryGridComponent(
 
   // Ensure height of container is full for virtualiser to function
   return (
-    <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col h-full min-h-0">
+    <div className="bg-muted pt-2 px-2 md:py-2.5 md:px-8 flex flex-col h-full min-h-0">
       <div className="flex justify-between px-4">
         <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
           {parseWordsForLabels(props.entityType)}
@@ -176,6 +177,13 @@ export default function RegistryGridComponent(
             />
           })}
         </div>
+      </section>
+      <section className="flex justify-end">
+        {data.length > 0 && <p className="text-sm pt-1 pr-4">{
+          interpolate(dict.message.numberOfRecords,
+            selectedCount != totalCount ? String(selectedCount) : String(totalCount))
+            .replace("{replacetotal}", String(totalCount))}</p>
+        }
       </section>
     </div>
   );
