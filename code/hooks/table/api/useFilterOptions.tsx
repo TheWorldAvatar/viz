@@ -1,35 +1,33 @@
-import { ColumnFilter } from "@tanstack/react-table";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDictionary } from "@/hooks/useDictionary";
-import React, { useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { parseColumnFiltersIntoUrlParams, parseTranslatedFieldToOriginal } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getAfterDelimiter, getUTCDate } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { ColumnFilter } from "@tanstack/react-table";
+import React, { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
 
 export interface FilterOptionsDescriptor {
   options: string[];
   search: string;
   isLoading: boolean;
-  showFilterDropdown: boolean;
   currentFilters: string[];
   setSearch: React.Dispatch<React.SetStateAction<string>>;
-  setShowFilterDropdown: React.Dispatch<React.SetStateAction<boolean>>;
-  setTriggerFetch: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
 * A custom hook to retrieve the filter options and additional states to query the filter options when required.
 * 
 * @param {string} entityType Type of entity for rendering.
-* @param {string} field List of parameters for sorting.
+* @param {string} field The field name to find filters for.
 * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
 * @param {DateRange} selectedDate The currently selected date.
 * @param {string[]} currentFilters The currently selected filter values.
 * @param {ColumnFilter[]} allFilters Filter state for the entire table.
+* @param {boolean} disable Disables the hook if true.
 */
 export function useFilterOptions(
   entityType: string,
@@ -38,11 +36,10 @@ export function useFilterOptions(
   selectedDate: DateRange,
   currentFilters: string[],
   allFilters: ColumnFilter[],
+  disable: boolean,
 ): FilterOptionsDescriptor {
   const dict: Dictionary = useDictionary();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
-  const [triggerFetch, setTriggerFetch] = useState<boolean>(false);
   const [options, setOptions] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
   const debouncedSearch: string = useDebounce<string>(search, 500);
@@ -99,19 +96,16 @@ export function useFilterOptions(
       }
     };
 
-    if (triggerFetch) {
+    if (!disable) {
       fetchData();
     }
-  }, [triggerFetch, debouncedSearch, entityType, field, lifecycleStage, selectedDate, dict.title]);
+  }, [disable, debouncedSearch, entityType, field, lifecycleStage, selectedDate, dict.title]);
 
   return {
     options,
     search,
     isLoading,
-    showFilterDropdown,
     currentFilters,
     setSearch,
-    setShowFilterDropdown,
-    setTriggerFetch,
   };
 }

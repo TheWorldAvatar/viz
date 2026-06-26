@@ -1,24 +1,19 @@
+import { useDictionary } from "@/hooks/useDictionary";
+import { Dictionary } from "@/types/dictionary";
 import { Icon } from "@mui/material";
 import { ColumnFilter, flexRender, Header, Table } from "@tanstack/react-table";
-import { useDictionary } from "@/hooks/useDictionary";
 import { FieldValues } from "react-hook-form";
-import { Dictionary } from "@/types/dictionary";
 
-import { useFilterOptions } from "@/hooks/table/api/useFilterOptions";
-import { DateRange } from "react-day-picker";
 import { LifecycleStage } from "@/types/form";
 import { TableCellTagMap } from "@/types/table";
-import LoadingSpinner from "@/ui/graphic/loader/spinner";
+import RegistryFilter from "@/ui/container/registry-filter";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
-import SearchSelector from "@/ui/interaction/dropdown/search-selector";
 import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { interpolate } from "@/utils/client-utils";
-import { XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER, XSD_TIME } from "@/utils/constants";
-import DateColumnFilter from "../action/date-column-filter";
-import NumericColumnFilter from "../action/numeric-column-filter";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 import { EnhancedColumnDef } from "../registry/registry-table-utils";
 import TableCell from "./table-cell";
-import TimeColumnFilter from "../action/time-column-filter";
 
 interface HeaderCellProps {
   type: string;
@@ -47,30 +42,9 @@ interface HeaderCellProps {
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
+  const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
-  const currentFilters: string[] = props.header.column.getFilterValue() as string[] ?? [];
-
-  const {
-    options,
-    search,
-    isLoading,
-    showFilterDropdown,
-    setSearch,
-    setShowFilterDropdown,
-    setTriggerFetch
-  } = useFilterOptions(
-    props.type,
-    props.header.id.toLowerCase(),
-    props.lifecycleStage,
-    props.selectedDate,
-    currentFilters,
-    props.filters,
-  );
-  const columnDataType: string = (props.header.column.columnDef as EnhancedColumnDef<FieldValues>).dataType;
-  const isDateColumn: boolean = columnDataType === XSD_DATE || columnDataType === XSD_DATETIME;
-  const isTimeColumn: boolean = columnDataType === XSD_TIME;
-  const isNumericColumn: boolean = columnDataType === XSD_DECIMAL || columnDataType === XSD_INTEGER;
 
   return (
     <TableCell
@@ -117,54 +91,22 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               setIsOpen={setShowFilterDropdown}
               onClick={(event) => {
                 event.stopPropagation();
-                // Do not trigger fetch/loading state for date or numeric columns
-                if (!isDateColumn && !isNumericColumn && !isTimeColumn) {
-                  setTriggerFetch(!showFilterDropdown);
-                }
                 setShowFilterDropdown(!showFilterDropdown);
               }}
             >
-              {isNumericColumn && <NumericColumnFilter
-                label={props.header.id}
-                currentVal={props.header.column.getFilterValue() as string[]}
+              <RegistryFilter
+                type={props.type}
+                name={props.header.id}
+                fieldType={(props.header.column.columnDef as EnhancedColumnDef<FieldValues>)?.dataType}
+                lifecycleStage={props.lifecycleStage}
+                selectedDate={props.selectedDate}
+                filters={props.filters}
                 onSubmission={(selectedOptions: string[]) => {
                   props.header.column.setFilterValue(selectedOptions);
                   props.table.resetRowSelection();
                   props.table.resetPageIndex();
-                }}
-              />}
-              {isDateColumn && <DateColumnFilter
-                label={props.header.id}
-                currentVal={props.header.column.getFilterValue() as string}
-                onSubmission={(dates: string) => {
-                  props.header.column.setFilterValue(dates);
-                  props.table.resetRowSelection();
-                  props.table.resetPageIndex();
-                }}
-              />}
-              {isTimeColumn && <TimeColumnFilter
-                label={props.header.id}
-                currentVal={props.header.column.getFilterValue() as string[]}
-                onSubmission={(selectedOptions: string[]) => {
-                  props.header.column.setFilterValue(selectedOptions);
-                  props.table.resetRowSelection();
-                  props.table.resetPageIndex();
-                }}
-              />}
-              {!(isDateColumn || isNumericColumn || isTimeColumn) && <SearchSelector
-                searchString={search}
-                options={options}
-                label={props.header.id}
-                initSelectedOptions={currentFilters}
-                showOptions={!isLoading}
-                onSubmission={(selectedOptions: string[]) => {
-                  props.header.column.setFilterValue(selectedOptions);
-                  props.table.resetRowSelection();
-                  props.table.resetPageIndex();
-                }}
-                setSearchString={setSearch}
-              />}
-              {isLoading && <LoadingSpinner isSmall={true} />}
+                }
+                } />
             </PopoverActionButton>
             }
           </div>

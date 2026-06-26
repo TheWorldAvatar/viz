@@ -1,15 +1,15 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { useState } from "react";
-import { DateRange } from "react-day-picker";
 import { Dictionary } from "@/types/dictionary";
 import Button from "@/ui/interaction/button";
 import DateInput from "@/ui/interaction/input/date/date-input";
 import { getNormalizedDate, interpolate } from "@/utils/client-utils";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 interface DateColumnFilterProps {
   label: string;
   currentVal: string;
-  onSubmission: (_dates: string) => void;
+  onSubmission: (_dates: string[]) => void;
 }
 
 /**
@@ -40,7 +40,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          props.onSubmission(`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`);
+          props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
         }}
         tooltipText={dict.action.applyFilter}
         variant="primary"
@@ -54,7 +54,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          props.onSubmission("");
+          props.onSubmission([""]);
         }}
         tooltipText={dict.action.clearFilter}
         variant="destructive"
