@@ -38,7 +38,7 @@ export default function Card(props: Readonly<CardProps>) {
                 transform: `translateY(${props.virtualItem.start}px)`,
             }}
             className="px-1.5 py-3 max-w-[90vw]">
-            <div className="overflow-hidden rounded-md border border-card-border bg-card text-card-foreground">
+            <div className="overflow-hidden rounded-md border border-card-border bg-card text-foreground">
                 {props.header && (
                     <div className="border-b border-card-border px-4 pt-4 pb-3 bg-card-header">
                         {props.header}

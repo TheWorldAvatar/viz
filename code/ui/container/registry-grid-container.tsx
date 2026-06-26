@@ -81,7 +81,7 @@ export default function RegistryGridComponent(
                     <StatusComponent status={status} size="sm" />
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-card-foreground">
+                <p className="flex items-center gap-1 text-foreground">
                   <Icon fontSize="small" className="material-symbols-outlined">
                     {"calendar_month"}
                   </Icon>
