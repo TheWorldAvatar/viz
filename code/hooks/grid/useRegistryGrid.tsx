@@ -27,6 +27,7 @@ export interface GridDescriptor {
     resetFormSession: () => void;
     triggerRefresh: () => void;
     updateFilter: (_field: string, _selectedOptions: string[]) => void;
+    resetFilters: () => void;
 }
 
 const GRID_LIMIT: number = 50;
@@ -69,6 +70,10 @@ export function useRegistryGrid(
             updatedFilters[currentFieldIndex] = filter;
             return updatedFilters;
         });
+    };
+
+    const resetFilters = () => {
+        setFilters([]);
     };
 
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
@@ -140,6 +145,7 @@ export function useRegistryGrid(
         rowVirtualizer,
         resetFormSession,
         triggerRefresh,
-        updateFilter: updateFilter,
+        updateFilter,
+        resetFilters,
     };
 }

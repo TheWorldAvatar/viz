@@ -14,6 +14,7 @@ import {
 } from "@/utils/client-utils";
 import { Icon } from "@mui/material";
 import { useEffect } from "react";
+import Accordion from "../interaction/accordion/accordion";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
@@ -35,7 +36,8 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { parentRef, data, columns, filters, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh, updateFilter } = useRegistryGrid(props.entityType, props.tableColumnOptions);
+  const { parentRef, data, columns, filters, virtualItems, rowVirtualizer,
+    resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
@@ -64,10 +66,27 @@ export default function RegistryGridComponent(
           size="icon"
           aria-label={dict.action.filter}
         >
+          <section className="flex justify-between ml-2 mr-4 items-center">
+            <h1>{dict.action.filter}</h1>
+            <Button
+              leftIcon="filter_list_off"
+              aria-label={dict.action.clearAllFilters}
+              iconSize="medium"
+              className="mt-1"
+              disabled={filters.every((filter) => (filter?.value as string[])?.length == 0)}
+              size="icon"
+              onClick={() => resetFilters()}
+              tooltipText={dict.action.clearAllFilters}
+              variant="destructive"
+            />
+          </section>
           <section className="h-full max-h-100 overflow-y-auto">
             {columns.map((column, index) => {
-              return <div key={index}>
-                <p>{column.header.toString()}</p>
+              return <Accordion
+                id={column.header.toString()}
+                title={column.header.toString()}
+                key={index}
+              >
                 <RegistryFilter
                   type={props.entityType}
                   name={column.header.toString()}
@@ -79,7 +98,7 @@ export default function RegistryGridComponent(
                     updateFilter(column.id.toString(), selectedOptions);
                   }}
                 />
-              </div>
+              </Accordion>
             })}
           </section>
         </PopoverActionButton>}
