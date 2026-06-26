@@ -6,6 +6,7 @@ import { TableColumnOption } from "@/types/settings";
 import {
     EnhancedColumnDef,
     getInitialSortParams,
+    parseColumnFiltersIntoUrlParams,
     parseColumnsMetadata,
     parseDataForTable
 } from "@/ui/graphic/table/registry/registry-table-utils";
@@ -70,10 +71,16 @@ export function useRegistryGrid(
             updatedFilters[currentFieldIndex] = filter;
             return updatedFilters;
         });
+        setPage(0);
+        setHasMore(true);
+        setData([])
     };
 
     const resetFilters = () => {
         setFilters([]);
+        setPage(0);
+        setHasMore(true);
+        setData([])
     };
 
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
@@ -92,7 +99,8 @@ export function useRegistryGrid(
             // Fetches the next range when it hits the threshold because there is one more virtual item than data
             if (lastVirtualItem.index >= data.length) {
                 setIsFetching(true);
-                const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, page.toString(), GRID_LIMIT.toString(), getInitialSortParams([]), "");
+                const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
+                const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, page.toString(), GRID_LIMIT.toString(), getInitialSortParams([]), filterParams);
                 const res: AgentResponseBody = await queryInternalApi(apiUrl);
                 const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
 
@@ -134,7 +142,7 @@ export function useRegistryGrid(
         if (!isFetching && hasMore && virtualItems.length > 0) {
             fetchData();
         }
-    }, [entityType, refreshId, virtualItems]);
+    }, [entityType, refreshId, virtualItems, filters]);
 
     return {
         parentRef,
