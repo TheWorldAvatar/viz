@@ -128,7 +128,7 @@ export function useRegistryGrid(
                 });
                 // Parsing of columns should only occur once at the start
                 if (columns.length === 0) {
-                    const columnResponse: ColumnDefinitionResponse[] = !mobileFields.current ? res.data?.columns :
+                    const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ? res.data?.columns :
                         res.data?.columns.filter(col => mobileFields.current.includes(col.value)
                             || col.value == "id" || col.value == "event_id"
                             || col.value == "status" || col.value == "date");
