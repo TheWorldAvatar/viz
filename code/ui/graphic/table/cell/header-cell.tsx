@@ -96,7 +96,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             >
               <RegistryFilter
                 type={props.type}
-                name={props.header.id}
+                field={props.header.id}
                 fieldType={(props.header.column.columnDef as EnhancedColumnDef<FieldValues>)?.dataType}
                 lifecycleStage={props.lifecycleStage}
                 selectedDate={props.selectedDate}

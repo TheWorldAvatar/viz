@@ -95,7 +95,7 @@ export default function RegistryGridComponent(
               >
                 <RegistryFilter
                   type={props.entityType}
-                  name={colId}
+                  field={colId}
                   fieldType={column.dataType}
                   lifecycleStage={LifecycleStageMap.OUTSTANDING}
                   selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
