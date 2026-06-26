@@ -6,16 +6,19 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
-import { RegistryStatusMap } from "@/types/form";
+import { LifecycleStageMap, RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
+  getInitialDateFromLifecycleStage,
   parseWordsForLabels
 } from "@/utils/client-utils";
+import { Icon } from "@mui/material";
 import { useEffect } from "react";
+import PopoverActionButton from "../interaction/action/popover/popover-button";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
 import StatusComponent from "../text/status/status";
-import { Icon } from "@mui/material";
+import RegistryFilter from "./registry-filter";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -32,7 +35,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { parentRef, data, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh } = useRegistryGrid(props.entityType, props.tableColumnOptions);
+  const { parentRef, data, columns, filters, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh, updateFilter } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
@@ -49,9 +52,38 @@ export default function RegistryGridComponent(
   // Ensure height of container is full for virtualiser to function
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col h-full min-h-0">
-      <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
-        {parseWordsForLabels(props.entityType)}
-      </h1>
+      <div className="flex justify-between px-4">
+        <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
+          {parseWordsForLabels(props.entityType)}
+        </h1>
+        {data.length > 0 && <PopoverActionButton
+          placement="bottom"
+          leftIcon="filter_list"
+          variant="ghost"
+          tooltipText={dict.action.filter}
+          size="icon"
+          aria-label={dict.action.filter}
+        >
+          <section className="h-full max-h-100 overflow-y-auto">
+            {columns.map((column, index) => {
+              return <div key={index}>
+                <p>{column.header.toString()}</p>
+                <RegistryFilter
+                  type={props.entityType}
+                  name={column.header.toString()}
+                  fieldType={column.dataType}
+                  lifecycleStage={LifecycleStageMap.OUTSTANDING}
+                  selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
+                  filters={filters}
+                  onSubmission={(selectedOptions: string[]) => {
+                    updateFilter(column.id.toString(), selectedOptions);
+                  }}
+                />
+              </div>
+            })}
+          </section>
+        </PopoverActionButton>}
+      </div>
       {/** The virtualiser requires flex-1 height and overflow y in parent ref; it also requires an inner canvas container */}
       <section ref={parentRef} className="py-4 px-2 md:py-2.5 md:px-8 flex-1 overflow-y-auto min-h-0 w-full">
         <div

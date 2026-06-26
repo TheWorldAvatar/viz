@@ -1,14 +1,17 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { AgentResponseBody } from "@/types/backend-agent";
+import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
+    EnhancedColumnDef,
     getInitialSortParams,
+    parseColumnsMetadata,
     parseDataForTable
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getId } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
@@ -17,10 +20,13 @@ import useOperationStatus from "../useOperationStatus";
 export interface GridDescriptor {
     parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
+    columns: EnhancedColumnDef<FieldValues>[];
+    filters: ColumnFilter[];
     virtualItems: VirtualItem[];
     rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element>;
     resetFormSession: () => void;
     triggerRefresh: () => void;
+    updateFilter: (_field: string, _selectedOptions: string[]) => void;
 }
 
 const GRID_LIMIT: number = 50;
@@ -45,6 +51,25 @@ export function useRegistryGrid(
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [data, setData] = useState<FieldValues[]>([]);
+    const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
+    const [filters, setFilters] = useState<ColumnFilter[]>([]);
+
+    const updateFilter = (field: string, selectedOptions: string[]) => {
+        setFilters(prev => {
+            const currentFieldIndex: number = prev.findIndex((f) => f.id === field);
+            const filter: ColumnFilter = {
+                id: field,
+                value: selectedOptions,
+            };
+            // Append if there is no previous filter for the field
+            if (currentFieldIndex === -1) {
+                return [...prev, filter];
+            }
+            const updatedFilters: ColumnFilter[] = [...prev];
+            updatedFilters[currentFieldIndex] = filter;
+            return updatedFilters;
+        });
+    };
 
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
         // If there is always more, virtual items must be 1 more to trigger the refetch
@@ -81,6 +106,15 @@ export function useRegistryGrid(
                         )
                     }
                 });
+                // Parsing of columns should only occur once at the start
+                if (columns.length === 0) {
+                    const columnResponse: ColumnDefinitionResponse[] = !mobileFields.current ? res.data?.columns :
+                        res.data?.columns.filter(col => mobileFields.current.includes(col.value)
+                            || col.value == "id" || col.value == "event_id"
+                            || col.value == "status" || col.value == "date");
+                    const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
+                    setColumns(columnData);
+                }
                 // If total length is smaller than size, there are no more instances to render
                 if (parsedData.length < GRID_LIMIT) {
                     setHasMore(false);
@@ -100,9 +134,12 @@ export function useRegistryGrid(
     return {
         parentRef,
         data,
+        columns,
+        filters,
         virtualItems,
         rowVirtualizer,
         resetFormSession,
         triggerRefresh,
+        updateFilter: updateFilter,
     };
 }

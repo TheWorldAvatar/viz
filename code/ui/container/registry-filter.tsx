@@ -6,6 +6,7 @@ import TimeColumnFilter from "@/ui/graphic/table/action/time-column-filter";
 import SearchSelector from "@/ui/interaction/dropdown/search-selector";
 import { XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER, XSD_TIME } from "@/utils/constants";
 import { ColumnFilter } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import LoadingSpinner from "../graphic/loader/spinner";
 
@@ -31,12 +32,15 @@ interface RegistryFilterProps {
  * @param  onSubmission Executes this function on submission.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
-    const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === props.name);
-    const currentFilters: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
-
     const isDateField: boolean = props.fieldType === XSD_DATE || props.fieldType === XSD_DATETIME;
     const isTimeField: boolean = props.fieldType === XSD_TIME;
     const isNumericField: boolean = props.fieldType === XSD_DECIMAL || props.fieldType === XSD_INTEGER;
+
+    const [currentFilters, setCurrentFilters] = useState<string[]>(getCurrentFilters(props.filters, props.name));
+
+    useEffect(() => {
+        setCurrentFilters(getCurrentFilters(props.filters, props.name));
+    }, [props.filters, props.name]);
 
     const {
         options,
@@ -88,4 +92,9 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
     />
+}
+
+function getCurrentFilters(filters: ColumnFilter[], field: string): string[] {
+    const targetFilter: ColumnFilter = filters.find(filter => filter.id === field.toLowerCase());
+    return !targetFilter ? [] : (targetFilter.value as string[]);
 }
