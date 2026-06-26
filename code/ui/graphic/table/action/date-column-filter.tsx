@@ -26,12 +26,13 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
-    <div className="flex">
+    <div className="flex h-10">
       <DateInput
         mode="range"
         ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
         selectedDate={selectedDate}
         setSelectedDateRange={setSelectedDate}
+        disableMobileView={true}
       />
       <Button
         leftIcon="filter_alt"
@@ -44,7 +45,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         }}
         tooltipText={dict.action.applyFilter}
         variant="primary"
-        className="h-full rounded-none w-12"
+        className="rounded-none w-12"
         aria-label={interpolate(dict.action.filterBy, props.label)}
       />
       <Button
@@ -59,7 +60,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         tooltipText={dict.action.clearFilter}
         variant="destructive"
         disabled={!selectedDate}
-        className="h-full rounded-l-none w-12"
+        className="rounded-l-none w-12"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
     </div>

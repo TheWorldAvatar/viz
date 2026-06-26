@@ -155,7 +155,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               ref={popover.refs.setFloating}
               style={{
                 ...popover.floatingStyles,
-                zIndex: 99999,
+                zIndex: 9999999,
               }}
               {...popover.getFloatingProps()}
             >
