@@ -110,7 +110,10 @@ export function useRegistryGrid(
 
                 let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
                 parsedData = parsedData.map(instance => {
-                    if (!mobileFields.current) return instance;
+                    // When there are no custom settings, ensure only values with contents are returned
+                    if (mobileFields.current.length === 0) return Object.fromEntries(
+                        Object.entries(instance).filter(([key, value]) => key != "iri" && value !== null && value !== undefined)
+                    );
                     return {
                         id: instance.id,
                         event_id: getId(instance.event_id),
