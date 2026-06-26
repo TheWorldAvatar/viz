@@ -408,6 +408,8 @@ Instructions:
 
 The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or specific views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `invoice`, `billable`).
 
+There is a special `mobile` table key for users who can only view outstanding tasks in their entire portal. This will defined the fields they can see and filter by.
+
 Each table key maps to an array of column configuration objects. The supported object fields are:
 
 - `name` (required): The backend column identifier.
