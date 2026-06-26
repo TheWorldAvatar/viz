@@ -84,18 +84,19 @@ export default function RegistryGridComponent(
           </section>
           <section className="h-full max-h-100 overflow-y-auto">
             {columns.map((column, index) => {
-              const colId: string = column.header.toString();
-              const targetFilter: ColumnFilter = filters.find(filter => filter.id === colId.toLowerCase());
+              const fieldId: string = column.id;
+              const fieldTitle: string = column.header.toString();
+              const targetFilter: ColumnFilter = filters.find(filter => filter.id === fieldId);
               const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
               return <Accordion
                 key={index}
-                id={colId}
-                title={colId}
+                id={fieldId}
+                title={fieldTitle}
                 isActive={currentFilter.length > 0}
               >
                 <RegistryFilter
                   type={props.entityType}
-                  field={colId.toLowerCase()}
+                  field={fieldId}
                   fieldType={column.dataType}
                   lifecycleStage={LifecycleStageMap.OUTSTANDING}
                   selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}

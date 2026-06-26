@@ -49,7 +49,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         setSearch,
     } = useFilterOptions(
         props.type,
-        props.field.toLowerCase(),
+        props.field,
         props.lifecycleStage,
         props.selectedDate,
         currentFilters,
@@ -95,6 +95,6 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
 }
 
 function getCurrentFilters(filters: ColumnFilter[], field: string): string[] {
-    const targetFilter: ColumnFilter = filters.find(filter => filter.id === field.toLowerCase());
+    const targetFilter: ColumnFilter = filters.find(filter => filter.id === field);
     return !targetFilter ? [] : (targetFilter.value as string[]);
 }
