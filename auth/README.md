@@ -40,7 +40,7 @@ Do not commit exported realms anywhere.
 
 - First, enable Keycloak authorisation by setting the KEYCLOAK environment variable to true in your viz-app's docker compose file or `twa-vis-platform/code/[.env|.env.local]`  (if running a local node server in development).s
 - This is a Keycloak dev container. This is *not* suitable for production but is useful for testing the authentication flow of your web app and to create realm settings to be later exported.
-- The Keycloak admin console will be running at `http://localhost:8081`.
+- The Keycloak admin console will be running at `http://localhost:8080`.
 - There is a `twa-test` sample realm in this directory that is imported on startup. Use the keycloak UI to create a your own one specific to your use case. This can be later exporteed and imported for the production deployment.
 - Users must be created manually. Set a name and password. Assigning a user a `protected` role will allow them to access the role-protected pages.
 - Ensure that the `keycloak.json` file correctly points to the address of the auth server. This can be `localhost` if running a node server on the bare metal but should be a host that is valid from within the web container. This can be `host.docker.internal` (docker's alias for your host machine) the direct hostname or its IPv4 address
