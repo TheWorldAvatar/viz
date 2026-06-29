@@ -116,9 +116,13 @@ export function useRegistryGrid(
                 let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
                 parsedData = parsedData.map(instance => {
                     // When there are no custom settings, ensure only values with contents are returned
-                    if (mobileFields.current.length === 0) return Object.fromEntries(
-                        Object.entries(instance).filter(([key, value]) => key != "iri" && value !== null && value !== undefined)
-                    );
+                    if (mobileFields.current.length === 0) return {
+                        // Extract event id to support redirects
+                        event_id: getId(instance.event_id),
+                        ...Object.fromEntries(
+                            Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
+                        )
+                    };
                     return {
                         id: instance.id,
                         event_id: getId(instance.event_id),
@@ -133,7 +137,9 @@ export function useRegistryGrid(
                 });
                 // Parsing of columns should only occur once at the start
                 if (columns.length === 0) {
-                    const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ? res.data?.columns :
+                    const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ?
+                        // Without any mobile settings, status filters should be hidden
+                        res.data?.columns.filter(col => col.value != "status") :
                         res.data?.columns.filter(col => mobileFields.current.includes(col.value)
                             || col.value == "id" || col.value == "event_id"
                             || col.value == "date");
