@@ -80,14 +80,16 @@ export function useRegistryGrid(
         });
         setPage(0);
         setHasMore(true);
-        setData([])
+        setData([]);
+        setIsInitialLoading(true);
     };
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
         setPage(0);
         setHasMore(true);
-        setData([])
+        setData([]);
+        setIsInitialLoading(true);
     };
 
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
