@@ -33,7 +33,7 @@ export interface GridDescriptor {
     resetFilters: () => void;
 }
 
-const GRID_LIMIT: number = 50;
+const GRID_LIMIT: number = 20;
 
 /**
  * A custom hook to retrieve grid data into functionalities for the registry.
