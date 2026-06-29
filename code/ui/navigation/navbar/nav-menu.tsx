@@ -7,13 +7,14 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { Modules, Routes } from "@/io/config/routes";
 import { Dictionary } from "@/types/dictionary";
-import { NavBarItemSettings, UISettings } from "@/types/settings";
+import { NavBarItemSettings, ScreenType, ScreenTypeMap, UISettings } from "@/types/settings";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import FileModal from "@/ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "@/utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
+import { useScreenType } from "@/hooks/useScreenType";
 
 
 export interface NavMenuProps {
@@ -113,6 +114,7 @@ function NavMenuContents(
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
+  const screenType: ScreenType = useScreenType();
   const navMenuRef = useRef<HTMLDivElement>(null);
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -268,7 +270,7 @@ function NavMenuContents(
             url={
               isPermitted("registryFullAccess")
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
-                : Routes.REGISTRY_TASK_OUTSTANDING
+                : screenType === ScreenTypeMap.MOBILE ? Routes.REGISTRY_TASK_OUTSTANDING_MOBILE : Routes.REGISTRY_TASK_OUTSTANDING
             }
             isMobile={props.isMobile}
             caption={
