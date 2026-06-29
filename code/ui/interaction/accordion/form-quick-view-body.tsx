@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useResizeObserver } from "@/hooks/screen/useResizeObserver";
 import { QuickViewGroupings } from "@/types/form";
 import FormQuickViewFields from "./field/form-quick-view-fields";
 
@@ -18,32 +18,8 @@ interface FormQuickViewBodyProps {
 export default function FormQuickViewBody(
   props: Readonly<FormQuickViewBodyProps>
 ) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState<number>(0);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      const updateHeight = () => {
-        if (contentRef.current) {
-          const height = contentRef.current.scrollHeight;
-          setContentHeight(height);
-        }
-      };
-
-      updateHeight();
-
-      const resizeObserver = new ResizeObserver(() => {
-        updateHeight();
-      });
-
-      // Start observing the content for size changes
-      resizeObserver.observe(contentRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, []);
+  // isOpen is true as the component will only render when open
+  const { contentRef, contentHeight } = useResizeObserver(true);
 
   return (
     <div

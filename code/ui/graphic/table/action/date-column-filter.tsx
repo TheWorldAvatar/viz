@@ -1,15 +1,15 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { useState } from "react";
-import { DateRange } from "react-day-picker";
 import { Dictionary } from "@/types/dictionary";
 import Button from "@/ui/interaction/button";
 import DateInput from "@/ui/interaction/input/date/date-input";
 import { getNormalizedDate, interpolate } from "@/utils/client-utils";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 interface DateColumnFilterProps {
   label: string;
   currentVal: string;
-  onSubmission: (_dates: string) => void;
+  onSubmission: (_dates: string[]) => void;
 }
 
 /**
@@ -26,12 +26,13 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
-    <div className="flex">
+    <div className="flex h-10">
       <DateInput
         mode="range"
         ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
         selectedDate={selectedDate}
         setSelectedDateRange={setSelectedDate}
+        disableMobileView={true}
       />
       <Button
         leftIcon="filter_alt"
@@ -40,11 +41,11 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          props.onSubmission(`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`);
+          props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
         }}
         tooltipText={dict.action.applyFilter}
         variant="primary"
-        className="h-full rounded-none w-12"
+        className="rounded-none w-12"
         aria-label={interpolate(dict.action.filterBy, props.label)}
       />
       <Button
@@ -54,12 +55,12 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          props.onSubmission("");
+          props.onSubmission([""]);
         }}
         tooltipText={dict.action.clearFilter}
         variant="destructive"
         disabled={!selectedDate}
-        className="h-full rounded-l-none w-12"
+        className="rounded-l-none w-12"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
     </div>

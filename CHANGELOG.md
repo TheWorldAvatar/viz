@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.77.0
+
+### Changes
+
+- Added a new UI for viewing outstanding assigned tasks on mobile interfaces
+- Updated design of popover elements for mobile
+
 ## 5.76.5
 
 ### Changes
