@@ -19,6 +19,7 @@ import { FieldValues } from "react-hook-form";
 import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
+    isInitialLoading: boolean;
     parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
@@ -52,6 +53,7 @@ export function useRegistryGrid(
     const [page, setPage] = useState<number>(0);
     const [selectedCount, setSelectedCount] = useState<number>(0);
     const [totalCount, setTotalCount] = useState<number>(0);
+    const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
 
@@ -144,6 +146,7 @@ export function useRegistryGrid(
                 setData((prev) => [...prev, ...parsedData]);
                 setPage((prev) => prev + 1);
                 setIsFetching(false);
+                setIsInitialLoading(false);
             };
         }
 
@@ -154,6 +157,7 @@ export function useRegistryGrid(
     }, [entityType, refreshId, virtualItems, filters]);
 
     return {
+        isInitialLoading,
         parentRef,
         data,
         columns,

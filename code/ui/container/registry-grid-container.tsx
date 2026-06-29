@@ -22,6 +22,7 @@ import Button from "../interaction/button";
 import Card from "../interaction/card/card";
 import StatusComponent from "../text/status/status";
 import RegistryFilter from "./registry-filter";
+import LoadingSpinner from "../graphic/loader/spinner";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -38,7 +39,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
+  const { isInitialLoading, parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
     resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
   const hasNoActiveFilters: boolean = filters.every((filter) => (filter?.value as string[])?.length == 0);
@@ -120,6 +121,8 @@ export default function RegistryGridComponent(
             position: "relative",
           }}
         >
+          {isInitialLoading && <LoadingSpinner isSmall={false} />}
+          {!isInitialLoading && data.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
           {data.length > 0 && virtualItems.map((virtualItem) => {
             const isLoaderRow: boolean = virtualItem.index >= data.length;
             if (isLoaderRow) {
