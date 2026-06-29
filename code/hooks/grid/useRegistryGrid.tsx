@@ -1,7 +1,7 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
+import { LifecycleStageMap, RegistryFieldValues, RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
     EnhancedColumnDef,
@@ -35,6 +35,7 @@ export interface GridDescriptor {
 }
 
 const GRID_LIMIT: number = 20;
+const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistryStatusMap.ASSIGNED] }];
 
 /**
  * A custom hook to retrieve grid data into functionalities for the registry.
@@ -60,7 +61,7 @@ export function useRegistryGrid(
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [data, setData] = useState<FieldValues[]>([]);
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
-    const [filters, setFilters] = useState<ColumnFilter[]>([]);
+    const [filters, setFilters] = useState<ColumnFilter[]>(INITIAL_FILTER_STATE);
 
     const updateFilter = (field: string, selectedOptions: string[]) => {
         setFilters(prev => {
@@ -83,7 +84,7 @@ export function useRegistryGrid(
     };
 
     const resetFilters = () => {
-        setFilters([]);
+        setFilters(INITIAL_FILTER_STATE);
         setPage(0);
         setHasMore(true);
         setData([])
@@ -133,7 +134,7 @@ export function useRegistryGrid(
                     const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ? res.data?.columns :
                         res.data?.columns.filter(col => mobileFields.current.includes(col.value)
                             || col.value == "id" || col.value == "event_id"
-                            || col.value == "status" || col.value == "date");
+                            || col.value == "date");
                     const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
                     setColumns(columnData);
                 }

@@ -16,13 +16,13 @@ import {
 import { Icon } from "@mui/material";
 import { ColumnFilter } from "@tanstack/react-table";
 import { useEffect } from "react";
+import LoadingSpinner from "../graphic/loader/spinner";
 import Accordion from "../interaction/accordion/accordion";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
 import StatusComponent from "../text/status/status";
 import RegistryFilter from "./registry-filter";
-import LoadingSpinner from "../graphic/loader/spinner";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -42,7 +42,8 @@ export default function RegistryGridComponent(
   const { isInitialLoading, parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
     resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
-  const hasNoActiveFilters: boolean = filters.every((filter) => (filter?.value as string[])?.length == 0);
+  const hasNoActiveFilters: boolean = filters.filter(filter => filter?.id != "status")
+    .every((filter) => (filter?.value as string[])?.length == 0);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
