@@ -37,12 +37,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <>
-      <div className="flex flex-row items-end justify-between gap-1.5">
+      <div className="flex flex-row items-stretch justify-between gap-1.5">
         <div className="relative flex-1">
           <input
             autoFocus
             type="text"
-            className="border border-border rounded pl-3 pr-14 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-[2px]"
+            className="border border-border rounded pl-3 pr-14 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
@@ -87,7 +87,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           }}
           tooltipText={dict.action.clearSelection}
           variant="secondary"
-          className="border border-border"
+          className="h-full w-12 border border-border"
           aria-label={dict.action.deselectAll}
         />}
       </div>
