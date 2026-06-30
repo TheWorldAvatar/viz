@@ -4,8 +4,6 @@
 
 import "@/ui/css/globals.css";
 
-import localFont from "next/font/local";
-import React from "react";
 import OptionalPages, { OptionalPage } from "@/io/config/optional-pages";
 import SettingsStore from "@/io/config/settings";
 import { Dictionary } from "@/types/dictionary";
@@ -14,6 +12,9 @@ import GlobalContainer from "@/ui/global-container";
 import { SessionInfoProvider } from "@/utils/auth/SessionInfo";
 import { getDictionary } from "@/utils/dictionary/dictionaries";
 import { DictionaryProvider } from "@/utils/dictionary/DictionaryContext";
+import { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import React from "react";
 import { Toaster } from "sonner";
 
 /**
@@ -42,6 +43,22 @@ const inter = localFont({
 
 export function generateStaticParams() {
   return [{ lang: "en" }, { lang: "de" }];
+}
+
+export async function generateMetadata({ params }: {
+  params: Promise<{ lang: string }>
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: "The World Avatar",
+    manifest: `/manifest_${lang}.json`,
+  }
+}
+
+export const viewport: Viewport = {
+  themeColor: "#bebebe",
+  width: "device-width",
+  initialScale: 1,
 }
 
 /**
