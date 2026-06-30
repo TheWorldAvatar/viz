@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.78.0
+
+### Changes
+
+- Enabled progressive web app functionality
+
 ## 5.77.0
 
 ### Changes
