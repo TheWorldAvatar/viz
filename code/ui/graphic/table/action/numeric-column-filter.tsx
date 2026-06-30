@@ -46,8 +46,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
       BetweenComparisonOptionMap.INCLUSIVE);
 
 
-  const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
-  const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
+  const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1) && value1 !== "";
+  const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2) && value2 !== "";
   const isBetweenComparisonOperator: boolean = selectedOperator === ComparisonOperatorMap.BETWEEN;
 
   const operators: SelectOptionType[] = [
