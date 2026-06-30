@@ -58,9 +58,9 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
           props.onSubmission([""]);
         }}
         tooltipText={dict.action.clearFilter}
-        variant="destructive"
+        variant="secondary"
         disabled={!selectedDate}
-        className="rounded-l-none w-12"
+        className="rounded-l-none w-12 border border-border"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
     </div>

@@ -133,8 +133,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           leftIcon="filter_list_off"
           iconSize="medium"
           size="icon"
-          variant="destructive"
-          className="h-full w-12"
+          variant="secondary"
+          className="h-full w-12 border border-border"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
