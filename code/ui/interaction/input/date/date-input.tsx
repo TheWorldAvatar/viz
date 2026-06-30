@@ -93,7 +93,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   return (
     <div
       ref={popover.refs.setReference}
-      className="flex items-center gap-2 relative"
+      className="flex items-center gap-2"
     >
       {!props.disableMobileView && screenType === ScreenTypeMap.MOBILE && (
         <Button
@@ -110,37 +110,37 @@ export default function DateInput(props: Readonly<DateInputProps>) {
       {(props.disableMobileView || screenType !== ScreenTypeMap.MOBILE) && (
         <div className="flex items-center w-full">
           <div className="relative w-full">
-            <Icon
-              fontSize={props.mode === "single" || props.mode === "multiple" ? "small" : "medium"}
-              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${props.mode === "single" || props.mode === "multiple"
-                ? "text-foreground"
-                : "text-info-foreground"
-                }  pointer-events-none`}
-            >
-              calendar_month
-            </Icon>
             <button
               id={id}
               type="button"
               className={
                 props.mode === "single" || props.mode === "multiple"
-                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${props.disabled
+                  ? `h-11 w-full pl-4 rounded-lg bg-muted border border-border text-foreground text-left flex items-center gap-1 ${props.disabled
                     ? props.mode === "multiple"
                       ? "opacity-75"
                       : "cursor-not-allowed opacity-75"
                     : ""
                   }`
                   : `h-10  ${(props.selectedDate as DateRange)?.to
-                    ? "w-fit pr-11 pl-4"
-                    : "w-24"
-                  } rounded-lg bg-info-background border border-info-border text-info-foreground shadow-xs cursor-pointer`
+                    ? "w-fit px-4"
+                    : "w-22"
+                  } rounded-lg bg-info-background border border-info-border text-info-foreground shadow-xs cursor-pointer flex items-center gap-2`
               }
               {...popover.getReferenceProps()}
               disabled={props.disabled}
               aria-label={interpolate(dict.message.pickDateRangeFor, props.ariaLabel)}
               aria-describedby={arialDescriptionId}
             >
-              <span id={arialDescriptionId}>
+              <Icon
+                fontSize={props.mode === "single" || props.mode === "multiple" ? "small" : "medium"}
+                className={`material-symbols-outlined ${props.mode === "single" || props.mode === "multiple"
+                  ? "text-foreground"
+                  : "text-info-foreground"
+                  }  pointer-events-none`}
+              >
+                calendar_month
+              </Icon>
+              <span className="flex" id={arialDescriptionId}>
                 {displayedDateValues}
               </span>
             </button>
