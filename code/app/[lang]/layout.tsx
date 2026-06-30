@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: {
   const { lang } = await params;
   return {
     title: "The World Avatar",
-    manifest: `/manifest_${lang}.json`,
+    manifest: `${process.env.ASSET_PREFIX || ""}/manifest_${lang}.json`,
   }
 }
 

@@ -497,5 +497,6 @@ The viz platform can be deployed as a `Progressive Web App` by including `manife
 
 - `name`: The name of the app. Please translate them in different versions if required.
 - `description`: The description of the app when installing it on the browser. Please translate them in different versions.
+- `start_url`: Typically `/` for local developments, but on deployment, it should follow the `ASSET_PREFIX` parameter. Use of `scope` is also possible to restrict to the specific path(s).
 - `icons`: Use only a `svg` icon to resize them.
-- `screenshots`: Change the `src` image placeholder for different previews in the downloading prompt.
+- `screenshots`: Change the `src` image placeholder for different previews in the downloading prompt. Note that the url should include `ASSET_PREFIX` for static assets in the viz.
