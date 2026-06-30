@@ -246,7 +246,13 @@ export function getNormalizedDate(date: Date): string {
  * @param { string | Date} value The raw value from the backend.
  */
 export function formatDateValue(value: string | Date): string {
-  return new Date(value).toLocaleDateString();
+  if (typeof value === 'string') {
+    // Parse as YYYY-MM-DD
+    // This avoid unnecessary time zone conversion due to UTC assumption
+    const [year, month, day] = value.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString();
+  }
+  return value.toLocaleDateString();
 }
 
 /**
