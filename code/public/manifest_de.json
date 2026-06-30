@@ -1,0 +1,31 @@
+{
+  "name": "The World Avatar",
+  "description": "Eine Beispielbeschreibung für die App auf Deutsch",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#bebebe",
+  "icons": [
+    {
+      "src": "/images/defaults/icons/twa.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+   "screenshots": [
+    {
+      "src": "/images/cambridge.jpg",
+      "sizes": "750x1334",
+      "type": "image/jpg",
+      "form_factor": "narrow",
+      "label": "Application Mobile View"
+    },
+    {
+      "src": "/images/cambridge.jpg",
+      "sizes": "1920x1080",
+      "type": "image/jpg",
+      "form_factor": "wide",
+      "label": "Application Desktop View"
+    }
+  ]
+}
