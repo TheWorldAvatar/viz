@@ -45,13 +45,9 @@ export function generateStaticParams() {
   return [{ lang: "en" }, { lang: "de" }];
 }
 
-export async function generateMetadata({ params }: {
-  params: Promise<{ lang: string }>
-}): Promise<Metadata> {
-  const { lang } = await params;
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "The World Avatar",
-    manifest: `${process.env.ASSET_PREFIX || ""}/manifest_${lang}.json`,
   }
 }
 
@@ -84,10 +80,14 @@ export default async function RootLayout({
   const { lang } = await params;
   const dictionary: Dictionary = await getDictionary(lang);
   const pages: OptionalPage[] = OptionalPages.getAllPages();
+  const manifestUrl = `${process.env.ASSET_PREFIX || ""}/manifest_${lang}.json`;
 
   // Root element containing all children.
   return (
     <html lang={lang}>
+      <head>
+        <link rel="manifest" href={manifestUrl} crossOrigin="use-credentials" />
+      </head>
       <body className={inter.className}>
         <DictionaryProvider dictionary={dictionary}>
           <SessionInfoProvider>
