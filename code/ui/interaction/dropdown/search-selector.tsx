@@ -15,6 +15,7 @@ interface SearchSelectorProps {
   showOptions: boolean;
   onSubmission: (_options: string[]) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -27,6 +28,7 @@ interface SearchSelectorProps {
  * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
+ * @param setIsLoading State function to set loading state.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
@@ -64,13 +66,13 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
               }}
               tooltipText={dict.action.applyFilter}
               variant="primary"
-              className="h-full rounded-l-none w-12"
+              className="h-full rounded-l-none rounded-r-sm border border-border w-12"
               aria-label={"Submit for " + props.label}
             />
           </div>
         </div>
         {selectedOptions.length > 0 && <Button
-          leftIcon="filter_list_off"
+          leftIcon="indeterminate_check_box"
           iconSize="medium"
           size="icon"
           onClick={(event) => {
@@ -78,10 +80,15 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             event.stopPropagation();
             triggerRefresh();
             setSelectedOptions([]);
+            if (props.searchString.length > 0) {
+              props.setIsLoading(true);
+              props.setSearchString("");
+            }
           }}
-          tooltipText={dict.action.clearFilter}
-          variant="destructive"
-          aria-label={"Clear all options for " + props.label}
+          tooltipText={dict.action.clearSelection}
+          variant="secondary"
+          className="border border-border"
+          aria-label={dict.action.deselectAll}
         />}
       </div>
       <div className="max-h-60 overflow-y-auto">
