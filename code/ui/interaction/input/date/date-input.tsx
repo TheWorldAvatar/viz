@@ -76,13 +76,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
           variant={!showMobileView && !!props.variant ? props.variant : "outline"}
           label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
           tooltipText={dict.action.date}
-          onClick={(e) => {
-            // Prevent click effects when disabled
-            e.preventDefault();
-          }}
           aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
           aria-describedby={arialDescriptionId}
-          disabled={props.disabled}
+          disabled={true}
         />
         {props.children}
       </div>
