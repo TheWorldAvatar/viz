@@ -38,11 +38,11 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   return (
     <>
       <div className="flex flex-row items-stretch justify-between gap-1.5">
-        <div className="relative flex-1">
+        <div className="flex flex-1 items-stretch">
           <input
             autoFocus
             type="text"
-            className="border border-border rounded pl-3 pr-14 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
+            className="border border-border rounded pl-3 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
@@ -54,22 +54,20 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
               props.setSearchString(event.target.value);
             }}
           />
-          <div className="absolute right-0 top-0 bottom-0 flex items-stretch">
-            <Button
-              leftIcon="filter_alt"
-              iconSize="medium"
-              size="icon"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                props.onSubmission(selectedOptions);
-              }}
-              tooltipText={dict.action.applyFilter}
-              variant="primary"
-              className="h-full rounded-l-none rounded-r-sm border border-border w-12"
-              aria-label={"Submit for " + props.label}
-            />
-          </div>
+          <Button
+            leftIcon="filter_alt"
+            iconSize="medium"
+            size="icon"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              props.onSubmission(selectedOptions);
+            }}
+            tooltipText={dict.action.applyFilter}
+            variant="primary"
+            className="h-full w-12 rounded-l-none rounded-r-sm border border-border "
+            aria-label={"Submit for " + props.label}
+          />
         </div>
         {selectedOptions.length > 0 && <Button
           leftIcon="indeterminate_check_box"
@@ -86,8 +84,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }
           }}
           tooltipText={dict.action.clearSelection}
-          variant="secondary"
-          className="h-full w-12 border border-border"
+          variant="ghost"
           aria-label={dict.action.deselectAll}
         />}
       </div>
