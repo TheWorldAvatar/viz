@@ -29,6 +29,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     <div className="flex gap-1">
       <DateInput
         mode="range"
+        variant="info_banner"
         ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
         selectedDate={selectedDate}
         setSelectedDateRange={setSelectedDate}
