@@ -67,7 +67,7 @@ export function useTableData(
 
       const buildApiUrl = (page: string, limit: string): string => {
         if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
-          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, page, limit, sortParams, filterParams);
+          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(new Date()).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || lifecycleStage == LifecycleStageMap.CLOSED) {
