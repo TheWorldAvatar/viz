@@ -1,5 +1,12 @@
 import "react-day-picker/style.css";
 
+import { usePopover } from "@/hooks/float/usePopover";
+import { useDictionary } from "@/hooks/useDictionary";
+import { useScreenType } from "@/hooks/useScreenType";
+import { Dictionary } from "@/types/dictionary";
+import { ScreenType, ScreenTypeMap } from "@/types/settings";
+import Button from "@/ui/interaction/button";
+import { extractDateDisplay, interpolate } from "@/utils/client-utils";
 import {
   FloatingFocusManager,
   FloatingPortal,
@@ -7,9 +14,6 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import { Icon } from "@mui/material";
-import { usePopover } from "@/hooks/float/usePopover";
-import { useDictionary } from "@/hooks/useDictionary";
-import { useScreenType } from "@/hooks/useScreenType";
 import { useId } from "react";
 import {
   ClassNames,
@@ -19,12 +23,8 @@ import {
   getDefaultClassNames,
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
-import { Dictionary } from "@/types/dictionary";
-import { ScreenType, ScreenTypeMap } from "@/types/settings";
-import Button from "@/ui/interaction/button";
-import { extractDateDisplay, interpolate } from "@/utils/client-utils";
-import CustomYearsDropdown from "./custom-years-dropdown";
 import CustomMonthsDropdown from "./custom-months-dropdown";
+import CustomYearsDropdown from "./custom-years-dropdown";
 
 interface DateInputProps {
   selectedDate: Date | DateRange | Date[] | undefined;
@@ -123,7 +123,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
                   }`
                   : `h-10  ${(props.selectedDate as DateRange)?.to
                     ? "w-fit px-4"
-                    : "w-22"
+                    : "w-full px-2"
                   } rounded-lg bg-info-background border border-info-border text-info-foreground shadow-xs cursor-pointer flex items-center gap-2`
               }
               {...popover.getReferenceProps()}
@@ -140,9 +140,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
               >
                 calendar_month
               </Icon>
-              <span className="flex" id={arialDescriptionId}>
+              {!!displayedDateValues && <span className="flex" id={arialDescriptionId}>
                 {displayedDateValues}
-              </span>
+              </span>}
             </button>
           </div>
         </div>

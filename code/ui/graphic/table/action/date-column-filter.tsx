@@ -45,7 +45,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         }}
         tooltipText={dict.action.applyFilter}
         variant="primary"
-        className="h-full w-11"
+        className="p-5"
         aria-label={interpolate(dict.action.filterBy, props.label)}
       />
       <Button
@@ -60,7 +60,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         tooltipText={dict.action.clearFilter}
         variant="secondary"
         disabled={!selectedDate}
-        className="h-full w-11 border border-border"
+        className="p-5 border border-border"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
     </div>
