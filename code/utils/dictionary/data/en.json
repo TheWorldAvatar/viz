@@ -65,8 +65,6 @@
     "clearAllFilters": "Clear all filters",
     "clearFilter": "Clear filter",
     "clearFilterFor": "Clear filter for {replace}",
-    "clearSelection": "Clear selection",
-    "deselectAll": "Deselect all selected items",
     "showMore": "Show more",
     "showLess": "Show less",
     "addInvoice": "add invoice",

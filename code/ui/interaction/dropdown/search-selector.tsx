@@ -83,9 +83,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
               props.setSearchString("");
             }
           }}
-          tooltipText={dict.action.clearSelection}
           variant="ghost"
-          aria-label={dict.action.deselectAll}
+          tooltipText={dict.action.clear}
+          aria-label={dict.action.clear}
         />}
       </div>
       <div className="max-h-80 md:w-[50vw] overflow-y-auto">
