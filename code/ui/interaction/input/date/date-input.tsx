@@ -55,29 +55,8 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   const id: string = useId();
   const dict: Dictionary = useDictionary();
   const screenType: ScreenType = useScreenType();
-  const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
   const displayedDateValues: string = extractDateDisplay(props.selectedDate, props.mode);
   const arialDescriptionId: string = `${props.ariaLabel}-current-value`;
-
-  const handleDateSelect = (date: Date | DateRange | Date[]) => {
-    if (props.mode === "single") {
-      props.setSelectedDate?.(date as Date | undefined);
-    } else if (props.mode === "multiple") {
-      props.setSelectedDates?.(date as Date[]);
-    } else {
-      props.setSelectedDateRange?.({
-        from: (date as DateRange)?.from ?? undefined,
-        to: (date as DateRange)?.to ?? undefined,
-      });
-    }
-  };
-
-  const dayPickerClassNames: Partial<ClassNames> = {
-    today: "text-yellow-500",
-    selected: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-    root: `${defaultDayPickerClassNames.root} p-4`,
-    chevron: "fill-foreground",
-  };
 
   const showMobileView: boolean = !props.disableMobileView && screenType === ScreenTypeMap.MOBILE;
 
@@ -99,66 +78,92 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     aria-describedby={arialDescriptionId}
     disabled={props.disabled}
   >
-    {props.mode === "range" && (
-      <DayPicker
-        locale={dict.lang === "de" ? de : enGB}
-        mode="range"
-        selected={props.selectedDate as DateRange}
-        onSelect={handleDateSelect}
-        disabled={props.disabledDates}
-        captionLayout="dropdown"
-        startMonth={new Date(new Date().getFullYear() - 500, 0)}
-        endMonth={new Date(new Date().getFullYear() + 500, 11)}
-        classNames={{
-          ...dayPickerClassNames,
-          selected: "bg-gray-200 dark:bg-zinc-800",
-          // range_middle is an empty string to override default styles (required)
-          range_middle: "",
-          range_start: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-          range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-        }}
-        required={true}
-        components={{
-          YearsDropdown: CustomYearsDropdown,
-          MonthsDropdown: CustomMonthsDropdown,
-        }}
-      />
-    )}
-    {props.mode === "multiple" && (
-      <DayPicker
-        locale={dict.lang === "de" ? de : enGB}
-        mode="multiple"
-        captionLayout="dropdown"
-        startMonth={new Date(new Date().getFullYear() - 500, 0)}
-        endMonth={new Date(new Date().getFullYear() + 500, 11)}
-        selected={props.selectedDate as Date[]}
-        onSelect={handleDateSelect}
-        disabled={props.disabledDates || props.disabled}
-        classNames={dayPickerClassNames}
-        required={true}
-        components={{
-          YearsDropdown: CustomYearsDropdown,
-          MonthsDropdown: CustomMonthsDropdown,
-        }}
-      />
-    )}
-    {props.mode === "single" && (
-      <DayPicker
-        locale={dict.lang === "de" ? de : enGB}
-        mode="single"
-        captionLayout="dropdown"
-        startMonth={new Date(new Date().getFullYear() - 500, 0)}
-        endMonth={new Date(new Date().getFullYear() + 500, 11)}
-        selected={props.selectedDate as Date | undefined}
-        onSelect={handleDateSelect}
-        disabled={props.disabledDates}
-        classNames={dayPickerClassNames}
-        required={props.required ?? true}
-        components={{
-          YearsDropdown: CustomYearsDropdown,
-          MonthsDropdown: CustomMonthsDropdown,
-        }}
-      />
-    )}
+    <DateSelectionInput
+      {...props} />
   </PopoverActionButton>
+}
+
+function DateSelectionInput(props: Readonly<DateInputProps>) {
+  const dict: Dictionary = useDictionary();
+  const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
+
+  const handleDateSelect = (date: Date | DateRange | Date[]) => {
+    if (props.mode === "single") {
+      props.setSelectedDate?.(date as Date | undefined);
+    } else if (props.mode === "multiple") {
+      props.setSelectedDates?.(date as Date[]);
+    } else {
+      props.setSelectedDateRange?.({
+        from: (date as DateRange)?.from ?? undefined,
+        to: (date as DateRange)?.to ?? undefined,
+      });
+    }
+  };
+
+  const dayPickerClassNames: Partial<ClassNames> = {
+    today: "text-yellow-500",
+    selected: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+    root: `${defaultDayPickerClassNames.root} p-4`,
+    chevron: "fill-foreground",
+  };
+  if (props.mode === "range") {
+    return <DayPicker
+      locale={dict.lang === "de" ? de : enGB}
+      mode="range"
+      selected={props.selectedDate as DateRange}
+      onSelect={handleDateSelect}
+      disabled={props.disabledDates}
+      captionLayout="dropdown"
+      startMonth={new Date(new Date().getFullYear() - 500, 0)}
+      endMonth={new Date(new Date().getFullYear() + 500, 11)}
+      classNames={{
+        ...dayPickerClassNames,
+        selected: "bg-gray-200 dark:bg-zinc-800",
+        // range_middle is an empty string to override default styles (required)
+        range_middle: "",
+        range_start: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+        range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+      }}
+      required={true}
+      components={{
+        YearsDropdown: CustomYearsDropdown,
+        MonthsDropdown: CustomMonthsDropdown,
+      }}
+    />
+  } else if (props.mode === "multiple") {
+    return <DayPicker
+      locale={dict.lang === "de" ? de : enGB}
+      mode="multiple"
+      captionLayout="dropdown"
+      startMonth={new Date(new Date().getFullYear() - 500, 0)}
+      endMonth={new Date(new Date().getFullYear() + 500, 11)}
+      selected={props.selectedDate as Date[]}
+      onSelect={handleDateSelect}
+      disabled={props.disabledDates || props.disabled}
+      classNames={dayPickerClassNames}
+      required={true}
+      components={{
+        YearsDropdown: CustomYearsDropdown,
+        MonthsDropdown: CustomMonthsDropdown,
+      }}
+    />
+  } else if (props.mode === "single") {
+    return <DayPicker
+      locale={dict.lang === "de" ? de : enGB}
+      mode="single"
+      captionLayout="dropdown"
+      startMonth={new Date(new Date().getFullYear() - 500, 0)}
+      endMonth={new Date(new Date().getFullYear() + 500, 11)}
+      selected={props.selectedDate as Date | undefined}
+      onSelect={handleDateSelect}
+      disabled={props.disabledDates}
+      classNames={dayPickerClassNames}
+      required={props.required ?? true}
+      components={{
+        YearsDropdown: CustomYearsDropdown,
+        MonthsDropdown: CustomMonthsDropdown,
+      }}
+    />
+  }
+  return;
 }
