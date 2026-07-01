@@ -10,7 +10,7 @@ import {
     parseColumnsMetadata,
     parseDataForTable
 } from "@/ui/graphic/table/registry/registry-table-utils";
-import { getId } from "@/utils/client-utils";
+import { getId, getUTCDate } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
@@ -109,7 +109,15 @@ export function useRegistryGrid(
             if (lastVirtualItem.index >= data.length) {
                 setIsFetching(true);
                 const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
-                const apiUrl: string = makeInternalRegistryAPIwithParams(LifecycleStageMap.OUTSTANDING, entityType, page.toString(), GRID_LIMIT.toString(), getInitialSortParams([]), filterParams);
+                const apiUrl: string = makeInternalRegistryAPIwithParams(
+                    LifecycleStageMap.OUTSTANDING,
+                    entityType,
+                    getUTCDate(new Date()).getTime().toString(),
+                    page.toString(),
+                    GRID_LIMIT.toString(),
+                    getInitialSortParams([]),
+                    filterParams,
+                );
                 const res: AgentResponseBody = await queryInternalApi(apiUrl);
                 const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
 
