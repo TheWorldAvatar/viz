@@ -59,8 +59,8 @@ export default function Card(props: Readonly<CardProps>) {
                                     {parseWordsForLabels(translateLifecycleFields(key, dict.title))}
                                 </dt>
                                 <dd className={isLongValue
-                                    ? "wrap-break-word font-medium"
-                                    : "min-w-0 wrap-break-word text-right font-medium"}>
+                                    ? "whitespace-pre-wrap wrap-break-word font-medium"
+                                    : "whitespace-pre-wrap min-w-0 wrap-break-word text-right font-medium"}>
                                     {`${value}`}
                                 </dd>
                             </div>
