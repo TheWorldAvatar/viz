@@ -4,8 +4,6 @@
 
 import "@/ui/css/globals.css";
 
-import localFont from "next/font/local";
-import React from "react";
 import OptionalPages, { OptionalPage } from "@/io/config/optional-pages";
 import SettingsStore from "@/io/config/settings";
 import { Dictionary } from "@/types/dictionary";
@@ -14,6 +12,9 @@ import GlobalContainer from "@/ui/global-container";
 import { SessionInfoProvider } from "@/utils/auth/SessionInfo";
 import { getDictionary } from "@/utils/dictionary/dictionaries";
 import { DictionaryProvider } from "@/utils/dictionary/DictionaryContext";
+import { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import React from "react";
 import { Toaster } from "sonner";
 
 /**
@@ -44,6 +45,18 @@ export function generateStaticParams() {
   return [{ lang: "en" }, { lang: "de" }];
 }
 
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "The World Avatar",
+  }
+}
+
+export const viewport: Viewport = {
+  themeColor: "#bebebe",
+  width: "device-width",
+  initialScale: 1,
+}
+
 /**
  * Define a root layout template to be used for all generated HTML files.
  *
@@ -67,10 +80,14 @@ export default async function RootLayout({
   const { lang } = await params;
   const dictionary: Dictionary = await getDictionary(lang);
   const pages: OptionalPage[] = OptionalPages.getAllPages();
+  const manifestUrl = `${process.env.ASSET_PREFIX || ""}/manifest_${lang}.json`;
 
   // Root element containing all children.
   return (
     <html lang={lang}>
+      <head>
+        <link rel="manifest" href={manifestUrl} crossOrigin="use-credentials" />
+      </head>
       <body className={inter.className}>
         <DictionaryProvider dictionary={dictionary}>
           <SessionInfoProvider>
