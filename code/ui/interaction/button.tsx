@@ -1,21 +1,23 @@
-import React, { ButtonHTMLAttributes } from "react";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
+import Tooltip from "@/ui/interaction/tooltip/tooltip";
 import { Placement } from "@floating-ui/react";
 import { Icon } from "@mui/material";
-import Tooltip from "@/ui/interaction/tooltip/tooltip";
-import LoadingSpinner from "@/ui/graphic/loader/spinner";
+import React, { ButtonHTMLAttributes } from "react";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?:
-  | "link"
+export type ButtonVariant = "link"
   | "primary"
   | "secondary"
   | "destructive"
   | "destructiveOutline"
   | "info"
+  | "info_banner"
   | "warning"
   | "outline"
   | "ghost"
   | "active";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
   size?: "xs" | "sm" | "md" | "lg" | "default" | "icon";
   leftIcon?: "string" | React.ReactNode;
   rightIcon?: "string" | React.ReactNode;
@@ -72,6 +74,8 @@ export default function Button({
     link: "text-blue-500 underline-offset-4 hover:underline",
     info:
       "text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600",
+    info_banner:
+      "bg-info-background border border-info-border text-info-foreground shadow-xs ",
     warning:
       "bg-amber-300 hover:bg-amber-500/80 dark:bg-amber-800 dark:hover:bg-amber-900/80",
     secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",

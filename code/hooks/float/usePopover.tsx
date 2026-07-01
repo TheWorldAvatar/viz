@@ -4,6 +4,7 @@ import React, { useState } from "react";
 export function usePopover(
     placement: Placement = "top",
     isControlledOpen?: boolean,
+    disabled?: boolean,
     setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>,
     onClose?: () => void,) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,7 +30,9 @@ export function usePopover(
     });
 
     const context = floatingProps.context;
-    const click = useClick(context);
+    const click = useClick(context, {
+        enabled: !disabled,
+    });
     const focus: ElementProps = useFocus(context);
     const dismiss: ElementProps = useDismiss(context);
     const role: ElementProps = useRole(context);

@@ -57,7 +57,7 @@ export default function PopoverActionButton({
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
   const screenType: ScreenType = useScreenType();
 
-  const popover = usePopover(placement, isOpen, setIsOpen, onClose);
+  const popover = usePopover(placement, isOpen, rest.disabled, setIsOpen, onClose);
   const transition = useTransitionStyles(popover.context, {
     duration: screenType == ScreenTypeMap.MOBILE ? 400 : 200,
     initial: screenType == ScreenTypeMap.MOBILE ? {
@@ -88,7 +88,7 @@ export default function PopoverActionButton({
   }
   return (
     <>
-      <div ref={popover.refs.setReference} {...popover.getReferenceProps()}>
+      <div ref={popover.refs.setReference} {...popover.getReferenceProps()} className={rest.disabled && "cursor-not-allowed"}>
         <Button
           leftIcon={leftIcon}
           rightIcon={rightIcon}

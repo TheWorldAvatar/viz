@@ -26,14 +26,15 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
-    <div className="flex gap-1">
-      <DateInput
-        mode="range"
-        ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
-        selectedDate={selectedDate}
-        setSelectedDateRange={setSelectedDate}
-        disableMobileView={true}
-      />
+    <DateInput
+      mode="range"
+      variant="info_banner"
+      ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
+      selectedDate={selectedDate}
+      setSelectedDateRange={setSelectedDate}
+      disableMobileView={true}
+      inline={true}
+    >
       <Button
         leftIcon="filter_alt"
         iconSize="medium"
@@ -63,6 +64,6 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         className="p-5 border border-border"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
-    </div>
+    </DateInput>
   );
 }
