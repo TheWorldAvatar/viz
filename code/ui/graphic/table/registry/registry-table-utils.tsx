@@ -6,7 +6,7 @@ import {
   VisibilityState
 } from "@tanstack/react-table";
 import { Routes } from "@/io/config/routes";
-import { DateBefore } from "react-day-picker";
+import { DateBefore, DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "@/types/backend-agent";
@@ -49,7 +49,11 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     }
     // For date filters
     if (typeof filter.value == "string") {
-      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
+      const dateFilterValue = filter.value.trim();
+      if (!dateFilterValue) {
+        return "";
+      }
+      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${dateFilterValue}`;
     }
     const currentFilterValues: string[] = filter.value as string[];
     let filterParams: string[];
@@ -60,6 +64,33 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
     }
     return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
   }).join("");
+}
+
+/**
+ * Returns the active date range from the date column filter when present.
+ * Falls back to the calendar range when the date filter is cleared or absent.
+ *
+ * @param {DateRange} calendarDate The page-level calendar date range.
+ * @param {ColumnFilter[]} filters The active column filters.
+ * @returns {DateRange} The effective date range to query with.
+ */
+export function getEffectiveDateRange(calendarDate: DateRange, filters: ColumnFilter[]): DateRange {
+  const dateFilter: ColumnFilter = filters?.find((filter) => filter.id === "date");
+  const dateFilterValue: string = typeof dateFilter?.value === "string" ? dateFilter.value : "";
+
+  if (!dateFilterValue.trim()) {
+    return calendarDate;
+  }
+
+  const [from, to] = dateFilterValue.split("..");
+  if (!from || !to) {
+    return calendarDate;
+  }
+
+  return {
+    from: new Date(from),
+    to: new Date(to),
+  };
 }
 
 /**
