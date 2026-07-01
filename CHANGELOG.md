@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.79.2
+
+### Bug fixes
+
+- Fixed date selection for date inputs
+- Updated designs of date inputs
+
 ## 5.79.1
 
 ### Changes
