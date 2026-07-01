@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.79.0
+
+### Changes
+
+- Send local timestamp as parameter to backend API for outstanding tasks
+
 ## 5.78.0
 
 ### Changes

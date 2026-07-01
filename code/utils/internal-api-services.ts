@@ -136,6 +136,15 @@ export function makeInternalRegistryAPIwithParams(
       });
       break;
     case InternalApiIdentifierMap.OUTSTANDING:
+      searchParams = new URLSearchParams({
+        type: params[0],
+        end_date: params[1],
+        page: params[2],
+        limit: params[3],
+        sort_by: params[4],
+        filters: params[5],
+      });
+      break;
     case InternalApiIdentifierMap.INVOICEABLE:
       searchParams = new URLSearchParams({
         type: params[0],

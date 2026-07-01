@@ -67,6 +67,18 @@ export function useFilterOptions(
             getUTCDate(selectedDate.from).getTime().toString(),
             getUTCDate(selectedDate.to).getTime().toString(),
           );
+        } else if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
+          // Pass current local day for the end date
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.FILTER,
+            entityType,
+            parseTranslatedFieldToOriginal(field, dict.title),
+            debouncedSearch,
+            filterParams,
+            lifecycleStage,
+            null,
+            getUTCDate(new Date()).getTime().toString(),
+          );
         } else {
           let parsedStage: string = lifecycleStage;
           if (lifecycleStage == LifecycleStageMap.ACCOUNT ||
