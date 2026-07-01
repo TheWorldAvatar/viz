@@ -91,7 +91,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           aria-label={dict.action.deselectAll}
         />}
       </div>
-      <div className="max-h-60 overflow-y-auto">
+      <div className="max-h-80 md:w-[50vw] overflow-y-auto">
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}
