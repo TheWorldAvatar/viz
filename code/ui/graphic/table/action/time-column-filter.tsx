@@ -97,9 +97,9 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
     }
 
     return (
-        <div className="flex flex-col w-62 gap-2">
-            <div className="flex w-62 space-x-1">
-                <div className="w-100">
+        <div className="flex flex-col gap-2">
+            <div className="flex space-x-1">
+                <div className="w-100 md:w-40">
                     <SimpleSelector
                         options={operators}
                         defaultVal={selectedOperator}
@@ -118,7 +118,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                     iconSize="medium"
                     size="icon"
                     variant="primary"
-                    className="h-full w-12"
+                    className="p-5"
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -133,7 +133,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                     iconSize="medium"
                     size="icon"
                     variant="secondary"
-                    className="h-full w-12 border border-border"
+                    className="p-5 border border-border"
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
