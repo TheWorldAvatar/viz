@@ -2,6 +2,17 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.79.1
+
+### Changes
+
+- Renamed and updated design of the reset button for text filters
+- Updated the design for non-text filters
+
+### Bug fixes
+
+- Fixed reset for search input in the text filter
+
 ## 5.79.0
 
 ### Changes

@@ -26,7 +26,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
-    <div className="flex h-10">
+    <div className="flex gap-1">
       <DateInput
         mode="range"
         ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
@@ -45,7 +45,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         }}
         tooltipText={dict.action.applyFilter}
         variant="primary"
-        className="rounded-none w-12"
+        className="p-5"
         aria-label={interpolate(dict.action.filterBy, props.label)}
       />
       <Button
@@ -58,9 +58,9 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
           props.onSubmission([""]);
         }}
         tooltipText={dict.action.clearFilter}
-        variant="destructive"
+        variant="secondary"
         disabled={!selectedDate}
-        className="rounded-l-none w-12"
+        className="p-5 border border-border"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />
     </div>

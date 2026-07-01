@@ -14,6 +14,7 @@ export interface FilterOptionsDescriptor {
   options: string[];
   search: string;
   isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   currentFilters: string[];
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -117,6 +118,7 @@ export function useFilterOptions(
     options,
     search,
     isLoading,
+    setIsLoading,
     currentFilters,
     setSearch,
   };

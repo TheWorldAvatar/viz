@@ -46,6 +46,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         options,
         search,
         isLoading,
+        setIsLoading,
         setSearch,
     } = useFilterOptions(
         props.type,
@@ -91,6 +92,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         showOptions={!isLoading}
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
+        setIsLoading={setIsLoading}
     />
 }
 

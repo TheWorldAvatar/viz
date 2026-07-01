@@ -46,8 +46,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
       BetweenComparisonOptionMap.INCLUSIVE);
 
 
-  const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1);
-  const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2);
+  const hasFirstValue: boolean = value1 !== null && !Number.isNaN(value1) && value1 !== "";
+  const hasSecondValue: boolean = value2 !== null && !Number.isNaN(value2) && value2 !== "";
   const isBetweenComparisonOperator: boolean = selectedOperator === ComparisonOperatorMap.BETWEEN;
 
   const operators: SelectOptionType[] = [
@@ -98,9 +98,9 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
   }
 
   return (
-    <div className="flex flex-col w-62 gap-2">
-      <div className="flex w-62 space-x-1">
-        <div className="w-100">
+    <div className="flex flex-col gap-2">
+      <div className="flex space-x-1">
+        <div className="w-100 md:w-40">
           <SimpleSelector
             options={operators}
             defaultVal={selectedOperator}
@@ -119,7 +119,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           iconSize="medium"
           size="icon"
           variant="primary"
-          className="h-full w-12"
+          className="p-5"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -133,8 +133,8 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
           leftIcon="filter_list_off"
           iconSize="medium"
           size="icon"
-          variant="destructive"
-          className="h-full w-12"
+          variant="secondary"
+          className="p-5 border border-border"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
