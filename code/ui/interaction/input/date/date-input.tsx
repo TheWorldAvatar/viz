@@ -4,12 +4,12 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { useScreenType } from "@/hooks/useScreenType";
 import { Dictionary } from "@/types/dictionary";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
-import { ButtonVariant } from "@/ui/interaction/button";
+import Button, { ButtonVariant } from "@/ui/interaction/button";
 import { extractDateDisplay, interpolate } from "@/utils/client-utils";
 import {
   Placement
 } from "@floating-ui/react";
-import { useId } from "react";
+import React, { useId } from "react";
 import {
   ClassNames,
   DateBefore,
@@ -32,9 +32,12 @@ interface DateInputProps {
   placement?: Placement;
   variant?: ButtonVariant;
   disabledDates?: DateBefore;
+  className?: string;
   disabled?: boolean;
   disableMobileView?: boolean;
+  inline?: boolean;
   required?: boolean;
+  children?: React.ReactNode;
 }
 
 /** A component to display a date range input
@@ -49,6 +52,7 @@ interface DateInputProps {
  * @param {DateBefore} disabledDates Optional dates to be disabled.
  * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
+ * @param {boolean} inline Indicates if the date selection UI is inline with the current DOM element.
  * @param {boolean} required Whether the date input is required or not. Only applicable in single date mode.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
@@ -60,6 +64,35 @@ export default function DateInput(props: Readonly<DateInputProps>) {
 
   const showMobileView: boolean = !props.disableMobileView && screenType === ScreenTypeMap.MOBILE;
 
+  if (props.inline) {
+    return <section className="flex flex-col">
+      <div className="flex pr-1">
+        <Button
+          id={id}
+          leftIcon="date_range"
+          size={showMobileView ? "icon" : "sm"}
+          className={"flex-4 justify-start"}
+          // Defaults variant to outline if not provided and in mobile view mode
+          variant={!showMobileView && !!props.variant ? props.variant : "outline"}
+          label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
+          tooltipText={dict.action.date}
+          onClick={(e) => {
+            // Prevent click effects when disabled
+            e.preventDefault();
+          }}
+          aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
+          aria-describedby={arialDescriptionId}
+          disabled={props.disabled}
+        />
+        {props.children}
+      </div>
+
+      <DateSelectionInput
+        {...props}
+        className="px-2 py-1"
+      />
+    </section>
+  }
   return <PopoverActionButton
     id={id}
     leftIcon="date_range"
@@ -79,7 +112,9 @@ export default function DateInput(props: Readonly<DateInputProps>) {
     disabled={props.disabled}
   >
     <DateSelectionInput
-      {...props} />
+      {...props}
+      className="py-2 px-4"
+    />
   </PopoverActionButton>
 }
 
@@ -103,9 +138,10 @@ function DateSelectionInput(props: Readonly<DateInputProps>) {
   const dayPickerClassNames: Partial<ClassNames> = {
     today: "text-yellow-500",
     selected: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-    root: `${defaultDayPickerClassNames.root} p-4`,
+    root: `${defaultDayPickerClassNames.root} ${props.className}`,
     chevron: "fill-foreground",
   };
+
   if (props.mode === "range") {
     return <DayPicker
       locale={dict.lang === "de" ? de : enGB}
