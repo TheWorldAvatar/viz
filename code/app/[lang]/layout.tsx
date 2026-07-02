@@ -48,6 +48,9 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "The World Avatar",
+    icons: {
+      icon: `${process.env.ASSET_PREFIX || ""}/favicon.ico`,
+    },
   }
 }
 
