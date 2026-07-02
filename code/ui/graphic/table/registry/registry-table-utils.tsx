@@ -42,37 +42,25 @@ export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string, titleDict: Record<string, string>): string {
-  const serializedFilters: string[] = filters.map((filter) => {
-    if (filter.value === undefined || filter.value === null) {
+  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
+  return remainingFilters.length === 0 ? "" : filters.map(filter => {
+    if (filter.value === undefined || (filter.value as string[]).length === 0) {
       return "";
     }
-
-    // Date filters are stored as a single string range and should be passed through as-is.
-    if (typeof filter.value === "string") {
-      const dateFilterValue = filter.value.trim();
-      if (!dateFilterValue) {
-        return "";
-      }
-      return "%7E" + parseTranslatedFieldToOriginal(filter.id, titleDict) + "=" + dateFilterValue;
+    // For date filters
+    if (typeof filter.value == "string") {
+      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filter.value}`;
     }
-
     const currentFilterValues: string[] = filter.value as string[];
-    if (currentFilterValues.length === 0) {
-      return "";
-    }
-
     let filterParams: string[];
     if (currentFilterValues.includes(translatedBlankText)) {
       filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
     } else {
       filterParams = currentFilterValues;
     }
-    return "%7E" + parseTranslatedFieldToOriginal(filter.id, titleDict) + "=" + filterParams.join("%7C");
-  });
-
-  return serializedFilters.filter(Boolean).join("");
+    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
+  }).join("");
 }
-
 
 /**
  * Parses raw data from API into table data format suitable for rendering.
