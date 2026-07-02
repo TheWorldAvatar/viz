@@ -4,6 +4,7 @@
 
 import "@/ui/css/globals.css";
 
+import { SerwistProvider } from "@serwist/turbopack/react";
 import OptionalPages, { OptionalPage } from "@/io/config/optional-pages";
 import SettingsStore from "@/io/config/settings";
 import { Dictionary } from "@/types/dictionary";
@@ -92,7 +93,8 @@ export default async function RootLayout({
         <link rel="manifest" href={manifestUrl} crossOrigin="use-credentials" />
       </head>
       <body className={inter.className}>
-        <DictionaryProvider dictionary={dictionary}>
+        <SerwistProvider swUrl={`${process.env.ASSET_PREFIX || ""}/serwist/sw.js`}>
+          <DictionaryProvider dictionary={dictionary}>
           <SessionInfoProvider>
             <GlobalContainer pages={pages} settings={uiSettings}>
               {children}
@@ -101,7 +103,8 @@ export default async function RootLayout({
             </GlobalContainer>
           </SessionInfoProvider>
         </DictionaryProvider>
-      </body>
-    </html>
+      </SerwistProvider>
+    </body>
+    </html >
   );
 }

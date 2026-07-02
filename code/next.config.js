@@ -7,7 +7,9 @@
     not included in the browser build.
 **/
 
-const nextConfig = {
+import { withSerwist } from "@serwist/turbopack";
+
+export default withSerwist( {
     reactStrictMode: true,
     assetPrefix: process.env.ASSET_PREFIX ?? "",
     compiler: { removeConsole: false },
@@ -26,7 +28,4 @@ const nextConfig = {
         REACT_APP_USE_GEOSERVER_PROXY: process.env.REACT_APP_USE_GEOSERVER_PROXY,
         REACT_APP_SERVER_URL: process.env.REACT_APP_SERVER_URL // only used when REACT_APP_USE_GEOSERVER_PROXY is true
     }
-};
-
-
-export default nextConfig;
+});
