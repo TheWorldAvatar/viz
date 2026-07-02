@@ -3,7 +3,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
-import { getEffectiveDateRange, parseColumnFiltersIntoUrlParams, parseTranslatedFieldToOriginal } from "@/ui/graphic/table/registry/registry-table-utils";
+import { parseColumnFiltersIntoUrlParams, parseTranslatedFieldToOriginal } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getAfterDelimiter, getUTCDate } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { ColumnFilter } from "@tanstack/react-table";
@@ -57,7 +57,6 @@ export function useFilterOptions(
           lifecycleStage == LifecycleStageMap.SCHEDULED ||
           lifecycleStage == LifecycleStageMap.CLOSED
         ) {
-          const effectiveDateRange = getEffectiveDateRange(selectedDate, allFilters);
           url = makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.FILTER,
             entityType,
@@ -65,8 +64,8 @@ export function useFilterOptions(
             debouncedSearch,
             filterParams,
             lifecycleStage,
-            getUTCDate(effectiveDateRange.from).getTime().toString(),
-            getUTCDate(effectiveDateRange.to).getTime().toString(),
+            getUTCDate(selectedDate.from).getTime().toString(),
+            getUTCDate(selectedDate.to).getTime().toString(),
           );
         } else if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
           // Pass current local day for the end date

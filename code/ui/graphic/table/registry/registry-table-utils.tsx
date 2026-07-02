@@ -6,7 +6,7 @@ import {
   VisibilityState
 } from "@tanstack/react-table";
 import { Routes } from "@/io/config/routes";
-import { DateBefore, DateRange } from "react-day-picker";
+import { DateBefore } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "@/types/backend-agent";
@@ -42,56 +42,37 @@ export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue
  * @param {Record<string, string>} titleDict The translations for the dict.title path.
  */
 export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], translatedBlankText: string, titleDict: Record<string, string>): string {
-  const remainingFilters: ColumnFilter[] = filters.filter(filter => (filter.value as string[])?.length > 0);
-  return remainingFilters.length === 0 ? "" : filters.map(filter => {
-    if (filter.value === undefined || (filter.value as string[]).length === 0) {
+  const serializedFilters: string[] = filters.map((filter) => {
+    if (filter.value === undefined || filter.value === null) {
       return "";
     }
-    // For date filters
-    if (typeof filter.value == "string") {
+
+    // Date filters are stored as a single string range and should be passed through as-is.
+    if (typeof filter.value === "string") {
       const dateFilterValue = filter.value.trim();
       if (!dateFilterValue) {
         return "";
       }
-      return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${dateFilterValue}`;
+      return "%7E" + parseTranslatedFieldToOriginal(filter.id, titleDict) + "=" + dateFilterValue;
     }
+
     const currentFilterValues: string[] = filter.value as string[];
+    if (currentFilterValues.length === 0) {
+      return "";
+    }
+
     let filterParams: string[];
     if (currentFilterValues.includes(translatedBlankText)) {
       filterParams = [...currentFilterValues.filter(val => val != translatedBlankText), "null"];
     } else {
       filterParams = currentFilterValues;
     }
-    return `%7E${parseTranslatedFieldToOriginal(filter.id, titleDict)}=${filterParams.join("%7C")}`;
-  }).join("");
+    return "%7E" + parseTranslatedFieldToOriginal(filter.id, titleDict) + "=" + filterParams.join("%7C");
+  });
+
+  return serializedFilters.filter(Boolean).join("");
 }
 
-/**
- * Returns the active date range from the date column filter when present.
- * Falls back to the calendar range when the date filter is cleared or absent.
- *
- * @param {DateRange} calendarDate The page-level calendar date range.
- * @param {ColumnFilter[]} filters The active column filters.
- * @returns {DateRange} The effective date range to query with.
- */
-export function getEffectiveDateRange(calendarDate: DateRange, filters: ColumnFilter[]): DateRange {
-  const dateFilter: ColumnFilter = filters?.find((filter) => filter.id === "date");
-  const dateFilterValue: string = typeof dateFilter?.value === "string" ? dateFilter.value : "";
-
-  if (!dateFilterValue.trim()) {
-    return calendarDate;
-  }
-
-  const [from, to] = dateFilterValue.split("..");
-  if (!from || !to) {
-    return calendarDate;
-  }
-
-  return {
-    from: new Date(from),
-    to: new Date(to),
-  };
-}
 
 /**
  * Parses raw data from API into table data format suitable for rendering.

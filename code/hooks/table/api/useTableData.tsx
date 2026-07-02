@@ -7,7 +7,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
-import { EnhancedColumnDef, getEffectiveDateRange, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "@/ui/graphic/table/registry/registry-table-utils";
+import { EnhancedColumnDef, parseColumnFiltersIntoUrlParams, parseColumnsMetadata, parseDataForTable } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getUTCDate } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 
@@ -71,8 +71,7 @@ export function useTableData(
         } else if (lifecycleStage == LifecycleStageMap.BILLABLE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INVOICEABLE, entityType, page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.SCHEDULED || lifecycleStage == LifecycleStageMap.CLOSED) {
-          const effectiveDateRange = getEffectiveDateRange(selectedDate, filters);
-          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(effectiveDateRange.from).getTime().toString(), getUTCDate(effectiveDateRange.to).getTime().toString(), page, limit, sortParams, filterParams);
+          return makeInternalRegistryAPIwithParams(lifecycleStage, entityType, getUTCDate(selectedDate.from).getTime().toString(), getUTCDate(selectedDate.to).getTime().toString(), page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.GENERAL || lifecycleStage == LifecycleStageMap.PRICING || lifecycleStage == LifecycleStageMap.INVOICE) {
           return makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.INSTANCES, entityType, "true", null, null, page, limit, sortParams, filterParams);
         } else if (lifecycleStage == LifecycleStageMap.ACCOUNT) {
