@@ -56,7 +56,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          props.onSubmission([""]);
+          props.onSubmission([]);
         }}
         tooltipText={dict.action.clearFilter}
         variant="secondary"
