@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.79.3
+
+### Bug fixes
+
+- Fixed missing mobile attachment viewer
+
 ## 5.79.2
 
 ### Bug fixes
