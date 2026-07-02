@@ -17,6 +17,7 @@ import { Icon } from "@mui/material";
 import { ColumnFilter } from "@tanstack/react-table";
 import { useEffect } from "react";
 import LoadingSpinner from "../graphic/loader/spinner";
+import ViewAttachmentButton from "../graphic/table/action/view-attachment-button";
 import Accordion from "../interaction/accordion/accordion";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
 import Button from "../interaction/button";
@@ -144,12 +145,17 @@ export default function RegistryGridComponent(
                     <StatusComponent status={status} size="sm" />
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-foreground">
-                  <Icon fontSize="small" className="material-symbols-outlined">
-                    {"calendar_month"}
-                  </Icon>
-                  {date}
-                </p>
+                <div className="flex justify-between">
+                  <p className="flex items-center gap-1 text-foreground">
+                    <Icon fontSize="small" className="material-symbols-outlined">
+                      {"calendar_month"}
+                    </Icon>
+                    {date}
+                  </p>
+                  <ViewAttachmentButton
+                    id={event_id}
+                    hideLabel={true} />
+                </div>
               </div>}
               actions={[<Button
                 key={virtualItem.key + dict.action.complete}
