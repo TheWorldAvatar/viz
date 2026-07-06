@@ -7,10 +7,11 @@ import { Provider } from "react-redux";
 import { reduxStore } from "@/app/store";
 import { useBackgroundImageUrl } from "@/hooks/useBackgroundImageUrl";
 import { useContextMenu } from "@/hooks/useContextMenu";
+import { useHealthCheck } from "@/hooks/useHealthCheck";
 import { OptionalPage } from "@/io/config/optional-pages";
-import { usePathname } from "next/navigation";
 import { UISettings } from "@/types/settings";
 import Trex from "@/utils/trex";
+import { usePathname } from "next/navigation";
 import ContextMenu from "./interaction/context-menu/context-menu";
 import HeaderBar from "./interaction/header/headerbar";
 import { NavMenu } from "./navigation/navbar/nav-menu";
@@ -31,6 +32,8 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
+  
+  useHealthCheck();
 
   const togglePopup = () => {
     setPopup(!popup);

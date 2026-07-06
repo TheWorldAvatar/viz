@@ -163,6 +163,7 @@
     "cancelInstruction": "Bitte geben Sie einen Grund für die Stornierung des geplanten Dienstes (oder Auftrags) am {replace} an:",
     "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {replace}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
     "rescheduleInstruction": "Änderung einer bereits geplanten Dienstleistung am {replace} beantragen",
+    "offlineMode": "Offline-Modus",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",

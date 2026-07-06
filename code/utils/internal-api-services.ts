@@ -1,14 +1,34 @@
-import { HTTP_METHOD } from "next/dist/server/web/http";
-import { DateRange } from "react-day-picker";
-import { AgentResponseBody, BackendApis, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap, ContractDirectory } from "@/types/backend-agent";
+import { AgentResponseBody, BackendApis, ContractDirectory, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FORM_IDENTIFIER, FormTemplateType, FormType } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
+import { HTTP_METHOD } from "next/dist/server/web/http";
+import { DateRange } from "react-day-picker";
 import { getUTCDate, parseStringsForUrls } from "./client-utils";
 
 const assetPrefix = process.env.ASSET_PREFIX ?? "";
 const prefixedRegistryURL: string = `${assetPrefix}/api/registry/`;
 export const BRANCH_ADD = "branch_add";
 export const BRANCH_DELETE = "branch_delete";
+
+/**
+ * Checks the online status of the app.
+ */
+export async function healthCheck(): Promise<boolean> {
+  const url: string = `${assetPrefix}/api/status`;
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" }
+    });
+    return res.status === 200;
+  } catch (error: unknown) {
+    if (error instanceof TypeError) {
+      return false;
+    }
+    throw error;
+  }
+}
 
 export function makeInternalRegistryAPIwithParams(
   internalIdentifier: InternalApiIdentifier,
