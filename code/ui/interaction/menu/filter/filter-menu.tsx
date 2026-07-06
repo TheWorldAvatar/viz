@@ -1,6 +1,7 @@
 "use client";
 
 import { useDictionary } from "@/hooks/useDictionary";
+import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap } from "@/types/form";
 import RegistryFilter from "@/ui/container/registry-filter";
@@ -10,8 +11,9 @@ import Accordion from "@/ui/interaction/accordion/accordion";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
 import { getInitialDateFromLifecycleStage } from "@/utils/client-utils";
+import { TASK_VIEWER_FILTER } from "@/utils/constants";
 import { ColumnFilter } from "@tanstack/react-table";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
 interface FilterMenuProps {
@@ -37,7 +39,7 @@ interface FilterMenuProps {
  */
 export default function FilterMenu(props: Readonly<FilterMenuProps>) {
     const dict: Dictionary = useDictionary();
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(props.hasNoActiveFilters);
 
     const setIsOpen: Dispatch<SetStateAction<boolean>> = (valueOrFn) => {
         // Early termination without active filter to prevent data view
@@ -51,6 +53,16 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
             setIsMenuOpen(valueOrFn);
         }
     };
+
+    // Prevent hydration issues by updating menu open after and returning no component
+    useEffect(() => {
+        setIsMenuOpen(!localStorageManager.get(TASK_VIEWER_FILTER))
+    }, [])
+
+    if (props.isInitialLoading) {
+        return;
+    }
+
     return <PopoverActionButton
         placement="bottom"
         leftIcon="filter_list"

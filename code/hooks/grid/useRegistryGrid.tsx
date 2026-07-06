@@ -1,4 +1,5 @@
 import { useDictionary } from "@/hooks/useDictionary";
+import { localStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap, RegistryFieldValues, RegistryStatusMap } from "@/types/form";
@@ -11,6 +12,7 @@ import {
     parseDataForTable
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getId, getUTCDate } from "@/utils/client-utils";
+import { TASK_VIEWER_FILTER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
@@ -83,6 +85,7 @@ export function useRegistryGrid(
             // Check for active filters
             setHasNoActiveFilters(updatedFilters.filter(filter => filter?.id != "status")
                 .every((filter) => (filter?.value as string[])?.length == 0));
+            localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
             return updatedFilters;
         });
         setPage(0);
@@ -93,6 +96,7 @@ export function useRegistryGrid(
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
+        localStorageManager.clear();
         setHasNoActiveFilters(true);
         setPage(0);
         setHasMore(true);
@@ -110,13 +114,26 @@ export function useRegistryGrid(
     });
 
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
+
+    useEffect(() => {
+        // To prevent hydration effects when reading from storage
+        if (localStorageManager.get(TASK_VIEWER_FILTER)) {
+            setFilters(JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)));
+            setHasNoActiveFilters(false);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             const lastVirtualItem: VirtualItem = virtualItems[virtualItems.length - 1];
             // Fetches the next range when it hits the threshold because there is one more virtual item than data
             if (lastVirtualItem.index >= data.length) {
                 setIsFetching(true);
-                const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
+                let activeFilters: ColumnFilter[] = filters;
+                if (localStorageManager.get(TASK_VIEWER_FILTER)) {
+                    activeFilters = JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER));
+                }
+                const filterParams: string = parseColumnFiltersIntoUrlParams(activeFilters, dict.title.blank, dict.title);
                 const apiUrl: string = makeInternalRegistryAPIwithParams(
                     LifecycleStageMap.OUTSTANDING,
                     entityType,
