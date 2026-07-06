@@ -20,6 +20,7 @@ import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
     isInitialLoading: boolean;
+    hasNoActiveFilters: boolean;
     parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
@@ -57,6 +58,7 @@ export function useRegistryGrid(
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
+    const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [data, setData] = useState<FieldValues[]>([]);
@@ -70,12 +72,17 @@ export function useRegistryGrid(
                 id: field,
                 value: selectedOptions,
             };
+            let updatedFilters: ColumnFilter[];
             // Append if there is no previous filter for the field
             if (currentFieldIndex === -1) {
-                return [...prev, filter];
+                updatedFilters = [...prev, filter];
+            } else {
+                updatedFilters = [...prev];
+                updatedFilters[currentFieldIndex] = filter;
             }
-            const updatedFilters: ColumnFilter[] = [...prev];
-            updatedFilters[currentFieldIndex] = filter;
+            // Check for active filters
+            setHasNoActiveFilters(updatedFilters.filter(filter => filter?.id != "status")
+                .every((filter) => (filter?.value as string[])?.length == 0));
             return updatedFilters;
         });
         setPage(0);
@@ -86,6 +93,7 @@ export function useRegistryGrid(
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
+        setHasNoActiveFilters(true);
         setPage(0);
         setHasMore(true);
         setData([]);
@@ -175,6 +183,7 @@ export function useRegistryGrid(
 
     return {
         isInitialLoading,
+        hasNoActiveFilters,
         parentRef,
         data,
         columns,

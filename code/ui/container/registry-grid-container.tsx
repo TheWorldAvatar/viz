@@ -6,24 +6,19 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStageMap, RegistryStatusMap } from "@/types/form";
+import { RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
-  getInitialDateFromLifecycleStage,
   interpolate,
   parseWordsForLabels
 } from "@/utils/client-utils";
 import { Icon } from "@mui/material";
-import { ColumnFilter } from "@tanstack/react-table";
 import { useEffect } from "react";
-import LoadingSpinner from "../graphic/loader/spinner";
 import ViewAttachmentButton from "../graphic/table/action/view-attachment-button";
-import Accordion from "../interaction/accordion/accordion";
-import PopoverActionButton from "../interaction/action/popover/popover-button";
 import Button from "../interaction/button";
 import Card from "../interaction/card/card";
+import FilterMenu from "../interaction/menu/filter/filter-menu";
 import StatusComponent from "../text/status/status";
-import RegistryFilter from "./registry-filter";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -40,11 +35,9 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isInitialLoading, parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
+  const { isInitialLoading, hasNoActiveFilters, parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
     resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
-  const hasNoActiveFilters: boolean = filters.filter(filter => filter?.id != "status")
-    .every((filter) => (filter?.value as string[])?.length == 0);
 
   useEffect(() => {
     // Trigger refresh when back navigation occurs
@@ -64,55 +57,15 @@ export default function RegistryGridComponent(
         <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
           {parseWordsForLabels(props.entityType)}
         </h1>
-        {data.length > 0 && <PopoverActionButton
-          placement="bottom"
-          leftIcon="filter_list"
-          variant={hasNoActiveFilters ? "ghost" : "secondary"}
-          tooltipText={dict.action.filter}
-          size="icon"
-          aria-label={dict.action.filter}
-        >
-          <section className="flex justify-between ml-2 mr-4 items-center">
-            <h1>{dict.action.filter}</h1>
-            <Button
-              leftIcon="filter_list_off"
-              aria-label={dict.action.clearAllFilters}
-              iconSize="medium"
-              className="mt-1"
-              disabled={hasNoActiveFilters}
-              size="icon"
-              onClick={() => resetFilters()}
-              tooltipText={dict.action.clearAllFilters}
-              variant="destructive"
-            />
-          </section>
-          <section className="h-full max-h-100 overflow-y-auto">
-            {columns.map((column, index) => {
-              const fieldId: string = column.id;
-              const fieldTitle: string = column.header.toString();
-              const targetFilter: ColumnFilter = filters.find(filter => filter.id === fieldId);
-              const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
-              return <Accordion
-                key={index}
-                id={fieldId}
-                title={fieldTitle}
-                isActive={currentFilter.length > 0}
-              >
-                <RegistryFilter
-                  type={props.entityType}
-                  field={fieldId}
-                  fieldType={column.dataType}
-                  lifecycleStage={LifecycleStageMap.OUTSTANDING}
-                  selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
-                  filters={filters}
-                  onSubmission={(selectedOptions: string[]) => {
-                    updateFilter(column.id.toString(), selectedOptions);
-                  }}
-                />
-              </Accordion>
-            })}
-          </section>
-        </PopoverActionButton>}
+        <FilterMenu
+          isInitialLoading={isInitialLoading}
+          hasNoActiveFilters={hasNoActiveFilters}
+          columns={columns}
+          entityType={props.entityType}
+          filters={filters}
+          resetFilters={resetFilters}
+          updateFilter={updateFilter}
+        />
       </div>
       {/** The virtualiser requires flex-1 height and overflow y in parent ref; it also requires an inner canvas container */}
       <section ref={parentRef} className="py-4 px-2 md:py-2.5 md:px-8 flex-1 overflow-y-auto min-h-0 w-full">
@@ -123,7 +76,6 @@ export default function RegistryGridComponent(
             position: "relative",
           }}
         >
-          {isInitialLoading && <LoadingSpinner isSmall={false} />}
           {!isInitialLoading && data.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
           {data.length > 0 && virtualItems.map((virtualItem) => {
             const isLoaderRow: boolean = virtualItem.index >= data.length;
