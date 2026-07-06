@@ -77,7 +77,7 @@ export default function RegistryGridComponent(
           }}
         >
           {!isInitialLoading && data.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
-          {data.length > 0 && virtualItems.map((virtualItem) => {
+          {!hasNoActiveFilters && data.length > 0 && virtualItems.map((virtualItem) => {
             const isLoaderRow: boolean = virtualItem.index >= data.length;
             if (isLoaderRow) {
               return;
