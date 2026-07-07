@@ -160,19 +160,22 @@ export function useRegistryGrid(
                 const res: AgentResponseBody = await queryInternalApi(apiUrl);
                 const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
 
-                let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns);
+                let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns).map(instance => {
+                    instance.event_id = getId(instance.event_id);
+                    return instance;
+                });
                 parsedData = parsedData.map(instance => {
                     // When there are no custom settings, ensure only values with contents are returned
                     if (mobileFields.current.length === 0) return {
                         // Extract event id to support redirects
-                        event_id: getId(instance.event_id),
+                        event_id: instance.event_id,
                         ...Object.fromEntries(
                             Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
                         )
                     };
                     return {
                         id: instance.id,
-                        event_id: getId(instance.event_id),
+                        event_id: instance.event_id,
                         date: instance.date,
                         status: instance.status,
                         ...Object.fromEntries(
