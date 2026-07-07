@@ -14,6 +14,7 @@ import {
 import { getId, getUTCDate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { bulkPutTasks, clearTasks } from "@/utils/table/dexie-utils";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
@@ -90,6 +91,7 @@ export function useRegistryGrid(
         });
         setPage(0);
         setHasMore(true);
+        clearTasks();
         setData([]);
         setIsInitialLoading(true);
     };
@@ -97,6 +99,7 @@ export function useRegistryGrid(
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
+        clearTasks();
         setHasNoActiveFilters(true);
         setPage(0);
         setHasMore(true);
@@ -164,6 +167,7 @@ export function useRegistryGrid(
                     instance.event_id = getId(instance.event_id);
                     return instance;
                 });
+                await bulkPutTasks(parsedData);
                 parsedData = parsedData.map(instance => {
                     // When there are no custom settings, ensure only values with contents are returned
                     if (mobileFields.current.length === 0) return {

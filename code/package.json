@@ -44,6 +44,8 @@
     "chart.js": "^4.5.1",
     "chartjs-adapter-moment": "^1.0.1",
     "connect-redis": "^9.0.0",
+    "dexie": "^4.4.4",
+    "dexie-react-hooks": "^4.4.0",
     "esbuild": "^0.28.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
