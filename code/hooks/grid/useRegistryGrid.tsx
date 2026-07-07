@@ -26,6 +26,7 @@ export interface GridDescriptor {
     hasNoActiveFilters: boolean;
     parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
+    previewData: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
     currentItemIndex: number;
     selectedCount: number;
@@ -108,10 +109,10 @@ export function useRegistryGrid(
         setIsFetching(true);
     };
 
-    const data: FieldValues[] = useLiveTasks(mobileFields.current, selectedCount, dict.message);
+    const { data, previewData } = useLiveTasks(mobileFields.current, selectedCount, dict);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
         // If there is always more, virtual items must be 1 more to trigger the refetch
-        count: hasMore ? data.length + 1 : data.length,
+        count: hasMore ? previewData.length + 1 : previewData.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 15, // Low value to prevent auto-trigger the bottom row
@@ -227,6 +228,7 @@ export function useRegistryGrid(
         hasNoActiveFilters,
         parentRef,
         data,
+        previewData,
         columns,
         currentItemIndex,
         selectedCount,

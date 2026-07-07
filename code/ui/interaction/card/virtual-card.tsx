@@ -3,11 +3,12 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { translateLifecycleFields } from "@/ui/graphic/table/registry/registry-table-utils";
+import DescriptionList from "@/ui/text/field/description-list";
 import { parseWordsForLabels } from "@/utils/client-utils";
 import { VirtualItem } from "@tanstack/react-virtual";
 import { FieldValues } from "react-hook-form";
 
-interface CardProps {
+interface VirtualCardProps {
     data: FieldValues;
     virtualItem: VirtualItem;
     ref: (node: Element) => void;
@@ -16,7 +17,7 @@ interface CardProps {
 }
 
 /**
- * This component renders a card component.
+ * This component renders a card component within a virtualisation container.
  *
  * @param {FieldValues} data Contains the content to render. Must have id, date, and status.
  * @param {VirtualItem} virtualItem A virtual item to support virtualisation.
@@ -24,7 +25,7 @@ interface CardProps {
  * @param {React.ReactNode} header A header component to render.
  * @param {React.ReactNode} actions Renders these optional action components.
  */
-export default function Card(props: Readonly<CardProps>) {
+export default function VirtualCard(props: Readonly<VirtualCardProps>) {
     const dict: Dictionary = useDictionary();
     return (
         <div
@@ -44,29 +45,9 @@ export default function Card(props: Readonly<CardProps>) {
                         {props.header}
                     </div>
                 )}
-                <dl>
-                    {Object.entries(props.data).map(([key, value], index) => {
-                        // For long values, stack the label above a full-width, left-aligned value instead.
-                        const isLongValue: boolean = value.length > 40;
-                        return (
-                            <div
-                                key={key + index}
-                                className={isLongValue
-                                    ? "flex flex-col gap-1 px-4 py-2.5"
-                                    : "flex items-start justify-between gap-4 px-4 py-2.5"}
-                            >
-                                <dt className="shrink-0 text-muted-foreground">
-                                    {parseWordsForLabels(translateLifecycleFields(key, dict.title))}
-                                </dt>
-                                <dd className={isLongValue
-                                    ? "whitespace-pre-wrap wrap-break-word font-medium"
-                                    : "whitespace-pre-wrap min-w-0 wrap-break-word text-right font-medium"}>
-                                    {`${value}`}
-                                </dd>
-                            </div>
-                        );
-                    })}
-                </dl>
+                <DescriptionList
+                    data={props.data}
+                />
                 {props.actions && props.actions.length > 0 && (
                     <div className="flex items-stretch border-t border-card-border bg-card-footer">
                         {props.actions.map((action, index) => (

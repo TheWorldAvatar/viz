@@ -8,17 +8,19 @@ import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
+import ViewAttachmentButton from "@/ui/graphic/table/action/view-attachment-button";
+import Button from "@/ui/interaction/button";
+import VirtualCard from "@/ui/interaction/card/virtual-card";
+import FilterMenu from "@/ui/interaction/menu/filter/filter-menu";
+import StatusComponent from "@/ui/text/status/status";
 import {
   interpolate,
   parseWordsForLabels
 } from "@/utils/client-utils";
 import { Icon } from "@mui/material";
 import { useEffect } from "react";
-import ViewAttachmentButton from "../graphic/table/action/view-attachment-button";
-import Button from "../interaction/button";
-import Card from "../interaction/card/card";
-import FilterMenu from "../interaction/menu/filter/filter-menu";
-import StatusComponent from "../text/status/status";
+import PopoverActionButton from "../interaction/action/popover/popover-button";
+import DescriptionList from "../text/field/description-list";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -35,7 +37,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isInitialLoading, hasNoActiveFilters, parentRef, data, columns, currentItemIndex, selectedCount,
+  const { isInitialLoading, hasNoActiveFilters, parentRef, data, previewData, columns, currentItemIndex, selectedCount,
     filters, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh, updateFilter, resetFilters
   } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
@@ -77,14 +79,14 @@ export default function RegistryGridComponent(
             position: "relative",
           }}
         >
-          {!isInitialLoading && data.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
-          {!hasNoActiveFilters && data.length > 0 && virtualItems.map((virtualItem) => {
-            const isLoaderRow: boolean = virtualItem.index >= data.length;
+          {!isInitialLoading && previewData.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
+          {!hasNoActiveFilters && previewData.length > 0 && virtualItems.map((virtualItem) => {
+            const isLoaderRow: boolean = virtualItem.index >= previewData.length;
             if (isLoaderRow) {
               return;
             }
-            const { id, date, event_id, status, ...displayFields } = data[virtualItem.index];
-            return <Card
+            const { id, date, event_id, status, ...displayFields } = previewData[virtualItem.index];
+            return <VirtualCard
               key={virtualItem.key}
               ref={rowVirtualizer.measureElement}
               data={displayFields}
@@ -124,26 +126,27 @@ export default function RegistryGridComponent(
                   navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
                 }}
               />,
-              <Button
+              <PopoverActionButton
                 key={virtualItem.key + dict.action.view}
                 variant="ghost"
                 size="md"
                 iconSize="medium"
                 leftIcon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
-                onClick={() => {
-                  browserStorageManager.clear();
-                  resetFormSession();
-                  navigateToDrawer(Routes.REGISTRY_TASK_VIEW, event_id);
-                }}
-              />]}
+              >
+                <section className="h-[80vh] overflow-y-auto">
+                  <DescriptionList
+                    data={data[virtualItem.index]}
+                  />
+                </section>
+              </PopoverActionButton>]}
             />
           })}
         </div>
       </section>
       <section className="flex justify-end">
         {data.length > 0 && <p className="text-sm pt-1 pr-4">{
-          interpolate(dict.message.numberOfRecords, String(currentItemIndex+1))
+          interpolate(dict.message.numberOfRecords, String(currentItemIndex + 1))
             .replace("{replacetotal}", String(selectedCount))}</p>
         }
       </section>
