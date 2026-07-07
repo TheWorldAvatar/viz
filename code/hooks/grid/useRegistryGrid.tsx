@@ -26,8 +26,8 @@ export interface GridDescriptor {
     parentRef: React.RefObject<HTMLDivElement>;
     data: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
+    currentItemIndex: number;
     selectedCount: number;
-    totalCount: number;
     filters: ColumnFilter[];
     virtualItems: VirtualItem[];
     rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element>;
@@ -55,8 +55,8 @@ export function useRegistryGrid(
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     const [page, setPage] = useState<number>(0);
+    const [currentItemIndex, setCurrentItemIndex] = useState<number>(1);
     const [selectedCount, setSelectedCount] = useState<number>(0);
-    const [totalCount, setTotalCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
@@ -111,6 +111,20 @@ export function useRegistryGrid(
         estimateSize: () => 80,
         overscan: 15, // Low value to prevent auto-trigger the bottom row
         useFlushSync: false,
+        onChange: (instance) => {
+            const items: VirtualItem[] = instance.getVirtualItems();
+            if (items.length === 0) return;
+
+            const currentScroll: number = instance.scrollOffset;
+            // Item covering more than 50% of screen
+            const dominantItem: VirtualItem = items.find(
+                (item) => (item.start + item.size / 2) > currentScroll
+            );
+
+            if (dominantItem) {
+                setCurrentItemIndex(dominantItem.index);
+            }
+        }
     });
 
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
@@ -184,7 +198,6 @@ export function useRegistryGrid(
                     setHasMore(false);
                 }
                 setSelectedCount(res.data?.currentItemCount);
-                setTotalCount(res.data?.totalItems);
                 setData((prev) => [...prev, ...parsedData]);
                 setPage((prev) => prev + 1);
                 setIsFetching(false);
@@ -204,8 +217,8 @@ export function useRegistryGrid(
         parentRef,
         data,
         columns,
+        currentItemIndex,
         selectedCount,
-        totalCount,
         filters,
         virtualItems,
         rowVirtualizer,

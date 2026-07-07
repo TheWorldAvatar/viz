@@ -35,8 +35,9 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isInitialLoading, hasNoActiveFilters, parentRef, data, columns, selectedCount, totalCount, filters, virtualItems, rowVirtualizer,
-    resetFormSession, triggerRefresh, updateFilter, resetFilters } = useRegistryGrid(props.entityType, props.tableColumnOptions);
+  const { isInitialLoading, hasNoActiveFilters, parentRef, data, columns, currentItemIndex, selectedCount,
+    filters, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh, updateFilter, resetFilters
+  } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
@@ -142,9 +143,8 @@ export default function RegistryGridComponent(
       </section>
       <section className="flex justify-end">
         {data.length > 0 && <p className="text-sm pt-1 pr-4">{
-          interpolate(dict.message.numberOfRecords,
-            selectedCount != totalCount ? String(selectedCount) : String(totalCount))
-            .replace("{replacetotal}", String(totalCount))}</p>
+          interpolate(dict.message.numberOfRecords, String(currentItemIndex+1))
+            .replace("{replacetotal}", String(selectedCount))}</p>
         }
       </section>
     </div>
