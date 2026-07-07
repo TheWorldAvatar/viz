@@ -1,5 +1,6 @@
 "use client";
 
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
@@ -40,6 +41,7 @@ interface FilterMenuProps {
 export default function FilterMenu(props: Readonly<FilterMenuProps>) {
     const dict: Dictionary = useDictionary();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(props.hasNoActiveFilters);
+    const isConnected: boolean = useConnected();
 
     const setIsOpen: Dispatch<SetStateAction<boolean>> = (valueOrFn) => {
         // Early termination without active filter to prevent data view
@@ -69,6 +71,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         variant={props.hasNoActiveFilters ? "ghost" : "secondary"}
         isOpen={isMenuOpen}
         setIsOpen={setIsOpen}
+        disabled={!isConnected}
         tooltipText={dict.action.filter}
         size="icon"
         aria-label={dict.action.filter}
