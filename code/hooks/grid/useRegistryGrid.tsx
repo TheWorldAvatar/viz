@@ -14,7 +14,7 @@ import {
 import { getId, getUTCDate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { bulkPutTasks, clearTasks } from "@/utils/table/dexie-utils";
+import { bulkPutTasks, clearTasks, useLiveTasks } from "@/utils/table/dexie-utils";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
@@ -64,7 +64,6 @@ export function useRegistryGrid(
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
-    const [data, setData] = useState<FieldValues[]>([]);
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
     const [filters, setFilters] = useState<ColumnFilter[]>(INITIAL_FILTER_STATE);
 
@@ -92,8 +91,8 @@ export function useRegistryGrid(
         setPage(0);
         setHasMore(true);
         clearTasks();
-        setData([]);
         setIsInitialLoading(true);
+        setIsFetching(true);
     };
 
     const resetFilters = () => {
@@ -103,10 +102,11 @@ export function useRegistryGrid(
         setHasNoActiveFilters(true);
         setPage(0);
         setHasMore(true);
-        setData([]);
         setIsInitialLoading(true);
+        setIsFetching(true);
     };
 
+    const data: FieldValues[] = useLiveTasks(mobileFields.current);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
         // If there is always more, virtual items must be 1 more to trigger the refetch
         count: hasMore ? data.length + 1 : data.length,
@@ -127,12 +127,20 @@ export function useRegistryGrid(
             if (dominantItem) {
                 setCurrentItemIndex(dominantItem.index);
             }
+
+            // Trigger fetch once the current index has hit half of the grid limit
+            const currentThreshold: number = GRID_LIMIT * page;
+            if (dominantItem.index == (GRID_LIMIT / 2 + currentThreshold) && !isFetching && hasMore) {
+                setPage((prev) => prev + 1);
+                setIsFetching(true);
+            }
         }
     });
 
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
 
     useEffect(() => {
+        setIsFetching(true);
         // To prevent hydration effects when reading from storage
         if (localStorageManager.get(TASK_VIEWER_FILTER)) {
             setFilters(JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)));
@@ -142,81 +150,75 @@ export function useRegistryGrid(
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            const lastVirtualItem: VirtualItem = virtualItems[virtualItems.length - 1];
-            // Fetches the next range when it hits the threshold because there is one more virtual item than data
-            if (lastVirtualItem.index >= data.length) {
-                setIsFetching(true);
-                let activeFilters: ColumnFilter[] = filters;
-                if (localStorageManager.get(TASK_VIEWER_FILTER)) {
-                    activeFilters = JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER));
-                }
-                const filterParams: string = parseColumnFiltersIntoUrlParams(activeFilters, dict.title.blank, dict.title);
-                const apiUrl: string = makeInternalRegistryAPIwithParams(
-                    LifecycleStageMap.OUTSTANDING,
-                    entityType,
-                    getUTCDate(new Date()).getTime().toString(),
-                    page.toString(),
-                    GRID_LIMIT.toString(),
-                    getInitialSortParams([]),
-                    filterParams,
-                );
-                const res: AgentResponseBody = await queryInternalApi(apiUrl);
-                const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+            let activeFilters: ColumnFilter[] = filters;
+            if (localStorageManager.get(TASK_VIEWER_FILTER)) {
+                activeFilters = JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER));
+            }
+            const filterParams: string = parseColumnFiltersIntoUrlParams(activeFilters, dict.title.blank, dict.title);
+            const apiUrl: string = makeInternalRegistryAPIwithParams(
+                LifecycleStageMap.OUTSTANDING,
+                entityType,
+                getUTCDate(new Date()).getTime().toString(),
+                page.toString(),
+                GRID_LIMIT.toString(),
+                getInitialSortParams([]),
+                filterParams,
+            );
+            const res: AgentResponseBody = await queryInternalApi(apiUrl);
+            const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
 
-                let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns).map(instance => {
-                    instance.event_id = getId(instance.event_id);
-                    return instance;
-                });
-                await bulkPutTasks(parsedData);
-                parsedData = parsedData.map(instance => {
-                    // When there are no custom settings, ensure only values with contents are returned
-                    if (mobileFields.current.length === 0) return {
-                        // Extract event id to support redirects
-                        event_id: instance.event_id,
-                        ...Object.fromEntries(
-                            Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
-                        )
-                    };
-                    return {
-                        id: instance.id,
-                        event_id: instance.event_id,
-                        date: instance.date,
-                        status: instance.status,
-                        ...Object.fromEntries(
-                            // Filter out undefined fields
-                            mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
-                                .map(field => [field, instance[field as keyof typeof instance]])
-                        )
-                    }
-                });
-                // Parsing of columns should only occur once at the start
-                if (columns.length === 0) {
-                    const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ?
-                        // Without any mobile settings, status filters should be hidden
-                        res.data?.columns.filter(col => col.value != "status") :
-                        res.data?.columns.filter(col => mobileFields.current.includes(col.value)
-                            || col.value == "id" || col.value == "event_id"
-                            || col.value == "date");
-                    const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
-                    setColumns(columnData);
+            let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns).map(instance => {
+                instance.event_id = getId(instance.event_id);
+                return instance;
+            });
+            setSelectedCount(res.data?.currentItemCount);
+
+            // Update cache
+            await bulkPutTasks(parsedData);
+            parsedData = parsedData.map(instance => {
+                // When there are no custom settings, ensure only values with contents are returned
+                if (mobileFields.current.length === 0) return {
+                    // Extract event id to support redirects
+                    event_id: instance.event_id,
+                    ...Object.fromEntries(
+                        Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
+                    )
+                };
+                return {
+                    id: instance.id,
+                    event_id: instance.event_id,
+                    date: instance.date,
+                    status: instance.status,
+                    ...Object.fromEntries(
+                        // Filter out undefined fields
+                        mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
+                            .map(field => [field, instance[field as keyof typeof instance]])
+                    )
                 }
-                // If total length is smaller than size, there are no more instances to render
-                if (parsedData.length < GRID_LIMIT) {
-                    setHasMore(false);
-                }
-                setSelectedCount(res.data?.currentItemCount);
-                setData((prev) => [...prev, ...parsedData]);
-                setPage((prev) => prev + 1);
-                setIsFetching(false);
-                setIsInitialLoading(false);
-            };
+            });
+            // Parsing of columns should only occur once at the start
+            if (columns.length === 0) {
+                const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ?
+                    // Without any mobile settings, status filters should be hidden
+                    res.data?.columns.filter(col => col.value != "status") :
+                    res.data?.columns.filter(col => mobileFields.current.includes(col.value)
+                        || col.value == "id" || col.value == "event_id"
+                        || col.value == "date");
+                const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
+                setColumns(columnData);
+            }
+            // If total length is smaller than size, there are no more instances to render
+            if (parsedData.length < GRID_LIMIT) {
+                setHasMore(false);
+            }
+            setIsFetching(false);
+            setIsInitialLoading(false);
         }
-
         // Only fetch data if there are no ongoing fetches, and there are more data to fetch
-        if (!isFetching && hasMore && virtualItems.length > 0) {
+        if (isFetching && hasMore) {
             fetchData();
         }
-    }, [entityType, refreshId, virtualItems, filters]);
+    }, [entityType, refreshId, isFetching, filters]);
 
     return {
         isInitialLoading,
