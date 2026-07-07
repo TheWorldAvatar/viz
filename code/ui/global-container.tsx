@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { reduxStore } from "@/app/store";
 import { useBackgroundImageUrl } from "@/hooks/useBackgroundImageUrl";
 import { useContextMenu } from "@/hooks/useContextMenu";
-import { useHealthCheck } from "@/hooks/useHealthCheck";
+import { useOfflineWarning } from "@/hooks/useOfflineWarning";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { UISettings } from "@/types/settings";
 import Trex from "@/utils/trex";
@@ -33,7 +33,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const pathname = usePathname();
   const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
   
-  useHealthCheck();
+  useOfflineWarning();
 
   const togglePopup = () => {
     setPopup(!popup);
