@@ -416,8 +416,12 @@ export function buildUrl(...args: string[]): string {
  * Injects a dynamic value into a translation string by replacing a specific placeholder - {replace}.
  *
  * @param text The localised string containing the `{replace}` placeholder.
- * @param replacement The dynamic string to inject into the text.
+ * @param replacements The dynamic list string to inject into the text.
  */
-export function interpolate(text: string, replacement: string): string {
-  return text.replace("{replace}", replacement);
+export function interpolate(text: string, ...replacements: string[]): string {
+  let result: string = text;
+  for (const replacement of replacements) {
+    result = result.replace("{replace}", replacement);
+  }
+  return result;
 };

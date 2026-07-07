@@ -38,7 +38,7 @@ export interface GridDescriptor {
     resetFilters: () => void;
 }
 
-const GRID_LIMIT: number = 20;
+const GRID_LIMIT: number = 100;
 const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistryStatusMap.ASSIGNED] }];
 
 /**
@@ -89,6 +89,7 @@ export function useRegistryGrid(
             return updatedFilters;
         });
         setPage(0);
+        setSelectedCount(0);
         setHasMore(true);
         clearTasks();
         setIsInitialLoading(true);
@@ -101,12 +102,13 @@ export function useRegistryGrid(
         clearTasks();
         setHasNoActiveFilters(true);
         setPage(0);
+        setSelectedCount(0);
         setHasMore(true);
         setIsInitialLoading(true);
         setIsFetching(true);
     };
 
-    const data: FieldValues[] = useLiveTasks(mobileFields.current);
+    const data: FieldValues[] = useLiveTasks(mobileFields.current, selectedCount, dict.message);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
         // If there is always more, virtual items must be 1 more to trigger the refetch
         count: hasMore ? data.length + 1 : data.length,
