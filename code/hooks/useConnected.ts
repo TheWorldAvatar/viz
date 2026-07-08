@@ -10,8 +10,21 @@ export const useConnected = (): boolean => {
       const isOnline: boolean = await healthCheck();
       setIsConnected(isOnline);
     };
+    const online = () => {
+      setIsConnected(true);
+    };
+    const offline = () => {
+      setIsConnected(false);
+    };
 
     checkConnection();
+
+    window.addEventListener("online", online);
+    window.addEventListener("offline", offline);
+    return () => {
+      window.removeEventListener("online", online);
+      window.removeEventListener("offline", offline);
+    };
   }, []);
   return isConnected;
 };
