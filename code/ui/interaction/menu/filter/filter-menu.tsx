@@ -122,6 +122,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                             filters={props.filters}
                             onSubmission={(selectedOptions: string[]) => {
                                 props.updateFilter(column.id.toString(), selectedOptions);
+                                setIsMenuOpen(false);
                             }}
                         />
                     </Accordion>
