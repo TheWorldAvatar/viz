@@ -102,6 +102,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         <section className="h-[80vh] overflow-y-auto">
             {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
                 props.columns.map((column, index) => {
+                    if (column.dataType === "array") return;
                     const fieldId: string = column.id;
                     const fieldTitle: string = column.header.toString();
                     const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
