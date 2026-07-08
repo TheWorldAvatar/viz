@@ -14,7 +14,7 @@ import { parseStringsForUrls, parseWordsForLabels, interpolate } from "@/utils/c
 import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
-import { useScreenType } from "@/hooks/useScreenType";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 
 
 export interface NavMenuProps {

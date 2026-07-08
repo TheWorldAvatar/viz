@@ -1,7 +1,7 @@
 "use client";
 
 import { usePopover } from "@/hooks/float/usePopover";
-import { useScreenType } from "@/hooks/useScreenType";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 import Button, { ButtonProps } from "@/ui/interaction/button";
 import {
