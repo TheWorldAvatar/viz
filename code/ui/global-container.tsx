@@ -5,6 +5,7 @@ import Konami from "react-konami-code";
 import { Provider } from "react-redux";
 
 import { reduxStore } from "@/app/store";
+import { usePullToRefresh } from "@/hooks/screen/usePullToRefresh";
 import { useBackgroundImageUrl } from "@/hooks/useBackgroundImageUrl";
 import { useContextMenu } from "@/hooks/useContextMenu";
 import { useOfflineWarning } from "@/hooks/useOfflineWarning";
@@ -32,7 +33,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
-  
+  usePullToRefresh();
   useOfflineWarning();
 
   const togglePopup = () => {
