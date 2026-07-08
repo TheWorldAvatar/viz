@@ -1,10 +1,6 @@
 "use client";
 
-import { useDictionary } from "@/hooks/useDictionary";
-import { Dictionary } from "@/types/dictionary";
-import { translateLifecycleFields } from "@/ui/graphic/table/registry/registry-table-utils";
 import DescriptionList from "@/ui/text/field/description-list";
-import { parseWordsForLabels } from "@/utils/client-utils";
 import { VirtualItem } from "@tanstack/react-virtual";
 import { FieldValues } from "react-hook-form";
 
@@ -26,7 +22,6 @@ interface VirtualCardProps {
  * @param {React.ReactNode} actions Renders these optional action components.
  */
 export default function VirtualCard(props: Readonly<VirtualCardProps>) {
-    const dict: Dictionary = useDictionary();
     return (
         <div
             ref={props.ref}
