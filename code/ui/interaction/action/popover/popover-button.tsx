@@ -88,7 +88,7 @@ export default function PopoverActionButton({
   }
   return (
     <>
-      <div ref={popover.refs.setReference} {...popover.getReferenceProps()} className={rest.disabled && "cursor-not-allowed"}>
+      <div ref={popover.refs.setReference} {...popover.getReferenceProps()} className={rest.disabled ? "cursor-not-allowed" : ""}>
         <Button
           leftIcon={leftIcon}
           rightIcon={rightIcon}
