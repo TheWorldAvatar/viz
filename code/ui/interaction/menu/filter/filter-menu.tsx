@@ -90,7 +90,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                     tooltipText={dict.action.clearAllFilters}
                     variant="destructive"
                 />
-                {!props.hasNoActiveFilters || !isConnected && <Button
+                {(!props.hasNoActiveFilters || !isConnected) && <Button
                     leftIcon="close"
                     size="icon"
                     variant="ghost"
