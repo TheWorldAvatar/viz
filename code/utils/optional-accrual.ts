@@ -11,7 +11,7 @@ interface OptionalAccrualOptions {
 
 /**
  * Submits an accrual without mounting the interactive accrual form.
- * Task context is loaded here so callers do not depend on table-row fields.
+ * Task context is supplied by the server defaults endpoint.
  */
 export async function submitOptionalAccrual(
   options: OptionalAccrualOptions,
@@ -28,22 +28,14 @@ export async function submitOptionalAccrual(
       throw new Error(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.");
     }
 
-    const taskResponse = await queryInternalApi(
-      makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", options.taskId),
-    );
-    const task = taskResponse.data?.items?.[0] as Record<string, { value?: string }> | undefined;
-    if (!task?.contract?.value || !task.date?.value) {
-      throw new Error("Unable to prepare the task contract and date.");
-    }
-
     const response = await queryInternalApi(
       makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"),
       "PUT",
       JSON.stringify({
         ...defaultsBody.data,
         id: options.taskId,
-        contract: task.contract.value,
-        date: task.date.value,
+        contract: defaultsBody.data.contract,
+        date: defaultsBody.data.date,
       }),
     );
     if (response.error) {

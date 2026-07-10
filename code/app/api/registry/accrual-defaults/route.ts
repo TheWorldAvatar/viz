@@ -41,9 +41,28 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentResponseB
       );
     }
 
+    const taskUrl = new URL("/api/registry/tasks", req.url);
+    taskUrl.searchParams.set("type", "task");
+    taskUrl.searchParams.set("idOrTimestamp", id);
+    const taskResponse = await fetch(taskUrl, {
+      headers: {
+        ...(req.headers.get("accept-language") && { "accept-language": req.headers.get("accept-language") as string }),
+        ...(req.headers.get("x-bearer-token") && { "x-bearer-token": req.headers.get("x-bearer-token") as string }),
+      },
+      cache: "no-store",
+    });
+    const taskBody = await taskResponse.json() as AgentResponseBody;
+    const task = taskBody.data?.items?.[0] as Record<string, { value?: string }> | undefined;
+    if (!taskResponse.ok || taskBody.error || !task?.contract?.value || !task.date?.value) {
+      return NextResponse.json(
+        { apiVersion, error: { code: 502, message: "Task contract and date are unavailable." } },
+        { status: 502 },
+      );
+    }
+
     return NextResponse.json({
       apiVersion,
-      data: buildFormDefaults(template, { context: { id } }),
+      data: buildFormDefaults(template, { context: { id, contract: task.contract.value, date: task.date.value } }),
     });
   } catch (error) {
     console.error("Failed to build accrual defaults:", error);
