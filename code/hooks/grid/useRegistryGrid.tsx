@@ -129,13 +129,12 @@ export function useRegistryGrid(
 
             if (dominantItem) {
                 setCurrentItemIndex(dominantItem.index);
-            }
-
-            // Trigger fetch once the current index has hit half of the grid limit
-            const currentThreshold: number = GRID_LIMIT * page;
-            if (dominantItem.index == (GRID_LIMIT / 2 + currentThreshold) && !isFetching && hasMore) {
-                setPage((prev) => prev + 1);
-                setIsFetching(true);
+                // Trigger fetch once the current index has hit half of the grid limit
+                const currentThreshold: number = GRID_LIMIT * page;
+                if (dominantItem.index == (GRID_LIMIT / 2 + currentThreshold) && !isFetching && hasMore) {
+                    setPage((prev) => prev + 1);
+                    setIsFetching(true);
+                }
             }
         }
     });
