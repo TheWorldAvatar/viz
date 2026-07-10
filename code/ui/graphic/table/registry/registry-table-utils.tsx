@@ -28,6 +28,7 @@ import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValid
 import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
+import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import ArrayTextCell from "../cell/array-text-cell";
 
@@ -471,16 +472,14 @@ export async function execReviewBillableAction(
   }
   if (body.data.message == "true") {
     if (canSkipOptionalAccrual(row.status as string | undefined)) {
-      const defaultsResponse = await fetch("/api/registry/accrual-defaults?id=" + encodeURIComponent(getId(row.event_id)), { cache: "no-store" });
-      const defaultsBody = await defaultsResponse.json() as AgentResponseBody;
-      if (!defaultsResponse.ok || defaultsBody.error || !defaultsBody.data) {
-        toast(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.", "error");
-        return;
-      }
-      const taskResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", getId(row.event_id)));
-      const task = taskResponse.data?.items?.[0];
-      const accrualResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: getId(row.event_id), contract: task?.contract?.value, date: task?.date?.value }));
-      toast(accrualResponse.error?.message ?? accrualResponse.data?.message ?? "Accrual completed.", accrualResponse.error ? "error" : "success");
+      let loadingToast: string | number;
+      await submitOptionalAccrual({
+        taskId: getId(row.event_id),
+        onStart: () => { loadingToast = toast("Accrual in progress...", "loading"); },
+        onSuccess: (response) => toast(response.data?.message ?? "Accrual completed.", "success"),
+        onError: (message) => toast(message, "error"),
+        onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
+      });
       return;
     }
     navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id));

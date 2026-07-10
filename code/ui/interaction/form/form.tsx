@@ -34,6 +34,7 @@ import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/c
 import { DATE_KEY, EVENT_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
+import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
 import { FORM_STATES, parseBranches, parsePricingModels, parsePropertyShapeOrGroupList } from "./form-utils";
@@ -427,15 +428,14 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
           const taskResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", eventId));
           const task = taskResponse.data?.items?.[0];
           if (canSkipOptionalAccrual(task?.status?.value)) {
-            const defaultsResponse = await fetch("/api/registry/accrual-defaults?id=" + encodeURIComponent(eventId), { cache: "no-store" });
-            const defaultsBody = await defaultsResponse.json();
-            if (!defaultsResponse.ok || defaultsBody.error || !defaultsBody.data) { toast(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.", "error"); return; }
-            const accrualResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: eventId, contract: task.contract?.value, date: task.date?.value }));
-            if (accrualResponse.error) {
-              toast(accrualResponse.error.message, "error");
-              return;
-            }
-            router.back();
+            let loadingToast: string | number;
+            await submitOptionalAccrual({
+              taskId: eventId,
+              onStart: () => { loadingToast = toast("Accrual in progress...", "loading"); },
+              onSuccess: () => router.back(),
+              onError: (message) => toast(message, "error"),
+              onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
+            });
           } else {
             router.replace(buildUrl(Routes.REGISTRY_TASK_ACCRUAL, eventId));
           }
