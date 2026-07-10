@@ -125,8 +125,8 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     },
     RESCHEDULE_TASK: {
         permission: "rescheduleTask",
-        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
-        status: [],
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
     },
 } as const;
 
