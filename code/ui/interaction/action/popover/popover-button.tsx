@@ -1,7 +1,7 @@
 "use client";
 
 import { usePopover } from "@/hooks/float/usePopover";
-import { useScreenType } from "@/hooks/useScreenType";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 import Button, { ButtonProps } from "@/ui/interaction/button";
 import {
@@ -88,7 +88,7 @@ export default function PopoverActionButton({
   }
   return (
     <>
-      <div ref={popover.refs.setReference} {...popover.getReferenceProps()} className={rest.disabled && "cursor-not-allowed"}>
+      <div ref={popover.refs.setReference} {...popover.getReferenceProps()} className={rest.disabled ? "cursor-not-allowed" : ""}>
         <Button
           leftIcon={leftIcon}
           rightIcon={rightIcon}

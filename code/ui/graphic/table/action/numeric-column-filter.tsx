@@ -1,18 +1,19 @@
-import { Icon } from "@mui/material";
 import { useDictionary } from "@/hooks/useDictionary";
-import { useState } from "react";
 import { Dictionary } from "@/types/dictionary";
 import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "@/types/table";
 import Button from "@/ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import NumberInput from "@/ui/interaction/input/number-input";
 import { interpolate } from "@/utils/client-utils";
+import { Icon } from "@mui/material";
+import { useState } from "react";
 import { getInitialFilters } from "../registry/registry-table-utils";
 
 interface NumericColumnFilterProps {
   label: string;
   currentVal: string[];
   onSubmission: (_options: string[]) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ interface NumericColumnFilterProps {
  * @param {string} label The name of the column.
  * @param {string[]} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered options.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function NumericColumnFilter(props: Readonly<NumericColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
@@ -126,7 +128,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             handleFilter();
           }}
           tooltipText={dict.action.applyFilter}
-          disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
+          disabled={(!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)) || props.disabled}
           aria-label={interpolate(dict.action.filterBy, props.label)}
         />
         <Button
@@ -141,7 +143,7 @@ export default function NumericColumnFilter(props: Readonly<NumericColumnFilterP
             handleClearFilter();
           }}
           tooltipText={dict.action.clearFilter}
-          disabled={!hasFirstValue && !props.currentVal?.length}
+          disabled={(!hasFirstValue && !props.currentVal?.length) || props.disabled}
           aria-label={interpolate(dict.action.clearFilterFor, props.label)}
         />
       </div>

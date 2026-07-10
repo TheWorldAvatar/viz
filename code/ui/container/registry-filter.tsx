@@ -18,6 +18,7 @@ interface RegistryFilterProps {
     selectedDate: DateRange;
     filters: ColumnFilter[];
     onSubmission: (_selectedOptions: string[]) => void;
+    disabled?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ interface RegistryFilterProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {ColumnFilter[]} filters Current filter state for all applied filters.
  * @param  onSubmission Executes this function on submission.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     const isDateField: boolean = props.fieldType === XSD_DATE || props.fieldType === XSD_DATETIME;
@@ -66,6 +68,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
             label={props.field}
             currentVal={currentFilters[0]}
             onSubmission={props.onSubmission}
+            disabled={props.disabled}
         />
     }
 
@@ -74,6 +77,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
             label={props.field}
             currentVal={currentFilters}
             onSubmission={props.onSubmission}
+            disabled={props.disabled}
         />
     }
 
@@ -82,6 +86,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
             label={props.field}
             currentVal={currentFilters}
             onSubmission={props.onSubmission}
+            disabled={props.disabled}
         />
     }
     return <SearchSelector
@@ -93,6 +98,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
         setIsLoading={setIsLoading}
+        disabled={props.disabled}
     />
 }
 

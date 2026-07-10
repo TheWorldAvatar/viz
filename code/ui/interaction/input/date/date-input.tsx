@@ -1,7 +1,7 @@
 import "react-day-picker/style.css";
 
 import { useDictionary } from "@/hooks/useDictionary";
-import { useScreenType } from "@/hooks/useScreenType";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 import { Dictionary } from "@/types/dictionary";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 import Button, { ButtonVariant } from "@/ui/interaction/button";

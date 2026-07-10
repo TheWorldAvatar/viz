@@ -2,6 +2,22 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.80.0
+
+### Changes
+
+- Removed unused loading.gif
+- Added offline support for registry task mobile view with service workers
+- Enforce users to set filters first before viewing tasks
+- Caching of mobile task view filters and data into browser storage
+- Offline warnings
+- Added a view fields display to replace the view form in registry task mobile view
+- Pull gesture to refresh for mobile
+
+### Bug fixes
+
+- Empty default value for dependent form section
+
 ## 5.79.5
 
 ### Bug fixes

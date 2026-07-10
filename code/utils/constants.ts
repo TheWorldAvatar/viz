@@ -10,6 +10,7 @@ export const DATE_KEY: string = "date";
 export const EVENT_KEY: string = "event";
 export const FLAG_KEY: string = "flag";
 export const FLAG_EMOJI: string = "🚩";
+export const TASK_VIEWER_FILTER: string = "task_view";
 
 export const DEFAULT_MAX_CHARACTER_LENGTH: number = 25;
 export const YEARS_PER_PAGE: number = 12;

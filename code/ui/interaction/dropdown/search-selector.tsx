@@ -1,8 +1,8 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import useRefresh from "@/hooks/useRefresh";
-import { useState } from "react";
 import { Dictionary } from "@/types/dictionary";
 import StatusComponent from "@/ui/text/status/status";
+import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 
@@ -16,6 +16,7 @@ interface SearchSelectorProps {
   onSubmission: (_options: string[]) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  disabled?: boolean;
 }
 
 /**
@@ -29,6 +30,7 @@ interface SearchSelectorProps {
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
  * @param setIsLoading State function to set loading state.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
@@ -46,6 +48,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
+            disabled={props.disabled}
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -66,6 +69,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             tooltipText={dict.action.applyFilter}
             variant="primary"
             className="h-full w-12 rounded-l-none rounded-r-sm border border-border "
+            disabled={props.disabled}
             aria-label={"Submit for " + props.label}
           />
         </div>
@@ -84,6 +88,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }
           }}
           variant="ghost"
+          disabled={props.disabled}
           tooltipText={dict.action.clear}
           aria-label={dict.action.clear}
         />}
