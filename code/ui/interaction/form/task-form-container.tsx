@@ -7,10 +7,11 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "@/hooks/form/api/useTaskData";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
-import { browserStorageManager } from "@/state/browser-storage-manager";
+import { browserStorageManager, localStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import {
@@ -30,7 +31,7 @@ import { FORM_STATES } from "@/ui/interaction/form/form-utils";
 import FormSkeleton from "@/ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "@/ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "@/ui/text/status/status";
-import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue, interpolate } from "@/utils/client-utils";
+import { compareDates, formatDateValue, getAfterDelimiter, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
@@ -95,7 +96,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
+
   const id: string = getAfterDelimiter(pathname, "/");
+  const isConnected: boolean = useConnected();
 
   // State for form data
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -132,8 +135,20 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       targetId?: string
     ): Promise<void> => {
       setIsFetching(true);
+
+      localStorageManager.get(eventType);
+
       try {
-        const template: FormTemplateType = await queryInternalTaskFormTemplate(eventType, getId(targetId));
+        let template: FormTemplateType;
+        if (!isConnected) {
+          template = JSON.parse(localStorageManager.get(eventType));
+        } else {
+          template = await queryInternalTaskFormTemplate(eventType, getId(targetId));
+          if (!localStorageManager.get(eventType)) {
+            const cachedTemplate: FormTemplateType = await queryInternalTaskFormTemplate(eventType);
+            localStorageManager.set(eventType, JSON.stringify(cachedTemplate));
+          }
+        }
         if (template?.property) {
           setFormFields(template.property);
         }
