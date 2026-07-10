@@ -430,7 +430,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             const defaultsResponse = await fetch("/api/registry/accrual-defaults?id=" + encodeURIComponent(eventId), { cache: "no-store" });
             const defaultsBody = await defaultsResponse.json();
             if (!defaultsResponse.ok || defaultsBody.error || !defaultsBody.data) { toast(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.", "error"); return; }
-            await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: eventId, contract: task.contract?.value, date: task.date?.value }));
+            const accrualResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: eventId, contract: task.contract?.value, date: task.date?.value }));
+            if (accrualResponse.error) {
+              toast(accrualResponse.error.message, "error");
+              return;
+            }
+            router.back();
           } else {
             router.replace(buildUrl(Routes.REGISTRY_TASK_ACCRUAL, eventId));
           }
