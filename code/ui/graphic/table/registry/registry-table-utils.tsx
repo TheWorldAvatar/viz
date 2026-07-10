@@ -27,6 +27,8 @@ import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
 import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
+import { toast } from "@/ui/interaction/action/toast/toast";
 import ArrayTextCell from "../cell/array-text-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
@@ -468,7 +470,18 @@ export async function execReviewBillableAction(
     console.error("Error fetching instances", error);
   }
   if (body.data.message == "true") {
-    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+    if (canSkipOptionalAccrual(row.status as string | undefined)) {
+      const defaultsResponse = await fetch("/api/registry/accrual-defaults?id=" + encodeURIComponent(getId(row.event_id)), { cache: "no-store" });
+      const defaultsBody = await defaultsResponse.json() as AgentResponseBody;
+      if (!defaultsResponse.ok || defaultsBody.error || !defaultsBody.data) {
+        toast(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.", "error");
+        return;
+      }
+      const accrualResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: getId(row.event_id), contract: row.contract, date: row.date }));
+      toast(accrualResponse.error?.message ?? accrualResponse.data?.message ?? "Accrual completed.", accrualResponse.error ? "error" : "success");
+      return;
+    }
+    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id));
   } else {
     navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
   }
