@@ -432,7 +432,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             await submitOptionalAccrual({
               taskId: eventId,
               onStart: () => { loadingToast = toast("Accrual in progress...", "loading"); },
-              onSuccess: () => router.back(),
+              onSuccess: () => {
+                router.refresh();
+                router.back();
+              },
               onError: (message) => toast(message, "error"),
               onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
             });
