@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.80.1
+
+### Bug fixes
+
+- Fix clear filters being enabled with no active filters while online
+
 ## 5.80.0
 
 ### Changes
