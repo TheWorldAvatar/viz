@@ -84,13 +84,13 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                     aria-label={dict.action.clearAllFilters}
                     iconSize="medium"
                     className="mt-1"
-                    disabled={props.hasNoActiveFilters}
+                    disabled={props.hasNoActiveFilters && !isConnected}
                     size="icon"
                     onClick={() => props.resetFilters()}
                     tooltipText={dict.action.clearAllFilters}
                     variant="destructive"
                 />
-                {!props.hasNoActiveFilters && <Button
+                {!props.hasNoActiveFilters || !isConnected && <Button
                     leftIcon="close"
                     size="icon"
                     variant="ghost"
@@ -112,6 +112,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                         id={fieldId}
                         title={fieldTitle}
                         isActive={currentFilter.length > 0}
+                        disabled={!isConnected}
                     >
                         <RegistryFilter
                             type={props.entityType}
@@ -120,9 +121,12 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                             lifecycleStage={LifecycleStageMap.OUTSTANDING}
                             selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
                             filters={props.filters}
+                            disabled={!isConnected}
                             onSubmission={(selectedOptions: string[]) => {
-                                props.updateFilter(column.id.toString(), selectedOptions);
-                                setIsMenuOpen(false);
+                                if (isConnected) {
+                                    props.updateFilter(column.id.toString(), selectedOptions);
+                                    setIsMenuOpen(false);
+                                }
                             }}
                         />
                     </Accordion>

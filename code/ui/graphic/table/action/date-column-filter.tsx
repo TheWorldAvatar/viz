@@ -10,6 +10,7 @@ interface DateColumnFilterProps {
   label: string;
   currentVal: string;
   onSubmission: (_dates: string[]) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -18,6 +19,7 @@ interface DateColumnFilterProps {
  * @param {string} label The name of the column.
  * @param {string} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered date range.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
@@ -47,6 +49,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         tooltipText={dict.action.applyFilter}
         variant="primary"
         className="p-5"
+        disabled={props.disabled}
         aria-label={interpolate(dict.action.filterBy, props.label)}
       />
       <Button
@@ -60,7 +63,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
         }}
         tooltipText={dict.action.clearFilter}
         variant="secondary"
-        disabled={!selectedDate}
+        disabled={!selectedDate || props.disabled}
         className="p-5 border border-border"
         aria-label={interpolate(dict.action.clearFilterFor, props.label)}
       />

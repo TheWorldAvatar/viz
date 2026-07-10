@@ -1,16 +1,17 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { useState } from "react";
 import { Dictionary } from "@/types/dictionary";
 import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "@/types/table";
 import Button from "@/ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { interpolate } from "@/utils/client-utils";
+import { useState } from "react";
 import { getInitialFilters } from "../registry/registry-table-utils";
 
 interface TimeColumnFilterProps {
     label: string;
     currentVal: string[];
     onSubmission: (_options: string[]) => void;
+    disabled?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ interface TimeColumnFilterProps {
  * @param {string} label The name of the column.
  * @param {string[]} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered options.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>) {
     const dict: Dictionary = useDictionary();
@@ -125,7 +127,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                         handleFilter();
                     }}
                     tooltipText={dict.action.applyFilter}
-                    disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
+                    disabled={(!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)) || props.disabled}
                     aria-label={interpolate(dict.action.filterBy, props.label)}
                 />
                 <Button
@@ -140,7 +142,7 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                         handleClearFilter();
                     }}
                     tooltipText={dict.action.clearFilter}
-                    disabled={!hasFirstValue && !props.currentVal?.length}
+                    disabled={(!hasFirstValue && !props.currentVal?.length) || props.disabled}
                     aria-label={interpolate(dict.action.clearFilterFor, props.label)}
                 />
             </div>

@@ -9,6 +9,7 @@ interface AccordionProps {
     title: string;
     children: React.ReactNode;
     isActive?: boolean;
+    disabled?: boolean;
 }
 
 /** 
@@ -18,6 +19,7 @@ interface AccordionProps {
  * @param {string} title - The label for the trigger button.
  * @param children - A list of components to render as the accordion's body
  * @param {boolean} isActive - Uses an active variant for the accordion trigger if true.
+ * @param {boolean} disabled An optional state to disable the filter. 
  **/
 export default function Accordion(props: Readonly<AccordionProps>) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -30,8 +32,9 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                 leftIcon={isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
                 size="sm"
                 iconSize="small"
-                variant={props.isActive ? "secondary" :"outline"}
+                variant={props.isActive ? "secondary" : "outline"}
                 onClick={(): void => setIsOpen((prev) => !prev)}
+                disabled={props.disabled}
                 aria-label={props.title}
                 aria-expanded={isOpen}
                 aria-controls={`accordion-content-${props.id}`}
