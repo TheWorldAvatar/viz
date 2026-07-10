@@ -477,7 +477,9 @@ export async function execReviewBillableAction(
         toast(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.", "error");
         return;
       }
-      const accrualResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: getId(row.event_id), contract: row.contract, date: row.date }));
+      const taskResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", getId(row.event_id)));
+      const task = taskResponse.data?.items?.[0];
+      const accrualResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"), "PUT", JSON.stringify({ ...defaultsBody.data, id: getId(row.event_id), contract: task?.contract?.value, date: task?.date?.value }));
       toast(accrualResponse.error?.message ?? accrualResponse.data?.message ?? "Accrual completed.", accrualResponse.error ? "error" : "success");
       return;
     }
