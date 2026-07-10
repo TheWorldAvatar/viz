@@ -423,7 +423,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For assign price only, move to the next step to gen invoice
         if (formType === FormTypeMap.ASSIGN_PRICE) {
           router.replace(
-            buildUrl(Routes.REGISTRY_TASK_ACCRUAL, getId(browserStorageManager.get(EVENT_KEY)))
+            buildUrl(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(browserStorageManager.get(EVENT_KEY))}`)
           );
           // Close search modal on success
         } else if (formType === FormTypeMap.SEARCH) {

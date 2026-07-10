@@ -468,7 +468,7 @@ export async function execReviewBillableAction(
     console.error("Error fetching instances", error);
   }
   if (body.data.message == "true") {
-    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(row.event_id)}`);
   } else {
     navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
   }

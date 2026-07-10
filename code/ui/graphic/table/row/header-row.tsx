@@ -165,7 +165,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                         browserStorageManager.clear();
                         browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
                         resetFormSession();
-                        navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, BULK_IDENTIFIER);
+                        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${BULK_IDENTIFIER}`);
                       }}
                     />
                   )}
