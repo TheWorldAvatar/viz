@@ -452,6 +452,7 @@ export async function execReviewBillableAction(
   row: FieldValues,
   accountType: string,
   navigateToDrawer: (...urlParts: string[]) => void,
+  triggerRefresh?: () => void,
 ): Promise<void> {
   const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
   const body: AgentResponseBody = await queryInternalApi(url);
@@ -476,7 +477,10 @@ export async function execReviewBillableAction(
       await submitOptionalAccrual({
         taskId: getId(row.event_id),
         onStart: () => { loadingToast = toast("Accrual in progress...", "loading"); },
-        onSuccess: (response) => toast(response.data?.message ?? "Accrual completed.", "success"),
+        onSuccess: (response) => {
+          toast(response.data?.message ?? "Accrual completed.", "success");
+          triggerRefresh?.();
+        },
         onError: (message) => toast(message, "error"),
         onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
       });
