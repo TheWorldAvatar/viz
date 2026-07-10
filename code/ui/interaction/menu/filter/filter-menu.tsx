@@ -84,7 +84,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                     aria-label={dict.action.clearAllFilters}
                     iconSize="medium"
                     className="mt-1"
-                    disabled={props.hasNoActiveFilters && !isConnected}
+                    disabled={props.hasNoActiveFilters || !isConnected}
                     size="icon"
                     onClick={() => props.resetFilters()}
                     tooltipText={dict.action.clearAllFilters}
