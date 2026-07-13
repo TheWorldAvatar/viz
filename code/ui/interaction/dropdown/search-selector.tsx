@@ -69,7 +69,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             tooltipText={dict.action.applyFilter}
             variant="primary"
             className="h-full w-12 rounded-l-none rounded-r-sm border border-border "
-            disabled={props.disabled}
+            disabled={props.disabled || selectedOptions?.length == 0}
             aria-label={"Submit for " + props.label}
           />
         </div>
