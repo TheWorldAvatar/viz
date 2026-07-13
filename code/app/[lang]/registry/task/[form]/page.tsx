@@ -32,7 +32,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TaskFormPage({ params, searchParams }: PageProps) {
     const { id } = await searchParams;
     const { form } = await params;
-    const uiSettings: UISettings = SettingsStore.getUISettings();
+    let uiSettings: UISettings = null;
+    try {
+        uiSettings = SettingsStore.getUISettings();
+    } catch (e) {
+        console.warn("Failed to get UI settings offline, using local fallback", e);
+    }
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
     return (
         <TaskFormContainerComponent
