@@ -25,7 +25,7 @@ import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, TASK_STATUS_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
@@ -458,6 +458,7 @@ export async function execReviewBillableAction(
   const body: AgentResponseBody = await queryInternalApi(url);
   browserStorageManager.set(DATE_KEY, row.date);
   browserStorageManager.set(EVENT_KEY, row.event_id);
+  browserStorageManager.set(TASK_STATUS_KEY, row.status as string | undefined);
   try {
     const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
       InternalApiIdentifierMap.FILTER,

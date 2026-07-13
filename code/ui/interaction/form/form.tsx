@@ -31,9 +31,9 @@ import {
 } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
-import { DATE_KEY, EVENT_KEY } from "@/utils/constants";
+import { DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { canSkipOptionalAccrual, fetchTaskStatus } from "@/utils/accrual-utils";
+import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -425,7 +425,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         // For assign price only, move to the next step to gen invoice
         if (formType === FormTypeMap.ASSIGN_PRICE) {
           const eventId = getId(browserStorageManager.get(EVENT_KEY));
-          if (canSkipOptionalAccrual(await fetchTaskStatus(eventId))) {
+          if (canSkipOptionalAccrual(browserStorageManager.get(TASK_STATUS_KEY))) {
             let loadingToast: string | number;
             await submitOptionalAccrual({
               taskId: eventId,
