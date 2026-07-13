@@ -8,6 +8,7 @@ interface OptionalAccrualOptions {
   onStart?: () => void;
   onSuccess?: (response: AgentResponseBody) => void;
   onError?: (message: string) => void;
+  fallbackError: string;
   onFinally?: () => void;
 }
 
@@ -23,7 +24,7 @@ export async function submitOptionalAccrual(
   try {
     const template: FormTemplateType = await queryInternalTaskFormTemplate(FormTypeMap.ACCRUAL, options.taskId);
     if (!template?.property) {
-      throw new Error("Unable to prepare accrual defaults.");
+      throw new Error(options.fallbackError);
     }
     const defaultsBody: { data: FormDefaultValues } = {
       data: buildFormDefaults(template, { context: { id: options.taskId } }),
@@ -32,7 +33,7 @@ export async function submitOptionalAccrual(
     const taskResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", options.taskId));
     const task: Record<string, { value?: string }> | undefined = taskResponse.data?.items?.[0] as Record<string, { value?: string }> | undefined;
     if (!task?.contract?.value || !task.date?.value) {
-      throw new Error("Unable to prepare the task contract and date.");
+      throw new Error(options.fallbackError);
     }
 
     const response = await queryInternalApi(
@@ -52,7 +53,7 @@ export async function submitOptionalAccrual(
     options.onSuccess?.(response);
     return response;
   } catch (error) {
-    const message: string = error instanceof Error ? error.message : "Unable to complete accrual.";
+    const message: string = error instanceof Error ? error.message : options.fallbackError;
     options.onError?.(message);
     return null;
   } finally {

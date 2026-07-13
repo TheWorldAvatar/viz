@@ -429,12 +429,13 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             let loadingToast: string | number;
             await submitOptionalAccrual({
               taskId: eventId,
-              onStart: () => { loadingToast = toast("Accrual in progress...", "loading"); },
+              onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
               onSuccess: () => {
                 router.refresh();
                 router.back();
               },
               onError: (message) => toast(message, "error"),
+              fallbackError: dict.message.error,
               onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
             });
           } else {

@@ -452,7 +452,8 @@ export async function execReviewBillableAction(
   row: FieldValues,
   accountType: string,
   navigateToDrawer: (...urlParts: string[]) => void,
-  triggerRefresh?: () => void,
+  triggerRefresh: (() => void) | undefined,
+  dict: Dictionary,
 ): Promise<void> {
   const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
   const body: AgentResponseBody = await queryInternalApi(url);
@@ -477,12 +478,13 @@ export async function execReviewBillableAction(
       let loadingToast: string | number;
       await submitOptionalAccrual({
         taskId: getId(row.event_id),
-        onStart: () => { loadingToast = toast("Accrual in progress...", "loading"); },
+        onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
         onSuccess: (response) => {
-          toast(response.data?.message ?? "Accrual completed.", "success");
+          toast(response.data?.message ?? dict.message.success, "success");
           triggerRefresh?.();
         },
         onError: (message) => toast(message, "error"),
+        fallbackError: dict.message.error,
         onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
       });
       return;
