@@ -146,6 +146,17 @@ export default function RegistryRowAction(
     await execReviewBillableAction(props.row, props.accountType, navigateToDrawer);
   };
 
+  const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const reqBody: JsonObject = {
+      id: getId(props.row.event_id ?? props.row.id),
+      contract: getId(props.row.id),
+      date: props.row.date,
+      previousEventId: getId(props.row.event_id),
+    };
+    const url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "void");
+    submitPendingActions(url, "POST", JSON.stringify(reqBody));
+  };
+
   const isSubmissionOrGeneralPage: boolean =
     props.lifecycleStage == LifecycleStageMap.PENDING || props.lifecycleStage == LifecycleStageMap.GENERAL ||
     props.lifecycleStage == LifecycleStageMap.ACCOUNT || props.lifecycleStage == LifecycleStageMap.PRICING ||
@@ -306,6 +317,12 @@ export default function RegistryRowAction(
             label={dict.action.reviewBillable}
             disabled={isLoading}
             onClick={onReviewBillable}
+          />}
+          {(isActionAllowed("VOID_TASK")) && <RowActionButton
+            icon="block"
+            label={dict.action.voidTask}
+            disabled={isLoading}
+            onClick={onVoidTask}
           />}
           {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
             icon="money_off"

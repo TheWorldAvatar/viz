@@ -48,6 +48,7 @@
     "report": "Bericht",
     "reviewBillable": "Rechnung prüfen",
     "exemptBillable": "Rechnung ausschließen",
+    "voidTask": "Auftrag entwerten",
     "submit": "Einreichen",
     "reschedule": "Neu terminieren",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",

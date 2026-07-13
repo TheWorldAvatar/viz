@@ -48,6 +48,7 @@
     "report": "Report",
     "reviewBillable": "Review billables",
     "exemptBillable": "Exempt task from billing",
+    "voidTask": "Void task",
     "submit": "Submit",
     "reschedule": "Reschedule",
     "submitAndDuplicate": "Submit and duplicate",
