@@ -1,5 +1,7 @@
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { FormTypeMap } from "@/types/form";
+import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
+import { buildFormDefaults } from "@/utils/form-defaults";
 
 interface OptionalAccrualOptions {
   taskId: string;
@@ -11,7 +13,7 @@ interface OptionalAccrualOptions {
 
 /**
  * Submits an accrual without mounting the interactive accrual form.
- * Task context is supplied by the server defaults endpoint.
+ * Form defaults are generated client-side after the authenticated template request.
  */
 export async function submitOptionalAccrual(
   options: OptionalAccrualOptions,
@@ -19,13 +21,16 @@ export async function submitOptionalAccrual(
   options.onStart?.();
 
   try {
-    const defaultsResponse = await fetch(
-      "/api/registry/accrual-defaults?id=" + encodeURIComponent(options.taskId),
-      { cache: "no-store" },
-    );
-    const defaultsBody = await defaultsResponse.json() as AgentResponseBody;
-    if (!defaultsResponse.ok || defaultsBody.error || !defaultsBody.data) {
-      throw new Error(defaultsBody.error?.message ?? "Unable to prepare accrual defaults.");
+    const template = await queryInternalTaskFormTemplate(FormTypeMap.ACCRUAL, options.taskId);
+    if (!template?.property) {
+      throw new Error("Unable to prepare accrual defaults.");
+    }
+    const defaultsBody = { data: buildFormDefaults(template, { context: { id: options.taskId } }) };
+
+    const taskResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", options.taskId));
+    const task = taskResponse.data?.items?.[0] as Record<string, { value?: string }> | undefined;
+    if (!task?.contract?.value || !task.date?.value) {
+      throw new Error("Unable to prepare the task contract and date.");
     }
 
     const response = await queryInternalApi(
@@ -34,8 +39,8 @@ export async function submitOptionalAccrual(
       JSON.stringify({
         ...defaultsBody.data,
         id: options.taskId,
-        contract: defaultsBody.data.contract,
-        date: defaultsBody.data.date,
+        contract: task.contract.value,
+        date: task.date.value,
       }),
     );
     if (response.error) {
