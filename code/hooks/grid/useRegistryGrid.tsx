@@ -53,7 +53,7 @@ export function useRegistryGrid(
     mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
-    const { refreshId, resetFormSession, triggerRefresh } = useOperationStatus();
+    const { resetFormSession } = useOperationStatus();
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     const [page, setPage] = useState<number>(0);
@@ -91,23 +91,24 @@ export function useRegistryGrid(
         });
         setPage(0);
         setSelectedCount(0);
-        setHasMore(true);
-        clearTasks();
-        setIsInitialLoading(true);
-        setIsFetching(true);
+        triggerRefresh();
     };
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
-        clearTasks();
         setHasNoActiveFilters(true);
         setPage(0);
         setSelectedCount(0);
+        triggerRefresh();
+    };
+
+    const triggerRefresh = () => {
+        clearTasks();
         setHasMore(true);
         setIsInitialLoading(true);
         setIsFetching(true);
-    };
+    }
 
     const { data, previewData } = useLiveTasks(mobileFields.current, selectedCount, dict);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
@@ -220,7 +221,7 @@ export function useRegistryGrid(
         if (isFetching && hasMore) {
             fetchData();
         }
-    }, [entityType, refreshId, isFetching, filters]);
+    }, [entityType, isFetching, filters]);
 
     return {
         isInitialLoading,
