@@ -148,7 +148,7 @@ export default function RegistryRowAction(
 
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
-      id: getId(props.row.event_id ?? props.row.id),
+      id: getId(props.row.event_id),
       contract: getId(props.row.id),
       date: props.row.date,
       previousEventId: getId(props.row.event_id),
