@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.80.3
+
+### Changes
+
+- Changed default sorting behaviour
+
 ## 5.80.2
 
 ### Changes
