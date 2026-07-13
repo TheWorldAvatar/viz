@@ -33,7 +33,7 @@ function maximumCount(field: PropertyShapeOrGroup): number | undefined {
 }
 
 function hasType(field: PropertyShape, type: string): boolean {
-  return field.datatype?.[ID_KEY] === type || field.class?.[ID_KEY] === type;
+  return field.datatype === type || field.class?.[ID_KEY] === type;
 }
 
 function scalarDefault(field: PropertyShape, now: Date): unknown {
