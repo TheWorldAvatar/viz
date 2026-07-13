@@ -429,6 +429,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
             let loadingToast: string | number;
             await submitOptionalAccrual({
               taskId: eventId,
+              contract: getId(id),
+              date: browserStorageManager.get(DATE_KEY) as string,
               onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
               onSuccess: () => {
                 router.refresh();

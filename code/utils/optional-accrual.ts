@@ -5,6 +5,8 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskF
 
 interface OptionalAccrualOptions {
   taskId: string;
+  contract: string;
+  date: string;
   onStart?: () => void;
   onSuccess?: (response: AgentResponseBody) => void;
   onError?: (message: string) => void;
@@ -30,11 +32,6 @@ export async function submitOptionalAccrual(
       data: buildFormDefaults(template, { context: { id: options.taskId } }),
     };
 
-    const taskResponse = await queryInternalApi(makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.TASKS, "task", options.taskId));
-    const task: Record<string, { value?: string }> | undefined = taskResponse.data?.items?.[0] as Record<string, { value?: string }> | undefined;
-    if (!task?.contract?.value || !task.date?.value) {
-      throw new Error(options.fallbackError);
-    }
 
     const response = await queryInternalApi(
       makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "accrual"),
@@ -42,8 +39,8 @@ export async function submitOptionalAccrual(
       JSON.stringify({
         ...defaultsBody.data,
         id: options.taskId,
-        contract: task.contract.value,
-        date: task.date.value,
+        contract: options.contract,
+        date: options.date,
       }),
     );
     if (response.error) {

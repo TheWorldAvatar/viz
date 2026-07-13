@@ -478,6 +478,8 @@ export async function execReviewBillableAction(
       let loadingToast: string | number;
       await submitOptionalAccrual({
         taskId: getId(row.event_id),
+        contract: getId(row.id),
+        date: row.date as string,
         onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
         onSuccess: (response) => {
           toast(response.data?.message ?? dict.message.success, "success");
