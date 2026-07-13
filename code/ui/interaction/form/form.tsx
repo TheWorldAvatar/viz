@@ -424,7 +424,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       handleDrawerClose(async () => {
         // For assign price only, move to the next step to gen invoice
         if (formType === FormTypeMap.ASSIGN_PRICE) {
-          const eventId = getId(browserStorageManager.get(EVENT_KEY));
+          const eventId: string = getId(browserStorageManager.get(EVENT_KEY));
           if (canSkipOptionalAccrual(browserStorageManager.get(TASK_STATUS_KEY))) {
             let loadingToast: string | number;
             await submitOptionalAccrual({

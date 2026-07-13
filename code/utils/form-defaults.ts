@@ -20,15 +20,15 @@ const valueOf = (value?: { [VALUE_KEY]?: string }): string | undefined =>
   value?.[VALUE_KEY];
 
 function minimumCount(field: PropertyShapeOrGroup): number {
-  const value = valueOf(field.minCount);
-  const count = value == null ? 0 : Number.parseInt(value, 10);
+  const value: string | undefined = valueOf(field.minCount);
+  const count: number = value == null ? 0 : Number.parseInt(value, 10);
   return Number.isFinite(count) ? count : 0;
 }
 
 function maximumCount(field: PropertyShapeOrGroup): number | undefined {
-  const value = valueOf(field.maxCount);
+  const value: string | undefined = valueOf(field.maxCount);
   if (value == null) return undefined;
-  const count = Number.parseInt(value, 10);
+  const count: number = Number.parseInt(value, 10);
   return Number.isFinite(count) ? count : undefined;
 }
 
@@ -37,12 +37,12 @@ function hasType(field: PropertyShape, type: string): boolean {
 }
 
 function scalarDefault(field: PropertyShape, now: Date): unknown {
-  const explicit = Array.isArray(field.defaultValue)
+  const explicit: string | undefined = Array.isArray(field.defaultValue)
     ? field.defaultValue[0]?.value
     : field.defaultValue?.value;
   if (explicit != null && explicit !== "") {
     if (explicit === "tomorrow") {
-      const tomorrow = new Date(now);
+      const tomorrow: Date = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       return tomorrow.toISOString().split("T")[0];
     }
@@ -65,20 +65,20 @@ function propertyDefaults(
   now: Date,
   groupName?: string,
 ): FormDefaultValues {
-  return fields.reduce<FormDefaultValues>((defaults, item) => {
+  return fields.reduce<FormDefaultValues>((defaults: FormDefaultValues, item: PropertyShapeOrGroup): FormDefaultValues => {
     if (item[TYPE_KEY]?.includes(PROPERTY_GROUP_TYPE)) {
-      const group = item as PropertyGroup;
-      const name = valueOf(group.label) ?? group[ID_KEY];
-      const row = propertyDefaults(group.property, now, name);
-      const isArray = maximumCount(group) == null || (maximumCount(group) as number) > 1;
+      const group: PropertyGroup = item as PropertyGroup;
+      const name: string = valueOf(group.label) ?? group[ID_KEY];
+      const row: FormDefaultValues = propertyDefaults(group.property, now, name);
+      const isArray: boolean = maximumCount(group) == null || (maximumCount(group) as number) > 1;
       defaults[name] = isArray ? Array.from({ length: Math.max(1, minimumCount(group)) }, () => ({ ...row })) : row;
       return defaults;
     }
 
-    const field = item as PropertyShape;
-    const name = valueOf(field.name) ?? field[ID_KEY];
-    const key = groupName ? `${groupName} ${name}` : name;
-    const isArray = groupName != null && (maximumCount(field) == null || (maximumCount(field) as number) > 1);
+    const field: PropertyShape = item as PropertyShape;
+    const name: string = valueOf(field.name) ?? field[ID_KEY];
+    const key: string = groupName ? `${groupName} ${name}` : name;
+    const isArray: boolean = groupName != null && (maximumCount(field) == null || (maximumCount(field) as number) > 1);
     if (isArray) {
       defaults[key] = Array.from({ length: Math.max(1, minimumCount(field)) }, () => ({ [key]: scalarDefault(field, now) }));
     } else {
