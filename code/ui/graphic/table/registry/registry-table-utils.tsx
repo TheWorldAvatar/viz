@@ -224,7 +224,7 @@ export function parseColumnsMetadata(
       filterFn: multiSelectFilter,
       size: effectiveWidth,
       enableSorting: true,
-      sortDescFirst: true,
+      sortDescFirst: false,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
     });
   }
