@@ -38,7 +38,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                 aria-label={props.title}
                 aria-expanded={isOpen}
                 aria-controls={`accordion-content-${props.id}`}
-                className={`w-full justify-start min-h-10.5 ${props.isActive ? "border border-border" : ""}`}
+                className={`w-full justify-start min-h-10.5 shadow-xs ${props.isActive ? "border border-border" : ""}`}
             >
                 {props.title}
             </Button>
