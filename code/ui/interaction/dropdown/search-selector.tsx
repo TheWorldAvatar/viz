@@ -68,7 +68,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }}
             tooltipText={dict.action.applyFilter}
             variant="primary"
-            className="h-full w-12 rounded-l-none rounded-r-sm border border-border "
+            className="h-full w-12 border border-border ml-2"
             disabled={props.disabled}
             aria-label={"Submit for " + props.label}
           />
@@ -87,13 +87,14 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
               props.setSearchString("");
             }
           }}
-          variant="ghost"
+          variant="secondary"
+          className="p-5 border border-border"
           disabled={props.disabled}
           tooltipText={dict.action.clear}
           aria-label={dict.action.clear}
         />}
       </div>
-      <div className="max-h-80 md:w-[50vw] overflow-y-auto">
+      <div className="max-h-80 w-full overflow-y-auto">
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}

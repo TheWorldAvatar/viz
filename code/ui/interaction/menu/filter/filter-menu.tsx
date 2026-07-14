@@ -67,39 +67,34 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
 
     return <PopoverActionButton
         placement="bottom"
+        draggable={!props.hasNoActiveFilters}
+        bottomSheet
         leftIcon="filter_list"
-        variant={props.hasNoActiveFilters ? "ghost" : "secondary"}
+        variant={props.hasNoActiveFilters ? "outline" : "secondary"}
         isOpen={isMenuOpen}
         setIsOpen={setIsOpen}
         disabled={!isConnected}
         tooltipText={dict.action.filter}
         size="icon"
+        className={`${!props.hasNoActiveFilters ? "border border-border" : ""}`}
         aria-label={dict.action.filter}
     >
-        <section className="flex justify-between ml-2 items-center">
-            <h1>{dict.action.filter}</h1>
+        <section className="flex justify-between items-center px-1 mb-1">
+            <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
             <div className="flex gap-4 items-center">
                 <Button
                     leftIcon="filter_list_off"
                     aria-label={dict.action.clearAllFilters}
                     iconSize="medium"
-                    className="mt-1"
                     disabled={props.hasNoActiveFilters || !isConnected}
                     size="icon"
                     onClick={() => props.resetFilters()}
                     tooltipText={dict.action.clearAllFilters}
                     variant="destructive"
                 />
-                {(!props.hasNoActiveFilters || !isConnected) && <Button
-                    leftIcon="close"
-                    size="icon"
-                    variant="ghost"
-                    type="button"
-                    onClick={() => setIsMenuOpen(false)}
-                />}
             </div>
         </section>
-        <section className="h-[80vh] overflow-y-auto">
+        <section className="h-[75vh] overflow-y-auto px-1 w-full">
             {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
                 props.columns.map((column, index) => {
                     if (column.dataType === "array") return;
