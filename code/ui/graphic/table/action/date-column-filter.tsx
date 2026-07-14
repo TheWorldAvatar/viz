@@ -50,7 +50,7 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
           tooltipText={dict.action.applyFilter}
           variant="primary"
           className="p-5 border border-border"
-          disabled={props.disabled}
+          disabled={props.disabled || !selectedDate}
           aria-label={interpolate(dict.action.filterBy, props.label)}
         />
         <Button
