@@ -2,6 +2,26 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.80.4
+
+### Bug fixes
+
+- Fixed auto refresh in mobile registry view after completion
+- Fixed cached copy of completed task after completion in mobile registry
+- Disabled string and date filters unless users have selected options
+
+## 5.80.3
+
+### Changes
+
+- Changed default sorting behaviour
+
+## 5.80.2
+
+### Changes
+
+- Allow reschedule of completed task up to accrual
+
 ## 5.80.1
 
 ### Bug fixes
