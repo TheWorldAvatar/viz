@@ -147,11 +147,12 @@ export default function RegistryRowAction(
   };
 
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const taskId: string = getId(props.row.event_id);
     const reqBody: JsonObject = {
-      id: getId(props.row.event_id),
+      id: taskId,
       contract: getId(props.row.id),
       date: props.row.date,
-      previousEventId: getId(props.row.event_id),
+      previousEventId: taskId,
     };
     const url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "void");
     submitPendingActions(url, "POST", JSON.stringify(reqBody));
