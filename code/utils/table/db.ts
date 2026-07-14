@@ -1,7 +1,7 @@
 import { Dexie, type EntityTable } from "dexie";
 
-interface DynamicTask {
-    event_id: number; // a known primary key
+export interface DynamicTask {
+    event_id: string; // a known primary key
     [key: string]: unknown;
 }
 
