@@ -81,20 +81,8 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
     >
         <section className="flex justify-between items-center px-1 mb-1">
             <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
-            <div className="flex gap-4 items-center">
-                <Button
-                    leftIcon="filter_list_off"
-                    aria-label={dict.action.clearAllFilters}
-                    iconSize="medium"
-                    disabled={props.hasNoActiveFilters || !isConnected}
-                    size="icon"
-                    onClick={() => props.resetFilters()}
-                    tooltipText={dict.action.clearAllFilters}
-                    variant="destructive"
-                />
-            </div>
         </section>
-        <section className="h-[75vh] overflow-y-auto px-1 w-full">
+        <section className={`${props.hasNoActiveFilters ? "h-[73vh]" : "h-[60vh]"} overflow-y-auto px-1 w-full`}>
             {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
                 props.columns.map((column, index) => {
                     if (column.dataType === "array") return;
@@ -127,5 +115,17 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                     </Accordion>
                 })}
         </section>
+        <footer className="shrink-0 -mx-2 border-t border-border pt-2 px-3">
+            <Button
+                leftIcon="filter_list_off"
+                label={dict.action.clearAllFilters}
+                aria-label={dict.action.clearAllFilters}
+                iconSize="medium"
+                disabled={props.hasNoActiveFilters || !isConnected}
+                onClick={() => props.resetFilters()}
+                variant="outline"
+                className="w-full min-h-12 justify-center"
+            />
+        </footer>
     </PopoverActionButton>
 }

@@ -26,7 +26,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
     const { contentRef, contentHeight } = useResizeObserver(isOpen);
 
     return (
-        <article className="flex flex-col mb-2">
+        <article className="flex flex-col mb-2 mt-0.5">
             <Button
                 type="button"
                 leftIcon={isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
