@@ -82,7 +82,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         <section className="flex justify-between items-center px-1 mb-1">
             <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
         </section>
-        <section className={`${props.hasNoActiveFilters ? "h-[73vh]" : "h-[60vh]"} overflow-y-auto px-1 w-full`}>
+        <section className={`${props.hasNoActiveFilters ? "h-[70vh]" : "h-[50vh]"} overflow-y-auto px-1 w-full`}>
             {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
                 props.columns.map((column, index) => {
                     if (column.dataType === "array") return;
