@@ -57,7 +57,7 @@ export const RegistryStatusMap = {
   BILLABLE_COMPLETED: "billablecompleted",
   BILLABLE_CANCELLED: "billablecancelled",
   BILLABLE_REPORTED: "billableissue",
-  BILLABLE_EXEMPTED: "billableExempted",
+  BILLABLE_EXEMPTED: "billableexempted",
   INVOICED: "invoiced",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];

@@ -70,7 +70,7 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     VOID_TASK: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED],
-        status: [RegistryStatusMap.CANCELLED],
+        status: [RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_EXEMPTED],
     },
     VIEW_BILLABLES: {
         permission: "invoice",
