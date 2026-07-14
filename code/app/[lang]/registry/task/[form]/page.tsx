@@ -18,7 +18,7 @@ type PageProps = {
  */
 export async function generateMetadata(): Promise<Metadata> {
     const uiSettings: UISettings = SettingsStore.getUISettings();
-    const metadata: NavBarItemSettings = uiSettings.links?.find(
+    const metadata: NavBarItemSettings = uiSettings?.links?.find(
         (link) => link.url === Modules.REGISTRY
     );
     return {
