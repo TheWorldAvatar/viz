@@ -39,7 +39,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <>
-      <div className="flex flex-row items-stretch justify-between gap-1.5">
+      <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
         <div className="flex flex-1 items-stretch">
           <input
             autoFocus

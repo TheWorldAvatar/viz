@@ -38,7 +38,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                 aria-label={props.title}
                 aria-expanded={isOpen}
                 aria-controls={`accordion-content-${props.id}`}
-                className={`w-full justify-start min-h-10 ${props.isActive ? "border border-border" : ""}`}
+                className={`w-full justify-start min-h-10.5 ${props.isActive ? "border border-border" : ""}`}
             >
                 {props.title}
             </Button>
@@ -52,7 +52,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                         maxHeight: `${contentHeight}px`,
                     }}
                 >
-                    <div ref={contentRef} className="py-2 w-full overflow-hidden">
+                    <div ref={contentRef} className="pt-2 px-0.5 w-full overflow-hidden">
                         {props.children}
                     </div>
                 </div>
