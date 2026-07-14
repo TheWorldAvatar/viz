@@ -266,9 +266,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     isPost: boolean
   ) => {
     // Add current task id, contract, and date field
-    formData[FORM_STATES.ID] = task.id;
-    formData[FORM_STATES.CONTRACT] = task.contract;
-    formData[FORM_STATES.DATE] = task.date;
+    formData[FORM_STATES.ID] = task?.id;
+    formData[FORM_STATES.CONTRACT] = task?.contract;
+    formData[FORM_STATES.DATE] = task?.date;
 
     return await queryInternalApi(
       makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
@@ -291,7 +291,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         </h1>
         {task?.date && (
           <h2 className="text-base md:text-lg md:mr-8">
-            {formatDateValue(task.date)}: {getTranslatedStatusLabel(task?.status, dict)}
+            {formatDateValue(task?.date)}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
       </section>

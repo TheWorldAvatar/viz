@@ -4,6 +4,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { RegistryTaskOption, SparqlResponseField } from "@/types/form";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { useConnected } from "@/hooks/useConnected";
 
 interface UseTaskDataResult {
     task: RegistryTaskOption | null;
@@ -21,6 +22,7 @@ export function useTaskData(
     setIsFetching: Dispatch<SetStateAction<boolean>>
 ): UseTaskDataResult {
     const [task, setTask] = useState<RegistryTaskOption | null>(null);
+    const isConnected: boolean = useConnected();
 
     useEffect(() => {
         const fetchTask = async (): Promise<void> => {
@@ -47,7 +49,7 @@ export function useTaskData(
             }
         };
 
-        if (id && id != BULK_IDENTIFIER) {
+        if (id && id != BULK_IDENTIFIER && isConnected) {
             fetchTask();
         }
     }, [id, setIsFetching]);
