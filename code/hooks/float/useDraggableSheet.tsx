@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// Fraction of the sheet height the panel is translated down when snapped to peek.
-const PEEK_RATIO = 0.55;
+// Fraction of the sheet height that is collapsed away when the panel is snapped to peek.
+const PEEK_RATIO: number = 0.55;
 // Releasing the panel dragged down beyond this fraction of its height dismisses the sheet.
-const CLOSE_RATIO = 0.75;
+const CLOSE_RATIO: number = 0.75;
 // Downward pointer speed (px/ms) that dismisses the sheet regardless of position.
-const FLICK_VELOCITY = 0.5;
+const FLICK_VELOCITY: number = 0.5;
 
 interface UseDraggableSheetParams {
   enabled: boolean;
@@ -30,12 +30,14 @@ interface UseDraggableSheetReturn {
  * @param {void} onClose Invoked when the sheet is dragged past the close threshold.
  */
 export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): UseDraggableSheetReturn {
-  // Vertical offset applied to the sheet while dragging. 0 means fully expanded.
+  // The height collapsed away from the sheet. 0 means fully expanded.
   const [dragOffset, setDragOffset] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const sheetRef: React.RefObject<HTMLDivElement | null> = useRef(null);
   const offsetRef: React.RefObject<number> = useRef(0);
-  const dragStart: React.RefObject<{ pointerY: number; offset: number; sheetHeight: number } | null> = useRef(null);
+  // Height of the fully expanded sheet, refreshed when a drag starts.
+  const sheetHeightRef: React.RefObject<number> = useRef(0);
+  const dragStart: React.RefObject<{ pointerY: number; offset: number } | null> = useRef(null);
   // Last pointer sample used to derive the release velocity (px per ms, positive = downward).
   const lastSample: React.RefObject<{ y: number; time: number; velocity: number }> = useRef({ y: 0, time: 0, velocity: 0 });
 
@@ -53,10 +55,11 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
+    // The visible height plus the amount already collapsed away restores the expanded height.
+    sheetHeightRef.current = (sheetRef.current?.offsetHeight ?? window.innerHeight) + offsetRef.current;
     dragStart.current = {
       pointerY: event.clientY,
       offset: offsetRef.current,
-      sheetHeight: sheetRef.current?.offsetHeight ?? window.innerHeight,
     };
     lastSample.current = { y: event.clientY, time: event.timeStamp, velocity: 0 };
     setIsDragging(true);
@@ -66,9 +69,8 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
     if (!dragStart.current) {
       return;
     }
-    // Dragging down increases clientY, which pushes the sheet further off screen.
     const delta: number = event.clientY - dragStart.current.pointerY;
-    applyOffset(Math.min(dragStart.current.sheetHeight, Math.max(0, dragStart.current.offset + delta)));
+    applyOffset(Math.min(sheetHeightRef.current, Math.max(0, dragStart.current.offset + delta)));
 
     const elapsed: number = event.timeStamp - lastSample.current.time;
     if (elapsed > 0) {
@@ -85,16 +87,15 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
       return;
     }
     event.currentTarget.releasePointerCapture(event.pointerId);
-    const { sheetHeight } = dragStart.current;
     dragStart.current = null;
     setIsDragging(false);
 
-    const peekOffset: number = sheetHeight * PEEK_RATIO;
+    const peekOffset: number = sheetHeightRef.current * PEEK_RATIO;
     const offset: number = offsetRef.current;
     const velocity: number = lastSample.current.velocity;
 
     // A downward flick, or a slow drag past the close threshold, dismisses the sheet.
-    if ((velocity > FLICK_VELOCITY && offset > peekOffset / 2) || offset > sheetHeight * CLOSE_RATIO) {
+    if ((velocity > FLICK_VELOCITY && offset > peekOffset / 2) || offset > sheetHeightRef.current * CLOSE_RATIO) {
       applyOffset(0);
       props.onClose();
       return;
@@ -114,8 +115,8 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
   return {
     sheetRef,
     sheetStyle: {
-      transform: `translateY(${dragOffset}px)`,
-      transition: isDragging ? "none" : "transform 300ms ease-out",
+      maxHeight: dragOffset === 0 ? "100dvh" : `${Math.max(0, sheetHeightRef.current - dragOffset)}px`,
+      transition: isDragging ? "none" : "max-height 300ms ease-out",
     },
     dragHandleProps: {
       onPointerDown: handlePointerDown,
