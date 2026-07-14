@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/turbopack/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { NetworkFirst, Serwist } from "serwist";
+import { BackgroundSyncPlugin, NetworkFirst, NetworkOnly, Serwist } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -16,12 +16,24 @@ declare const self: WorkerGlobalScope & typeof globalThis;
 
 const assetPrefix: string = process.env.ASSET_PREFIX;
 
+const bgSyncPlugin: BackgroundSyncPlugin = new BackgroundSyncPlugin("form-submissions", {
+  maxRetentionTime: 24 * 60, // Retry 24 hours
+});
+
+
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
+    {
+      matcher: ({ url }) => url.pathname === assetPrefix + "/api/registry/event",
+      method: "PUT",
+      handler: new NetworkOnly({
+        plugins: [bgSyncPlugin],
+      })
+    },
     {
       matcher({ request, sameOrigin }) {
         return sameOrigin && (
