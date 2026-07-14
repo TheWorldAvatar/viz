@@ -58,7 +58,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
             />
           )}
           <div className="flex flex-col flex-1 min-h-0 min-w-0 bg-muted h-full box-border">
-            <section className="grow overflow-y-auto">
+            <section className="flex-1 min-h-0 overflow-y-auto">
               {props.children}
             </section>
             {!pathname.endsWith("map") && <Footer />}
