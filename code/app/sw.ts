@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/turbopack/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { NetworkFirst, Serwist } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -21,8 +21,30 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
-  fallbacks: {
+  runtimeCaching: [
+    {
+      matcher({ request, sameOrigin }) {
+        return sameOrigin && (
+          request.headers.get("RSC") === "1" ||
+          request.headers.get("Next-Router-Prefetch") === "1"
+        );
+      },
+      handler: new NetworkFirst({
+        cacheName: "rsc-cache",
+        plugins: [
+          {
+            cacheKeyWillBeUsed: async ({ request }) => {
+              const url: URL = new URL(request.url);
+              url.searchParams.delete("id");
+              url.searchParams.delete("_rsc");
+              return url.href;
+            },
+          },
+        ],
+      }),
+    },
+    ...defaultCache,
+  ], fallbacks: {
     entries: [
       {
         url: `${assetPrefix || ""}/~offline`,
