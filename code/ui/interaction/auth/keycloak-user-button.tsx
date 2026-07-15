@@ -17,7 +17,7 @@ export default function KeycloakUserButton() {
       size="icon"
       variant="primary"
       placement="bottom"
-      className="w-12 h-12 !rounded-full mr-6 transition-all duration-200 hover:scale-110 hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-muted"
+      className="size-11 md:size-12 rounded-full!"
     >
       <div className="flex flex-col justify-center items-center p-1">
         <div className="p-2">
