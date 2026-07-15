@@ -143,7 +143,7 @@ export default function RegistryRowAction(
 
   const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
     handleClickRowAction();
-    await execReviewBillableAction(props.row, props.accountType, navigateToDrawer);
+    await execReviewBillableAction(props.row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
   };
 
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
