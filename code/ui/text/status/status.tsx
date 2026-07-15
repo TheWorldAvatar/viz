@@ -81,6 +81,10 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBorderColor = "var(--success-border)";
       break;
     case dict.title.voided.toLowerCase():
+      statusTextColor = "var(--void-foreground)";
+      statusBackgroundColor = "var(--void-background)";
+      statusBorderColor = "var(--void-border)";
+      break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
       statusTextColor = "var(--error-foreground)";
