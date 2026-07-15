@@ -112,8 +112,8 @@ export default function RegistryRowAction(
 
   const submitPendingActions = async (
     url: string,
-    method: "POST" | "PUT",
-    body: string
+    method: "POST" | "PUT" | "DELETE",
+    body?: string
   ): Promise<void> => {
     startLoading();
     handleClickRowAction();
@@ -144,6 +144,29 @@ export default function RegistryRowAction(
   const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
     handleClickRowAction();
     await execReviewBillableAction(props.row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
+  };
+
+  const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const taskId: string = getId(props.row.event_id);
+    const reqBody: JsonObject = {
+      id: taskId,
+      contract: getId(props.row.id),
+      date: props.row.date,
+      previousEventId: taskId,
+    };
+    const url = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", "void");
+    submitPendingActions(url, "POST", JSON.stringify(reqBody));
+  };
+
+  const onUnvoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    const taskId: string = getId(props.row.event_id);
+    const url: string = makeInternalRegistryAPIwithParams(
+      InternalApiIdentifierMap.EVENT,
+      "service",
+      "void",
+      taskId
+    );
+    submitPendingActions(url, "DELETE");
   };
 
   const isSubmissionOrGeneralPage: boolean =
@@ -306,6 +329,18 @@ export default function RegistryRowAction(
             label={dict.action.reviewBillable}
             disabled={isLoading}
             onClick={onReviewBillable}
+          />}
+          {(isActionAllowed("VOID_TASK")) && <RowActionButton
+            icon="block"
+            label={dict.action.voidTask}
+            disabled={isLoading}
+            onClick={onVoidTask}
+          />}
+          {(isActionAllowed("UNVOID_TASK")) && <RowActionButton
+            icon="undo"
+            label={dict.action.unvoidTask}
+            disabled={isLoading}
+            onClick={onUnvoidTask}
           />}
           {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
             icon="money_off"
