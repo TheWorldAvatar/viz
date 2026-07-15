@@ -33,6 +33,8 @@ export function getTranslatedStatusLabel(
       return dict.title.accrued;
     case "issue":
       return dict.title.issue;
+    case RegistryStatusMap.VOIDED:
+      return dict.title.voided;
     case "rescinded":
       return dict.title.rescinded;
     case "terminated":
@@ -78,6 +80,7 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBackgroundColor = "var(--success-background)";
       statusBorderColor = "var(--success-border)";
       break;
+    case dict.title.voided.toLowerCase():
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
       statusTextColor = "var(--error-foreground)";

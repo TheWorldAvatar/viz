@@ -286,6 +286,7 @@
     "billableCompleted": "abrechnungsfähig (abgeschlossen)",
     "billableIssue": "abrechnungsfähig (problem)",
     "billableExempted": "ausgeschlossen",
+    "voided": "annulliert",
     "invoiced": "in Rechnung gestellt",
     "item": "Artikel",
     "rescinded": "Aufgehoben",

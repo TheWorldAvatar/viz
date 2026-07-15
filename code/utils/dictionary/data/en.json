@@ -286,6 +286,7 @@
     "billableCompleted": "billable (completed)",
     "billableIssue": "billable (issue)",
     "billableExempted": "exempted",
+    "voided": "voided",
     "invoiced": "invoiced",
     "item": "Item",
     "rescinded": "rescinded",
