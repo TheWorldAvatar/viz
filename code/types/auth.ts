@@ -72,6 +72,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_EXEMPTED],
     },
+    UNVOID_TASK: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.VOIDED],
+    },
     VIEW_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],

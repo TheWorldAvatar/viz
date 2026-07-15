@@ -49,6 +49,7 @@
     "reviewBillable": "Rechnung prüfen",
     "exemptBillable": "Rechnung ausschließen",
     "voidTask": "Auftrag entwerten",
+    "unvoidTask": "Annullierung aufheben",
     "submit": "Einreichen",
     "reschedule": "Neu terminieren",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",
