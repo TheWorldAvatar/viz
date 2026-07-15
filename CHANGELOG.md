@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.80.5
+
+### Changes
+
+- Changed accural behaviour to silently accrues completed, cancelled, and reported tasks on their first billable review.
+- Preserves the editable accrual form for later revisions and excludes already billable tasks.
+- It still keeps pricing assignment as a prerequisite when no pricing model exists.
+
 ## 5.80.4
 
 ### Bug fixes
