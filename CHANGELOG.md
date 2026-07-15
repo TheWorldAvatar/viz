@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.0
+
+### Changes
+
+- Added void status, user may void and unvoid a task
+
 ## 5.80.5
 
 ### Changes
