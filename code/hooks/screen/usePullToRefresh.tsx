@@ -49,7 +49,7 @@ export const usePullToRefresh = (): React.RefObject<HTMLDivElement | null> => {
     const screenType: ScreenType = useScreenType();
 
     useEffect(() => {
-        if (screenType != ScreenTypeMap.MOBILE) return;
+        if (screenType != ScreenTypeMap.MOBILE && screenType != ScreenTypeMap.TABLET) return;
 
         // Written directly to the DOM to keep the drag off the render path
         const drawIndicator = (delta: number) => {
