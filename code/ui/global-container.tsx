@@ -5,11 +5,13 @@ import Konami from "react-konami-code";
 import { Provider } from "react-redux";
 
 import { reduxStore } from "@/app/store";
+import { usePullToRefresh } from "@/hooks/screen/usePullToRefresh";
 import { useBackgroundImageUrl } from "@/hooks/useBackgroundImageUrl";
 import { useContextMenu } from "@/hooks/useContextMenu";
 import { useOfflineWarning } from "@/hooks/useOfflineWarning";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { UISettings } from "@/types/settings";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import Trex from "@/utils/trex";
 import { usePathname } from "next/navigation";
 import ContextMenu from "./interaction/context-menu/context-menu";
@@ -32,6 +34,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
+  const pullIndicatorRef: React.RefObject<HTMLDivElement | null> = usePullToRefresh();
   useOfflineWarning();
   const isMapPage: boolean = pathname.endsWith("map");
 
@@ -41,14 +44,21 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
 
   return (
     <Provider store={reduxStore}>
-      <div className={`flex w-full flex-col ${isMapPage ? "h-dvh overflow-hidden" : "min-h-dvh xl:h-dvh xl:min-h-0 xl:overflow-hidden"}`}>
+      <div className="flex h-dvh w-full flex-col overflow-hidden">
         <HeaderBar pages={props.pages} settings={props.settings} />
-        <main className="flex w-full flex-1 min-h-0"
+        <main className="relative flex w-full flex-1 min-h-0"
           style={{
             backgroundImage: `url(${backgroundImageUrl})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}>
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center">
+            <div ref={pullIndicatorRef} className="opacity-0">
+              <div className="mt-2 rounded-full bg-background p-4 shadow-md">
+                <LoadingSpinner isSmall={true} />
+              </div>
+            </div>
+          </div>
           {!isMapPage && (
             <NavMenu
               pages={props.pages}

@@ -80,10 +80,10 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         className={`${!props.hasNoActiveFilters ? "border border-border" : ""}`}
         aria-label={dict.action.filter}
     >
-        <section className="flex justify-between items-center px-1 mb-1">
+        <section className="shrink-0 flex justify-between items-center px-1 mb-1">
             <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
         </section>
-        <section className={`${props.hasNoActiveFilters ? "h-[70vh]" : "h-[50vh]"} overflow-y-auto px-1 w-full`}>
+        <section className={`${props.hasNoActiveFilters ? "max-h-[70vh]" : "max-h-[50vh]"} min-h-0 overflow-y-auto px-1 w-full`}>
             {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
                 filterableColumns.length === 0 ?
                     <p className="text-muted-foreground text-center py-2">{dict.message.noTasks}</p> :

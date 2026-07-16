@@ -1,6 +1,7 @@
 "use client";
 
 import { useDraggableSheet } from "@/hooks/float/useDraggableSheet";
+import { NO_PULL_REFRESH_ATTRIBUTE } from "@/hooks/screen/usePullToRefresh";
 import { usePopover } from "@/hooks/float/usePopover";
 import { useScreenType } from "@/hooks/screen/useScreenType";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
@@ -125,6 +126,7 @@ export default function PopoverActionButton({
               ref={popover.refs.setFloating}
               style={isDraggable ? { ...floatingStyles, pointerEvents: "none" } : floatingStyles}
               {...popover.getFloatingProps()}
+              {...{ [NO_PULL_REFRESH_ATTRIBUTE]: "" }}
             >
               {isDraggable ? (
                 <div style={{ ...transition.styles }}>

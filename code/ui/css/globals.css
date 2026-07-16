@@ -246,29 +246,15 @@
 html,
 body {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   overflow: hidden;
+  overscroll-behavior-y: none; /* No document rubber-banding; pull-to-refresh is custom */
   touch-action: manipulation; /* Prevents double-tap zoom on mobile */
-}
-
-/* Below the xl breakpoint the document is the scroller so native
-   pull-to-refresh works (iOS Safari only triggers it on the root scroller). */
-@media (max-width: 1279.98px) {
-  html,
-  body {
-    width: 100%;
-    height: auto;
-    min-height: 100dvh;
-  }
-
-  body {
-    overflow: visible;
-  }
 }
 
 /* a {
