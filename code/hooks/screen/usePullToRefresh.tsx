@@ -3,13 +3,9 @@
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 import { useEffect, useRef } from "react";
 import { useScreenType } from "./useScreenType";
+import { NO_PULL_REFRESH_ATTRIBUTE } from "@/utils/constants";
 
 const THRESHOLD: number = 80;
-
-// Touches starting inside an element with this attribute never arm the pull
-// gesture, so overlays with their own drag interactions (e.g. bottom sheets)
-// can opt out of triggering a refresh.
-export const NO_PULL_REFRESH_ATTRIBUTE: string = "data-no-pull-refresh";
 const RESISTANCE: number = 0.5;
 const MAX_PULL: number = 120;
 
