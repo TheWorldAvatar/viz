@@ -155,7 +155,7 @@
     --error-background-hover: hsl(2, 100%, 15%);
     --error-foreground: hsl(2, 100%, 96%);
     --error-border: hsl(2, 100%, 35%);
-    
+
     --success-background: hsl(156, 40%, 20%);
     --success-background-hover: hsl(156, 40%, 15%);
     --success-foreground: hsl(156, 40%, 86%);
@@ -254,6 +254,21 @@ body {
   color: var(--foreground);
   overflow: hidden;
   touch-action: manipulation; /* Prevents double-tap zoom on mobile */
+}
+
+/* Below the xl breakpoint the document is the scroller so native
+   pull-to-refresh works (iOS Safari only triggers it on the root scroller). */
+@media (max-width: 1279.98px) {
+  html,
+  body {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  body {
+    overflow: visible;
+  }
 }
 
 /* a {
