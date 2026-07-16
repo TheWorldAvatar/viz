@@ -138,7 +138,7 @@ export default function PopoverActionButton({
                   >
                     <div
                       {...sheet.dragHandleProps}
-                      className="flex shrink-0 cursor-grab touch-none items-center justify-center pb-1 active:cursor-grabbing"
+                      className="flex shrink-0 cursor-grab touch-none items-center justify-center -mx-2 -mt-2 px-2 pt-3 pb-2 active:cursor-grabbing"
                       role="separator"
                       aria-label="Drag to resize"
                     >
