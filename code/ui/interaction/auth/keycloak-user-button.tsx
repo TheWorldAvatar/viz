@@ -24,9 +24,10 @@ export default function KeycloakUserButton() {
           <span className="text-md font-bold">{userDisplayName}</span>
         </div>
         <hr className="w-full border-t border-border my-1" />
-        <div className="p-2">
+        <div className="p-2 max-md:w-full">
           <Link
-            className="py-2 px-8 rounded-md transition-colors duration-200 hover:bg-ring"
+            className="w-full min-h-12 justify-center py-2 px-8 rounded-md transition-colors duration-200 hover:bg-ring
+              max-md:flex max-md:items-center max-md:px-4 max-md:border max-md:border-border max-md:font-medium"
             prefetch={false}
             href="/logout"
           >
