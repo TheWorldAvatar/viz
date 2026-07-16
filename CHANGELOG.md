@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.1
+
+### Changes
+
+- Corrected width of searchable filter dropdown
+
 ## 5.81.0
 
 ### Changes
