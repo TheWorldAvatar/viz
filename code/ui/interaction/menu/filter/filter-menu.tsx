@@ -42,6 +42,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
     const dict: Dictionary = useDictionary();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(props.hasNoActiveFilters);
     const isConnected: boolean = useConnected();
+    const filterableColumns: EnhancedColumnDef<FieldValues>[] = props.columns.filter(column => column.dataType !== "array");
 
     const setIsOpen: Dispatch<SetStateAction<boolean>> = (valueOrFn) => {
         // Early termination without active filter to prevent data view
@@ -84,36 +85,37 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         </section>
         <section className={`${props.hasNoActiveFilters ? "h-[70vh]" : "h-[50vh]"} overflow-y-auto px-1 w-full`}>
             {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
-                props.columns.map((column, index) => {
-                    if (column.dataType === "array") return;
-                    const fieldId: string = column.id;
-                    const fieldTitle: string = column.header.toString();
-                    const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
-                    const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
-                    return <Accordion
-                        key={index}
-                        id={fieldId}
-                        title={fieldTitle}
-                        isActive={currentFilter.length > 0}
-                        disabled={!isConnected}
-                    >
-                        <RegistryFilter
-                            type={props.entityType}
-                            field={fieldId}
-                            fieldType={column.dataType}
-                            lifecycleStage={LifecycleStageMap.OUTSTANDING}
-                            selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
-                            filters={props.filters}
+                filterableColumns.length === 0 ?
+                    <p className="text-muted-foreground text-center py-2">{dict.message.noTasks}</p> :
+                    filterableColumns.map((column, index) => {
+                        const fieldId: string = column.id;
+                        const fieldTitle: string = column.header.toString();
+                        const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
+                        const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
+                        return <Accordion
+                            key={index}
+                            id={fieldId}
+                            title={fieldTitle}
+                            isActive={currentFilter.length > 0}
                             disabled={!isConnected}
-                            onSubmission={(selectedOptions: string[]) => {
-                                if (isConnected) {
-                                    props.updateFilter(column.id.toString(), selectedOptions);
-                                    setIsMenuOpen(false);
-                                }
-                            }}
-                        />
-                    </Accordion>
-                })}
+                        >
+                            <RegistryFilter
+                                type={props.entityType}
+                                field={fieldId}
+                                fieldType={column.dataType}
+                                lifecycleStage={LifecycleStageMap.OUTSTANDING}
+                                selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
+                                filters={props.filters}
+                                disabled={!isConnected}
+                                onSubmission={(selectedOptions: string[]) => {
+                                    if (isConnected) {
+                                        props.updateFilter(column.id.toString(), selectedOptions);
+                                        setIsMenuOpen(false);
+                                    }
+                                }}
+                            />
+                        </Accordion>
+                    })}
         </section>
         <footer className="shrink-0 -mx-2 border-t border-border pt-2 px-3">
             <Button

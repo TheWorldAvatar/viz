@@ -177,6 +177,7 @@
     "noData": "Keine Daten verfügbar",
     "noInstances": "Keine Instanzen verfügbar. Bitte erstellen Sie eine neue Instanz.",
     "noResultFound": "Keine Ergebnisse gefunden",
+    "noTasks": "Es sind keine Aufgaben verfügbar.",
     "mapSelectInstruction": "Ein Objekt auswählen...",
     "mapSelectFeature": "Wählen Sie ein Merkmal auf der Karte aus, um dessen Informationen im Detail zu erkunden.",
     "mapOverlapFeatures": "Mehrere überlappende Merkmale wurden im angeklickten Bereich erkannt. Bitte wählen Sie ein bestimmtes Merkmal aus, um genauere Informationen zu erhalten.",
