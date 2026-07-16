@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// Fraction of the sheet height that is collapsed away when the panel is snapped to peek.
-const PEEK_RATIO: number = 0.55;
 // Releasing the panel dragged down beyond this fraction of its height dismisses the sheet.
-const CLOSE_RATIO: number = 0.75;
+const CLOSE_RATIO: number = 0.4;
 // Downward pointer speed (px/ms) that dismisses the sheet regardless of position.
 const FLICK_VELOCITY: number = 0.5;
+// A flick only dismisses once dragged this far, so a stray twitch on tap cannot close the sheet.
+const FLICK_MIN_RATIO: number = 0.1;
 
 interface UseDraggableSheetParams {
   enabled: boolean;
@@ -90,22 +90,16 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
     dragStart.current = null;
     setIsDragging(false);
 
-    const peekOffset: number = sheetHeightRef.current * PEEK_RATIO;
     const offset: number = offsetRef.current;
     const velocity: number = lastSample.current.velocity;
 
-    // A downward flick, or a slow drag past the close threshold, dismisses the sheet.
-    if ((velocity > FLICK_VELOCITY && offset > peekOffset / 2) || offset > sheetHeightRef.current * CLOSE_RATIO) {
-      applyOffset(0);
+    // The sheet is either expanded or gone, so it always springs back and only the release decides
+    // whether it is also dismissed: a downward flick, or a slow drag past the close threshold.
+    applyOffset(0);
+    if ((velocity > FLICK_VELOCITY && offset > sheetHeightRef.current * FLICK_MIN_RATIO)
+      || offset > sheetHeightRef.current * CLOSE_RATIO) {
       props.onClose();
-      return;
     }
-    // An upward flick expands; otherwise snap to the nearer of expanded (0) or peek.
-    if (velocity < -FLICK_VELOCITY) {
-      applyOffset(0);
-      return;
-    }
-    applyOffset(offset > peekOffset / 2 ? peekOffset : 0);
   };
 
   if (!props.enabled) {

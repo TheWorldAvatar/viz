@@ -32,7 +32,7 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param setIsOpen Optional dispatch action to control the open state of popover.
  * @param onClose Optional actions to perform on close.
  * @param {Placement} placement Optional position of popover.
- * @param {boolean} draggable Optional flag to render a drag handle on the bottom sheet, allowing the sheet to be dragged between an expanded and peek height, or dismissed by dragging past the bottom.
+ * @param {boolean} draggable Optional flag to render a drag handle on the bottom sheet, allowing the sheet to be dismissed by dragging it past the bottom.
  * @param {boolean} bottomSheet Optional flag to force the bottom-sheet presentation on larger screens; mobile always renders as a sheet.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
@@ -123,9 +123,6 @@ export default function PopoverActionButton({
           <FloatingFocusManager context={popover.context} modal={false}>
             <div
               ref={popover.refs.setFloating}
-              // While dragging/peeking the panel is translated down but this container keeps its
-              // full layout height, so let pointer events fall through it and re-enable them on the
-              // panel below, otherwise clicks in the empty area above the peek are treated as inside.
               style={isDraggable ? { ...floatingStyles, pointerEvents: "none" } : floatingStyles}
               {...popover.getFloatingProps()}
             >
