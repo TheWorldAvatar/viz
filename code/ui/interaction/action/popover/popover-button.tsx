@@ -63,8 +63,6 @@ export default function PopoverActionButton({
 }: Readonly<PopoverActionButtonProps>) {
   const validChildren: React.ReactNode[] = React.Children.toArray(children) as React.ReactNode[];
   const screenType: ScreenType = useScreenType();
-  // The popover is presented as a full-width bottom sheet on mobile, or whenever a caller
-  // explicitly opts in via `bottomSheet` (e.g. to force the "from below" look on tablet).
   const isSheet: boolean = screenType == ScreenTypeMap.MOBILE || bottomSheet;
   const isDraggable: boolean = draggable && isSheet;
 
