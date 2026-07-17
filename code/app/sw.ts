@@ -23,6 +23,9 @@ const bgSyncPlugin: BackgroundSyncPlugin = new BackgroundSyncPlugin("form-submis
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
+  precacheOptions: {
+    ignoreURLParametersMatching: [/.*/],
+  },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
