@@ -143,7 +143,7 @@ export function useRegistryGrid(
                 // Trigger fetch once the user scrolls past the halfway mark of the loaded data.
                 // Scroll events may skip indices (especially on Android momentum scrolling),
                 // so this must be a range check rather than an equality check
-                if (dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
+                if (previewData.length > 0 && dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
                     fetchNextPage();
                 }
             }
