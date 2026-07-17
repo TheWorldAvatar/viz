@@ -2,9 +2,10 @@ import { Metadata } from "next";
 
 import { Modules, PageTitles } from "@/io/config/routes";
 import SettingsStore from "@/io/config/settings";
-import { FormType } from "@/types/form";
+import { FormType, FormTypeMap } from "@/types/form";
 import { NavBarItemSettings, UISettings } from "@/types/settings";
 import { TaskFormContainerComponent } from "@/ui/interaction/form/task-form-container";
+import { notFound } from "next/navigation";
 
 type PageProps = {
     params: Promise<{ form: FormType }>;
@@ -39,11 +40,18 @@ export default async function TaskFormPage({ params, searchParams }: PageProps) 
         console.warn("Failed to get UI settings offline, using local fallback", e);
     }
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
-    return (
-        <TaskFormContainerComponent
-            id={id}
-            entityType={entityType}
-            formType={form}
-        />
-    );
+
+    if (form === FormTypeMap.CANCEL || form === FormTypeMap.COMPLETE || form === FormTypeMap.DISPATCH ||
+        form === FormTypeMap.REPORT || form === FormTypeMap.ACCRUAL || form === FormTypeMap.VIEW ||
+        form === FormTypeMap.EXEMPT
+    ) {
+        return (
+            <TaskFormContainerComponent
+                id={id}
+                entityType={entityType}
+                formType={form}
+            />
+        );
+    }
+    notFound();
 }

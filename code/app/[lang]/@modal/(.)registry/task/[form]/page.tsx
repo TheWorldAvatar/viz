@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import { Modules, PageTitles } from "@/io/config/routes";
 import SettingsStore from "@/io/config/settings";
-import { FormType } from "@/types/form";
+import { FormType, FormTypeMap } from "@/types/form";
 import { NavBarItemSettings, UISettings } from "@/types/settings";
 import { InterceptTaskFormContainerComponent } from "@/ui/interaction/form/task-form-container";
 
@@ -34,11 +34,17 @@ export default async function InterceptTaskFormPage({ params, searchParams }: Pa
     const { form } = await params;
     const uiSettings: UISettings = SettingsStore.getUISettings();
     const entityType: string = uiSettings?.resources?.registry?.data ?? "";
-    return (
-        <InterceptTaskFormContainerComponent
-            id={id}
-            entityType={entityType}
-            formType={form}
-        />
-    );
+
+    if (form === FormTypeMap.CANCEL || form === FormTypeMap.COMPLETE || form === FormTypeMap.DISPATCH ||
+        form === FormTypeMap.REPORT || form === FormTypeMap.ACCRUAL || form === FormTypeMap.VIEW ||
+        form === FormTypeMap.EXEMPT
+    ) {
+        return (
+            <InterceptTaskFormContainerComponent
+                id={id}
+                entityType={entityType}
+                formType={form}
+            />
+        );
+    }
 }
