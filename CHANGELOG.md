@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.2
+
+### Changes
+
+- Overall mobile UI improvements (interactions and design)
+- Improved the custom pull to Refresh functionality for mobile
+- Made the popover component draggable so the user can resize the component by dragging its border at the top
+- Improved the filter design on mobile
+- Improved global styling for mobile for Safari and Chrome browsers
+
 ## 5.81.1
 
 ### Changes
@@ -13,6 +23,7 @@
 ### Changes
 
 - Added void status, user may void and unvoid a task
+- Bump min version of `VisBackend Agent` from `v1.59.0` to `v1.61.0`
 
 ## 5.80.5
 
@@ -105,6 +116,7 @@
 ### Changes
 
 - Send local timestamp as parameter to backend API for outstanding tasks
+- Bump min version of `VisBackend Agent` from `v1.57.0` to `v1.59.0`
 
 ## 5.78.0
 
