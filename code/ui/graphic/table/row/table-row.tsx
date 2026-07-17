@@ -100,7 +100,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED,
         RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row.status.toLowerCase())
       ) {
-        await execReviewBillableAction(row, props.accountType, navigateToDrawer);
+        await execReviewBillableAction(row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
       } else {
         navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
       }

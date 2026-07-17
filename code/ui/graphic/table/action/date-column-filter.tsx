@@ -37,36 +37,38 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
       disableMobileView={true}
       inline={true}
     >
-      <Button
-        leftIcon="filter_alt"
-        iconSize="medium"
-        size="icon"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
-        }}
-        tooltipText={dict.action.applyFilter}
-        variant="primary"
-        className="p-5"
-        disabled={props.disabled || !selectedDate}
-        aria-label={interpolate(dict.action.filterBy, props.label)}
-      />
-      <Button
-        leftIcon="filter_list_off"
-        iconSize="medium"
-        size="icon"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          props.onSubmission([]);
-        }}
-        tooltipText={dict.action.clearFilter}
-        variant="secondary"
-        disabled={!selectedDate || props.disabled}
-        className="p-5 border border-border"
-        aria-label={interpolate(dict.action.clearFilterFor, props.label)}
-      />
+      <div className="flex gap-2 ml-2">
+        <Button
+          leftIcon="filter_alt"
+          iconSize="medium"
+          size="icon"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
+          }}
+          tooltipText={dict.action.applyFilter}
+          variant="primary"
+          className="p-5 border border-border"
+          disabled={props.disabled || !selectedDate}
+          aria-label={interpolate(dict.action.filterBy, props.label)}
+        />
+        <Button
+          leftIcon="filter_list_off"
+          iconSize="medium"
+          size="icon"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            props.onSubmission([]);
+          }}
+          tooltipText={dict.action.clearFilter}
+          variant="secondary"
+          disabled={!selectedDate || props.disabled}
+          className="p-5 border border-border"
+          aria-label={interpolate(dict.action.clearFilterFor, props.label)}
+        />
+      </div>
     </DateInput>
   );
 }

@@ -31,8 +31,10 @@ import {
 } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
-import { DATE_KEY, EVENT_KEY } from "@/utils/constants";
+import { DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
+import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
 import { FORM_STATES, parseBranches, parsePricingModels, parsePropertyShapeOrGroupList } from "./form-utils";
@@ -419,12 +421,30 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
       browserStorageManager.set(formattedEntityType, newIri);
       handleFormClose();
-      handleDrawerClose(() => {
+      handleDrawerClose(async () => {
         // For assign price only, move to the next step to gen invoice
         if (formType === FormTypeMap.ASSIGN_PRICE) {
-          router.replace(
-            buildUrl(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(browserStorageManager.get(EVENT_KEY))}`)
-          );
+          const eventId: string = getId(browserStorageManager.get(EVENT_KEY));
+          if (canSkipOptionalAccrual(browserStorageManager.get(TASK_STATUS_KEY))) {
+            let loadingToast: string | number;
+            await submitOptionalAccrual({
+              taskId: eventId,
+              contract: getId(id),
+              date: browserStorageManager.get(DATE_KEY) as string,
+              onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
+              onSuccess: () => {
+                router.refresh();
+                router.back();
+              },
+              onError: (message) => toast(message, "error"),
+              fallbackError: dict.message.error,
+              onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
+            });
+          } else {
+            router.replace(
+              buildUrl(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(browserStorageManager.get(EVENT_KEY))}`)
+            );
+          }
           // Close search modal on success
         } else if (formType === FormTypeMap.SEARCH) {
           props.setShowSearchModalState(false);

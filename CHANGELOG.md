@@ -2,6 +2,37 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.2
+
+### Changes
+
+- Overall mobile UI improvements (interactions and design)
+- Improved the custom pull to Refresh functionality for mobile
+- Made the popover component draggable so the user can resize the component by dragging its border at the top
+- Improved the filter design on mobile
+- Improved global styling for mobile for Safari and Chrome browsers
+
+## 5.81.1
+
+### Changes
+
+- Corrected width of searchable filter dropdown
+
+## 5.81.0
+
+### Changes
+
+- Added void status, user may void and unvoid a task
+- Bump min version of `VisBackend Agent` from `v1.59.0` to `v1.61.0`
+
+## 5.80.5
+
+### Changes
+
+- Changed accural behaviour to silently accrues completed, cancelled, and reported tasks on their first billable review.
+- Preserves the editable accrual form for later revisions and excludes already billable tasks.
+- It still keeps pricing assignment as a prerequisite when no pricing model exists.
+
 ## 5.80.4
 
 ### Bug fixes
@@ -85,6 +116,7 @@
 ### Changes
 
 - Send local timestamp as parameter to backend API for outstanding tasks
+- Bump min version of `VisBackend Agent` from `v1.57.0` to `v1.59.0`
 
 ## 5.78.0
 
