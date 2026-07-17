@@ -7,13 +7,7 @@ const FLICK_VELOCITY: number = 0.5;
 // A flick only dismisses once dragged this far, so a stray twitch on tap cannot close the sheet.
 const FLICK_MIN_RATIO: number = 0.1;
 
-interface UseDraggableSheetParams {
-  enabled: boolean;
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-interface UseDraggableSheetReturn {
+interface useDraggableSheetReturn {
   sheetRef: React.RefObject<HTMLDivElement>;
   sheetStyle: React.CSSProperties;
   dragHandleProps: Pick<
@@ -25,11 +19,15 @@ interface UseDraggableSheetReturn {
 /**
  * A hook that provides the necessary props to make a bottom sheet draggable.
  * 
- * @param {boolean} enabled Whether the drag behaviour is active.
+ * @param {boolean} isDraggable Whether the drag behaviour is active.
  * @param {boolean} isOpen Current open state, used to reset the offset once closed.
  * @param {void} onClose Invoked when the sheet is dragged past the close threshold.
  */
-export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): UseDraggableSheetReturn {
+export function useDraggableSheet(
+  isDraggable: boolean,
+  isOpen: boolean,
+  onClose: () => void
+): useDraggableSheetReturn {
   // The height collapsed away from the sheet. 0 means fully expanded.
   const [dragOffset, setDragOffset] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -48,10 +46,10 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
 
   // Reset the drag offset once the sheet is closed so it reopens fully expanded.
   useEffect(() => {
-    if (!props.isOpen) {
+    if (!isOpen) {
       applyOffset(0);
     }
-  }, [props.isOpen]);
+  }, [isOpen]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -98,11 +96,11 @@ export function useDraggableSheet(props: Readonly<UseDraggableSheetParams>): Use
     applyOffset(0);
     if ((velocity > FLICK_VELOCITY && offset > sheetHeightRef.current * FLICK_MIN_RATIO)
       || offset > sheetHeightRef.current * CLOSE_RATIO) {
-      props.onClose();
+      onClose();
     }
   };
 
-  if (!props.enabled) {
+  if (!isDraggable) {
     return { sheetRef, sheetStyle: {}, dragHandleProps: {} };
   }
 

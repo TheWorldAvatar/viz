@@ -92,11 +92,11 @@ export default function PopoverActionButton({
       zIndex: 999998,
     };
 
-  const sheet: ReturnType<typeof useDraggableSheet> = useDraggableSheet({
-    enabled: isDraggable,
-    isOpen: popover.isOpen,
-    onClose: () => popover.setIsOpen(false),
-  });
+  const sheet: ReturnType<typeof useDraggableSheet> = useDraggableSheet(
+    isDraggable,
+    popover.isOpen,
+    () => popover.setIsOpen(false)
+  );
 
   if (validChildren.length === 0) {
     return null;
