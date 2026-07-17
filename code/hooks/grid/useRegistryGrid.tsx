@@ -61,7 +61,9 @@ export function useRegistryGrid(
     const [selectedCount, setSelectedCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
-    const isFetchingRef: React.RefObject<boolean> = useRef<boolean>(false);
+    // Synchronous lock against duplicate fetch triggers: scroll events fire faster
+    // than state re-renders, so the onChange guard cannot rely on isFetching alone
+    const fetchLockRef: React.RefObject<boolean> = useRef<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
 
@@ -108,12 +110,12 @@ export function useRegistryGrid(
         clearTasks();
         setHasMore(true);
         setIsInitialLoading(true);
-        isFetchingRef.current = true;
+        fetchLockRef.current = true;
         setIsFetching(true);
     }
 
     const fetchNextPage = () => {
-        isFetchingRef.current = true;
+        fetchLockRef.current = true;
         setPage((prev) => prev + 1);
         setIsFetching(true);
     }
@@ -141,7 +143,7 @@ export function useRegistryGrid(
                 // Trigger fetch once the user scrolls past the halfway mark of the loaded data.
                 // Scroll events may skip indices (especially on Android momentum scrolling),
                 // so this must be a range check rather than an equality check
-                if (dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !isFetchingRef.current && hasMore) {
+                if (dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
                     fetchNextPage();
                 }
             }
@@ -151,7 +153,7 @@ export function useRegistryGrid(
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
 
     useEffect(() => {
-        isFetchingRef.current = true;
+        fetchLockRef.current = true;
         setIsFetching(true);
         // To prevent hydration effects when reading from storage
         if (localStorageManager.get(TASK_VIEWER_FILTER)) {
@@ -223,7 +225,7 @@ export function useRegistryGrid(
             if (parsedData.length < GRID_LIMIT) {
                 setHasMore(false);
             }
-            isFetchingRef.current = false;
+            fetchLockRef.current = false;
             setIsFetching(false);
             setIsInitialLoading(false);
         }
