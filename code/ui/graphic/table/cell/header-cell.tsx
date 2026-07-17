@@ -83,6 +83,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
               leftIcon="filter_list"
               variant={isActiveFilter ? "secondary" : "ghost"}
               tooltipText={dict.action.filter}
+              tooltipPosition="top-start"
               size="icon"
               className="ml-2"
               aria-label={interpolate(dict.action.filterBy, props.header.column.columnDef.header as string)}

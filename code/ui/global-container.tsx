@@ -11,6 +11,7 @@ import { useContextMenu } from "@/hooks/useContextMenu";
 import { useOfflineWarning } from "@/hooks/useOfflineWarning";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { UISettings } from "@/types/settings";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import Trex from "@/utils/trex";
 import { usePathname } from "next/navigation";
 import ContextMenu from "./interaction/context-menu/context-menu";
@@ -33,8 +34,9 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
   const backgroundImageUrl: string = useBackgroundImageUrl();
   const pathname = usePathname();
   const { contextMenuVisible, x: contextMenuX, y: contextMenuY, } = useContextMenu();
-  usePullToRefresh();
+  const pullIndicatorRef: React.RefObject<HTMLDivElement | null> = usePullToRefresh();
   useOfflineWarning();
+  const isMapPage: boolean = pathname.endsWith("map");
 
   const togglePopup = () => {
     setPopup(!popup);
@@ -44,24 +46,29 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
     <Provider store={reduxStore}>
       <div className="flex h-dvh w-full flex-col overflow-hidden">
         <HeaderBar pages={props.pages} settings={props.settings} />
-        <main className="flex w-full flex-1 min-h-0"
+        <main className="relative flex w-full flex-1 min-h-0"
           style={{
             backgroundImage: `url(${backgroundImageUrl})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}>
-          {!pathname.endsWith("map") && (
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center">
+            <div ref={pullIndicatorRef} className="mt-2 rounded-full bg-background border border-ring p-4 shadow-md opacity-0">
+              <LoadingSpinner isSmall={true} />
+            </div>
+          </div>
+          {!isMapPage && (
             <NavMenu
               pages={props.pages}
               settings={props.settings}
               isMobile={false}
             />
           )}
-          <div className="flex flex-col flex-1 min-h-0 min-w-0 bg-muted h-full box-border">
-            <section className="grow overflow-y-auto">
+          <div className="flex flex-col flex-1 min-h-0 min-w-0 bg-muted box-border">
+            <section className="flex-1 min-h-0 overflow-y-auto">
               {props.children}
             </section>
-            {!pathname.endsWith("map") && <Footer />}
+            {!isMapPage && <Footer />}
           </div>
         </main>
       </div>
@@ -70,12 +77,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
       {popup && <Trex callback={togglePopup} />}
 
       {/* Conditionally render the ContextMenu component based on contextMenuVisible */}
-      {contextMenuVisible && (
-        <ContextMenu
-          x={contextMenuX}
-          y={contextMenuY}
-        />
-      )}
+      {contextMenuVisible && <ContextMenu x={contextMenuX} y={contextMenuY} />}
     </Provider>
   );
 }

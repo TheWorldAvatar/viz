@@ -177,6 +177,7 @@
     "noData": "No data available",
     "noInstances": "No instances available. Please create a new instance.",
     "noResultFound": "No results found",
+    "noTasks": "No tasks available.",
     "mapSelectInstruction": "Select a feature...",
     "mapSelectFeature": "Select a feature on the map to explore its information in detail.",
     "mapOverlapFeatures": "Multiple overlapping features detected within the clicked area. Please select a specific feature for more detailed information.",

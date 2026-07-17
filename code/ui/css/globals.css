@@ -155,7 +155,7 @@
     --error-background-hover: hsl(2, 100%, 15%);
     --error-foreground: hsl(2, 100%, 96%);
     --error-border: hsl(2, 100%, 35%);
-    
+
     --success-background: hsl(156, 40%, 20%);
     --success-background-hover: hsl(156, 40%, 15%);
     --success-foreground: hsl(156, 40%, 86%);
@@ -246,13 +246,14 @@
 html,
 body {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   overflow: hidden;
+  overscroll-behavior-y: none; /* No document rubber-banding; pull-to-refresh is custom */
   touch-action: manipulation; /* Prevents double-tap zoom on mobile */
 }
 

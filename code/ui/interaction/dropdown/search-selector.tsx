@@ -39,7 +39,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <>
-      <div className="flex flex-row items-stretch justify-between gap-1.5">
+      <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
         <div className="flex flex-1 items-stretch">
           <input
             autoFocus
@@ -68,7 +68,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             }}
             tooltipText={dict.action.applyFilter}
             variant="primary"
-            className="h-full w-12 rounded-l-none rounded-r-sm border border-border "
+            className="h-full w-12 border border-border ml-2"
             disabled={props.disabled || selectedOptions?.length == 0}
             aria-label={"Submit for " + props.label}
           />
@@ -87,7 +87,8 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
               props.setSearchString("");
             }
           }}
-          variant="ghost"
+          variant="secondary"
+          className="p-5 border border-border"
           disabled={props.disabled}
           tooltipText={dict.action.clear}
           aria-label={dict.action.clear}

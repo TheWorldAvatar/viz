@@ -17,3 +17,5 @@ export const DEFAULT_MAX_CHARACTER_LENGTH: number = 25;
 export const YEARS_PER_PAGE: number = 12;
 
 export const MAX_SORT_COLUMNS: number = 3;
+
+export const NO_PULL_REFRESH_ATTRIBUTE: string = "data-no-pull-refresh";
