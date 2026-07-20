@@ -1,4 +1,4 @@
-import { autoUpdate, ElementProps, flip, offset, Placement, shift, size, useClick, useDismiss, useFloating, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
+import { autoUpdate, ElementProps, flip, offset, Placement, shift, useClick, useDismiss, useFloating, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
 import React, { useState } from "react";
 
 export function usePopover(
