@@ -38,7 +38,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
 
   return (
-    <>
+    <div className="w-full sm:w-sm xl:w-lg">
       <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
         <div className="flex flex-1 items-stretch">
           <input
@@ -94,7 +94,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           aria-label={dict.action.clear}
         />}
       </div>
-      <div className="max-h-80 w-full overflow-y-auto">
+      <div className="max-h-80 w-full overflow-y-auto overflow-x-auto">
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}
@@ -120,6 +120,6 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           {props.options.length > 20 && "..."}
         </p>
       </div>
-    </>
+    </div>
   );
 }
