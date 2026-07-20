@@ -2,14 +2,15 @@
  * Server side code to read and cache all JSON configuration files.
  */
 
+import uiSettingsJson from '@/public/config/ui-settings.json';
+import { LifecycleStageMap } from '@/types/form';
 import fs from 'fs';
 import path from 'path';
-import { LifecycleStageMap } from '@/types/form';
 
 import { JsonObject } from '@/types/json';
 import { DataSettings, MapSettings, TableColumnOption, TableColumnSettings, UISettings } from '@/types/settings';
-import { logColours } from '@/utils/logColours';
 import { MAX_SORT_COLUMNS } from "@/utils/constants";
+import { logColours } from '@/utils/logColours';
 
 /**
  * Handles the retrieval and storage of settings from the user provided configuration files.
@@ -19,12 +20,11 @@ import { MAX_SORT_COLUMNS } from "@/utils/constants";
 export default class SettingsStore {
 
   // Location of all configuration files
-  private static readonly UI_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/ui-settings.json");
   private static readonly DATA_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/data-settings.json");
   private static readonly MAP_SETTINGS_FILE: string = path.join(process.cwd(), "public/config/map-settings.json");
 
   // Cached settings
-  private static UI_SETTINGS: UISettings | null = null;
+  private static UI_SETTINGS: UISettings = (uiSettingsJson as unknown) as UISettings;
   private static MAP_SETTINGS: MapSettings | null = null;
   private static MAP_DATA_SETTINGS: string | null = null;
   private static TABLE_COLUMN_SETTINGS: TableColumnSettings = {};
@@ -34,9 +34,6 @@ export default class SettingsStore {
    * Retrieves UI settings from `SettingsStore` class
    */
   public static getUISettings(): UISettings {
-    if (!this.UI_SETTINGS) {
-      this.readUISettings();
-    }
     return this.UI_SETTINGS;
   }
 
@@ -72,17 +69,6 @@ export default class SettingsStore {
     }
     return lifecycleStage === LifecycleStageMap.GENERAL ? this.TABLE_COLUMN_SETTINGS[entityType]
       : this.TABLE_COLUMN_SETTINGS[lifecycleStage];
-  }
-
-  /**
-   * Reads the initialisation settings.
-   */
-  public static readUISettings(): void {
-    const jsonifiedSettings: UISettings = this.readFile<UISettings>(this.UI_SETTINGS_FILE);
-    if (jsonifiedSettings.modules.dashboard && !jsonifiedSettings.resources?.dashboard?.url) {
-      console.warn(`${logColours.Yellow}modules.dashboard${logColours.Reset} module set to true but ${logColours.Yellow}resources.dashboard.url${logColours.Reset} is empty`);
-    }
-    this.UI_SETTINGS = jsonifiedSettings;
   }
 
   /**

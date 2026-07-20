@@ -6,7 +6,7 @@ import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "@/types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "@/types/form";
 import { JsonObject } from "@/types/json";
 import { FileDownloadButton } from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
@@ -134,7 +134,7 @@ export default function RegistryRowAction(
       props.lifecycleStage == LifecycleStageMap.CLOSED
     ) {
       // Navigate to task view modal route (drawer)
-      navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
+      navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
     } else {
       // Move to the view page for the specific record (not a drawer)
       navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
@@ -252,7 +252,7 @@ export default function RegistryRowAction(
                 label={parseWordsForLabels(dict.action.view)}
                 onClick={() => {
                   handleClickRowAction();
-                  navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
+                  navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
                 }}
               />}
               {isActionAllowed("COMPLETE_TASK") && <RowActionButton
@@ -264,7 +264,7 @@ export default function RegistryRowAction(
                   // Set a flag to indicate if the bill has been accrued, which determines the next navigation action
                   browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED,
                     (props.row.status.toLowerCase() === RegistryStatusMap.BILLABLE_COMPLETED).toString());
-                  navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, recordId);
+                  navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.COMPLETE}?id=${recordId}`);
                 }}
               />}
               {isActionAllowed("ASSIGN_TASK") && <RowActionButton
@@ -272,7 +272,7 @@ export default function RegistryRowAction(
                 label={dict.action.dispatch}
                 onClick={() => {
                   handleClickRowAction();
-                  navigateToDrawer(Routes.REGISTRY_TASK_DISPATCH, recordId);
+                  navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${recordId}`);
                 }}
               />}
               {isActionAllowed("RESCHEDULE_TASK") &&
@@ -294,7 +294,7 @@ export default function RegistryRowAction(
                   label={dict.action.cancel}
                   onClick={() => {
                     handleClickRowAction();
-                    navigateToDrawer(Routes.REGISTRY_TASK_CANCEL, recordId);
+                    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.CANCEL}?id=${recordId}`);
                   }}
                 />
               )}
@@ -305,7 +305,7 @@ export default function RegistryRowAction(
                   disabled={isLoading}
                   onClick={() => {
                     handleClickRowAction();
-                    navigateToDrawer(Routes.REGISTRY_TASK_REPORT, recordId);
+                    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.REPORT}?id=${recordId}`);
                   }}
                 />
               )}
@@ -348,7 +348,7 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={() => {
               handleClickRowAction();
-              navigateToDrawer(Routes.REGISTRY_TASK_EXEMPT, recordId);
+              navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.EXEMPT}?id=${recordId}`);
             }}
           />}
           {isActionAllowed("VIEW_BILLABLES") && <RowActionButton

@@ -23,7 +23,6 @@ import { Toaster } from "sonner";
  * first loaded. Runs on the server.
  */
 function initialise() {
-  SettingsStore.readUISettings();
   // Cache contents of optional static pages
   OptionalPages.loadPages();
 }

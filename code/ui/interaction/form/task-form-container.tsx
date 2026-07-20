@@ -1,16 +1,17 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import { useTaskData } from "@/hooks/form/api/useTaskData";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
-import { browserStorageManager } from "@/state/browser-storage-manager";
+import { browserStorageManager, localStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import {
@@ -30,13 +31,14 @@ import { FORM_STATES } from "@/ui/interaction/form/form-utils";
 import FormSkeleton from "@/ui/interaction/form/skeleton/form-skeleton";
 import { FormTemplate } from "@/ui/interaction/form/template/form-template";
 import { getTranslatedStatusLabel } from "@/ui/text/status/status";
-import { compareDates, getAfterDelimiter, getId, parseWordsForLabels, formatDateValue, interpolate } from "@/utils/client-utils";
+import { compareDates, formatDateValue, getAfterDelimiter, interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 
 interface TaskFormContainerComponentProps {
+  id: string;
   entityType: string;
   formType: FormType;
 }
@@ -88,14 +90,13 @@ export function TaskFormContainerComponent(
  * Fetches task data from the URL ID and handles task operations.
  */
 function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
-  const pathname = usePathname();
   const isPermitted = usePermissionGuard();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
   const { navigateToDrawer, handleDrawerClose } = useDrawerNavigation();
 
-  const id: string = getAfterDelimiter(pathname, "/");
+  const isConnected: boolean = useConnected();
 
   // State for form data
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -105,7 +106,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
-  const { task } = useTaskData(id, setIsFetching);
+  const { task } = useTaskData(props.id, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
@@ -132,8 +133,20 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       targetId?: string
     ): Promise<void> => {
       setIsFetching(true);
+
+      localStorageManager.get(eventType);
+
       try {
-        const template: FormTemplateType = await queryInternalTaskFormTemplate(eventType, getId(targetId));
+        let template: FormTemplateType;
+        if (!isConnected) {
+          template = JSON.parse(localStorageManager.get(eventType));
+        } else {
+          template = await queryInternalTaskFormTemplate(eventType, targetId);
+          if (!localStorageManager.get(eventType)) {
+            const cachedTemplate: FormTemplateType = await queryInternalTaskFormTemplate(eventType);
+            localStorageManager.set(eventType, JSON.stringify(cachedTemplate));
+          }
+        }
         if (template?.property) {
           setFormFields(template.property);
         }
@@ -150,11 +163,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     if (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.COMPLETE ||
       props.formType === FormTypeMap.ACCRUAL) {
-      getFormTemplate(props.formType, id);
+      getFormTemplate(props.formType, props.id);
     } else if (props.formType === FormTypeMap.REPORT || props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.EXEMPT) {
       getFormTemplate(props.formType);
     }
-  }, [id, props.formType]);
+  }, [props.id, props.formType]);
 
 
   // Handle form submission when buttons are clicked
@@ -170,7 +183,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   ) => {
     startLoading();
     let response: AgentResponseBody;
-    if (id != BULK_IDENTIFIER) {
+    if (props.id != BULK_IDENTIFIER) {
       let action = "";
       if (props.formType === FormTypeMap.DISPATCH) {
         action = "dispatch";
@@ -207,7 +220,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         // Override id with the current ID based on path
         response = await submitLifecycleAction({
           ...formData,
-          id
+          id: props.id
         }, "continue", true);
         setIsDuplicate(false);
       }
@@ -238,7 +251,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         // For completion of task if the bill is already accrued, navigate to accrual drawer
         if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true") {
           browserStorageManager.clear();
-          navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(id));
+          navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${props.id}`);
         } else {
           router.back();
         }
@@ -253,9 +266,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     isPost: boolean
   ) => {
     // Add current task id, contract, and date field
-    formData[FORM_STATES.ID] = task.id;
-    formData[FORM_STATES.CONTRACT] = task.contract;
-    formData[FORM_STATES.DATE] = task.date;
+    formData[FORM_STATES.ID] = task?.id;
+    formData[FORM_STATES.CONTRACT] = task?.contract;
+    formData[FORM_STATES.DATE] = task?.date;
 
     return await queryInternalApi(
       makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", action),
@@ -266,7 +279,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    navigateToDrawer(Routes.REGISTRY_TASK, action, id);
+    navigateToDrawer(Routes.REGISTRY_TASK, action, props.id);
   };
 
   return (
@@ -278,7 +291,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         </h1>
         {task?.date && (
           <h2 className="text-base md:text-lg md:mr-8">
-            {formatDateValue(task.date)}: {getTranslatedStatusLabel(task?.status, dict)}
+            {formatDateValue(task?.date)}: {getTranslatedStatusLabel(task?.status, dict)}
           </h2>
         )}
       </section>
