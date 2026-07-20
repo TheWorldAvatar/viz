@@ -1,4 +1,5 @@
 import { useDictionary } from "@/hooks/useDictionary";
+import { useConnected } from "@/hooks/useConnected";
 import useRefresh from "@/hooks/useRefresh";
 import { Dictionary } from "@/types/dictionary";
 import StatusComponent from "@/ui/text/status/status";
@@ -34,6 +35,7 @@ interface SearchSelectorProps {
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
+  const isConnected: boolean = useConnected();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
 
@@ -69,7 +71,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             tooltipText={dict.action.applyFilter}
             variant="primary"
             className="h-full w-12 border border-border ml-2"
-            disabled={props.disabled || selectedOptions?.length == 0}
+            disabled={props.disabled || !isConnected}
             aria-label={"Submit for " + props.label}
           />
         </div>
