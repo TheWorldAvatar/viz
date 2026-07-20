@@ -2,11 +2,12 @@
 
 Given that the platform is designed to be generalisable, this directory exists to allow users to customise their web contents according to their needs. It acts as the target for a Docker volume or bind mount, and should be mounted to the `/twa/public` directory within the deployed container. Files within it can then be accessed using the `$HOST/...` URL route.
 
-The uploaded content provided by the deploying developer should match the directory structure below. Please read the respective sections for the specific instructions. Do note that the example configuration are intended to disseminate information and may not be functional (i.e. to set up the platform). If you require sample files of a working example, please have a look over at the [example](../example/) directory.
+The uploaded content provided by the deploying developer should match the directory structure below. Please read the respective sections for the specific instructions. Do note that the example configuration are intended to disseminate information and may not be functional (i.e. to set up the platform). If you require sample files of a working example, please have a look over at the [example](../code/public/) directory.
 
 - [`config/`](#1-configuration): Contains config/settings files.
 - [`images/`](#2-assets): Custom image files.
 - [`optional-pages/`](#3-optional-pages): Markdown files for optional static content (with metadata from [gray-matter](https://www.npmjs.com/package/gray-matter)).
+- [`manifest_[lang].json`](#4-app-manifests): App manifests for Progressive Web Apps functionality based on language.
 
 ## Table of Contents
 
@@ -25,6 +26,7 @@ The uploaded content provided by the deploying developer should match the direct
   - [3. Optional Pages](#3-optional-pages)
     - [3.1 Fields](#31-fields)
     - [3.2 Sample](#32-sample)
+  - [4. App Manifests](#4-app-manifests)
 
 ## 1. Configuration
 
@@ -408,6 +410,8 @@ Instructions:
 
 The table column settings file in `config/` is optional and can be used to override default column settings for registry or billing tables. Its filename can be anything (for example, `table-settings.json` or `table-column-settings.json`). To enable it for registry, set `resources.registry.settings` in `config/ui-settings.json` to the exact filename you want to use. You can define table keys using entity types listed in `resources.registry.paths` (for example, `driver`) or specific views (`pending`, `active`, `archive`, `outstanding`, `scheduled`, `closed`, `account`, `pricing`, `invoice`, `billable`).
 
+There is a special `mobile` table key for users who can only view outstanding tasks in their entire portal. This will defined the fields they can see and filter by.
+
 Each table key maps to an array of column configuration objects. The supported object fields are:
 
 - `name` (required): The backend column identifier.
@@ -486,3 +490,13 @@ slug: landing // This must always be set to landing for the landing page
 
 Insert your content here
 ```
+
+## 4. App manifests
+
+The viz platform can be deployed as a `Progressive Web App` by including `manifest_[lang].json`, where `[lang]` is the translated language version based on the user's browser language. It is recommended for developers to only customise the following fields:
+
+- `name`: The name of the app. Please translate them in different versions if required.
+- `description`: The description of the app when installing it on the browser. Please translate them in different versions.
+- `start_url`: Typically `/` for local developments, but on deployment, it should follow the `ASSET_PREFIX` parameter. Use of `scope` is also possible to restrict to the specific path(s).
+- `icons`: Use only a `svg` icon to resize them.
+- `screenshots`: Change the `src` image placeholder for different previews in the downloading prompt. Note that the url should include `ASSET_PREFIX` for static assets in the viz.

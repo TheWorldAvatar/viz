@@ -25,8 +25,11 @@ import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, TASK_STATUS_KEY, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
+import { submitOptionalAccrual } from "@/utils/optional-accrual";
+import { toast } from "@/ui/interaction/action/toast/toast";
 import ArrayTextCell from "../cell/array-text-cell";
 
 export type EnhancedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
@@ -221,7 +224,7 @@ export function parseColumnsMetadata(
       filterFn: multiSelectFilter,
       size: effectiveWidth,
       enableSorting: true,
-      sortDescFirst: true,
+      sortDescFirst: false,
       sortingFn: isDateTimeColumn ? "datetime" : undefined,
     });
   }
@@ -449,11 +452,14 @@ export async function execReviewBillableAction(
   row: FieldValues,
   accountType: string,
   navigateToDrawer: (...urlParts: string[]) => void,
+  triggerRefresh: (() => void) | undefined,
+  dict: Dictionary,
 ): Promise<void> {
   const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
   const body: AgentResponseBody = await queryInternalApi(url);
   browserStorageManager.set(DATE_KEY, row.date);
   browserStorageManager.set(EVENT_KEY, row.event_id);
+  browserStorageManager.set(TASK_STATUS_KEY, row.status as string | undefined);
   try {
     const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
       InternalApiIdentifierMap.FILTER,
@@ -468,7 +474,24 @@ export async function execReviewBillableAction(
     console.error("Error fetching instances", error);
   }
   if (body.data.message == "true") {
-    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id))
+    if (canSkipOptionalAccrual(row.status as string | undefined)) {
+      let loadingToast: string | number;
+      await submitOptionalAccrual({
+        taskId: getId(row.event_id),
+        contract: getId(row.id),
+        date: row.date as string,
+        onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
+        onSuccess: (response) => {
+          toast(response.data?.message ?? dict.message.success, "success");
+          triggerRefresh?.();
+        },
+        onError: (message) => toast(message, "error"),
+        fallbackError: dict.message.error,
+        onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
+      });
+      return;
+    }
+    navigateToDrawer(Routes.REGISTRY_TASK_ACCRUAL, getId(row.event_id));
   } else {
     navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
   }

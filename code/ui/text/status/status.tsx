@@ -5,6 +5,7 @@ import { parseWordsForLabels } from "@/utils/client-utils";
 
 interface StatusComponentProps {
   status: string;
+  size?: "sm" | "default";
 }
 
 export function getTranslatedStatusLabel(
@@ -32,6 +33,8 @@ export function getTranslatedStatusLabel(
       return dict.title.accrued;
     case "issue":
       return dict.title.issue;
+    case RegistryStatusMap.VOIDED:
+      return dict.title.voided;
     case "rescinded":
       return dict.title.rescinded;
     case "terminated":
@@ -77,6 +80,11 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBackgroundColor = "var(--success-background)";
       statusBorderColor = "var(--success-border)";
       break;
+    case dict.title.voided.toLowerCase():
+      statusTextColor = "var(--void-foreground)";
+      statusBackgroundColor = "var(--void-background)";
+      statusBorderColor = "var(--void-border)";
+      break;
     case dict.title.rescinded.toLowerCase():
     case dict.title.terminated.toLowerCase():
       statusTextColor = "var(--error-foreground)";
@@ -89,10 +97,15 @@ export default function StatusComponent(props: Readonly<StatusComponentProps>) {
       statusBorderColor = "var(--neutral-border)";
   }
 
+  const sizeStyles: string =
+    props.size === "sm"
+      ? "text-sm px-3 py-0.5"
+      : "text-lg px-8 py-1";
+
   return (
     <span className="flex justify-center items-center">
       <p
-        className="text-lg px-8 py-1 rounded-4xl"
+        className={`${sizeStyles} rounded-4xl`}
         style={{
           color: statusTextColor,
           backgroundColor: statusBackgroundColor,

@@ -1,9 +1,10 @@
-import { autoUpdate, ElementProps, flip, offset, Placement, shift, useClick, useDismiss, useFloating, useFocus, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
+import { autoUpdate, ElementProps, flip, offset, Placement, shift, useClick, useDismiss, useFloating, useInteractions, UseInteractionsReturn, useRole } from "@floating-ui/react";
 import React, { useState } from "react";
 
 export function usePopover(
     placement: Placement = "top",
     isControlledOpen?: boolean,
+    disabled?: boolean,
     setIsControlledOpen?: React.Dispatch<React.SetStateAction<boolean>>,
     onClose?: () => void,) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,12 +30,13 @@ export function usePopover(
     });
 
     const context = floatingProps.context;
-    const click = useClick(context);
-    const focus: ElementProps = useFocus(context);
+    const click = useClick(context, {
+        enabled: !disabled,
+    });
     const dismiss: ElementProps = useDismiss(context);
     const role: ElementProps = useRole(context);
 
-    const interactions: UseInteractionsReturn = useInteractions([click, focus, dismiss, role]);
+    const interactions: UseInteractionsReturn = useInteractions([click, dismiss, role]);
 
     return React.useMemo(
         () => ({

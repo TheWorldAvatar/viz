@@ -2,6 +2,154 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.2
+
+### Changes
+
+- Overall mobile UI improvements (interactions and design)
+- Improved the custom pull to Refresh functionality for mobile
+- Made the popover component draggable so the user can resize the component by dragging its border at the top
+- Improved the filter design on mobile
+- Improved global styling for mobile for Safari and Chrome browsers
+
+## 5.81.1
+
+### Changes
+
+- Corrected width of searchable filter dropdown
+
+## 5.81.0
+
+### Changes
+
+- Added void status, user may void and unvoid a task
+- Bump min version of `VisBackend Agent` from `v1.59.0` to `v1.61.0`
+
+## 5.80.5
+
+### Changes
+
+- Changed accural behaviour to silently accrues completed, cancelled, and reported tasks on their first billable review.
+- Preserves the editable accrual form for later revisions and excludes already billable tasks.
+- It still keeps pricing assignment as a prerequisite when no pricing model exists.
+
+## 5.80.4
+
+### Bug fixes
+
+- Fixed auto refresh in mobile registry view after completion
+- Fixed cached copy of completed task after completion in mobile registry
+- Disabled string and date filters unless users have selected options
+
+## 5.80.3
+
+### Changes
+
+- Changed default sorting behaviour
+
+## 5.80.2
+
+### Changes
+
+- Allow reschedule of completed task up to accrual
+
+## 5.80.1
+
+### Bug fixes
+
+- Fix clear filters being enabled with no active filters while online
+
+## 5.80.0
+
+### Changes
+
+- Removed unused loading.gif
+- Added offline support for registry task mobile view with service workers
+- Enforce users to set filters first before viewing tasks
+- Caching of mobile task view filters and data into browser storage
+- Offline warnings
+- Added a view fields display to replace the view form in registry task mobile view
+- Pull gesture to refresh for mobile
+
+### Bug fixes
+
+- Empty default value for dependent form section
+
+## 5.79.5
+
+### Bug fixes
+
+- Missing favicon display in production builds
+
+## 5.79.4
+
+### Bug fixes
+
+- Fixed date column filter reset
+
+## 5.79.3
+
+### Bug fixes
+
+- Fixed missing mobile attachment viewer
+
+## 5.79.2
+
+### Bug fixes
+
+- Fixed date selection for date inputs
+- Updated designs of date inputs
+
+## 5.79.1
+
+### Changes
+
+- Renamed and updated design of the reset button for text filters
+- Updated the design for non-text filters
+
+### Bug fixes
+
+- Fixed reset for search input in the text filter
+
+## 5.79.0
+
+### Changes
+
+- Send local timestamp as parameter to backend API for outstanding tasks
+- Bump min version of `VisBackend Agent` from `v1.57.0` to `v1.59.0`
+
+## 5.78.0
+
+### Changes
+
+- Enabled progressive web app functionality
+
+## 5.77.0
+
+### Changes
+
+- Added a new UI for viewing outstanding assigned tasks on mobile interfaces
+- Updated design of popover elements for mobile
+
+## 5.76.5
+
+### Changes
+
+- Remove row selection on click in mass assignment mode
+- Disable mass assignment functionality for non operation users
+
+## 5.76.4
+
+### Changes
+
+- Added a new role to view attachments separately
+
+## 5.76.3
+
+### Changes
+
+- Corrected German translations for time filtering options
+
 ## 5.76.2
 
 ### Changes

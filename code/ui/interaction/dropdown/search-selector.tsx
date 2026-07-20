@@ -1,8 +1,8 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import useRefresh from "@/hooks/useRefresh";
-import { useState } from "react";
 import { Dictionary } from "@/types/dictionary";
 import StatusComponent from "@/ui/text/status/status";
+import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 
@@ -15,6 +15,8 @@ interface SearchSelectorProps {
   showOptions: boolean;
   onSubmission: (_options: string[]) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  disabled?: boolean;
 }
 
 /**
@@ -27,6 +29,8 @@ interface SearchSelectorProps {
  * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
+ * @param setIsLoading State function to set loading state.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
@@ -35,15 +39,16 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
 
   return (
     <>
-      <div className="flex flex-row items-end justify-between gap-1.5">
-        <div className="relative flex-1">
+      <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
+        <div className="flex flex-1 items-stretch">
           <input
             autoFocus
             type="text"
-            className="border border-border rounded pl-3 pr-14 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-[2px]"
+            className="border border-border rounded pl-3 py-2 w-full outline-none focus-visible:ring-focus focus-visible:ring-2"
             value={props.searchString}
             placeholder={dict.message.typeFilter}
             aria-label={"search input for " + props.label}
+            disabled={props.disabled}
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -52,25 +57,24 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
               props.setSearchString(event.target.value);
             }}
           />
-          <div className="absolute right-0 top-0 bottom-0 flex items-stretch">
-            <Button
-              leftIcon="filter_alt"
-              iconSize="medium"
-              size="icon"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                props.onSubmission(selectedOptions);
-              }}
-              tooltipText={dict.action.applyFilter}
-              variant="primary"
-              className="h-full rounded-l-none w-12"
-              aria-label={"Submit for " + props.label}
-            />
-          </div>
+          <Button
+            leftIcon="filter_alt"
+            iconSize="medium"
+            size="icon"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              props.onSubmission(selectedOptions);
+            }}
+            tooltipText={dict.action.applyFilter}
+            variant="primary"
+            className="h-full w-12 border border-border ml-2"
+            disabled={props.disabled || selectedOptions?.length == 0}
+            aria-label={"Submit for " + props.label}
+          />
         </div>
         {selectedOptions.length > 0 && <Button
-          leftIcon="filter_list_off"
+          leftIcon="indeterminate_check_box"
           iconSize="medium"
           size="icon"
           onClick={(event) => {
@@ -78,13 +82,19 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             event.stopPropagation();
             triggerRefresh();
             setSelectedOptions([]);
+            if (props.searchString.length > 0) {
+              props.setIsLoading(true);
+              props.setSearchString("");
+            }
           }}
-          tooltipText={dict.action.clearFilter}
-          variant="destructive"
-          aria-label={"Clear all options for " + props.label}
+          variant="secondary"
+          className="p-5 border border-border"
+          disabled={props.disabled}
+          tooltipText={dict.action.clear}
+          aria-label={dict.action.clear}
         />}
       </div>
-      <div className="max-h-60 overflow-y-auto">
+      <div className="max-h-80 w-full overflow-y-auto">
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}

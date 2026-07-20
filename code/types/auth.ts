@@ -31,6 +31,7 @@ export type HasPermissions = {
     reportTask: boolean;
     rescheduleTask: boolean;
     saveTask: boolean;
+    viewAttachment: boolean;
 };
 
 export type PermissionType = keyof HasPermissions;
@@ -66,13 +67,23 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
     },
+    VOID_TASK: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_EXEMPTED],
+    },
+    UNVOID_TASK: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.VOIDED],
+    },
     VIEW_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],
         status: [RegistryStatusMap.BILLABLE_CANCELLED, RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED, RegistryStatusMap.INVOICED],
     },
     VIEW_FILES: {
-        permission: "operation",
+        permission: "viewAttachment",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
         status: [],
     },
@@ -124,8 +135,8 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     },
     RESCHEDULE_TASK: {
         permission: "rescheduleTask",
-        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
-        status: [],
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
     },
 } as const;
 

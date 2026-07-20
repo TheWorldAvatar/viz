@@ -1,16 +1,17 @@
 import { useDictionary } from "@/hooks/useDictionary";
-import { useState } from "react";
 import { Dictionary } from "@/types/dictionary";
 import { BetweenComparisonOption, BetweenComparisonOptionMap, ComparisonOperator, ComparisonOperatorMap } from "@/types/table";
 import Button from "@/ui/interaction/button";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { interpolate } from "@/utils/client-utils";
+import { useState } from "react";
 import { getInitialFilters } from "../registry/registry-table-utils";
 
 interface TimeColumnFilterProps {
     label: string;
     currentVal: string[];
     onSubmission: (_options: string[]) => void;
+    disabled?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ interface TimeColumnFilterProps {
  * @param {string} label The name of the column.
  * @param {string[]} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered options.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>) {
     const dict: Dictionary = useDictionary();
@@ -97,9 +99,9 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
     }
 
     return (
-        <div className="flex flex-col w-62 gap-2">
-            <div className="flex w-62 space-x-1">
-                <div className="w-100">
+        <div className="flex flex-col gap-2">
+            <div className="flex space-x-1">
+                <div className="w-100 md:w-40">
                     <SimpleSelector
                         options={operators}
                         defaultVal={selectedOperator}
@@ -118,29 +120,29 @@ export default function TimeColumnFilter(props: Readonly<TimeColumnFilterProps>)
                     iconSize="medium"
                     size="icon"
                     variant="primary"
-                    className="h-full w-12"
+                    className="p-5"
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
                         handleFilter();
                     }}
                     tooltipText={dict.action.applyFilter}
-                    disabled={!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)}
+                    disabled={(!hasFirstValue || (isBetweenComparisonOperator && !hasSecondValue)) || props.disabled}
                     aria-label={interpolate(dict.action.filterBy, props.label)}
                 />
                 <Button
                     leftIcon="filter_list_off"
                     iconSize="medium"
                     size="icon"
-                    variant="destructive"
-                    className="h-full w-12"
+                    variant="secondary"
+                    className="p-5 border border-border"
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
                         handleClearFilter();
                     }}
                     tooltipText={dict.action.clearFilter}
-                    disabled={!hasFirstValue && !props.currentVal?.length}
+                    disabled={(!hasFirstValue && !props.currentVal?.length) || props.disabled}
                     aria-label={interpolate(dict.action.clearFilterFor, props.label)}
                 />
             </div>

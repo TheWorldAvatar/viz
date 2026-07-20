@@ -27,6 +27,12 @@ export function proxy(request: NextRequest) {
     // Check if there is any supported locale in the pathname
     const { pathname } = request.nextUrl
 
+    // Ignores all public directory contents and manifests
+    if (pathname.includes("config") || pathname.includes("images") || pathname.includes("optional-pages") ||
+        (pathname.includes("/manifest_") && pathname.endsWith(".json")) ||
+        pathname.includes("/sw.js") || pathname.includes("/serwist/")) {
+        return;
+    }
     const pathnameHasLocale = supportedLocales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     )

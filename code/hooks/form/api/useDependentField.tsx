@@ -131,7 +131,7 @@ export function useDependentField(
                             null,
                             null,
                             null,
-                            inputValue,
+                            inputValue ?? null,
                         )
                     );
                     entities = (responseEntity.data?.items as SelectOptionType[]) ?? [];
@@ -166,7 +166,7 @@ export function useDependentField(
                     if (matchingExistingOptionValue != null) {
                         defaultId = matchingExistingOptionValue;
                         // If there is no match and no default ID, retrieve and append the existing option to the list
-                    } else if (matchingExistingOptionValue == null && defaultId != undefined) {
+                    } else if (matchingExistingOptionValue == null && !!defaultId) {
                         const responseEntity: AgentResponseBody = await queryInternalApi(
                             makeInternalRegistryAPIwithParams(
                                 InternalApiIdentifierMap.INSTANCES,

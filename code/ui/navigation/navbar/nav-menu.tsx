@@ -7,13 +7,14 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { OptionalPage } from "@/io/config/optional-pages";
 import { Modules, Routes } from "@/io/config/routes";
 import { Dictionary } from "@/types/dictionary";
-import { NavBarItemSettings, UISettings } from "@/types/settings";
+import { NavBarItemSettings, ScreenType, ScreenTypeMap, UISettings } from "@/types/settings";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import FileModal from "@/ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "@/utils/client-utils";
 import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 
 
 export interface NavMenuProps {
@@ -46,15 +47,16 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <nav className="flex mr-1.5">
+      <nav className="flex">
         <PopoverActionButton
+          draggable
           variant="ghost"
           leftIcon="menu"
           size="icon"
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="mr-4 h-12"
+          className="h-12"
           aria-expanded={isMenuOpen}
           aria-label={isMenuOpen ? dict.message.closeMenu : dict.message.openMenu}
         >
@@ -113,6 +115,7 @@ function NavMenuContents(
   const ASSET_PREFIX = process.env.ASSET_PREFIX ?? "";
   const dict: Dictionary = useDictionary();
   const isPermitted = usePermissionGuard();
+  const screenType: ScreenType = useScreenType();
   const navMenuRef = useRef<HTMLDivElement>(null);
   // Retrieve links
   const dashboardLinkProps: NavBarItemSettings = props.settings.links?.find(
@@ -148,7 +151,7 @@ function NavMenuContents(
       aria-label={dict.nav.title.primary}
       ref={navMenuRef}
       className={`${props.isMobile
-        ? "flex gap-4 p-2 max-w-3xs max-h-[60dvh] overflow-y-auto"
+        ? "flex gap-4 p-2 max-h-[60dvh] overflow-y-auto"
         : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
       xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
@@ -268,7 +271,7 @@ function NavMenuContents(
             url={
               isPermitted("registryFullAccess")
                 ? `${Routes.REGISTRY_GENERAL}/${props.settings.resources?.registry?.data}`
-                : Routes.REGISTRY_TASK_OUTSTANDING
+                : screenType === ScreenTypeMap.MOBILE ? Routes.REGISTRY_TASK_OUTSTANDING_MOBILE : Routes.REGISTRY_TASK_OUTSTANDING
             }
             isMobile={props.isMobile}
             caption={

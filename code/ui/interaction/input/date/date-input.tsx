@@ -1,16 +1,15 @@
 import "react-day-picker/style.css";
 
-import {
-  FloatingFocusManager,
-  FloatingPortal,
-  Placement,
-  useTransitionStyles,
-} from "@floating-ui/react";
-import { Icon } from "@mui/material";
-import { usePopover } from "@/hooks/float/usePopover";
 import { useDictionary } from "@/hooks/useDictionary";
-import { useScreenType } from "@/hooks/useScreenType";
-import { useId } from "react";
+import { useScreenType } from "@/hooks/screen/useScreenType";
+import { Dictionary } from "@/types/dictionary";
+import { ScreenType, ScreenTypeMap } from "@/types/settings";
+import Button, { ButtonVariant } from "@/ui/interaction/button";
+import { extractDateDisplay, interpolate } from "@/utils/client-utils";
+import {
+  Placement
+} from "@floating-ui/react";
+import React, { useId } from "react";
 import {
   ClassNames,
   DateBefore,
@@ -19,12 +18,9 @@ import {
   getDefaultClassNames,
 } from "react-day-picker";
 import { de, enGB } from "react-day-picker/locale";
-import { Dictionary } from "@/types/dictionary";
-import { ScreenType, ScreenTypeMap } from "@/types/settings";
-import Button from "@/ui/interaction/button";
-import { extractDateDisplay, interpolate } from "@/utils/client-utils";
-import CustomYearsDropdown from "./custom-years-dropdown";
+import PopoverActionButton from "../../action/popover/popover-button";
 import CustomMonthsDropdown from "./custom-months-dropdown";
+import CustomYearsDropdown from "./custom-years-dropdown";
 
 interface DateInputProps {
   selectedDate: Date | DateRange | Date[] | undefined;
@@ -34,10 +30,14 @@ interface DateInputProps {
   setSelectedDateRange?: React.Dispatch<React.SetStateAction<DateRange>>;
   setSelectedDates?: React.Dispatch<React.SetStateAction<Date[]>>;
   placement?: Placement;
+  variant?: ButtonVariant;
   disabledDates?: DateBefore;
+  className?: string;
   disabled?: boolean;
   disableMobileView?: boolean;
+  inline?: boolean;
   required?: boolean;
+  children?: React.ReactNode;
 }
 
 /** A component to display a date range input
@@ -48,27 +48,75 @@ interface DateInputProps {
  * @param setSelectedDate An optional controlled dispatch method to update selected date.
  * @param setSelectedDateRange An optional controlled dispatch method to update selected date range.
  * @param {Placement} placement Optional placement position for the calendar view.
+ * @param {ButtonVariant} variant Optional variant to default to.
  * @param {DateBefore} disabledDates Optional dates to be disabled.
  * @param {boolean} disabled Disabled the input if true.
  * @param {boolean} disableMobileView An override property to disable the mobile view if set. Do not set this if the component is intended to be dynamically rendered.
+ * @param {boolean} inline Indicates if the date selection UI is inline with the current DOM element.
  * @param {boolean} required Whether the date input is required or not. Only applicable in single date mode.
  */
 export default function DateInput(props: Readonly<DateInputProps>) {
   const id: string = useId();
   const dict: Dictionary = useDictionary();
   const screenType: ScreenType = useScreenType();
-  const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
   const displayedDateValues: string = extractDateDisplay(props.selectedDate, props.mode);
   const arialDescriptionId: string = `${props.ariaLabel}-current-value`;
 
-  const popover = usePopover(props.placement);
-  const transition = useTransitionStyles(popover.context, {
-    duration: 200,
-    initial: {
-      opacity: 0,
-      transform: "scale(0.9)",
-    },
-  });
+  const showMobileView: boolean = !props.disableMobileView && screenType === ScreenTypeMap.MOBILE;
+
+  if (props.inline) {
+    return <section className="flex flex-col">
+      <div className="flex">
+        <Button
+          id={id}
+          leftIcon="date_range"
+          size={showMobileView ? "icon" : "sm"}
+          className={"flex-4 justify-start"}
+          // Defaults variant to outline if not provided and in mobile view mode
+          variant={!showMobileView && !!props.variant ? props.variant : "outline"}
+          label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
+          tooltipText={dict.action.date}
+          aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
+          aria-describedby={arialDescriptionId}
+          disabled={true}
+        />
+        {props.children}
+      </div>
+
+      <DateSelectionInput
+        {...props}
+        className="px-2 py-1"
+      />
+    </section>
+  }
+  return <PopoverActionButton
+    id={id}
+    leftIcon="date_range"
+    placement={props.placement ?? "bottom"}
+    size={showMobileView ? "icon" : "sm"}
+    className={"h-full w-full p-2 justify-start"}
+    // Defaults variant to outline if not provided and in mobile view mode
+    variant={!showMobileView && !!props.variant ? props.variant : "outline"}
+    label={showMobileView && !!displayedDateValues ? "" : displayedDateValues}
+    tooltipText={dict.action.date}
+    onClick={(e) => {
+      // Prevent click effects when disabled
+      e.preventDefault();
+    }}
+    aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
+    aria-describedby={arialDescriptionId}
+    disabled={props.disabled}
+  >
+    <DateSelectionInput
+      {...props}
+      className="py-2 px-4"
+    />
+  </PopoverActionButton>
+}
+
+function DateSelectionInput(props: Readonly<DateInputProps>) {
+  const dict: Dictionary = useDictionary();
+  const defaultDayPickerClassNames: ClassNames = getDefaultClassNames();
 
   const handleDateSelect = (date: Date | DateRange | Date[]) => {
     if (props.mode === "single") {
@@ -86,151 +134,68 @@ export default function DateInput(props: Readonly<DateInputProps>) {
   const dayPickerClassNames: Partial<ClassNames> = {
     today: "text-yellow-500",
     selected: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-    root: `${defaultDayPickerClassNames.root} p-4`,
+    root: `${defaultDayPickerClassNames.root} ${props.className}`,
     chevron: "fill-foreground",
   };
 
-  return (
-    <div
-      ref={popover.refs.setReference}
-      className="flex items-center gap-2 relative"
-    >
-      {!props.disableMobileView && screenType === ScreenTypeMap.MOBILE && (
-        <Button
-          id={`${id}-mobile`}
-          type="button"
-          size="icon"
-          variant="outline"
-          leftIcon="date_range"
-          tooltipText={dict.action.date}
-          aria-label={interpolate(dict.message.pickDateRangeFor, `${props.ariaLabel}: ${displayedDateValues}`)}
-          {...popover.getReferenceProps()}
-        />
-      )}
-      {(props.disableMobileView || screenType !== ScreenTypeMap.MOBILE) && (
-        <div className="flex items-center w-full">
-          <div className="relative w-full">
-            <Icon
-              fontSize={props.mode === "single" || props.mode === "multiple" ? "small" : "medium"}
-              className={`material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 ${props.mode === "single" || props.mode === "multiple"
-                ? "text-foreground"
-                : "text-info-foreground"
-                }  pointer-events-none`}
-            >
-              calendar_month
-            </Icon>
-            <button
-              id={id}
-              type="button"
-              className={
-                props.mode === "single" || props.mode === "multiple"
-                  ? `h-[43.5px] w-full pr-10 pl-4 rounded-lg bg-muted border border-border text-foreground text-left ${props.disabled
-                    ? props.mode === "multiple"
-                      ? "opacity-75"
-                      : "cursor-not-allowed opacity-75"
-                    : ""
-                  }`
-                  : `h-10  ${(props.selectedDate as DateRange)?.to
-                    ? "w-fit pr-11 pl-4"
-                    : "w-24"
-                  } rounded-lg bg-info-background border border-info-border text-info-foreground shadow-xs cursor-pointer`
-              }
-              {...popover.getReferenceProps()}
-              disabled={props.disabled}
-              aria-label={interpolate(dict.message.pickDateRangeFor, props.ariaLabel)}
-              aria-describedby={arialDescriptionId}
-            >
-              <span id={arialDescriptionId}>
-                {displayedDateValues}
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {popover.isOpen && (
-        <FloatingPortal>
-          <FloatingFocusManager context={popover.context} modal={false}>
-            <div
-              ref={popover.refs.setFloating}
-              style={{
-                ...popover.floatingStyles,
-                zIndex: 99999,
-              }}
-              {...popover.getFloatingProps()}
-            >
-              <div
-                style={{
-                  ...transition.styles,
-                }}
-                className="z-10 bg-muted ml-4 rounded-lg shadow-md border border-border"
-              >
-                {props.mode === "range" && (
-                  <DayPicker
-                    locale={dict.lang === "de" ? de : enGB}
-                    mode="range"
-                    selected={props.selectedDate as DateRange}
-                    onSelect={handleDateSelect}
-                    disabled={props.disabledDates}
-                    captionLayout="dropdown"
-                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
-                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
-                    classNames={{
-                      ...dayPickerClassNames,
-                      selected: "bg-gray-200 dark:bg-zinc-800",
-                      // range_middle is an empty string to override default styles (required)
-                      range_middle: "",
-                      range_start: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-                      range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
-                    }}
-                    required={true}
-                    components={{
-                      YearsDropdown: CustomYearsDropdown,
-                      MonthsDropdown: CustomMonthsDropdown,
-                    }}
-                  />
-                )}
-                {props.mode === "multiple" && (
-                  <DayPicker
-                    locale={dict.lang === "de" ? de : enGB}
-                    mode="multiple"
-                    captionLayout="dropdown"
-                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
-                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
-                    selected={props.selectedDate as Date[]}
-                    onSelect={handleDateSelect}
-                    disabled={props.disabledDates || props.disabled}
-                    classNames={dayPickerClassNames}
-                    required={true}
-                    components={{
-                      YearsDropdown: CustomYearsDropdown,
-                      MonthsDropdown: CustomMonthsDropdown,
-                    }}
-                  />
-                )}
-                {props.mode === "single" && !props.disabled && (
-                  <DayPicker
-                    locale={dict.lang === "de" ? de : enGB}
-                    mode="single"
-                    captionLayout="dropdown"
-                    startMonth={new Date(new Date().getFullYear() - 500, 0)}
-                    endMonth={new Date(new Date().getFullYear() + 500, 11)}
-                    selected={props.selectedDate as Date | undefined}
-                    onSelect={handleDateSelect}
-                    disabled={props.disabledDates}
-                    classNames={dayPickerClassNames}
-                    required={props.required ?? true}
-                    components={{
-                      YearsDropdown: CustomYearsDropdown,
-                      MonthsDropdown: CustomMonthsDropdown,
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          </FloatingFocusManager>
-        </FloatingPortal>
-      )}
-    </div>
-  );
+  if (props.mode === "range") {
+    return <DayPicker
+      locale={dict.lang === "de" ? de : enGB}
+      mode="range"
+      selected={props.selectedDate as DateRange}
+      onSelect={handleDateSelect}
+      disabled={props.disabledDates}
+      captionLayout="dropdown"
+      startMonth={new Date(new Date().getFullYear() - 500, 0)}
+      endMonth={new Date(new Date().getFullYear() + 500, 11)}
+      classNames={{
+        ...dayPickerClassNames,
+        selected: "bg-gray-200 dark:bg-zinc-800",
+        // range_middle is an empty string to override default styles (required)
+        range_middle: "",
+        range_start: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+        range_end: "!bg-blue-600 dark:!bg-blue-700 text-blue-50 rounded-full",
+      }}
+      required={true}
+      components={{
+        YearsDropdown: CustomYearsDropdown,
+        MonthsDropdown: CustomMonthsDropdown,
+      }}
+    />
+  } else if (props.mode === "multiple") {
+    return <DayPicker
+      locale={dict.lang === "de" ? de : enGB}
+      mode="multiple"
+      captionLayout="dropdown"
+      startMonth={new Date(new Date().getFullYear() - 500, 0)}
+      endMonth={new Date(new Date().getFullYear() + 500, 11)}
+      selected={props.selectedDate as Date[]}
+      onSelect={handleDateSelect}
+      disabled={props.disabledDates || props.disabled}
+      classNames={dayPickerClassNames}
+      required={true}
+      components={{
+        YearsDropdown: CustomYearsDropdown,
+        MonthsDropdown: CustomMonthsDropdown,
+      }}
+    />
+  } else if (props.mode === "single") {
+    return <DayPicker
+      locale={dict.lang === "de" ? de : enGB}
+      mode="single"
+      captionLayout="dropdown"
+      startMonth={new Date(new Date().getFullYear() - 500, 0)}
+      endMonth={new Date(new Date().getFullYear() + 500, 11)}
+      selected={props.selectedDate as Date | undefined}
+      onSelect={handleDateSelect}
+      disabled={props.disabledDates}
+      classNames={dayPickerClassNames}
+      required={props.required ?? true}
+      components={{
+        YearsDropdown: CustomYearsDropdown,
+        MonthsDropdown: CustomMonthsDropdown,
+      }}
+    />
+  }
+  return;
 }

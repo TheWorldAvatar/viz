@@ -26,13 +26,11 @@ A central framework for The World Avatar (TWA) Visualisations (the TWA Visualisa
 As the visualisation platform is intended to be customisable, [configuration files](./doc/config.md) must be included to customise the platform for specific user requirements. If there are any features or functionality you will like to see, please contact the CMCL team or create a new Github issue. Note that these files must be volume-mounted into the Docker container at `/twa/public/`, with specific instructions provided in the relevant deployment sections. To enable specific platform features, the following agents may need to be deployed, with detailed instructions available in their respective READMEs. The current version of the platform is only compatible with the stated versions of the agents and may not be backward-compatible.
 
 1. [Feature Info Agent](https://github.com/TheWorldAvatar/Feature-Info-Agent): `v3.3.0`
-2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.57.0`
+2. [Vis Backend Agent](https://github.com/TheWorldAvatar/Viz-Backend-Agent): `v1.61.0`
 
 If you are a developer who is adding a new feature, fixing an existing bug, or simply interested in learning more, please read the [Development](#2-development) section. If you are setting up a visualisation for your use cases, please read the [Production](#3-production) section.
 
 For any authorisation capabilities, refer to the [Authorisation](#4-authorisation) section. When releasing the platform as a developer, be sure to review the [Releasing](#5-release) section.
-
-Additionally, there is a tutorial in the [example](./example/) directory, including a sample directory setup. Please check it out if you are setting up the platform for the first time.
 
 ### 1.1 Endpoints
 
@@ -56,9 +54,9 @@ The recommended way to develop viz is to work in the `devcontainer` configured i
 - `KEYCLOAK` optional environment variable to set up an authorisation server if required; See [authorisation server](#4-authorisation) for more details
 - `REDIS_SOCKET_ADDRESS` optional environment variable to set up the REDIS endpoint; Defaults to `localhost:6379`; Usually requires local IP (`191.xx.xxx.xxx`) or `host.docker.internal` for standalone containers or `<stack-name>-redis:6379` for the stack deployment.
 
-1) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
-2) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
-3) Once installed, run `pnpm dev` from the `code` directory to set up the app server. Alternatively, go to the debug tab on VSCode to run in debug mode.
+3) Within the running container, set up the custom [configuration files](./doc/config.md) in the `code/public` directory. Create the `public` directory if it is not there. Sample configuration files can be found at the [example](./code/public/) directory.
+4) `node_modules` should have been installed on creation of the devcontainer in a persistent pnpm store. If the installation is unsuccessful, users may interrupt the process, and run `cd ./code; pnpm install` in the terminal directly
+5) Once installed, run `pnpm dev` from the `code` directory to set up the app server. Alternatively, go to the debug tab on VSCode to run in debug mode.
 
 ## 3. Production
 
@@ -81,7 +79,7 @@ To view the example configuration, simply run `docker compose up` in this direct
 > [!IMPORTANT]  
 > `ASSET_PREFIX` must start with a slash but not end with one, as in the example above
 
-1. Start the container by running the command `docker compose up`. The container will be running on the host machine (whichever the command was run from) at port `3000`.
+5. Start the container by running the command `docker compose up`. The container will be running on the host machine (whichever the command was run from) at port `3000`.
 
 ### 3.2 Stack Deployment
 
