@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.3
+
+### Changes
+
+- Allow view of complete form in offline mode
+- Users can complete one task on form submission in offline mode
+- General code improvements to support these offline features
+
 ## 5.81.2
 
 ### Changes
