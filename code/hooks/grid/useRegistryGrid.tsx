@@ -87,9 +87,14 @@ export function useRegistryGrid(
                 updatedFilters[currentFieldIndex] = filter;
             }
             // Check for active filters
-            setHasNoActiveFilters(updatedFilters.filter(filter => filter?.id != "status")
-                .every((filter) => (filter?.value as string[])?.length == 0));
-            localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
+            const noActiveFilters: boolean = updatedFilters.filter(filter => filter?.id != "status")
+                .every((filter) => (filter?.value as string[])?.length == 0);
+            setHasNoActiveFilters(noActiveFilters);
+            if (noActiveFilters) {
+                localStorageManager.clear();
+            } else {
+                localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
+            }
             return updatedFilters;
         });
         setPage(0);

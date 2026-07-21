@@ -57,6 +57,10 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         }
     };
 
+    // Indicates that a filter other than the submitted field is still active
+    const hasOtherActiveFilters = (fieldId: string): boolean => props.filters
+        .some(filter => filter.id !== fieldId && filter.id !== "status" && (filter.value as string[])?.length > 0);
+
     // Prevent hydration issues by updating menu open after and returning no component
     useEffect(() => {
         setIsMenuOpen(!localStorageManager.get(TASK_VIEWER_FILTER))
@@ -109,8 +113,10 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                                 disabled={!isConnected}
                                 onSubmission={(selectedOptions: string[]) => {
                                     if (isConnected) {
-                                        props.updateFilter(column.id.toString(), selectedOptions);
-                                        setIsMenuOpen(false);
+                                        props.updateFilter(fieldId, selectedOptions);
+                                        if (selectedOptions.length > 0 || hasOtherActiveFilters(fieldId)) {
+                                            setIsMenuOpen(false);
+                                        }
                                     }
                                 }}
                             />
