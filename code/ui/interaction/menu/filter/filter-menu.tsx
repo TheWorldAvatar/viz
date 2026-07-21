@@ -88,7 +88,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
             <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
         </section>
         <section className={`${props.hasNoActiveFilters ? "max-h-[70vh]" : "max-h-[50vh]"} min-h-0 overflow-y-auto px-1 w-full`}>
-            {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
+            {props.isInitialLoading ? <LoadingSpinner size="xl" /> :
                 filterableColumns.length === 0 ?
                     <p className="text-muted-foreground text-center py-2">{dict.message.noTasks}</p> :
                     filterableColumns.map((column, index) => {

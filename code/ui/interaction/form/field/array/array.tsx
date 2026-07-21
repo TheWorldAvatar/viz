@@ -109,7 +109,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
 
 
       <div className="bg-background flex flex-col w-full p-2 rounded-lg">
-        {refreshFlag && <LoadingSpinner isSmall={false} />}
+        {refreshFlag && <LoadingSpinner size="xl" />}
         {!refreshFlag && (
           <>
             {fields.length == 0 && <p>{props.options?.disabled ? dict.message.emptySection : dict.message.arrayInstruction}</p>}
