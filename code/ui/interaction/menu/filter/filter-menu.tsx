@@ -111,6 +111,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                                 selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
                                 filters={props.filters}
                                 disabled={!isConnected}
+                                fullWidth
                                 onSubmission={(selectedOptions: string[]) => {
                                     if (isConnected) {
                                         props.updateFilter(fieldId, selectedOptions);
