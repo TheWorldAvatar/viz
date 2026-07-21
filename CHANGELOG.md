@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.5
+
+### Bug fix
+
+- Fixed an issue where when multiple column filters were applied, users were unable to remove or clear a single column filter independently due to the filter button being disabled, so they couldn't submit an empty filter. 
+
 ## 5.81.4
 
 ### Changes
