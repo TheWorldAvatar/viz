@@ -36,10 +36,15 @@ export const selectorStyles: StylesConfig<
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     borderRadius: "0.2rem",
     margin: "0.25rem 0",
-    minWidth: "fit-content",
+    minWidth: "100%",
+    maxWidth: "100%",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "visible",
+    overflow: "hidden",
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    overflowX: "auto",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -104,7 +109,7 @@ export const selectorStyles: StylesConfig<
           : "var(--background-tertiary)",
       },
       padding: "0.25rem 0.5rem",
-      textWrap: "nowrap",
+      whiteSpace: "nowrap",
       minWidth: "100%",
       width: "fit-content",
       "&::before": isSelected
@@ -160,10 +165,14 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     borderRadius: "0.2rem",
     margin: "0.25rem 0",
     minWidth: "100%",
-    width: "fit-content",
+    maxWidth: "100%",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "visible",
+    overflow: "hidden",
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    overflowX: "auto",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -235,7 +244,7 @@ export const checkboxInputsSelectorStyles: StylesConfig<
           : "var(--background-tertiary)",
       },
       padding: "0.25rem 0.5rem",
-      textWrap: "nowrap",
+      whiteSpace: "nowrap",
       minWidth: "100%",
       width: "fit-content",
     };
