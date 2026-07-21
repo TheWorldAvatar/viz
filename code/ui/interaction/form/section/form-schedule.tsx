@@ -260,7 +260,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
       <h2 className="text-xl md:text-2xl  font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
-      {isLoading && <LoadingSpinner isSmall={true} />}
+      {isLoading && <LoadingSpinner size="sm" />}
       {!isLoading && (
         <>
           <div className="flex flex-col w-full gap-4">

@@ -132,7 +132,7 @@ export function DependentFormSection(
           isQuickViewOpen &&
           (isQuickViewLoading ? (
             <div className="flex justify-center p-4">
-              <LoadingSpinner isSmall={true} />
+              <LoadingSpinner size="sm" />
             </div>
           ) : (
             <FormQuickViewBody id={id} quickViewGroups={quickViewGroups} />

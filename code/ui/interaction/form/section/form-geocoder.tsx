@@ -123,7 +123,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
       </h2>
       {isFetching && (
         <div className="mr-2">
-          <LoadingSpinner isSmall={true} />
+          <LoadingSpinner size="sm" />
         </div>
       )}
 

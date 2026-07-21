@@ -54,7 +54,7 @@ export default function GlobalContainer(props: Readonly<GlobalContainerProps>) {
           }}>
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center">
             <div ref={pullIndicatorRef} className="mt-2 rounded-full bg-background border border-ring p-4 shadow-md opacity-0">
-              <LoadingSpinner isSmall={true} />
+              <LoadingSpinner size="sm" />
             </div>
           </div>
           {!isMapPage && (

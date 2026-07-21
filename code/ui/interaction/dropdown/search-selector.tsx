@@ -6,6 +6,7 @@ import StatusComponent from "@/ui/text/status/status";
 import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 
 
 interface SearchSelectorProps {
@@ -16,6 +17,7 @@ interface SearchSelectorProps {
   showOptions: boolean;
   onSubmission: (_options: string[]) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disabled?: boolean;
 }
@@ -30,6 +32,7 @@ interface SearchSelectorProps {
  * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
+ * @param {boolean} isLoading The loading state to indicate if options are fetching.
  * @param setIsLoading State function to set loading state.
  * @param {boolean} disabled An optional state to disable the filter.
  */
@@ -40,7 +43,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
 
   return (
-    <div className="w-full sm:w-sm xl:w-lg">
+    <div className="w-full">
       <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
         <div className="flex flex-1 items-stretch">
           <input
@@ -97,6 +100,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
         />}
       </div>
       <div className="max-h-80 w-full overflow-y-auto overflow-x-auto">
+        {props.isLoading && (
+          <div role="status" aria-live="polite" className="p-2.5 mt-2">
+            <LoadingSpinner size="md" />
+            <span className="sr-only">{dict.message.loading}</span>
+          </div>
+        )}
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
           {props.options.length === 0 && dict.message.noOptions}
           {props.options.length > 20 && dict.message.typeMore}

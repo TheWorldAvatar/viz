@@ -43,7 +43,7 @@ export function useFilterOptions(
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
-  const debouncedSearch: string = useDebounce<string>(search, 500);
+  const debouncedSearch: string = useDebounce<string>(search, 300);
 
   //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {

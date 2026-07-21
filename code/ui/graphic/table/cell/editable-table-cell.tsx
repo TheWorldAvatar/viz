@@ -29,7 +29,7 @@ export default function EditableTableCell(props: Readonly<EditableTableCellProps
       {props.isBulkEditMode ?
         // If in bulk edit mode, render the form field if it is not retrieving the data from backend
         props.fieldShape != undefined ? renderFormField("", FormTypeMap.MASS_EDIT, props.fieldShape, props.form, 0) :
-          <LoadingSpinner isSmall={true} /> :
+          <LoadingSpinner size="sm" /> :
         props.children}
     </TableCell>
   );

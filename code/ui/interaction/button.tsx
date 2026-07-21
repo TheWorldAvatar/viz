@@ -138,7 +138,7 @@ export default function Button({
           className={`flex items-center ${iconSpacing[size]} ${loading ? "gap-2" : ""
             }`}
         >
-          {loading && <LoadingSpinner isSmall={true} />}
+          {loading && <LoadingSpinner size="sm" />}
           {!loading && leftIcon && (
             <span
               className={`${hasMobileIcon ? "flex" : "hidden md:flex"
