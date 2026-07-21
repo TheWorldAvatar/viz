@@ -51,6 +51,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     rowRefs,
   );
 
+  // When no column metadata is available at all (e.g. an empty result on first load),
+  // the header cannot be rendered, so fall back to a plain "no results" message.
+  if (props.tableDescriptor.table.getAllLeafColumns().length === 0) {
+    return (
+      <div className="text-lg ml-6">
+        {dict.message.noResultFound}
+      </div>
+    );
+  }
+
   if (props.tableDescriptor.table.getVisibleLeafColumns().length > 0) {
     return (
       <TableSessionContextProvider
@@ -85,7 +95,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                     ))}
                 </thead>
                 <tbody>
-                  {props.tableDescriptor.table.getRowModel().rows?.length > 0 && (
+                  {props.tableDescriptor.table.getRowModel().rows?.length > 0 ? (
                     <SortableContext
                       items={dragAndDropDescriptor.dataIds}
                       strategy={verticalListSortingStrategy}
@@ -103,6 +113,15 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                         />
                       })}
                     </SortableContext>
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={2}
+                        className="p-8 text-md md:text-lg text-foreground"
+                      >
+                        {dict.message.noResultFound}
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
