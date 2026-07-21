@@ -22,7 +22,6 @@ interface PopoverActionButtonProps extends ButtonProps {
   placement?: Placement;
   draggable?: boolean;
   bottomSheet?: boolean;
-  panelClassName?: string;
 }
 
 /**
@@ -36,7 +35,6 @@ interface PopoverActionButtonProps extends ButtonProps {
  * @param {Placement} placement Optional position of popover.
  * @param {boolean} draggable Optional flag to render a drag handle on the bottom sheet, allowing the sheet to be dismissed by dragging it past the bottom.
  * @param {boolean} bottomSheet Optional flag to force the bottom-sheet presentation on larger screens; mobile always renders as a sheet.
- * @param {string} panelClassName Optional classes for the floating popover panel. Ignored in sheet mode, where the panel is always full width.
  * @param {string} label Optional label that is displayed on the button.
  * @param {string} tooltipText Optional label that is displayed as a tooltip on hover.
  * @param {Placement} tooltipPosition Optional tooltip positioning.
@@ -54,7 +52,6 @@ export default function PopoverActionButton({
   placement,
   draggable,
   bottomSheet,
-  panelClassName,
   leftIcon,
   rightIcon,
   label,
@@ -153,7 +150,7 @@ export default function PopoverActionButton({
                     ...transition.styles,
                   }}
                   className={`flex flex-col gap-y-2 p-2 bg-muted border border-border shadow-md
-                    ${isSheet ? "rounded-t-lg" : `rounded-lg ${panelClassName ?? ""}`}`}
+                    ${isSheet ? "rounded-t-lg" : "rounded-lg"}`}
                 >
                   {children}
                 </div>
