@@ -36,6 +36,7 @@ import { BULK_IDENTIFIER } from "@/utils/constants";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
+import { submitOptionalAccrual } from "@/utils/optional-accrual";
 
 interface TaskFormContainerComponentProps {
   id: string;
@@ -245,16 +246,26 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       response?.data?.message || response?.error?.message,
       response?.error ? "error" : "success"
     );
-
     if (response && !response?.error) {
-      handleDrawerClose(() => {
-        // For completion of task if the bill is already accrued, navigate to accrual drawer
-        if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true") {
+      // For completion of an already-accrued bill, silently re-calculate the accrual using the
+      // existing additional cost data instead of forcing the user back into the accrual form.
+      const wasAccrued: boolean = browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true";
+      handleDrawerClose(async () => {
+        if (wasAccrued && task) {
           browserStorageManager.clear();
-          navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${props.id}`);
-        } else {
-          router.back();
+          let loadingToast: string | number;
+          await submitOptionalAccrual({
+            taskId: task.id,
+            contract: task.contract,
+            date: task.date,
+            onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
+            onSuccess: (res) => toast(res.data?.message ?? dict.message.success, "success"),
+            onError: (message) => toast(message, "error"),
+            fallbackError: dict.message.error,
+            onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
+          });
         }
+        router.back();
       });
     }
   };
