@@ -42,10 +42,6 @@ export const selectorStyles: StylesConfig<
     zIndex: 99999,
     overflow: "hidden",
   }),
-  menuList: (provided) => ({
-    ...provided,
-    overflowX: "auto",
-  }),
   noOptionsMessage: (provided) => ({
     ...provided,
     padding: "0.25rem 0.5rem",
@@ -109,9 +105,12 @@ export const selectorStyles: StylesConfig<
           : "var(--background-tertiary)",
       },
       padding: "0.25rem 0.5rem",
-      whiteSpace: "nowrap",
+      whiteSpace: "normal",
+      overflowWrap: "anywhere",
       minWidth: "100%",
-      width: "fit-content",
+      width: "100%",
+      display: "flex",
+      alignItems: "flex-start",
       "&::before": isSelected
         ? {
           content: "'✓'",
@@ -119,10 +118,12 @@ export const selectorStyles: StylesConfig<
           fontWeight: "bold",
           marginRight: "0.5rem",
           fontSize: "0.875rem",
+          flexShrink: 0,
         }
         : {
           content: "''",
           marginRight: "1rem",
+          flexShrink: 0,
         },
     };
   },
@@ -169,10 +170,6 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     border: "1px solid var(--border)",
     zIndex: 99999,
     overflow: "hidden",
-  }),
-  menuList: (provided) => ({
-    ...provided,
-    overflowX: "auto",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -244,9 +241,10 @@ export const checkboxInputsSelectorStyles: StylesConfig<
           : "var(--background-tertiary)",
       },
       padding: "0.25rem 0.5rem",
-      whiteSpace: "nowrap",
+      whiteSpace: "normal",
+      overflowWrap: "anywhere",
       minWidth: "100%",
-      width: "fit-content",
+      width: "100%",
     };
   },
 };
