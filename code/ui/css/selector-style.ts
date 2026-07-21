@@ -111,20 +111,16 @@ export const selectorStyles: StylesConfig<
       width: "100%",
       display: "flex",
       alignItems: "flex-start",
-      "&::before": isSelected
-        ? {
-          content: "'✓'",
-          color: "var(--foreground)",
-          fontWeight: "bold",
-          marginRight: "0.5rem",
-          fontSize: "0.875rem",
-          flexShrink: 0,
-        }
-        : {
-          content: "''",
-          marginRight: "1rem",
-          flexShrink: 0,
-        },
+      "&::before": {
+        content: isSelected ? "'✓'" : "''",
+        color: "var(--foreground)",
+        fontWeight: "bold",
+        fontSize: "0.875rem",
+        flexShrink: 0,
+        width: "1rem",
+        marginRight: "0.5rem",
+        textAlign: "center",
+      },
     };
   },
 };
