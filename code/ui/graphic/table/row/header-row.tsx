@@ -100,106 +100,107 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
 
   return (
     <tr className="border-b border-border text-left bg-background text-foreground">
-      <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
-        <div className="flex justify-end items-center rounded-md gap-2">
-          {numberOfSelectedRows > 0 && (
-            <PopoverActionButton
-              placement="bottom-start"
-              leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
-              variant="ghost"
-              size="icon"
-              tooltipText={dict.title.bulkActions}
-              isOpen={isActionMenuOpen}
-              setIsOpen={setIsActionMenuOpen}
-              aria-label={dict.title.bulkActions}
-            >
-              <div className="flex flex-col space-y-3">
-                {
-                  tableDescriptor.isBulkDispatchEdit && <Button
-                    leftIcon="assignment_add"
-                    label={dict.action.dispatch}
-                    variant="ghost"
-                    disabled={isLoading}
-                    onClick={async () => {
-                      await onBulkEditSubmit();
-                      tableDescriptor.setIsBulkDispatchEdit(false);
-                      props.triggerRefresh();
-                    }}
-                  />
-                }
-                {lifecycleStage === LifecycleStageMap.PENDING && (
-                  <>
-                    <Button
-                      leftIcon="done_outline"
-                      label={dict.action.approve}
-                      variant="ghost"
-                      disabled={isLoading}
-                      onClick={() => handleBulkAction("approve")}
-                    />
-                    {hasAmendedStatus && (
-                      <Button
-                        leftIcon="published_with_changes"
-                        label={dict.action.resubmit}
-                        variant="ghost"
-                        disabled={isLoading}
-                        onClick={() => handleBulkAction("resubmit")}
-                      />
-                    )}
-                  </>
-                )}
-                {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED)
-                  && !tableDescriptor.isBulkDispatchEdit && (
-                    <Button
+      {tableDescriptor.table.getRowModel().rows.length > 0 && (
+        <TableCell className="w-1/10 sticky left-0 z-20 bg-background">
+          <div className="flex justify-end items-center rounded-md gap-2">
+            {numberOfSelectedRows > 0 && (
+              <PopoverActionButton
+                placement="bottom-start"
+                leftIcon={isActionMenuOpen ? "arrow_drop_up" : "arrow_drop_down"}
+                variant="ghost"
+                size="icon"
+                tooltipText={dict.title.bulkActions}
+                isOpen={isActionMenuOpen}
+                setIsOpen={setIsActionMenuOpen}
+                aria-label={dict.title.bulkActions}
+              >
+                <div className="flex flex-col space-y-3">
+                  {
+                    tableDescriptor.isBulkDispatchEdit && <Button
                       leftIcon="assignment_add"
                       label={dict.action.dispatch}
                       variant="ghost"
                       disabled={isLoading}
-                      onClick={() => {
-                        const tasks: RegistryTaskOption[] = [];
-                        tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
-                          tasks.push({
-                            id: getId(row.original.event_id),
-                            contract: row.original.id,
-                            date: row.original.date,
-                          }))
-                        browserStorageManager.clear();
-                        browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
-                        resetFormSession();
-                        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${BULK_IDENTIFIER}`);
+                      onClick={async () => {
+                        await onBulkEditSubmit();
+                        tableDescriptor.setIsBulkDispatchEdit(false);
+                        props.triggerRefresh();
                       }}
                     />
-                  )}
-                {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
-                  <DraftTemplateButton
-                    rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
-                    recordType={recordType}
-                    triggerRefresh={props.triggerRefresh}
-                    resetRowSelection={tableDescriptor.table.resetRowSelection}
-                  />
-                )}
-              </div>
-            </PopoverActionButton>
-          )}
-
-          {isBulkActionPermitted && !tableDescriptor.isBulkDispatchEdit && (
-            <Checkbox
-              aria-label={dict.action.selectAll}
-              disabled={isLoading}
-              className="w-4 h-4 mx-4 cursor-pointer"
-              checked={tableDescriptor.table.getIsAllPageRowsSelected()}
-              handleChange={(checked) => {
-                tableDescriptor.table.getRowModel().rows.forEach((row) => {
-                  if (lifecycleStage == LifecycleStageMap.BILLABLE) {
-                    const eventId: string = getId(row.getValue("event_id"));
-                    tableDescriptor.setSelectedRows(eventId, !checked);
                   }
-                  row.toggleSelected(checked);
-                });
-              }}
-            />
-          )}
-        </div>
-      </TableCell>
+                  {lifecycleStage === LifecycleStageMap.PENDING && (
+                    <>
+                      <Button
+                        leftIcon="done_outline"
+                        label={dict.action.approve}
+                        variant="ghost"
+                        disabled={isLoading}
+                        onClick={() => handleBulkAction("approve")}
+                      />
+                      {hasAmendedStatus && (
+                        <Button
+                          leftIcon="published_with_changes"
+                          label={dict.action.resubmit}
+                          variant="ghost"
+                          disabled={isLoading}
+                          onClick={() => handleBulkAction("resubmit")}
+                        />
+                      )}
+                    </>
+                  )}
+                  {(lifecycleStage === LifecycleStageMap.OUTSTANDING || lifecycleStage === LifecycleStageMap.SCHEDULED)
+                    && !tableDescriptor.isBulkDispatchEdit && (
+                      <Button
+                        leftIcon="assignment_add"
+                        label={dict.action.dispatch}
+                        variant="ghost"
+                        disabled={isLoading}
+                        onClick={() => {
+                          const tasks: RegistryTaskOption[] = [];
+                          tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
+                            tasks.push({
+                              id: getId(row.original.event_id),
+                              contract: row.original.id,
+                              date: row.original.date,
+                            }))
+                          browserStorageManager.clear();
+                          browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
+                          resetFormSession();
+                          navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${BULK_IDENTIFIER}`);
+                        }}
+                      />
+                    )}
+                  {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
+                    <DraftTemplateButton
+                      rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
+                      recordType={recordType}
+                      triggerRefresh={props.triggerRefresh}
+                      resetRowSelection={tableDescriptor.table.resetRowSelection}
+                    />
+                  )}
+                </div>
+              </PopoverActionButton>
+            )}
+            {isBulkActionPermitted && !tableDescriptor.isBulkDispatchEdit && (
+              <Checkbox
+                aria-label={dict.action.selectAll}
+                disabled={isLoading}
+                className="w-4 h-4 mx-4 cursor-pointer"
+                checked={tableDescriptor.table.getIsAllPageRowsSelected()}
+                handleChange={(checked) => {
+                  tableDescriptor.table.getRowModel().rows.forEach((row) => {
+                    if (lifecycleStage == LifecycleStageMap.BILLABLE) {
+                      const eventId: string = getId(row.getValue("event_id"));
+                      tableDescriptor.setSelectedRows(eventId, !checked);
+                    }
+                    row.toggleSelected(checked);
+                  });
+                }}
+              />
+            )}
+          </div>
+        </TableCell>
+      )}
       {props.headers.map((header, index) => {
         const colDef: EnhancedColumnDef<FieldValues> = header.column.columnDef as EnhancedColumnDef<FieldValues>;
         return (
