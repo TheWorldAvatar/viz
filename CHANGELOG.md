@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.6
+
+### Changes
+
+- Fixed an issue where the users couldn't type into the searchable filter while the dropdown is in its loading state.
+- Moved the loading indicator inside the dropdown content, where a loading spinner is shown while the data is being fetched, and the user can still type into the input field to search for options. This improves the user experience by allowing users to continue searching for options even when the dropdown is loading, instead of being blocked from typing until the loading is complete.
+
 ## 5.81.5
 
 ### Bug fix
