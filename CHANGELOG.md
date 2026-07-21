@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.4
+
+### Changes
+
+- Updated the selector component to allow text wrapping in the dropdown options, ensuring that long option texts are fully visible without being cut off. This improves the user experience by making it easier to read and select options with lengthy descriptions. This also fixes the overflow issues that was causing the dropdown to go beyond the viewport and not being fully visible to the user.
+
 ## 5.81.3
 
 ### Changes

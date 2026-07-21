@@ -36,10 +36,11 @@ export const selectorStyles: StylesConfig<
     boxShadow: " 0 0 0.3rem rgba(0, 0, 0, 0.1)",
     borderRadius: "0.2rem",
     margin: "0.25rem 0",
-    minWidth: "fit-content",
+    minWidth: "100%",
+    maxWidth: "100%",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "visible",
+    overflow: "hidden",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -104,21 +105,22 @@ export const selectorStyles: StylesConfig<
           : "var(--background-tertiary)",
       },
       padding: "0.25rem 0.5rem",
-      textWrap: "nowrap",
+      whiteSpace: "normal",
+      overflowWrap: "anywhere",
       minWidth: "100%",
-      width: "fit-content",
-      "&::before": isSelected
-        ? {
-          content: "'✓'",
-          color: "var(--foreground)",
-          fontWeight: "bold",
-          marginRight: "0.5rem",
-          fontSize: "0.875rem",
-        }
-        : {
-          content: "''",
-          marginRight: "1rem",
-        },
+      width: "100%",
+      display: "flex",
+      alignItems: "flex-start",
+      "&::before": {
+        content: isSelected ? "'✓'" : "''",
+        color: "var(--foreground)",
+        fontWeight: "bold",
+        fontSize: "0.875rem",
+        flexShrink: 0,
+        width: "1rem",
+        marginRight: "0.5rem",
+        textAlign: "center",
+      },
     };
   },
 };
@@ -160,10 +162,10 @@ export const checkboxInputsSelectorStyles: StylesConfig<
     borderRadius: "0.2rem",
     margin: "0.25rem 0",
     minWidth: "100%",
-    width: "fit-content",
+    maxWidth: "100%",
     border: "1px solid var(--border)",
     zIndex: 99999,
-    overflow: "visible",
+    overflow: "hidden",
   }),
   noOptionsMessage: (provided) => ({
     ...provided,
@@ -235,9 +237,10 @@ export const checkboxInputsSelectorStyles: StylesConfig<
           : "var(--background-tertiary)",
       },
       padding: "0.25rem 0.5rem",
-      textWrap: "nowrap",
+      whiteSpace: "normal",
+      overflowWrap: "anywhere",
       minWidth: "100%",
-      width: "fit-content",
+      width: "100%",
     };
   },
 };
