@@ -143,7 +143,7 @@ export default function FileModal(props: Readonly<FileModalProps>) {
             <div className="flex items-center gap-2">
               {isUploading && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <LoadingSpinner isSmall={true} />
+                  <LoadingSpinner size="sm" />
                 </div>
               )}
             </div>

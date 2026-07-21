@@ -91,7 +91,7 @@ export default function HistoryModal(props: Readonly<HistoryModalProps>) {
                     </div>
                 )}
                 {isLoading && <div className="flex justify-center items-center h-48">
-                    <LoadingSpinner isSmall={false} />
+                    <LoadingSpinner size="xl" />
                 </div>}
             </div>
         </Modal>

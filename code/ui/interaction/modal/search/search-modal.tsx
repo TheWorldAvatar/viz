@@ -59,7 +59,7 @@ export default function SearchModal(props: Readonly<SearchModalProps>) {
         </section>
         <section className="flex items-start 2xl:items-center justify-between p-2 sticky bottom-0 shrink-0 mb-2.5 mt-2.5  2xl:mb-4 2xl:mt-4">
           {formRef.current?.formState?.isSubmitting && (
-            <LoadingSpinner isSmall={false} />
+            <LoadingSpinner size="xl" />
           )}
           <div className="flex flex-wrap gap-2.5 2xl:gap-2">
             <Button

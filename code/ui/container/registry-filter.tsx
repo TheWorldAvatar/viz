@@ -60,9 +60,6 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         isDateField || isNumericField || isTimeField,
     );
 
-    if (isLoading) {
-        return <LoadingSpinner isSmall={true} />
-    }
     if (isDateField) {
         return <DateColumnFilter
             label={props.field}
@@ -97,6 +94,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         showOptions={!isLoading}
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
+        isLoading={isLoading}
         setIsLoading={setIsLoading}
         disabled={props.disabled}
     />
