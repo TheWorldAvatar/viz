@@ -24,6 +24,13 @@ export const LifecycleStageMap = {
 } as const;
 export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
 
+export const FormOptionStateMap = {
+  PENDING: "pending",
+  SYNC: "syncing",
+  COMPLETE: "complete",
+} as const;
+export type FormOptionState = typeof FormOptionStateMap[keyof typeof FormOptionStateMap];
+
 export const FormTypeMap = {
   ADD: "add",
   ADD_BILL: "addbill",

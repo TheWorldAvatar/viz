@@ -5,6 +5,7 @@ import { FormTypeMap, PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, 
 import LoadingSpinner from '@/ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
+import { dexieFormRepo } from '@/utils/db/dexie-form-repository';
 
 interface FormComponentProps {
   entityType: string;
@@ -41,6 +42,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       }
 
       delete initialState.lockField;
+      await dexieFormRepo.sync();
 
       setFormFields(fields);
       setFieldIdNameMapping(fieldIdMapping);

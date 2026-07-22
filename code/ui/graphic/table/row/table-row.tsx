@@ -23,6 +23,7 @@ import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, execReviewBillableAction, getRowRecordId } from "../registry/registry-table-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 
 interface TableRowProps {
   id: string;
@@ -145,6 +146,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             }));
           }
         });
+        await dexieFormRepo.sync();
         delete initialState.lockField;
         // reset form data state on use effect
         form.reset(initialState);

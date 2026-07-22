@@ -45,6 +45,7 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -78,7 +79,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { formType, addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
+  const { formType, accountType, isContractForm, addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
@@ -145,6 +146,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       delete initialState.lockField;
 
+      await dexieFormRepo.sync(accountType, isContractForm);
       setFormTemplate(parsedTemplate);
       setFieldIdNameMapping(fieldIdMapping);
       setBillingParams(billingParamsStore)
