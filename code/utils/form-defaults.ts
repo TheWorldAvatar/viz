@@ -5,6 +5,7 @@ import {
   PropertyGroup,
   PropertyShape,
   PropertyShapeOrGroup,
+  SparqlResponseField,
   TYPE_KEY,
   VALUE_KEY,
 } from "@/types/form";
@@ -36,10 +37,19 @@ function hasType(field: PropertyShape, type: string): boolean {
   return field.datatype === type || field.class?.[ID_KEY] === type;
 }
 
-function scalarDefault(field: PropertyShape, now: Date): unknown {
-  const explicit: string | undefined = Array.isArray(field.defaultValue)
-    ? field.defaultValue[0]?.value
-    : field.defaultValue?.value;
+// Number of pre-existing default values supplied for a field by the template.
+function defaultValueCount(field: PropertyShape): number {
+  if (Array.isArray(field.defaultValue)) return field.defaultValue.length;
+  return field.defaultValue != null ? 1 : 0;
+}
+
+function scalarDefault(field: PropertyShape, now: Date, index = 0): unknown {
+  const values: SparqlResponseField[] = Array.isArray(field.defaultValue)
+    ? field.defaultValue
+    : field.defaultValue != null
+      ? [field.defaultValue]
+      : [];
+  const explicit: string | undefined = values[index]?.value;
   if (explicit != null && explicit !== "") {
     if (explicit === "tomorrow") {
       const tomorrow: Date = new Date(now);
@@ -55,8 +65,8 @@ function scalarDefault(field: PropertyShape, now: Date): unknown {
 
   if (hasType(field, "http://www.w3.org/2001/XMLSchema#boolean")) return false;
   if (hasType(field, "http://www.w3.org/2001/XMLSchema#integer") ||
-      hasType(field, "http://www.w3.org/2001/XMLSchema#decimal") ||
-      hasType(field, "http://www.w3.org/2001/XMLSchema#double")) return 0;
+    hasType(field, "http://www.w3.org/2001/XMLSchema#decimal") ||
+    hasType(field, "http://www.w3.org/2001/XMLSchema#double")) return 0;
   return "";
 }
 
@@ -64,14 +74,20 @@ function propertyDefaults(
   fields: PropertyShapeOrGroup[],
   now: Date,
   groupName?: string,
+  index = 0,
 ): FormDefaultValues {
   return fields.reduce<FormDefaultValues>((defaults: FormDefaultValues, item: PropertyShapeOrGroup): FormDefaultValues => {
     if (item[TYPE_KEY]?.includes(PROPERTY_GROUP_TYPE)) {
       const group: PropertyGroup = item as PropertyGroup;
       const name: string = valueOf(group.label) ?? group[ID_KEY];
-      const row: FormDefaultValues = propertyDefaults(group.property, now, name);
       const isArray: boolean = maximumCount(group) == null || (maximumCount(group) as number) > 1;
-      defaults[name] = isArray ? Array.from({ length: Math.max(1, minimumCount(group)) }, () => ({ ...row })) : row;
+      if (isArray) {
+        // Emit one row per pre-existing default value
+        const rows: number = Math.max(1, minimumCount(group), ...group.property.map(defaultValueCount));
+        defaults[name] = Array.from({ length: rows }, (_row, rowIndex: number) => propertyDefaults(group.property, now, name, rowIndex));
+      } else {
+        defaults[name] = propertyDefaults(group.property, now, name, index);
+      }
       return defaults;
     }
 
@@ -80,9 +96,11 @@ function propertyDefaults(
     const key: string = groupName ? `${groupName} ${name}` : name;
     const isArray: boolean = groupName != null && (maximumCount(field) == null || (maximumCount(field) as number) > 1);
     if (isArray) {
-      defaults[key] = Array.from({ length: Math.max(1, minimumCount(field)) }, () => ({ [key]: scalarDefault(field, now) }));
+      // One entry per pre-existing default value.
+      const count: number = Math.max(1, minimumCount(field), defaultValueCount(field));
+      defaults[key] = Array.from({ length: count }, (_entry, entryIndex: number) => ({ [key]: scalarDefault(field, now, entryIndex) }));
     } else {
-      defaults[key] = scalarDefault(field, now);
+      defaults[key] = scalarDefault(field, now, index);
     }
     return defaults;
   }, {});
