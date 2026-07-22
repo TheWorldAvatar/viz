@@ -17,7 +17,7 @@ import { compareDates, getId, parseWordsForLabels } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { execReviewBillableAction } from "../registry/registry-table-utils";
+import { execReviewBillableAction, presetJobFormClientFields } from "../registry/registry-table-utils";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
 
@@ -199,6 +199,21 @@ export default function RegistryRowAction(
                   handleClickView();
                 }}
               />
+              {props.recordType === "service_site" &&
+                <RowActionButton
+                  icon="add"
+                  label={"Add job"}
+                  onClick={async () => {
+                    handleClickRowAction();
+                    const clientName: string = props.row[props.accountType];
+                    const serviceSiteName: string = props.row.service_site ??
+                      (props.recordType === "service_site" ? props.row.name : undefined);
+                    await presetJobFormClientFields(props.accountType, clientName, serviceSiteName);
+                    navigateToDrawer(Routes.REGISTRY_ADD, "job");
+                  }
+                  }
+                />
+              }
               {isActionAllowed("TERMINATE_CONTRACT") &&
                 <RowActionButton
                   icon="block"

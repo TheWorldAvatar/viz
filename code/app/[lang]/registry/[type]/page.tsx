@@ -56,6 +56,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
         message={caption}
         lifecycleStage={lifecycleStage}
         tableColumnOptions={tableColumnSettings}
+        accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT)?.key}
       />
     );
   } else {
