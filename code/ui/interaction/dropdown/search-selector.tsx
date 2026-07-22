@@ -3,7 +3,7 @@ import { useConnected } from "@/hooks/useConnected";
 import useRefresh from "@/hooks/useRefresh";
 import { Dictionary } from "@/types/dictionary";
 import StatusComponent from "@/ui/text/status/status";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
@@ -43,6 +43,15 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const isConnected: boolean = useConnected();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
+  const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions);
+
+  useEffect(() => {
+    if (props.isLoading) {
+      setPinnedOptions(selectedOptions);
+    }
+  }, [props.isLoading, selectedOptions]);
+
+  const visibleOptions: string[] = [...new Set([...pinnedOptions, ...props.options, ...selectedOptions])];
 
   return (
     <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
@@ -109,10 +118,10 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           </div>
         )}
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
-          {props.options.length === 0 && dict.message.noOptions}
-          {props.options.length > 20 && dict.message.typeMore}
+          {visibleOptions.length === 0 && dict.message.noOptions}
+          {visibleOptions.length > 20 && dict.message.typeMore}
         </p>}
-        {props.showOptions && !refreshFlag && props.options.map((option, index) => (
+        {props.showOptions && !refreshFlag && visibleOptions.map((option, index) => (
           <SelectOption
             key={option + index}
             option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
@@ -130,7 +139,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
         ))}
         <p className="text-2xl text-foreground/80 italic px-2">
-          {props.options.length > 20 && "..."}
+          {visibleOptions.length > 20 && "..."}
         </p>
       </div>
     </div>
