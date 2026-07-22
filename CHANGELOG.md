@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.7
+
+### Changes
+
+- Changed the table rendering logic so that the header row should now always remain visible, even when there are no data rows.
+- Added a new className prop to the RegistryFilter and the SearchSelector, which fixes an issue with the filter width on mobile and desktop 
+
 ## 5.81.6
 
 ### Changes
