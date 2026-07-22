@@ -1,3 +1,9 @@
+/**
+ * Builds defaults for a limited background-submission workflow.
+ *
+ * This module does not fully reproduce interactive form behaviour. Use it with
+ * care and verify compatibility before applying it to other workflows.
+ */
 import {
   FormTemplateType,
   ID_KEY,
