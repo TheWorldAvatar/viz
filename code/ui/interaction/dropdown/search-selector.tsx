@@ -36,7 +36,7 @@ interface SearchSelectorProps {
  * @param {boolean} isLoading The loading state to indicate if options are fetching.
  * @param setIsLoading State function to set loading state.
  * @param {boolean} disabled An optional state to disable the filter.
- * @param {string} className Optional CSS classes applied to the selector wrapper.
+ * @param {string} className Optional additional styling applied to the selector.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();

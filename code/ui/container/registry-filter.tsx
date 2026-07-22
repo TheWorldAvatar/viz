@@ -32,7 +32,7 @@ interface RegistryFilterProps {
  * @param {ColumnFilter[]} filters Current filter state for all applied filters.
  * @param  onSubmission Executes this function on submission.
  * @param {boolean} disabled An optional state to disable the filter.
- * @param {string} className Optional CSS classes applied to the underlying selector.
+ * @param {string} className Optional additional styling applied to the registry filter.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     const isDateField: boolean = props.fieldType === XSD_DATE || props.fieldType === XSD_DATETIME;
