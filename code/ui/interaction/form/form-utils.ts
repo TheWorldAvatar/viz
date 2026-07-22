@@ -28,6 +28,7 @@ import {
 import { interpolate } from "@/utils/client-utils";
 import { BRANCH_ADD, BRANCH_DELETE } from "@/utils/internal-api-services";
 import { SelectOptionType } from "../dropdown/simple-selector";
+import { FORM_FIELD_OPTIONS } from "@/utils/constants";
 
 export const FORM_STATES: Record<string, string> = {
   ID: "id",
@@ -507,6 +508,16 @@ function updateDependentProperty(
   field: PropertyShape,
   properties: PropertyShapeOrGroup[]
 ): PropertyShape {
+  if (field.class && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
+    && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
+    && field.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
+  ) {
+    const currentOptionFieldsString: string = browserStorageManager.get(FORM_FIELD_OPTIONS);
+    const currentOptionFields: Set<string> = new Set(currentOptionFieldsString ? JSON.parse(currentOptionFieldsString) : []);
+    currentOptionFields.add(field.name[VALUE_KEY]);
+    browserStorageManager.set(FORM_FIELD_OPTIONS, JSON.stringify(Array.from(currentOptionFields)));
+  }
+
   if (field.dependentOn) {
     const dependentIri: string = field.dependentOn[ID_KEY];
     let dependentFieldId: string;
