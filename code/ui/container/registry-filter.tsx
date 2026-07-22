@@ -18,7 +18,7 @@ interface RegistryFilterProps {
     filters: ColumnFilter[];
     onSubmission: (_selectedOptions: string[]) => void;
     disabled?: boolean;
-    fullWidth?: boolean;
+    className?: string;
 }
 
 /**
@@ -32,7 +32,7 @@ interface RegistryFilterProps {
  * @param {ColumnFilter[]} filters Current filter state for all applied filters.
  * @param  onSubmission Executes this function on submission.
  * @param {boolean} disabled An optional state to disable the filter.
- * @param {boolean} fullWidth Fills the parent width when true (e.g. inside a full-width sheet).
+ * @param {string} className Optional CSS classes applied to the underlying selector.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     const isDateField: boolean = props.fieldType === XSD_DATE || props.fieldType === XSD_DATETIME;
@@ -98,7 +98,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         disabled={props.disabled}
-        fullWidth={props.fullWidth}
+        className={props.className}
     />
 }
 

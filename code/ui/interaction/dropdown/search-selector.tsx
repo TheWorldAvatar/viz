@@ -20,7 +20,7 @@ interface SearchSelectorProps {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disabled?: boolean;
-  fullWidth?: boolean;
+  className?: string;
 }
 
 /**
@@ -36,7 +36,7 @@ interface SearchSelectorProps {
  * @param {boolean} isLoading The loading state to indicate if options are fetching.
  * @param setIsLoading State function to set loading state.
  * @param {boolean} disabled An optional state to disable the filter.
- * @param {boolean} fullWidth Fills the parent width when true (e.g. inside a full-width sheet).
+ * @param {string} className Optional CSS classes applied to the selector wrapper.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
@@ -45,7 +45,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
 
   return (
-    <div className={props.fullWidth ? "w-full" : "w-full sm:w-sm xl:w-lg"}>
+    <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
       <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
         <div className="flex flex-1 items-stretch">
           <input
