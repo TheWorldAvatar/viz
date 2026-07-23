@@ -12,6 +12,7 @@ export const TASK_STATUS_KEY: string = "task_status";
 export const FLAG_KEY: string = "flag";
 export const FLAG_EMOJI: string = "🚩";
 export const FORM_FIELD_OPTIONS: string = "field_options";
+export const SYNC_KEY: string = "sync";
 export const TASK_VIEWER_FILTER: string = "task_view";
 
 export const DEFAULT_MAX_CHARACTER_LENGTH: number = 25;

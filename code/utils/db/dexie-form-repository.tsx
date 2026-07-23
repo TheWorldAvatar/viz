@@ -8,11 +8,12 @@ import { db, FormOptionMetadata } from "@/utils/db/db";
 import { type Table } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
-import { FLAG_EMOJI, FORM_FIELD_OPTIONS } from "../constants";
+import { FLAG_EMOJI, FORM_FIELD_OPTIONS, SYNC_KEY } from "../constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal-api-services";
 
 class DexieFormRepository {
     private TABLE_NAME_TEMPLATE: string = "form_field_";
+    private BATCH_SIZE: number = 500;
 
     /**
      * Synchronises with the backend to cache all field options.
@@ -45,6 +46,8 @@ class DexieFormRepository {
                 }
                 const table: Table<SelectOptionType, string> = await this.getTable(field);
                 let selectOptions: SelectOptionType[] = [];
+
+                const parsedField: string = field.replaceAll(" ", "_");
                 if (field == accountType && isContractForm) {
                     const responseEntity: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
                         InternalApiIdentifierMap.FILTER,
@@ -64,7 +67,7 @@ class DexieFormRepository {
                     const responseEntity: AgentResponseBody = await queryInternalApi(
                         makeInternalRegistryAPIwithParams(
                             InternalApiIdentifierMap.INSTANCES,
-                            field.replaceAll(" ", "_"),
+                            parsedField,
                             "false",
                         )
                     );
@@ -72,6 +75,43 @@ class DexieFormRepository {
                 }
 
                 await table.bulkPut(selectOptions);
+
+                if (selectOptions.length < 21) {
+                    await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, selectOptions.length);
+                    return;
+                }
+
+                let hasMore = true;
+                let currentOffset = await table.count();
+
+                while (hasMore) {
+                    await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
+                    const responseEntity: AgentResponseBody = await queryInternalApi(
+                        makeInternalRegistryAPIwithParams(
+                            InternalApiIdentifierMap.INSTANCES,
+                            parsedField,
+                            SYNC_KEY,
+                            null,
+                            null,
+                            String(Math.floor(currentOffset / this.BATCH_SIZE)),
+                            String(this.BATCH_SIZE),
+                        )
+                    );
+                    const nextBatch: SelectOptionType[] = (responseEntity.data?.items as SelectOptionType[]) ?? [];
+
+                    if (nextBatch.length > 0) {
+                        await table.bulkPut(nextBatch);
+                        currentOffset += nextBatch.length;
+                        if (nextBatch.length < this.BATCH_SIZE) {
+                            hasMore = false;
+                            await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
+                        } else {
+                            await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                }
             }));
     }
 

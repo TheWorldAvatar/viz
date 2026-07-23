@@ -4,6 +4,7 @@ import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
 import { getBackendApi } from "@/utils/internal-api-services";
 import { logColours } from "@/utils/logColours";
+import { SYNC_KEY } from "@/utils/constants";
 
 const apiVersion: string = "5.30.5";
 const internalApiIdentifierSet: ReadonlySet<string> = new Set(Object.values(InternalApiIdentifierMap));
@@ -314,8 +315,12 @@ function makeExternalEndpoint(
       const search: string = searchParams.get("search");
 
       let url: string = `${agentBaseApi}/${type}`;
-      // For getting registry table backend
-      if (requireLabel === "true") {
+      if (requireLabel === SYNC_KEY) {
+        const page: string = searchParams.get("page");
+        const limit: string = searchParams.get("limit");
+        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}`;
+        // For getting registry table backend
+      } else if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
