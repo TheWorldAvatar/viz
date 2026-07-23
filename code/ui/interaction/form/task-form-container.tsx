@@ -196,7 +196,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const taskSubmitAction: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    startLoading();
+    const loadingId: number | string = startLoading();
     try {
       let response: AgentResponseBody;
       if (props.id != BULK_IDENTIFIER) {
@@ -223,7 +223,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         } else if (props.formType === FormTypeMap.EXEMPT) {
           action = "exempt";
         } else {
-          stopLoading();
           return;
         }
 
@@ -235,7 +234,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         if (!isConnected && props.formType === FormTypeMap.COMPLETE) {
           submitLifecycleAction(formData, action, isPost).catch((error) => console.warn("Queued offline submission:", error));
           setIsDuplicate(false);
-          stopLoading();
           toast(dict.message.offlineQueued, "success");
           handleDrawerClose(() => router.back());
           return;
@@ -267,7 +265,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         );
       }
 
-      stopLoading();
       toast(
         response?.data?.message || response?.error?.message,
         response?.error ? "error" : "success"
@@ -295,8 +292,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       }
     } catch (error) {
       console.error("Failed to submit task action:", error);
-      stopLoading();
       toast(dict.message.genericError, "error");
+    } finally {
+      stopLoading(loadingId);
     }
   };
 
