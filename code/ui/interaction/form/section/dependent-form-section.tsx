@@ -96,12 +96,12 @@ export function DependentFormSection(
             control={props.form.control}
             defaultValue={""}
             rules={getRegisterOptions(props.dependentProp, formType, dict)}
-            render={({ field: { onChange } }) => {
+            render={({ field: { onChange, value } }) => {
               return (
                 liveFormOptions && <SimpleSelector
                   key={`${fieldName}-${currentParentOption}`}
                   options={liveFormOptions.options}
-                  defaultVal=""
+                  defaultVal={value}
                   onChange={(option) => {
                     // When on the invoice form, update the invoice account for filtering
                     if (formType == FormTypeMap.INVOICE && props.billingStore?.accountField === props.dependentProp.fieldId) {
