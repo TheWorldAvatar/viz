@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.9
+
+### Changes
+
+- Re-completing a task now skips the additional cost form and automatically recalculates any additional costs in the background.
+
 ## 5.81.8
 
 ### Changes
