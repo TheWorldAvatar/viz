@@ -1,9 +1,13 @@
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
-import { FormOptionState, FormOptionStateMap, LifecycleStageMap } from "@/types/form";
+import { Dictionary } from "@/types/dictionary";
+import { FormOptionState, FormOptionStateMap, FormType, FormTypeMap, LifecycleStageMap, OntologyConcept, useLiveFormOptionReturn } from "@/types/form";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
+import { genDefaultSelectOption } from "@/ui/interaction/form/form-utils";
 import { db, FormOptionMetadata } from "@/utils/db/db";
 import { type Table } from "dexie";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useMemo } from "react";
 import { FLAG_EMOJI, FORM_FIELD_OPTIONS } from "../constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal-api-services";
 
@@ -97,11 +101,62 @@ class DexieFormRepository {
 
     /**
      * Gets the form select option fields from the session storage.
+     * 
+     * @param {string} field The name of the target field.
      */
     private async getTable(field: string): Promise<Table<SelectOptionType, string>> {
         const tableName: string = `${this.TABLE_NAME_TEMPLATE}${field}`;
         return db.table(tableName);
     }
+
+    /**
+     * Fetches the options directly from target table.
+     * 
+     * @param {string} field The name of the target field.
+     */
+    async getOptions(field: string): Promise<SelectOptionType[]> {
+        const table: Table<SelectOptionType, string> = await this.getTable(field);
+        return table.toArray();
+    }
 }
 
 export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
+
+/**
+ * Get form options for target field from IndexedDb in real time.
+ *
+ * @param {string} field The name of the target field.
+ * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
+ * @param {boolean} isOptional Indicates if the form field can be optional.
+ * @param {Dictionary} dict The translation dictionary.
+ */
+export function useLiveFormOptions(field: string, formType: FormType, isOptional: boolean, dict: Dictionary): useLiveFormOptionReturn {
+    const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
+
+    const options: SelectOptionType[] = useLiveQuery(
+        async () => await dexieFormRepo.getOptions(field),
+        [field]
+    );
+
+    return useMemo(() => {
+        const naOption: SelectOptionType = { value: "", label: dict.message.na, disabled: false };
+        if (!options || options.length == 0) return { options: [] };
+        // Sort the fields by the labels
+        const sortedOptions: SelectOptionType[] = [...options]?.sort((a, b) => {
+            return a.label.localeCompare(b.label);
+        });
+        // Add the default search option only if this is the search form
+        if (formType === FormTypeMap.SEARCH) {
+            // Default option should only use empty string "" as the value
+            sortedOptions?.unshift({
+                label: defaultSearchOption.label.value,
+                value: defaultSearchOption.type.value,
+                disabled: false,
+            });
+            // Add the NA option at the start if this section can be optional
+        } else if (isOptional) {
+            sortedOptions?.unshift(naOption);
+        }
+        return { options: sortedOptions };
+    }, [options, formType, isOptional, defaultSearchOption]);
+}

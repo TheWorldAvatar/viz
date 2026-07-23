@@ -1,3 +1,5 @@
+import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
+
 export const CONTEXT_KEY = "@context";
 export const ID_KEY = "@id";
 export const TYPE_KEY = "@type";
@@ -69,6 +71,10 @@ export const RegistryStatusMap = {
   INVOICED: "invoiced",
 } as const;
 export type RegistryStatus = typeof RegistryStatusMap[keyof typeof RegistryStatusMap];
+
+export interface useLiveFormOptionReturn  {
+    options: SelectOptionType[];
+}
 
 export interface SparqlResponseField {
   value: string;
