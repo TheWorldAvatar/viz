@@ -189,10 +189,9 @@ export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
  * @param {string} field The name of the target field.
  * @param {string} search The search term.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
- * @param {boolean} isOptional Indicates if the form field can be optional.
  * @param {Dictionary} dict The translation dictionary.
  */
-export function useLiveFormOptions(field: string, search: string, formType: FormType, isOptional: boolean, dict: Dictionary): useLiveFormOptionReturn {
+export function useLiveFormOptions(field: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
 
     const options: SelectOptionType[] = useLiveQuery(
@@ -201,7 +200,6 @@ export function useLiveFormOptions(field: string, search: string, formType: Form
     );
 
     return useMemo(() => {
-        const naOption: SelectOptionType = { value: "", label: dict.message.na, disabled: false };
         if (!options || options.length == 0) return { options: [] };
         const copyOptions: SelectOptionType[] = [...options];
         // Add the default search option only if this is the search form
@@ -212,10 +210,7 @@ export function useLiveFormOptions(field: string, search: string, formType: Form
                 value: defaultSearchOption.type.value,
                 disabled: false,
             });
-            // Add the NA option at the start if this section can be optional
-        } else if (isOptional) {
-            copyOptions?.unshift(naOption);
         }
         return { options: copyOptions };
-    }, [options, search, formType, isOptional, defaultSearchOption]);
+    }, [options, search, formType, defaultSearchOption]);
 }

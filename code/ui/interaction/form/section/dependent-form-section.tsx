@@ -65,7 +65,7 @@ export function DependentFormSection(
     control,
     name: props.dependentProp?.dependentOn?.[ID_KEY] ?? "",
   });
-  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], search, formType, props.dependentProp.minCount?.[VALUE_KEY] === "0", dict);
+  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], search, formType, dict);
 
   const {
     id,
@@ -118,6 +118,7 @@ export function DependentFormSection(
                   isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && !currentParentOption)}
+                  reqNotApplicableOption={props.dependentProp.minCount?.[VALUE_KEY] === "0"}
                   menuPortalTarget={formType === FormTypeMap.MASS_EDIT ? document.body : undefined}
                   noOptionMessage={dict.message.noInstances}
                 />
