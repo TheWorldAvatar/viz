@@ -167,7 +167,7 @@ class DexieFormRepository {
      */
     async getOptions(field: string): Promise<SelectOptionType[]> {
         const table: Table<SelectOptionType, string> = await this.getTable(field);
-        return table.toArray();
+        return table.orderBy("label").limit(21).toArray();
     }
 }
 
@@ -192,22 +192,19 @@ export function useLiveFormOptions(field: string, formType: FormType, isOptional
     return useMemo(() => {
         const naOption: SelectOptionType = { value: "", label: dict.message.na, disabled: false };
         if (!options || options.length == 0) return { options: [] };
-        // Sort the fields by the labels
-        const sortedOptions: SelectOptionType[] = [...options]?.sort((a, b) => {
-            return a.label.localeCompare(b.label);
-        });
+        const copyOptions: SelectOptionType[] = [...options];
         // Add the default search option only if this is the search form
         if (formType === FormTypeMap.SEARCH) {
             // Default option should only use empty string "" as the value
-            sortedOptions?.unshift({
+            copyOptions?.unshift({
                 label: defaultSearchOption.label.value,
                 value: defaultSearchOption.type.value,
                 disabled: false,
             });
             // Add the NA option at the start if this section can be optional
         } else if (isOptional) {
-            sortedOptions?.unshift(naOption);
+            copyOptions?.unshift(naOption);
         }
-        return { options: sortedOptions };
+        return { options: copyOptions };
     }, [options, formType, isOptional, defaultSearchOption]);
 }
