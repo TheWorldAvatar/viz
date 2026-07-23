@@ -98,10 +98,7 @@ export function useFilterOptions(
         const res: AgentResponseBody = await queryInternalApi(url);
         const resOptions: string[] = (res.data?.items as string[]).map(option =>
           field === "event_id" ? getAfterDelimiter(option, "/") : !option ? dict.title.blank : option);
-        // Merge selected filters with fetched options to ensure selected items are always visible
-        // Use set to avoid duplicates
-        const mergedOptions: string[] = [...new Set([...currentFilters, ...resOptions])];
-        setOptions(mergedOptions);
+        setOptions(resOptions);
       } catch (error) {
         console.error("Error fetching instances", error);
       } finally {

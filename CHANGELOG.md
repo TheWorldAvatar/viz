@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.8
+
+### Changes
+
+- Improved searchable table filters so draft selections remain visible without options moving when users select or deselect values.
+- Stopped forcing deselected applied values into searchable filter results. They now remain visible only when they match the current search.
+
 ## 5.81.7
 
 ### Changes
