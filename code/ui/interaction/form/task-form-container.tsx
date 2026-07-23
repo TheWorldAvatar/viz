@@ -74,12 +74,26 @@ export function InterceptTaskFormContainerComponent(
 export function TaskFormContainerComponent(
   props: Readonly<TaskFormContainerComponentProps>
 ) {
+  const router = useRouter();
+  const dict: Dictionary = useDictionary();
+
   return (
     <FormSessionContextProvider formType={props.formType} entityType={props.formType === FormTypeMap.VIEW ? props.entityType :
       props.formType === FormTypeMap.REPORT ? "report" :
         props.formType === FormTypeMap.CANCEL ? "cancellation" :
           "dispatch"}>
-      <div className="flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border-1 xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
+      <div className="relative flex flex-col w-full h-full mt-0 xl:w-[50vw] xl:h-[85vh] mx-auto justify-between py-4 px-4 md:px-8 bg-muted xl:border xl:shadow-lg xl:border-border xl:rounded-xl xl:mt-4">
+        <div className="absolute top-2 right-4 z-10">
+          <Button
+            leftIcon="close"
+            size="icon"
+            variant="ghost"
+            type="button"
+            tooltipText={dict.action.dismiss}
+            className="rounded-full!"
+            onClick={() => router.back()}
+          />
+        </div>
         <TaskFormContents {...props} />
       </div>
     </FormSessionContextProvider >
@@ -183,89 +197,106 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     formData: FieldValues
   ) => {
     startLoading();
-    let response: AgentResponseBody;
-    if (props.id != BULK_IDENTIFIER) {
-      let action = "";
-      if (props.formType === FormTypeMap.DISPATCH) {
-        action = "dispatch";
-        formData[FORM_STATES.ORDER] = 0;
-      } else if (props.formType === FormTypeMap.COMPLETE) {
-        if (isSaving) {
-          action = "saved";
-          setIsSaving(false);
+    try {
+      let response: AgentResponseBody;
+      if (props.id != BULK_IDENTIFIER) {
+        let action = "";
+        if (props.formType === FormTypeMap.DISPATCH) {
+          action = "dispatch";
+          formData[FORM_STATES.ORDER] = 0;
+        } else if (props.formType === FormTypeMap.COMPLETE) {
+          if (isSaving) {
+            action = "saved";
+            setIsSaving(false);
+          } else {
+            action = "complete";
+          }
+          formData[FORM_STATES.ORDER] = 1;
+        } else if (props.formType === FormTypeMap.CANCEL) {
+          action = "cancel";
+          formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
+        } else if (props.formType === FormTypeMap.REPORT) {
+          action = "report";
+          formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
+        } else if (props.formType === FormTypeMap.ACCRUAL) {
+          action = "accrual";
+        } else if (props.formType === FormTypeMap.EXEMPT) {
+          action = "exempt";
         } else {
-          action = "complete";
+          stopLoading();
+          return;
         }
-        formData[FORM_STATES.ORDER] = 1;
-      } else if (props.formType === FormTypeMap.CANCEL) {
-        action = "cancel";
-        formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
-      } else if (props.formType === FormTypeMap.REPORT) {
-        action = "report";
-        formData[FORM_STATES.ORDER] = getPrevEventOccurrenceEnum(task?.status ?? "");
-      } else if (props.formType === FormTypeMap.ACCRUAL) {
-        action = "accrual";
-      } else if (props.formType === FormTypeMap.EXEMPT) {
-        action = "exempt";
+
+        const isPost: boolean = props.formType !== FormTypeMap.DISPATCH &&
+          props.formType !== FormTypeMap.COMPLETE && props.formType !== FormTypeMap.ACCRUAL;
+
+        // Offline completion: fire the request so the service worker queues it for
+        // replay on reconnect, then confirm and close without awaiting a response
+        if (!isConnected && props.formType === FormTypeMap.COMPLETE) {
+          submitLifecycleAction(formData, action, isPost).catch((error) => console.warn("Queued offline submission:", error));
+          setIsDuplicate(false);
+          stopLoading();
+          toast(dict.message.offlineQueued, "success");
+          handleDrawerClose(() => router.back());
+          return;
+        }
+
+        response = await submitLifecycleAction(formData, action, isPost);
+
+        if (!response?.error && isDuplicate) {
+          // Override id with the current ID based on path
+          response = await submitLifecycleAction({
+            ...formData,
+            id: props.id
+          }, "continue", true);
+          setIsDuplicate(false);
+        }
       } else {
-        return;
+        delete formData.id;
+        const currentTasks: FieldValues[] = (JSON.parse(browserStorageManager.get(FormTypeMap.MASS_EDIT)) as FieldValues[])
+          .map(task => {
+            return {
+              ...task,
+              ...formData
+            };
+          })
+        response = await queryInternalApi(
+          makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", FormTypeMap.MASS_EDIT),
+          "PUT",
+          JSON.stringify({ items: currentTasks })
+        );
       }
 
-      response = await submitLifecycleAction(
-        formData,
-        action,
-        props.formType !== FormTypeMap.DISPATCH && props.formType !== FormTypeMap.COMPLETE && props.formType !== FormTypeMap.ACCRUAL,
+      stopLoading();
+      toast(
+        response?.data?.message || response?.error?.message,
+        response?.error ? "error" : "success"
       );
-
-      if (!response?.error && isDuplicate) {
-        // Override id with the current ID based on path
-        response = await submitLifecycleAction({
-          ...formData,
-          id: props.id
-        }, "continue", true);
-        setIsDuplicate(false);
+      if (response && !response?.error) {
+        // For completion of an already-accrued bill, silently re-calculate the accrual using the
+        // existing additional cost data instead of forcing the user back into the accrual form.
+        handleDrawerClose(async () => {
+          if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true" && task) {
+            browserStorageManager.clear();
+            let loadingToast: string | number;
+            await submitOptionalAccrual({
+              taskId: task.id,
+              contract: task.contract,
+              date: task.date,
+              onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
+              onSuccess: (res) => toast(res.data?.message ?? dict.message.success, "success"),
+              onError: (message) => toast(message, "error"),
+              fallbackError: dict.message.genericError,
+              onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
+            });
+          }
+          router.back();
+        });
       }
-    } else {
-      delete formData.id;
-      const currentTasks: FieldValues[] = (JSON.parse(browserStorageManager.get(FormTypeMap.MASS_EDIT)) as FieldValues[])
-        .map(task => {
-          return {
-            ...task,
-            ...formData
-          };
-        })
-      response = await queryInternalApi(
-        makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "service", FormTypeMap.MASS_EDIT),
-        "PUT",
-        JSON.stringify({ items: currentTasks })
-      );
-    }
-
-    stopLoading();
-    toast(
-      response?.data?.message || response?.error?.message,
-      response?.error ? "error" : "success"
-    );
-    if (response && !response?.error) {
-      // For completion of an already-accrued bill, silently re-calculate the accrual using the
-      // existing additional cost data instead of forcing the user back into the accrual form.
-      handleDrawerClose(async () => {
-        if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true" && task) {
-          browserStorageManager.clear();
-          let loadingToast: string | number;
-          await submitOptionalAccrual({
-            taskId: task.id,
-            contract: task.contract,
-            date: task.date,
-            onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
-            onSuccess: (res) => toast(res.data?.message ?? dict.message.success, "success"),
-            onError: (message) => toast(message, "error"),
-            fallbackError: dict.message.error,
-            onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
-          });
-        }
-        router.back();
-      });
+    } catch (error) {
+      console.error("Failed to submit task action:", error);
+      stopLoading();
+      toast(dict.message.genericError, "error");
     }
   };
 

@@ -437,7 +437,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
                 router.back();
               },
               onError: (message) => toast(message, "error"),
-              fallbackError: dict.message.error,
+              fallbackError: dict.message.genericError,
               onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
             });
           } else {
