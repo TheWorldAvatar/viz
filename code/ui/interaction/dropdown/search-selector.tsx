@@ -3,7 +3,7 @@ import { useConnected } from "@/hooks/useConnected";
 import useRefresh from "@/hooks/useRefresh";
 import { Dictionary } from "@/types/dictionary";
 import StatusComponent from "@/ui/text/status/status";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
@@ -44,12 +44,12 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
   const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions);
+  const [previousOptions, setPreviousOptions] = useState<string[]>(props.options);
 
-  useEffect(() => {
-    if (props.isLoading) {
-      setPinnedOptions(selectedOptions);
-    }
-  }, [props.isLoading, selectedOptions]);
+  if (props.options !== previousOptions) {
+    setPreviousOptions(props.options);
+    setPinnedOptions(selectedOptions);
+  }
 
   const visibleOptions: string[] = [...new Set([...pinnedOptions, ...props.options, ...selectedOptions])];
 
