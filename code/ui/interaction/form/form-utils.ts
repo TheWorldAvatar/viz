@@ -6,6 +6,7 @@ import { Dictionary } from "@/types/dictionary";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import {
   BillingEntityTypes,
+  FormOptionStateMap,
   FormTemplateType,
   FormType,
   FormTypeMap,
@@ -512,7 +513,7 @@ function updateDependentProperty(
     && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
     && field.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries"
   ) {
-    dexieFormRepo.addField(field.name[VALUE_KEY]);
+    dexieFormRepo.registerField(field.name[VALUE_KEY]);
   }
 
   if (field.dependentOn) {

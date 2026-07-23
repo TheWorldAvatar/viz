@@ -1,4 +1,3 @@
-import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import { FormOptionState, FormOptionStateMap, FormType, FormTypeMap, LifecycleStageMap, OntologyConcept, useLiveFormOptionReturn } from "@/types/form";
@@ -8,7 +7,7 @@ import { db, FormOptionMetadata } from "@/utils/db/db";
 import { Collection, type Table } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
-import { FLAG_EMOJI, FORM_FIELD_OPTIONS, SYNC_KEY } from "../constants";
+import { FLAG_EMOJI, SYNC_KEY } from "../constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal-api-services";
 
 class DexieFormRepository {
@@ -16,14 +15,16 @@ class DexieFormRepository {
     private BATCH_SIZE: number = 500;
 
     /**
-     * Adds field meeting the requirement for caching.
-     * 
-     * @param {string} field The name of the field.
-    */
-    addField(field: string): void {
-        const currentOptionFields: Set<string> = new Set(this.getOptionFields());
-        currentOptionFields.add(field);
-        browserStorageManager.set(FORM_FIELD_OPTIONS, JSON.stringify(Array.from(currentOptionFields)));
+     * Registers a field as pending.
+     *
+     * @param field The name of the field.
+     */
+    registerField(field: string): void {
+        // Non-blocking: Dexie queues the write internally
+        this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0)
+            .catch((err) => {
+                console.error(`Failed to seed metadata for field "${field}"`, err);
+            });
     }
 
     /**
@@ -33,20 +34,15 @@ class DexieFormRepository {
      * @param {boolean} isContractForm Indicates if the sync occurs for a contract form.
     */
     async sync(accountType: string = "", isContractForm: boolean = false): Promise<void> {
+        // Ensure metadata is ready
+        const meta: FormOptionMetadata[] = await db.metadata.toArray();
+        const currentOptionFields: string[] = meta.map(m => m.field);
         // Synchronises only if there are relevant fields available
-        const currentOptionFields: string[] = this.getOptionFields();
-        if (currentOptionFields.length == 0) {
+        if (currentOptionFields.length === 0) {
             return;
         }
 
         await db.registerDynamicTables(this.TABLE_NAME_TEMPLATE, currentOptionFields);
-        // Dynamic tables must be registered first before any metadata is further updated
-        for (const field of currentOptionFields) {
-            const meta = await db.metadata.get(field);
-            if (!meta) {
-                await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0);
-            }
-        }
 
         // Starts fetching and syncing with the backend
         await Promise.allSettled(
@@ -124,14 +120,6 @@ class DexieFormRepository {
                     }
                 }
             }));
-    }
-
-    /**
-     * Gets the form select option fields from the session storage.
-     */
-    private getOptionFields(): string[] {
-        const currentOptionFieldsString: string = browserStorageManager.get(FORM_FIELD_OPTIONS);
-        return currentOptionFieldsString ? JSON.parse(currentOptionFieldsString) : [];
     }
 
     /**
