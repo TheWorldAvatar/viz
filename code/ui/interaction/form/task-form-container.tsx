@@ -249,9 +249,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     if (response && !response?.error) {
       // For completion of an already-accrued bill, silently re-calculate the accrual using the
       // existing additional cost data instead of forcing the user back into the accrual form.
-      const wasAccrued: boolean = browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true";
       handleDrawerClose(async () => {
-        if (wasAccrued && task) {
+        if (browserStorageManager.get(RegistryStatusMap.BILLABLE_COMPLETED) === "true" && task) {
           browserStorageManager.clear();
           let loadingToast: string | number;
           await submitOptionalAccrual({
