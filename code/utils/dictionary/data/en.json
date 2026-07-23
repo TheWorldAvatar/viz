@@ -166,6 +166,8 @@
     "reportInstruction": "Report an issue with the service on {replace}. \n Please include the reason in your report:",
     "rescheduleInstruction": "Request a change to a previously scheduled service on {replace}",
     "offlineMode": "Offline mode",
+    "offlineQueued": "Saved offline. Your changes will sync automatically when you reconnect.",
+    "genericError": "Something went wrong. Please try again.",
     "matchedFeatures": "Found matching features! Updating the visualisation...",
     "noMatchFeature": "No matching feature found! Please refine your search parameters.",
     "noMatchMetaWithTime": "No matching feature found! Attempting to display all features within the selected time period...",

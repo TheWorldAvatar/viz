@@ -166,6 +166,8 @@
     "reportInstruction": "Melden Sie ein Problem mit dem Dienst am {replace}. \n Bitte geben Sie in Ihrem Bericht den Grund an:",
     "rescheduleInstruction": "Änderung einer bereits geplanten Dienstleistung am {replace} beantragen",
     "offlineMode": "Offline-Modus",
+    "offlineQueued": "Offline gespeichert. Ihre Änderungen werden automatisch synchronisiert, sobald Sie wieder eine Verbindung herstellen.",
+    "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "matchedFeatures": "Passende Merkmale gefunden! Die Visualisierung wird aktualisiert...",
     "noMatchFeature": "Kein passendes Merkmal gefunden! Bitte verfeinern Sie Ihre Suchparameter.",
     "noMatchMetaWithTime": "Kein passendes Merkmal gefunden! Es wird versucht, alle Merkmale innerhalb des ausgewählten Zeitraums anzuzeigen...",

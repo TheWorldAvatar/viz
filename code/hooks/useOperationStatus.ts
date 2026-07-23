@@ -10,8 +10,8 @@ import useRefresh, { useRefreshReturn } from './useRefresh';
 
 interface useOperationStatusReturn extends useRefreshReturn {
   isLoading: boolean;
-  startLoading: () => void;
-  stopLoading: () => void;
+  startLoading: () => number | string;
+  stopLoading: (id?: number | string) => void;
   resetFormSession: () => void;
 }
 
@@ -25,15 +25,17 @@ const useOperationStatus = (): useOperationStatusReturn => {
   const toastId: number | string = useSelector(selectToastId);
   const useRefreshReturn: useRefreshReturn = useRefresh(500);
 
-  const startLoading = () => {
+  const startLoading = (): number | string => {
     const id: number | string = toast(dict.message.processingRequest, "loading");
     dispatch(setToastId(id));
     dispatch(setLoading(true));
+    return id;
   }
 
-  const stopLoading = () => {
+  // If an id is provided, it will be used to dismiss the loading toast, otherwise the stored id will be used.
+  const stopLoading = (id?: number | string) => {
+    toast.dismiss(id ?? toastId);
     dispatch(setToastId(null));
-    toast.dismiss(toastId);
     dispatch(setLoading(false));
   }
   const resetFormSession = (): void => {
