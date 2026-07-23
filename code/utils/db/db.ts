@@ -33,7 +33,7 @@ class TWADatabase extends Dexie {
         for (const field of currentOptionFields) {
             const tableName: string = `${tablePrefix}${field}`;
             if (!this.tables.some((t) => t.name === tableName)) {
-                newDbSchema[tableName] = "value, label";
+                newDbSchema[tableName] = "label";
             }
         }
 
