@@ -115,6 +115,7 @@ export function DependentFormSection(
                     }
                   }}
                   ariaLabel={interpolate(dict.action.selectItem, label)}
+                  hasLimits={true}
                   isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
                     // Disable if parent field has no value
                     (props.dependentProp.dependentOn?.[ID_KEY] != undefined && !currentParentOption)}

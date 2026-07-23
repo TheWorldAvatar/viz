@@ -1,11 +1,13 @@
 import { useEffect, useMemo } from "react";
 import Select, {
   ActionMeta,
+  components,
   GroupBase,
+  InputActionMeta,
+  MenuListProps,
   MultiValue,
   OptionsOrGroups,
   SingleValue,
-  InputActionMeta,
 } from "react-select";
 
 import { useDictionary } from "@/hooks/useDictionary";
@@ -33,6 +35,7 @@ interface SimpleSelectorProps {
   ariaLabel: string;
   menuPortalTarget?: HTMLElement
   noOptionMessage?: string;
+  hasLimits?: boolean;
   isDisabled?: boolean;
   reqNotApplicableOption?: boolean;
   onInputChange?: (_newValue: string, _actionMeta: InputActionMeta) => void
@@ -47,6 +50,7 @@ interface SimpleSelectorProps {
  * @param {string} ariaLabel Parameter to set the aria-label attribute for accessibility.
  * @param {HTMLElement} menuPortalTarget Optional target element to attach the menu. May be undefined.
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
+ * @param {boolean} hasLimits Optional parameter to trigger additional menu messages when over the 20 limit. Defaults to false.
  * @param {boolean} isDisabled Optional parameter to disable the selector. Defaults to false.
  * @param {boolean} reqNotApplicableOption Optional parameter to enable the not applicable option. Defaults to false.
  * @param onInputChange Optional function to handle the event when typing in the search input.
@@ -114,6 +118,22 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
     return flattenedOptions.find((option) => option.value === props.defaultVal);
   };
 
+  const MenuList = (
+    menuProps: MenuListProps<SelectOptionType, false>
+  ) => (
+    <components.MenuList {...menuProps}>
+      {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
+        <p className="text-sm text-foreground/80 italic px-2 my-1">
+          {dict.message.typeMore}
+        </p>
+      )}
+      {menuProps.children}
+      {Array.isArray(menuProps.children) && menuProps.children?.length > 20 && (
+        <p className="text-2xl text-foreground/80 italic px-2 ">...</p>
+      )}
+    </components.MenuList>
+  );
+
   return (
     <Select
       styles={selectorStyles}
@@ -122,6 +142,7 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
       value={getDefaultValue()}
       onInputChange={props.onInputChange}
       onChange={props.onChange}
+      components={props.hasLimits ? { MenuList } : null}
       isLoading={false}
       isMulti={false}
       isSearchable={true}
