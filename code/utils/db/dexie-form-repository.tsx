@@ -5,7 +5,7 @@ import { FormOptionState, FormOptionStateMap, FormType, FormTypeMap, LifecycleSt
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { genDefaultSelectOption } from "@/ui/interaction/form/form-utils";
 import { db, FormOptionMetadata } from "@/utils/db/db";
-import { type Table } from "dexie";
+import { Collection, type Table } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
 import { FLAG_EMOJI, FORM_FIELD_OPTIONS, SYNC_KEY } from "../constants";
@@ -167,12 +167,17 @@ class DexieFormRepository {
      * @param {string} search The search term.
      */
     async getOptions(field: string, search: string): Promise<SelectOptionType[]> {
+        const cleanSearch: string = search.trim().toLowerCase();
         const table: Table<SelectOptionType, string> = await this.getTable(field);
-        if (search.trim() === "") {
-            return table.orderBy("label").limit(21).toArray();
+
+        let query: Collection<SelectOptionType, string> = table.orderBy("label");
+        if (cleanSearch) {
+            // Fast cursor-based filter
+            query = query.filter((item) =>
+                item.label.toLowerCase().includes(cleanSearch)
+            );
         }
-        return table.where("label").startsWithIgnoreCase(search)
-            .limit(21).toArray();
+        return await query.limit(21).toArray();
     }
 }
 
