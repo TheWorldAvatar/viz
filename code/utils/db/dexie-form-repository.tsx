@@ -16,6 +16,17 @@ class DexieFormRepository {
     private BATCH_SIZE: number = 500;
 
     /**
+     * Adds field meeting the requirement for caching.
+     * 
+     * @param {string} field The name of the field.
+    */
+    addField(field: string): void {
+        const currentOptionFields: Set<string> = new Set(this.getOptionFields());
+        currentOptionFields.add(field);
+        browserStorageManager.set(FORM_FIELD_OPTIONS, JSON.stringify(Array.from(currentOptionFields)));
+    }
+
+    /**
      * Synchronises with the backend to cache all field options.
      * 
      * @param {string} accountType The type of account.
