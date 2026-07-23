@@ -27,6 +27,7 @@ import FormQuickViewBody from "@/ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "@/ui/interaction/accordion/form-quick-view-header";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
+import { useState } from "react";
 import FormInputContainer from "../field/form-input-container";
 
 interface DependentFormSectionProps {
@@ -49,6 +50,7 @@ export function DependentFormSection(
 ) {
   const dict: Dictionary = useDictionary();
   const { formType, formCount, frozenFields, updateInvoiceAccount } = useFormSession();
+  const [search, setSearch] = useState<string>("");
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -63,7 +65,7 @@ export function DependentFormSection(
     control,
     name: props.dependentProp?.dependentOn?.[ID_KEY] ?? "",
   });
-  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], formType, props.dependentProp.minCount?.[VALUE_KEY] === "0", dict);
+  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], search, formType, props.dependentProp.minCount?.[VALUE_KEY] === "0", dict);
 
   const {
     id,
@@ -106,6 +108,11 @@ export function DependentFormSection(
                       updateInvoiceAccount((option as SelectOptionType).label);
                     }
                     onChange((option as SelectOptionType).value);
+                  }}
+                  onInputChange={(newValue, actionMeta) => {
+                    if (actionMeta.action === "input-change") {
+                      setSearch(newValue);
+                    }
                   }}
                   ariaLabel={interpolate(dict.action.selectItem, label)}
                   isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||

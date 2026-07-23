@@ -5,6 +5,7 @@ import Select, {
   MultiValue,
   OptionsOrGroups,
   SingleValue,
+  InputActionMeta,
 } from "react-select";
 
 import { useDictionary } from "@/hooks/useDictionary";
@@ -34,6 +35,7 @@ interface SimpleSelectorProps {
   noOptionMessage?: string;
   isDisabled?: boolean;
   reqNotApplicableOption?: boolean;
+  onInputChange?: (_newValue: string, _actionMeta: InputActionMeta) => void
 }
 
 /**
@@ -47,6 +49,7 @@ interface SimpleSelectorProps {
  * @param {string} noOptionMessage Optional message to display when no options are available. Defaults to an empty string.
  * @param {boolean} isDisabled Optional parameter to disable the selector. Defaults to false.
  * @param {boolean} reqNotApplicableOption Optional parameter to enable the not applicable option. Defaults to false.
+ * @param onInputChange Optional function to handle the event when typing in the search input.
  */
 export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
   const dict: Dictionary = useDictionary();
@@ -117,6 +120,7 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
       unstyled
       options={parsedOptions}
       value={getDefaultValue()}
+      onInputChange={props.onInputChange}
       onChange={props.onChange}
       isLoading={false}
       isMulti={false}

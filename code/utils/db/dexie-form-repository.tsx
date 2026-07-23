@@ -161,13 +161,18 @@ class DexieFormRepository {
     }
 
     /**
-     * Fetches the options directly from target table.
+     * Fetches the first 21 options directly from target table.
      * 
      * @param {string} field The name of the target field.
+     * @param {string} search The search term.
      */
-    async getOptions(field: string): Promise<SelectOptionType[]> {
+    async getOptions(field: string, search: string): Promise<SelectOptionType[]> {
         const table: Table<SelectOptionType, string> = await this.getTable(field);
-        return table.orderBy("label").limit(21).toArray();
+        if (search.trim() === "") {
+            return table.orderBy("label").limit(21).toArray();
+        }
+        return table.where("label").startsWithIgnoreCase(search)
+            .limit(21).toArray();
     }
 }
 
@@ -177,16 +182,17 @@ export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
  * Get form options for target field from IndexedDb in real time.
  *
  * @param {string} field The name of the target field.
+ * @param {string} search The search term.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
  * @param {boolean} isOptional Indicates if the form field can be optional.
  * @param {Dictionary} dict The translation dictionary.
  */
-export function useLiveFormOptions(field: string, formType: FormType, isOptional: boolean, dict: Dictionary): useLiveFormOptionReturn {
+export function useLiveFormOptions(field: string, search: string, formType: FormType, isOptional: boolean, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
 
     const options: SelectOptionType[] = useLiveQuery(
-        async () => await dexieFormRepo.getOptions(field),
-        [field]
+        async () => await dexieFormRepo.getOptions(field, search),
+        [field, search]
     );
 
     return useMemo(() => {
@@ -206,5 +212,5 @@ export function useLiveFormOptions(field: string, formType: FormType, isOptional
             copyOptions?.unshift(naOption);
         }
         return { options: copyOptions };
-    }, [options, formType, isOptional, defaultSearchOption]);
+    }, [options, search, formType, isOptional, defaultSearchOption]);
 }
