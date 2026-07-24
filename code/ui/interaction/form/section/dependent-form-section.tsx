@@ -9,6 +9,7 @@ import {
   FormTypeMap,
   ID_KEY,
   PropertyShape,
+  useLiveFormOptionReturn,
   VALUE_KEY
 } from "@/types/form";
 import LoadingSpinner from "@/ui/graphic/loader/spinner";
@@ -19,14 +20,14 @@ import {
 } from "@/utils/client-utils";
 import { getRegisterOptions } from "../form-utils";
 
-import { useDependentField } from "@/hooks/form/api/useDependentField";
 import { useFormQuickView } from "@/hooks/form/useFormQuickView";
 import useFormSession from "@/hooks/form/useFormSession";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import FormQuickViewBody from "@/ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "@/ui/interaction/accordion/form-quick-view-header";
-import AsyncSearchableSimpleSelector from "@/ui/interaction/dropdown/async-searchable-simple-selector";
-import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
+import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
+import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
+import { useState } from "react";
 import FormInputContainer from "../field/form-input-container";
 
 interface DependentFormSectionProps {
@@ -49,6 +50,7 @@ export function DependentFormSection(
 ) {
   const dict: Dictionary = useDictionary();
   const { formType, formCount, frozenFields, updateInvoiceAccount } = useFormSession();
+  const [search, setSearch] = useState<string>("");
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
@@ -59,7 +61,12 @@ export function DependentFormSection(
     name: fieldName,
   });
 
-  const { selectedOption, currentParentOption, getFieldOptions } = useDependentField(props.dependentProp, props.form, props.isArray);
+  const currentParentOption: string = useWatch<FieldValues>({
+    control,
+    name: props.dependentProp?.dependentOn?.[ID_KEY] ?? "",
+  });
+  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], search, formType, dict);
+
   const {
     id,
     selectedEntityId,
@@ -74,7 +81,6 @@ export function DependentFormSection(
     || (formType == FormTypeMap.ADJUST_PRICE && props.billingStore.pricing != queryEntityType)
     // Disable account field on assign price form page
     || (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
-
   return (
     <div className="rounded-lg my-4">
       <div className="flex flex-col w-full gap-2">
@@ -88,27 +94,34 @@ export function DependentFormSection(
           <Controller
             name={fieldName}
             control={props.form.control}
-            defaultValue={selectedOption}
+            defaultValue={""}
             rules={getRegisterOptions(props.dependentProp, formType, dict)}
-            render={({ field: { onChange } }) => {
+            render={({ field: { onChange, value } }) => {
               return (
-                <AsyncSearchableSimpleSelector
+                liveFormOptions?.options && <SimpleSelector
                   key={`${fieldName}-${currentParentOption}`}
-                  options={getFieldOptions}
-                  initialValue={selectedOption}
-                  onChange={(option: SelectOptionType) => {
+                  options={liveFormOptions.options}
+                  defaultVal={value}
+                  onChange={(option) => {
                     // When on the invoice form, update the invoice account for filtering
                     if (formType == FormTypeMap.INVOICE && props.billingStore?.accountField === props.dependentProp.fieldId) {
-                      updateInvoiceAccount(option.label);
+                      updateInvoiceAccount((option as SelectOptionType).label);
                     }
-                    onChange(option.value);
+                    onChange((option as SelectOptionType).value);
                   }}
+                  onInputChange={(newValue, actionMeta) => {
+                    if (actionMeta.action === "input-change") {
+                      setSearch(newValue);
+                    }
+                  }}
+                  ariaLabel={interpolate(dict.action.selectItem, label)}
+                  hasLimits={true}
                   isDisabled={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE || disable ||
                     // Disable if parent field has no value
-                    (props.dependentProp.dependentOn?.[ID_KEY] != undefined && currentParentOption == undefined)}
-                  noOptionMessage={dict.message.noInstances}
+                    (props.dependentProp.dependentOn?.[ID_KEY] != undefined && !currentParentOption)}
+                  reqNotApplicableOption={props.dependentProp.minCount?.[VALUE_KEY] === "0"}
                   menuPortalTarget={formType === FormTypeMap.MASS_EDIT ? document.body : undefined}
-                  ariaLabel={interpolate(dict.action.selectItem, label)}
+                  noOptionMessage={dict.message.noInstances}
                 />
               );
             }}

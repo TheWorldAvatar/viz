@@ -4,6 +4,7 @@ import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
 import { getBackendApi } from "@/utils/internal-api-services";
 import { logColours } from "@/utils/logColours";
+import { SYNC_KEY } from "@/utils/constants";
 
 const apiVersion: string = "5.30.5";
 const internalApiIdentifierSet: ReadonlySet<string> = new Set(Object.values(InternalApiIdentifierMap));
@@ -314,8 +315,12 @@ function makeExternalEndpoint(
       const search: string = searchParams.get("search");
 
       let url: string = `${agentBaseApi}/${type}`;
-      // For getting registry table backend
-      if (requireLabel === "true") {
+      if (requireLabel === SYNC_KEY) {
+        const page: string = searchParams.get("page");
+        const limit: string = searchParams.get("limit");
+        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}${subtype != null ? "&parent=" + subtype : ""}`;
+        // For getting registry table backend
+      } else if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
@@ -361,7 +366,10 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (type == LifecycleStageMap.ACCOUNT) {
-        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
+        const cursor: string = searchParams.get("cursor");
+        const limit: string = searchParams.get("limit");
+        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}
+        &cursor=${encodeURIComponent(cursor)}&limit=${encodeURIComponent(limit)}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;

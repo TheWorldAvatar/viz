@@ -26,6 +26,7 @@ import {
   VALUE_KEY
 } from "@/types/form";
 import { interpolate } from "@/utils/client-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { BRANCH_ADD, BRANCH_DELETE } from "@/utils/internal-api-services";
 import { SelectOptionType } from "../dropdown/simple-selector";
 
@@ -507,6 +508,9 @@ function updateDependentProperty(
   field: PropertyShape,
   properties: PropertyShapeOrGroup[]
 ): PropertyShape {
+  const dependentClassCondition: boolean = field.class && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
+    && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
+    && field.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries";
   if (field.dependentOn) {
     const dependentIri: string = field.dependentOn[ID_KEY];
     let dependentFieldId: string;
@@ -534,6 +538,9 @@ function updateDependentProperty(
         }
       }
     }
+    if (dependentClassCondition) {
+      dexieFormRepo.registerField(field.name[VALUE_KEY], dependentFieldName);
+    }
     return {
       ...field,
       dependentOn: {
@@ -542,6 +549,9 @@ function updateDependentProperty(
       },
     };
   } else {
+    if (dependentClassCondition) {
+      dexieFormRepo.registerField(field.name[VALUE_KEY]);
+    }
     return field;
   }
 }
