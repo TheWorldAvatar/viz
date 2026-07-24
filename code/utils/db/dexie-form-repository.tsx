@@ -20,13 +20,15 @@ class DexieFormRepository {
      * Registers a field as pending.
      *
      * @param field The name of the field.
+     * @param dependentField Optional dependent field.
      */
-    registerField(field: string): void {
+    registerField(field: string, dependentField?: string): void {
         this.fields[field] = {
             field,
             state: FormOptionStateMap.PENDING,
             count: 0,
             lastUpdated: Date.now(),
+            dependentField,
         }
     }
 
@@ -44,10 +46,10 @@ class DexieFormRepository {
         }
 
         // Stores metadata state if not present
-        for (const field of currentOptionFields) {
+        for (const [field, currentMeta] of Object.entries(this.fields)) {
             const meta: FormOptionMetadata = await db.metadata.get(field);
             if (!meta || meta?.state == FormOptionStateMap.PENDING) {
-                await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0);
+                await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0, currentMeta.dependentField);
             }
         }
 
@@ -106,13 +108,21 @@ class DexieFormRepository {
      * @param {string} field The name of the field.
      * @param {FormOptionState} state The current state of the field syncing process.
      * @param {number} count The total count of data cached.
+     * @param {string} dependentField The name of the dependent field if any. Optional for non-pending state updates.
     */
-    private async updateFieldMeta(field: string, state: FormOptionState, count: number): Promise<void> {
+    private async updateFieldMeta(field: string, state: FormOptionState, count: number, dependentField?: string): Promise<void> {
+        let updatedDependentField: string = dependentField;
+        // For non-pending states, reuse the previous dependent field
+        if (state != FormOptionStateMap.PENDING) {
+            const meta: FormOptionMetadata = await db.metadata.get(field);
+            updatedDependentField = meta.dependentField;
+        }
         await db.metadata.put({
             field,
             state,
             count,
             lastUpdated: Date.now(),
+            dependentField: updatedDependentField,
         });
     }
 

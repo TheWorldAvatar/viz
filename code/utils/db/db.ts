@@ -11,6 +11,7 @@ export interface FormOptionMetadata {
     state: FormOptionState;
     count: number;
     lastUpdated: number;
+    dependentField?: string;
 }
 
 class TWADatabase extends Dexie {
