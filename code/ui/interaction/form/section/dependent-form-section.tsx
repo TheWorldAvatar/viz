@@ -98,7 +98,7 @@ export function DependentFormSection(
             rules={getRegisterOptions(props.dependentProp, formType, dict)}
             render={({ field: { onChange, value } }) => {
               return (
-                liveFormOptions && <SimpleSelector
+                liveFormOptions?.options && <SimpleSelector
                   key={`${fieldName}-${currentParentOption}`}
                   options={liveFormOptions.options}
                   defaultVal={value}
