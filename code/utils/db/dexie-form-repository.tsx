@@ -14,17 +14,20 @@ class DexieFormRepository {
     private TABLE_NAME_TEMPLATE: string = "form_field_";
     private BATCH_SIZE: number = 500;
 
+    private fields: Record<string, FormOptionMetadata> = {};
+
     /**
      * Registers a field as pending.
      *
      * @param field The name of the field.
      */
     registerField(field: string): void {
-        // Non-blocking: Dexie queues the write internally
-        this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0)
-            .catch((err) => {
-                console.error(`Failed to seed metadata for field "${field}"`, err);
-            });
+        this.fields[field] = {
+            field,
+            state: FormOptionStateMap.PENDING,
+            count: 0,
+            lastUpdated: Date.now(),
+        }
     }
 
     /**
@@ -34,15 +37,23 @@ class DexieFormRepository {
      * @param {boolean} isContractForm Indicates if the sync occurs for a contract form.
     */
     async sync(accountType: string = "", isContractForm: boolean = false): Promise<void> {
-        // Ensure metadata is ready
-        const meta: FormOptionMetadata[] = await db.metadata.toArray();
-        const currentOptionFields: string[] = meta.map(m => m.field);
+        const currentOptionFields: string[] = Object.keys(this.fields);
         // Synchronises only if there are relevant fields available
         if (currentOptionFields.length === 0) {
             return;
         }
 
+        // Stores metadata state if not present
+        for (const field of currentOptionFields) {
+            const meta: FormOptionMetadata = await db.metadata.get(field);
+            if (!meta || meta?.state == FormOptionStateMap.PENDING) {
+                await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0);
+            }
+        }
+
+        // WARNING: Users must re-register a dynamic table each time as the schema is not preloaded on refresh
         await db.registerDynamicTables(this.TABLE_NAME_TEMPLATE, currentOptionFields);
+        this.fields = {}; // reset to prevent outdated data override
 
         // Starts fetching and syncing with the backend
         await Promise.allSettled(
