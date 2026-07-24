@@ -18,6 +18,7 @@ export type SelectOptionType = {
   label: string;
   value: string;
   disabled: boolean;
+  parent?: string;
 };
 
 type SelectValue<T extends SelectOptionType> =
@@ -57,7 +58,7 @@ interface SimpleSelectorProps {
  */
 export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
   const dict: Dictionary = useDictionary();
-  const naOption: SelectOptionType = { value: "", label: dict.message.na, disabled: false };
+  const naOption: SelectOptionType = { value: "", label: dict.message.na, parent: "", disabled: false };
 
   // A function that adds the not applicable option at the start if required
   const addNAOption = (

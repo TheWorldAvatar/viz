@@ -68,7 +68,7 @@ class DexieFormRepository {
 
                 // First batch is 21 options for quick loads
                 const parsedField: string = field.replaceAll(" ", "_");
-                const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField,
+                const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
                     0, 21, field == accountType && isContractForm);
                 await table.bulkPut(selectOptions);
 
@@ -82,7 +82,7 @@ class DexieFormRepository {
 
                 while (hasMore) {
                     await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
-                    const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField,
+                    const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
                         Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
                         field == accountType && isContractForm);
 
@@ -140,11 +140,12 @@ class DexieFormRepository {
      * Fetches the option from server side.
      * 
      * @param {string} field The name of the field.
+     * @param {string} parent The name of the parent/dependent field.
      * @param {number} cursor The current location of the fetch.
      * @param {number} limit The current limit to fetch for.
      * @param {boolean} isAccountField Indicates if this is an account field.
      */
-    private async fetchOptions(field: string, cursor: number, limit: number, isAccountField: boolean): Promise<SelectOptionType[]> {
+    private async fetchOptions(field: string, parent: string, cursor: number, limit: number, isAccountField: boolean): Promise<SelectOptionType[]> {
         const parsedField: string = field.replaceAll(" ", "_");
         if (isAccountField) {
             const responseEntity: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
@@ -171,7 +172,8 @@ class DexieFormRepository {
                 InternalApiIdentifierMap.INSTANCES,
                 parsedField,
                 SYNC_KEY,
-                null, null,
+                null,
+                parent,
                 String(cursor),
                 String(limit),
             )

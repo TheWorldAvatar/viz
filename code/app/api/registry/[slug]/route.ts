@@ -318,7 +318,7 @@ function makeExternalEndpoint(
       if (requireLabel === SYNC_KEY) {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
-        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}`;
+        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}${subtype != null ? "&parent=" + subtype : ""}`;
         // For getting registry table backend
       } else if (requireLabel === "true") {
         const page: string = searchParams.get("page");
