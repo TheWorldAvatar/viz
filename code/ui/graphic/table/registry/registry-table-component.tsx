@@ -1,6 +1,7 @@
 "use client";
 
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
+import { useTableScroll } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
@@ -75,6 +76,8 @@ export default function RegistryTableComponent(
     selectedDate,
   );
 
+  const { scrollPositionRef, scrollContainerRef } = useTableScroll(tableDescriptor, selectedDate);
+
   const triggerTableRefresh = () => {
     triggerRefresh();
     tableDescriptor.table.resetRowSelection();
@@ -131,6 +134,8 @@ export default function RegistryTableComponent(
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
+          scrollPositionRef={scrollPositionRef}
+          scrollContainerRef={scrollContainerRef}
         />
       )}
     </div>
