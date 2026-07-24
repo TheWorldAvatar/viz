@@ -366,7 +366,10 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (type == LifecycleStageMap.ACCOUNT) {
-        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
+        const cursor: string = searchParams.get("cursor");
+        const limit: string = searchParams.get("limit");
+        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}
+        &cursor=${encodeURIComponent(cursor)}&limit=${encodeURIComponent(limit)}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;

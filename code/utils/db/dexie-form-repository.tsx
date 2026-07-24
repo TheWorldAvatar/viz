@@ -63,35 +63,11 @@ class DexieFormRepository {
                     return;
                 }
                 const table: Table<SelectOptionType, string> = await this.getTable(field);
-                let selectOptions: SelectOptionType[] = [];
 
+                // First batch is 21 options for quick loads
                 const parsedField: string = field.replaceAll(" ", "_");
-                if (field == accountType && isContractForm) {
-                    const responseEntity: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-                        InternalApiIdentifierMap.FILTER,
-                        LifecycleStageMap.ACCOUNT,
-                        accountType,
-                        "",
-                    ));
-                    const accountFilterOptions: SelectOptionType[] = responseEntity.data?.items as SelectOptionType[] ?? [];
-                    selectOptions = accountFilterOptions.map(option => {
-                        return {
-                            ...option,
-                            label: `${option.label} ${option.disabled ? FLAG_EMOJI : ""}`,
-                        }
-
-                    });
-                } else {
-                    const responseEntity: AgentResponseBody = await queryInternalApi(
-                        makeInternalRegistryAPIwithParams(
-                            InternalApiIdentifierMap.INSTANCES,
-                            parsedField,
-                            "false",
-                        )
-                    );
-                    selectOptions = (responseEntity.data?.items as SelectOptionType[]) ?? [];
-                }
-
+                const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField,
+                    0, 21, field == accountType && isContractForm);
                 await table.bulkPut(selectOptions);
 
                 if (selectOptions.length < 21) {
@@ -104,18 +80,9 @@ class DexieFormRepository {
 
                 while (hasMore) {
                     await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
-                    const responseEntity: AgentResponseBody = await queryInternalApi(
-                        makeInternalRegistryAPIwithParams(
-                            InternalApiIdentifierMap.INSTANCES,
-                            parsedField,
-                            SYNC_KEY,
-                            null,
-                            null,
-                            String(Math.floor(currentOffset / this.BATCH_SIZE)),
-                            String(this.BATCH_SIZE),
-                        )
-                    );
-                    const nextBatch: SelectOptionType[] = (responseEntity.data?.items as SelectOptionType[]) ?? [];
+                    const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField,
+                        Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
+                        field == accountType && isContractForm);
 
                     if (nextBatch.length > 0) {
                         await table.bulkPut(nextBatch);
@@ -157,6 +124,49 @@ class DexieFormRepository {
     private async getTable(field: string): Promise<Table<SelectOptionType, string>> {
         const tableName: string = `${this.TABLE_NAME_TEMPLATE}${field}`;
         return db.table(tableName);
+    }
+
+    /**
+     * Fetches the option from server side.
+     * 
+     * @param {string} field The name of the field.
+     * @param {number} cursor The current location of the fetch.
+     * @param {number} limit The current limit to fetch for.
+     * @param {boolean} isAccountField Indicates if this is an account field.
+     */
+    private async fetchOptions(field: string, cursor: number, limit: number, isAccountField: boolean): Promise<SelectOptionType[]> {
+        const parsedField: string = field.replaceAll(" ", "_");
+        if (isAccountField) {
+            const responseEntity: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
+                InternalApiIdentifierMap.FILTER,
+                LifecycleStageMap.ACCOUNT,
+                field,
+                "",
+                "", null, null, null,
+                String(cursor),
+                String(limit),
+            ));
+
+            const accountFilterOptions: SelectOptionType[] = responseEntity.data?.items as SelectOptionType[] ?? [];
+            return accountFilterOptions.map(option => {
+                return {
+                    ...option,
+                    label: `${option.label} ${option.disabled ? FLAG_EMOJI : ""}`,
+                }
+            });
+        }
+
+        const responseEntity: AgentResponseBody = await queryInternalApi(
+            makeInternalRegistryAPIwithParams(
+                InternalApiIdentifierMap.INSTANCES,
+                parsedField,
+                SYNC_KEY,
+                null, null,
+                String(cursor),
+                String(limit),
+            )
+        );
+        return (responseEntity.data?.items as SelectOptionType[]) ?? [];
     }
 
     /**

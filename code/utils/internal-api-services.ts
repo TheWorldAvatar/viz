@@ -107,6 +107,8 @@ export function makeInternalRegistryAPIwithParams(
         lifecycle: params[4] ?? null,
         start_date: params[5] ?? null,
         end_date: params[6] ?? null,
+        cursor: params[7] ?? null,
+        limit: params[8] ?? null,
       });
       break;
     case InternalApiIdentifierMap.FORM:
