@@ -11,7 +11,7 @@ import { TableDescriptor } from "@/hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
 import { useDictionary } from "@/hooks/useDictionary";
 
-import { RefObject, useRef } from "react";
+import { RefObject, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "@/types/dictionary";
@@ -30,6 +30,8 @@ interface RegistryTableProps {
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
   selectedDate?: DateRange;
+  scrollPositionRef: RefObject<number>;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
 }
 
 /**
@@ -42,6 +44,8 @@ interface RegistryTableProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
+ * @param {RefObject<number>} scrollPositionRef A reference to the scroll position of the table.
+ * @param scrollContainerRef A reference to the scrollable table container.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -50,6 +54,12 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     props.tableDescriptor,
     rowRefs,
   );
+
+  useLayoutEffect(() => {
+    if (props.scrollContainerRef.current) {
+      props.scrollContainerRef.current.scrollTop = props.scrollPositionRef.current;
+    }
+  }, []);
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
@@ -70,7 +80,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         rowRefs={rowRefs}
       >
         <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
-          <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
+          <div ref={props.scrollContainerRef} onScroll={(e) => props.scrollPositionRef.current = e.currentTarget.scrollTop} className="flex-1 min-h-0 overflow-auto table-scrollbar">
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
@@ -129,7 +139,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
           </div>
           <TablePagination />
         </div>
-      </TableSessionContextProvider>
+      </TableSessionContextProvider >
     );
   }
   return (
