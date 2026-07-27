@@ -73,8 +73,8 @@ export function DependentFormSection(
     props.form.setValue(fieldName, "");
   }, [currentParentOption, props.form, fieldName])
 
-  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "",
-    currentParentOption, search, formType, dict);
+  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], currentOption,
+    props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "", currentParentOption, search, formType, dict);
 
   const {
     id,

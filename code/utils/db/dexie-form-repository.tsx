@@ -227,21 +227,33 @@ export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
  * Get form options for target field from IndexedDb in real time.
  *
  * @param {string} field The name of the target field.
+ * @param {string} current The currently selected option.
  * @param {string} parentField The name of the parent field.
  * @param {string} parent The parent value.
  * @param {string} search The search term.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
  * @param {Dictionary} dict The translation dictionary.
  */
-export function useLiveFormOptions(field: string, parentField: string, parent: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
+export function useLiveFormOptions(field: string, current: string, parentField: string, parent: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
 
     const options: SelectOptionType[] = useLiveQuery(
         async () => {
             const parentLabel: string = !!parentField ? (await dexieFormRepo.getOption(parentField, parent))?.label : "";
-            return await dexieFormRepo.getOptions(field, parentLabel, search);
+            const availableOptions: SelectOptionType[] = await dexieFormRepo.getOptions(field, parentLabel, search);
+            // If there is an existing value, ensure it is in the options list
+            if (current) {
+                const currentOption: SelectOptionType = await dexieFormRepo.getOption(field, current);
+                if (currentOption) {
+                    const exists: boolean = availableOptions.some((opt) => opt.value === currentOption.value);
+                    if (!exists) {
+                        return [currentOption, ...availableOptions];
+                    }
+                }
+            }
+            return availableOptions;
         },
-        [field, parent, search]
+        [field, current, parent, search]
     );
 
     return useMemo(() => {
