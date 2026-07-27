@@ -14,6 +14,7 @@ import PopoverActionButton from "@/ui/interaction/action/popover/popover-button"
 import { toast } from "@/ui/interaction/action/toast/toast";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
+import { ADD_FORM_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
@@ -206,10 +207,14 @@ export default function RegistryRowAction(
                   icon="add"
                   label={parseWordsForLabels(interpolate(dict.action.addItem, props.add))}
                   onClick={async () => {
+                    // Read before the row action clears the storage
+                    const previousFormFlag: string = browserStorageManager.get(ADD_FORM_KEY);
                     handleClickRowAction();
                     const clientName: string = props.row[props.accountType];
                     const serviceSiteName: string = props.row.service_site ?? props.row.name;
                     await presetJobFormClientFields(props.accountType, clientName, serviceSiteName);
+                    // We are flipping the value everytime so that the add form can re-render with new values
+                    browserStorageManager.set(ADD_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
                     navigateToDrawer(Routes.REGISTRY_ADD, props.add);
                   }
                   }
