@@ -17,6 +17,7 @@
     "viewItem": "view {replace}",
     "close": "Close",
     "refresh": "Refresh",
+    "backToTop": "Back to top",
     "backTo": "back to {replace}s",
     "export": "Export",
     "exportAsCsv": "Export as CSV",

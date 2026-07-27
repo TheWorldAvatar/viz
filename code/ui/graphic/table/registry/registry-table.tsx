@@ -11,12 +11,13 @@ import { TableDescriptor } from "@/hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
 import { useDictionary } from "@/hooks/useDictionary";
 
-import { RefObject, useLayoutEffect, useRef } from "react";
+import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage } from "@/types/form";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
+import Button from "@/ui/interaction/button";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
@@ -49,6 +50,7 @@ interface RegistryTableProps {
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
   const rowRefs: RefObject<TableRowHandle[]> = useRef<TableRowHandle[]>([]);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor,
@@ -79,8 +81,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableDescriptor={props.tableDescriptor}
         rowRefs={rowRefs}
       >
-        <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
-          <div ref={props.scrollContainerRef} onScroll={(e) => props.scrollPositionRef.current = e.currentTarget.scrollTop} className="flex-1 min-h-0 overflow-auto table-scrollbar">
+        <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
+          <div
+            ref={props.scrollContainerRef}
+            onScroll={(e) => {
+              const scrollTop: number = e.currentTarget.scrollTop;
+              props.scrollPositionRef.current = scrollTop;
+              setShowBackToTop(scrollTop > 300);
+            }}
+            className="flex-1 min-h-0 overflow-auto table-scrollbar"
+          >
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
@@ -137,6 +147,23 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </table>
             </DndContext>
           </div>
+          {showBackToTop && (
+            <div className="absolute bottom-16 right-6 z-20">
+              <Button
+                size="icon"
+                variant="secondary"
+                leftIcon="arrow_upward"
+                tooltipText={dict.action.backToTop}
+                aria-label={dict.action.backToTop}
+                onClick={() => {
+                  props.scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+                  props.scrollPositionRef.current = 0;
+                  setShowBackToTop(false);
+                }}
+                className="rounded-full! shadow-xs border border-border p-6"
+              />
+            </div>
+          )}
           <TablePagination />
         </div>
       </TableSessionContextProvider >
