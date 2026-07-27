@@ -30,7 +30,6 @@ import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simp
 import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
 import { useEffect, useState } from "react";
 import FormInputContainer from "../field/form-input-container";
-import { useOnMount } from "@/hooks/useOnMount";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
