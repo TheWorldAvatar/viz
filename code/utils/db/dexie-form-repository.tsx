@@ -66,15 +66,19 @@ class DexieFormRepository {
                 }
                 const table: Table<SelectOptionType, string> = await this.getTable(field);
 
-                // First batch is 21 options for quick loads
                 const parsedField: string = field.replaceAll(" ", "_");
-                const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
-                    0, 21, field == accountType && isContractForm);
-                await table.bulkPut(selectOptions);
 
-                if (selectOptions.length < 21) {
-                    await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, selectOptions.length);
-                    return;
+                // Only retrieve first batch of 21 options for quick load if it was not previously syncing
+                // If it is syncing, there should already be data to read from
+                if (meta?.state === FormOptionStateMap.PENDING) {
+                    const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
+                        0, 21, field == accountType && isContractForm);
+                    await table.bulkPut(selectOptions);
+
+                    if (selectOptions.length < 21) {
+                        await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, selectOptions.length);
+                        return;
+                    }
                 }
 
                 let hasMore = true;
