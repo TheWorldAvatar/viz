@@ -57,7 +57,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
     id: props.row?.id,
   });
 
-  const { activeRowId, recordType, lifecycleStage, tableDescriptor, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
+  const { activeRowId, recordType, lifecycleStage, tableDescriptor, add, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
@@ -200,6 +200,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               row={props.row.original}
               triggerRefresh={props.triggerRefresh}
               setActiveRowId={setActiveRowId}
+              add={add}
             />}
             {!props.disableRowAction && !tableDescriptor.isBulkDispatchEdit && <Button
               leftIcon="history"

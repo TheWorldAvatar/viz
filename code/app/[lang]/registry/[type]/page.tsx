@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Modules, PageTitles, Routes } from '@/io/config/routes';
 import SettingsStore from '@/io/config/settings';
 import { LifecycleStage, LifecycleStageMap } from '@/types/form';
-import { NavBarItemSettings, TableColumnOption, UISettings } from '@/types/settings';
+import { NavBarItemSettings, ResourcesPathSettings, TableColumnOption, UISettings } from '@/types/settings';
 import RegistryTableComponent from '@/ui/graphic/table/registry/registry-table-component';
 import { parseStringsForUrls } from '@/utils/client-utils';
 import { LanguageDictionary } from '@/types/dictionary';
@@ -41,9 +41,10 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
     // Stage should be pending for the main data
     let lifecycleStage: LifecycleStage;
     let caption: LanguageDictionary;
-    if (uiSettings.resources?.registry?.paths?.some(path => parseStringsForUrls(path.type) == decodedType)) {
+    const registryPath: ResourcesPathSettings = uiSettings.resources?.registry?.paths?.find(path => parseStringsForUrls(path.type) == decodedType);
+    if (registryPath) {
       lifecycleStage = LifecycleStageMap.GENERAL;
-      caption = uiSettings.resources?.registry?.paths?.find(path => parseStringsForUrls(path.type) == decodedType).caption;
+      caption = registryPath.caption;
     } else if (uiSettings.resources?.registry?.data) {
       lifecycleStage = LifecycleStageMap.PENDING;
     } else {
@@ -57,6 +58,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
         lifecycleStage={lifecycleStage}
         tableColumnOptions={tableColumnSettings}
         accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT)?.key}
+        add={registryPath?.add}
       />
     );
   } else {

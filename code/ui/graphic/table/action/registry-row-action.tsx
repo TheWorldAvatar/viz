@@ -13,7 +13,7 @@ import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-te
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
-import { compareDates, getId, parseWordsForLabels } from "@/utils/client-utils";
+import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
@@ -29,6 +29,7 @@ interface RegistryRowActionProps {
   row: FieldValues;
   triggerRefresh: () => void;
   setActiveRowId?: React.Dispatch<React.SetStateAction<string>>;
+  add?: string;
 }
 
 /**
@@ -40,6 +41,7 @@ interface RegistryRowActionProps {
  * @param {FieldValues} row Row values.
  * @param triggerRefresh A function to refresh the table when required.
  * @param setActiveRowId A function to set the active row ID.
+ * @param {string} add Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
@@ -199,17 +201,16 @@ export default function RegistryRowAction(
                   handleClickView();
                 }}
               />
-              {props.recordType === "service_site" &&
+              {props.add &&
                 <RowActionButton
                   icon="add"
-                  label={"Add job"}
+                  label={parseWordsForLabels(interpolate(dict.action.addItem, props.add))}
                   onClick={async () => {
                     handleClickRowAction();
                     const clientName: string = props.row[props.accountType];
-                    const serviceSiteName: string = props.row.service_site ??
-                      (props.recordType === "service_site" ? props.row.name : undefined);
+                    const serviceSiteName: string = props.row.service_site ?? props.row.name;
                     await presetJobFormClientFields(props.accountType, clientName, serviceSiteName);
-                    navigateToDrawer(Routes.REGISTRY_ADD, "job");
+                    navigateToDrawer(Routes.REGISTRY_ADD, props.add);
                   }
                   }
                 />

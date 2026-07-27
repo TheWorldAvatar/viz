@@ -30,6 +30,7 @@ interface RegistryTableProps {
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
   selectedDate?: DateRange;
+  add?: string;
 }
 
 /**
@@ -42,6 +43,7 @@ interface RegistryTableProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
+ * @param {string} add Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -68,6 +70,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         lifecycleStage={props.lifecycleStage}
         tableDescriptor={props.tableDescriptor}
         rowRefs={rowRefs}
+        add={props.add}
       >
         <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
