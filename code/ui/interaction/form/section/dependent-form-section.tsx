@@ -30,6 +30,7 @@ import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simp
 import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
 import { useEffect, useState } from "react";
 import FormInputContainer from "../field/form-input-container";
+import { useOnMount } from "@/hooks/useOnMount";
 
 interface DependentFormSectionProps {
   dependentProp: PropertyShape;
@@ -70,8 +71,10 @@ export function DependentFormSection(
 
   useEffect(() => {
     // Reset dependent field when independent field changes
-    props.form.setValue(fieldName, "");
-  }, [currentParentOption, props.form, fieldName])
+    if (currentParentOption) {
+      props.form.setValue(fieldName, "");
+    }
+  }, [currentParentOption]);
 
   const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], currentOption,
     props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "", currentParentOption, search, formType, dict);
