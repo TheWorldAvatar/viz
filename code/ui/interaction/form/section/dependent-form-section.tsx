@@ -8,6 +8,7 @@ import {
   BillingEntityTypes,
   FormTypeMap,
   ID_KEY,
+  LABEL_KEY,
   PropertyShape,
   useLiveFormOptionReturn,
   VALUE_KEY
@@ -65,7 +66,9 @@ export function DependentFormSection(
     control,
     name: props.dependentProp?.dependentOn?.[ID_KEY] ?? "",
   });
-  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], search, formType, dict);
+
+  const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "",
+    currentParentOption, search, formType, dict);
 
   const {
     id,

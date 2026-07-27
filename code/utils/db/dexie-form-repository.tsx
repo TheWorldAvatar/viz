@@ -1,6 +1,6 @@
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { FormOptionState, FormOptionStateMap, FormType, FormTypeMap, LifecycleStageMap, OntologyConcept, useLiveFormOptionReturn } from "@/types/form";
+import { FormOptionState, FormOptionStateMap, FormType, FormTypeMap, LABEL_KEY, LifecycleStageMap, OntologyConcept, useLiveFormOptionReturn } from "@/types/form";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { genDefaultSelectOption } from "@/ui/interaction/form/form-utils";
 import { db, FormOptionMetadata } from "@/utils/db/db";
@@ -182,23 +182,43 @@ class DexieFormRepository {
     }
 
     /**
+     * Gets the label of an option based on the id.
+     *
+     * @param field The name of the field.
+     * @param id The id of the field.
+     */
+    async getOptionLabel(field: string, id: string): Promise<string> {
+        const table: Table<SelectOptionType, string> = await this.getTable(field);
+        const selectedOption: SelectOptionType = await table.filter(option => option?.value === id)
+            .first();
+        return selectedOption?.label;
+    }
+
+    /**
      * Fetches the first 21 options directly from target table.
      * 
      * @param {string} field The name of the target field.
+     * @param {string} parent The parent value.
      * @param {string} search The search term.
      */
-    async getOptions(field: string, search: string): Promise<SelectOptionType[]> {
+    async getOptions(field: string, parent: string, search: string): Promise<SelectOptionType[]> {
         const cleanSearch: string = search.trim().toLowerCase();
         const table: Table<SelectOptionType, string> = await this.getTable(field);
-
-        let query: Collection<SelectOptionType, string> = table.orderBy("label");
+        let query: Collection<SelectOptionType, string>;
+        if (!!parent) {
+            query = table.filter((option) => option.parent.trim() === parent.trim());
+        } else {
+            query = table.toCollection();
+        }
         if (cleanSearch) {
             // Fast cursor-based filter
             query = query.filter((item) =>
                 item.label.toLowerCase().includes(cleanSearch)
             );
         }
-        return await query.limit(21).toArray();
+
+        const sortedItems: SelectOptionType[] = await query.sortBy(LABEL_KEY);
+        return sortedItems.slice(0, 21);
     }
 }
 
@@ -208,16 +228,21 @@ export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
  * Get form options for target field from IndexedDb in real time.
  *
  * @param {string} field The name of the target field.
+ * @param {string} parentField The name of the parent field.
+ * @param {string} parent The parent value.
  * @param {string} search The search term.
  * @param {FormType} formType The type of form such as dispatch, complete, cancel, report, view.
  * @param {Dictionary} dict The translation dictionary.
  */
-export function useLiveFormOptions(field: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
+export function useLiveFormOptions(field: string, parentField: string, parent: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
 
     const options: SelectOptionType[] = useLiveQuery(
-        async () => await dexieFormRepo.getOptions(field, search),
-        [field, search]
+        async () => {
+            const parentLabel: string = !!parentField ? await dexieFormRepo.getOptionLabel(parentField, parent) : "";
+            return await dexieFormRepo.getOptions(field, parentLabel, search)
+        },
+        [field, parent, search]
     );
 
     return useMemo(() => {
@@ -233,5 +258,5 @@ export function useLiveFormOptions(field: string, search: string, formType: Form
             });
         }
         return { options: copyOptions };
-    }, [options, search, formType, defaultSearchOption]);
+    }, [options, parent, search, formType, defaultSearchOption]);
 }

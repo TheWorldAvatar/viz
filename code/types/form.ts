@@ -8,6 +8,7 @@ export const PROPERTY_GROUP_TYPE = "PropertyGroup";
 export const PROPERTY_SHAPE_TYPE = "PropertyShape";
 export const ONTOLOGY_CONCEPT_ROOT = "root";
 export const FORM_IDENTIFIER = "form";
+export const LABEL_KEY = "label";
 
 export const LifecycleStageMap = {
   GENERAL: "general",
