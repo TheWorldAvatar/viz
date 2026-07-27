@@ -182,16 +182,15 @@ class DexieFormRepository {
     }
 
     /**
-     * Gets the label of an option based on the id.
+     * Gets the select option of an option based on the id.
      *
      * @param field The name of the field.
      * @param id The id of the field.
      */
-    async getOptionLabel(field: string, id: string): Promise<string> {
+    async getOption(field: string, id: string): Promise<SelectOptionType> {
         const table: Table<SelectOptionType, string> = await this.getTable(field);
-        const selectedOption: SelectOptionType = await table.filter(option => option?.value === id)
+        return await table.filter(option => option?.value === id)
             .first();
-        return selectedOption?.label;
     }
 
     /**
@@ -239,8 +238,8 @@ export function useLiveFormOptions(field: string, parentField: string, parent: s
 
     const options: SelectOptionType[] = useLiveQuery(
         async () => {
-            const parentLabel: string = !!parentField ? await dexieFormRepo.getOptionLabel(parentField, parent) : "";
-            return await dexieFormRepo.getOptions(field, parentLabel, search)
+            const parentLabel: string = !!parentField ? (await dexieFormRepo.getOption(parentField, parent))?.label : "";
+            return await dexieFormRepo.getOptions(field, parentLabel, search);
         },
         [field, parent, search]
     );
