@@ -13,6 +13,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal
 class DexieFormRepository {
     private TABLE_NAME_TEMPLATE: string = "form_field_";
     private BATCH_SIZE: number = 500;
+    private STALE_TIME_MS: number = 5 * 60 * 1000;
 
     private fields: Record<string, FormOptionMetadata> = {};
 
@@ -48,7 +49,8 @@ class DexieFormRepository {
         // Stores metadata state if not present
         for (const [field, currentMeta] of Object.entries(this.fields)) {
             const meta: FormOptionMetadata = await db.metadata.get(field);
-            if (!meta || meta?.state == FormOptionStateMap.PENDING) {
+            // If cached data does not exist or is in pending state or is stale, resync data
+            if (!meta || meta?.state == FormOptionStateMap.PENDING || (Date.now() - meta.lastUpdated < this.STALE_TIME_MS)) {
                 await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0, currentMeta.dependentField);
             }
         }
