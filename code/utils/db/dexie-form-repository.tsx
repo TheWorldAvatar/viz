@@ -16,6 +16,14 @@ class DexieFormRepository {
     private STALE_TIME_MS: number = 5 * 60 * 1000;
 
     private fields: Record<string, FormOptionMetadata> = {};
+    private isSyncing: boolean = false;
+
+    /**
+     * Get syncing status
+     */
+    getIsSyncing(): boolean {
+        return this.isSyncing;
+    }
 
     /**
      * Registers a field as pending.
@@ -40,6 +48,7 @@ class DexieFormRepository {
      * @param {boolean} isContractForm Indicates if the sync occurs for a contract form.
     */
     async sync(accountType: string = "", isContractForm: boolean = false): Promise<void> {
+        this.isSyncing = true;
         const currentOptionFields: string[] = Object.keys(this.fields);
         // Synchronises only if there are relevant fields available
         if (currentOptionFields.length === 0) {
@@ -106,6 +115,7 @@ class DexieFormRepository {
                     }
                 }
             }));
+        this.isSyncing = false;
     }
 
     /**

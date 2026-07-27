@@ -11,6 +11,7 @@ import Button from "@/ui/interaction/button";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import Checkbox from "@/ui/interaction/input/checkbox";
 import { getId } from "@/utils/client-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { useSortable } from "@dnd-kit/sortable";
@@ -23,7 +24,7 @@ import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, execReviewBillableAction, getRowRecordId } from "../registry/registry-table-utils";
-import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import LoadingSpinner from "../../loader/spinner";
 
 interface TableRowProps {
   id: string;
@@ -233,17 +234,21 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         {props.row.getVisibleCells().map((cell, index) => {
           if (tableDescriptor.isBulkDispatchEdit &&
             (cell.column.columnDef as EnhancedColumnDef<FieldValues>).stage == FormTypeMap.DISPATCH) {
-            return <EditableTableCell
-              key={cell.id + index}
-              isBulkEditMode={isBulkEditMode}
-              fieldShape={dispatchFormFields[cell.column.id]}
-              form={form}
-            >
-              {flexRender(
-                cell.column.columnDef.cell,
-                cell.getContext()
-              )}
-            </EditableTableCell>;
+            return dexieFormRepo.getIsSyncing() ?
+              <td key={cell.id + index}>
+                <LoadingSpinner size="sm" />
+              </td>
+              : <EditableTableCell
+                key={cell.id + index}
+                isBulkEditMode={isBulkEditMode}
+                fieldShape={dispatchFormFields[cell.column.id]}
+                form={form}
+              >
+                {flexRender(
+                  cell.column.columnDef.cell,
+                  cell.getContext()
+                )}
+              </EditableTableCell>;
           } else {
             return <TableCell
               key={cell.id + index}
