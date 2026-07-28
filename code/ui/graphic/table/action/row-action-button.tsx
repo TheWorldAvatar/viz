@@ -13,10 +13,10 @@ export interface RowActionButtonProps {
  * A generic row action button template.
  *
  * @param {string} icon Display icon.
- * @param {string} label Aria-label for the button.
+ * @param {string} label Optional text content, and only rendered when there are no children.
  * @param onClick Click handler for the button.
  * @param {boolean} disabled Optional disabled state for the button.
- * @param {ReactNode} children Optional label content; takes precedence over label when provided.
+ * @param {ReactNode} children Optional content that takes precedence over the label when provided.
  */
 export default function RowActionButton(props: Readonly<RowActionButtonProps>) {
   return <Button
