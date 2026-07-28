@@ -231,7 +231,7 @@ export default function RegistryRowAction(
                 >
                   {parseWordsForLabels(interpolate(dict.action.addItem, addEntity))}
                   {/* Always reserve emoji width so the menu does not jump when the flag loads */}
-                  <span className={account?.disabled ? "ml-2" : "invisible"} aria-hidden={!account?.disabled}>
+                  <span className={`ml-1 ${!account?.disabled && "invisible"}`} aria-hidden={!account?.disabled}>
                     {FLAG_EMOJI}
                   </span>
                 </RowActionButton>
