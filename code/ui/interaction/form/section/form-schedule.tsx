@@ -66,7 +66,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
   const perpetualService: string = dict.form.perpetualService;
   const fixedService: string = dict.form.fixedService;
   const entryDates: string[] = props.form.getValues(FORM_STATES.ENTRY_DATES);
-  const { formType } = useFormSession();
+  const { formType, id: formSessionId } = useFormSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fixedDates, setFixedDates] = useState<Date[]>(
     entryDates?.length > 0
@@ -88,8 +88,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      // If there is data in the session storage, do not fetch defaults for EDIT, VIEW, and DELETE forms
-      if (!browserStorageManager.empty()) {
+      // If there is saved data for this form session, do not overwrite it with defaults;
+      if (browserStorageManager.get(formSessionId)) {
         setIsLoading(false);
         return;
       }
