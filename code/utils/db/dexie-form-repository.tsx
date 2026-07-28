@@ -13,7 +13,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal
 class DexieFormRepository {
     private TABLE_NAME_TEMPLATE: string = "form_field_";
     private BATCH_SIZE: number = 500;
-    private STALE_TIME_MS: number = 5 * 60 * 1000;
+    private STALE_TIME_S: number = 5 * 60;
 
     private fields: Record<string, FormOptionMetadata> = {};
     private isSyncing: boolean = false;
@@ -36,7 +36,7 @@ class DexieFormRepository {
             field,
             state: FormOptionStateMap.PENDING,
             count: 0,
-            lastUpdated: Date.now(),
+            lastUpdated: this.genCurrentTimestamp(),
             dependentField,
         }
     }
@@ -59,7 +59,7 @@ class DexieFormRepository {
         for (const [field, currentMeta] of Object.entries(this.fields)) {
             const meta: FormOptionMetadata = await db.metadata.get(field);
             // If cached data does not exist or is in pending state or is stale, resync data
-            if (!meta || meta?.state == FormOptionStateMap.PENDING || (Date.now() - meta.lastUpdated < this.STALE_TIME_MS)) {
+            if (!meta || meta?.state == FormOptionStateMap.PENDING || (this.genCurrentTimestamp() - meta.lastUpdated > this.STALE_TIME_S)) {
                 await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0, currentMeta.dependentField);
             }
         }
@@ -72,14 +72,10 @@ class DexieFormRepository {
         await Promise.allSettled(
             currentOptionFields.map(async (field) => {
                 const meta: FormOptionMetadata = await db.metadata.get(field);
-                if (meta?.state === FormOptionStateMap.COMPLETE) {
-                    return;
-                }
                 const table: Table<SelectOptionType, string> = await this.getTable(field);
-
                 const parsedField: string = field.replaceAll(" ", "_");
 
-                // Only retrieve first batch of 21 options for quick load if it was not previously syncing
+                // Only retrieve first batch of 21 options for quick load if it was not previously syncing or completed
                 // If it is syncing, there should already be data to read from
                 if (meta?.state === FormOptionStateMap.PENDING) {
                     const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
@@ -92,14 +88,16 @@ class DexieFormRepository {
                     }
                 }
 
-                let hasMore = true;
-                let currentOffset = await table.count();
-
+                // If task is still syncing, continue to sync through batches
+                // If task is completed, only grab the new data with the timestamp check
+                let hasMore: boolean = true;
+                // Reset offset for completed
+                let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE ? 0 : await table.count();
+                const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
                 while (hasMore) {
-                    await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
                     const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
                         Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
-                        field == accountType && isContractForm);
+                        field == accountType && isContractForm, timestamp);
 
                     if (nextBatch.length > 0) {
                         await table.bulkPut(nextBatch);
@@ -107,7 +105,8 @@ class DexieFormRepository {
                         if (nextBatch.length < this.BATCH_SIZE) {
                             hasMore = false;
                             await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
-                        } else {
+                            // Only update the meta to sync if its still pending
+                        } else if (meta?.state === FormOptionStateMap.PENDING) {
                             await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
                         }
                     } else {
@@ -116,6 +115,14 @@ class DexieFormRepository {
                 }
             }));
         this.isSyncing = false;
+    }
+
+
+    /**
+     * Generates the current timestamp in seconds.
+     */
+    private genCurrentTimestamp(): number {
+        return Math.floor(Date.now() / 1000);
     }
 
     /**
@@ -137,7 +144,7 @@ class DexieFormRepository {
             field,
             state,
             count,
-            lastUpdated: Date.now(),
+            lastUpdated: this.genCurrentTimestamp(),
             dependentField: updatedDependentField,
         });
     }
@@ -160,8 +167,10 @@ class DexieFormRepository {
      * @param {number} cursor The current location of the fetch.
      * @param {number} limit The current limit to fetch for.
      * @param {boolean} isAccountField Indicates if this is an account field.
+     * @param {number} lastUpdated The optional last updated timestamp.
      */
-    private async fetchOptions(field: string, parent: string, cursor: number, limit: number, isAccountField: boolean): Promise<SelectOptionType[]> {
+    private async fetchOptions(field: string, parent: string, cursor: number, limit: number,
+        isAccountField: boolean, lastUpdated?: number): Promise<SelectOptionType[]> {
         const parsedField: string = field.replaceAll(" ", "_");
         if (isAccountField) {
             const responseEntity: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
@@ -169,7 +178,8 @@ class DexieFormRepository {
                 LifecycleStageMap.ACCOUNT,
                 field,
                 "",
-                "", null, null, null,
+                !!lastUpdated ? String(lastUpdated) : null,
+                null, null, null,
                 String(cursor),
                 String(limit),
             ));
@@ -192,6 +202,8 @@ class DexieFormRepository {
                 parent,
                 String(cursor),
                 String(limit),
+                null,
+                !!lastUpdated ? String(lastUpdated) : null,
             )
         );
         return (responseEntity.data?.items as SelectOptionType[]) ?? [];

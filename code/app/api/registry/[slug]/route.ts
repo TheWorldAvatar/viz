@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
+import { SYNC_KEY } from "@/utils/constants";
 import { getBackendApi } from "@/utils/internal-api-services";
 import { logColours } from "@/utils/logColours";
-import { SYNC_KEY } from "@/utils/constants";
+import { NextRequest, NextResponse } from "next/server";
 
 const apiVersion: string = "5.30.5";
 const internalApiIdentifierSet: ReadonlySet<string> = new Set(Object.values(InternalApiIdentifierMap));
@@ -318,7 +318,8 @@ function makeExternalEndpoint(
       if (requireLabel === SYNC_KEY) {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
-        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}${subtype != null ? "&parent=" + subtype : ""}`;
+        const timestamp: string = searchParams.get("filters");
+        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}${!!timestamp ? "&timestamp=" + timestamp : ""}${subtype != null ? "&parent=" + subtype : ""}`;
         // For getting registry table backend
       } else if (requireLabel === "true") {
         const page: string = searchParams.get("page");
@@ -368,8 +369,9 @@ function makeExternalEndpoint(
       if (type == LifecycleStageMap.ACCOUNT) {
         const cursor: string = searchParams.get("cursor");
         const limit: string = searchParams.get("limit");
+        const timestamp: string = searchParams.get("filters");
         return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}
-        &cursor=${encodeURIComponent(cursor)}&limit=${encodeURIComponent(limit)}`);
+        &cursor=${encodeURIComponent(cursor)}&limit=${encodeURIComponent(limit)}${!!timestamp ? "&timestamp=" + timestamp : ""}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;
