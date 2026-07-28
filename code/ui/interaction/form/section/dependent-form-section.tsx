@@ -23,12 +23,13 @@ import { getRegisterOptions } from "../form-utils";
 
 import { useFormQuickView } from "@/hooks/form/useFormQuickView";
 import useFormSession from "@/hooks/form/useFormSession";
+import { useAfterMount } from "@/hooks/useAfterMount";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import FormQuickViewBody from "@/ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "@/ui/interaction/accordion/form-quick-view-header";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FormInputContainer from "../field/form-input-container";
 
 interface DependentFormSectionProps {
@@ -55,7 +56,6 @@ export function DependentFormSection(
   const fieldName: string = props.dependentProp?.fieldId;
   const label: string = props.dependentProp.name[VALUE_KEY];
   const queryEntityType: string = parseStringsForUrls(label); // Ensure that all spaces are replaced with _
-
   const control: Control = props.form.control;
 
   const currentParentOption: string = useWatch<FieldValues>({
@@ -68,12 +68,12 @@ export function DependentFormSection(
     name: fieldName,
   });
 
-  useEffect(() => {
-    // Reset dependent field when independent field changes
+  // Reset dependent field when independent field changes only after first render
+  useAfterMount(() => {
     if (currentParentOption) {
       props.form.setValue(fieldName, "");
     }
-  }, [currentParentOption]);
+  }, [currentParentOption])
 
   const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], currentOption,
     props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "", currentParentOption, search, formType, dict);
