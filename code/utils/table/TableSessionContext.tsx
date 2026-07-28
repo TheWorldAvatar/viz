@@ -12,7 +12,7 @@ export interface TableSessionState {
     lifecycleStage: LifecycleStage;
     tableDescriptor: TableDescriptor;
     rowRefs: RefObject<TableRowHandle[]>;
-    add: string;
+    addEntity: string;
     setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
     setHistoryId: React.Dispatch<React.SetStateAction<string>>;
     setIsOpenHistoryModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,14 +25,14 @@ export const TableSessionContextProvider = ({
     lifecycleStage,
     tableDescriptor,
     rowRefs,
-    add,
+    addEntity,
     children,
 }: {
     recordType: string;
     lifecycleStage: LifecycleStage;
     tableDescriptor: TableDescriptor;
     rowRefs: RefObject<TableRowHandle[]>;
-    add?: string;
+    addEntity?: string;
     children: React.ReactNode;
 }) => {
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export const TableSessionContextProvider = ({
     const [activeRowId, setActiveRowId] = useState<string>("");
 
     return (
-        <TableSessionContext.Provider value={{ activeRowId, recordType, lifecycleStage, tableDescriptor, rowRefs, add, setActiveRowId, setHistoryId, setIsOpenHistoryModal }}>
+        <TableSessionContext.Provider value={{ activeRowId, recordType, lifecycleStage, tableDescriptor, rowRefs, addEntity, setActiveRowId, setHistoryId, setIsOpenHistoryModal }}>
             {children}
             {isOpenHistoryModal && historyId != "" &&
                 <HistoryModal

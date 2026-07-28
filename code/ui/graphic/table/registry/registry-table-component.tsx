@@ -29,7 +29,7 @@ interface RegistryTableComponentProps {
   accountType?: string;
   message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
-  add?: string;
+  addEntity?: string;
 }
 
 /**
@@ -40,7 +40,7 @@ interface RegistryTableComponentProps {
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
- * @param {string} add Optional entity type that can be added from each row of the current record type.
+ * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
@@ -133,7 +133,7 @@ export default function RegistryTableComponent(
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
-          add={props.add}
+          addEntity={props.addEntity}
         />
       )}
     </div>

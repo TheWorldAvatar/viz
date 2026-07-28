@@ -58,7 +58,7 @@ export default async function GeneralRegistryPage(props: Readonly<GeneralRegistr
         lifecycleStage={lifecycleStage}
         tableColumnOptions={tableColumnSettings}
         accountType={uiSettings.resources?.billing?.paths?.find(path => path.type === LifecycleStageMap.ACCOUNT)?.key}
-        add={registryPath?.add}
+        addEntity={registryPath?.add}
       />
     );
   } else {

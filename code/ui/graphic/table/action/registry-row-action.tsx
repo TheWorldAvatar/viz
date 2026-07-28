@@ -60,7 +60,7 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
-  const { add: addEntity } = useTableSession();
+  const { addEntity } = useTableSession();
 
   const account: SelectOptionType = useAccountFlag(
     addEntity && isActionMenuOpen ? props.accountType : undefined, props.row[props.accountType]);
