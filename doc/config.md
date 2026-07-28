@@ -77,6 +77,7 @@ Note that resources are optional and their configuration options can differ from
     - `caption`: Optional language dictionary to display a message on the table for the general registries. Only `en` and `de` are permitted at this moment.
     - `icon`: Optional parameter to display an icon from the icon library.
     - `permission`: Optional parameter to set the permission required in order to view the registry page on the nav bar IF authentication is enabled.
+    - `add`: Optional entity type that can be added directly from each row of this registry. When set, every row gains an `Add <entity>` action that opens the add form for that entity. The value must be an entity type that is mapped to the backend, and is also used for the action's label. Omit this parameter to hide the action.
 - Billing: Activate the `billing` page based on the backend resource. The billing page provides views for records of customer accounts, pricing models, and their bills, as well as modification of these records, using a form UI.
   - `paths`: Three items must be included as an array to view the corresponding billing page. Each item must be configured as a JSON object format:
     - `type`: Must be either `account`, `pricing`, or `activity`
@@ -126,7 +127,8 @@ Below is an example of the contents for a valid `ui-settings.json` file with add
             "en": "Example", // Only shows up on german site
             "de": "Beispiel" // Only shows up on german site
             },
-          "permission": "operation" // only for users with operation permissions
+          "permission": "operation", // only for users with operation permissions
+          "add": "type" // Optional; adds a row action to create this entity
         },{
           "type": "resource_two" // resource name from backend     
         }]
