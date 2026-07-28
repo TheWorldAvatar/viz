@@ -12,9 +12,6 @@ interface AccountDescriptor {
     isFlagged: boolean | undefined;
 }
 
-// Caches each account by name for the session, so that rows sharing an account require only one request
-const accountCache: Map<string, AccountDescriptor> = new Map();
-
 /**
  * Retrieves the IRI and flag of the account with the given name. The account filter API reports
  * a flagged account as a disabled option.
@@ -23,10 +20,6 @@ const accountCache: Map<string, AccountDescriptor> = new Map();
  * @param {string} accountName The account's display name.
  */
 async function resolveAccount(accountType: string, accountName: string): Promise<AccountDescriptor> {
-    const cacheKey: string = `${accountType}|${accountName}`;
-    if (accountCache.has(cacheKey)) {
-        return accountCache.get(cacheKey);
-    }
     try {
         const response: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.FILTER,
@@ -39,7 +32,6 @@ async function resolveAccount(accountType: string, accountName: string): Promise
         const account: AccountDescriptor = match
             ? { accountIri: match.value, isFlagged: !!match.disabled }
             : { accountIri: undefined, isFlagged: false };
-        accountCache.set(cacheKey, account);
         return account;
     } catch (error) {
         console.error("Error retrieving the account", error);
@@ -55,10 +47,7 @@ async function resolveAccount(accountType: string, accountName: string): Promise
  * @returns {AccountDescriptor} The account IRI and flag.
  */
 export default function useAccountFlag(accountType: string, accountName: string): AccountDescriptor {
-    const cacheKey: string = `${accountType}|${accountName}`;
-    const [account, setAccount] = useState<AccountDescriptor>(
-        () => accountCache.get(cacheKey) ?? { accountIri: undefined, isFlagged: undefined }
-    );
+    const [account, setAccount] = useState<AccountDescriptor>({ accountIri: undefined, isFlagged: undefined });
 
     useEffect(() => {
         if (!accountType || !accountName) {
