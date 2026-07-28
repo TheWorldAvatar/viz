@@ -161,7 +161,7 @@ export default function RegistryRowAction(
     if (props.accountType && accountIri) {
       browserStorageManager.set(props.accountType, accountIri);
       if (props.row.iri) {
-        browserStorageManager.set("service_site".replaceAll("_", " "), props.row.iri);
+        browserStorageManager.set(props.recordType.replaceAll("_", " "), props.row.iri);
       }
     }
     // We are flipping the value everytime so that the add form can re-render with new values
