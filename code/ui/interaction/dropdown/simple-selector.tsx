@@ -147,6 +147,7 @@ export default function SimpleSelector(props: Readonly<SimpleSelectorProps>) {
       isLoading={false}
       isMulti={false}
       isSearchable={true}
+      isOptionDisabled={(option) => option.disabled}
       isDisabled={props.isDisabled}
       menuPortalTarget={props.menuPortalTarget}
       noOptionsMessage={() => props.noOptionMessage ?? ""}
