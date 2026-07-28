@@ -6,20 +6,15 @@ import { LifecycleStageMap } from '@/types/form';
 import { SelectOptionType } from '@/ui/interaction/dropdown/simple-selector';
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from '@/utils/internal-api-services';
 
-interface AccountDescriptor {
-    accountIri: string | undefined;
-    // Indicates if the account is flagged, and undefined until it has been retrieved.
-    isFlagged: boolean | undefined;
-}
 
 /**
- * Retrieves the IRI and flag of the account with the given name. The account filter API reports
+ * Retrieves the account with the given name. The account filter API reports
  * a flagged account as a disabled option.
  *
  * @param {string} accountType The account type.
  * @param {string} accountName The account's display name.
  */
-async function resolveAccount(accountType: string, accountName: string): Promise<AccountDescriptor> {
+async function resolveAccount(accountType: string, accountName: string): Promise<SelectOptionType> {
     try {
         const response: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
             InternalApiIdentifierMap.FILTER,
@@ -28,33 +23,29 @@ async function resolveAccount(accountType: string, accountName: string): Promise
             accountName,
         ));
         const options: SelectOptionType[] = response.data?.items as SelectOptionType[] ?? [];
-        const match: SelectOptionType = options.find(option => option.label?.trim() === accountName?.trim());
-        const account: AccountDescriptor = match
-            ? { accountIri: match.value, isFlagged: !!match.disabled }
-            : { accountIri: undefined, isFlagged: false };
-        return account;
+        return options.find(option => option.label?.trim() === accountName?.trim());
     } catch (error) {
         console.error("Error retrieving the account", error);
-        return { accountIri: undefined, isFlagged: false };
     }
 }
 
 /**
- * A custom hook to retrieve the flag of the account with the given name.
+ * A custom hook to retrieve the account with the given name. Its IRI is available as the option's
+ * value, while a flagged account is reported as a disabled option.
  *
  * @param {string} accountType The account type.
  * @param {string} accountName The account's display name.
- * @returns {AccountDescriptor} The account IRI and flag.
+ * @returns {SelectOptionType} The account option or undefined until it has been retrieved.
  */
-export default function useAccountFlag(accountType: string, accountName: string): AccountDescriptor {
-    const [account, setAccount] = useState<AccountDescriptor>({ accountIri: undefined, isFlagged: undefined });
+export default function useAccountFlag(accountType: string, accountName: string): SelectOptionType {
+    const [account, setAccount] = useState<SelectOptionType>(undefined);
 
     useEffect(() => {
         if (!accountType || !accountName) {
             return;
         }
         let isActive: boolean = true;
-        resolveAccount(accountType, accountName).then((result: AccountDescriptor) => {
+        resolveAccount(accountType, accountName).then((result: SelectOptionType) => {
             if (isActive) {
                 setAccount(result);
             }

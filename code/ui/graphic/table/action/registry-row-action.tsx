@@ -12,6 +12,7 @@ import { FileDownloadButton } from "@/ui/interaction/action/download/file-downlo
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
+import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { ADD_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
@@ -61,7 +62,7 @@ export default function RegistryRowAction(
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
   const { add: addEntity } = useTableSession();
 
-  const { accountIri, isFlagged } = useAccountFlag(
+  const account: SelectOptionType = useAccountFlag(
     addEntity && isActionMenuOpen ? props.accountType : undefined, props.row[props.accountType]);
 
 
@@ -158,8 +159,8 @@ export default function RegistryRowAction(
     // Read before the row action clears the storage
     const previousFormFlag: string = browserStorageManager.get(ADD_FORM_KEY);
     handleClickRowAction();
-    if (props.accountType && accountIri) {
-      browserStorageManager.set(props.accountType, accountIri);
+    if (props.accountType && account?.value) {
+      browserStorageManager.set(props.accountType, account.value);
       if (props.row.iri) {
         browserStorageManager.set(props.recordType.replaceAll("_", " "), props.row.iri);
       }
@@ -225,12 +226,12 @@ export default function RegistryRowAction(
               {addEntity &&
                 <RowActionButton
                   icon="add"
-                  disabled={isLoading || props.row[props.accountType] && isFlagged !== false}
+                  disabled={isLoading || props.row[props.accountType] && account?.disabled !== false}
                   onClick={onAddItem}
                 >
                   {parseWordsForLabels(interpolate(dict.action.addItem, addEntity))}
                   {/* Always reserve emoji width so the menu does not jump when the flag loads */}
-                  <span className={isFlagged ? "ml-2" : "invisible"} aria-hidden={!isFlagged}>
+                  <span className={account?.disabled ? "ml-2" : "invisible"} aria-hidden={!account?.disabled}>
                     {FLAG_EMOJI}
                   </span>
                 </RowActionButton>
