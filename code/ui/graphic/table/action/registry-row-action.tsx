@@ -172,6 +172,7 @@ export default function RegistryRowAction(
         action = "void";
         break;
       default:
+        console.warn("A valid task status is required to revert the task.");
         return;
     }
     const url: string = makeInternalRegistryAPIwithParams(
