@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.82.1
+
+### Changes
+
+- Added row action to revert cancelled or reported task. Re-factored to include unvoid task.
+
 ## 5.82.0
 
 ### Changes
