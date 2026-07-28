@@ -14,11 +14,12 @@ import PopoverActionButton from "@/ui/interaction/action/popover/popover-button"
 import { toast } from "@/ui/interaction/action/toast/toast";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
-import { ADD_FORM_KEY } from "@/utils/constants";
+import { ADD_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
+import useAccountFlag from "@/hooks/useAccountFlag";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { execReviewBillableAction, presetJobFormClientFields } from "../registry/registry-table-utils";
+import { execReviewBillableAction } from "../registry/registry-table-utils";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
 
@@ -59,6 +60,10 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+
+  const { accountIri, isFlagged } = useAccountFlag(
+    props.add && isActionMenuOpen ? props.accountType : undefined, props.row[props.accountType]);
+
 
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
 
@@ -149,6 +154,21 @@ export default function RegistryRowAction(
     await execReviewBillableAction(props.row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
   };
 
+  const onAddItem: React.MouseEventHandler<HTMLButtonElement> = () => {
+    // Read before the row action clears the storage
+    const previousFormFlag: string = browserStorageManager.get(ADD_FORM_KEY);
+    handleClickRowAction();
+    if (props.accountType && accountIri) {
+      browserStorageManager.set(props.accountType, accountIri);
+      if (props.row.iri) {
+        browserStorageManager.set("service_site".replaceAll("_", " "), props.row.iri);
+      }
+    }
+    // We are flipping the value everytime so that the add form can re-render with new values
+    browserStorageManager.set(ADD_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
+    navigateToDrawer(Routes.REGISTRY_ADD, props.add);
+  };
+
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const taskId: string = getId(props.row.event_id);
     const reqBody: JsonObject = {
@@ -205,19 +225,9 @@ export default function RegistryRowAction(
               {props.add &&
                 <RowActionButton
                   icon="add"
-                  label={parseWordsForLabels(interpolate(dict.action.addItem, props.add))}
-                  onClick={async () => {
-                    // Read before the row action clears the storage
-                    const previousFormFlag: string = browserStorageManager.get(ADD_FORM_KEY);
-                    handleClickRowAction();
-                    const clientName: string = props.row[props.accountType];
-                    const serviceSiteName: string = props.row.service_site ?? props.row.name;
-                    await presetJobFormClientFields(props.accountType, clientName, serviceSiteName);
-                    // We are flipping the value everytime so that the add form can re-render with new values
-                    browserStorageManager.set(ADD_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
-                    navigateToDrawer(Routes.REGISTRY_ADD, props.add);
-                  }
-                  }
+                  label={`${parseWordsForLabels(interpolate(dict.action.addItem, props.add))}${isFlagged ? ` ${FLAG_EMOJI}` : ""}`}
+                  disabled={isLoading || props.row[props.accountType] && isFlagged !== false}
+                  onClick={onAddItem}
                 />
               }
               {isActionAllowed("TERMINATE_CONTRACT") &&
