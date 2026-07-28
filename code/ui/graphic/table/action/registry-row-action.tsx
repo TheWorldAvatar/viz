@@ -22,6 +22,7 @@ import { FieldValues } from "react-hook-form";
 import { execReviewBillableAction } from "../registry/registry-table-utils";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
+import useTableSession from "@/hooks/table/useTableSession";
 
 
 interface RegistryRowActionProps {
@@ -31,7 +32,6 @@ interface RegistryRowActionProps {
   row: FieldValues;
   triggerRefresh: () => void;
   setActiveRowId?: React.Dispatch<React.SetStateAction<string>>;
-  add?: string;
 }
 
 /**
@@ -43,7 +43,6 @@ interface RegistryRowActionProps {
  * @param {FieldValues} row Row values.
  * @param triggerRefresh A function to refresh the table when required.
  * @param setActiveRowId A function to set the active row ID.
- * @param {string} add Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
@@ -60,9 +59,10 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+  const { add: addEntity } = useTableSession();
 
   const { accountIri, isFlagged } = useAccountFlag(
-    props.add && isActionMenuOpen ? props.accountType : undefined, props.row[props.accountType]);
+    addEntity && isActionMenuOpen ? props.accountType : undefined, props.row[props.accountType]);
 
 
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
@@ -166,7 +166,7 @@ export default function RegistryRowAction(
     }
     // We are flipping the value everytime so that the add form can re-render with new values
     browserStorageManager.set(ADD_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
-    navigateToDrawer(Routes.REGISTRY_ADD, props.add);
+    navigateToDrawer(Routes.REGISTRY_ADD, addEntity);
   };
 
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -222,13 +222,13 @@ export default function RegistryRowAction(
                   handleClickView();
                 }}
               />
-              {props.add &&
+              {addEntity &&
                 <RowActionButton
                   icon="add"
                   disabled={isLoading || props.row[props.accountType] && isFlagged !== false}
                   onClick={onAddItem}
                 >
-                  {parseWordsForLabels(interpolate(dict.action.addItem, props.add))}
+                  {parseWordsForLabels(interpolate(dict.action.addItem, addEntity))}
                   {/* Always reserve emoji width so the menu does not jump when the flag loads */}
                   <span className={isFlagged ? "ml-2" : "invisible"} aria-hidden={!isFlagged}>
                     {FLAG_EMOJI}

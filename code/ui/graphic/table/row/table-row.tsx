@@ -200,7 +200,6 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
               row={props.row.original}
               triggerRefresh={props.triggerRefresh}
               setActiveRowId={setActiveRowId}
-              add={add}
             />}
             {!props.disableRowAction && !tableDescriptor.isBulkDispatchEdit && <Button
               leftIcon="history"
