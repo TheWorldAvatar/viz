@@ -6,7 +6,6 @@ import { LifecycleStageMap } from '@/types/form';
 import { SelectOptionType } from '@/ui/interaction/dropdown/simple-selector';
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from '@/utils/internal-api-services';
 
-
 /**
  * Retrieves the account with the given name. The account filter API reports
  * a flagged account as a disabled option.
@@ -22,8 +21,12 @@ async function resolveAccount(accountType: string, accountName: string): Promise
             accountType,
             accountName,
         ));
-        const options: SelectOptionType[] = response.data?.items as SelectOptionType[] ?? [];
-        return options.find(option => option.label?.trim() === accountName?.trim());
+        const options: SelectOptionType[] = response.data?.items as SelectOptionType[];
+        const match: SelectOptionType = options.find(option => option.label?.trim() === accountName?.trim());
+        if (!match) {
+            console.warn(`Missing ${accountType} for flagging`);
+        }
+        return match;
     } catch (error) {
         console.error("Error retrieving the account", error);
     }
