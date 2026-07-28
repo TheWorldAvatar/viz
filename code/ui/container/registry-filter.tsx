@@ -8,7 +8,6 @@ import { XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER, XSD_TIME } from "@/ut
 import { ColumnFilter } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import LoadingSpinner from "../graphic/loader/spinner";
 
 interface RegistryFilterProps {
     type: string;
@@ -19,6 +18,7 @@ interface RegistryFilterProps {
     filters: ColumnFilter[];
     onSubmission: (_selectedOptions: string[]) => void;
     disabled?: boolean;
+    className?: string;
 }
 
 /**
@@ -32,6 +32,7 @@ interface RegistryFilterProps {
  * @param {ColumnFilter[]} filters Current filter state for all applied filters.
  * @param  onSubmission Executes this function on submission.
  * @param {boolean} disabled An optional state to disable the filter.
+ * @param {string} className Optional additional styling applied to the registry filter.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     const isDateField: boolean = props.fieldType === XSD_DATE || props.fieldType === XSD_DATETIME;
@@ -97,6 +98,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         disabled={props.disabled}
+        className={props.className}
     />
 }
 

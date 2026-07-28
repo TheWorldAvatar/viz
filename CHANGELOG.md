@@ -2,6 +2,26 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.81.9
+
+### Changes
+
+- Re-completing a task now skips the additional cost form and automatically recalculates any additional costs in the background.
+
+## 5.81.8
+
+### Changes
+
+- Improved searchable table filters so draft selections remain visible without options moving when users select or deselect values.
+- Stopped forcing deselected applied values into searchable filter results. They now remain visible only when they match the current search.
+
+## 5.81.7
+
+### Changes
+
+- Changed the table rendering logic so that the header row should now always remain visible, even when there are no data rows.
+- Added a new className prop to the RegistryFilter and the SearchSelector, which fixes an issue with the filter width on mobile and desktop 
+
 ## 5.81.6
 
 ### Changes

@@ -122,7 +122,7 @@ export default function RegistryTableComponent(
       </div>
       {refreshFlag || tableDescriptor.isLoading ? (
         <TableSkeleton />
-      ) : tableDescriptor.data?.length > 0 ? (
+      ) : (
         <RegistryTable
           recordType={props.entityType}
           lifecycleStage={props.lifecycleStage}
@@ -132,8 +132,6 @@ export default function RegistryTableComponent(
           triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
         />
-      ) : (
-        <div className="text-lg ml-6">{dict.message.noResultFound}</div>
       )}
     </div>
   );

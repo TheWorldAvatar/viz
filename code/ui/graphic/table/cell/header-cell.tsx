@@ -80,7 +80,6 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             </Tooltip>
             {!props.disableFilter && <PopoverActionButton
               placement="bottom-start"
-              panelClassName="w-sm xl:w-lg"
               leftIcon="filter_list"
               variant={isActiveFilter ? "secondary" : "ghost"}
               tooltipText={dict.action.filter}
