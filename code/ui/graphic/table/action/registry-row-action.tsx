@@ -225,10 +225,15 @@ export default function RegistryRowAction(
               {props.add &&
                 <RowActionButton
                   icon="add"
-                  label={`${parseWordsForLabels(interpolate(dict.action.addItem, props.add))}${isFlagged ? ` ${FLAG_EMOJI}` : ""}`}
                   disabled={isLoading || props.row[props.accountType] && isFlagged !== false}
                   onClick={onAddItem}
-                />
+                >
+                  {parseWordsForLabels(interpolate(dict.action.addItem, props.add))}
+                  {/* Always reserve emoji width so the menu does not jump when the flag loads */}
+                  <span className={isFlagged ? "ml-2" : "invisible"} aria-hidden={!isFlagged}>
+                    {FLAG_EMOJI}
+                  </span>
+                </RowActionButton>
               }
               {isActionAllowed("TERMINATE_CONTRACT") &&
                 <RowActionButton
