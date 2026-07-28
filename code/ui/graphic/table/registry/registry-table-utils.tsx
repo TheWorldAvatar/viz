@@ -498,63 +498,6 @@ export async function execReviewBillableAction(
 }
 
 /**
- * Resolves the row's client and service site display names to their IRIs and stores them in
- * browser storage so that the add job form pre-selects them.
- *
- * @param {string} accountType The account type.
- * @param {string} clientName The client's display name from the row, if any.
- * @param {string} serviceSiteName The service site's display name from the row, if any.
- */
-export async function presetJobFormClientFields(
-  accountType: string,
-  clientName: string,
-  serviceSiteName?: string,
-): Promise<void> {
-  if (!accountType || !clientName) {
-    return;
-  }
-  try {
-    const clientRes: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-      InternalApiIdentifierMap.FILTER,
-      LifecycleStageMap.ACCOUNT,
-      accountType,
-      clientName
-    ));
-    const clientOptions: SelectOptionType[] = clientRes.data?.items as SelectOptionType[] ?? [];
-    const clientIri: string = (clientOptions.find(option => option.label === clientName) ?? clientOptions[0])?.value;
-    if (!clientIri) {
-      return;
-    }
-    browserStorageManager.set(accountType, clientIri);
-
-    if (!serviceSiteName) {
-      return;
-    }
-    const siteRes: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-      InternalApiIdentifierMap.INSTANCES,
-      accountType,
-      "false",
-      getId(clientIri),
-      "service_site",
-      null,
-      null,
-      null,
-      null,
-      null,
-      serviceSiteName
-    ));
-    const siteOptions: SelectOptionType[] = siteRes.data?.items as SelectOptionType[] ?? [];
-    const siteIri: string = (siteOptions.find(option => option.label === serviceSiteName) ?? siteOptions[0])?.value;
-    if (siteIri) {
-      // The storage key must match the form field's label, which uses spaces instead of underscores
-      browserStorageManager.set("service_site".replaceAll("_", " "), siteIri);
-    }
-  } catch (error) {
-    console.error("Error fetching instances", error);
-  }
-}
-
-/**
  * Retrieve the initial filter operator and values based on the input.
  * For between, the array will be of size 3, while everything else is size 2.
  * Handles numeric (e.g. "eq9.45") and HH:mm time (e.g. "eq09:45") values.
