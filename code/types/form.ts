@@ -31,6 +31,7 @@ export const FormOptionStateMap = {
   PENDING: "pending",
   SYNC: "syncing",
   COMPLETE: "complete",
+  STALE: "stale",
 } as const;
 export type FormOptionState = typeof FormOptionStateMap[keyof typeof FormOptionStateMap];
 

@@ -58,8 +58,11 @@ class DexieFormRepository {
         // Stores metadata state if not present
         for (const [field, currentMeta] of Object.entries(this.fields)) {
             const meta: FormOptionMetadata = await db.metadata.get(field);
-            // If cached data does not exist or is in pending state or is stale, resync data
-            if (!meta || meta?.state == FormOptionStateMap.PENDING || (this.genCurrentTimestamp() - meta.lastUpdated > this.STALE_TIME_S)) {
+            // Stale data
+            if (meta && (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S)) {
+                await this.updateFieldMeta(field, FormOptionStateMap.STALE, 0, currentMeta.dependentField);
+                // If cached data does not exist or is in pending state, resync data
+            } else if (!meta || meta?.state == FormOptionStateMap.PENDING) {
                 await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0, currentMeta.dependentField);
             }
         }
@@ -77,7 +80,10 @@ class DexieFormRepository {
 
                 // Only retrieve first batch of 21 options for quick load if it was not previously syncing or completed
                 // If it is syncing, there should already be data to read from
-                if (meta?.state === FormOptionStateMap.PENDING) {
+                if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
+                    if (meta?.state === FormOptionStateMap.STALE) {
+                        await table.clear();
+                    }
                     const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
                         0, 21, field == accountType && isContractForm);
                     await table.bulkPut(selectOptions);
@@ -105,8 +111,8 @@ class DexieFormRepository {
                         if (nextBatch.length < this.BATCH_SIZE) {
                             hasMore = false;
                             await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
-                            // Only update the meta to sync if its still pending
-                        } else if (meta?.state === FormOptionStateMap.PENDING) {
+                            // Only update the meta to sync if its still pending or stale
+                        } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
                             await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
                         }
                     } else {
