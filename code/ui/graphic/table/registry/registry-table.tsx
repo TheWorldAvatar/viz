@@ -79,6 +79,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         recordType={props.recordType}
         lifecycleStage={props.lifecycleStage}
         tableDescriptor={props.tableDescriptor}
+        tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
         addEntity={props.addEntity}
       >
