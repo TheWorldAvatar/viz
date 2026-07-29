@@ -1,11 +1,13 @@
 import { ColumnFiltersState } from "@tanstack/react-table";
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { TableDescriptor } from "./useTable";
 
-export interface TableScrollReturn {
-  scrollPositionRef: RefObject<number>;
+export interface TableScrollDescriptor {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
+  saveScrollPosition: (_scrollTop: number) => void;
+  restoreScrollPosition: () => void;
+  scrollToTop: () => void;
 }
 
 /**
@@ -13,12 +15,13 @@ export interface TableScrollReturn {
  *
  * @param {TableDescriptor} tableDescriptor The table descriptor providing the sort/filter/pagination state.
  * @param {DateRange} selectedDate The currently selected date range.
- * @returns The refs to wire into the table: the persisted scroll position and the scroll container.
+ * @returns The scroll container ref to attach to the scrollable element, plus helpers to save,
+ * restore, and reset the scroll position.
  */
 export function useTableScroll(
   tableDescriptor: TableDescriptor,
   selectedDate: DateRange,
-): TableScrollReturn {
+): TableScrollDescriptor {
   const scrollPositionRef = useRef<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +29,22 @@ export function useTableScroll(
   const { sortParams, pagination } = tableDescriptor;
   const prevPageSize = useRef<number>(pagination.pageSize);
 
+  const saveScrollPosition = (scrollTop: number) => {
+    scrollPositionRef.current = scrollTop;
+  };
+
+  const restoreScrollPosition = useCallback(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollPositionRef.current;
+    }
+  }, []);
+
+  const scrollToTop = () => {
+    scrollPositionRef.current = 0;
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Resets the scroll to top when a sort/filter/date/page change occurs. Page size change is excluded, so it keeps the position.
   const resetScrollToTop = () => {
     scrollPositionRef.current = 0;
     if (scrollContainerRef.current) {
@@ -33,8 +52,7 @@ export function useTableScroll(
     }
   };
 
-  // Reset scroll to top on sort, filter, date, or page navigation
-  // but keep it on a page-size change.
+  // Reset scroll to top on sort, filter, date, or page navigation, but keep it on a page-size change.
   useEffect(() => {
     const pageSizeChanged: boolean = prevPageSize.current !== pagination.pageSize;
     prevPageSize.current = pagination.pageSize;
@@ -43,5 +61,5 @@ export function useTableScroll(
     }
   }, [sortParams, columnFilters, selectedDate, pagination]);
 
-  return { scrollPositionRef, scrollContainerRef };
+  return { scrollContainerRef, saveScrollPosition, restoreScrollPosition, scrollToTop };
 }

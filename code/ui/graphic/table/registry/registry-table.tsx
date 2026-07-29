@@ -22,6 +22,7 @@ import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 
 interface RegistryTableProps {
   recordType: string;
@@ -31,8 +32,7 @@ interface RegistryTableProps {
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
   selectedDate?: DateRange;
-  scrollPositionRef: RefObject<number>;
-  scrollContainerRef: RefObject<HTMLDivElement | null>;
+  tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
 }
 
@@ -46,23 +46,22 @@ interface RegistryTableProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
- * @param {RefObject<number>} scrollPositionRef A reference to the scroll position of the table.
- * @param scrollContainerRef A reference to the scrollable table container.
+ * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const { scrollContainerRef, saveScrollPosition, restoreScrollPosition, scrollToTop } = props.tableScrollDescriptor;
   const rowRefs: RefObject<TableRowHandle[]> = useRef<TableRowHandle[]>([]);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor,
     rowRefs,
   );
 
+  // Restore the persisted scroll position when the table (re)mounts.
   useLayoutEffect(() => {
-    if (props.scrollContainerRef.current) {
-      props.scrollContainerRef.current.scrollTop = props.scrollPositionRef.current;
-    }
-  }, []);
+    restoreScrollPosition();
+  }, [restoreScrollPosition]);
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
@@ -85,10 +84,8 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
       >
         <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div
-            ref={props.scrollContainerRef}
-            onScroll={(e) => {
-              props.scrollPositionRef.current = e.currentTarget.scrollTop;
-            }}
+            ref={scrollContainerRef}
+            onScroll={(e) => saveScrollPosition(e.currentTarget.scrollTop)}
             className="flex-1 min-h-0 overflow-auto table-scrollbar"
           >
             <DndContext
@@ -154,10 +151,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               leftIcon="arrow_upward"
               tooltipText={dict.action.backToTop}
               aria-label={dict.action.backToTop}
-              onClick={() => {
-                props.scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-                props.scrollPositionRef.current = 0;
-              }}
+              onClick={scrollToTop}
               className="rounded-full! shadow-xs border border-border p-5.5"
             />
           </div>
