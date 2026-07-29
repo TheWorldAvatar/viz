@@ -63,7 +63,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 className={`flex items-center gap-2 ${props.disableSort ? "select-none" : "cursor-pointer"}`}
                 onClick={!props.disableSort ? (event) => {
                   props.header.column.getToggleSortingHandler()?.(event);
-                  tableScrollDescriptor.resetScrollToTop();
+                  tableScrollDescriptor.scrollToTop();
                 } : undefined}
                 aria-label={props.header.column.columnDef.header as string}
               >
@@ -111,7 +111,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.header.column.setFilterValue(selectedOptions);
                   props.table.resetRowSelection();
                   props.table.resetPageIndex();
-                  tableScrollDescriptor.resetScrollToTop();
+                  tableScrollDescriptor.scrollToTop();
                 }
                 } />
             </PopoverActionButton>

@@ -65,7 +65,7 @@ export default function TablePagination() {
             onClick={() => {
               tableDescriptor.table.setPageIndex(0);
               tableDescriptor.table.resetRowSelection();
-              tableScrollDescriptor.resetScrollToTop();
+              tableScrollDescriptor.scrollToTop();
             }}
             disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to first page"
@@ -77,7 +77,7 @@ export default function TablePagination() {
             onClick={() => {
               tableDescriptor.table.previousPage();
               tableDescriptor.table.resetRowSelection();
-              tableScrollDescriptor.resetScrollToTop();
+              tableScrollDescriptor.scrollToTop();
             }}
             disabled={tableDescriptor.pagination.pageIndex == 0 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to previous page"
@@ -89,7 +89,7 @@ export default function TablePagination() {
             onClick={() => {
               tableDescriptor.table.nextPage();
               tableDescriptor.table.resetRowSelection();
-              tableScrollDescriptor.resetScrollToTop();
+              tableScrollDescriptor.scrollToTop();
             }}
             disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to next page"
@@ -102,7 +102,7 @@ export default function TablePagination() {
             onClick={() => {
               tableDescriptor.table.setPageIndex(lastPageIndex - 1);
               tableDescriptor.table.resetRowSelection();
-              tableScrollDescriptor.resetScrollToTop();
+              tableScrollDescriptor.scrollToTop();
             }}
             disabled={tableDescriptor.pagination.pageIndex == lastPageIndex - 1 || tableDescriptor.isBackgroundLoading}
             aria-label="Go to last page"

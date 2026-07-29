@@ -87,7 +87,7 @@ export default function RegistryTableComponent(
 
   const handleSelectedDateChange: Dispatch<SetStateAction<DateRange>> = (value) => {
     setSelectedDate(value);
-    tableScrollDescriptor.resetScrollToTop();
+    tableScrollDescriptor.scrollToTop();
   };
 
   useEffect(() => {

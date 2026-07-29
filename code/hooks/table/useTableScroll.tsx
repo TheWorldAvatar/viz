@@ -4,8 +4,7 @@ export interface TableScrollDescriptor {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   saveScrollPosition: (_scrollTop: number) => void;
   restoreScrollPosition: () => void;
-  scrollToTop: () => void;
-  resetScrollToTop: () => void;
+  scrollToTop: (_smooth?: boolean) => void;
 }
 
 /**
@@ -28,18 +27,16 @@ export function useTableScroll(): TableScrollDescriptor {
     }
   }, []);
 
-  const scrollToTop = () => {
-    scrollPositionRef.current = 0;
-    scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
-  // Resets the scroll to the top; called from event handlers when a sort/filter/date/page change occurs.
-  const resetScrollToTop = () => {
+  const scrollToTop = (smooth = false) => {
     scrollPositionRef.current = 0;
-    if (scrollContainerRef.current) {
+    if (!scrollContainerRef.current) return;
+    if (smooth) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
       scrollContainerRef.current.scrollTop = 0;
     }
   };
 
-  return { scrollContainerRef, saveScrollPosition, restoreScrollPosition, scrollToTop, resetScrollToTop };
+  return { scrollContainerRef, saveScrollPosition, restoreScrollPosition, scrollToTop };
 }

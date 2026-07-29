@@ -152,7 +152,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               leftIcon="arrow_upward"
               tooltipText={dict.action.backToTop}
               aria-label={dict.action.backToTop}
-              onClick={scrollToTop}
+              onClick={() => scrollToTop(true)}
               className="rounded-full! shadow-xs border border-border p-5.5"
             />
           </div>
