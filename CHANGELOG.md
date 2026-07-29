@@ -2,6 +2,30 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.82.2
+
+### Changes
+
+- Improved the table experience by preserving the user's table scroll position when the underlying data is refreshed due to row-level actions, while resetting it to the top when sorting, filtering, changing the date range, or navigating table between pages.
+- Added a "Back to top" button for quickly returning to the start of the table
+
+## 5.82.1
+
+### Changes
+
+- Added row action to revert cancelled or reported task. Re-factored to include unvoid task.
+
+## 5.82.0
+
+### Changes
+
+- Added configurable row actions. Registry paths can now define an add entity type in their UI settings. This displays an Add {entity} action on each row, which opens the corresponding add form and automatically pre-fills the account and record fields when available from the selected row.
+- Added account flagging support to the add row action. Flagged accounts display a flag indicator and disable the add action.
+
+### Bug fixes
+
+- Fixed dependent field options being incorrectly marked as disabled when a single matching result is returned.
+
 ## 5.81.9
 
 ### Changes

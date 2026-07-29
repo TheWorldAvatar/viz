@@ -1,10 +1,11 @@
 "use client";
 
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
+import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "@/state/context-menu-slice";
@@ -29,6 +30,7 @@ interface RegistryTableComponentProps {
   accountType?: string;
   message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
+  addEntity?: string;
 }
 
 /**
@@ -39,6 +41,7 @@ interface RegistryTableComponentProps {
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
+ * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
@@ -75,10 +78,17 @@ export default function RegistryTableComponent(
     selectedDate,
   );
 
+  const tableScrollDescriptor: TableScrollDescriptor = useTableScroll();
+
   const triggerTableRefresh = () => {
     triggerRefresh();
     tableDescriptor.table.resetRowSelection();
   }
+
+  const handleSelectedDateChange: Dispatch<SetStateAction<DateRange>> = (value) => {
+    setSelectedDate(value);
+    tableScrollDescriptor.scrollToTop();
+  };
 
   useEffect(() => {
     dispatch(addItem(tableRibbonContextItem));
@@ -112,7 +122,7 @@ export default function RegistryTableComponent(
             entityType={props.entityType}
             disableDateFilter={disableDateFilter}
             selectedDate={selectedDate as DateRange}
-            setSelectedDate={setSelectedDate}
+            setSelectedDate={handleSelectedDateChange}
             lifecycleStage={props.lifecycleStage}
             instances={tableDescriptor.initialInstances}
             triggerRefresh={triggerTableRefresh}
@@ -131,6 +141,8 @@ export default function RegistryTableComponent(
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
+          tableScrollDescriptor={tableScrollDescriptor}
+          addEntity={props.addEntity}
         />
       )}
     </div>

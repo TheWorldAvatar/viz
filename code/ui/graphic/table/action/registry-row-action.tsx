@@ -12,14 +12,18 @@ import { FileDownloadButton } from "@/ui/interaction/action/download/file-downlo
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
+import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
-import { compareDates, getId, parseWordsForLabels } from "@/utils/client-utils";
+import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
+import { ADD_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
+import useAccountFlag from "@/hooks/useAccountFlag";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { execReviewBillableAction } from "../registry/registry-table-utils";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
+import useTableSession from "@/hooks/table/useTableSession";
 
 
 interface RegistryRowActionProps {
@@ -56,6 +60,11 @@ export default function RegistryRowAction(
   const [isActionMenuOpen, setIsActionMenuOpen] =
     React.useState<boolean>(false);
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
+  const { addEntity } = useTableSession();
+
+  const account: SelectOptionType = useAccountFlag(
+    addEntity && isActionMenuOpen ? props.accountType : undefined, props.row[props.accountType]);
+
 
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
 
@@ -146,6 +155,21 @@ export default function RegistryRowAction(
     await execReviewBillableAction(props.row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
   };
 
+  const onAddItem: React.MouseEventHandler<HTMLButtonElement> = () => {
+    // Read before the row action clears the storage
+    const previousFormFlag: string = browserStorageManager.get(ADD_FORM_KEY);
+    handleClickRowAction();
+    if (props.accountType && account?.value) {
+      browserStorageManager.set(props.accountType, account.value);
+      if (props.row.iri) {
+        browserStorageManager.set(props.recordType.replaceAll("_", " "), props.row.iri);
+      }
+    }
+    // We are flipping the value everytime so that the add form can re-render with new values
+    browserStorageManager.set(ADD_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
+    navigateToDrawer(Routes.REGISTRY_ADD, addEntity);
+  };
+
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const taskId: string = getId(props.row.event_id);
     const reqBody: JsonObject = {
@@ -158,12 +182,27 @@ export default function RegistryRowAction(
     submitPendingActions(url, "POST", JSON.stringify(reqBody));
   };
 
-  const onUnvoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  const onRevertTask: React.MouseEventHandler<HTMLButtonElement> = () => {
     const taskId: string = getId(props.row.event_id);
+    let action: "cancel" | "report" | "void";
+    switch (props.row.status.toLowerCase()) {
+      case RegistryStatusMap.CANCELLED:
+        action = "cancel";
+        break;
+      case RegistryStatusMap.REPORTED:
+        action = "report";
+        break;
+      case RegistryStatusMap.VOIDED:
+        action = "void";
+        break;
+      default:
+        console.warn("A valid task status is required to revert the task.");
+        return;
+    }
     const url: string = makeInternalRegistryAPIwithParams(
       InternalApiIdentifierMap.EVENT,
       "service",
-      "void",
+      action,
       taskId
     );
     submitPendingActions(url, "DELETE");
@@ -199,6 +238,19 @@ export default function RegistryRowAction(
                   handleClickView();
                 }}
               />
+              {addEntity &&
+                <RowActionButton
+                  icon="add"
+                  disabled={isLoading || props.row[props.accountType] && account?.disabled !== false}
+                  onClick={onAddItem}
+                >
+                  {parseWordsForLabels(interpolate(dict.action.addItem, addEntity))}
+                  {/* Always reserve emoji width so the menu does not jump when the flag loads */}
+                  <span className={`ml-1 ${!account?.disabled && "invisible"}`} aria-hidden={!account?.disabled}>
+                    {FLAG_EMOJI}
+                  </span>
+                </RowActionButton>
+              }
               {isActionAllowed("TERMINATE_CONTRACT") &&
                 <RowActionButton
                   icon="block"
@@ -336,11 +388,11 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={onVoidTask}
           />}
-          {(isActionAllowed("UNVOID_TASK")) && <RowActionButton
+          {(isActionAllowed("UNDO_CANCEL_OR_REPORT_TASK") || isActionAllowed("UNVOID_TASK")) && <RowActionButton
             icon="undo"
-            label={dict.action.unvoidTask}
+            label={dict.action.revertStatus}
             disabled={isLoading}
-            onClick={onUnvoidTask}
+            onClick={onRevertTask}
           />}
           {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
             icon="money_off"

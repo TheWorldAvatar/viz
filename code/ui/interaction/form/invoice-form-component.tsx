@@ -17,6 +17,7 @@ import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import Button from "../button";
 import { translateFormType } from "./form-utils";
 import FormSkeleton from "./skeleton/form-skeleton";
+import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
 
 interface InvoiceFormComponentProps {
     entityType: string;
@@ -47,6 +48,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
     const { refreshId, refreshFlag, triggerRefresh, isLoading } = useOperationStatus();
     const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
     const { invoiceAccountFilter } = useFormSession();
+    const tableScrollDescriptor: TableScrollDescriptor = useTableScroll();
 
     const tableDescriptor: TableDescriptor = useTable(
         props.entityType,
@@ -117,6 +119,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                                 tableDescriptor={tableDescriptor}
                                 triggerRefresh={triggerRefresh}
                                 accountType={props.accountType}
+                                tableScrollDescriptor={tableScrollDescriptor}
                             />
                         )}
                         {tableDescriptor.data?.length == 0 && (
