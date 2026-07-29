@@ -86,8 +86,9 @@ class DexieFormRepository {
             // Grab data in batches of 500, and continue looping if syncing
             // If task has been completed, only grab the new data with the timestamp check
             let hasMore: boolean = true;
-            // Reset offset for stale data
-            let currentOffset: number = meta?.state === FormOptionStateMap.STALE ? 0 : await table.count();
+            // Reset offset for completed or stale data, as the former will grab new data with timestamp while the latter restarts
+            let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE || meta?.state === FormOptionStateMap.STALE
+                ? 0 : await table.count();
             const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
 
             while (hasMore) {
@@ -95,23 +96,20 @@ class DexieFormRepository {
                     Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
                     field == accountType && isContractForm, timestamp);
 
-                if (nextBatch.length > 0) {
-                    // For the first batch after data is now stale, clear the data before adding the new batch
-                    if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
-                        await table.clear();
-                    }
-                    await table.bulkPut(nextBatch);
-                    currentOffset += nextBatch.length;
+                // For the first batch after data is now stale, clear the data before adding the new batch
+                if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
+                    await table.clear();
+                }
 
-                    if (nextBatch.length < this.BATCH_SIZE) {
-                        hasMore = false;
-                        await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
-                        // Only update the meta to sync if its still pending or stale
-                    } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
-                        await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
-                    }
-                } else {
+                await table.bulkPut(nextBatch);
+                currentOffset += nextBatch.length;
+
+                if (nextBatch.length < this.BATCH_SIZE) {
                     hasMore = false;
+                    await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
+                    // Only update the meta to sync if its still pending or stale
+                } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
+                    await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
                 }
             };
         });
