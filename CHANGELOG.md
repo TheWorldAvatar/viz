@@ -2,6 +2,13 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.82.2
+
+### Changes
+
+- Improved the table experience by preserving the user's table scroll position when the underlying data is refreshed due to row-level actions, while resetting it to the top when sorting, filtering, changing the date range, or navigating table between pages.
+- Added a "Back to top" button for quickly returning to the start of the table
+
 ## 5.82.1
 
 ### Changes
