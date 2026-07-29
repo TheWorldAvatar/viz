@@ -1,10 +1,11 @@
 "use client";
 
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
+import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "@/state/context-menu-slice";
@@ -77,10 +78,17 @@ export default function RegistryTableComponent(
     selectedDate,
   );
 
+  const tableScrollDescriptor: TableScrollDescriptor = useTableScroll();
+
   const triggerTableRefresh = () => {
     triggerRefresh();
     tableDescriptor.table.resetRowSelection();
   }
+
+  const handleSelectedDateChange: Dispatch<SetStateAction<DateRange>> = (value) => {
+    setSelectedDate(value);
+    tableScrollDescriptor.scrollToTop();
+  };
 
   useEffect(() => {
     dispatch(addItem(tableRibbonContextItem));
@@ -114,7 +122,7 @@ export default function RegistryTableComponent(
             entityType={props.entityType}
             disableDateFilter={disableDateFilter}
             selectedDate={selectedDate as DateRange}
-            setSelectedDate={setSelectedDate}
+            setSelectedDate={handleSelectedDateChange}
             lifecycleStage={props.lifecycleStage}
             instances={tableDescriptor.initialInstances}
             triggerRefresh={triggerTableRefresh}
@@ -133,6 +141,7 @@ export default function RegistryTableComponent(
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerTableRefresh}
           accountType={props.accountType}
+          tableScrollDescriptor={tableScrollDescriptor}
           addEntity={props.addEntity}
         />
       )}

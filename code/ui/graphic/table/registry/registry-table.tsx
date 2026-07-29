@@ -11,16 +11,18 @@ import { TableDescriptor } from "@/hooks/table/useTable";
 import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
 import { useDictionary } from "@/hooks/useDictionary";
 
-import { RefObject, useRef } from "react";
+import { RefObject, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage } from "@/types/form";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
+import Button from "@/ui/interaction/button";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 
 interface RegistryTableProps {
   recordType: string;
@@ -30,6 +32,7 @@ interface RegistryTableProps {
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
   selectedDate?: DateRange;
+  tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
 }
 
@@ -43,15 +46,22 @@ interface RegistryTableProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
+ * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
+  const { scrollContainerRef, saveScrollPosition, restoreScrollPosition, scrollToTop } = props.tableScrollDescriptor;
   const rowRefs: RefObject<TableRowHandle[]> = useRef<TableRowHandle[]>([]);
   const dragAndDropDescriptor: DragAndDropDescriptor = useTableDnd(
     props.tableDescriptor,
     rowRefs,
   );
+
+  // Restore the persisted scroll position when the table (re)mounts.
+  useLayoutEffect(() => {
+    restoreScrollPosition();
+  }, [restoreScrollPosition]);
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
@@ -69,11 +79,16 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         recordType={props.recordType}
         lifecycleStage={props.lifecycleStage}
         tableDescriptor={props.tableDescriptor}
+        tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
         addEntity={props.addEntity}
       >
-        <div className="rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
-          <div className="flex-1 min-h-0 overflow-auto table-scrollbar">
+        <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
+          <div
+            ref={scrollContainerRef}
+            onScroll={(e) => saveScrollPosition(e.currentTarget.scrollTop)}
+            className="flex-1 min-h-0 overflow-auto table-scrollbar"
+          >
             <DndContext
               collisionDetection={closestCenter}
               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
@@ -130,9 +145,20 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
               </table>
             </DndContext>
           </div>
+          <div className="absolute bottom-16 right-6 z-20">
+            <Button
+              size="icon"
+              variant="secondary"
+              leftIcon="arrow_upward"
+              tooltipText={dict.action.backToTop}
+              aria-label={dict.action.backToTop}
+              onClick={() => scrollToTop(true)}
+              className="rounded-full! shadow-xs border border-border p-5.5"
+            />
+          </div>
           <TablePagination />
         </div>
-      </TableSessionContextProvider>
+      </TableSessionContextProvider >
     );
   }
   return (

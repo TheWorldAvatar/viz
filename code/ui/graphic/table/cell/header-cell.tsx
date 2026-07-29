@@ -1,3 +1,4 @@
+import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { Icon } from "@mui/material";
@@ -42,6 +43,7 @@ interface HeaderCellProps {
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
+  const { tableScrollDescriptor } = useTableSession();
   const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
@@ -59,7 +61,10 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
             <Tooltip text={props.disableSort ? "" : dict.message.sort} placement="top-start">
               <div
                 className={`flex items-center gap-2 ${props.disableSort ? "select-none" : "cursor-pointer"}`}
-                onClick={!props.disableSort ? props.header.column.getToggleSortingHandler() : undefined}
+                onClick={!props.disableSort ? (event) => {
+                  props.header.column.getToggleSortingHandler()?.(event);
+                  tableScrollDescriptor.scrollToTop();
+                } : undefined}
                 aria-label={props.header.column.columnDef.header as string}
               >
                 {flexRender(
@@ -106,6 +111,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.header.column.setFilterValue(selectedOptions);
                   props.table.resetRowSelection();
                   props.table.resetPageIndex();
+                  tableScrollDescriptor.scrollToTop();
                 }
                 } />
             </PopoverActionButton>
