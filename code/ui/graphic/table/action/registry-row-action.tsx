@@ -15,7 +15,7 @@ import { toast } from "@/ui/interaction/action/toast/toast";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
-import { ADD_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
+import { ADD_LINKED_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
 import useAccountFlag from "@/hooks/useAccountFlag";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
@@ -157,7 +157,7 @@ export default function RegistryRowAction(
 
   const onAddItem: React.MouseEventHandler<HTMLButtonElement> = () => {
     // Read before the row action clears the storage
-    const previousFormFlag: string = browserStorageManager.get(ADD_FORM_KEY);
+    const previousFormFlag: string = browserStorageManager.get(ADD_LINKED_FORM_KEY);
     handleClickRowAction();
     if (props.accountType && account?.value) {
       browserStorageManager.set(props.accountType, account.value);
@@ -166,7 +166,7 @@ export default function RegistryRowAction(
       }
     }
     // We are flipping the value everytime so that the add form can re-render with new values
-    browserStorageManager.set(ADD_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
+    browserStorageManager.set(ADD_LINKED_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
     navigateToDrawer(Routes.REGISTRY_ADD, addEntity);
   };
 
