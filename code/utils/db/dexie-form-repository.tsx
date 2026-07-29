@@ -78,24 +78,8 @@ class DexieFormRepository {
                 const table: Table<SelectOptionType, string> = await this.getTable(field);
                 const parsedField: string = field.replaceAll(" ", "_");
 
-                // Only retrieve first batch of 21 options for quick load if it was not previously syncing or completed
-                // If it is syncing, there should already be data to read from
-                if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
-                    if (meta?.state === FormOptionStateMap.STALE) {
-                        await table.clear();
-                    }
-                    const selectOptions: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
-                        0, 21, field == accountType && isContractForm);
-                    await table.bulkPut(selectOptions);
-
-                    if (selectOptions.length < 21) {
-                        await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, selectOptions.length);
-                        return;
-                    }
-                }
-
-                // If task is still syncing, continue to sync through batches
-                // If task is completed, only grab the new data with the timestamp check
+                // Grab data in batches of 500, and continue looping if syncing
+                // If task has been completed, only grab the new data with the timestamp check
                 let hasMore: boolean = true;
                 // Reset offset for completed
                 let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE ? 0 : await table.count();
@@ -106,6 +90,10 @@ class DexieFormRepository {
                         field == accountType && isContractForm, timestamp);
 
                     if (nextBatch.length > 0) {
+                        // For the first batch after data is now stale, clear the data before adding the new batch
+                        if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
+                            await table.clear();
+                        }
                         await table.bulkPut(nextBatch);
                         currentOffset += nextBatch.length;
                         if (nextBatch.length < this.BATCH_SIZE) {
