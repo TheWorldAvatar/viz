@@ -196,7 +196,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const taskSubmitAction: SubmitHandler<FieldValues> = async (
     formData: FieldValues
   ) => {
-    const loadingId: number | string = startLoading();
+    const isOfflineCompletion: boolean = props.formType === FormTypeMap.COMPLETE && !isConnected;
+    const loadingId: number | string = isOfflineCompletion ? undefined : startLoading();
     try {
       let response: AgentResponseBody;
       if (props.id != BULK_IDENTIFIER) {
@@ -231,7 +232,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
         // Offline completion: fire the request so the service worker queues it for
         // replay on reconnect, then confirm and close without awaiting a response
-        if (!isConnected && props.formType === FormTypeMap.COMPLETE) {
+        if (isOfflineCompletion) {
           submitLifecycleAction(formData, action, isPost).catch((error) => console.warn("Queued offline submission:", error));
           setIsDuplicate(false);
           toast(dict.message.offlineQueued, "success");
@@ -294,7 +295,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
       console.error("Failed to submit task action:", error);
       toast(dict.message.genericError, "error");
     } finally {
-      stopLoading(loadingId);
+      if (!isOfflineCompletion) {
+        stopLoading(loadingId);
+      }
     }
   };
 
