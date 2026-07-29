@@ -86,8 +86,8 @@ class DexieFormRepository {
             // Grab data in batches of 500, and continue looping if syncing
             // If task has been completed, only grab the new data with the timestamp check
             let hasMore: boolean = true;
-            // Reset offset for completed
-            let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE ? 0 : await table.count();
+            // Reset offset for stale data
+            let currentOffset: number = meta?.state === FormOptionStateMap.STALE ? 0 : await table.count();
             const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
 
             while (hasMore) {
