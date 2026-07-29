@@ -115,11 +115,8 @@ class DexieFormRepository {
                 }
             };
         });
-        // Block only on the first set of promises for each field
-        await syncPromises[0];
-
-        // Continue syncing in the background
-        Promise.allSettled(syncPromises.slice(1)).then((results) => {
+        // Sync all in the background
+        Promise.allSettled(syncPromises).then((results) => {
             results.forEach((result, i) => {
                 if (result.status === "rejected") {
                     console.error(`Background sync failed for field "${currentOptionFields[i + 1]}":`, result.reason);
