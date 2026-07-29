@@ -25,6 +25,7 @@ import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
 import { EnhancedColumnDef, execReviewBillableAction, getRowRecordId } from "../registry/registry-table-utils";
 import LoadingSpinner from "../../loader/spinner";
+import { useConnected } from "@/hooks/useConnected";
 
 interface TableRowProps {
   id: string;
@@ -59,7 +60,9 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
     id: props.row?.id,
   });
 
+
   const { activeRowId, recordType, lifecycleStage, tableDescriptor, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
+  const isConnected: boolean = useConnected();
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
@@ -147,7 +150,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             }));
           }
         });
-        await dexieFormRepo.sync();
+        await dexieFormRepo.sync(isConnected);
         delete initialState.lockField;
         // reset form data state on use effect
         form.reset(initialState);

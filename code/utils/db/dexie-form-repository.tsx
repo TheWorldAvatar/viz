@@ -44,10 +44,11 @@ class DexieFormRepository {
     /**
      * Synchronises with the backend to cache all field options.
      * 
+     * @param {boolean} isConnected Indicates if the platform is online.
      * @param {string} accountType The type of account.
      * @param {boolean} isContractForm Indicates if the sync occurs for a contract form.
     */
-    async sync(accountType: string = "", isContractForm: boolean = false): Promise<void> {
+    async sync(isConnected: boolean, accountType: string = "", isContractForm: boolean = false): Promise<void> {
         this.isSyncing = true;
         const currentOptionFields: string[] = Object.keys(this.fields);
         // Synchronises only if there are relevant fields available
@@ -70,6 +71,11 @@ class DexieFormRepository {
         // WARNING: Users must re-register a dynamic table each time as the schema is not preloaded on refresh
         await db.registerDynamicTables(this.TABLE_NAME_TEMPLATE, currentOptionFields);
         this.fields = {}; // reset to prevent outdated data override
+
+        if (!isConnected) {
+            this.isSyncing = false;
+            return;
+        }
 
         // Starts fetching and syncing with the backend
         await Promise.allSettled(

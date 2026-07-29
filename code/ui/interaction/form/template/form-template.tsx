@@ -6,6 +6,7 @@ import LoadingSpinner from '@/ui/graphic/loader/spinner';
 import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
 import { dexieFormRepo } from '@/utils/db/dexie-form-repository';
+import { useConnected } from '@/hooks/useConnected';
 
 interface FormComponentProps {
   entityType: string;
@@ -25,6 +26,7 @@ interface FormComponentProps {
 export function FormTemplate(props: Readonly<FormComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const { formType, addFrozenFields, loadPreviousSession, setFieldIdNameMapping } = useFormSession();
+  const isConnected: boolean = useConnected();
 
   // Sets the default value with the requested function call if any
   const form: UseFormReturn = useForm({
@@ -42,7 +44,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       }
 
       delete initialState.lockField;
-      await dexieFormRepo.sync();
+      await dexieFormRepo.sync(isConnected);
 
       setFormFields(fields);
       setFieldIdNameMapping(fieldIdMapping);

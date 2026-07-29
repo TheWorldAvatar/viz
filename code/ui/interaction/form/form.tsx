@@ -46,6 +46,7 @@ import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
 import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { useConnected } from "@/hooks/useConnected";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -84,6 +85,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
+  const isConnected: boolean = useConnected();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -146,7 +148,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       delete initialState.lockField;
 
-      await dexieFormRepo.sync(accountType, isContractForm);
+      await dexieFormRepo.sync(isConnected, accountType, isContractForm);
       setFormTemplate(parsedTemplate);
       setFieldIdNameMapping(fieldIdMapping);
       setBillingParams(billingParamsStore)
