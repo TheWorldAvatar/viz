@@ -27,7 +27,6 @@ export function useTableScroll(): TableScrollDescriptor {
     }
   }, []);
 
-
   const scrollToTop = (smooth = false) => {
     scrollPositionRef.current = 0;
     if (!scrollContainerRef.current) return;
