@@ -50,7 +50,7 @@
     "reviewBillable": "Rechnung prüfen",
     "exemptBillable": "Rechnung ausschließen",
     "voidTask": "Auftrag entwerten",
-    "unvoidTask": "Annullierung aufheben",
+    "revertStatus": "Status zurücksetzen",
     "submit": "Einreichen",
     "reschedule": "Neu terminieren",
     "submitAndDuplicate": "Übermitteln und weiterarbeiten",

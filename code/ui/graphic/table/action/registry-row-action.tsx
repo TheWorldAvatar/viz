@@ -182,12 +182,27 @@ export default function RegistryRowAction(
     submitPendingActions(url, "POST", JSON.stringify(reqBody));
   };
 
-  const onUnvoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  const onRevertTask: React.MouseEventHandler<HTMLButtonElement> = () => {
     const taskId: string = getId(props.row.event_id);
+    let action: "cancel" | "report" | "void";
+    switch (props.row.status.toLowerCase()) {
+      case RegistryStatusMap.CANCELLED:
+        action = "cancel";
+        break;
+      case RegistryStatusMap.REPORTED:
+        action = "report";
+        break;
+      case RegistryStatusMap.VOIDED:
+        action = "void";
+        break;
+      default:
+        console.warn("A valid task status is required to revert the task.");
+        return;
+    }
     const url: string = makeInternalRegistryAPIwithParams(
       InternalApiIdentifierMap.EVENT,
       "service",
-      "void",
+      action,
       taskId
     );
     submitPendingActions(url, "DELETE");
@@ -373,11 +388,11 @@ export default function RegistryRowAction(
             disabled={isLoading}
             onClick={onVoidTask}
           />}
-          {(isActionAllowed("UNVOID_TASK")) && <RowActionButton
+          {(isActionAllowed("UNDO_CANCEL_OR_REPORT_TASK") || isActionAllowed("UNVOID_TASK")) && <RowActionButton
             icon="undo"
-            label={dict.action.unvoidTask}
+            label={dict.action.revertStatus}
             disabled={isLoading}
-            onClick={onUnvoidTask}
+            onClick={onRevertTask}
           />}
           {(isActionAllowed("EXEMPT_BILLABLES")) && <RowActionButton
             icon="money_off"
