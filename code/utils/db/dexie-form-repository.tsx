@@ -77,44 +77,55 @@ class DexieFormRepository {
             return;
         }
 
-        // Starts fetching and syncing with the backend
-        await Promise.allSettled(
-            currentOptionFields.map(async (field) => {
-                const meta: FormOptionMetadata = await db.metadata.get(field);
-                const table: Table<SelectOptionType, string> = await this.getTable(field);
-                const parsedField: string = field.replaceAll(" ", "_");
+        // Track promises that determine when to UNBLOCK the form
+        const syncPromises: Promise<void>[] = currentOptionFields.map(async (field) => {
+            const meta: FormOptionMetadata = await db.metadata.get(field);
+            const table: Table<SelectOptionType, string> = await this.getTable(field);
+            const parsedField: string = field.replaceAll(" ", "_");
 
-                // Grab data in batches of 500, and continue looping if syncing
-                // If task has been completed, only grab the new data with the timestamp check
-                let hasMore: boolean = true;
-                // Reset offset for completed
-                let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE ? 0 : await table.count();
-                const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
-                while (hasMore) {
-                    const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
-                        Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
-                        field == accountType && isContractForm, timestamp);
+            // Grab data in batches of 500, and continue looping if syncing
+            // If task has been completed, only grab the new data with the timestamp check
+            let hasMore: boolean = true;
+            // Reset offset for completed
+            let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE ? 0 : await table.count();
+            const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
 
-                    if (nextBatch.length > 0) {
-                        // For the first batch after data is now stale, clear the data before adding the new batch
-                        if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
-                            await table.clear();
-                        }
-                        await table.bulkPut(nextBatch);
-                        currentOffset += nextBatch.length;
-                        if (nextBatch.length < this.BATCH_SIZE) {
-                            hasMore = false;
-                            await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
-                            // Only update the meta to sync if its still pending or stale
-                        } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
-                            await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
-                        }
-                    } else {
-                        hasMore = false;
+            while (hasMore) {
+                const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
+                    Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
+                    field == accountType && isContractForm, timestamp);
+
+                if (nextBatch.length > 0) {
+                    // For the first batch after data is now stale, clear the data before adding the new batch
+                    if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
+                        await table.clear();
                     }
+                    await table.bulkPut(nextBatch);
+                    currentOffset += nextBatch.length;
+
+                    if (nextBatch.length < this.BATCH_SIZE) {
+                        hasMore = false;
+                        await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
+                        // Only update the meta to sync if its still pending or stale
+                    } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
+                        await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
+                    }
+                } else {
+                    hasMore = false;
                 }
-            }));
-        this.isSyncing = false;
+            };
+        });
+        // Block only on the first set of promises for each field
+        await syncPromises[0];
+
+        // Continue syncing in the background
+        Promise.allSettled(syncPromises.slice(1)).then((results) => {
+            results.forEach((result, i) => {
+                if (result.status === "rejected") {
+                    console.error(`Background sync failed for field "${currentOptionFields[i + 1]}":`, result.reason);
+                }
+            });
+        });
     }
 
 
@@ -298,4 +309,8 @@ export function useLiveFormOptions(field: string, current: string, parentField: 
         }
         return { options: copyOptions };
     }, [options, parent, search, formType, defaultSearchOption]);
+}
+
+function resolveFirstBatch() {
+    throw new Error("Function not implemented.");
 }
