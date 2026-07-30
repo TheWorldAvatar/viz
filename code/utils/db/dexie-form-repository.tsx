@@ -112,7 +112,7 @@ class DexieFormRepository {
         // For non-pending states, reuse the previous dependent field
         if (state != FormOptionStateMap.PENDING) {
             const meta: FormOptionMetadata = await db.metadata.get(field);
-            updatedDependentField = meta.dependentField;
+            updatedDependentField = meta?.dependentField;
         }
         await db.metadata.put({
             field,
