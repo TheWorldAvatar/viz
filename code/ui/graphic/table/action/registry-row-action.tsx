@@ -17,7 +17,7 @@ import { toast } from "@/ui/interaction/action/toast/toast";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
 import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
-import { ADD_LINKED_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
+import { ADD_LINKED_FORM_KEY, FLAG_EMOJI, FLAG_KEY } from "@/utils/constants";
 import { dexieFormRepo, useLiveAccountFilter, useLiveFormOptions } from "@/utils/db/dexie-form-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
@@ -112,10 +112,11 @@ export default function RegistryRowAction(
   const onUpdateAccountFlag: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const reqBody: JsonObject = {
       id: recordId,
+      type: props.recordType,
     };
     const url: string = makeInternalRegistryAPIwithParams(
       InternalApiIdentifierMap.ACCOUNT,
-      "flag"
+      FLAG_KEY,
     );
     submitPendingActions(url, "PUT", JSON.stringify({ ...reqBody }));
   };

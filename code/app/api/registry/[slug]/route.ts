@@ -1,7 +1,7 @@
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
-import { SYNC_KEY } from "@/utils/constants";
+import { FLAG_KEY, SYNC_KEY } from "@/utils/constants";
 import { getBackendApi } from "@/utils/internal-api-services";
 import { logColours } from "@/utils/logColours";
 import { NextRequest, NextResponse } from "next/server";
@@ -240,7 +240,7 @@ function makeExternalEndpoint(
   switch (slug) {
     case InternalApiIdentifierMap.ACCOUNT: {
       const type: string = searchParams.get("type");
-      if (type == "flag") {
+      if (type == FLAG_KEY) {
         return `${agentBaseApi}/report/account/flag`;
       }
       const page: string = searchParams.get("page");
