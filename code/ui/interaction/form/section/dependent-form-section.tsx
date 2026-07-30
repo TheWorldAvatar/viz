@@ -23,13 +23,12 @@ import { getRegisterOptions } from "../form-utils";
 
 import { useFormQuickView } from "@/hooks/form/useFormQuickView";
 import useFormSession from "@/hooks/form/useFormSession";
-import { useAfterMount } from "@/hooks/useAfterMount";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import FormQuickViewBody from "@/ui/interaction/accordion/form-quick-view-body";
 import FormQuickViewHeader from "@/ui/interaction/accordion/form-quick-view-header";
 import SimpleSelector, { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { useLiveFormOptions } from "@/utils/db/dexie-form-repository";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormInputContainer from "../field/form-input-container";
 
 interface DependentFormSectionProps {
@@ -68,12 +67,16 @@ export function DependentFormSection(
     name: fieldName,
   });
 
-  // Reset dependent field when independent field changes only after first render
-  useAfterMount(() => {
-    if (currentParentOption) {
+  const previousParentOption: React.RefObject<string> = React.useRef<string>(currentParentOption);
+
+  useEffect(() => {
+    const parentChanged: boolean = previousParentOption.current !== currentParentOption;
+    previousParentOption.current = currentParentOption;
+
+    if (parentChanged && currentParentOption) {
       props.form.setValue(fieldName, "");
     }
-  }, [currentParentOption])
+  }, [currentParentOption, fieldName, props.form]);
 
   const liveFormOptions: useLiveFormOptionReturn = useLiveFormOptions(props.dependentProp.name[VALUE_KEY], currentOption,
     props.dependentProp?.dependentOn?.[LABEL_KEY] ?? "", currentParentOption, search, formType, dict);
