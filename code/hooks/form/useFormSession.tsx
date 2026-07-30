@@ -1,13 +1,13 @@
 'use client';
 
-import { ColumnFilter } from '@tanstack/react-table';
-import { useContext } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
 import { browserStorageManager } from '@/state/browser-storage-manager';
 import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFormCount, setFrozenFields, setInvoiceAccountFilter } from '@/state/form-session-slice';
 import { FORM_STATES } from '@/ui/interaction/form/form-utils';
 import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
+import { ColumnFilter } from '@tanstack/react-table';
+import { useContext } from 'react';
+import { FieldValues } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface useFormSessionReturn extends FormSessionState {
     formCount: number;
@@ -114,10 +114,23 @@ const useFormSession = (): useFormSessionReturn => {
         // Load the values stored in the form ID, usually for input fields, branch names
         const previousSessionData: string = browserStorageManager.get(formSession.id);
         if (previousSessionData) {
+            const updatedState: FieldValues = { ...initialState };
             try {
                 // Override the initial state with the saved values from the previous session
                 const overrides: FieldValues = JSON.parse(previousSessionData);
-                initialState = { ...initialState, ...overrides };
+                // Sometimes overrides are not exact matches due to group, so we have to check if they end
+                for (const [overrideKey, overrideValue] of Object.entries(overrides)) {
+                    const matchingKey: string = Object.keys(updatedState).find((stateKey) =>
+                        stateKey.toLowerCase().endsWith(overrideKey.toLowerCase())
+                    );
+
+                    if (matchingKey) {
+                        updatedState[matchingKey] = overrideValue;
+                    } else {
+                        updatedState[overrideKey] = overrideValue;
+                    }
+                }
+                initialState = updatedState;
             } catch (e) {
                 console.error("Failed to load previous form data for: ", formSession.id, e);
             }

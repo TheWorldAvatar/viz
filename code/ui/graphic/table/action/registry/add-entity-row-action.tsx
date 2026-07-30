@@ -49,10 +49,9 @@ export default function AddEntityRowAction(
     // Read before the row action clears the storage
     const previousFormFlag: string = browserStorageManager.get(ADD_LINKED_FORM_KEY);
     props.handleClickRowAction();
-    const account: SelectOptionType = await dexieFormRepo.getOption(props.accountType, props.row.iri);
 
     const formData: FieldValues = {
-      [props.accountType]: account.value,
+      [props.accountType]: liveAccount?.options?.[0].value,
       [props.recordType.replaceAll("_", " ")]: props.row.iri,
     };
     saveCurrentSession(formData, addEntity);
