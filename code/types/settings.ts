@@ -53,6 +53,7 @@ export interface ResourcesPathSettings {
   icon?: string;
   caption?: LanguageDictionary;
   permission?: keyof HasPermissions;
+  add?: string;
 }
 
 export interface NavBarItemSettings {

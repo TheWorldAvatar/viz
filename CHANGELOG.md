@@ -2,6 +2,193 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.82.2
+
+### Changes
+
+- Improved the table experience by preserving the user's table scroll position when the underlying data is refreshed due to row-level actions, while resetting it to the top when sorting, filtering, changing the date range, or navigating table between pages.
+- Added a "Back to top" button for quickly returning to the start of the table
+
+## 5.82.1
+
+### Changes
+
+- Added row action to revert cancelled or reported task. Re-factored to include unvoid task.
+
+## 5.82.0
+
+### Changes
+
+- Added configurable row actions. Registry paths can now define an add entity type in their UI settings. This displays an Add {entity} action on each row, which opens the corresponding add form and automatically pre-fills the account and record fields when available from the selected row.
+- Added account flagging support to the add row action. Flagged accounts display a flag indicator and disable the add action.
+
+### Bug fixes
+
+- Fixed dependent field options being incorrectly marked as disabled when a single matching result is returned.
+
+## 5.81.9
+
+### Changes
+
+- Re-completing a task now skips the additional cost form and automatically recalculates any additional costs in the background.
+
+## 5.81.8
+
+### Changes
+
+- Improved searchable table filters so draft selections remain visible without options moving when users select or deselect values.
+- Stopped forcing deselected applied values into searchable filter results. They now remain visible only when they match the current search.
+
+## 5.81.7
+
+### Changes
+
+- Changed the table rendering logic so that the header row should now always remain visible, even when there are no data rows.
+- Added a new className prop to the RegistryFilter and the SearchSelector, which fixes an issue with the filter width on mobile and desktop 
+
+## 5.81.6
+
+### Changes
+
+- Fixed an issue where the users couldn't type into the searchable filter while the dropdown is in its loading state.
+- Moved the loading indicator inside the dropdown content, where a loading spinner is shown while the data is being fetched, and the user can still type into the input field to search for options. This improves the user experience by allowing users to continue searching for options even when the dropdown is loading, instead of being blocked from typing until the loading is complete.
+
+## 5.81.5
+
+### Bug fix
+
+- Fixed an issue where when multiple column filters were applied, users were unable to remove or clear a single column filter independently due to the filter button being disabled, so they couldn't submit an empty filter. 
+
+## 5.81.4
+
+### Changes
+
+- Updated the selector component to allow text wrapping in the dropdown options, ensuring that long option texts are fully visible without being cut off. This improves the user experience by making it easier to read and select options with lengthy descriptions. This also fixes the overflow issues that was causing the dropdown to go beyond the viewport and not being fully visible to the user.
+
+## 5.81.3
+
+### Changes
+
+- Allow view of complete form in offline mode
+- Users can complete one task on form submission in offline mode
+- General code improvements to support these offline features
+
+## 5.81.2
+
+### Changes
+
+- Overall mobile UI improvements (interactions and design)
+- Improved the custom pull to Refresh functionality for mobile
+- Made the popover component draggable so the user can resize the component by dragging its border at the top
+- Improved the filter design on mobile
+- Improved global styling for mobile for Safari and Chrome browsers
+
+## 5.81.1
+
+### Changes
+
+- Corrected width of searchable filter dropdown
+
+## 5.81.0
+
+### Changes
+
+- Added void status, user may void and unvoid a task
+- Bump min version of `VisBackend Agent` from `v1.59.0` to `v1.61.0`
+
+## 5.80.5
+
+### Changes
+
+- Changed accural behaviour to silently accrues completed, cancelled, and reported tasks on their first billable review.
+- Preserves the editable accrual form for later revisions and excludes already billable tasks.
+- It still keeps pricing assignment as a prerequisite when no pricing model exists.
+
+## 5.80.4
+
+### Bug fixes
+
+- Fixed auto refresh in mobile registry view after completion
+- Fixed cached copy of completed task after completion in mobile registry
+- Disabled string and date filters unless users have selected options
+
+## 5.80.3
+
+### Changes
+
+- Changed default sorting behaviour
+
+## 5.80.2
+
+### Changes
+
+- Allow reschedule of completed task up to accrual
+
+## 5.80.1
+
+### Bug fixes
+
+- Fix clear filters being enabled with no active filters while online
+
+## 5.80.0
+
+### Changes
+
+- Removed unused loading.gif
+- Added offline support for registry task mobile view with service workers
+- Enforce users to set filters first before viewing tasks
+- Caching of mobile task view filters and data into browser storage
+- Offline warnings
+- Added a view fields display to replace the view form in registry task mobile view
+- Pull gesture to refresh for mobile
+
+### Bug fixes
+
+- Empty default value for dependent form section
+
+## 5.79.5
+
+### Bug fixes
+
+- Missing favicon display in production builds
+
+## 5.79.4
+
+### Bug fixes
+
+- Fixed date column filter reset
+
+## 5.79.3
+
+### Bug fixes
+
+- Fixed missing mobile attachment viewer
+
+## 5.79.2
+
+### Bug fixes
+
+- Fixed date selection for date inputs
+- Updated designs of date inputs
+
+## 5.79.1
+
+### Changes
+
+- Renamed and updated design of the reset button for text filters
+- Updated the design for non-text filters
+
+### Bug fixes
+
+- Fixed reset for search input in the text filter
+
+## 5.79.0
+
+### Changes
+
+- Send local timestamp as parameter to backend API for outstanding tasks
+- Bump min version of `VisBackend Agent` from `v1.57.0` to `v1.59.0`
+
 ## 5.78.0
 
 ### Changes

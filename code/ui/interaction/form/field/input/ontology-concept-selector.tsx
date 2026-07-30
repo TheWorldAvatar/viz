@@ -187,7 +187,7 @@ export default function OntologyConceptSelector(
   }, []);
 
   if (isFetching) {
-    return <LoadingSpinner isSmall={true} />;
+    return <LoadingSpinner size="sm" />;
   }
   if (conceptMappings[ONTOLOGY_CONCEPT_ROOT] && options.length > 0) {
     return (

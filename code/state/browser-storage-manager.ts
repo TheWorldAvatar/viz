@@ -1,10 +1,12 @@
+type StorageType = "local" | "session";
+
 class BrowserStorageManager {
   private storage: Storage;
 
-  constructor() {
-    // Only attempt to access if 'window' is defined
+  constructor(type: StorageType = "session") {
+    // Only attempt to access if "window" is defined
     if (typeof window !== "undefined") {
-      this.storage = window.sessionStorage;
+      this.storage = type === "local" ? window.localStorage : window.sessionStorage;
     }
   }
 
@@ -12,7 +14,7 @@ class BrowserStorageManager {
    * Checks if the storage is empty.
    */
   public empty(): boolean {
-    return this.storage.length== 0;
+    return this.storage.length == 0;
   }
 
   /**
@@ -64,4 +66,5 @@ class BrowserStorageManager {
 }
 
 // Export a single instance to use across your application
-export const browserStorageManager = new BrowserStorageManager();
+export const browserStorageManager: BrowserStorageManager = new BrowserStorageManager();
+export const localStorageManager: BrowserStorageManager = new BrowserStorageManager("local");

@@ -135,7 +135,7 @@ export default function BranchFormSection(
           {selectedModel?.comment[VALUE_KEY]}
         </p>
       </div>
-      {isSwitching ? <LoadingSpinner isSmall={true} />
+      {isSwitching ? <LoadingSpinner size="sm" />
         : selectedModel?.property.map((field, index) => {
           return renderFormField(props.entityType, formType, field, props.form, index, props.billingStore);
         })}

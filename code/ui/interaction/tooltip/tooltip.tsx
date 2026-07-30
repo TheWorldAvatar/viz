@@ -4,7 +4,7 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import { useTooltip } from "@/hooks/float/useTooltip";
-import { useScreenType } from "@/hooks/useScreenType";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 import { ScreenType, ScreenTypeMap } from "@/types/settings";
 
 export interface TooltipProps {

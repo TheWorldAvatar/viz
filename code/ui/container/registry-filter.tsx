@@ -8,7 +8,6 @@ import { XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER, XSD_TIME } from "@/ut
 import { ColumnFilter } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import LoadingSpinner from "../graphic/loader/spinner";
 
 interface RegistryFilterProps {
     type: string;
@@ -18,6 +17,8 @@ interface RegistryFilterProps {
     selectedDate: DateRange;
     filters: ColumnFilter[];
     onSubmission: (_selectedOptions: string[]) => void;
+    disabled?: boolean;
+    className?: string;
 }
 
 /**
@@ -30,6 +31,8 @@ interface RegistryFilterProps {
  * @param {DateRange} selectedDate The currently selected date.
  * @param {ColumnFilter[]} filters Current filter state for all applied filters.
  * @param  onSubmission Executes this function on submission.
+ * @param {boolean} disabled An optional state to disable the filter.
+ * @param {string} className Optional additional styling applied to the registry filter.
  */
 export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
     const isDateField: boolean = props.fieldType === XSD_DATE || props.fieldType === XSD_DATETIME;
@@ -46,6 +49,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         options,
         search,
         isLoading,
+        setIsLoading,
         setSearch,
     } = useFilterOptions(
         props.type,
@@ -57,14 +61,12 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         isDateField || isNumericField || isTimeField,
     );
 
-    if (isLoading) {
-        return <LoadingSpinner isSmall={true} />
-    }
     if (isDateField) {
         return <DateColumnFilter
             label={props.field}
             currentVal={currentFilters[0]}
             onSubmission={props.onSubmission}
+            disabled={props.disabled}
         />
     }
 
@@ -73,6 +75,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
             label={props.field}
             currentVal={currentFilters}
             onSubmission={props.onSubmission}
+            disabled={props.disabled}
         />
     }
 
@@ -81,6 +84,7 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
             label={props.field}
             currentVal={currentFilters}
             onSubmission={props.onSubmission}
+            disabled={props.disabled}
         />
     }
     return <SearchSelector
@@ -91,6 +95,10 @@ export default function RegistryFilter(props: Readonly<RegistryFilterProps>) {
         showOptions={!isLoading}
         onSubmission={props.onSubmission}
         setSearchString={setSearch}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        disabled={props.disabled}
+        className={props.className}
     />
 }
 

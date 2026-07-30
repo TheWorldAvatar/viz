@@ -1,19 +1,29 @@
+type SpinnerSize = "xs" | "sm" | "md" | "lg" | "xl";
+
 interface LoadingSpinnerProps {
-  isSmall: boolean;
+  size: SpinnerSize;
   color?: string;
 }
+
+const SIZE_CLASSES: Record<SpinnerSize, string> = {
+  xs: "size-3",
+  sm: "size-4",
+  md: "size-6",
+  lg: "size-8",
+  xl: "size-10",
+};
 
 /**
  * This component renders a loading spinner.
  *
- * @param {boolean} isSmall Indicates if the loading spinner should be small or not.
+ * @param {string} size The size of the spinner.
  * @param {string} color Optional color for the spinner. It has to use a Tailwind CSS color class. E.G. "text-gray-300"
  */
 export default function LoadingSpinner(props: Readonly<LoadingSpinnerProps>) {
-  const sizeClasses = props.isSmall ? "w-4 h-4" : "w-10 h-10";
+  const sizeClasses = SIZE_CLASSES[props.size] ?? SIZE_CLASSES.md;
   return (
     <svg
-      className={` animate-spin text-ring relative overflow-hidden z-[1] flex items-ceter justify-center m-auto ${sizeClasses}`}
+      className={`animate-spin text-ring relative overflow-hidden z-1 flex items-ceter justify-center m-auto ${sizeClasses}`}
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
