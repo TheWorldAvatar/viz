@@ -447,6 +447,7 @@ export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
  * @param {FieldValues} row The row data.
  * @param {string} accountType The account type.
  * @param navigateToDrawer The function to navigate to the drawer.
+ * @param {boolean} formOnly Set this for callers that can be triggered accidentally, such as a row click. The read-only task view is opened in its place.
  */
 export async function execReviewBillableAction(
   row: FieldValues,
@@ -454,9 +455,14 @@ export async function execReviewBillableAction(
   navigateToDrawer: (...urlParts: string[]) => void,
   triggerRefresh: (() => void) | undefined,
   dict: Dictionary,
+  formOnly: boolean = false,
 ): Promise<void> {
   const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
   const body: AgentResponseBody = await queryInternalApi(url);
+  if (formOnly && body.data.message == "true" && canSkipOptionalAccrual(row.status as string | undefined)) {
+    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${getId(row.event_id)}`);
+    return;
+  }
   browserStorageManager.set(DATE_KEY, row.date);
   browserStorageManager.set(EVENT_KEY, row.event_id);
   browserStorageManager.set(TASK_STATUS_KEY, row.status as string | undefined);
