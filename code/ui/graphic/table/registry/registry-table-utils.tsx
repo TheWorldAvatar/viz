@@ -459,7 +459,7 @@ export async function execReviewBillableAction(
 ): Promise<void> {
   const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
   const body: AgentResponseBody = await queryInternalApi(url);
-  if (formOnly && body.data.message == "true" && canSkipOptionalAccrual(row.status as string | undefined)) {
+  if (formOnly && body.data.message == "true" && canSkipOptionalAccrual(row.status)) {
     navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${getId(row.event_id)}`);
     return;
   }
@@ -480,7 +480,7 @@ export async function execReviewBillableAction(
     console.error("Error fetching instances", error);
   }
   if (body.data.message == "true") {
-    if (canSkipOptionalAccrual(row.status as string | undefined)) {
+    if (canSkipOptionalAccrual(row.status)) {
       let loadingToast: string | number;
       await submitOptionalAccrual({
         taskId: getId(row.event_id),
