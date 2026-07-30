@@ -1,6 +1,5 @@
 import { useRegistryRowPermissionGuard } from "@/hooks/auth/useRegistryRowPermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
-import useFormSession from "@/hooks/form/useFormSession";
 import useTableSession from "@/hooks/table/useTableSession";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
@@ -8,21 +7,20 @@ import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap, useLiveFormOptionReturn } from "@/types/form";
+import { FormTypeMap, LifecycleStage, LifecycleStageMap, RegistryStatusMap } from "@/types/form";
 import { JsonObject } from "@/types/json";
 import { FileDownloadButton } from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
-import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import BillingModal from "@/ui/interaction/modal/billing-modal";
-import { compareDates, getId, interpolate, parseWordsForLabels } from "@/utils/client-utils";
-import { ADD_LINKED_FORM_KEY, FLAG_EMOJI, FLAG_KEY } from "@/utils/constants";
-import { dexieFormRepo, useLiveAccountFilter, useLiveFormOptions } from "@/utils/db/dexie-form-repository";
+import { compareDates, getId, parseWordsForLabels } from "@/utils/client-utils";
+import { FLAG_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { execReviewBillableAction } from "../registry/registry-table-utils";
+import AddEntityRowAction from "./registry/add-entity-row-action";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
 
@@ -50,7 +48,6 @@ export default function RegistryRowAction(
   props: Readonly<RegistryRowActionProps>
 ) {
   const { navigateToDrawer } = useDrawerNavigation();
-  const { saveCurrentSession } = useFormSession();
   const { addEntity } = useTableSession();
 
   const recordId: string = props.row.event_id
@@ -65,9 +62,6 @@ export default function RegistryRowAction(
     React.useState<boolean>(false);
   const [isOpenBillingModal, setIsOpenBillingModal] = React.useState<boolean>(false);
   const { isLoading, startLoading, stopLoading, resetFormSession } = useOperationStatus();
-  const liveAccount: useLiveFormOptionReturn = useLiveAccountFilter(props.accountType, props.row[props.accountType]);
-
-  const isSyncing: boolean = dexieFormRepo.getIsSyncing();
 
   /**
    * Performs these actions on every row click to reset states and mark row as active.
@@ -157,22 +151,6 @@ export default function RegistryRowAction(
     await execReviewBillableAction(props.row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
   };
 
-  const onAddItem: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    // Read before the row action clears the storage
-    const previousFormFlag: string = browserStorageManager.get(ADD_LINKED_FORM_KEY);
-    handleClickRowAction();
-    const account: SelectOptionType = await dexieFormRepo.getOption(props.accountType, props.row.iri);
-
-    const formData: FieldValues = {
-      [props.accountType]: account.value,
-      [props.recordType.replaceAll("_", " ")]: props.row.iri,
-    };
-    saveCurrentSession(formData, addEntity);
-    // We are flipping the value everytime so that the add form can re-render with new values
-    browserStorageManager.set(ADD_LINKED_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
-    navigateToDrawer(Routes.REGISTRY_ADD, addEntity);
-  };
-
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const taskId: string = getId(props.row.event_id);
     const reqBody: JsonObject = {
@@ -241,19 +219,13 @@ export default function RegistryRowAction(
                   handleClickView();
                 }}
               />
-              {addEntity &&
-                <RowActionButton
-                  icon="add"
-                  disabled={isLoading || isSyncing || liveAccount?.options?.[0]?.disabled}
-                  onClick={onAddItem}
-                >
-                  {parseWordsForLabels(interpolate(dict.action.addItem, addEntity))}
-                  {/* Always reserve emoji width so the menu does not jump when the flag loads */}
-                  <span className={`ml-1 ${!liveAccount?.options?.[0]?.disabled && "invisible"}`}
-                    aria-hidden={!liveAccount?.options?.[0]?.disabled}>
-                    {FLAG_EMOJI}
-                  </span>
-                </RowActionButton>
+              {isActionAllowed("ADD_LINKED_ENTITY") && addEntity &&
+                <AddEntityRowAction
+                  recordType={props.recordType}
+                  accountType={props.accountType}
+                  row={props.row}
+                  handleClickRowAction={handleClickRowAction}
+                />
               }
               {isActionAllowed("TERMINATE_CONTRACT") &&
                 <RowActionButton
