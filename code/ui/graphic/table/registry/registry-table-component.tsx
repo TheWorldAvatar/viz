@@ -2,12 +2,9 @@
 
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
 import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { usePathname } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { DateRange } from "react-day-picker";
-import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "@/state/context-menu-slice";
 import { Dictionary, LanguageDictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
@@ -18,6 +15,11 @@ import {
   getInitialDateFromLifecycleStage,
   parseWordsForLabels
 } from "@/utils/client-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { usePathname } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { DateRange } from "react-day-picker";
+import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
@@ -50,6 +52,7 @@ export default function RegistryTableComponent(
   const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshId, refreshFlag, triggerRefresh } = useOperationStatus();
+  const isConnected: boolean = useConnected();
 
   const filterOption: TableColumnOption = props.tableColumnOptions?.find(option => option.name === "filter");
   const disableDateFilter: boolean = filterOption ? !filterOption.visible : false;
@@ -104,6 +107,17 @@ export default function RegistryTableComponent(
       window.removeEventListener("popstate", handleHistoryChange);
     };
   }, []);
+
+  useEffect(() => {
+    // Syncs account data only if available
+    const syncAccountData = async (): Promise<void> => {
+      await dexieFormRepo.syncAccount(props.accountType, isConnected);
+    };
+
+    if (props.addEntity) {
+      syncAccountData();
+    }
+  }, [props.accountType, props.addEntity, isConnected]);
 
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">

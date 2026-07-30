@@ -10,6 +10,7 @@ export interface FormSessionState {
     formType: FormType;
     fieldIdNameMapping: Record<string, string>;
     setFieldIdNameMapping: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    genFormSessionId: (_type: string) => string;
 }
 
 export const FormSessionContext = createContext<FormSessionState>(null);
@@ -27,11 +28,17 @@ export const FormSessionContextProvider = ({
     isContractForm?: boolean;
     children: React.ReactNode;
 }) => {
-    const formSessionId: string = `_form_${entityType}`;
     const [fieldIdNameMapping, setFieldIdNameMapping] = useState<Record<string, string>>({});
 
+    const genFormSessionId = (field: string): string => {
+        return `_form_${field}`;
+    };
     return (
-        <FormSessionContext.Provider value={{ id: formSessionId, accountType, isContractForm, formType, fieldIdNameMapping, setFieldIdNameMapping }}>
+        <FormSessionContext.Provider value={{
+            id: genFormSessionId(entityType),
+            accountType, isContractForm, formType, fieldIdNameMapping,
+            setFieldIdNameMapping, genFormSessionId
+        }}>
             {children}
         </FormSessionContext.Provider>
     );

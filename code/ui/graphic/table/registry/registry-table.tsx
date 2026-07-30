@@ -23,6 +23,7 @@ import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 
 interface RegistryTableProps {
   recordType: string;
@@ -126,7 +127,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           id={recordId}
                           row={row}
                           accountType={props.accountType}
-                          disableRowAction={props.disableRowAction}
+                          disableRowAction={props.disableRowAction || dexieFormRepo.getIsSyncing()}
                           triggerRefresh={props.triggerRefresh}
                         />
                       })}

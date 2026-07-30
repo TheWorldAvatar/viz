@@ -42,6 +42,24 @@ class DexieFormRepository {
     }
 
     /**
+    * Synchronises with the backend to cache all account options.
+    * 
+    * @param {string} accountType The type of account.
+    * @param {boolean} isConnected Indicates if the platform is online.
+    */
+    async syncAccount(accountType: string, isConnected: boolean): Promise<void> {
+        this.isSyncing = true;
+        const meta: FormOptionMetadata = await db.metadata.get(accountType);
+        if (meta && (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S)) {
+            await this.updateFieldMeta(accountType, FormOptionStateMap.STALE, 0);
+        } else if (!meta || meta?.state == FormOptionStateMap.PENDING) {
+            await this.updateFieldMeta(accountType, FormOptionStateMap.PENDING, 0);
+        }
+
+        this.backgroundSync([accountType], accountType, isConnected, true);
+    }
+
+    /**
      * Synchronises with the backend to cache all field options.
      * 
      * @param {boolean} isConnected Indicates if the platform is online.
@@ -68,59 +86,9 @@ class DexieFormRepository {
             }
         }
 
-        // WARNING: Users must re-register a dynamic table each time as the schema is not preloaded on refresh
-        await db.registerDynamicTables(this.TABLE_NAME_TEMPLATE, currentOptionFields);
         this.fields = {}; // reset to prevent outdated data override
 
-        if (!isConnected) {
-            this.isSyncing = false;
-            return;
-        }
-
-        // Track promises that determine when to UNBLOCK the form
-        const syncPromises: Promise<void>[] = currentOptionFields.map(async (field) => {
-            const meta: FormOptionMetadata = await db.metadata.get(field);
-            const table: Table<SelectOptionType, string> = await this.getTable(field);
-            const parsedField: string = field.replaceAll(" ", "_");
-
-            // Grab data in batches of 500, and continue looping if syncing
-            // If task has been completed, only grab the new data with the timestamp check
-            let hasMore: boolean = true;
-            // Reset offset for completed or stale data, as the former will grab new data with timestamp while the latter restarts
-            let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE || meta?.state === FormOptionStateMap.STALE
-                ? 0 : await table.count();
-            const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
-
-            while (hasMore) {
-                const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
-                    Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
-                    field == accountType && isContractForm, timestamp);
-
-                // For the first batch after data is now stale, clear the data before adding the new batch
-                if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
-                    await table.clear();
-                }
-
-                await table.bulkPut(nextBatch);
-                currentOffset += nextBatch.length;
-
-                if (nextBatch.length < this.BATCH_SIZE) {
-                    hasMore = false;
-                    await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
-                    // Only update the meta to sync if its still pending or stale
-                } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
-                    await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
-                }
-            };
-        });
-        // Sync all in the background
-        Promise.allSettled(syncPromises).then((results) => {
-            results.forEach((result, i) => {
-                if (result.status === "rejected") {
-                    console.error(`Background sync failed for field "${currentOptionFields[i + 1]}":`, result.reason);
-                }
-            });
-        });
+        this.backgroundSync(currentOptionFields, accountType, isConnected, isContractForm);
     }
 
 
@@ -165,6 +133,68 @@ class DexieFormRepository {
         return db.table(tableName);
     }
 
+    /**
+     * Start the background sync with the database.
+     * 
+     * @param {string[]} fields The list of fields to sync data for.
+    * @param {string} accountType The type of account.
+    * @param {boolean} isConnected Indicates if the platform is online.
+     * @param {boolean} isAccountField Indicates if this is an account field.
+     */
+    private async backgroundSync(fields: string[], accountType: string, isConnected: boolean, isAccountField: boolean) {
+        // WARNING: Users must re-register a dynamic table each time as the schema is not preloaded on refresh
+        await db.registerDynamicTables(this.TABLE_NAME_TEMPLATE, fields);
+
+        if (!isConnected) {
+            this.isSyncing = false;
+            return;
+        }
+
+        const syncPromises: Promise<void>[] = fields.map(async (field) => {
+            const meta: FormOptionMetadata = await db.metadata.get(field);
+            const table: Table<SelectOptionType, string> = await this.getTable(field);
+            const parsedField: string = field.replaceAll(" ", "_");
+
+            // Grab data in batches of 500, and continue looping if syncing
+            // If task has been completed, only grab the new data with the timestamp check
+            let hasMore: boolean = true;
+            // Reset offset for completed or stale data, as the former will grab new data with timestamp while the latter restarts
+            let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE || meta?.state === FormOptionStateMap.STALE
+                ? 0 : await table.count();
+            const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
+
+            while (hasMore) {
+                const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
+                    Math.floor(currentOffset / this.BATCH_SIZE), this.BATCH_SIZE,
+                    field === accountType && isAccountField, timestamp);
+
+                // For the first batch after data is now stale, clear the data before adding the new batch
+                if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
+                    await table.clear();
+                }
+
+                await table.bulkPut(nextBatch);
+                currentOffset += nextBatch.length;
+
+                if (nextBatch.length < this.BATCH_SIZE) {
+                    hasMore = false;
+                    await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
+                    // Only update the meta to sync if its still pending or stale
+                } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
+                    await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
+                }
+            };
+        });
+        // Sync all in the background
+        Promise.allSettled(syncPromises).then((results) => {
+            results.forEach((result, i) => {
+                if (result.status === "rejected") {
+                    console.error(`Background sync failed for field "${fields[i + 1]}":`, result.reason);
+                }
+            });
+            this.isSyncing = false;
+        });
+    }
     /**
      * Fetches the option from server side.
      * 
@@ -223,6 +253,8 @@ class DexieFormRepository {
      */
     async getOption(field: string, id: string): Promise<SelectOptionType> {
         const table: Table<SelectOptionType, string> = await this.getTable(field);
+        console.log(field)
+        console.log(id)
         return await table.filter(option => option?.value === id)
             .first();
     }
@@ -258,6 +290,37 @@ class DexieFormRepository {
 export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
 
 /**
+ * Get the account filter from IndexedDb in real time.
+ *
+ * @param {string} field The name of the target field.
+ * @param {string} current The current label.
+ */
+export function useLiveAccountFilter(field: string, current: string): useLiveFormOptionReturn {
+    const isSyncing: boolean = dexieFormRepo.getIsSyncing();
+    const account: SelectOptionType = useLiveQuery(
+        async () => {
+            if (isSyncing || !current) {
+                return null;
+            }
+            const accountOptions: SelectOptionType[] = await dexieFormRepo.getOptions(field, null, current);
+            if (accountOptions.length == 1) {
+                return accountOptions[0];
+            } else {
+                console.warn(`Unable to find valid filter for ${current}!`);
+                return null;
+            }
+        },
+        [field, current, isSyncing]
+    );
+
+    return useMemo(() => {
+        if (!account) return { options: [] };
+        const copyOptions: SelectOptionType[] = [account];
+        return { options: copyOptions };
+    }, [account, isSyncing]);
+}
+
+/**
  * Get form options for target field from IndexedDb in real time.
  *
  * @param {string} field The name of the target field.
@@ -270,9 +333,12 @@ export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
  */
 export function useLiveFormOptions(field: string, current: string, parentField: string, parent: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
-
+    const isSyncing: boolean = dexieFormRepo.getIsSyncing();
     const options: SelectOptionType[] = useLiveQuery(
         async () => {
+            if (isSyncing) {
+                return [];
+            }
             const parentLabel: string = !!parentField ? (await dexieFormRepo.getOption(parentField, parent))?.label : "";
             const availableOptions: SelectOptionType[] = await dexieFormRepo.getOptions(field, parentLabel, search);
             // If there is an existing value, ensure it is in the options list
@@ -287,7 +353,7 @@ export function useLiveFormOptions(field: string, current: string, parentField: 
             }
             return availableOptions;
         },
-        [field, current, parent, search]
+        [field, current, parent, search, isSyncing]
     );
 
     return useMemo(() => {

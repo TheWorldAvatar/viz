@@ -16,7 +16,7 @@ interface useFormSessionReturn extends FormSessionState {
     updateInvoiceAccount: (_account: string) => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
-    saveCurrentSession: (_initialState: FieldValues) => void;
+    saveCurrentSession: (_initialState: FieldValues, _sessionId?: string) => void;
     loadPreviousSession: (_initialState: FieldValues) => FieldValues;
 }
 
@@ -80,8 +80,9 @@ const useFormSession = (): useFormSessionReturn => {
      * as saving usually occurs before moving to the next form.
      * 
      * @param {FieldValues} formData  The current form data.
+     * @param {string} sessionId Optionally saves the session into a target form based on this type.
      */
-    const saveCurrentSession = (formData: FieldValues): void => {
+    const saveCurrentSession = (formData: FieldValues, sessionId?: string): void => {
         // Increment form count
         dispatch(setFormCount(formCount + 1));
 
@@ -99,7 +100,8 @@ const useFormSession = (): useFormSessionReturn => {
         });
         // Save all other fields under a single identifier
         if (Object.keys(dataTypeValues).length) {
-            browserStorageManager.set(formSession.id, JSON.stringify(dataTypeValues));
+            browserStorageManager.set(sessionId ? formSession.genFormSessionId(sessionId) : formSession.id,
+                JSON.stringify(dataTypeValues));
         }
     }
 
