@@ -69,26 +69,15 @@ export const ENTITY_STATUS: Record<string, string> = {
   PENDING: "Pending",
 };
 
-// Class IDs that should be excluded from field ID mapping.
-// It a field includes one of these class IDs, it is not part of the dependent form section.
-const EXCLUDED_CLASS_IDS: string[] = [
-  "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule",
-  "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation",
-  "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries",
-];
-
 /**
- * Checks if a field shape has a class that is not in the excluded list.
- * Also it check if its an ontology concept selector (has 'in' property).
- * Returns true if the field should be included in the field ID mapping.
+ * Checks if a field shape is an ontology concept selector (has 'in' property).
  * 
  * @param {PropertyShape} fieldShape The field shape to check.
- * @returns {boolean} True if the field has a class that is not excluded.
+ * @returns {boolean} True if the field should be included in the field ID mapping.
  */
 export function isFieldMappable(fieldShape: PropertyShape): boolean {
-  return (fieldShape.class && !EXCLUDED_CLASS_IDS.includes(fieldShape.class[ID_KEY])) || !!fieldShape.in;
+  return !!fieldShape.in;
 }
-
 
 /**
  * Parses a list of property shape or group into a format compliant with the viz.
