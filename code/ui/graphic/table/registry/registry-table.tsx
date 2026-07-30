@@ -1,3 +1,6 @@
+import { TableDescriptor } from "@/hooks/table/useTable";
+import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
+import { useDictionary } from "@/hooks/useDictionary";
 import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -7,23 +10,20 @@ import {
   SortableContext,
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
-import { TableDescriptor } from "@/hooks/table/useTable";
-import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
-import { useDictionary } from "@/hooks/useDictionary";
 
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { Dictionary } from "@/types/dictionary";
+import { LifecycleStage } from "@/types/form";
+import Button from "@/ui/interaction/button";
+import { useIsSyncing } from "@/utils/db/dexie-form-repository";
+import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
 import { RefObject, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage } from "@/types/form";
-import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
-import Button from "@/ui/interaction/button";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
-import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
-import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 
 interface RegistryTableProps {
   recordType: string;
@@ -63,6 +63,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   useLayoutEffect(() => {
     restoreScrollPosition();
   }, [restoreScrollPosition]);
+  const isSyncing: boolean = useIsSyncing();
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
@@ -127,7 +128,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           id={recordId}
                           row={row}
                           accountType={props.accountType}
-                          disableRowAction={props.disableRowAction || dexieFormRepo.getIsSyncing()}
+                          disableRowAction={props.disableRowAction || isSyncing}
                           triggerRefresh={props.triggerRefresh}
                         />
                       })}

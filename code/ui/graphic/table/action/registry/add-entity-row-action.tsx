@@ -10,7 +10,7 @@ import { useLiveFormOptionReturn } from "@/types/form";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { ADD_LINKED_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
-import { dexieFormRepo, useLiveAccountFilter } from "@/utils/db/dexie-form-repository";
+import { dexieFormRepo, useIsSyncing, useLiveAccountFilter } from "@/utils/db/dexie-form-repository";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import RowActionButton from "../row-action-button";
@@ -43,7 +43,7 @@ export default function AddEntityRowAction(
   const { isLoading } = useOperationStatus();
   const liveAccount: useLiveFormOptionReturn = useLiveAccountFilter(props.accountType, props.row[props.accountType]);
 
-  const isSyncing: boolean = dexieFormRepo.getIsSyncing();
+  const isSyncing: boolean = useIsSyncing();
 
   const onAddItem: React.MouseEventHandler<HTMLButtonElement> = async () => {
     // Read before the row action clears the storage

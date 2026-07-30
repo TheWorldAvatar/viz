@@ -16,13 +16,13 @@ class DexieFormRepository {
     private STALE_TIME_S: number = 5 * 60;
 
     private fields: Record<string, FormOptionMetadata> = {};
-    private isSyncing: boolean = false;
 
     /**
      * Get syncing status
      */
-    getIsSyncing(): boolean {
-        return this.isSyncing;
+    async getIsSyncing(): Promise<boolean> {
+        const meta: FormOptionMetadata = await db.metadata.get(SYNC_KEY);
+        return meta?.state === FormOptionStateMap.SYNC;
     }
 
     /**
@@ -48,7 +48,7 @@ class DexieFormRepository {
     * @param {boolean} isConnected Indicates if the platform is online.
     */
     async syncAccount(accountType: string, isConnected: boolean): Promise<void> {
-        this.isSyncing = true;
+        this.startSyncStatus();
         const meta: FormOptionMetadata = await db.metadata.get(accountType);
         if (meta && (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S)) {
             await this.updateFieldMeta(accountType, FormOptionStateMap.STALE, 0);
@@ -67,7 +67,7 @@ class DexieFormRepository {
      * @param {boolean} isContractForm Indicates if the sync occurs for a contract form.
     */
     async sync(isConnected: boolean, accountType: string = "", isContractForm: boolean = false): Promise<void> {
-        this.isSyncing = true;
+        this.startSyncStatus();
         const currentOptionFields: string[] = Object.keys(this.fields);
         // Synchronises only if there are relevant fields available
         if (currentOptionFields.length === 0) {
@@ -146,7 +146,7 @@ class DexieFormRepository {
         await db.registerDynamicTables(this.TABLE_NAME_TEMPLATE, fields);
 
         if (!isConnected) {
-            this.isSyncing = false;
+            this.completeSyncStatus();
             return;
         }
 
@@ -192,7 +192,7 @@ class DexieFormRepository {
                     console.error(`Background sync failed for field "${fields[i + 1]}":`, result.reason);
                 }
             });
-            this.isSyncing = false;
+            this.completeSyncStatus();
         });
     }
     /**
@@ -253,8 +253,6 @@ class DexieFormRepository {
      */
     async getOption(field: string, id: string): Promise<SelectOptionType> {
         const table: Table<SelectOptionType, string> = await this.getTable(field);
-        console.log(field)
-        console.log(id)
         return await table.filter(option => option?.value === id)
             .first();
     }
@@ -285,9 +283,36 @@ class DexieFormRepository {
         const sortedItems: SelectOptionType[] = await query.sortBy(LABEL_KEY);
         return sortedItems.slice(0, 21);
     }
+
+    /**
+     * Starts the sync status in field metadata
+     */
+    private async startSyncStatus(): Promise<void> {
+        await this.updateFieldMeta(SYNC_KEY, FormOptionStateMap.SYNC, 0);
+    }
+
+    /**
+     * Starts the sync status in field metadata
+     */
+    private async completeSyncStatus(): Promise<void> {
+        await this.updateFieldMeta(SYNC_KEY, FormOptionStateMap.COMPLETE, 0);
+    }
 }
 
 export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
+
+/**
+ * Check if the repository is still syncing.
+ */
+export function useIsSyncing(): boolean {
+    const isSyncing: boolean = useLiveQuery(
+        async () => {
+            return await dexieFormRepo.getIsSyncing();
+        },
+        []
+    );
+    return isSyncing;
+}
 
 /**
  * Get the account filter from IndexedDb in real time.
@@ -296,7 +321,7 @@ export const dexieFormRepo: DexieFormRepository = new DexieFormRepository();
  * @param {string} current The current label.
  */
 export function useLiveAccountFilter(field: string, current: string): useLiveFormOptionReturn {
-    const isSyncing: boolean = dexieFormRepo.getIsSyncing();
+    const isSyncing: boolean = useIsSyncing();
     const account: SelectOptionType = useLiveQuery(
         async () => {
             if (isSyncing || !current) {
@@ -333,7 +358,7 @@ export function useLiveAccountFilter(field: string, current: string): useLiveFor
  */
 export function useLiveFormOptions(field: string, current: string, parentField: string, parent: string, search: string, formType: FormType, dict: Dictionary): useLiveFormOptionReturn {
     const defaultSearchOption: OntologyConcept = genDefaultSelectOption(dict);
-    const isSyncing: boolean = dexieFormRepo.getIsSyncing();
+    const isSyncing: boolean = useIsSyncing();
     const options: SelectOptionType[] = useLiveQuery(
         async () => {
             if (isSyncing) {
