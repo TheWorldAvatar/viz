@@ -14,6 +14,7 @@ export interface FilterOptionsDescriptor {
   options: string[];
   search: string;
   isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   currentFilters: string[];
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -42,7 +43,7 @@ export function useFilterOptions(
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
-  const debouncedSearch: string = useDebounce<string>(search, 500);
+  const debouncedSearch: string = useDebounce<string>(search, 300);
 
   //  A hook that refetches all data when the dialogs are closed and search term changes
   useEffect(() => {
@@ -66,6 +67,18 @@ export function useFilterOptions(
             getUTCDate(selectedDate.from).getTime().toString(),
             getUTCDate(selectedDate.to).getTime().toString(),
           );
+        } else if (lifecycleStage == LifecycleStageMap.OUTSTANDING) {
+          // Pass current local day for the end date
+          url = makeInternalRegistryAPIwithParams(
+            InternalApiIdentifierMap.FILTER,
+            entityType,
+            parseTranslatedFieldToOriginal(field, dict.title),
+            debouncedSearch,
+            filterParams,
+            lifecycleStage,
+            null,
+            getUTCDate(new Date()).getTime().toString(),
+          );
         } else {
           let parsedStage: string = lifecycleStage;
           if (lifecycleStage == LifecycleStageMap.ACCOUNT ||
@@ -85,10 +98,7 @@ export function useFilterOptions(
         const res: AgentResponseBody = await queryInternalApi(url);
         const resOptions: string[] = (res.data?.items as string[]).map(option =>
           field === "event_id" ? getAfterDelimiter(option, "/") : !option ? dict.title.blank : option);
-        // Merge selected filters with fetched options to ensure selected items are always visible
-        // Use set to avoid duplicates
-        const mergedOptions: string[] = [...new Set([...currentFilters, ...resOptions])];
-        setOptions(mergedOptions);
+        setOptions(resOptions);
       } catch (error) {
         console.error("Error fetching instances", error);
       } finally {
@@ -105,6 +115,7 @@ export function useFilterOptions(
     options,
     search,
     isLoading,
+    setIsLoading,
     currentFilters,
     setSearch,
   };

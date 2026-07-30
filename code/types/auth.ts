@@ -67,6 +67,16 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.CLOSED],
         status: [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
     },
+    VOID_TASK: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_EXEMPTED],
+    },
+    UNVOID_TASK: {
+        permission: "invoice",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.VOIDED],
+    },
     VIEW_BILLABLES: {
         permission: "invoice",
         stage: [LifecycleStageMap.CLOSED, LifecycleStageMap.BILLABLE],
@@ -118,6 +128,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
         status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED],
     },
+    UNDO_CANCEL_OR_REPORT_TASK: {
+        permission: "reportTask",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
+    },
     COMPLETE_TASK: {
         permission: "completeTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.CLOSED],
@@ -125,8 +140,8 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
     },
     RESCHEDULE_TASK: {
         permission: "rescheduleTask",
-        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
-        status: [],
+        stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED, LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED, RegistryStatusMap.COMPLETED, RegistryStatusMap.BILLABLE_COMPLETED],
     },
 } as const;
 

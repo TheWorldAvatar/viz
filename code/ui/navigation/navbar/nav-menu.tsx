@@ -14,7 +14,7 @@ import { parseStringsForUrls, parseWordsForLabels, interpolate } from "@/utils/c
 import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
-import { useScreenType } from "@/hooks/useScreenType";
+import { useScreenType } from "@/hooks/screen/useScreenType";
 
 
 export interface NavMenuProps {
@@ -47,15 +47,16 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
 
   if (props.isMobile) {
     return (
-      <nav className="flex mr-1.5">
+      <nav className="flex">
         <PopoverActionButton
+          draggable
           variant="ghost"
           leftIcon="menu"
           size="icon"
           isOpen={isMenuOpen}
           setIsOpen={setIsMenuOpen}
           placement="bottom-end"
-          className="mr-4 h-12"
+          className="h-12"
           aria-expanded={isMenuOpen}
           aria-label={isMenuOpen ? dict.message.closeMenu : dict.message.openMenu}
         >

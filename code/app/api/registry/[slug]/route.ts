@@ -380,7 +380,9 @@ function makeExternalEndpoint(
         }
         return `${agentBaseApi}/contracts/${stagePath}/filter?${urlParams.toString()}${filters}`;
       } else if (lifecycle == "outstanding") {
-        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}${filters}`;
+        const endDate: string = searchParams.get("end_date");
+        const unixTimestampEndDate: string = Math.floor(parseInt(endDate) / 1000).toString();
+        return `${agentBaseApi}/contracts/service/${lifecycle}/filter?${urlParams.toString()}&endTimestamp=${unixTimestampEndDate}${filters}`;
       } else if (lifecycle == "scheduled" || lifecycle == "closed") {
         const startDate: string = searchParams.get("start_date");
         const unixTimestampStartDate: string = Math.floor(parseInt(startDate) / 1000).toString();
@@ -449,7 +451,9 @@ function makeExternalEndpoint(
       const sortBy: string = searchParams.get("sort_by");
       const filters: string = encodeFilters(searchParams.get("filters"));
       if (slug == InternalApiIdentifierMap.OUTSTANDING) {
-        return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
+        const endDate: string = searchParams.get("end_date");
+        const endTimestamp: string = Math.floor(parseInt(endDate) / 1000).toString();
+        return `${agentBaseApi}/contracts/service/outstanding?type=${contractType}&endTimestamp=${endTimestamp}&page=${page}&limit=${limit}&sort_by=${sortBy}${filters}`;
       }
       if (contractType == FormTypeMap.INVOICE) {
         return `${agentBaseApi}/report/account/invoice`;

@@ -246,7 +246,13 @@ export function getNormalizedDate(date: Date): string {
  * @param { string | Date} value The raw value from the backend.
  */
 export function formatDateValue(value: string | Date): string {
-  return new Date(value).toLocaleDateString();
+  if (typeof value === 'string') {
+    // Parse as YYYY-MM-DD
+    // This avoid unnecessary time zone conversion due to UTC assumption
+    const [year, month, day] = value.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString();
+  }
+  return value.toLocaleDateString();
 }
 
 /**
@@ -410,8 +416,12 @@ export function buildUrl(...args: string[]): string {
  * Injects a dynamic value into a translation string by replacing a specific placeholder - {replace}.
  *
  * @param text The localised string containing the `{replace}` placeholder.
- * @param replacement The dynamic string to inject into the text.
+ * @param replacements The dynamic list string to inject into the text.
  */
-export function interpolate(text: string, replacement: string): string {
-  return text.replace("{replace}", replacement);
+export function interpolate(text: string, ...replacements: string[]): string {
+  let result: string = text;
+  for (const replacement of replacements) {
+    result = result.replace("{replace}", replacement);
+  }
+  return result;
 };

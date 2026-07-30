@@ -14,7 +14,6 @@ export const Assets: {
   FILE_XLS: "/images/defaults/icons/file/xls.svg",
   HELP: "/images/defaults/icons/help.svg",
   INFO: "/images/defaults/icons/info.svg",
-  LOADING: "/images/defaults/loading.gif",
   MAP: "/images/defaults/icons/map.svg",
   REGISTRY: "/images/defaults/icons/glossary.svg",
   SCHEDULE: "/images/defaults/icons/schedule.svg",

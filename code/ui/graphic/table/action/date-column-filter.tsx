@@ -10,6 +10,7 @@ interface DateColumnFilterProps {
   label: string;
   currentVal: string;
   onSubmission: (_dates: string[]) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -18,6 +19,7 @@ interface DateColumnFilterProps {
  * @param {string} label The name of the column.
  * @param {string} currentVal The current value stored in the table filters.
  * @param {void} onSubmission Function that submits the filtered date range.
+ * @param {boolean} disabled An optional state to disable the filter.
  */
 export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>) {
   const dict: Dictionary = useDictionary();
@@ -26,43 +28,47 @@ export default function DateColumnFilter(props: Readonly<DateColumnFilterProps>)
     { from: new Date(from), to: new Date(to) } : undefined);
 
   return (
-    <div className="flex h-10">
-      <DateInput
-        mode="range"
-        ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
-        selectedDate={selectedDate}
-        setSelectedDateRange={setSelectedDate}
-        disableMobileView={true}
-      />
-      <Button
-        leftIcon="filter_alt"
-        iconSize="medium"
-        size="icon"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
-        }}
-        tooltipText={dict.action.applyFilter}
-        variant="primary"
-        className="rounded-none w-12"
-        aria-label={interpolate(dict.action.filterBy, props.label)}
-      />
-      <Button
-        leftIcon="filter_list_off"
-        iconSize="medium"
-        size="icon"
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          props.onSubmission([""]);
-        }}
-        tooltipText={dict.action.clearFilter}
-        variant="destructive"
-        disabled={!selectedDate}
-        className="rounded-l-none w-12"
-        aria-label={interpolate(dict.action.clearFilterFor, props.label)}
-      />
-    </div>
+    <DateInput
+      mode="range"
+      variant="info_banner"
+      ariaLabel={interpolate(dict.message.pickDateRangeFor, props.label)}
+      selectedDate={selectedDate}
+      setSelectedDateRange={setSelectedDate}
+      disableMobileView={true}
+      inline={true}
+    >
+      <div className="flex gap-2 ml-2">
+        <Button
+          leftIcon="filter_alt"
+          iconSize="medium"
+          size="icon"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            props.onSubmission([`${getNormalizedDate(selectedDate.from)}..${getNormalizedDate(selectedDate.to)}`]);
+          }}
+          tooltipText={dict.action.applyFilter}
+          variant="primary"
+          className="p-5 border border-border"
+          disabled={props.disabled || !selectedDate}
+          aria-label={interpolate(dict.action.filterBy, props.label)}
+        />
+        <Button
+          leftIcon="filter_list_off"
+          iconSize="medium"
+          size="icon"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            props.onSubmission([]);
+          }}
+          tooltipText={dict.action.clearFilter}
+          variant="secondary"
+          disabled={!selectedDate || props.disabled}
+          className="p-5 border border-border"
+          aria-label={interpolate(dict.action.clearFilterFor, props.label)}
+        />
+      </div>
+    </DateInput>
   );
 }

@@ -210,6 +210,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             (props.lifecycleStage == LifecycleStageMap.CLOSED && !props.disableDateFilter)) && (
               <DateInput
                 mode="range"
+                variant="info_banner"
                 ariaLabel={dict.nav.title.tasks}
                 selectedDate={props.selectedDate}
                 setSelectedDateRange={props.setSelectedDate}
