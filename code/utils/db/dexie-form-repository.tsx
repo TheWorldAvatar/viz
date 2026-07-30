@@ -305,7 +305,3 @@ export function useLiveFormOptions(field: string, current: string, parentField: 
         return { options: copyOptions };
     }, [options, parent, search, formType, defaultSearchOption]);
 }
-
-function resolveFirstBatch() {
-    throw new Error("Function not implemented.");
-}
