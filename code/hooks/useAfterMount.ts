@@ -16,7 +16,14 @@ export const useAfterMount = (
       return;
     }
 
-    return effect();
+
+    // Reset when Strict Mode unmounts the component on initial load
+    return () => {
+      isMounted.current = false;
+      if (typeof effect === 'function') {
+        effect();
+      }
+    };
     // eslint-disable-next-deps
   }, deps);
 };
