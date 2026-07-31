@@ -71,6 +71,7 @@ class DexieFormRepository {
         const currentOptionFields: string[] = Object.keys(this.fields);
         // Synchronises only if there are relevant fields available
         if (currentOptionFields.length === 0) {
+            this.completeSyncStatus();
             return;
         }
 
