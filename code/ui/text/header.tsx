@@ -34,7 +34,7 @@ export default function HeaderField(props: Readonly<HeaderFieldProps>) {
       {/* Renders a loading indicator when required, or else, shows the required icon */}
       {props.isLoading && (
         <div className="w-4">
-          <LoadingSpinner isSmall={true} />
+          <LoadingSpinner size="sm" />
         </div>
       )}
 

@@ -94,12 +94,15 @@ export function useTableData(
         const res: AgentResponseBody = await queryInternalApi(apiUrl, undefined, undefined, controller.signal);
         const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
         const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
-        const columns: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(res.data?.columns, columnOptions, dict);
         setSelectedCount(res.data?.currentItemCount);
         setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
         setData(parsedData);
-        setColumns(columns);
+        // Parse and set the column metadata only once, then retain it for subsequent
+        // fetches. This keeps the header visible when a later response has no metadata
+        setColumns(prevColumns => prevColumns.length > 0
+          ? prevColumns
+          : parseColumnsMetadata(res.data?.columns ?? [], columnOptions, dict));
         setIsLoading(false);
         if (firstVisiblePageSize < 50) {
           // Capped Remainder: fetch the full batch in the background so subsequent pages are instant

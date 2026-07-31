@@ -159,7 +159,7 @@ function TaskFormContents() {
         </div>
         {
           isLoading && (
-            <LoadingSpinner isSmall={false} />
+            <LoadingSpinner size="xl" />
           )
         }
         <div className="flex flex-wrap gap-2.5 2xl:gap-2 justify-end items-center">

@@ -9,7 +9,7 @@ export default function Loading() {
     return (
         <div className="fixed z-50 inset-0 left-0 top-0 backdrop-blur-xs bg-background/10 flex min-h-screen items-center justify-center">
             <div className="flex flex-col items-center gap-4">
-                <LoadingSpinner isSmall={false} />
+                <LoadingSpinner size="xl" />
                 <p className="text-sm md:text-base lg:text-lg text-muted-foreground">{dict.message.loading}</p>
             </div>
         </div>

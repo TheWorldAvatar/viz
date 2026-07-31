@@ -2,7 +2,7 @@ import { useConnected } from "@/hooks/useConnected";
 import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { toast } from "@/ui/interaction/action/toast/toast";
-import { db } from "@/utils/table/db";
+import { db, DynamicTask } from "@/utils/table/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
 import { FieldValues } from "react-hook-form";
@@ -26,6 +26,16 @@ export async function bulkPutTasks(instances: FieldValues[]): Promise<void> {
 }
 
 /**
+ * Get task from IndexedDb.
+ *
+ * @param {string} id Target task identifier.
+ */
+export async function getTask(id: string): Promise<DynamicTask> {
+    const task: DynamicTask = await db.tasks.get(id);
+    return task;
+}
+
+/**
  * Get tasks from IndexedDb in real time.
  *
  * @param {number} mobileFields Mobile specific fields.
@@ -38,7 +48,7 @@ export function useLiveTasks(mobileFields: string[], selectedCount: number, dict
     const tasks: FieldValues[] = useLiveQuery(() => db.tasks.toArray(),
         []);
     return useMemo(() => {
-        if (!tasks) return { data: [], previewData: [] };
+        if (!tasks || tasks.length == 0) return { data: [], previewData: [] };
         if (localStorageManager.get(TASK_VIEWER_FILTER) && selectedCount > 0 && tasks.length != selectedCount) {
             if (isOnline) {
                 toast(interpolate(dict.message.showScrollMore, String(tasks.length), String(selectedCount)), "default")

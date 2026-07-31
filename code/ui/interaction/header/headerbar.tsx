@@ -59,12 +59,12 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
   return (
     <header
       id="headerbar"
-      className="bg-muted border-b-border z-999 flex h-[8dvh] items-center justify-between overflow-hidden border-b fade-in-on-motion"
+      className="bg-muted border-b-border z-999 sticky top-0 shrink-0 flex h-[8dvh] items-center justify-between overflow-hidden border-b fade-in-on-motion"
     >
       {/* Render header bar logo if set */}
       {props.settings?.branding?.navbar?.length > 0 && (
         // Handle the case where header bar is a list
-        <div className="flex items-center gap-5 md:gap-2">
+        <div className="flex items-center gap-1">
           {Array.isArray(props.settings?.branding?.navbar) ? (
             props.settings?.branding?.navbar.map((logo) => (
               <Link key={logo} href={Routes.HOME}>
@@ -87,7 +87,7 @@ export default function HeaderBar(props: Readonly<HeaderBarProps>) {
       )}
 
       {/* Render each component as required */}
-      <div className="flex">
+      <div className="flex items-center gap-4 md:gap-6 mr-4 md:mr-6">
         <div className={`flex ${pathname.endsWith("map") ? "" : "xl:hidden"} `}>
           <NavMenu
             pages={props.pages}

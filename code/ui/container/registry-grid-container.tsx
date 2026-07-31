@@ -6,7 +6,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
-import { RegistryStatusMap } from "@/types/form";
+import { FormTypeMap, RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import ViewAttachmentButton from "@/ui/graphic/table/action/view-attachment-button";
 import Button from "@/ui/interaction/button";
@@ -56,8 +56,8 @@ export default function RegistryGridComponent(
   // Ensure height of container is full for virtualiser to function
   return (
     <div className="bg-muted pt-2 px-2 md:py-2.5 md:px-8 flex flex-col h-full min-h-0">
-      <div className="flex justify-between px-4">
-        <h1 className="py-1 md:py-4 text-2xl md:text-4xl font-bold">
+      <div className="flex justify-between items-center px-4 py-1">
+        <h1 className="py-1  text-3xl md:text-4xl font-bold">
           {parseWordsForLabels(props.entityType)}
         </h1>
         <FilterMenu
@@ -123,10 +123,12 @@ export default function RegistryGridComponent(
                   browserStorageManager.clear();
                   resetFormSession();
                   browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
-                  navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
+                  navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.COMPLETE}?id=${event_id}`);
                 }}
               />,
               <PopoverActionButton
+                draggable
+                bottomSheet
                 key={virtualItem.key + dict.action.view}
                 variant="ghost"
                 size="md"
@@ -134,7 +136,7 @@ export default function RegistryGridComponent(
                 leftIcon="open_in_new"
                 label={parseWordsForLabels(dict.action.view)}
               >
-                <section className="h-[80vh] overflow-y-auto">
+                <section className="h-[75vh] overflow-y-auto">
                   <DescriptionList
                     data={data[virtualItem.index]}
                   />
@@ -144,8 +146,8 @@ export default function RegistryGridComponent(
           })}
         </div>
       </section>
-      <section className="flex justify-end">
-        {data.length > 0 && <p className="text-sm pt-1 pr-4">{
+      <section className="flex justify-end shrink-0 py-1 md:pb-0">
+        {data.length > 0 && <p className="text-sm md:text-base pt-1 pr-4">{
           interpolate(dict.message.numberOfRecords, String(currentItemIndex + 1))
             .replace("{replacetotal}", String(selectedCount))}</p>
         }

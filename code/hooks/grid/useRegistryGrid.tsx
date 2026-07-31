@@ -53,7 +53,7 @@ export function useRegistryGrid(
     mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
-    const { refreshId, resetFormSession, triggerRefresh } = useOperationStatus();
+    const { resetFormSession } = useOperationStatus();
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     const [page, setPage] = useState<number>(0);
@@ -61,6 +61,9 @@ export function useRegistryGrid(
     const [selectedCount, setSelectedCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
+    // Synchronous lock against duplicate fetch triggers: scroll events fire faster
+    // than state re-renders, so the onChange guard cannot rely on isFetching alone
+    const fetchLockRef: React.RefObject<boolean> = useRef<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
 
@@ -84,30 +87,43 @@ export function useRegistryGrid(
                 updatedFilters[currentFieldIndex] = filter;
             }
             // Check for active filters
-            setHasNoActiveFilters(updatedFilters.filter(filter => filter?.id != "status")
-                .every((filter) => (filter?.value as string[])?.length == 0));
-            localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
+            const noActiveFilters: boolean = updatedFilters.filter(filter => filter?.id != "status")
+                .every((filter) => (filter?.value as string[])?.length == 0);
+            setHasNoActiveFilters(noActiveFilters);
+            if (noActiveFilters) {
+                localStorageManager.clear();
+            } else {
+                localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
+            }
             return updatedFilters;
         });
         setPage(0);
         setSelectedCount(0);
-        setHasMore(true);
-        clearTasks();
-        setIsInitialLoading(true);
-        setIsFetching(true);
+        triggerRefresh();
     };
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
-        clearTasks();
         setHasNoActiveFilters(true);
         setPage(0);
         setSelectedCount(0);
+        triggerRefresh();
+    };
+
+    const triggerRefresh = () => {
+        clearTasks();
         setHasMore(true);
         setIsInitialLoading(true);
+        fetchLockRef.current = true;
         setIsFetching(true);
-    };
+    }
+
+    const fetchNextPage = () => {
+        fetchLockRef.current = true;
+        setPage((prev) => prev + 1);
+        setIsFetching(true);
+    }
 
     const { data, previewData } = useLiveTasks(mobileFields.current, selectedCount, dict);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
@@ -129,11 +145,11 @@ export function useRegistryGrid(
 
             if (dominantItem) {
                 setCurrentItemIndex(dominantItem.index);
-                // Trigger fetch once the current index has hit half of the grid limit
-                const currentThreshold: number = GRID_LIMIT * page;
-                if (dominantItem.index == (GRID_LIMIT / 2 + currentThreshold) && !isFetching && hasMore) {
-                    setPage((prev) => prev + 1);
-                    setIsFetching(true);
+                // Trigger fetch once the user scrolls past the halfway mark of the loaded data.
+                // Scroll events may skip indices (especially on Android momentum scrolling),
+                // so this must be a range check rather than an equality check
+                if (previewData.length > 0 && dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
+                    fetchNextPage();
                 }
             }
         }
@@ -142,6 +158,7 @@ export function useRegistryGrid(
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
 
     useEffect(() => {
+        fetchLockRef.current = true;
         setIsFetching(true);
         // To prevent hydration effects when reading from storage
         if (localStorageManager.get(TASK_VIEWER_FILTER)) {
@@ -213,6 +230,7 @@ export function useRegistryGrid(
             if (parsedData.length < GRID_LIMIT) {
                 setHasMore(false);
             }
+            fetchLockRef.current = false;
             setIsFetching(false);
             setIsInitialLoading(false);
         }
@@ -220,7 +238,7 @@ export function useRegistryGrid(
         if (isFetching && hasMore) {
             fetchData();
         }
-    }, [entityType, refreshId, isFetching, filters]);
+    }, [entityType, isFetching, filters]);
 
     return {
         isInitialLoading,

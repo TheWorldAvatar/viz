@@ -26,7 +26,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
     const { contentRef, contentHeight } = useResizeObserver(isOpen);
 
     return (
-        <article className="flex flex-col items-start mb-2">
+        <article className="flex flex-col mb-2 mt-0.5">
             <Button
                 type="button"
                 leftIcon={isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
@@ -38,7 +38,7 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                 aria-label={props.title}
                 aria-expanded={isOpen}
                 aria-controls={`accordion-content-${props.id}`}
-                className="w-[90vw] ml-1 justify-start"
+                className={`w-full justify-start min-h-11 shadow-xs ${props.isActive ? "border border-border" : ""}`}
             >
                 {props.title}
             </Button>
@@ -47,12 +47,12 @@ export default function Accordion(props: Readonly<AccordionProps>) {
                     id={`accordion-content-${props.id}`}
                     role="region"
                     aria-labelledby={`accordion-button-${props.id}`}
-                    className={`transition-all duration-300 ease-in-out overflow-hidden inset-shadow-sm `}
+                    className={`transition-all duration-300 ease-in-out overflow-hidden`}
                     style={{
                         maxHeight: `${contentHeight}px`,
                     }}
                 >
-                    <div ref={contentRef} className="py-2 px-2 w-[90vw] overflow-hidden">
+                    <div ref={contentRef} className="pt-2 px-0.5 w-full overflow-hidden">
                         {props.children}
                     </div>
                 </div>

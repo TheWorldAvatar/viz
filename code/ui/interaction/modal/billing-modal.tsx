@@ -97,7 +97,7 @@ export default function BillingModal(props: Readonly<BillingModalProps>) {
                         </div>
                     ) : (
                         <div className="flex justify-center items-center h-48">
-                            <LoadingSpinner isSmall={false} />
+                            <LoadingSpinner size="xl" />
                         </div>
                     )}
                 </div>

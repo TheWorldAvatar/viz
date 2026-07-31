@@ -66,7 +66,7 @@ export default function DateInput(props: Readonly<DateInputProps>) {
 
   if (props.inline) {
     return <section className="flex flex-col">
-      <div className="flex pr-1">
+      <div className="flex">
         <Button
           id={id}
           leftIcon="date_range"
