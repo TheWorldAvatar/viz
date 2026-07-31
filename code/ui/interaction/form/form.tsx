@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import useFormSession from "@/hooks/form/useFormSession";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
@@ -30,10 +31,11 @@ import {
   VALUE_KEY,
 } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
+import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
 import { DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -45,8 +47,6 @@ import FormSchedule, { daysOfWeek } from "./section/form-schedule";
 import FormSearchPeriod from "./section/form-search-period";
 import FormSection from "./section/form-section";
 import FormSkeleton from "./skeleton/form-skeleton";
-import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
-import { useConnected } from "@/hooks/useConnected";
 
 interface FormComponentProps {
   formRef: React.RefObject<HTMLFormElement>;
@@ -80,7 +80,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { formType, accountType, isContractForm, addFrozenFields, updatePreviousSession, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
+  const { formType, accountType, isContractForm, addFrozenFields, updatePreviousSession, loadPreviousSession, handleFormClose } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
@@ -150,10 +150,8 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       await dexieFormRepo.sync(isConnected, accountType, isContractForm);
       setFormTemplate(parsedTemplate);
-      setFieldIdNameMapping(fieldIdMapping);
       setBillingParams(billingParamsStore)
-
-      return loadPreviousSession(initialState);
+      return loadPreviousSession(initialState, fieldIdMapping);
     },
   });
 

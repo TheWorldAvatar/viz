@@ -1,12 +1,12 @@
 import useFormSession from '@/hooks/form/useFormSession';
-import React, { useState } from 'react';
-import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
+import { useConnected } from '@/hooks/useConnected';
 import { FormTypeMap, PROPERTY_GROUP_TYPE, PropertyShape, PropertyShapeOrGroup, TYPE_KEY } from '@/types/form';
 import LoadingSpinner from '@/ui/graphic/loader/spinner';
+import { dexieFormRepo } from '@/utils/db/dexie-form-repository';
+import React, { useState } from 'react';
+import { FieldValues, SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 import { renderFormField } from '../form';
 import { parsePropertyShapeOrGroupList } from '../form-utils';
-import { dexieFormRepo } from '@/utils/db/dexie-form-repository';
-import { useConnected } from '@/hooks/useConnected';
 
 interface FormComponentProps {
   entityType: string;
@@ -25,7 +25,7 @@ interface FormComponentProps {
  */
 export function FormTemplate(props: Readonly<FormComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
-  const { formType, addFrozenFields, loadPreviousSession, setFieldIdNameMapping } = useFormSession();
+  const { formType, addFrozenFields, loadPreviousSession } = useFormSession();
   const isConnected: boolean = useConnected();
 
   // Sets the default value with the requested function call if any
@@ -47,9 +47,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
       await dexieFormRepo.sync(isConnected);
 
       setFormFields(fields);
-      setFieldIdNameMapping(fieldIdMapping);
-
-      return loadPreviousSession(initialState);
+      return loadPreviousSession(initialState, fieldIdMapping);
     }
   });
 

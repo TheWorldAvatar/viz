@@ -5,6 +5,7 @@ import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFor
 import { FORM_STATES } from '@/ui/interaction/form/form-utils';
 import { PREV_SESSION_KEY } from '@/utils/constants';
 import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
+import { BRANCH_ADD } from '@/utils/internal-api-services';
 import { ColumnFilter } from '@tanstack/react-table';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
@@ -19,7 +20,7 @@ interface useFormSessionReturn extends FormSessionState {
     handleFormClose: () => void;
     saveCurrentSession: (_initialState: FieldValues, _sessionId?: string) => void;
     updatePreviousSession: (_formData: FieldValues) => void;
-    loadPreviousSession: (_initialState: FieldValues) => FieldValues;
+    loadPreviousSession: (_initialState: FieldValues, _fieldIdNameMapping: Record<string, string>) => FieldValues;
 }
 
 /**
@@ -96,10 +97,9 @@ const useFormSession = (): useFormSessionReturn => {
             // If the field ID mapping exists for dropdown fields, use the field name
             if (formSession.fieldIdNameMapping && formSession.fieldIdNameMapping[key]) {
                 browserStorageManager.set(formSession.fieldIdNameMapping[key], value);
-            } else {
-                // Save individual field
-                dataTypeValues[key] = value;
             }
+            // Save all fields within the session too
+            dataTypeValues[key] = value;
         });
         // Save all other fields under a single identifier
         if (Object.keys(dataTypeValues).length) {
@@ -140,11 +140,13 @@ const useFormSession = (): useFormSessionReturn => {
 
     }
 
-    /** Loads the previous form session for non-dropdowns for the current form.
+    /** Loads the previous form session for non-dropdowns for the current form and stores the field id name mapping.
      * 
      * @param {FieldValues} initialState  The initial state for the form.
+     * @param {Record<string, string>} fieldIdNameMapping  Mappings between field id and name.
      */
-    const loadPreviousSession = (initialState: FieldValues): FieldValues => {
+    const loadPreviousSession = (initialState: FieldValues, fieldIdNameMapping: Record<string, string>): FieldValues => {
+        formSession.setFieldIdNameMapping(fieldIdNameMapping);
         // Load the values stored in the form ID, usually for input fields, branch names
         const previousSessionData: string = browserStorageManager.get(formSession.id);
         if (previousSessionData) {
@@ -152,15 +154,17 @@ const useFormSession = (): useFormSessionReturn => {
             try {
                 // Override the initial state with the saved values from the previous session
                 const overrides: FieldValues = JSON.parse(previousSessionData);
-                // Sometimes overrides are not exact matches due to group, so we have to check if they end
                 for (const [overrideKey, overrideValue] of Object.entries(overrides)) {
-                    const matchingKey: string = Object.keys(updatedState).find((stateKey) =>
-                        stateKey.toLowerCase().endsWith(overrideKey.toLowerCase())
-                    );
-                    // Do not override if unmatched as they may send redundant info
-                    if (matchingKey) {
-                        updatedState[matchingKey] = overrideValue;
+                    for (const [fieldId, fieldName] of Object.entries(fieldIdNameMapping)) {
+                        // Early break if override key is found
+                        if (fieldId == overrideKey || fieldName == overrideKey) {
+                            updatedState[fieldId] = overrideValue;
+                            continue;
+                        }
                     }
+
+                    // If they are not found in the mappings above, they are non-dropdown and should overwrite
+                    updatedState[overrideKey] = overrideValue;
                 }
                 initialState = updatedState;
             } catch (e) {
