@@ -57,6 +57,10 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
         }
     };
 
+    // Indicates that a filter other than the submitted field is still active
+    const hasOtherActiveFilters = (fieldId: string): boolean => props.filters
+        .some(filter => filter.id !== fieldId && filter.id !== "status" && (filter.value as string[])?.length > 0);
+
     // Prevent hydration issues by updating menu open after and returning no component
     useEffect(() => {
         setIsMenuOpen(!localStorageManager.get(TASK_VIEWER_FILTER))
@@ -84,7 +88,7 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
             <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
         </section>
         <section className={`${props.hasNoActiveFilters ? "max-h-[70vh]" : "max-h-[50vh]"} min-h-0 overflow-y-auto px-1 w-full`}>
-            {props.isInitialLoading ? <LoadingSpinner isSmall={false} /> :
+            {props.isInitialLoading ? <LoadingSpinner size="xl" /> :
                 filterableColumns.length === 0 ?
                     <p className="text-muted-foreground text-center py-2">{dict.message.noTasks}</p> :
                     filterableColumns.map((column, index) => {
@@ -107,10 +111,13 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
                                 selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
                                 filters={props.filters}
                                 disabled={!isConnected}
+                                className="w-full"
                                 onSubmission={(selectedOptions: string[]) => {
                                     if (isConnected) {
-                                        props.updateFilter(column.id.toString(), selectedOptions);
-                                        setIsMenuOpen(false);
+                                        props.updateFilter(fieldId, selectedOptions);
+                                        if (selectedOptions.length > 0 || hasOtherActiveFilters(fieldId)) {
+                                            setIsMenuOpen(false);
+                                        }
                                     }
                                 }}
                             />

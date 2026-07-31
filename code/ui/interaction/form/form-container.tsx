@@ -12,7 +12,9 @@ import { Dictionary } from "@/types/dictionary";
 import { FormType, FormTypeMap } from "@/types/form";
 import { JsonObject } from "@/types/json";
 import { FormComponent } from "@/ui/interaction/form/form";
+import { browserStorageManager } from "@/state/browser-storage-manager";
 import { getAfterDelimiter, parseWordsForLabels } from "@/utils/client-utils";
+import { ADD_FORM_KEY } from "@/utils/constants";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { toast } from "../action/toast/toast";
@@ -151,6 +153,7 @@ function FormContents(props: Readonly<FormContainerComponentProps>) {
       <section className="overflow-y-auto overflow-x-hidden md:p-3 p-1 flex-1 min-h-0">
         {refreshFlag ? <FormSkeleton /> :
           (<FormComponent
+            key={browserStorageManager.get(ADD_FORM_KEY)}
             formRef={formRef}
             entityType={props.entityType}
             primaryInstance={status?.data?.id}

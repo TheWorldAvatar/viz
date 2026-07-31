@@ -22,6 +22,7 @@ export function usePopover(
         open: isControlledOpen ?? isOpen,
         onOpenChange: handleOpenChange,
         whileElementsMounted: autoUpdate,
+        strategy: "fixed",
         middleware: [
             offset(8),
             flip(),

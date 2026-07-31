@@ -188,7 +188,7 @@ export function useDependentField(
                                 entities.push({
                                     label: results[0].name?.value,
                                     value: results[0].iri?.value,
-                                    disabled: true,
+                                    disabled: false,
                                 });
                             }
                         }

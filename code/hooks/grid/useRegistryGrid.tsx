@@ -87,9 +87,14 @@ export function useRegistryGrid(
                 updatedFilters[currentFieldIndex] = filter;
             }
             // Check for active filters
-            setHasNoActiveFilters(updatedFilters.filter(filter => filter?.id != "status")
-                .every((filter) => (filter?.value as string[])?.length == 0));
-            localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
+            const noActiveFilters: boolean = updatedFilters.filter(filter => filter?.id != "status")
+                .every((filter) => (filter?.value as string[])?.length == 0);
+            setHasNoActiveFilters(noActiveFilters);
+            if (noActiveFilters) {
+                localStorageManager.clear();
+            } else {
+                localStorageManager.set(TASK_VIEWER_FILTER, JSON.stringify(updatedFilters))
+            }
             return updatedFilters;
         });
         setPage(0);
@@ -143,7 +148,7 @@ export function useRegistryGrid(
                 // Trigger fetch once the user scrolls past the halfway mark of the loaded data.
                 // Scroll events may skip indices (especially on Android momentum scrolling),
                 // so this must be a range check rather than an equality check
-                if (dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
+                if (previewData.length > 0 && dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
                     fetchNextPage();
                 }
             }

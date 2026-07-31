@@ -81,21 +81,19 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       lifecycleStage === LifecycleStageMap.SCHEDULED
     ) {
       // Determine the appropriate task route based on status and permissions
-      let taskRoute: string;
       if (isPermitted("operation") &&
         ((row.status as string).toLowerCase() === RegistryStatusMap.NEW ||
           ((row.status as string).toLowerCase() === RegistryStatusMap.ASSIGNED &&
             lifecycleStage === LifecycleStageMap.SCHEDULED))
       ) {
-        taskRoute = Routes.REGISTRY_TASK_DISPATCH;
+        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.DISPATCH}?id=${recordId}`);
       } else if (isPermitted("completeTask") &&
         (row.status as string).toLowerCase() === RegistryStatusMap.ASSIGNED
       ) {
-        taskRoute = Routes.REGISTRY_TASK_COMPLETE;
+        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.COMPLETE}?id=${recordId}`);
       } else {
-        taskRoute = Routes.REGISTRY_TASK_VIEW;
+        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
       }
-      navigateToDrawer(taskRoute, recordId);
     } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
       if (isPermitted("invoice") &&
         [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED,
@@ -104,7 +102,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       ) {
         await execReviewBillableAction(row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
       } else {
-        navigateToDrawer(Routes.REGISTRY_TASK_VIEW, recordId);
+        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
       }
     } else if (lifecycleStage === LifecycleStageMap.INVOICE) {
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);

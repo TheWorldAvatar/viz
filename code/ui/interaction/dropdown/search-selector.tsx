@@ -1,10 +1,12 @@
 import { useDictionary } from "@/hooks/useDictionary";
+import { useConnected } from "@/hooks/useConnected";
 import useRefresh from "@/hooks/useRefresh";
 import { Dictionary } from "@/types/dictionary";
 import StatusComponent from "@/ui/text/status/status";
 import { useState } from "react";
 import Button from "../button";
 import SelectOption from "../input/select-option";
+import LoadingSpinner from "@/ui/graphic/loader/spinner";
 
 
 interface SearchSelectorProps {
@@ -15,8 +17,10 @@ interface SearchSelectorProps {
   showOptions: boolean;
   onSubmission: (_options: string[]) => void;
   setSearchString: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   disabled?: boolean;
+  className?: string;
 }
 
 /**
@@ -29,16 +33,28 @@ interface SearchSelectorProps {
  * @param {boolean} showOptions Shows the options if true. Used to indicate if options are fetching.
  * @param onSubmission Function to be executed on submission.
  * @param setSearchString Dispatch function to set search string state.
+ * @param {boolean} isLoading The loading state to indicate if options are fetching.
  * @param setIsLoading State function to set loading state.
  * @param {boolean} disabled An optional state to disable the filter.
+ * @param {string} className Optional additional styling applied to the selector.
  */
 export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
   const dict: Dictionary = useDictionary();
+  const isConnected: boolean = useConnected();
   const { refreshFlag, triggerRefresh } = useRefresh(100);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(props.initSelectedOptions);
+  const [pinnedOptions, setPinnedOptions] = useState<string[]>(props.initSelectedOptions);
+  const [previousOptions, setPreviousOptions] = useState<string[]>(props.options);
+
+  if (props.options !== previousOptions) {
+    setPreviousOptions(props.options);
+    setPinnedOptions(selectedOptions);
+  }
+
+  const visibleOptions: string[] = [...new Set([...pinnedOptions, ...props.options, ...selectedOptions])];
 
   return (
-    <>
+    <div className={`w-full ${props.className ?? "md:w-sm xl:w-lg"}`}>
       <div className="flex flex-row items-stretch justify-between gap-1.5 mb-1">
         <div className="flex flex-1 items-stretch">
           <input
@@ -69,7 +85,7 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
             tooltipText={dict.action.applyFilter}
             variant="primary"
             className="h-full w-12 border border-border ml-2"
-            disabled={props.disabled || selectedOptions?.length == 0}
+            disabled={props.disabled || !isConnected}
             aria-label={"Submit for " + props.label}
           />
         </div>
@@ -94,12 +110,18 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           aria-label={dict.action.clear}
         />}
       </div>
-      <div className="max-h-80 w-full overflow-y-auto">
+      <div className="max-h-80 w-full overflow-y-auto overflow-x-auto">
+        {props.isLoading && (
+          <div role="status" aria-live="polite" className="p-2.5 mt-2">
+            <LoadingSpinner size="md" />
+            <span className="sr-only">{dict.message.loading}</span>
+          </div>
+        )}
         {props.showOptions && <p className="text-sm text-foreground/80 italic px-2 my-1">
-          {props.options.length === 0 && dict.message.noOptions}
-          {props.options.length > 20 && dict.message.typeMore}
+          {visibleOptions.length === 0 && dict.message.noOptions}
+          {visibleOptions.length > 20 && dict.message.typeMore}
         </p>}
-        {props.showOptions && !refreshFlag && props.options.map((option, index) => (
+        {props.showOptions && !refreshFlag && visibleOptions.map((option, index) => (
           <SelectOption
             key={option + index}
             option={props.label === dict.title.status ? dict.title[option.toLowerCase()] :
@@ -117,9 +139,9 @@ export default function SearchSelector(props: Readonly<SearchSelectorProps>) {
           />
         ))}
         <p className="text-2xl text-foreground/80 italic px-2">
-          {props.options.length > 20 && "..."}
+          {visibleOptions.length > 20 && "..."}
         </p>
       </div>
-    </>
+    </div>
   );
 }

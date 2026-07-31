@@ -128,6 +128,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.SCHEDULED],
         status: [RegistryStatusMap.NEW, RegistryStatusMap.ASSIGNED],
     },
+    UNDO_CANCEL_OR_REPORT_TASK: {
+        permission: "reportTask",
+        stage: [LifecycleStageMap.CLOSED],
+        status: [RegistryStatusMap.CANCELLED, RegistryStatusMap.REPORTED],
+    },
     COMPLETE_TASK: {
         permission: "completeTask",
         stage: [LifecycleStageMap.OUTSTANDING, LifecycleStageMap.CLOSED],

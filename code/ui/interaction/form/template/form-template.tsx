@@ -52,7 +52,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
   return (
     <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
       {form.formState.isLoading ?
-        <LoadingSpinner isSmall={false} /> :
+        <LoadingSpinner size="xl" /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
           .map((formField, index) => {
             return renderFormField(props.entityType, FormTypeMap.EDIT, formField, form, index)

@@ -441,7 +441,9 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
               onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
             });
           } else {
-            router.replace(buildUrl(Routes.REGISTRY_TASK_ACCRUAL, eventId));
+            router.replace(
+              buildUrl(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(browserStorageManager.get(EVENT_KEY))}`)
+            );
           }
           // Close search modal on success
         } else if (formType === FormTypeMap.SEARCH) {

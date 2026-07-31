@@ -2,7 +2,7 @@ import { useConnected } from "@/hooks/useConnected";
 import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { toast } from "@/ui/interaction/action/toast/toast";
-import { db } from "@/utils/table/db";
+import { db, DynamicTask } from "@/utils/table/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
 import { FieldValues } from "react-hook-form";
@@ -23,6 +23,16 @@ export async function clearTasks(): Promise<void> {
  */
 export async function bulkPutTasks(instances: FieldValues[]): Promise<void> {
     await db.tasks.bulkPut(instances);
+}
+
+/**
+ * Get task from IndexedDb.
+ *
+ * @param {string} id Target task identifier.
+ */
+export async function getTask(id: string): Promise<DynamicTask> {
+    const task: DynamicTask = await db.tasks.get(id);
+    return task;
 }
 
 /**

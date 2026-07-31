@@ -66,7 +66,7 @@ export default function InfoTree(props: Readonly<InfoTreeProps>) {
     // Render only the loading spinner if it is initially fetching data
     if (props.isFetching && !hasExistingData) {
       return <div className={styles.loading}>
-        <LoadingSpinner isSmall={false} />
+        <LoadingSpinner size="xl" />
       </div>
     }
 

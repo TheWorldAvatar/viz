@@ -9,7 +9,7 @@
 
 import { withSerwist } from "@serwist/turbopack";
 
-export default withSerwist( {
+export default withSerwist({
     reactStrictMode: true,
     assetPrefix: process.env.ASSET_PREFIX ?? "",
     compiler: { removeConsole: false },

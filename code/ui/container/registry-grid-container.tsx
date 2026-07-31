@@ -6,7 +6,7 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
-import { RegistryStatusMap } from "@/types/form";
+import { FormTypeMap, RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import ViewAttachmentButton from "@/ui/graphic/table/action/view-attachment-button";
 import Button from "@/ui/interaction/button";
@@ -123,7 +123,7 @@ export default function RegistryGridComponent(
                   browserStorageManager.clear();
                   resetFormSession();
                   browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
-                  navigateToDrawer(Routes.REGISTRY_TASK_COMPLETE, event_id);
+                  navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.COMPLETE}?id=${event_id}`);
                 }}
               />,
               <PopoverActionButton

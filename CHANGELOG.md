@@ -2,6 +2,77 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.82.2
+
+### Changes
+
+- Improved the table experience by preserving the user's table scroll position when the underlying data is refreshed due to row-level actions, while resetting it to the top when sorting, filtering, changing the date range, or navigating table between pages.
+- Added a "Back to top" button for quickly returning to the start of the table
+
+## 5.82.1
+
+### Changes
+
+- Added row action to revert cancelled or reported task. Re-factored to include unvoid task.
+
+## 5.82.0
+
+### Changes
+
+- Added configurable row actions. Registry paths can now define an add entity type in their UI settings. This displays an Add {entity} action on each row, which opens the corresponding add form and automatically pre-fills the account and record fields when available from the selected row.
+- Added account flagging support to the add row action. Flagged accounts display a flag indicator and disable the add action.
+
+### Bug fixes
+
+- Fixed dependent field options being incorrectly marked as disabled when a single matching result is returned.
+
+## 5.81.9
+
+### Changes
+
+- Re-completing a task now skips the additional cost form and automatically recalculates any additional costs in the background.
+
+## 5.81.8
+
+### Changes
+
+- Improved searchable table filters so draft selections remain visible without options moving when users select or deselect values.
+- Stopped forcing deselected applied values into searchable filter results. They now remain visible only when they match the current search.
+
+## 5.81.7
+
+### Changes
+
+- Changed the table rendering logic so that the header row should now always remain visible, even when there are no data rows.
+- Added a new className prop to the RegistryFilter and the SearchSelector, which fixes an issue with the filter width on mobile and desktop 
+
+## 5.81.6
+
+### Changes
+
+- Fixed an issue where the users couldn't type into the searchable filter while the dropdown is in its loading state.
+- Moved the loading indicator inside the dropdown content, where a loading spinner is shown while the data is being fetched, and the user can still type into the input field to search for options. This improves the user experience by allowing users to continue searching for options even when the dropdown is loading, instead of being blocked from typing until the loading is complete.
+
+## 5.81.5
+
+### Bug fix
+
+- Fixed an issue where when multiple column filters were applied, users were unable to remove or clear a single column filter independently due to the filter button being disabled, so they couldn't submit an empty filter. 
+
+## 5.81.4
+
+### Changes
+
+- Updated the selector component to allow text wrapping in the dropdown options, ensuring that long option texts are fully visible without being cut off. This improves the user experience by making it easier to read and select options with lengthy descriptions. This also fixes the overflow issues that was causing the dropdown to go beyond the viewport and not being fully visible to the user.
+
+## 5.81.3
+
+### Changes
+
+- Allow view of complete form in offline mode
+- Users can complete one task on form submission in offline mode
+- General code improvements to support these offline features
+
 ## 5.81.2
 
 ### Changes
