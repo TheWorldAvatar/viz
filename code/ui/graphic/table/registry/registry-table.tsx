@@ -131,7 +131,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
                           id={recordId}
                           row={row}
                           accountType={props.accountType}
-                          disableRowAction={props.disableRowAction || isSyncing}
+                          disableRowAction={props.disableRowAction}
                           triggerRefresh={props.triggerRefresh}
                         />
                       })}
