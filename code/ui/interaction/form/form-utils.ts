@@ -158,6 +158,9 @@ export function parsePropertyShapeOrGroupList(
             initialState[fieldsetName] = [];
             // If at least one item or belongs to pricing group, initialise it with an array with 1 empty object
           } else if (!initialState[fieldsetName] && fieldset.minCount && (parseInt(fieldset.minCount?.[VALUE_KEY]) > 0 || isAddOrEditPricingGroup)) {
+            initialState[fieldId] = !Array.isArray(updatedProp.defaultValue)
+              ? updatedProp.defaultValue?.value
+              : updatedProp.defaultValue?.[0].value;
             initialState[fieldsetName] = [{}];
           }
           return initFormField(
