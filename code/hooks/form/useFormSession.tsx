@@ -123,11 +123,9 @@ const useFormSession = (): useFormSessionReturn => {
                     const matchingKey: string = Object.keys(updatedState).find((stateKey) =>
                         stateKey.toLowerCase().endsWith(overrideKey.toLowerCase())
                     );
-
+                    // Do not override if unmatched as they may send redundant info
                     if (matchingKey) {
                         updatedState[matchingKey] = overrideValue;
-                    } else {
-                        updatedState[overrideKey] = overrideValue;
                     }
                 }
                 initialState = updatedState;
