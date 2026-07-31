@@ -1,6 +1,7 @@
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import useTableSession from "@/hooks/table/useTableSession";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
@@ -19,13 +20,12 @@ import { CSS } from "@dnd-kit/utilities";
 import { flexRender, Row } from "@tanstack/react-table";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
+import LoadingSpinner from "../../loader/spinner";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
-import { EnhancedColumnDef, execReviewBillableAction, getRowRecordId } from "../registry/registry-table-utils";
-import LoadingSpinner from "../../loader/spinner";
-import { useConnected } from "@/hooks/useConnected";
+import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
 
 interface TableRowProps {
   id: string;
@@ -100,15 +100,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
       }
     } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
-      if (isPermitted("invoice") &&
-        [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED,
-        RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED,
-        RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row.status.toLowerCase())
-      ) {
-        await execReviewBillableAction(row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
-      } else {
-        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
-      }
+      navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
     } else if (lifecycleStage === LifecycleStageMap.INVOICE) {
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);
     } else if (lifecycleStage === LifecycleStageMap.ACTIVE || lifecycleStage === LifecycleStageMap.ARCHIVE) {
