@@ -80,7 +80,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { formType, accountType, isContractForm, addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
+  const { formType, accountType, isContractForm, addFrozenFields, updatePreviousSession, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
@@ -423,7 +423,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (!pendingResponse?.error && (formType != FormTypeMap.ASSIGN_PRICE || !isInvalidPricingModel)) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
-      browserStorageManager.set(formattedEntityType, newIri);
+      updatePreviousSession({ [formattedEntityType]: newIri });
       handleFormClose();
       handleDrawerClose(async () => {
         // For assign price only, move to the next step to gen invoice

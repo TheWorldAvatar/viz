@@ -3,6 +3,7 @@
 import { browserStorageManager } from '@/state/browser-storage-manager';
 import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFormCount, setFrozenFields, setInvoiceAccountFilter } from '@/state/form-session-slice';
 import { FORM_STATES } from '@/ui/interaction/form/form-utils';
+import { PREV_SESSION_KEY } from '@/utils/constants';
 import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
 import { ColumnFilter } from '@tanstack/react-table';
 import { useContext } from 'react';
@@ -17,6 +18,7 @@ interface useFormSessionReturn extends FormSessionState {
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
     saveCurrentSession: (_initialState: FieldValues, _sessionId?: string) => void;
+    updatePreviousSession: (_formData: FieldValues) => void;
     loadPreviousSession: (_initialState: FieldValues) => FieldValues;
 }
 
@@ -85,6 +87,7 @@ const useFormSession = (): useFormSessionReturn => {
     const saveCurrentSession = (formData: FieldValues, sessionId?: string): void => {
         // Increment form count
         dispatch(setFormCount(formCount + 1));
+        updateSessionHistory(formSession.id);
 
         const dataTypeValues: Record<string, string> = {};
         Object.entries(formData).forEach(([key, value]) => {
@@ -105,6 +108,37 @@ const useFormSession = (): useFormSessionReturn => {
         }
     }
 
+    /** Stores the various form session id to track history of changes.
+    * 
+    * @param {string} sessionId  The current session id.
+    */
+    const updateSessionHistory = (sessionId: string): void => {
+        const sessions: string[] = browserStorageManager.get(PREV_SESSION_KEY) ? JSON.parse(browserStorageManager.get(PREV_SESSION_KEY)) : [];
+
+        // Do not push duplicates
+        if (!sessions.some(session => session === sessionId)) {
+            sessions.push(sessionId);
+            browserStorageManager.set(PREV_SESSION_KEY, JSON.stringify(sessions));
+        }
+    }
+
+    /** Updates all previous session with the data.
+    * 
+    * @param {FieldValues} formData  The data to be updated.
+    */
+    const updatePreviousSession = (formData: FieldValues): void => {
+        const sessions: string[] = browserStorageManager.get(PREV_SESSION_KEY) ? JSON.parse(browserStorageManager.get(PREV_SESSION_KEY)) : [];
+        sessions.forEach(session => {
+            const prevSessionRawData: string = browserStorageManager.get(session);
+            let prevSessionData: FieldValues = prevSessionRawData ? JSON.parse(prevSessionRawData) : {};
+            prevSessionData = {
+                ...prevSessionData,
+                ...formData,
+            }
+            browserStorageManager.set(session, JSON.stringify(prevSessionData));
+        });
+
+    }
 
     /** Loads the previous form session for non-dropdowns for the current form.
      * 
@@ -145,6 +179,7 @@ const useFormSession = (): useFormSessionReturn => {
         addFrozenFields,
         handleFormClose,
         saveCurrentSession,
+        updatePreviousSession,
         loadPreviousSession,
     };
 };

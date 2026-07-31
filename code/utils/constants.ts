@@ -10,6 +10,7 @@ export const DATE_KEY: string = "date";
 export const EVENT_KEY: string = "event";
 export const TASK_STATUS_KEY: string = "task_status";
 export const FLAG_KEY: string = "flag";
+export const PREV_SESSION_KEY: string = "previous_session";
 export const ADD_LINKED_FORM_KEY: string = "add_linked_form";
 export const FLAG_EMOJI: string = "🚩";
 export const SYNC_KEY: string = "sync";
