@@ -121,6 +121,7 @@ export function DependentFormSection(
                     if (formType == FormTypeMap.INVOICE && props.billingStore?.accountField === props.dependentProp.fieldId) {
                       updateInvoiceAccount((option as SelectOptionType).label);
                     }
+                    setSearch("");
                     onChange((option as SelectOptionType).value);
                   }}
                   onInputChange={(newValue, actionMeta) => {
