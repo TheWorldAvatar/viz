@@ -5,7 +5,6 @@ import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFor
 import { FORM_STATES } from '@/ui/interaction/form/form-utils';
 import { PREV_SESSION_KEY } from '@/utils/constants';
 import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
-import { BRANCH_ADD } from '@/utils/internal-api-services';
 import { ColumnFilter } from '@tanstack/react-table';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
@@ -96,10 +95,17 @@ const useFormSession = (): useFormSessionReturn => {
             if (excludedFields.includes(key) || key.startsWith("_form_")) return;
             // If the field ID mapping exists for dropdown fields, use the field name
             if (formSession.fieldIdNameMapping && formSession.fieldIdNameMapping[key]) {
+                // If there is a future session opening, store only the field and nothing else
+                if (sessionId) {
+                    dataTypeValues[formSession.fieldIdNameMapping[key]] = value;
+                } else {
+                    dataTypeValues[key] = value;
+                }
                 browserStorageManager.set(formSession.fieldIdNameMapping[key], value);
+            } else {
+                // For non-dropdown fields
+                dataTypeValues[key] = value;
             }
-            // Save all fields within the session too
-            dataTypeValues[key] = value;
         });
         // Save all other fields under a single identifier
         if (Object.keys(dataTypeValues).length) {
