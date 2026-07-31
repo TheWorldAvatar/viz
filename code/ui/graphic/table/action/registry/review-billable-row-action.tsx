@@ -64,7 +64,7 @@ export default function ReviewBillableRowAction(
     const formData: FieldValues = {
       [props.accountType]: liveAccount?.options?.[0].value,
     };
-    saveCurrentSession(formData, pricingType);
+    saveCurrentSession(formData, pricingType, true);
 
     if (body.data.message == "true") {
       if (canSkipOptionalAccrual(props.row.status as string | undefined)) {
