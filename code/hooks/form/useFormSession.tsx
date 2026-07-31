@@ -136,12 +136,20 @@ const useFormSession = (): useFormSessionReturn => {
         const sessions: string[] = browserStorageManager.get(PREV_SESSION_KEY) ? JSON.parse(browserStorageManager.get(PREV_SESSION_KEY)) : [];
         sessions.forEach(session => {
             const prevSessionRawData: string = browserStorageManager.get(session);
-            let prevSessionData: FieldValues = prevSessionRawData ? JSON.parse(prevSessionRawData) : {};
-            prevSessionData = {
-                ...prevSessionData,
-                ...formData,
+            const prevSessionData: FieldValues = prevSessionRawData ? JSON.parse(prevSessionRawData) : {};
+            let currentSessionData: FieldValues = prevSessionData;
+            for (const dataKey of Object.keys(formData)) {
+                for (const sessionKey of Object.keys(prevSessionData)) {
+                    if (sessionKey.toLowerCase().endsWith(dataKey.toLowerCase())) {
+                        currentSessionData = {
+                            ...currentSessionData,
+                            [sessionKey]: formData[dataKey],
+                        }
+                        break;
+                    }
+                }
             }
-            browserStorageManager.set(session, JSON.stringify(prevSessionData));
+            browserStorageManager.set(session, JSON.stringify(currentSessionData));
         });
 
     }
