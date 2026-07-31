@@ -7,10 +7,9 @@ import { Routes } from "@/io/config/routes";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { useLiveFormOptionReturn } from "@/types/form";
-import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { interpolate, parseWordsForLabels } from "@/utils/client-utils";
 import { ADD_LINKED_FORM_KEY, FLAG_EMOJI } from "@/utils/constants";
-import { dexieFormRepo, useIsSyncing, useLiveAccountFilter } from "@/utils/db/dexie-form-repository";
+import { useIsSyncing, useLiveAccountFilter } from "@/utils/db/dexie-form-repository";
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import RowActionButton from "../row-action-button";
@@ -54,7 +53,7 @@ export default function AddEntityRowAction(
       [props.accountType]: liveAccount?.options?.[0].value,
       [props.recordType.replaceAll("_", " ")]: props.row.iri,
     };
-    saveCurrentSession(formData, addEntity);
+    saveCurrentSession(formData, addEntity, true);
     // We are flipping the value everytime so that the add form can re-render with new values
     browserStorageManager.set(ADD_LINKED_FORM_KEY, previousFormFlag === "true" ? "false" : "true");
     navigateToDrawer(Routes.REGISTRY_ADD, addEntity);

@@ -17,7 +17,7 @@ interface useFormSessionReturn extends FormSessionState {
     updateInvoiceAccount: (_account: string) => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
-    saveCurrentSession: (_initialState: FieldValues, _sessionId?: string) => void;
+    saveCurrentSession: (_initialState: FieldValues, _sessionId?: string, _alwaysStore?: boolean) => void;
     updatePreviousSession: (_formData: FieldValues) => void;
     loadPreviousSession: (_initialState: FieldValues, _fieldIdNameMapping: Record<string, string>) => FieldValues;
 }
@@ -83,8 +83,9 @@ const useFormSession = (): useFormSessionReturn => {
      * 
      * @param {FieldValues} formData  The current form data.
      * @param {string} sessionId Optionally saves the session into a target form based on this type.
+     * @param {boolean} alwaysStore Optionally forces the session to save all the values.
      */
-    const saveCurrentSession = (formData: FieldValues, sessionId?: string): void => {
+    const saveCurrentSession = (formData: FieldValues, sessionId?: string, alwaysStore?: boolean): void => {
         // Increment form count
         dispatch(setFormCount(formCount + 1));
         updateSessionHistory(formSession.id);
@@ -102,7 +103,7 @@ const useFormSession = (): useFormSessionReturn => {
                     dataTypeValues[key] = value;
                 }
                 browserStorageManager.set(formSession.fieldIdNameMapping[key], value);
-            } else if (!sessionId) {
+            } else if (!sessionId || alwaysStore) {
                 // For non-dropdown fields of the current form
                 dataTypeValues[key] = value;
             }
