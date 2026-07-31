@@ -102,8 +102,8 @@ const useFormSession = (): useFormSessionReturn => {
                     dataTypeValues[key] = value;
                 }
                 browserStorageManager.set(formSession.fieldIdNameMapping[key], value);
-            } else {
-                // For non-dropdown fields
+            } else if (!sessionId) {
+                // For non-dropdown fields of the current form
                 dataTypeValues[key] = value;
             }
         });
