@@ -32,6 +32,7 @@ interface RegistryTableProps {
   lifecycleStage: LifecycleStage;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
+  pricingType?: string;
   selectedDate?: DateRange;
   tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
@@ -44,6 +45,7 @@ interface RegistryTableProps {
  * @param {string} accountType The type of account for billing capabilities.
  * @param {boolean} disableRowAction Hides the row actions for the user if true.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {string} pricingType Optional value to indicate the type of pricing for billing capabilities.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
@@ -84,6 +86,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
         addEntity={props.addEntity}
+        pricingType={props.pricingType}
       >
         <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div

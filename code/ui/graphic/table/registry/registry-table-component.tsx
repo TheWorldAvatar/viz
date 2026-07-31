@@ -25,11 +25,11 @@ import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
 
 
-
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
+  pricingType?: string;
   message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
   addEntity?: string;
@@ -41,6 +41,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
+ * @param {string} pricingType Optional value to indicate the type of pricing for billing capabilities.
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
@@ -114,7 +115,7 @@ export default function RegistryTableComponent(
       await dexieFormRepo.syncAccount(props.accountType, isConnected);
     };
 
-    if (props.addEntity) {
+    if (props.addEntity || props.lifecycleStage == LifecycleStageMap.CLOSED) {
       syncAccountData();
     }
   }, [props.accountType, props.addEntity, isConnected]);
@@ -151,6 +152,7 @@ export default function RegistryTableComponent(
           recordType={props.entityType}
           lifecycleStage={props.lifecycleStage}
           disableRowAction={false}
+          pricingType={props.pricingType}
           selectedDate={selectedDate}
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerTableRefresh}

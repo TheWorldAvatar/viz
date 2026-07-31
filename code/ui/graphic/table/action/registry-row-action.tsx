@@ -19,8 +19,8 @@ import { FLAG_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { execReviewBillableAction } from "../registry/registry-table-utils";
 import AddEntityRowAction from "./registry/add-entity-row-action";
+import ReviewBillableRowAction from "./registry/review-billable-row-action";
 import RowActionButton from "./row-action-button";
 import ViewAttachmentButton from "./view-attachment-button";
 
@@ -144,11 +144,6 @@ export default function RegistryRowAction(
       // Move to the view page for the specific record (not a drawer)
       navigateToDrawer(Routes.REGISTRY, props.recordType, recordId);
     }
-  };
-
-  const onReviewBillable: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    handleClickRowAction();
-    await execReviewBillableAction(props.row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
   };
 
   const onVoidTask: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -352,11 +347,12 @@ export default function RegistryRowAction(
               navigateToDrawer(Routes.REGISTRY_ADJUST_PRICING, getId(props.row.id));
             }}
           />}
-          {(isActionAllowed("REVIEW_BILLABLES")) && <RowActionButton
-            icon="price_check"
-            label={dict.action.reviewBillable}
-            disabled={isLoading}
-            onClick={onReviewBillable}
+          {(isActionAllowed("REVIEW_BILLABLES")) && <ReviewBillableRowAction
+            recordType={props.recordType}
+            accountType={props.accountType}
+            row={props.row}
+            handleClickRowAction={handleClickRowAction}
+            triggerRefresh={props.triggerRefresh}
           />}
           {(isActionAllowed("VOID_TASK")) && <RowActionButton
             icon="block"
