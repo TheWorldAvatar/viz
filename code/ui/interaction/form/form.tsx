@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import useFormSession from "@/hooks/form/useFormSession";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
@@ -30,10 +31,11 @@ import {
   VALUE_KEY,
 } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
+import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { buildUrl, getAfterDelimiter, getId, getNormalizedDate } from "@/utils/client-utils";
 import { DATE_KEY, EVENT_KEY, TASK_STATUS_KEY } from "@/utils/constants";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
 import FormArray from "./field/array/array";
 import FormFieldComponent from "./field/form-field";
@@ -78,11 +80,12 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   const dispatch = useDispatch();
   const dict: Dictionary = useDictionary();
   const router = useRouter();
-  const { formType, addFrozenFields, loadPreviousSession, handleFormClose, setFieldIdNameMapping } = useFormSession();
+  const { formType, accountType, isContractForm, addFrozenFields, updatePreviousSession, loadPreviousSession, handleFormClose } = useFormSession();
   const { startLoading, stopLoading } = useOperationStatus();
   const [formTemplate, setFormTemplate] = useState<FormTemplateType>(null);
   const [billingParams, setBillingParams] = useState<BillingEntityTypes>(null);
   const { handleDrawerClose } = useDrawerNavigation();
+  const isConnected: boolean = useConnected();
 
   // Sets the default value with the requested function call
   const form: UseFormReturn = useForm({
@@ -145,11 +148,10 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
 
       delete initialState.lockField;
 
+      await dexieFormRepo.sync(isConnected, accountType, isContractForm);
       setFormTemplate(parsedTemplate);
-      setFieldIdNameMapping(fieldIdMapping);
       setBillingParams(billingParamsStore)
-
-      return loadPreviousSession(initialState);
+      return loadPreviousSession(initialState, fieldIdMapping);
     },
   });
 
@@ -419,7 +421,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
     if (!pendingResponse?.error && (formType != FormTypeMap.ASSIGN_PRICE || !isInvalidPricingModel)) {
       const newIri: string = pendingResponse.data.id;
       const formattedEntityType: string = props.entityType.toLowerCase().replaceAll('_', ' ');
-      browserStorageManager.set(formattedEntityType, newIri);
+      updatePreviousSession({ [formattedEntityType]: newIri });
       handleFormClose();
       handleDrawerClose(async () => {
         // For assign price only, move to the next step to gen invoice

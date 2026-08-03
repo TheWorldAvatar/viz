@@ -2,6 +2,20 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.83.0
+
+### Changes
+
+- Sync form field dropdown options for sh:class into the cache for offline reads
+- Refactor previous workflow for these options to use the cache directly instead of calling the endpoint on each refresh
+- Refactor search dropdown option functionalities to utilise the cache
+- Removed row click for review billables action
+- Bump min version of `VisBackend Agent` from `v1.63.0` to `v1.64.0`
+
+### Bug fixes
+
+- Undefined browser storage manager when interacting with add linked form functionality
+
 ## 5.82.2
 
 ### Changes
@@ -14,6 +28,7 @@
 ### Changes
 
 - Added row action to revert cancelled or reported task. Re-factored to include unvoid task.
+- Bump min version of `VisBackend Agent` from `v1.61.0` to `v1.63.0`
 
 ## 5.82.0
 
@@ -44,7 +59,7 @@
 ### Changes
 
 - Changed the table rendering logic so that the header row should now always remain visible, even when there are no data rows.
-- Added a new className prop to the RegistryFilter and the SearchSelector, which fixes an issue with the filter width on mobile and desktop 
+- Added a new className prop to the RegistryFilter and the SearchSelector, which fixes an issue with the filter width on mobile and desktop
 
 ## 5.81.6
 
@@ -57,7 +72,7 @@
 
 ### Bug fix
 
-- Fixed an issue where when multiple column filters were applied, users were unable to remove or clear a single column filter independently due to the filter button being disabled, so they couldn't submit an empty filter. 
+- Fixed an issue where when multiple column filters were applied, users were unable to remove or clear a single column filter independently due to the filter button being disabled, so they couldn't submit an empty filter.
 
 ## 5.81.4
 
@@ -260,7 +275,7 @@
 
 ### Changes
 
-- Changed table pagination API requests to improve performance 
+- Changed table pagination API requests to improve performance
 - For page sizes equal and above 50, a full batch call is executed
 - For page sizes below 50, calls are executed in two requests to improve first visible page's performance
 
@@ -283,7 +298,7 @@
 
 - Prevented submission of whitespace-only post code input in the geocoder form section
 - Trimmed leading and trailing whitespace from post code input in the geocoder form section before validation and submission. This ensures that accidental spaces do not cause validation errors or issues with geocoding.
-- Removed address shape from the geocoder form section 
+- Removed address shape from the geocoder form section
 
 ## 5.75.0
 

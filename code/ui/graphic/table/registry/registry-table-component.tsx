@@ -2,12 +2,9 @@
 
 import { TableDescriptor, useTable } from "@/hooks/table/useTable";
 import { TableScrollDescriptor, useTableScroll } from "@/hooks/table/useTableScroll";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
-import { usePathname } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { DateRange } from "react-day-picker";
-import { useDispatch, useSelector } from "react-redux";
 import { addItem, selectItem } from "@/state/context-menu-slice";
 import { Dictionary, LanguageDictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
@@ -18,16 +15,21 @@ import {
   getInitialDateFromLifecycleStage,
   parseWordsForLabels
 } from "@/utils/client-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { usePathname } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { DateRange } from "react-day-picker";
+import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "../skeleton/table-skeleton";
 import RegistryTable from "./registry-table";
 import TableRibbon from "./ribbon/table-ribbon";
-
 
 
 interface RegistryTableComponentProps {
   entityType: string;
   lifecycleStage: LifecycleStage;
   accountType?: string;
+  pricingType?: string;
   message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
   addEntity?: string;
@@ -39,6 +41,7 @@ interface RegistryTableComponentProps {
  * @param {string} entityType Type of entity for rendering.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
  * @param {string} accountType Optional value to indicate the type of account for billing capabilities.
+ * @param {string} pricingType Optional value to indicate the type of pricing for billing capabilities.
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
@@ -50,6 +53,7 @@ export default function RegistryTableComponent(
   const dispatch = useDispatch();
   const pathNameEnd: string = getAfterDelimiter(usePathname(), "/");
   const { refreshId, refreshFlag, triggerRefresh } = useOperationStatus();
+  const isConnected: boolean = useConnected();
 
   const filterOption: TableColumnOption = props.tableColumnOptions?.find(option => option.name === "filter");
   const disableDateFilter: boolean = filterOption ? !filterOption.visible : false;
@@ -105,6 +109,17 @@ export default function RegistryTableComponent(
     };
   }, []);
 
+  useEffect(() => {
+    // Syncs account data only if available
+    const syncAccountData = async (): Promise<void> => {
+      await dexieFormRepo.syncAccount(props.accountType, isConnected);
+    };
+
+    if (props.addEntity || props.lifecycleStage == LifecycleStageMap.CLOSED) {
+      syncAccountData();
+    }
+  }, [props.accountType, props.addEntity, isConnected]);
+
   return (
     <div className="bg-muted py-4 px-2 md:py-2.5 md:px-8 flex flex-col md:h-full md:min-h-0">
       <div className="rounded-lg pb-4">
@@ -137,6 +152,7 @@ export default function RegistryTableComponent(
           recordType={props.entityType}
           lifecycleStage={props.lifecycleStage}
           disableRowAction={false}
+          pricingType={props.pricingType}
           selectedDate={selectedDate}
           tableDescriptor={tableDescriptor}
           triggerRefresh={triggerTableRefresh}

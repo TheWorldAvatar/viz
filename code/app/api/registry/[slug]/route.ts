@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
+import { FLAG_KEY, SYNC_KEY } from "@/utils/constants";
 import { getBackendApi } from "@/utils/internal-api-services";
 import { logColours } from "@/utils/logColours";
+import { NextRequest, NextResponse } from "next/server";
 
 const apiVersion: string = "5.30.5";
 const internalApiIdentifierSet: ReadonlySet<string> = new Set(Object.values(InternalApiIdentifierMap));
@@ -239,7 +240,7 @@ function makeExternalEndpoint(
   switch (slug) {
     case InternalApiIdentifierMap.ACCOUNT: {
       const type: string = searchParams.get("type");
-      if (type == "flag") {
+      if (type == FLAG_KEY) {
         return `${agentBaseApi}/report/account/flag`;
       }
       const page: string = searchParams.get("page");
@@ -314,8 +315,13 @@ function makeExternalEndpoint(
       const search: string = searchParams.get("search");
 
       let url: string = `${agentBaseApi}/${type}`;
-      // For getting registry table backend
-      if (requireLabel === "true") {
+      if (requireLabel === SYNC_KEY) {
+        const page: string = searchParams.get("page");
+        const limit: string = searchParams.get("limit");
+        const timestamp: string = searchParams.get("filters");
+        return `${agentBaseApi}/${type}/pull?cursor=${page}&limit=${limit}${!!timestamp ? "&timestamp=" + timestamp : ""}${subtype != null ? "&parent=" + subtype : ""}`;
+        // For getting registry table backend
+      } else if (requireLabel === "true") {
         const page: string = searchParams.get("page");
         const limit: string = searchParams.get("limit");
         const sortBy: string = searchParams.get("sort_by");
@@ -361,7 +367,11 @@ function makeExternalEndpoint(
       const filters: string = encodeFilters(searchParams.get("filters"));
       const urlParams: URLSearchParams = new URLSearchParams({ type, field, search });
       if (type == LifecycleStageMap.ACCOUNT) {
-        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}`);
+        const cursor: string = searchParams.get("cursor");
+        const limit: string = searchParams.get("limit");
+        const timestamp: string = searchParams.get("filters");
+        return buildUrl(agentBaseApi, "report", "account", `filter?type=${encodeURIComponent(field)}&search=${encodeURIComponent(search)}
+        &cursor=${encodeURIComponent(cursor)}&limit=${encodeURIComponent(limit)}${!!timestamp ? "&timestamp=" + timestamp : ""}`);
       }
       if (lifecycle == "general") {
         return `${agentBaseApi}/${type}/filter?${urlParams.toString()}${filters}`;

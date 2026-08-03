@@ -53,10 +53,16 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
     props.setIsOpen((prev) => !prev);
   };
 
-  // Handler to save the current form state
+  // Handlers to save the current form state; Only add and edit form requires propagation of values
   const onSaveSession = (): void => {
     const values: FieldValues = props.form.getValues();
     saveCurrentSession(values);
+  }
+
+  const onSaveSessionWithPropagation = (): void => {
+    const values: FieldValues = props.form.getValues();
+    saveCurrentSession(values);
+    saveCurrentSession(values, props.entityType);
   }
 
   // Generate URL for sub-entity actions (add, edit, delete)
@@ -102,7 +108,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             url={genSubEntityUrl("add", props.entityType)}
             softRedirect={true}
             variant="outline"
-            additionalAction={onSaveSession}
+            additionalAction={onSaveSessionWithPropagation}
           />
           {props.selectedEntityId && isPermitted("edit") && <RedirectButton
             leftIcon="edit"
@@ -117,7 +123,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
             )}
             softRedirect={true}
             variant="outline"
-            additionalAction={onSaveSession}
+            additionalAction={onSaveSessionWithPropagation}
           />}
           {props.selectedEntityId && isPermitted("delete") && <RedirectButton
             leftIcon="delete"
