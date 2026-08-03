@@ -15,7 +15,6 @@ import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStage } from "@/types/form";
 import Button from "@/ui/interaction/button";
-import { useIsSyncing } from "@/utils/db/dexie-form-repository";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
 import { RefObject, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
@@ -65,7 +64,6 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   useLayoutEffect(() => {
     restoreScrollPosition();
   }, [restoreScrollPosition]);
-  const isSyncing: boolean = useIsSyncing();
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
