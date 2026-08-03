@@ -74,6 +74,7 @@ export function DependentFormSection(
     previousParentOption.current = currentParentOption;
 
     if (parentChanged && currentParentOption) {
+      setSearch("");
       props.form.setValue(fieldName, "");
     }
   }, [currentParentOption, fieldName, props.form]);
@@ -113,7 +114,7 @@ export function DependentFormSection(
             render={({ field: { onChange, value } }) => {
               return (
                 liveFormOptions?.options && <SimpleSelector
-                  key={`${fieldName}-${currentParentOption}`}
+                  key={`${fieldName}-${currentParentOption}-${value}`}
                   options={liveFormOptions.options}
                   defaultVal={value}
                   onChange={(option) => {
