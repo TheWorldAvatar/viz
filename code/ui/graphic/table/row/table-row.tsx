@@ -130,14 +130,14 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             (field as PropertyGroup).property.forEach((nestedField) => {
               setDispatchFormFields((prev) => ({
                 ...prev,
-                [nestedField.name[VALUE_KEY].replace(" ", "_")]: nestedField
+                [nestedField.name[VALUE_KEY].replaceAll(" ", "_")]: nestedField
               }));
             })
           } else {
             const fieldShape: PropertyShape = field as PropertyShape;
             setDispatchFormFields((prev) => ({
               ...prev,
-              [fieldShape.name[VALUE_KEY].replace(" ", "_")]: fieldShape
+              [fieldShape.name[VALUE_KEY].replaceAll(" ", "_")]: fieldShape
             }));
           }
         });
