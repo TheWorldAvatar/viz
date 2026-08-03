@@ -36,6 +36,7 @@ interface DependentFormSectionProps {
   form: UseFormReturn;
   billingStore?: BillingEntityTypes;
   isArray?: boolean;
+  resetArray?: () => void;
 }
 
 /**
@@ -45,6 +46,7 @@ interface DependentFormSectionProps {
  * @param {UseFormReturn} form A react-hook-form hook containing methods and state for managing the associated form.
  * @param {BillingEntityTypes} billingStore Optionally stores the type of account and pricing.
  * @param {boolean} isArray Whether the field is an array.
+ * @param resetArray An optional function to reset the array.
  */
 export function DependentFormSection(
   props: Readonly<DependentFormSectionProps>
@@ -75,7 +77,11 @@ export function DependentFormSection(
 
     if (parentChanged && currentParentOption) {
       setSearch("");
-      props.form.setValue(fieldName, "");
+      if (props.isArray) {
+        props.resetArray();
+      } else {
+        props.form.setValue(fieldName, "");
+      }
     }
   }, [currentParentOption, fieldName, props.form]);
 
