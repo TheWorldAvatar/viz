@@ -1,3 +1,6 @@
+import { TableDescriptor } from "@/hooks/table/useTable";
+import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
+import { useDictionary } from "@/hooks/useDictionary";
 import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -7,22 +10,20 @@ import {
   SortableContext,
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
-import { TableDescriptor } from "@/hooks/table/useTable";
-import { DragAndDropDescriptor, useTableDnd } from "@/hooks/table/useTableDnd";
-import { useDictionary } from "@/hooks/useDictionary";
 
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
+import { Dictionary } from "@/types/dictionary";
+import { LifecycleStage } from "@/types/form";
+import Button from "@/ui/interaction/button";
+import { useIsSyncing } from "@/utils/db/dexie-form-repository";
+import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
 import { RefObject, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
-import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage } from "@/types/form";
-import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
-import Button from "@/ui/interaction/button";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
-import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 
 interface RegistryTableProps {
   recordType: string;
@@ -31,6 +32,7 @@ interface RegistryTableProps {
   lifecycleStage: LifecycleStage;
   tableDescriptor: TableDescriptor;
   triggerRefresh: () => void;
+  pricingType?: string;
   selectedDate?: DateRange;
   tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
@@ -43,6 +45,7 @@ interface RegistryTableProps {
  * @param {string} accountType The type of account for billing capabilities.
  * @param {boolean} disableRowAction Hides the row actions for the user if true.
  * @param {LifecycleStage} lifecycleStage The current stage of a contract lifecycle to display.
+ * @param {string} pricingType Optional value to indicate the type of pricing for billing capabilities.
  * @param {DateRange} selectedDate The currently selected date.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
  * @param triggerRefresh A function to refresh the table when required.
@@ -62,6 +65,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   useLayoutEffect(() => {
     restoreScrollPosition();
   }, [restoreScrollPosition]);
+  const isSyncing: boolean = useIsSyncing();
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
@@ -82,6 +86,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
         tableScrollDescriptor={props.tableScrollDescriptor}
         rowRefs={rowRefs}
         addEntity={props.addEntity}
+        pricingType={props.pricingType}
       >
         <div className="relative rounded-lg border border-border w-full mr-auto overflow-hidden fade-in-on-motion flex flex-col h-[calc(100dvh-13rem)] md:h-full md:min-h-0">
           <div

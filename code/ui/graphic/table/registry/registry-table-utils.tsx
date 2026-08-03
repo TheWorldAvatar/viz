@@ -1,11 +1,7 @@
-import { Routes } from "@/io/config/routes";
-import { browserStorageManager } from "@/state/browser-storage-manager";
-import { AgentResponseBody, ColumnDefinitionResponse, InternalApiIdentifierMap } from "@/types/backend-agent";
+import { ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
 import {
-  FormTypeMap,
   LifecycleStage,
-  LifecycleStageMap,
   RegistryFieldValues,
   RegistryFlatFieldValues,
   SparqlResponseField
@@ -13,14 +9,9 @@ import {
 import { TableColumnOption } from "@/types/settings";
 import { ComparisonOperatorMap } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
-import { toast } from "@/ui/interaction/action/toast/toast";
-import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import StatusComponent from "@/ui/text/status/status";
-import { canSkipOptionalAccrual } from "@/utils/accrual-utils";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { DATE_KEY, DEFAULT_MAX_CHARACTER_LENGTH, EVENT_KEY, FLAG_EMOJI, FLAG_KEY, TASK_STATUS_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { submitOptionalAccrual } from "@/utils/optional-accrual";
+import { DEFAULT_MAX_CHARACTER_LENGTH, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
   ColumnDef,
   ColumnFilter,
@@ -439,62 +430,6 @@ export function getDisabledDates(lifecycleStage: LifecycleStage): DateBefore {
     return { before: tomorrow };
   }
   return undefined;
-}
-
-/**
- * Executes the review billable action which checks if the bill is already accrued or not and navigates to the correct drawer.
- *
- * @param {FieldValues} row The row data.
- * @param {string} accountType The account type.
- * @param navigateToDrawer The function to navigate to the drawer.
- */
-export async function execReviewBillableAction(
-  row: FieldValues,
-  accountType: string,
-  navigateToDrawer: (...urlParts: string[]) => void,
-  triggerRefresh: (() => void) | undefined,
-  dict: Dictionary,
-): Promise<void> {
-  const url: string = makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE, row.id, row.date);
-  const body: AgentResponseBody = await queryInternalApi(url);
-  browserStorageManager.set(DATE_KEY, row.date);
-  browserStorageManager.set(EVENT_KEY, row.event_id);
-  browserStorageManager.set(TASK_STATUS_KEY, row.status as string | undefined);
-  try {
-    const res: AgentResponseBody = await queryInternalApi(makeInternalRegistryAPIwithParams(
-      InternalApiIdentifierMap.FILTER,
-      LifecycleStageMap.ACCOUNT,
-      accountType,
-      row[accountType]
-    ));
-    const options: SelectOptionType[] = res.data?.items as SelectOptionType[];
-    // Set the account type in browser storage to match the values of the account type in the assign price form
-    browserStorageManager.set(accountType, options[0]?.value);
-  } catch (error) {
-    console.error("Error fetching instances", error);
-  }
-  if (body.data.message == "true") {
-    if (canSkipOptionalAccrual(row.status as string | undefined)) {
-      let loadingToast: string | number;
-      await submitOptionalAccrual({
-        taskId: getId(row.event_id),
-        contract: getId(row.id),
-        date: row.date as string,
-        onStart: () => { loadingToast = toast(dict.message.processingRequest, "loading"); },
-        onSuccess: (response) => {
-          toast(response.data?.message ?? dict.message.success, "success");
-          triggerRefresh?.();
-        },
-        onError: (message) => toast(message, "error"),
-        fallbackError: dict.message.genericError,
-        onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
-      });
-      return;
-    }
-    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.ACCRUAL}?id=${getId(row.event_id)}`);
-  } else {
-    navigateToDrawer(Routes.BILLING_ACTIVITY_PRICE, getId(row.id));
-  }
 }
 
 /**

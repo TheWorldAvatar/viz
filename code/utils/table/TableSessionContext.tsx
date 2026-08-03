@@ -15,6 +15,7 @@ export interface TableSessionState {
     tableScrollDescriptor: TableScrollDescriptor
     rowRefs: RefObject<TableRowHandle[]>;
     addEntity: string;
+    pricingType: string;
     setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
     setHistoryId: React.Dispatch<React.SetStateAction<string>>;
     setIsOpenHistoryModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,6 +30,7 @@ export const TableSessionContextProvider = ({
     tableScrollDescriptor,
     rowRefs,
     addEntity,
+    pricingType,
     children,
 }: {
     recordType: string;
@@ -37,6 +39,7 @@ export const TableSessionContextProvider = ({
     tableScrollDescriptor: TableScrollDescriptor
     rowRefs: RefObject<TableRowHandle[]>;
     addEntity?: string;
+    pricingType?: string;
     children: React.ReactNode;
 }) => {
     const [isOpenHistoryModal, setIsOpenHistoryModal] = useState<boolean>(false);
@@ -44,7 +47,7 @@ export const TableSessionContextProvider = ({
     const [activeRowId, setActiveRowId] = useState<string>("");
 
     return (
-        <TableSessionContext.Provider value={{ activeRowId, recordType, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, setActiveRowId, setHistoryId, setIsOpenHistoryModal }}>
+        <TableSessionContext.Provider value={{ activeRowId, recordType, lifecycleStage, tableDescriptor, tableScrollDescriptor, rowRefs, addEntity, pricingType, setActiveRowId, setHistoryId, setIsOpenHistoryModal }}>
             {children}
             {isOpenHistoryModal && historyId != "" &&
                 <HistoryModal
