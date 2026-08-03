@@ -79,7 +79,7 @@ export default function ReviewBillableRowAction(
             props.triggerRefresh?.();
           },
           onError: (message) => toast(message, "error"),
-          fallbackError: dict.message.error,
+          fallbackError: dict.message.genericError,
           onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
         });
         return;
