@@ -2,7 +2,7 @@ import { useConnected } from "@/hooks/useConnected";
 import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { toast } from "@/ui/interaction/action/toast/toast";
-import { db, DynamicTask } from "@/utils/table/db";
+import { db, DynamicTask } from "@/utils/db/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
 import { FieldValues } from "react-hook-form";

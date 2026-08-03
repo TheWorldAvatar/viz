@@ -26,6 +26,7 @@ import {
   VALUE_KEY
 } from "@/types/form";
 import { interpolate } from "@/utils/client-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { BRANCH_ADD, BRANCH_DELETE } from "@/utils/internal-api-services";
 import { SelectOptionType } from "../dropdown/simple-selector";
 
@@ -87,7 +88,6 @@ const EXCLUDED_CLASS_IDS: string[] = [
 export function isFieldMappable(fieldShape: PropertyShape): boolean {
   return (fieldShape.class && !EXCLUDED_CLASS_IDS.includes(fieldShape.class[ID_KEY])) || !!fieldShape.in;
 }
-
 
 /**
  * Parses a list of property shape or group into a format compliant with the viz.
@@ -158,6 +158,9 @@ export function parsePropertyShapeOrGroupList(
             initialState[fieldsetName] = [];
             // If at least one item or belongs to pricing group, initialise it with an array with 1 empty object
           } else if (!initialState[fieldsetName] && fieldset.minCount && (parseInt(fieldset.minCount?.[VALUE_KEY]) > 0 || isAddOrEditPricingGroup)) {
+            initialState[fieldId] = !Array.isArray(updatedProp.defaultValue)
+              ? updatedProp.defaultValue?.value
+              : updatedProp.defaultValue?.[0].value;
             initialState[fieldsetName] = [{}];
           }
           return initFormField(
@@ -507,6 +510,9 @@ function updateDependentProperty(
   field: PropertyShape,
   properties: PropertyShapeOrGroup[]
 ): PropertyShape {
+  const dependentClassCondition: boolean = field.class && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/FinancialDates/RegularSchedule"
+    && field.class[ID_KEY] !== "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/PhysicalLocation"
+    && field.class[ID_KEY] !== "https://www.theworldavatar.com/kg/ontotimeseries/TimeSeries";
   if (field.dependentOn) {
     const dependentIri: string = field.dependentOn[ID_KEY];
     let dependentFieldId: string;
@@ -534,6 +540,9 @@ function updateDependentProperty(
         }
       }
     }
+    if (dependentClassCondition) {
+      dexieFormRepo.registerField(field.name[VALUE_KEY], dependentFieldName);
+    }
     return {
       ...field,
       dependentOn: {
@@ -542,6 +551,9 @@ function updateDependentProperty(
       },
     };
   } else {
+    if (dependentClassCondition) {
+      dexieFormRepo.registerField(field.name[VALUE_KEY]);
+    }
     return field;
   }
 }

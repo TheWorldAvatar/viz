@@ -1,13 +1,14 @@
 'use client';
 
+import { browserStorageManager } from '@/state/browser-storage-manager';
+import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFormCount, setFrozenFields, setInvoiceAccountFilter } from '@/state/form-session-slice';
+import { FORM_STATES } from '@/ui/interaction/form/form-utils';
+import { PREV_SESSION_KEY } from '@/utils/constants';
+import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
 import { ColumnFilter } from '@tanstack/react-table';
 import { useContext } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { browserStorageManager } from '@/state/browser-storage-manager';
-import { selectFormCount, selectFrozenFields, selectInvoiceAccountFilter, setFormCount, setFrozenFields, setInvoiceAccountFilter } from '@/state/form-session-slice';
-import { FORM_STATES } from '@/ui/interaction/form/form-utils';
-import { FormSessionContext, FormSessionState } from '@/utils/form/FormSessionContext';
 
 interface useFormSessionReturn extends FormSessionState {
     formCount: number;
@@ -16,8 +17,9 @@ interface useFormSessionReturn extends FormSessionState {
     updateInvoiceAccount: (_account: string) => void;
     addFrozenFields: (_fields: string[]) => void;
     handleFormClose: () => void;
-    saveCurrentSession: (_initialState: FieldValues) => void;
-    loadPreviousSession: (_initialState: FieldValues) => FieldValues;
+    saveCurrentSession: (_initialState: FieldValues, _sessionId?: string, _alwaysStore?: boolean) => void;
+    updatePreviousSession: (_formData: FieldValues) => void;
+    loadPreviousSession: (_initialState: FieldValues, _fieldIdNameMapping: Record<string, string>) => FieldValues;
 }
 
 /**
@@ -80,10 +82,13 @@ const useFormSession = (): useFormSessionReturn => {
      * as saving usually occurs before moving to the next form.
      * 
      * @param {FieldValues} formData  The current form data.
+     * @param {string} sessionId Optionally saves the session into a target form based on this type.
+     * @param {boolean} alwaysStore Optionally forces the session to save all the values.
      */
-    const saveCurrentSession = (formData: FieldValues): void => {
+    const saveCurrentSession = (formData: FieldValues, sessionId?: string, alwaysStore?: boolean): void => {
         // Increment form count
         dispatch(setFormCount(formCount + 1));
+        updateSessionHistory(formSession.id);
 
         const dataTypeValues: Record<string, string> = {};
         Object.entries(formData).forEach(([key, value]) => {
@@ -91,31 +96,92 @@ const useFormSession = (): useFormSessionReturn => {
             if (excludedFields.includes(key) || key.startsWith("_form_")) return;
             // If the field ID mapping exists for dropdown fields, use the field name
             if (formSession.fieldIdNameMapping && formSession.fieldIdNameMapping[key]) {
+                // If there is a future session opening, store only the field and nothing else
+                if (sessionId) {
+                    dataTypeValues[formSession.fieldIdNameMapping[key]] = value;
+                } else {
+                    dataTypeValues[key] = value;
+                }
                 browserStorageManager.set(formSession.fieldIdNameMapping[key], value);
-            } else {
-                // Save individual field
+            } else if (!sessionId || alwaysStore) {
+                // For non-dropdown fields of the current form
                 dataTypeValues[key] = value;
             }
         });
         // Save all other fields under a single identifier
         if (Object.keys(dataTypeValues).length) {
-            browserStorageManager.set(formSession.id, JSON.stringify(dataTypeValues));
+            browserStorageManager.set(sessionId ? formSession.genFormSessionId(sessionId) : formSession.id,
+                JSON.stringify(dataTypeValues));
         }
     }
 
+    /** Stores the various form session id to track history of changes.
+    * 
+    * @param {string} sessionId  The current session id.
+    */
+    const updateSessionHistory = (sessionId: string): void => {
+        const sessions: string[] = browserStorageManager.get(PREV_SESSION_KEY) ? JSON.parse(browserStorageManager.get(PREV_SESSION_KEY)) : [];
 
-    /** Loads the previous form session for non-dropdowns for the current form.
+        // Do not push duplicates
+        if (!sessions.some(session => session === sessionId)) {
+            sessions.push(sessionId);
+            browserStorageManager.set(PREV_SESSION_KEY, JSON.stringify(sessions));
+        }
+    }
+
+    /** Updates all previous session with the data.
+    * 
+    * @param {FieldValues} formData  The data to be updated.
+    */
+    const updatePreviousSession = (formData: FieldValues): void => {
+        const sessions: string[] = browserStorageManager.get(PREV_SESSION_KEY) ? JSON.parse(browserStorageManager.get(PREV_SESSION_KEY)) : [];
+        sessions.forEach(session => {
+            const prevSessionRawData: string = browserStorageManager.get(session);
+            const prevSessionData: FieldValues = prevSessionRawData ? JSON.parse(prevSessionRawData) : {};
+            let currentSessionData: FieldValues = prevSessionData;
+            for (const dataKey of Object.keys(formData)) {
+                for (const sessionKey of Object.keys(prevSessionData)) {
+                    if (sessionKey.toLowerCase().endsWith(dataKey.toLowerCase())) {
+                        currentSessionData = {
+                            ...currentSessionData,
+                            [sessionKey]: formData[dataKey],
+                        }
+                        break;
+                    }
+                }
+            }
+            browserStorageManager.set(session, JSON.stringify(currentSessionData));
+        });
+
+    }
+
+    /** Loads the previous form session for non-dropdowns for the current form and stores the field id name mapping.
      * 
      * @param {FieldValues} initialState  The initial state for the form.
+     * @param {Record<string, string>} fieldIdNameMapping  Mappings between field id and name.
      */
-    const loadPreviousSession = (initialState: FieldValues): FieldValues => {
+    const loadPreviousSession = (initialState: FieldValues, fieldIdNameMapping: Record<string, string>): FieldValues => {
+        formSession.setFieldIdNameMapping(fieldIdNameMapping);
         // Load the values stored in the form ID, usually for input fields, branch names
         const previousSessionData: string = browserStorageManager.get(formSession.id);
         if (previousSessionData) {
+            const updatedState: FieldValues = { ...initialState };
             try {
                 // Override the initial state with the saved values from the previous session
                 const overrides: FieldValues = JSON.parse(previousSessionData);
-                initialState = { ...initialState, ...overrides };
+                for (const [overrideKey, overrideValue] of Object.entries(overrides)) {
+                    for (const [fieldId, fieldName] of Object.entries(fieldIdNameMapping)) {
+                        // Early break if override key is found
+                        if (fieldId == overrideKey || fieldName == overrideKey) {
+                            updatedState[fieldId] = overrideValue;
+                            continue;
+                        }
+                    }
+
+                    // If they are not found in the mappings above, they are non-dropdown and should overwrite
+                    updatedState[overrideKey] = overrideValue;
+                }
+                initialState = updatedState;
             } catch (e) {
                 console.error("Failed to load previous form data for: ", formSession.id, e);
             }
@@ -132,6 +198,7 @@ const useFormSession = (): useFormSessionReturn => {
         addFrozenFields,
         handleFormClose,
         saveCurrentSession,
+        updatePreviousSession,
         loadPreviousSession,
     };
 };

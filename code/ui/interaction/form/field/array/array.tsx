@@ -44,7 +44,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
     Number.isNaN(props.minSize) || props.minSize != 0 ? 1 : props.minSize;
   const { control } = props.form;
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: props.fieldId,
   });
@@ -52,6 +52,10 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   const emptyRow: FieldValues = useMemo(() => {
     return genEmptyArrayRow(props.fieldConfigs);
   }, [props.fieldConfigs]);
+
+  const resetArray = (): void => {
+    replace([emptyRow]);
+  }
 
   return (
     <div className="flex flex-col ">
@@ -131,6 +135,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
                         form={props.form}
                         billingStore={props.billingStore}
                         isArray={true}
+                        resetArray={resetArray}
                       />
                     )}
                     {!config.class && (

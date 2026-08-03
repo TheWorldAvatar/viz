@@ -25,8 +25,8 @@ class BrowserStorageManager {
    */
   public get(key: string): string | null | undefined {
     try {
-      const serialisedValue: string = this.storage.getItem(key);
-      if (serialisedValue === null) {
+      const serialisedValue: string = this.storage?.getItem(key);
+      if (!serialisedValue) {
         return null;
       }
       // Handle the case where "undefined" was stored as a raw string (not JSON)

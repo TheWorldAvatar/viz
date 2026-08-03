@@ -97,6 +97,11 @@ export const BUTTON_POLICIES: Record<string, ButtonPolicy> = {
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.GENERAL, LifecycleStageMap.ACCOUNT, LifecycleStageMap.PRICING],
         status: [],
     },
+    ADD_LINKED_ENTITY: {
+        permission: "operation",
+        stage: [LifecycleStageMap.GENERAL],
+        status: [],
+    },
     DRAFT_TEMPLATE: {
         permission: "draftTemplate",
         stage: [LifecycleStageMap.PENDING, LifecycleStageMap.ACTIVE, LifecycleStageMap.ARCHIVE, LifecycleStageMap.OUTSTANDING,
