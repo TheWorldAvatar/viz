@@ -38,6 +38,7 @@ export interface TableDescriptor {
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
   saveOrder: (_rows: FieldValues[]) => void;
+  resetOrder: () => void;
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
@@ -97,10 +98,6 @@ export function useTable(
     setSortParams(params);
   };
 
-  useEffect(() => {
-    resetOrder();
-  }, [selectedDate, sorting, columnFilters,
-    pagination.pageIndex, pagination.pageSize, resetOrder]);
 
   useEffect(() => {
     setCurrentDataView(applyOrder(data?.slice(startIndex, startIndex + pagination.pageSize)));
@@ -200,6 +197,7 @@ export function useTable(
     data: currentDataView,
     setData: setCurrentDataView,
     saveOrder,
+    resetOrder,
     initialInstances,
     pagination,
     apiPagination,

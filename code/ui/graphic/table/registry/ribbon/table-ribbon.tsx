@@ -18,6 +18,7 @@ import DateInput from "@/ui/interaction/input/date/date-input";
 import { buildUrl, interpolate } from "@/utils/client-utils";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
+import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 
 interface TableRibbonProps {
   path: string;
@@ -29,6 +30,7 @@ interface TableRibbonProps {
   setSelectedDate: React.Dispatch<React.SetStateAction<DateRange>>;
   triggerRefresh: () => void;
   tableDescriptor: TableDescriptor;
+  tableScrollDescriptor: TableScrollDescriptor
   message?: string;
 }
 
@@ -44,6 +46,7 @@ interface TableRibbonProps {
  * @param setSelectedDate A dispatch method to update selected date range.
  * @param triggerRefresh Method to trigger refresh.
  * @param {TableDescriptor} tableDescriptor A descriptor containing the required table functionalities and data.
+ * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} message Optional value to display a user-defined message at the table ribbon.
  */
 export default function TableRibbon(props: Readonly<TableRibbonProps>) {
@@ -259,6 +262,8 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             onClick={() => {
               props.tableDescriptor.table.resetColumnFilters();
               props.tableDescriptor.table.resetRowSelection();
+              props.tableDescriptor.resetOrder();
+              props.tableScrollDescriptor.scrollToTop();
             }}
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
