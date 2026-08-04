@@ -230,18 +230,16 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         const isPost: boolean = props.formType !== FormTypeMap.DISPATCH &&
           props.formType !== FormTypeMap.COMPLETE && props.formType !== FormTypeMap.ACCRUAL;
 
-        // Offline completion: fire the request so the service worker queues it for
-        // replay on reconnect, then confirm and close without awaiting a response
-        if (isOfflineCompletion) {
-          submitLifecycleAction(formData, action, isPost).catch((error) => console.warn("Queued offline submission:", error));
-          setIsDuplicate(false);
-          toast(dict.message.offlineQueued, "success");
-          handleDrawerClose(() => router.back());
-          return;
+        try {
+          response = await submitLifecycleAction(formData, action, isPost);
+        } catch {
+          if (isOfflineCompletion) {
+            setIsDuplicate(false);
+            toast(dict.message.offlineQueued, "success");
+            handleDrawerClose(() => router.back());
+            return;
+          }
         }
-
-        response = await submitLifecycleAction(formData, action, isPost);
-
         if (!response?.error && isDuplicate) {
           // Override id with the current ID based on path
           response = await submitLifecycleAction({
