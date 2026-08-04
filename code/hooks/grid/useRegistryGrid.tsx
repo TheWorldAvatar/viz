@@ -112,7 +112,9 @@ export function useRegistryGrid(
     };
 
     const triggerRefresh = () => {
-        clearTasks();
+        if (navigator.onLine) {
+            clearTasks();
+        }
         setHasMore(true);
         setIsInitialLoading(true);
         fetchLockRef.current = true;
