@@ -1,7 +1,6 @@
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import useTableSession from "@/hooks/table/useTableSession";
-import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
@@ -12,7 +11,7 @@ import Button from "@/ui/interaction/button";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import Checkbox from "@/ui/interaction/input/checkbox";
 import { getId } from "@/utils/client-utils";
-import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { useIsSyncing } from "@/utils/db/dexie-form-repository";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { useSortable } from "@dnd-kit/sortable";
@@ -62,7 +61,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
 
 
   const { activeRowId, recordType, lifecycleStage, tableDescriptor, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
-  const isConnected: boolean = useConnected();
+  const isSyncing: boolean = useIsSyncing();
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
@@ -131,18 +130,17 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             (field as PropertyGroup).property.forEach((nestedField) => {
               setDispatchFormFields((prev) => ({
                 ...prev,
-                [nestedField.name[VALUE_KEY].replace(" ", "_")]: nestedField
+                [nestedField.name[VALUE_KEY].replaceAll(" ", "_")]: nestedField
               }));
             })
           } else {
             const fieldShape: PropertyShape = field as PropertyShape;
             setDispatchFormFields((prev) => ({
               ...prev,
-              [fieldShape.name[VALUE_KEY].replace(" ", "_")]: fieldShape
+              [fieldShape.name[VALUE_KEY].replaceAll(" ", "_")]: fieldShape
             }));
           }
         });
-        await dexieFormRepo.sync(isConnected);
         delete initialState.lockField;
         // reset form data state on use effect
         form.reset(initialState);
@@ -155,7 +153,6 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
       getFormTemplate();
     }
   }, [props.id, isBulkEditMode]);
-
 
   useImperativeHandle(ref, () => ({
     getRowData: () => {
@@ -229,7 +226,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         {props.row.getVisibleCells().map((cell, index) => {
           if (tableDescriptor.isBulkDispatchEdit &&
             (cell.column.columnDef as EnhancedColumnDef<FieldValues>).stage == FormTypeMap.DISPATCH) {
-            return dexieFormRepo.getIsSyncing() ?
+            return isSyncing ?
               <td key={cell.id + index}>
                 <LoadingSpinner size="sm" />
               </td>
