@@ -296,7 +296,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
         break;
       }
       case FormTypeMap.ASSIGN_PRICE: {
-        formData["pricing"] = formData[props.entityType.replace("_", " ")];
+        formData["pricing"] = formData[props.entityType.replaceAll("_", " ")];
         pendingResponse = await queryInternalApi(
           makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.BILL, FormTypeMap.ASSIGN_PRICE),
           "POST",
@@ -439,7 +439,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
                 router.back();
               },
               onError: (message) => toast(message, "error"),
-              fallbackError: dict.message.error,
+              fallbackError: dict.message.genericError,
               onFinally: () => { if (loadingToast !== undefined) toast.dismiss(loadingToast); },
             });
           } else {

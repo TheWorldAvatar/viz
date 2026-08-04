@@ -13,17 +13,20 @@ import {
 
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStage } from "@/types/form";
+import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
 import Button from "@/ui/interaction/button";
-import { useIsSyncing } from "@/utils/db/dexie-form-repository";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
-import { RefObject, useLayoutEffect, useRef } from "react";
+import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { FieldValues } from "react-hook-form";
 import TablePagination from "../pagination/table-pagination";
 import HeaderRow from "../row/header-row";
 import TableRow, { TableRowHandle } from "../row/table-row";
 import { getRowRecordId } from "./registry-table-utils";
+import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
+import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
+import { useConnected } from "@/hooks/useConnected";
 
 interface RegistryTableProps {
   recordType: string;
@@ -61,11 +64,31 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     rowRefs,
   );
 
+  const isConnected: boolean = useConnected();
+
   // Restore the persisted scroll position when the table (re)mounts.
   useLayoutEffect(() => {
     restoreScrollPosition();
   }, [restoreScrollPosition]);
-  const isSyncing: boolean = useIsSyncing();
+
+  useEffect(() => {
+    // Fetch a clean form template and parse to get the sync fields required
+    const syncBulkEditFields = async (): Promise<void> => {
+      try {
+        const template: FormTemplateType = await queryInternalTaskFormTemplate(FormTypeMap.DISPATCH, FORM_IDENTIFIER);
+        const initialState: FieldValues = { lockField: [] };
+        parsePropertyShapeOrGroupList(initialState, FormTypeMap.MASS_EDIT, template?.property, {});
+        await dexieFormRepo.sync(isConnected);
+        delete initialState.lockField;
+      } catch (error) {
+        console.error("Failed to fetch form template:", error);
+      }
+    };
+
+    if (props.tableDescriptor.isBulkDispatchEdit) {
+      syncBulkEditFields();
+    }
+  }, [props.tableDescriptor.isBulkDispatchEdit]);
 
   // When no column metadata is available at all (e.g. an empty result on first load),
   // the header cannot be rendered, so fall back to a plain "no results" message.
