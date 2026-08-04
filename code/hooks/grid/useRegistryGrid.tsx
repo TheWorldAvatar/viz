@@ -14,7 +14,7 @@ import {
 import { getId, getUTCDate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { bulkPutTasks, clearTasks, useLiveTasks } from "@/utils/table/dexie-utils";
+import { bulkPutTasks, clearTasks, useLiveTasks } from "@/utils/db/dexie-task-utils";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";

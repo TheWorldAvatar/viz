@@ -88,11 +88,6 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
   useEffect(() => {
     const getAndSetScheduleDefaults = async (): Promise<void> => {
-      // If there is saved data for this form session, do not overwrite it with defaults;
-      if (browserStorageManager.get(formSessionId)) {
-        setIsLoading(false);
-        return;
-      }
       // Fetch existing values and update them according
       if (formType != FormTypeMap.ADD && formType != FormTypeMap.SEARCH) {
         // defaults
@@ -179,7 +174,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
         props.form.setValue(FORM_STATES.RECURRENCE, recurrence);
         props.form.setValue(FORM_STATES.TIME_SLOT_START, defaultTimeSlotStart);
         props.form.setValue(FORM_STATES.TIME_SLOT_END, defaultTimeSlotEnd);
-      } else if (formType == FormTypeMap.ADD) {
+      } else if (formType == FormTypeMap.ADD && !props.form.getValues(FORM_STATES.START_DATE)) {
         props.form.setValue(
           FORM_STATES.START_DATE,
           getDefaultVal(

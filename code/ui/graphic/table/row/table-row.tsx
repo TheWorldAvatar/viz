@@ -1,6 +1,7 @@
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDrawerNavigation } from "@/hooks/drawer/useDrawerNavigation";
 import useTableSession from "@/hooks/table/useTableSession";
+import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
 import useOperationStatus from "@/hooks/useOperationStatus";
 import { Routes } from "@/io/config/routes";
@@ -11,6 +12,7 @@ import Button from "@/ui/interaction/button";
 import { parsePropertyShapeOrGroupList } from "@/ui/interaction/form/form-utils";
 import Checkbox from "@/ui/interaction/input/checkbox";
 import { getId } from "@/utils/client-utils";
+import { dexieFormRepo } from "@/utils/db/dexie-form-repository";
 import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import { useSortable } from "@dnd-kit/sortable";
@@ -18,11 +20,12 @@ import { CSS } from "@dnd-kit/utilities";
 import { flexRender, Row } from "@tanstack/react-table";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
+import LoadingSpinner from "../../loader/spinner";
 import DragActionHandle from "../action/drag-action-handle";
 import RegistryRowAction from "../action/registry-row-action";
 import EditableTableCell from "../cell/editable-table-cell";
 import TableCell from "../cell/table-cell";
-import { EnhancedColumnDef, execReviewBillableAction, getRowRecordId } from "../registry/registry-table-utils";
+import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
 
 interface TableRowProps {
   id: string;
@@ -57,7 +60,9 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
     id: props.row?.id,
   });
 
+
   const { activeRowId, recordType, lifecycleStage, tableDescriptor, setActiveRowId, setHistoryId, setIsOpenHistoryModal, isBulkActionPermitted } = useTableSession();
+  const isConnected: boolean = useConnected();
 
   const isSelected: boolean = props.row?.getIsSelected();
   const isActive: boolean = activeRowId === props.id;
@@ -95,15 +100,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
       }
     } else if (lifecycleStage === LifecycleStageMap.CLOSED) {
-      if (isPermitted("invoice") &&
-        [RegistryStatusMap.COMPLETED, RegistryStatusMap.CANCELLED,
-        RegistryStatusMap.REPORTED, RegistryStatusMap.BILLABLE_CANCELLED,
-        RegistryStatusMap.BILLABLE_COMPLETED, RegistryStatusMap.BILLABLE_REPORTED].includes(row.status.toLowerCase())
-      ) {
-        await execReviewBillableAction(row, props.accountType, navigateToDrawer, props.triggerRefresh, dict);
-      } else {
-        navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
-      }
+      navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.VIEW}?id=${recordId}`);
     } else if (lifecycleStage === LifecycleStageMap.INVOICE) {
       navigateToDrawer(Routes.REGISTRY, recordType, recordId);
     } else if (lifecycleStage === LifecycleStageMap.ACTIVE || lifecycleStage === LifecycleStageMap.ARCHIVE) {
@@ -145,6 +142,7 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
             }));
           }
         });
+        await dexieFormRepo.sync(isConnected);
         delete initialState.lockField;
         // reset form data state on use effect
         form.reset(initialState);
@@ -231,17 +229,21 @@ export function TableRowRender(props: Readonly<TableRowProps>, ref: React.Forwar
         {props.row.getVisibleCells().map((cell, index) => {
           if (tableDescriptor.isBulkDispatchEdit &&
             (cell.column.columnDef as EnhancedColumnDef<FieldValues>).stage == FormTypeMap.DISPATCH) {
-            return <EditableTableCell
-              key={cell.id + index}
-              isBulkEditMode={isBulkEditMode}
-              fieldShape={dispatchFormFields[cell.column.id]}
-              form={form}
-            >
-              {flexRender(
-                cell.column.columnDef.cell,
-                cell.getContext()
-              )}
-            </EditableTableCell>;
+            return dexieFormRepo.getIsSyncing() ?
+              <td key={cell.id + index}>
+                <LoadingSpinner size="sm" />
+              </td>
+              : <EditableTableCell
+                key={cell.id + index}
+                isBulkEditMode={isBulkEditMode}
+                fieldShape={dispatchFormFields[cell.column.id]}
+                form={form}
+              >
+                {flexRender(
+                  cell.column.columnDef.cell,
+                  cell.getContext()
+                )}
+              </EditableTableCell>;
           } else {
             return <TableCell
               key={cell.id + index}

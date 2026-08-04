@@ -5,8 +5,8 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { RegistryTaskOption, SparqlResponseField } from "@/types/form";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { DynamicTask } from "@/utils/table/db";
-import { getTask } from "@/utils/table/dexie-utils";
+import { DynamicTask } from "@/utils/db/db";
+import { getTask } from "@/utils/db/dexie-task-utils";
 
 interface UseTaskDataResult {
     task: RegistryTaskOption | null;
