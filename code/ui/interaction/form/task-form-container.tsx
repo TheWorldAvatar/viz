@@ -232,13 +232,14 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
         try {
           response = await submitLifecycleAction(formData, action, isPost);
-        } catch {
+        } catch (error) {
           if (isOfflineCompletion) {
             setIsDuplicate(false);
             toast(dict.message.offlineQueued, "success");
             handleDrawerClose(() => router.back());
             return;
           }
+          throw error;
         }
         if (!response?.error && isDuplicate) {
           // Override id with the current ID based on path
