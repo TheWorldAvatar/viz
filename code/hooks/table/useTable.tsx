@@ -25,6 +25,7 @@ import {
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { useTableData } from "./api/useTableData";
+import { useTableRowOrder } from "./useTableRowOrder";
 import { useTablePagination } from "./useTablePagination";
 
 export interface TableDescriptor {
@@ -36,6 +37,7 @@ export interface TableDescriptor {
   data: FieldValues[];
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
+  saveOrder: (_rows: FieldValues[]) => void;
   pagination: PaginationState,
   apiPagination: PaginationState,
   totalRows: number;
@@ -73,6 +75,7 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
+  const { applyOrder, saveOrder, resetOrder } = useTableRowOrder();
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
@@ -94,9 +97,13 @@ export function useTable(
     setSortParams(params);
   };
 
+  useEffect(() => {
+    resetOrder();
+  }, [selectedDate, sorting, columnFilters,
+    pagination.pageIndex, pagination.pageSize, resetOrder]);
 
   useEffect(() => {
-    setCurrentDataView(data?.slice(startIndex, startIndex + pagination.pageSize));
+    setCurrentDataView(applyOrder(data?.slice(startIndex, startIndex + pagination.pageSize)));
   }, [data, pagination.pageIndex]);
 
   useEffect(() => {
@@ -192,6 +199,7 @@ export function useTable(
     table,
     data: currentDataView,
     setData: setCurrentDataView,
+    saveOrder,
     initialInstances,
     pagination,
     apiPagination,
