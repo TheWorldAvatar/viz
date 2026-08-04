@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
 import { FieldValues } from "react-hook-form";
 import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
 
@@ -23,9 +23,9 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         orderRef.current = rows.map(row => getRowRecordId(row));
     };
 
-    const resetOrder = useCallback((): void => {
+    const resetOrder = (): void => {
         orderRef.current = null;
-    }, []);
+    };
 
     // Reorders a freshly fetched page to match the remembered order. Rows that were never part of
     // that order are appended last, and rows that no longer exist drop out of it.
