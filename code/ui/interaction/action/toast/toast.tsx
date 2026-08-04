@@ -50,41 +50,38 @@ function Toast(props: Readonly<ToastProps>) {
 
   return (
     <div
-      className={`flex rounded-lg shadow-xl gap-3 w-full md:w-[500px] items-center justify-center p-4 ${toastConfig.bg} ${toastConfig.text} ${toastConfig.border}
-        border`}
+      className={`flex w-full items-center gap-2 rounded-lg border p-3 shadow-xl sm:gap-3 sm:p-4 md:w-125 ${toastConfig.bg} ${toastConfig.text} ${toastConfig.border}`}
     >
-      <div className="flex mr-3">
-        <Icon
-          className={`material-symbols-outlined shrink-0 mt-0.5 ${toastConfig.animate} ${toastConfig.text}`}
-        >
-          {toastConfig.icon}
-        </Icon>
-      </div>
-      <div className="flex flex-1 items-center">
-        <div className="w-full">
-          <p
-            className={`text-sm font-medium ${toastConfig.text}`}
-          >
+      <Icon
+        className={`material-symbols-outlined shrink-0 mr-1 ${toastConfig.animate} ${toastConfig.text}`}
+      >
+        {toastConfig.icon}
+      </Icon>
+      <div className="min-w-0 flex-1">
+        {toastConfig.title && (
+          <p className={`text-sm font-medium ${toastConfig.text}`}>
             {toastConfig.title}
           </p>
-          <p
-            className={`mt-1 text-sm ${toastConfig.text}`}
-          >
-            {message}
-          </p>
-        </div>
+        )}
+        <p
+          className={`text-sm hyphens-auto wrap-break-word ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
+        >
+          {message}
+        </p>
       </div>
       {type !== "loading" &&
-        <div className="ml-5 shrink-0">
-          <Button
-            variant="outline"
-            onClick={() => {
-              toast.dismiss(id);
-            }}
-          >
-            {dict.action.dismiss}
-          </Button>
-        </div>}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={`size-8 shrink-0 ${toastConfig.text}`}
+          leftIcon="close"
+          iconSize="small"
+          aria-label={dict.action.dismiss}
+          tooltipText={dict.action.dismiss}
+          onClick={() => {
+            toast.dismiss(id);
+          }}
+        />}
     </div>
   );
 }

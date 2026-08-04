@@ -13,7 +13,7 @@ import {
 
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { Dictionary } from "@/types/dictionary";
-import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage, PropertyShapeOrGroup } from "@/types/form";
+import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
 import Button from "@/ui/interaction/button";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
 import { RefObject, useEffect, useLayoutEffect, useRef } from "react";

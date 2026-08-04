@@ -14,5 +14,5 @@ export const useOfflineWarning = (): void => {
     if (!isConnected) {
       toast(dict.message.offlineMode, "error");
     }
-  }, [dict, isConnected]);
+  }, [dict.message.offlineMode, isConnected]);
 };
