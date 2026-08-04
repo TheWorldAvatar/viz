@@ -2,6 +2,14 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.83.2
+
+### Bug fixes
+
+- Fixed infinite loading for mass edit
+- Fixed dropdown selectors for ontology concepts in mass edit mode
+- Fixed field matching not working for three and more disjointed field names
+
 ## 5.83.1
 
 ### Chores

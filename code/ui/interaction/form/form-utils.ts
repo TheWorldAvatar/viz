@@ -118,7 +118,7 @@ export function parsePropertyShapeOrGroupList(
       const fieldsetName: string = fieldset?.label?.[VALUE_KEY];
       const isFieldsetArray: boolean = !fieldset.maxCount || parseInt(fieldset.maxCount?.[VALUE_KEY]) > 1;
       const isAddOrEditPricingGroup: boolean = isPrimaryEntity && billingTypes.pricing &&
-        fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replace("_", " ")) &&
+        fieldset.property?.some(prop => prop.name[VALUE_KEY] === billingTypes.pricing.replaceAll("_", " ")) &&
         (formType == FormTypeMap.ADD || formType == FormTypeMap.EDIT);
       if (isFieldsetArray && isAddOrEditPricingGroup) {
         fieldset.maxCount = {
@@ -146,9 +146,9 @@ export function parsePropertyShapeOrGroupList(
             fieldIdMapping[fieldsetName] = fieldsetName;
           }
           // Replace account or pricing field with the fieldset as it is an array so that we can still retrieve the old values
-          if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+          if (billingTypes?.account?.replaceAll("_", " ") == updatedProp.name[VALUE_KEY]) {
             billingTypes.accountField = fieldsetName;
-          } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+          } else if (billingTypes?.pricing?.replaceAll("_", " ") == updatedProp.name[VALUE_KEY]) {
             // As pricing field is an single input for add and edit draft contract forms, they should reuse the field id
             billingTypes.pricingField = isAddOrEditPricingGroup ? fieldId : fieldsetName;
           }
@@ -173,9 +173,9 @@ export function parsePropertyShapeOrGroupList(
           );
         }
         // Replace account or pricing field with the field ID so that we can still retrieve the old values
-        if (billingTypes?.account?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+        if (billingTypes?.account?.replaceAll("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.accountField = fieldId;
-        } else if (billingTypes?.pricing?.replace("_", " ") == updatedProp.name[VALUE_KEY]) {
+        } else if (billingTypes?.pricing?.replaceAll("_", " ") == updatedProp.name[VALUE_KEY]) {
           billingTypes.pricingField = fieldId;
         }
         if (isFieldMappable(updatedProp)) {
@@ -194,7 +194,7 @@ export function parsePropertyShapeOrGroupList(
         fields
       );
       const isFieldShapeArray: boolean = !shape.maxCount || parseInt(shape.maxCount?.[VALUE_KEY]) > 1;
-      const isPricingField: boolean = billingTypes.pricing && shape.name?.[VALUE_KEY] === billingTypes.pricing.replace("_", " ");
+      const isPricingField: boolean = billingTypes.pricing && shape.name?.[VALUE_KEY] === billingTypes.pricing.replaceAll("_", " ");
       const fieldShape: PropertyShape =
         isPrimaryEntity && isFieldShapeArray && (formType == FormTypeMap.ADD || formType == FormTypeMap.EDIT) && isPricingField
           ? {
@@ -1024,7 +1024,7 @@ export function parsePricingModels(formData: FieldValues, billingParams: Billing
     return [pricingData];
   } else if (pricingData.length > 0) {
     const pricingFieldKey: string = Object.keys(pricingData[0] as FieldValues)
-      .find(field => field.includes(billingParams.pricing.replace("_", " ")));
+      .find(field => field.includes(billingParams.pricing.replaceAll("_", " ")));
     return pricingData.flatMap(data => data[pricingFieldKey]);
   }
   return [];
