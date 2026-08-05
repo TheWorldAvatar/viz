@@ -50,6 +50,7 @@ export function useTableDnd(
       setTimeout(() => {
         tableDescriptor.table.setPageIndex(currentPageIndex);
       }, 0);
+      return reordered;
     }
   }
   return {
