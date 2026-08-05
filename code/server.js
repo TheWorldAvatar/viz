@@ -101,6 +101,13 @@ nextApp.prepare().then(async () => {
             res.json({ name, roles });
         });
 
+        // Bypass dynamic serwist route for sw.js
+        expressServer.get("/serwist/sw.js", (req, res) => {
+            res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+            res.setHeader("Content-Type", "application/javascript");
+            return handle(req, res);
+        });
+
         if (!process.env.PROTECTED_PAGES) {
             console.info('No protected pages specified. Protecting', colourGreen, 'all', colourReset, 'pages with Keycloak authentication.');
             expressServer.get("*allpaths", keycloak.protect());

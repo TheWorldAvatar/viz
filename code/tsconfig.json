@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "target": "esnext",
     "module": "esnext",
     "allowJs": true,
@@ -9,12 +8,15 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
     "strictNullChecks": false,
+    "paths": {
+        "@/*": ["./*"]
+    },
     "typeRoots": [
       "node_modules/@types"
     ],
