@@ -268,6 +268,17 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             tooltipText={dict.action.clearAllFilters}
             variant="destructive"
           />
+          <Button
+            leftIcon="mobiledata_off"
+            aria-label={dict.action.resetOrder}
+            iconSize="medium"
+            className="mt-1"
+            disabled={!props.tableDescriptor.hasCustomOrder}
+            size="icon"
+            onClick={props.tableDescriptor.resetOrder}
+            tooltipText={dict.action.resetOrder}
+            variant="destructive"
+          />
           {isPermitted("operation") && (props.lifecycleStage == LifecycleStageMap.OUTSTANDING ||
             props.lifecycleStage == LifecycleStageMap.SCHEDULED) &&
             <Button

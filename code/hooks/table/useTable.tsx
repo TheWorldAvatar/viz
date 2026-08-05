@@ -37,6 +37,7 @@ export interface TableDescriptor {
   data: FieldValues[];
   initialInstances: RegistryFieldValues[];
   setData: React.Dispatch<React.SetStateAction<FieldValues[]>>,
+  hasCustomOrder: boolean;
   saveOrder: (_rows: FieldValues[]) => void;
   resetOrder: () => void;
   pagination: PaginationState,
@@ -76,7 +77,7 @@ export function useTable(
   const [currentDataView, setCurrentDataView] = useState<FieldValues[]>([]);
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
-  const { applyOrder, saveOrder, resetOrder } = useTableRowOrder();
+  const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
@@ -101,7 +102,7 @@ export function useTable(
 
   useEffect(() => {
     setCurrentDataView(applyOrder(data?.slice(startIndex, startIndex + pagination.pageSize)));
-  }, [data, pagination.pageIndex]);
+  }, [data, pagination.pageIndex, hasCustomOrder]);
 
   useEffect(() => {
     if (invoiceAccountFilter) {
@@ -196,6 +197,7 @@ export function useTable(
     table,
     data: currentDataView,
     setData: setCurrentDataView,
+    hasCustomOrder,
     saveOrder,
     resetOrder,
     initialInstances,

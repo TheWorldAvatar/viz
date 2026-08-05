@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { getRowRecordId } from "@/ui/graphic/table/registry/registry-table-utils";
 
 interface TableRowOrderDescriptor {
+    hasCustomOrder: boolean;
     applyOrder: (_rows: FieldValues[]) => FieldValues[];
     saveOrder: (_rows: FieldValues[]) => void;
     resetOrder: () => void;
@@ -18,13 +19,16 @@ interface TableRowOrderDescriptor {
 export function useTableRowOrder(): TableRowOrderDescriptor {
     // A null ref means no custom order is in effect, and rows are left in the server's order
     const orderRef = useRef<string[] | null>(null);
+    const [hasCustomOrder, setHasCustomOrder] = useState<boolean>(false);
 
     const saveOrder = (rows: FieldValues[]): void => {
         orderRef.current = rows.map(row => getRowRecordId(row));
+        setHasCustomOrder(true);
     };
 
     const resetOrder = (): void => {
         orderRef.current = null;
+        setHasCustomOrder(false);
     };
 
     // Reorders a freshly fetched page to match the remembered order. Rows that were never part of
@@ -50,5 +54,5 @@ export function useTableRowOrder(): TableRowOrderDescriptor {
         return ordered;
     };
 
-    return { applyOrder, saveOrder, resetOrder };
+    return { hasCustomOrder, applyOrder, saveOrder, resetOrder };
 }
