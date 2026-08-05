@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/turbopack/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { BackgroundSyncPlugin, NetworkFirst, NetworkOnly, Serwist } from "serwist";
+import { BackgroundSyncPlugin, NetworkOnly, Serwist, StaleWhileRevalidate } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -14,7 +14,7 @@ declare global {
 
 declare const self: WorkerGlobalScope & typeof globalThis;
 
-const assetPrefix: string = process.env.ASSET_PREFIX;
+const assetPrefix: string = process.env.ASSET_PREFIX || "";
 
 const bgSyncPlugin: BackgroundSyncPlugin = new BackgroundSyncPlugin("form-submissions", {
   maxRetentionTime: 24 * 60, // Retry 24 hours
@@ -44,25 +44,18 @@ const serwist = new Serwist({
           request.headers.get("Next-Router-Prefetch") === "1"
         );
       },
-      handler: new NetworkFirst({
+      handler: new StaleWhileRevalidate({
         cacheName: "rsc-cache",
-        plugins: [
-          {
-            cacheKeyWillBeUsed: async ({ request }) => {
-              const url: URL = new URL(request.url);
-              url.searchParams.delete("id");
-              url.searchParams.delete("_rsc");
-              return url.href;
-            },
-          },
-        ],
+        matchOptions: {
+          ignoreSearch: true,
+        }
       }),
     },
     ...defaultCache,
   ], fallbacks: {
     entries: [
       {
-        url: `${assetPrefix || ""}/~offline`,
+        url: `${assetPrefix}/~offline`,
         matcher({ request }) {
           return request.destination === "document";
         },
