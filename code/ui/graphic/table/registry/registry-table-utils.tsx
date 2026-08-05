@@ -87,8 +87,6 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
       const field: string = sort.id;
       const valA: string = a[field];
       const valB: string = b[field];
-      // Both are blank, so this field cannot separate the rows and the next one decides
-      if (!valA && !valB) continue;
       // For null, undefined, or empty values, 
       // A comes last if descending, and first if ascending
       if (!valA) return sort.desc ? 1 : -1;
