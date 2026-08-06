@@ -160,7 +160,7 @@ function NavMenuContents(
         ? "flex gap-4 p-2 max-h-[60dvh] overflow-y-auto"
         : "items-center gap-4 overflow-x-hidden px-0 xl:px-4 pb-4 shrink-0"
         }
-      xl:flex flex-col ${props.isMenuExpanded ? "items-stretch" : "items-center"
+      xl:flex flex-col ${props.isMobile || props.isMenuExpanded ? "items-stretch" : "items-center"
         }`}
     >
       {!props.isMobile && (
