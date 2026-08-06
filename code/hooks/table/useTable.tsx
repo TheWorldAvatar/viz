@@ -78,7 +78,6 @@ export function useTable(
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
   const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
-  console.log("SLECTED ROW IDS", selectedRowIds);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
