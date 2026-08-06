@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/turbopack/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { BackgroundSyncPlugin, NetworkOnly, Serwist, StaleWhileRevalidate } from "serwist";
+import { BackgroundSyncPlugin, NetworkFirst, NetworkOnly, Serwist } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -44,7 +44,7 @@ const serwist = new Serwist({
           request.headers.get("Next-Router-Prefetch") === "1"
         );
       },
-      handler: new StaleWhileRevalidate({
+      handler: new NetworkFirst({
         cacheName: "rsc-cache",
         matchOptions: {
           ignoreSearch: true,
