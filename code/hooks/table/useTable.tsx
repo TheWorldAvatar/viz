@@ -78,6 +78,7 @@ export function useTable(
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
   const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
+  console.log("SLECTED ROW IDS", selectedRowIds);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
@@ -109,6 +110,10 @@ export function useTable(
       // Take out any invoice account filter and add the latest version
       const nonDefaultFilters: ColumnFilter[] = columnFilters.filter(filter => filter.id != invoiceAccountFilter.id);
       setColumnFilters([...nonDefaultFilters, invoiceAccountFilter]);
+      // An invoice covers a single account, so the previous account's rows must never carry over
+      // so we clear the selected row IDs and reset the table row selection.
+      setSelectedRowIds(new Set());
+      table.resetRowSelection();
     }
   }, [invoiceAccountFilter]);
 
