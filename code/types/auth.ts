@@ -2,11 +2,13 @@ import { LifecycleStage, LifecycleStageMap, RegistryStatus, RegistryStatusMap } 
 
 /**
  * Information retaining to keycloak login - username and relevant permissions.
+ * The default menu expanded state is stored in a cookie.
  *
 */
 export type SessionInfo = {
     userDisplayName: string;
     permissionScheme?: PermissionScheme;
+    defaultMenuExpanded: boolean;
 };
 
 /**

@@ -11,11 +11,12 @@ import { NavBarItemSettings, ScreenType, ScreenTypeMap, UISettings } from "@/typ
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import FileModal from "@/ui/interaction/modal/file/file-modal";
 import { parseStringsForUrls, parseWordsForLabels, interpolate } from "@/utils/client-utils";
+import { SIDE_MENU_EXPANDED_COOKIE } from "@/utils/constants";
 import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
 import { useScreenType } from "@/hooks/screen/useScreenType";
-
+import { useSession } from "@/hooks/auth/useSession";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -40,10 +41,11 @@ interface NavMenuContentsProps extends NavMenuProps {
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const dict: Dictionary = useDictionary();
+  const { defaultMenuExpanded } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
-  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(true);
+  const [isMenuExpanded, setIsMenuExpanded] = useState<boolean>(defaultMenuExpanded);
 
   if (props.isMobile) {
     return (
@@ -88,7 +90,11 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         setFileModalSettings={setFileModalSettings}
         setIsFileUploadModalOpen={setIsFileModalOpen}
         setIsMenuOpen={setIsMenuOpen}
-        handleMenuToggle={() => setIsMenuExpanded(!isMenuExpanded)}
+        handleMenuToggle={() => {
+          const next: boolean = !isMenuExpanded;
+          setIsMenuExpanded(next);
+          document.cookie = `${SIDE_MENU_EXPANDED_COOKIE}=${next}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
+        }}
       />
       {isFileModalOpen && (
         <FileModal

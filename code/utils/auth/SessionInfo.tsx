@@ -8,12 +8,15 @@ export const SessionContext = createContext<SessionInfo>(null);
 
 export const SessionInfoProvider = ({
     children,
+    defaultMenuExpanded,
 }: {
     children: React.ReactNode;
+    defaultMenuExpanded: boolean;
 }) => {
     const [session, setSession] = useState<SessionInfo>({
         userDisplayName: "",
         permissionScheme: null,
+        defaultMenuExpanded,
     });
     useEffect(() => {
         const fetchSession = cache(async () => {
@@ -21,10 +24,11 @@ export const SessionInfoProvider = ({
                 const response: Response = await fetch('/api/userinfo');
                 if (response.ok) {
                     const session = await response.json();
-                    setSession({
+                    setSession(prevSession => ({
+                        ...prevSession,
                         userDisplayName: session.name,
                         permissionScheme: parsePermissions(session.roles),
-                    });
+                    }));
                 }
             } catch (error) {
                 console.warn('Error fetching session details:', error);

@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useUserDisplayName } from "@/hooks/auth/useUserDisplayName";
 import PopoverActionButton from "../action/popover/popover-button";
+import { useSession } from "@/hooks/auth/useSession";
 
 /**
  * This component renders a widget that displays the user and a log out button.
  *
  */
 export default function KeycloakUserButton() {
-  const userDisplayName = useUserDisplayName();
+  const { userDisplayName } = useSession();
 
   return (
     <PopoverActionButton
