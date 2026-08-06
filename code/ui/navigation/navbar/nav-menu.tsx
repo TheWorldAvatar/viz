@@ -64,7 +64,7 @@ export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
         >
           <NavMenuContents
             {...props}
-            isMenuExpanded={true}
+            isMenuExpanded={isMenuExpanded}
             setFileModalSettings={setFileModalSettings}
             setIsFileUploadModalOpen={setIsFileModalOpen}
             setIsMenuOpen={setIsMenuOpen}
