@@ -1,14 +1,14 @@
 "use client"
 
-import { usePermissionScheme } from '@/hooks/auth/usePermissionScheme';
-import { PermissionScheme, PermissionType } from '@/types/auth';
+import { PermissionType } from '@/types/auth';
+import { useSession } from '@/hooks/auth/useSession';
 
 /**
  * A custom hook to support authorisation checks based on permissions.
  */
 export function usePermissionGuard(): (_permission: PermissionType) => boolean {
-    const keycloakEnabled: boolean = process.env.KEYCLOAK === "true";
-    const permissionScheme: PermissionScheme = usePermissionScheme();
+    const keycloakEnabled: boolean = process.env.KEYCLOAK.toLowerCase() === "true";
+    const { permissionScheme } = useSession();
 
     // A method to check if permitted by keycloak
     const isPermitted = (permission: PermissionType) => {

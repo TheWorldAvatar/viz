@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 
-import { useDefaultMenuExpanded } from "@/hooks/auth/useDefaultMenuExpanded";
 import { usePermissionGuard } from "@/hooks/auth/usePermissionGuard";
 import { useDictionary } from "@/hooks/useDictionary";
 import { OptionalPage } from "@/io/config/optional-pages";
@@ -17,6 +16,7 @@ import { NavBarItem } from "./navbar-item";
 import Button from "@/ui/interaction/button";
 import MobileContextMenu from "@/ui/interaction/context-menu/mobile-context-menu";
 import { useScreenType } from "@/hooks/screen/useScreenType";
+import { useSession } from "@/hooks/auth/useSession";
 
 export interface NavMenuProps {
   pages: OptionalPage[];
@@ -41,7 +41,7 @@ interface NavMenuContentsProps extends NavMenuProps {
  */
 export function NavMenu(props: Readonly<NavMenuProps>): React.ReactElement {
   const dict: Dictionary = useDictionary();
-  const defaultMenuExpanded: boolean = useDefaultMenuExpanded();
+  const { defaultMenuExpanded } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [fileModalSettings, setFileModalSettings] = useState<NavBarItemSettings>(null);
   const [isFileModalOpen, setIsFileModalOpen] = useState<boolean>(false);
