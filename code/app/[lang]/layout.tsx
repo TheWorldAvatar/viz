@@ -10,6 +10,7 @@ import SettingsStore from "@/io/config/settings";
 import { Dictionary } from "@/types/dictionary";
 import { UISettings } from "@/types/settings";
 import GlobalContainer from "@/ui/global-container";
+import { SIDE_MENU_EXPANDED_COOKIE } from "@/utils/constants";
 import { SessionInfoProvider } from "@/utils/auth/SessionInfo";
 import { getDictionary } from "@/utils/dictionary/dictionaries";
 import { DictionaryProvider } from "@/utils/dictionary/DictionaryContext";
@@ -85,7 +86,6 @@ export default async function RootLayout({
   const dictionary: Dictionary = await getDictionary(lang);
   const pages: OptionalPage[] = OptionalPages.getAllPages();
   const cookieStore = await cookies();
-  const defaultMenuExpanded: boolean = cookieStore.get("viz:side-menu-expanded")?.value !== "false";
   const manifestUrl = `${process.env.ASSET_PREFIX || ""}/manifest_${lang}.json`;
 
   // Root element containing all children.
@@ -97,8 +97,8 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SerwistProvider swUrl={`${process.env.ASSET_PREFIX || ""}/serwist/sw.js`}>
           <DictionaryProvider dictionary={dictionary}>
-            <SessionInfoProvider>
-              <GlobalContainer pages={pages} settings={uiSettings} defaultMenuExpanded={defaultMenuExpanded}>
+            <SessionInfoProvider defaultMenuExpanded={cookieStore.get(SIDE_MENU_EXPANDED_COOKIE)?.value !== "false"}>
+              <GlobalContainer pages={pages} settings={uiSettings}>
                 {children}
                 {modal}
                 <Toaster duration={Infinity} />

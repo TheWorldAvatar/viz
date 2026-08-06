@@ -7,6 +7,7 @@ import { LifecycleStage, LifecycleStageMap, RegistryStatus, RegistryStatusMap } 
 export type SessionInfo = {
     userDisplayName: string;
     permissionScheme?: PermissionScheme;
+    defaultMenuExpanded: boolean;
 };
 
 /**
