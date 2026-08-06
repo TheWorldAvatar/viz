@@ -37,6 +37,7 @@ import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
+import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
 
 interface TaskFormContainerComponentProps {
   id: string;
@@ -235,6 +236,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
         } catch (error) {
           if (isOfflineCompletion) {
             setIsDuplicate(false);
+            await dexieTaskRepo.removeTask(task?.id);
             toast(dict.message.offlineQueued, "success");
             handleDrawerClose(() => router.back());
             return;

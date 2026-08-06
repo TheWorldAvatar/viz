@@ -12,6 +12,15 @@ import { TASK_VIEWER_FILTER } from "../constants";
 class DexieTaskRepository {
 
     /**
+     * Remove the target task in IndexedDb.
+     * 
+     * @param {string} id Target task identifier.
+     */
+    async removeTask(id: string): Promise<void> {
+        await db.tasks.delete(id);
+    }
+
+    /**
      * Clear all tasks in IndexedDb.
      */
     async clearTasks(): Promise<void> {
