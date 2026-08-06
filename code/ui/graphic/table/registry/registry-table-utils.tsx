@@ -76,7 +76,12 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
   const defaultSorting: SortingState = hasEventId
     ? [{ id: "id", desc: false }, { id: "event_id", desc: false }]
     : [{ id: "id", desc: false }];
-  const activeSorting: SortingState = sorting.length > 0 ? sorting : defaultSorting;
+  // Always apply the default sorting to ensure stable sorting, even if the user has not specified any sorting
+  // If sorting is specified, the default sorting is applied after the user-specified sorting
+  const activeSorting: SortingState = [
+    ...sorting,
+    ...defaultSorting.filter(defaultSort => !sorting.some(sort => sort.id === defaultSort.id)),
+  ];
   return data.sort((a: FieldValues, b: FieldValues): number => {
     for (const sort of activeSorting) {
       const field: string = sort.id;

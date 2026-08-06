@@ -92,6 +92,7 @@ export default function RegistryTableComponent(
   const handleSelectedDateChange: Dispatch<SetStateAction<DateRange>> = (value) => {
     setSelectedDate(value);
     tableScrollDescriptor.scrollToTop();
+    tableDescriptor.resetOrder();
   };
 
   useEffect(() => {
@@ -142,6 +143,7 @@ export default function RegistryTableComponent(
             instances={tableDescriptor.initialInstances}
             triggerRefresh={triggerTableRefresh}
             tableDescriptor={tableDescriptor}
+            tableScrollDescriptor={tableScrollDescriptor}
             message={dict.translate(props.message)}
           />}
       </div>

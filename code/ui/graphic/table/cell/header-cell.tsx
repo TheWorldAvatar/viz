@@ -43,7 +43,7 @@ interface HeaderCellProps {
  */
 export default function HeaderCell(props: Readonly<HeaderCellProps>) {
   const dict: Dictionary = useDictionary();
-  const { tableScrollDescriptor } = useTableSession();
+  const { tableScrollDescriptor, tableDescriptor } = useTableSession();
   const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
   const isActiveFilter: boolean = props.header.column.getFilterValue() !== undefined &&
     (props.header.column.getFilterValue() as string[])?.length > 0;
@@ -64,6 +64,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 onClick={!props.disableSort ? (event) => {
                   props.header.column.getToggleSortingHandler()?.(event);
                   tableScrollDescriptor.scrollToTop();
+                  tableDescriptor.resetOrder();
                 } : undefined}
                 aria-label={props.header.column.columnDef.header as string}
               >
@@ -112,6 +113,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.table.resetRowSelection();
                   props.table.resetPageIndex();
                   tableScrollDescriptor.scrollToTop();
+                  tableDescriptor.resetOrder();
                 }
                 } />
             </PopoverActionButton>

@@ -1,5 +1,6 @@
 import { DragEndEvent, KeyboardSensor, MouseSensor, SensorDescriptor, SensorOptions, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import { FieldValues } from "react-hook-form";
 import { TableRowHandle } from "@/ui/graphic/table/row/table-row";
 import { TableDescriptor } from "./useTable";
 
@@ -35,21 +36,21 @@ export function useTableDnd(
     tableDescriptor.table.resetRowSelection();
     if (active && over && active.id !== over.id) {
       const currentPageIndex: number = tableDescriptor.table.getState().pagination.pageIndex;
-      tableDescriptor.setData((prev) => {
-        const oldIndex: number = dataIds.findIndex(
-          (record) => record == active.id
-        );
-        const newIndex: number = dataIds.findIndex(
-          (record) => record == over.id
-        );
-        // Hacky solution to reset pagination after reordering
-        // A better solution is that pagination is stored in a state outside of this component and
-        // we need to change the default pagination functionality in Tanstack as it is the source of this issue
-        setTimeout(() => {
-          tableDescriptor.table.setPageIndex(currentPageIndex);
-        }, 0);
-        return arrayMove(prev, oldIndex, newIndex);
-      });
+      const oldIndex: number = dataIds.findIndex((record) => record == active.id);
+      const newIndex: number = dataIds.findIndex((record) => record == over.id);
+      if (oldIndex < 0 || newIndex < 0) {
+        return;
+      }
+      const reordered: FieldValues[] = arrayMove(tableDescriptor.data, oldIndex, newIndex);
+      tableDescriptor.saveOrder(reordered);
+      tableDescriptor.setData(reordered);
+      // Hacky solution to reset pagination after reordering
+      // A better solution is that pagination is stored in a state outside of this component and
+      // we need to change the default pagination functionality in Tanstack as it is the source of this issue
+      setTimeout(() => {
+        tableDescriptor.table.setPageIndex(currentPageIndex);
+      }, 0);
+      return reordered;
     }
   }
   return {
