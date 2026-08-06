@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.83.4
+
+### Changes
+
+- Introduced a persistent Drag and drop state which keeps the row position after manual refreshes, row actions, and table data updates. This allows users to maintain their preferred row order even after performing actions that would normally reset the table state.
+- New rows added to the table will be appended to the end of the current order, preserving the existing order of rows.
+- The custom row is reset when the user refreshes the page, changes the table filters, sort columns, changes date range, table page size, and moves between table pagination
+- Added new btton in the table ribbon whcih indicates when a custom order is applied, which also resets to the default order when pressed.
+- Added scrollToTop fucntion to the page size change event and clear all filters button.
+
 ## 5.83.3
 
 ### Changes

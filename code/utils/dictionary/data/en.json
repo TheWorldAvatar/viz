@@ -41,6 +41,7 @@
     "update": "Update",
     "clear": "Clear",
     "clearSort": "Clear sort",
+    "resetOrder": "Reset rows",
     "sortasc": "Sort ascending",
     "sortdesc": "Sort descending",
     "dispatch": "Assign",

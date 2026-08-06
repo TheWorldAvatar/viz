@@ -41,6 +41,7 @@
     "update": "Aktualisieren",
     "clear": "Zurücksetzen",
     "clearSort": "Sortierung löschen",
+    "resetOrder": "Zeilen zurücksetzen",
     "sortasc": "Aufsteigend sortieren",
     "sortdesc": "Absteigend sortieren",
     "dispatch": "Zuweisen",
