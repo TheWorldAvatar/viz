@@ -13,8 +13,8 @@ import {
 } from "@/ui/graphic/table/registry/registry-table-utils";
 import { getId, getUTCDate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
+import { dexieTaskRepo, useLiveTasks } from "@/utils/db/dexie-task-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { bulkPutTasks, clearTasks, useLiveTasks } from "@/utils/db/dexie-task-utils";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
@@ -113,7 +113,7 @@ export function useRegistryGrid(
 
     const triggerRefresh = () => {
         if (navigator.onLine) {
-            clearTasks();
+            dexieTaskRepo.clearTasks();
         }
         setHasMore(true);
         setIsInitialLoading(true);
@@ -195,7 +195,7 @@ export function useRegistryGrid(
             setSelectedCount(res.data?.currentItemCount);
 
             // Update cache
-            await bulkPutTasks(parsedData);
+            await dexieTaskRepo.bulkPutTasks(parsedData);
             parsedData = parsedData.map(instance => {
                 // When there are no custom settings, ensure only values with contents are returned
                 if (mobileFields.current.length === 0) return {

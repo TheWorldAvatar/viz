@@ -9,31 +9,36 @@ import { FieldValues } from "react-hook-form";
 import { interpolate } from "../client-utils";
 import { TASK_VIEWER_FILTER } from "../constants";
 
-/**
- * Clear all tasks in IndexedDb.
- */
-export async function clearTasks(): Promise<void> {
-    await db.tasks.clear();
+class DexieTaskRepository {
+
+    /**
+     * Clear all tasks in IndexedDb.
+     */
+    async clearTasks(): Promise<void> {
+        await db.tasks.clear();
+    }
+
+    /**
+     * Bulk update tasks in IndexedDb.
+     *
+     * @param {FieldValues[]} instances Target tasks.
+     */
+    async bulkPutTasks(instances: FieldValues[]): Promise<void> {
+        await db.tasks.bulkPut(instances);
+    }
+
+    /**
+     * Get task from IndexedDb.
+     *
+     * @param {string} id Target task identifier.
+     */
+    async getTask(id: string): Promise<DynamicTask> {
+        const task: DynamicTask = await db.tasks.get(id);
+        return task;
+    }
 }
 
-/**
- * Bulk update tasks in IndexedDb.
- *
- * @param {FieldValues[]} instances Target tasks.
- */
-export async function bulkPutTasks(instances: FieldValues[]): Promise<void> {
-    await db.tasks.bulkPut(instances);
-}
-
-/**
- * Get task from IndexedDb.
- *
- * @param {string} id Target task identifier.
- */
-export async function getTask(id: string): Promise<DynamicTask> {
-    const task: DynamicTask = await db.tasks.get(id);
-    return task;
-}
+export const dexieTaskRepo: DexieTaskRepository = new DexieTaskRepository();
 
 /**
  * Get tasks from IndexedDb in real time.

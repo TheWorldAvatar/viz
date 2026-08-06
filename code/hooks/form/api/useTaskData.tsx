@@ -6,7 +6,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { RegistryStatusMap, RegistryTaskOption, SparqlResponseField } from "@/types/form";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { DynamicTask } from "@/utils/db/db";
-import { getTask } from "@/utils/db/dexie-task-utils";
+import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 
 interface UseTaskDataResult {
@@ -46,7 +46,7 @@ export function useTaskData(
                     }
                 } else {
                     const taskId: string = browserStorageManager.get(RegistryStatusMap.COMPLETED)
-                    const cachedTask: DynamicTask = await getTask(taskId);
+                    const cachedTask: DynamicTask = await dexieTaskRepo.getTask(taskId);
                     item = {
                         id: taskId,
                         contract: cachedTask.id as string,
