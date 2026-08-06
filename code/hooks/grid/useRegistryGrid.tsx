@@ -20,6 +20,7 @@ import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-v
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import useOperationStatus from "../useOperationStatus";
+import { useConnected } from "../useConnected";
 
 export interface GridDescriptor {
     isInitialLoading: boolean;
@@ -71,6 +72,8 @@ export function useRegistryGrid(
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
     const [filters, setFilters] = useState<ColumnFilter[]>(INITIAL_FILTER_STATE);
 
+    const isConnected: boolean = useConnected();
+
     const updateFilter = (field: string, selectedOptions: string[]) => {
         setFilters(prev => {
             const currentFieldIndex: number = prev.findIndex((f) => f.id === field);
@@ -112,13 +115,13 @@ export function useRegistryGrid(
     };
 
     const triggerRefresh = () => {
-        if (navigator.onLine) {
+        if (isConnected) {
             dexieTaskRepo.clearTasks();
+            setHasMore(true);
+            setIsInitialLoading(true);
+            fetchLockRef.current = true;
+            setIsFetching(true);
         }
-        setHasMore(true);
-        setIsInitialLoading(true);
-        fetchLockRef.current = true;
-        setIsFetching(true);
     }
 
     const fetchNextPage = () => {
@@ -237,10 +240,10 @@ export function useRegistryGrid(
             setIsInitialLoading(false);
         }
         // Only fetch data if there are no ongoing fetches, and there are more data to fetch
-        if (isFetching && hasMore) {
+        if (isFetching && hasMore && isConnected) {
             fetchData();
         }
-    }, [entityType, isFetching, filters]);
+    }, [entityType, isConnected, isFetching, filters]);
 
     return {
         isInitialLoading,
