@@ -99,10 +99,9 @@ export function useTable(
     setSortParams(params);
   };
 
-
-  // Leave hasCustomOrder in the dependencies, as its value is used to determine if we should apply the order or not.
   useEffect(() => {
-    setCurrentDataView(applyOrder(data?.slice(startIndex, startIndex + pagination.pageSize)));
+    const pageRows: FieldValues[] = data?.slice(startIndex, startIndex + pagination.pageSize);
+    setCurrentDataView(hasCustomOrder ? applyOrder(pageRows) : pageRows);
   }, [data, pagination.pageIndex, hasCustomOrder]);
 
   useEffect(() => {
