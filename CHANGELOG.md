@@ -2,12 +2,23 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.83.6
+
+### Changes
+
+- Simplify serwist config for query parameters
+
+### Bug fixes
+
+- Fixed broken task completion targeting the wrong tasks
+- Fixed isConnected functionality for offline mode
+
 ## 5.83.5
 
 ### Changes
 
 - Introduced a persistent side navigation state using cookies
-- Introduced a new hook `useSession` which replaces the individual hooks `useUserDisplayName` and `usePermissionScheme` 
+- Introduced a new hook `useSession` which replaces the individual hooks `useUserDisplayName` and `usePermissionScheme`
 
 ## 5.83.4
 

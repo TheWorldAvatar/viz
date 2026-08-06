@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 /* A custom hook to check online and offline connection.
   */
 export const useConnected = (): boolean => {
-  const [isConnected, setIsConnected] = useState<boolean>(true);
+  const [isConnected, setIsConnected] = useState<boolean>(typeof window !== "undefined" ? navigator.onLine : true);
   useEffect(() => {
     const checkConnection = async () => {
       const isOnline: boolean = await healthCheck();

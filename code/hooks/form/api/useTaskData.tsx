@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { useConnected } from "@/hooks/useConnected";
+import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
-import { RegistryTaskOption, SparqlResponseField } from "@/types/form";
+import { RegistryStatusMap, RegistryTaskOption, SparqlResponseField } from "@/types/form";
 import { BULK_IDENTIFIER } from "@/utils/constants";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import { DynamicTask } from "@/utils/db/db";
 import { getTask } from "@/utils/db/dexie-task-utils";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 
 interface UseTaskDataResult {
     task: RegistryTaskOption | null;
@@ -44,9 +45,10 @@ export function useTaskData(
                         scheduleType: itemData.scheduleType.value,
                     }
                 } else {
-                    const cachedTask: DynamicTask = await getTask(id);
+                    const taskId: string = browserStorageManager.get(RegistryStatusMap.COMPLETED)
+                    const cachedTask: DynamicTask = await getTask(taskId);
                     item = {
-                        id: id,
+                        id: taskId,
                         contract: cachedTask.id as string,
                         status: cachedTask.status as string,
                         date: cachedTask.date as string,

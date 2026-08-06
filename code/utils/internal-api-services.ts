@@ -23,10 +23,8 @@ export async function healthCheck(): Promise<boolean> {
     });
     return res.status === 200;
   } catch (error: unknown) {
-    if (error instanceof TypeError) {
-      return false;
-    }
-    throw error;
+    console.warn(error);
+    return false;
   }
 }
 

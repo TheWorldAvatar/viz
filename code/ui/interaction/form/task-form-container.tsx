@@ -178,11 +178,11 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
     if (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.COMPLETE ||
       props.formType === FormTypeMap.ACCRUAL) {
-      getFormTemplate(props.formType, props.id);
+      getFormTemplate(props.formType, task?.id);
     } else if (props.formType === FormTypeMap.REPORT || props.formType === FormTypeMap.CANCEL || props.formType === FormTypeMap.EXEMPT) {
       getFormTemplate(props.formType);
     }
-  }, [props.id, props.formType]);
+  }, [isConnected, task?.id, props.formType]);
 
 
   // Handle form submission when buttons are clicked
@@ -200,7 +200,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     const loadingId: number | string = isOfflineCompletion ? undefined : startLoading();
     try {
       let response: AgentResponseBody;
-      if (props.id != BULK_IDENTIFIER) {
+      if (task?.id != BULK_IDENTIFIER) {
         let action = "";
         if (props.formType === FormTypeMap.DISPATCH) {
           action = "dispatch";
@@ -245,7 +245,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
           // Override id with the current ID based on path
           response = await submitLifecycleAction({
             ...formData,
-            id: props.id
+            id: task?.id
           }, "continue", true);
           setIsDuplicate(false);
         }
@@ -320,7 +320,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
   // Navigate to a different task action view
   const navigateToTaskAction = (action: RegistryTaskType) => {
-    navigateToDrawer(Routes.REGISTRY_TASK, action, props.id);
+    navigateToDrawer(Routes.REGISTRY_TASK, action, task?.id);
   };
 
   return (
