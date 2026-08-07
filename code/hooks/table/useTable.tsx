@@ -48,6 +48,7 @@ export interface TableDescriptor {
   sortParams: string;
   selectedRowIds: Set<string>;
   setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
+  resetRowSelection: () => void;
 }
 
 /**
@@ -109,6 +110,9 @@ export function useTable(
       // Take out any invoice account filter and add the latest version
       const nonDefaultFilters: ColumnFilter[] = columnFilters.filter(filter => filter.id != invoiceAccountFilter.id);
       setColumnFilters([...nonDefaultFilters, invoiceAccountFilter]);
+      // An invoice covers a single account, so the previous account's rows must never carry over
+      // so we clear the selected row IDs and reset the table row selection.
+      resetRowSelection();
     }
   }, [invoiceAccountFilter]);
 
@@ -162,7 +166,6 @@ export function useTable(
 
       return;
     }
-
     setColumnFilters(newFilters);
   };
 
@@ -189,6 +192,11 @@ export function useTable(
     getRowId: (row, index) => row.id + index,
   });
 
+  const resetRowSelection = (): void => {
+    setSelectedRowIds(new Set());
+    table.resetRowSelection();
+  }
+
   return {
     isLoading,
     isBackgroundLoading,
@@ -209,5 +217,6 @@ export function useTable(
     sortParams,
     selectedRowIds,
     setSelectedRows,
+    resetRowSelection,
   };
 }

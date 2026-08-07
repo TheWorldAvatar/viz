@@ -16,6 +16,7 @@ import RedirectButton from "@/ui/interaction/action/redirect/redirect-button";
 import Button from "@/ui/interaction/button";
 import DateInput from "@/ui/interaction/input/date/date-input";
 import { buildUrl, interpolate } from "@/utils/client-utils";
+import ClearAllFiltersButton from "../../action/clear-all-filters-button";
 import ColumnToggle from "../../action/column-toggle";
 import { getDisabledDates } from "../registry-table-utils";
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
@@ -252,21 +253,10 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
               columns={props.tableDescriptor.table.getAllLeafColumns()}
             />
           )}
-          <Button
-            leftIcon="filter_list_off"
-            aria-label={dict.action.clearAllFilters}
-            iconSize="medium"
-            className="mt-1"
+          <ClearAllFiltersButton
+            tableDescriptor={props.tableDescriptor}
+            tableScrollDescriptor={props.tableScrollDescriptor}
             disabled={props.tableDescriptor.filters.every((filter) => (filter?.value as string[])?.length == 0)}
-            size="icon"
-            onClick={() => {
-              props.tableDescriptor.table.resetColumnFilters();
-              props.tableDescriptor.table.resetRowSelection();
-              props.tableDescriptor.resetOrder();
-              props.tableScrollDescriptor.scrollToTop();
-            }}
-            tooltipText={dict.action.clearAllFilters}
-            variant="destructive"
           />
           <Button
             leftIcon="mobiledata_off"
