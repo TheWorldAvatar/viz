@@ -129,8 +129,7 @@ export function useRegistryGrid(
 
     const { data, previewData } = useLiveTasks(mobileFields.current, selectedCount, dict);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
-        // If there is always more, virtual items must be 1 more to trigger the refetch
-        count: hasMore ? previewData.length + 1 : previewData.length,
+        count: previewData.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 15, // Low value to prevent auto-trigger the bottom row
