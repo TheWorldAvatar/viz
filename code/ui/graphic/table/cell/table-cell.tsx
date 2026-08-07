@@ -30,7 +30,7 @@ export default function TableCell(props: Readonly<TableCellProps>) {
       className={`border-r border-border border-b p-1.5 px-2 text-lg text-left  font-normal last:border-r-0 ${props.className ?? ""
         }`}
     >
-      {props.children}
+      <div className="grid min-h-10 items-center">{props.children}</div>
     </CellTag>
   );
 }

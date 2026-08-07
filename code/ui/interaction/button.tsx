@@ -18,7 +18,7 @@ export type ButtonVariant = "link"
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
-  size?: "xs" | "sm" | "md" | "lg" | "default" | "icon";
+  size?: "xs" | "sm" | "md" | "lg" | "default" | "icon" | "icon-sm" | "icon-md" | "icon-xs";
   leftIcon?: "string" | React.ReactNode;
   rightIcon?: "string" | React.ReactNode;
   iconSize?: "inherit" | "medium" | "small" | "large";
@@ -99,6 +99,9 @@ export default function Button({
     default: "h-9 px-4 py-2 has-[>svg]:px-3",
     lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
     icon: "size-9",
+    "icon-xs": "size-6",
+    "icon-sm": "size-7",
+    "icon-md": "size-8",
   };
 
   // Define spacing between icons based on size
@@ -109,6 +112,9 @@ export default function Button({
     default: "space-x-2",
     lg: "space-x-2",
     icon: "space-x-0",
+    "icon-xs": "space-x-0",
+    "icon-sm": "space-x-0",
+    "icon-md": "space-x-0",
   };
 
   // Define styles for the disabled state

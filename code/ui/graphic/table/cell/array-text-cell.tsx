@@ -5,25 +5,30 @@ import ExpandableTextCell from "./expandable-text-cell";
 
 interface ArrayTextCellProps {
     fields: Record<string, string>[];
-    maxTextLength: number;
 }
 
 /**
  * This component renders an array text cell that allows users to switch between array item.
  *
  * @param {Record<string, string>[]} fields A list of fields to display.
- * @param {number} maxTextLength maximum length of text to display before truncation.
  */
 export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
     const [currentFieldValue, setCurrentFieldValue] = useState<number>(0);
     const nestedFields: string[] = Object.keys(props.fields[currentFieldValue]);
 
-    return <div>
-        {props.fields.length > 1 && <div className="flex gap-2 justify-end mb-2">
+    return <div className="flex w-full items-center gap-1">
+        {nestedFields.map((nestedField) => (
+            <ExpandableTextCell
+                key={nestedField}
+                text={parseWordsForLabels(nestedField) + ": " + props.fields[currentFieldValue][nestedField]}
+                className="min-w-0 flex-1"
+            />
+        ))}
+        {props.fields.length > 1 && <div className="flex shrink-0 items-center gap-1">
             <Button
                 variant="info"
                 leftIcon="keyboard_arrow_left"
-                size="icon"
+                size="icon-sm"
                 iconSize="small"
                 onClick={(event) => {
                     event.preventDefault();
@@ -32,12 +37,11 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 }}
                 disabled={currentFieldValue === 0}
                 aria-label="Go to previous array field"
-                className="h-8 w-8"
             />
             <Button
                 variant="info"
                 leftIcon="keyboard_arrow_right"
-                size="icon"
+                size="icon-sm"
                 iconSize="small"
                 onClick={(event) => {
                     event.preventDefault();
@@ -46,18 +50,7 @@ export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
                 }}
                 disabled={currentFieldValue == props.fields.length - 1}
                 aria-label="Go to next array field"
-                className="h-8 w-8"
             />
         </div>}
-        <div className="min-w-56">
-            {nestedFields.map((nestedField) => (
-                <ExpandableTextCell
-                    key={nestedField}
-                    text={parseWordsForLabels(nestedField) + ": " + props.fields[currentFieldValue][nestedField]}
-                    maxTextLength={props.maxTextLength}
-                    overrideExpansion={false}
-                />
-            ))}
-        </div>
     </div>
 }
