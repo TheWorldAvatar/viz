@@ -9,6 +9,7 @@ import React, { useRef } from "react";
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStageMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
+import ClearAllFiltersButton from "@/ui/graphic/table/action/clear-all-filters-button";
 import ColumnToggle from "@/ui/graphic/table/action/column-toggle";
 import RegistryTable from "@/ui/graphic/table/registry/registry-table";
 import { FormComponent } from "@/ui/interaction/form/form";
@@ -95,19 +96,11 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                                 columns={tableDescriptor.table.getAllLeafColumns()}
                             />
                         )}
-                        <Button
-                            leftIcon="filter_list_off"
-                            aria-label={dict.action.clearAllFilters}
-                            iconSize="medium"
-                            className="mt-1"
+                        <ClearAllFiltersButton
+                            tableDescriptor={tableDescriptor}
+                            tableScrollDescriptor={tableScrollDescriptor}
                             disabled={tableDescriptor.filters.every((filter) => filter.id === invoiceAccountFilter.id || (filter.value as string[])?.length === 0)}
-                            size="icon"
-                            onClick={() => {
-                                tableDescriptor.setFilters([invoiceAccountFilter]);
-                                tableDescriptor.clearSelectedRowIds();
-                            }}
-                            tooltipText={dict.action.clearAllFilters}
-                            variant="destructive"
+                            pinnedFilter={invoiceAccountFilter}
                         />
                     </div>
                     {!refreshFlag && !tableDescriptor.isLoading && <div>
