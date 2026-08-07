@@ -40,7 +40,7 @@ export default function ClearAllFiltersButton(props: Readonly<ClearAllFiltersBut
         } else {
           props.tableDescriptor.table.resetColumnFilters();
         }
-        props.tableDescriptor.clearSelectedRowIds();
+        props.tableDescriptor.resetRowSelection();
         props.tableDescriptor.resetOrder();
         props.tableScrollDescriptor.scrollToTop();
       }}

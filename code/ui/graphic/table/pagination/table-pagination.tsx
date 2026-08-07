@@ -34,7 +34,7 @@ export default function TablePagination() {
               value={tableDescriptor.pagination.pageSize}
               onChange={(e) => {
                 tableDescriptor.table.setPageSize(Number(e.target.value));
-                tableDescriptor.clearSelectedRowIds();
+                tableDescriptor.resetRowSelection();
                 tableScrollDescriptor.scrollToTop();
                 tableDescriptor.resetOrder();
               }}
@@ -66,7 +66,7 @@ export default function TablePagination() {
             className="hidden! md:flex!"
             onClick={() => {
               tableDescriptor.table.setPageIndex(0);
-              tableDescriptor.clearSelectedRowIds();
+              tableDescriptor.resetRowSelection();
               tableScrollDescriptor.scrollToTop();
               tableDescriptor.resetOrder();
             }}
@@ -79,7 +79,7 @@ export default function TablePagination() {
             size="icon"
             onClick={() => {
               tableDescriptor.table.previousPage();
-              tableDescriptor.clearSelectedRowIds();
+              tableDescriptor.resetRowSelection();
               tableScrollDescriptor.scrollToTop();
               tableDescriptor.resetOrder();
             }}
@@ -92,7 +92,7 @@ export default function TablePagination() {
             size="icon"
             onClick={() => {
               tableDescriptor.table.nextPage();
-              tableDescriptor.clearSelectedRowIds();
+              tableDescriptor.resetRowSelection();
               tableScrollDescriptor.scrollToTop();
               tableDescriptor.resetOrder();
             }}
@@ -106,7 +106,7 @@ export default function TablePagination() {
             size="icon"
             onClick={() => {
               tableDescriptor.table.setPageIndex(lastPageIndex - 1);
-              tableDescriptor.clearSelectedRowIds();
+              tableDescriptor.resetRowSelection();
               tableScrollDescriptor.scrollToTop();
               tableDescriptor.resetOrder();
             }}
