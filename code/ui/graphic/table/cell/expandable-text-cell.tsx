@@ -33,7 +33,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
     }, [props.text, isExpanded]);
 
     return (
-        <div className={`${isExpanded ? "" : "flex items-center gap-1"} ${props.className ?? ""}`}>
+        <div className={`${isExpanded ? "" : "flex items-center"} ${props.className ?? ""}`}>
             <div
                 ref={textRef}
                 // line-clamp rather than truncate, because the nowrap that truncate applies would make
@@ -43,7 +43,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                 {props.text}
             </div>
             {(isExpanded || isTruncated) && (
-                <div className="ml-1 inline-flex align-middle">
+                <div className="ml-1 inline-flex">
                     <Button
                         onClick={(e) => {
                             e.stopPropagation();
