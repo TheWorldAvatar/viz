@@ -104,7 +104,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                             size="icon"
                             onClick={() => {
                                 tableDescriptor.setFilters([invoiceAccountFilter]);
-                                tableDescriptor.table.resetRowSelection();
+                                tableDescriptor.clearSelectedRowIds();
                             }}
                             tooltipText={dict.action.clearAllFilters}
                             variant="destructive"

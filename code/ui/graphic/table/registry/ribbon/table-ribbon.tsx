@@ -261,7 +261,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             size="icon"
             onClick={() => {
               props.tableDescriptor.table.resetColumnFilters();
-              props.tableDescriptor.table.resetRowSelection();
+              props.tableDescriptor.clearSelectedRowIds();
               props.tableDescriptor.resetOrder();
               props.tableScrollDescriptor.scrollToTop();
             }}

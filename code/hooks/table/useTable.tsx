@@ -48,6 +48,7 @@ export interface TableDescriptor {
   sortParams: string;
   selectedRowIds: Set<string>;
   setSelectedRows: (_rowId: string, _isRemove: boolean) => void;
+  clearSelectedRowIds: () => void;
 }
 
 /**
@@ -78,6 +79,7 @@ export function useTable(
   const { startIndex, pagination, apiPagination, onPaginationChange } = useTablePagination();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(getInitialColumnVisibilityState(tableColumnOptions));
   const { hasCustomOrder, applyOrder, saveOrder, resetOrder } = useTableRowOrder();
+  console.log("SELECTED ROW IDS", selectedRowIds);
 
   const { isLoading, isBackgroundLoading, data, columns, selectedCount, totalCount, initialInstances } = useTableData(
     entityType,
@@ -91,6 +93,11 @@ export function useTable(
     tableColumnOptions,
     pagination.pageSize,
   );
+
+  const clearSelectedRowIds = (): void => {
+    setSelectedRowIds(new Set());
+    table.resetRowSelection();
+  }
 
   const onSortingChange: OnChangeFn<SortingState> = (updater) => {
     const newSorting: SortingState = typeof updater === "function" ? updater(sorting) : updater;
@@ -111,8 +118,7 @@ export function useTable(
       setColumnFilters([...nonDefaultFilters, invoiceAccountFilter]);
       // An invoice covers a single account, so the previous account's rows must never carry over
       // so we clear the selected row IDs and reset the table row selection.
-      setSelectedRowIds(new Set());
-      table.resetRowSelection();
+      clearSelectedRowIds();
     }
   }, [invoiceAccountFilter]);
 
@@ -166,7 +172,6 @@ export function useTable(
 
       return;
     }
-
     setColumnFilters(newFilters);
   };
 
@@ -213,5 +218,6 @@ export function useTable(
     sortParams,
     selectedRowIds,
     setSelectedRows,
+    clearSelectedRowIds,
   };
 }
