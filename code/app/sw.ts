@@ -31,6 +31,10 @@ const serwist = new Serwist({
   navigationPreload: true,
   runtimeCaching: [
     {
+      matcher: ({ url }) => url.pathname === assetPrefix + "/api/status",
+      handler: new NetworkOnly()
+    },
+    {
       matcher: ({ url }) => url.pathname === assetPrefix + "/api/registry/event",
       method: "PUT",
       handler: new NetworkOnly({
