@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { AgentResponseBody } from "@/types/backend-agent";
 import { UISettings } from "@/types/settings";
 import { buildUrl } from "@/utils/client-utils";
-import { getBackendApi } from "@/utils/internal-api-services";
+import { getBackendApi } from "@/utils/backend-api-services";
 
 /**
  * GET request handler

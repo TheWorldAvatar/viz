@@ -1,4 +1,4 @@
-import { AgentResponseBody, BackendApis, ContractDirectory, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
+import { AgentResponseBody, ContractDirectory, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FORM_IDENTIFIER, FormTemplateType, FormType } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { HTTP_METHOD } from "next/dist/server/web/http";
@@ -329,16 +329,4 @@ export function getSafeUrl(rawUrl: string): string | null {
   } catch {
     return null;
   }
-}
-
-/**
- * Get the backend API URL for a given service key.
- * Throws an error if the service is not configured in the environment variables.
- * 
- * @param service The resource identifier representing the backend service.
- */
-export function getBackendApi(service: keyof typeof BackendApis) {
-  const url: string = BackendApis[service];
-  if (!url) throw new Error(`Backend for ${service} not configured.`);
-  return url;
 }
