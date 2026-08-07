@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.83.7
+
+### Bug fixes
+
+- Fixed an issue where invoices could include tasks from multiple clients if the selected client was changed after tasks had already been selected. Selected tasks are now cleared whenever the client, filters, sorting, or table pagination changes.
+
+### Hot fix
+
+- Fixed a layout issue in the nav menu on mobile where the menu items were not displayed correctly. This bug was introduced in PR #710
+
 ## 5.83.6
 
 ### Changes
