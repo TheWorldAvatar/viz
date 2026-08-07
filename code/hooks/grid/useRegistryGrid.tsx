@@ -19,8 +19,8 @@ import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
-import useOperationStatus from "../useOperationStatus";
 import { useConnected } from "../useConnected";
+import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
     isInitialLoading: boolean;
@@ -115,13 +115,10 @@ export function useRegistryGrid(
     };
 
     const triggerRefresh = () => {
-        if (isConnected) {
-            dexieTaskRepo.clearTasks();
-            setHasMore(true);
-            setIsInitialLoading(true);
-            fetchLockRef.current = true;
-            setIsFetching(true);
-        }
+        setHasMore(true);
+        setIsInitialLoading(true);
+        fetchLockRef.current = true;
+        setIsFetching(true);
     }
 
     const fetchNextPage = () => {
@@ -196,7 +193,10 @@ export function useRegistryGrid(
                 return instance;
             });
             setSelectedCount(res.data?.currentItemCount);
-
+            // Only clear tasks if this is the first load or refresh triggered
+            if (isInitialLoading) {
+                await dexieTaskRepo.clearTasks();
+            }
             // Update cache
             await dexieTaskRepo.bulkPutTasks(parsedData);
             parsedData = parsedData.map(instance => {

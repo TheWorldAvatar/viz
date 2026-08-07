@@ -150,7 +150,7 @@ export default function RegistryGridComponent(
       <section className="flex justify-end shrink-0 py-1 md:pb-0">
         {data.length > 0 && <p className="text-sm md:text-base pt-1 pr-4">{
           interpolate(dict.message.numberOfRecords, String(currentItemIndex + 1))
-            .replace("{replacetotal}", String(selectedCount))}</p>
+            .replace("{replacetotal}", String(data?.length))}</p>
         }
       </section>
     </div>
