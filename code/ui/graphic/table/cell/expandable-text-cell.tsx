@@ -23,14 +23,13 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
     const [isTruncated, setIsTruncated] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
+    // Turnication happens on mount and whenever the text changes
     useEffect(() => {
         const element: HTMLDivElement = textRef.current;
-        // Measuring only means anything while the clamp is applied, so it is skipped while expanded
-        // and rerun on collapse, keeping the last answer in between
         if (!element) return;
         // The clamped element overflows its own box whenever the text does not fit.
         setIsTruncated(element.scrollHeight > element.clientHeight);
-    }, []);
+    }, [props.text]);
 
     return (
         <div className={`${isExpanded ? "" : "flex items-center"} ${props.className ?? ""}`}>
