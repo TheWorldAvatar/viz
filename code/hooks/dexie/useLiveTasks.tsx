@@ -23,12 +23,8 @@ export function useLiveTasks(mobileFields: string[], selectedCount: number, dict
         []);
     return useMemo(() => {
         if (!tasks || tasks.length == 0) return { data: [], previewData: [] };
-        if (localStorageManager.get(TASK_VIEWER_FILTER) && selectedCount > 0 && tasks.length != selectedCount) {
-            if (isOnline) {
-                toast(interpolate(dict.message.showScrollMore, String(tasks.length), String(selectedCount)), "default")
-            } else {
-                toast(interpolate(dict.message.showReconnect, String(tasks.length), String(selectedCount)), "error")
-            }
+        if (localStorageManager.get(TASK_VIEWER_FILTER) && selectedCount > 0 && tasks.length != selectedCount && !isOnline) {
+            toast(interpolate(dict.message.showReconnect, String(tasks.length), String(selectedCount)), "error")
         }
         return {
             data: tasks?.map(instance => {
