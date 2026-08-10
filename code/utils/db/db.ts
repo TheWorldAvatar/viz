@@ -1,3 +1,4 @@
+import { ColumnDefinitionResponse } from "@/types/backend-agent";
 import { IndexedDbState } from "@/types/form";
 import { Dexie, type EntityTable } from "dexie";
 
@@ -12,6 +13,7 @@ export interface IndexedDbMetadata {
     count: number;
     lastUpdated: number;
     dependentField?: string;
+    columns?: ColumnDefinitionResponse[];
 }
 
 class TWADatabase extends Dexie {

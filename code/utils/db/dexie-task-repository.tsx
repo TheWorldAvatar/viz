@@ -1,4 +1,4 @@
-import { AgentResponseBody, AgentResponseDataPayload } from "@/types/backend-agent";
+import { AgentResponseBody, AgentResponseDataPayload, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { IndexedDbState, IndexedDbStateMap, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-utils";
 import { db, DynamicTask } from "@/utils/db/db";
@@ -29,22 +29,6 @@ class DexieTaskRepository {
     }
 
     /**
-     * Clear all tasks in IndexedDb.
-     */
-    async clearTasks(): Promise<void> {
-        await db.tasks.clear();
-    }
-
-    /**
-     * Bulk update tasks in IndexedDb.
-     *
-     * @param {FieldValues[]} instances Target tasks.
-     */
-    async bulkPutTasks(instances: FieldValues[]): Promise<void> {
-        await db.tasks.bulkPut(instances);
-    }
-
-    /**
      * Get task from IndexedDb.
      *
      * @param {string} id Target task identifier.
@@ -65,7 +49,6 @@ class DexieTaskRepository {
             return;
         }
 
-        const table: EntityTable<DynamicTask, "event_id"> = await db.tasks;
         // Grab data in batches of 500, and continue looping if syncing
         // If task has been completed, only grab the new data with the timestamp check
         let hasMore: boolean = true;
@@ -73,10 +56,9 @@ class DexieTaskRepository {
         while (hasMore) {
             const responsePayload: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
                 entityType, Math.floor(currentOffset / this.BATCH_SIZE).toString(), this.BATCH_SIZE.toString(),
-                sortParams, filters);
+                sortParams, filters, false);
 
             const nextBatch: FieldValues[] = responsePayload.items as FieldValues[];
-            await table.bulkPut(nextBatch);
             currentOffset += nextBatch.length;
 
             if (nextBatch.length < this.BATCH_SIZE) {
@@ -85,7 +67,8 @@ class DexieTaskRepository {
         }
     }
 
-    async fetchTasks(entityType: string, page: string, limit: string, sortParams: string, filters: string): Promise<AgentResponseDataPayload> {
+    async fetchTasks(entityType: string, page: string, limit: string,
+        sortParams: string, filters: string, clearData: boolean): Promise<AgentResponseDataPayload> {
         const apiUrl: string = makeInternalRegistryAPIwithParams(
             LifecycleStageMap.OUTSTANDING,
             entityType,
@@ -95,23 +78,32 @@ class DexieTaskRepository {
             sortParams,
             filters,
         );
+
         const res: AgentResponseBody = await queryInternalApi(apiUrl);
+
         const data: FieldValues[] = [];
+        const table: EntityTable<DynamicTask, "event_id"> = db.tasks;
         if (res.data?.items?.length > 0) {
+            // Clear cached data if set required
+            if (clearData) {
+                await table.clear();
+            }
             (res.data?.items as RegistryFieldValues[]).forEach(instance => {
                 data.push(flattenInstance(instance));
             });
+            await table.bulkPut(data);
         }
+        const columns: ColumnDefinitionResponse[] = res.data?.columns;
         if (data?.length < Number.parseFloat(limit)) {
-            await this.updateMeta(IndexedDbStateMap.COMPLETE, res.data?.currentItemCount);
+            await this.updateMeta(IndexedDbStateMap.COMPLETE, res.data?.currentItemCount, columns);
         } else {
-            await this.updateMeta(IndexedDbStateMap.SYNC, res.data?.currentItemCount);
+            await this.updateMeta(IndexedDbStateMap.SYNC, res.data?.currentItemCount, columns);
         }
 
         return {
             items: data,
             totalItems: res.data?.currentItemCount,
-            columns: res.data?.columns,
+            columns,
         }
     }
 
@@ -120,13 +112,15 @@ class DexieTaskRepository {
      * 
      * @param {IndexedDbState} state The current state of the field syncing process.
      * @param {number} count The total count of data cached.
+     * @param {ColumnDefinitionResponse[]} columns The column definitions received from the API.
     */
-    private async updateMeta(state: IndexedDbState, count: number): Promise<void> {
+    private async updateMeta(state: IndexedDbState, count: number, columns: ColumnDefinitionResponse[]): Promise<void> {
         await db.metadata.put({
             field: this.TASK_KEY,
             state,
             count,
             lastUpdated: this.genCurrentTimestamp(),
+            columns,
         });
     }
 

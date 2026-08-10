@@ -135,13 +135,11 @@ export function useRegistryGrid(
             const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
             const sortParams: string = getInitialSortParams([]);
 
+            // Clear data only when connected
             const tasks: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
-                entityType, "0", GRID_LIMIT.toString(), sortParams, filterParams);
+                entityType, "0", GRID_LIMIT.toString(), sortParams, filterParams, isConnected);
 
-            // Update cache by removing previous tasks first
-            await dexieTaskRepo.clearTasks();
             const data: FieldValues[] = tasks?.items as FieldValues[];
-            await dexieTaskRepo.bulkPutTasks(data);
             // Parsing of columns should only occur once at the start
             if (columns.length === 0) {
                 const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ?
