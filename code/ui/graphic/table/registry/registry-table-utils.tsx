@@ -164,12 +164,16 @@ export function parseColumnsMetadata(
   for (const col of columns) {
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
     const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
-    const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
-      title.length * 15,
-      125
-    );
     const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
+    const minWidth: number = col.value == FLAG_KEY
+      ? title.length
+      : isDateTimeColumn
+        ? 210
+        : Math.max(
+          title.length * 15,
+          125
+        );
 
     const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
