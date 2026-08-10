@@ -23,14 +23,11 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
     const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-    // Truncation is measured on mount, whenever the text changes, and again on collapse
+    // Overflow is measured on mount, whenever the text changes, and again on collapse
     useEffect(() => {
         const element: HTMLDivElement = textRef.current;
         if (!element || isExpanded) return;
-        // line-clamp lays out every line and only hides the ones past the limit, so scrollHeight
-        // stays the height the full text needs rather than the height on screen. 28px is one line at
-        // the text-lg the cell inherits, so anything taller means the text was clipped and needs the
-        // button.
+        // A height greater than 28px means the text exceeds one line i.e. overflow
         setIsOverflowing(element.scrollHeight > 28);
     }, [props.text, isExpanded]);
 
