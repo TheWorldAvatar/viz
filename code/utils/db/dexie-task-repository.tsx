@@ -13,6 +13,13 @@ class DexieTaskRepository {
     private BATCH_SIZE: number = 500;
 
     /**
+     * Retrieves the field key for tasks.
+    */
+    getFieldKey(): string {
+        return this.TASK_KEY;
+    }
+
+    /**
      * Remove the target task in IndexedDb.
      * 
      * @param {string} id Target task identifier.

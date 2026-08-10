@@ -37,7 +37,7 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
-  const { isInitialLoading, hasNoActiveFilters, parentRef, data, previewData, columns, currentItemIndex, selectedCount,
+  const { isInitialLoading, hasNoActiveFilters, parentRef, data, previewData, columns, currentItemIndex,
     filters, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh, updateFilter, resetFilters
   } = useRegistryGrid(props.entityType, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();

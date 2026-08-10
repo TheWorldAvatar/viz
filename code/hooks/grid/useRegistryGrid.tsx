@@ -28,7 +28,6 @@ export interface GridDescriptor {
     previewData: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
     currentItemIndex: number;
-    selectedCount: number;
     filters: ColumnFilter[];
     virtualItems: VirtualItem[];
     rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element>;
@@ -56,7 +55,6 @@ export function useRegistryGrid(
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(1);
-    const [selectedCount, setSelectedCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(true);
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
@@ -92,7 +90,6 @@ export function useRegistryGrid(
             }
             return updatedFilters;
         });
-        setSelectedCount(0);
         triggerRefresh();
     };
 
@@ -100,7 +97,6 @@ export function useRegistryGrid(
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
         setHasNoActiveFilters(true);
-        setSelectedCount(0);
         triggerRefresh();
     };
 
@@ -109,7 +105,7 @@ export function useRegistryGrid(
         setIsFetching(true);
     }
 
-    const { data, previewData } = useLiveTasks(mobileFields.current, selectedCount, dict);
+    const { data, previewData } = useLiveTasks(mobileFields.current, dict);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
         count: previewData.length,
         getScrollElement: () => parentRef.current,
@@ -142,7 +138,6 @@ export function useRegistryGrid(
             const tasks: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
                 entityType, "0", GRID_LIMIT.toString(), sortParams, filterParams);
 
-            setSelectedCount(tasks.totalItems);
             // Update cache by removing previous tasks first
             await dexieTaskRepo.clearTasks();
             const data: FieldValues[] = tasks?.items as FieldValues[];
@@ -190,7 +185,6 @@ export function useRegistryGrid(
         previewData,
         columns,
         currentItemIndex,
-        selectedCount,
         filters,
         virtualItems,
         rowVirtualizer,
