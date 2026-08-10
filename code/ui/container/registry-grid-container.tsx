@@ -79,8 +79,8 @@ export default function RegistryGridComponent(
             position: "relative",
           }}
         >
-          {!isInitialLoading && previewData.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
-          {!hasNoActiveFilters && previewData.length > 0 && virtualItems.map((virtualItem) => {
+          {!isInitialLoading && previewData?.length == 0 && <p className="p-2">{dict.message.noResultFound}</p>}
+          {!isInitialLoading && !hasNoActiveFilters && previewData?.length > 0 && virtualItems.map((virtualItem) => {
             const isLoaderRow: boolean = virtualItem.index >= previewData.length;
             if (isLoaderRow) {
               return;
@@ -148,9 +148,9 @@ export default function RegistryGridComponent(
         </div>
       </section>
       <section className="flex justify-end shrink-0 py-1 md:pb-0">
-        {data.length > 0 && <p className="text-sm md:text-base pt-1 pr-4">{
+        {previewData?.length > 0 && <p className="text-sm md:text-base pt-1 pr-4">{
           interpolate(dict.message.numberOfRecords, String(currentItemIndex + 1))
-            .replace("{replacetotal}", String(data?.length))}</p>
+            .replace("{replacetotal}", String(previewData?.length))}</p>
         }
       </section>
     </div>

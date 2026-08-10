@@ -58,13 +58,12 @@ export function useRegistryGrid(
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(1);
     const [selectedCount, setSelectedCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
-    const [isFetching, setIsFetching] = useState<boolean>(false);
-    const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
+    const [isFetching, setIsFetching] = useState<boolean>(true);
+    const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
-    const [filters, setFilters] = useState<ColumnFilter[]>(INITIAL_FILTER_STATE);
-
+    const [filters, setFilters] = useState<ColumnFilter[]>(localStorageManager.get(TASK_VIEWER_FILTER) ? JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)) : INITIAL_FILTER_STATE);
     const isConnected: boolean = useConnected();
 
     const updateFilter = (field: string, selectedOptions: string[]) => {
@@ -136,21 +135,8 @@ export function useRegistryGrid(
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
 
     useEffect(() => {
-        setIsFetching(true);
-        // To prevent hydration effects when reading from storage
-        if (localStorageManager.get(TASK_VIEWER_FILTER)) {
-            setFilters(JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)));
-            setHasNoActiveFilters(false);
-        }
-    }, []);
-
-    useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            let activeFilters: ColumnFilter[] = filters;
-            if (localStorageManager.get(TASK_VIEWER_FILTER)) {
-                activeFilters = JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER));
-            }
-            const filterParams: string = parseColumnFiltersIntoUrlParams(activeFilters, dict.title.blank, dict.title);
+            const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
             const sortParams: string = getInitialSortParams([]);
 
             const tasks: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
@@ -175,7 +161,8 @@ export function useRegistryGrid(
             // If total length is equal or more than limit, start a background sync
             const registration: ServiceWorkerRegistration = await navigator.serviceWorker?.ready;
             const targetWorker: ServiceWorker = navigator.serviceWorker?.controller || registration.active;
-            if (data.length >= GRID_LIMIT && targetWorker) {
+            // Do not trigger background sync if there are no active filters
+            if (data.length >= GRID_LIMIT && targetWorker && !hasNoActiveFilters) {
                 navigator.serviceWorker.controller.postMessage({
                     type: TASK_SYNC_EVENT,
                     payload: {
@@ -193,7 +180,7 @@ export function useRegistryGrid(
         if (isFetching && isConnected) {
             fetchData();
         }
-    }, [entityType, isConnected, isFetching, filters]);
+    }, [entityType, isConnected, isFetching, filters, columns?.length, dict]);
 
     return {
         isInitialLoading,

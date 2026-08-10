@@ -2,7 +2,6 @@
 
 import { useConnected } from "@/hooks/useConnected";
 import { useDictionary } from "@/hooks/useDictionary";
-import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap } from "@/types/form";
 import RegistryFilter from "@/ui/container/registry-filter";
@@ -12,9 +11,8 @@ import Accordion from "@/ui/interaction/accordion/accordion";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import Button from "@/ui/interaction/button";
 import { getInitialDateFromLifecycleStage } from "@/utils/client-utils";
-import { TASK_VIEWER_FILTER } from "@/utils/constants";
 import { ColumnFilter } from "@tanstack/react-table";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
 interface FilterMenuProps {
@@ -61,18 +59,9 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
     const hasOtherActiveFilters = (fieldId: string): boolean => props.filters
         .some(filter => filter.id !== fieldId && filter.id !== "status" && (filter.value as string[])?.length > 0);
 
-    // Prevent hydration issues by updating menu open after and returning no component
-    useEffect(() => {
-        setIsMenuOpen(!localStorageManager.get(TASK_VIEWER_FILTER))
-    }, [])
-
-    if (props.isInitialLoading) {
-        return;
-    }
-
     return <PopoverActionButton
         placement="bottom"
-        draggable={!props.hasNoActiveFilters}
+        draggable
         bottomSheet
         leftIcon="filter_list"
         variant={props.hasNoActiveFilters ? "outline" : "secondary"}
