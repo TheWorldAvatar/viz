@@ -1,4 +1,4 @@
-import { FormOptionState } from "@/types/form";
+import { IndexedDbState } from "@/types/form";
 import { Dexie, type EntityTable } from "dexie";
 
 export interface DynamicTask {
@@ -6,9 +6,9 @@ export interface DynamicTask {
     [key: string]: unknown;
 }
 
-export interface FormOptionMetadata {
+export interface IndexedDbMetadata {
     field: string;
-    state: FormOptionState;
+    state: IndexedDbState;
     count: number;
     lastUpdated: number;
     dependentField?: string;
@@ -16,7 +16,7 @@ export interface FormOptionMetadata {
 
 class TWADatabase extends Dexie {
     tasks!: EntityTable<DynamicTask, "event_id">;
-    metadata!: EntityTable<FormOptionMetadata, "field">;
+    metadata!: EntityTable<IndexedDbMetadata, "field">;
 
     constructor() {
         super("TWA");

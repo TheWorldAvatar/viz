@@ -1,5 +1,5 @@
 import { AgentResponseBody, AgentResponseDataPayload } from "@/types/backend-agent";
-import { FormOptionState, FormOptionStateMap, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
+import { IndexedDbState, IndexedDbStateMap, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-utils";
 import { db, DynamicTask } from "@/utils/db/db";
 import { EntityTable } from "dexie";
@@ -103,9 +103,9 @@ class DexieTaskRepository {
             });
         }
         if (data?.length < Number.parseFloat(limit)) {
-            await this.updateMeta(FormOptionStateMap.COMPLETE, res.data?.currentItemCount);
+            await this.updateMeta(IndexedDbStateMap.COMPLETE, res.data?.currentItemCount);
         } else {
-            await this.updateMeta(FormOptionStateMap.SYNC, res.data?.currentItemCount);
+            await this.updateMeta(IndexedDbStateMap.SYNC, res.data?.currentItemCount);
         }
 
         return {
@@ -118,10 +118,10 @@ class DexieTaskRepository {
     /**
      * Updates the field metadata.
      * 
-     * @param {FormOptionState} state The current state of the field syncing process.
+     * @param {IndexedDbState} state The current state of the field syncing process.
      * @param {number} count The total count of data cached.
     */
-    private async updateMeta(state: FormOptionState, count: number): Promise<void> {
+    private async updateMeta(state: IndexedDbState, count: number): Promise<void> {
         await db.metadata.put({
             field: this.TASK_KEY,
             state,

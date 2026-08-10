@@ -4,7 +4,7 @@ import { Dictionary } from "@/types/dictionary";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { interpolate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
-import { db, FormOptionMetadata } from "@/utils/db/db";
+import { db, IndexedDbMetadata } from "@/utils/db/db";
 import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
@@ -22,7 +22,7 @@ export function useLiveTasks(mobileFields: string[], dict: Dictionary): {
     const isOnline: boolean = useConnected();
     const tasks: FieldValues[] = useLiveQuery(() => db.tasks.toArray(),
         []);
-    const meta: FormOptionMetadata = useLiveQuery(() => db.metadata.get(dexieTaskRepo.getFieldKey()),
+    const meta: IndexedDbMetadata = useLiveQuery(() => db.metadata.get(dexieTaskRepo.getFieldKey()),
         []);
     return useMemo(() => {
         if (!tasks || tasks.length == 0) return { data: [], previewData: [] };
