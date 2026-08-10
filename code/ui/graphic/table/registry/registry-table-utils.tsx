@@ -61,10 +61,9 @@ export function parseColumnFiltersIntoUrlParams(filters: ColumnFilter[], transla
  *
  * @param {RegistryFieldValues[]} instances Raw instances queried from knowledge graph
  * @param {SortingState} sorting Current sorting state.
- * @param {Record<string, string>} titleDict The translations for the dict.title path.
+ * @param {ColumnDefinitionResponse[]} columns The list of columns.
  */
-export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState,
-  titleDict: Record<string, string>, columns: ColumnDefinitionResponse[]): FieldValues[] {
+export function parseDataForTable(instances: RegistryFieldValues[], sorting: SortingState, columns: ColumnDefinitionResponse[]): FieldValues[] {
   const data: FieldValues[] = [];
   if (instances?.length > 0) {
     instances.forEach(instance => {
