@@ -1,15 +1,15 @@
-import { useConnected } from "@/hooks/useConnected";
-import { localStorageManager } from "@/state/browser-storage-manager";
-import { Dictionary } from "@/types/dictionary";
-import { toast } from "@/ui/interaction/action/toast/toast";
+import { AgentResponseBody, AgentResponseDataPayload } from "@/types/backend-agent";
+import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
+import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-utils";
 import { db, DynamicTask } from "@/utils/db/db";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useMemo } from "react";
+import { EntityTable } from "dexie";
 import { FieldValues } from "react-hook-form";
-import { interpolate } from "../client-utils";
-import { TASK_VIEWER_FILTER } from "../constants";
+import { getUTCDate } from "../client-utils";
+import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal-api-services";
 
+export const TASK_SYNC_EVENT: string = "task_sync";
 class DexieTaskRepository {
+    private BATCH_SIZE: number = 500;
 
     /**
      * Remove the target task in IndexedDb.
@@ -45,63 +45,62 @@ class DexieTaskRepository {
         const task: DynamicTask = await db.tasks.get(id);
         return task;
     }
+
+    /**
+     * Start the sync with the database.
+     * 
+     * @param {string[]} fields The list of fields to sync data for.
+     * @param {boolean} isConnected Indicates if the platform is online.
+      */
+    async sync(entityType: string, sortParams: string, filters: string, isConnected: boolean) {
+        if (!isConnected) {
+            return;
+        }
+
+        const table: EntityTable<DynamicTask, "event_id"> = await db.tasks;
+        // Grab data in batches of 500, and continue looping if syncing
+        // If task has been completed, only grab the new data with the timestamp check
+        let hasMore: boolean = true;
+        let currentOffset: number = 0;
+        while (hasMore) {
+            const responsePayload: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
+                entityType, Math.floor(currentOffset / this.BATCH_SIZE).toString(), this.BATCH_SIZE.toString(),
+                sortParams, filters);
+
+            const nextBatch: FieldValues[] = responsePayload.items as FieldValues[];
+            await table.bulkPut(nextBatch);
+            currentOffset += nextBatch.length;
+
+            if (nextBatch.length < this.BATCH_SIZE) {
+                hasMore = false;
+            }
+        }
+    }
+
+    async fetchTasks(entityType: string, page: string, limit: string, sortParams: string, filters: string): Promise<AgentResponseDataPayload> {
+        const apiUrl: string = makeInternalRegistryAPIwithParams(
+            LifecycleStageMap.OUTSTANDING,
+            entityType,
+            getUTCDate(new Date()).getTime().toString(),
+            page,
+            limit,
+            sortParams,
+            filters,
+        );
+        const res: AgentResponseBody = await queryInternalApi(apiUrl);
+        const data: FieldValues[] = [];
+        if (res.data?.items?.length > 0) {
+            (res.data?.items as RegistryFieldValues[]).forEach(instance => {
+                data.push(flattenInstance(instance));
+            });
+        }
+        return {
+            items: data,
+            totalItems: res.data?.currentItemCount,
+            columns: res.data?.columns,
+        }
+    }
+
 }
 
 export const dexieTaskRepo: DexieTaskRepository = new DexieTaskRepository();
-
-/**
- * Get tasks from IndexedDb in real time.
- *
- * @param {number} mobileFields Mobile specific fields.
- */
-export function useLiveTasks(mobileFields: string[], selectedCount: number, dict: Dictionary): {
-    data: FieldValues[];
-    previewData: FieldValues[];
-} {
-    const isOnline: boolean = useConnected();
-    const tasks: FieldValues[] = useLiveQuery(() => db.tasks.toArray(),
-        []);
-    return useMemo(() => {
-        if (!tasks || tasks.length == 0) return { data: [], previewData: [] };
-        if (localStorageManager.get(TASK_VIEWER_FILTER) && selectedCount > 0 && tasks.length != selectedCount) {
-            if (isOnline) {
-                toast(interpolate(dict.message.showScrollMore, String(tasks.length), String(selectedCount)), "default")
-            } else {
-                toast(interpolate(dict.message.showReconnect, String(tasks.length), String(selectedCount)), "error")
-            }
-        }
-        return {
-            data: tasks?.map(instance => {
-                return {
-                    id: instance.id,
-                    ["scheduleType"]: dict.form[instance["scheduleType"]],
-                    ...Object.fromEntries(
-                        Object.entries(instance).filter(([key, value]) =>
-                            !["iri", "id", "event_id", "status", "scheduleType", "lastmodified"].includes(key) && value !== null && value !== undefined)
-                    )
-                }
-            }),
-            previewData: tasks?.map(instance => {
-                // When there are no custom settings, ensure only values with contents are returned
-                if (mobileFields.length === 0) return {
-                    // Extract event id to support redirects
-                    event_id: instance.event_id,
-                    ...Object.fromEntries(
-                        Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
-                    )
-                };
-                return {
-                    id: instance.id,
-                    event_id: instance.event_id,
-                    date: instance.date,
-                    status: instance.status,
-                    ...Object.fromEntries(
-                        // Filter out undefined fields
-                        mobileFields.filter(field => !!instance[field as keyof typeof instance])
-                            .map(field => [field, instance[field as keyof typeof instance]])
-                    )
-                }
-            })
-        };
-    }, [tasks, mobileFields]);
-}

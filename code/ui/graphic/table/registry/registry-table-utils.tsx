@@ -68,7 +68,7 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
   const data: FieldValues[] = [];
   if (instances?.length > 0) {
     instances.forEach(instance => {
-      const flatInstance: RegistryFlatFieldValues = flattenInstance(instance, titleDict);
+      const flatInstance: RegistryFlatFieldValues = flattenInstance(instance);
       data.push(flatInstance);
     });
   }
@@ -124,12 +124,8 @@ export function parseDataForTable(instances: RegistryFieldValues[], sorting: Sor
  * Flattens the instance to a string instead of SparqlResponseField.
  *
  * @param {RegistryFieldValues} instance The original column definitions.
- * @param {Record<string, string>} titleDict The dictionary object leading to title.
  */
-function flattenInstance(
-  instance: RegistryFieldValues,
-  titleDict: Record<string, string>
-): RegistryFlatFieldValues {
+export function flattenInstance(instance: RegistryFieldValues): RegistryFlatFieldValues {
   const flatInstance: RegistryFlatFieldValues = {};
   const instanceFields: string[] = Object.keys(instance);
 
@@ -138,7 +134,7 @@ function flattenInstance(
     if (Array.isArray(instanceValue)) {
       // For array fields, only display array field, subfields need not be parsed
       flatInstance[instanceField] = instanceValue.map((nestedFields) =>
-        flattenInstance(nestedFields, titleDict)) as Record<string, string>[];
+        flattenInstance(nestedFields)) as Record<string, string>[];
     } else {
       flatInstance[instanceField] = instanceValue?.value;
     }

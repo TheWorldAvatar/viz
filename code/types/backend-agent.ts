@@ -2,27 +2,23 @@ import { EVENT_KEY } from "@/utils/constants";
 import { SparqlResponseField } from "./form";
 import { FileEntry } from "./settings";
 
-export const BackendApis = {
-  REGISTRY_BACKEND: process.env.REGISTRY_BACKEND_URL,
-  REGISTRY_TASK_ATTACHMENT: process.env.REGISTRY_TASK_ATTACHMENT_URL,
-  FILE_EXPORTER: process.env.FILE_EXPORTER_URL,
-};
-
 export type AgentResponseBody = {
   apiVersion: string;
-  data?: {
-    id?: string;
-    message?: string;
-    currentItemCount?: number;
-    totalItems?: number;
-    columns?: ColumnDefinitionResponse[];
-    deleted?: boolean;
-    items?: string[] | Record<string, unknown>[];
-  };
+  data?: AgentResponseDataPayload;
   error?: {
     code: number;
     message: string;
   };
+};
+
+export type AgentResponseDataPayload = {
+  id?: string;
+  message?: string;
+  currentItemCount?: number;
+  totalItems?: number;
+  columns?: ColumnDefinitionResponse[];
+  deleted?: boolean;
+  items?: string[] | Record<string, unknown>[];
 };
 
 export type ColumnDefinitionResponse = {

@@ -1,3 +1,4 @@
+import { dexieTaskRepo, TASK_SYNC_EVENT } from "@/utils/db/dexie-task-repository";
 import { defaultCache } from "@serwist/turbopack/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
 import { BackgroundSyncPlugin, NetworkFirst, NetworkOnly, Serwist } from "serwist";
@@ -69,3 +70,11 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+self.addEventListener("message", async (event) => {
+  if (event.data && event.data.type === TASK_SYNC_EVENT) {
+    const { entityType, sortParams, filterParams, } = event.data.payload || {};
+
+    await dexieTaskRepo.sync(entityType, sortParams, filterParams, navigator.onLine);
+  }
+});

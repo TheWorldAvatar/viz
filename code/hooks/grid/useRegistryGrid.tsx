@@ -1,24 +1,22 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { localStorageManager } from "@/state/browser-storage-manager";
-import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
+import { AgentResponseDataPayload, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStageMap, RegistryFieldValues, RegistryStatusMap } from "@/types/form";
+import { RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
     EnhancedColumnDef,
     getInitialSortParams,
     parseColumnFiltersIntoUrlParams,
-    parseColumnsMetadata,
-    parseDataForTable
+    parseColumnsMetadata
 } from "@/ui/graphic/table/registry/registry-table-utils";
-import { getId, getUTCDate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
-import { dexieTaskRepo, useLiveTasks } from "@/utils/db/dexie-task-repository";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
+import { dexieTaskRepo, TASK_SYNC_EVENT } from "@/utils/db/dexie-task-repository";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { useLiveTasks } from "../dexie/useLiveTasks";
 import { useConnected } from "../useConnected";
 import useOperationStatus from "../useOperationStatus";
 
@@ -57,15 +55,10 @@ export function useRegistryGrid(
     const { resetFormSession } = useOperationStatus();
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-    const [page, setPage] = useState<number>(0);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(1);
     const [selectedCount, setSelectedCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
-    // Synchronous lock against duplicate fetch triggers: scroll events fire faster
-    // than state re-renders, so the onChange guard cannot rely on isFetching alone
-    const fetchLockRef: React.RefObject<boolean> = useRef<boolean>(false);
-    const [hasMore, setHasMore] = useState<boolean>(true);
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
@@ -100,7 +93,6 @@ export function useRegistryGrid(
             }
             return updatedFilters;
         });
-        setPage(0);
         setSelectedCount(0);
         triggerRefresh();
     };
@@ -109,21 +101,12 @@ export function useRegistryGrid(
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
         setHasNoActiveFilters(true);
-        setPage(0);
         setSelectedCount(0);
         triggerRefresh();
     };
 
     const triggerRefresh = () => {
-        setHasMore(true);
         setIsInitialLoading(true);
-        fetchLockRef.current = true;
-        setIsFetching(true);
-    }
-
-    const fetchNextPage = () => {
-        fetchLockRef.current = true;
-        setPage((prev) => prev + 1);
         setIsFetching(true);
     }
 
@@ -146,12 +129,6 @@ export function useRegistryGrid(
 
             if (dominantItem) {
                 setCurrentItemIndex(dominantItem.index);
-                // Trigger fetch once the user scrolls past the halfway mark of the loaded data.
-                // Scroll events may skip indices (especially on Android momentum scrolling),
-                // so this must be a range check rather than an equality check
-                if (previewData.length > 0 && dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
-                    fetchNextPage();
-                }
             }
         }
     });
@@ -159,7 +136,6 @@ export function useRegistryGrid(
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
 
     useEffect(() => {
-        fetchLockRef.current = true;
         setIsFetching(true);
         // To prevent hydration effects when reading from storage
         if (localStorageManager.get(TASK_VIEWER_FILTER)) {
@@ -175,71 +151,46 @@ export function useRegistryGrid(
                 activeFilters = JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER));
             }
             const filterParams: string = parseColumnFiltersIntoUrlParams(activeFilters, dict.title.blank, dict.title);
-            const apiUrl: string = makeInternalRegistryAPIwithParams(
-                LifecycleStageMap.OUTSTANDING,
-                entityType,
-                getUTCDate(new Date()).getTime().toString(),
-                page.toString(),
-                GRID_LIMIT.toString(),
-                getInitialSortParams([]),
-                filterParams,
-            );
-            const res: AgentResponseBody = await queryInternalApi(apiUrl);
-            const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+            const sortParams: string = getInitialSortParams([]);
 
-            let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns).map(instance => {
-                instance.event_id = getId(instance.event_id);
-                return instance;
-            });
-            setSelectedCount(res.data?.currentItemCount);
-            // Only clear tasks if this is the first load or refresh triggered
-            if (isInitialLoading) {
-                await dexieTaskRepo.clearTasks();
-            }
-            // Update cache
-            await dexieTaskRepo.bulkPutTasks(parsedData);
-            parsedData = parsedData.map(instance => {
-                // When there are no custom settings, ensure only values with contents are returned
-                if (mobileFields.current.length === 0) return {
-                    // Extract event id to support redirects
-                    event_id: instance.event_id,
-                    ...Object.fromEntries(
-                        Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
-                    )
-                };
-                return {
-                    id: instance.id,
-                    event_id: instance.event_id,
-                    date: instance.date,
-                    status: instance.status,
-                    ...Object.fromEntries(
-                        // Filter out undefined fields
-                        mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
-                            .map(field => [field, instance[field as keyof typeof instance]])
-                    )
-                }
-            });
+            const tasks: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
+                entityType, "0", GRID_LIMIT.toString(), sortParams, filterParams);
+
+            setSelectedCount(tasks.totalItems);
+            // Update cache by removing previous tasks first
+            await dexieTaskRepo.clearTasks();
+            const data: FieldValues[] = tasks?.items as FieldValues[];
+            await dexieTaskRepo.bulkPutTasks(data);
             // Parsing of columns should only occur once at the start
             if (columns.length === 0) {
                 const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ?
                     // Without any mobile settings, status filters should be hidden
-                    res.data?.columns.filter(col => col.value != "status") :
-                    res.data?.columns.filter(col => mobileFields.current.includes(col.value)
+                    tasks?.columns.filter(col => col.value != "status") :
+                    tasks?.columns.filter(col => mobileFields.current.includes(col.value)
                         || col.value == "id" || col.value == "event_id"
                         || col.value == "date");
                 const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
                 setColumns(columnData);
             }
-            // If total length is smaller than size, there are no more instances to render
-            if (parsedData.length < GRID_LIMIT) {
-                setHasMore(false);
+            // If total length is equal or more than limit, start a background sync
+            const registration: ServiceWorkerRegistration = await navigator.serviceWorker?.ready;
+            const targetWorker: ServiceWorker = navigator.serviceWorker?.controller || registration.active;
+            if (data.length >= GRID_LIMIT && targetWorker) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: TASK_SYNC_EVENT,
+                    payload: {
+                        entityType,
+                        sortParams,
+                        filterParams,
+                    },
+                });
             }
-            fetchLockRef.current = false;
+
             setIsFetching(false);
             setIsInitialLoading(false);
         }
         // Only fetch data if there are no ongoing fetches, and there are more data to fetch
-        if (isFetching && hasMore && isConnected) {
+        if (isFetching && isConnected) {
             fetchData();
         }
     }, [entityType, isConnected, isFetching, filters]);
