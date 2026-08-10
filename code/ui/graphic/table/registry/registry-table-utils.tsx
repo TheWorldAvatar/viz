@@ -206,7 +206,7 @@ export function parseColumnsMetadata(
         }
 
         if (isValidIRI(value)) {
-          return getAfterDelimiter(value, "/");
+          value = getAfterDelimiter(value, "/");
         }
 
         // Column header name is untranslated so we can directly compare to a string
