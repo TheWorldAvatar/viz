@@ -38,23 +38,24 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                 ref={textRef}
                 // line-clamp rather than truncate, because the nowrap that truncate applies would make
                 // the text unbreakable and widen the whole column
-                className={`mr-1.5 min-w-0 text-foreground ${isExpanded ? "inline wrap-break-word whitespace-pre-wrap" : "flex-1 line-clamp-1 break-all"}`}
+                className={`mr-2 min-w-0 text-foreground ${isExpanded ? "inline wrap-break-word whitespace-pre-wrap" : "flex-1 line-clamp-1 break-all"}`}
             >
                 {props.text}
             </div>
             {(isExpanded || isTruncated) && (
-                <div className="inline-flex">
+                <div className="inline-flex align-middle">
                     <Button
                         onClick={(e) => {
                             e.stopPropagation();
                             setIsExpanded(!isExpanded);
                         }}
-                        variant="link"
-                        size="xs"
-                        className="text-base px-0!"
-                    >
-                        {isExpanded ? dict.action.showLess : dict.action.showMore}
-                    </Button>
+                        variant="ghost"
+                        size="icon"
+                        leftIcon={isExpanded ? "collapse_content" : "read_more"}
+                        tooltipText={isExpanded ? dict.action.showLess : dict.action.showMore}
+                        aria-label={isExpanded ? dict.action.showLess : dict.action.showMore}
+                        className="text-info-foreground!"
+                    />
                 </div>
             )}
         </div>

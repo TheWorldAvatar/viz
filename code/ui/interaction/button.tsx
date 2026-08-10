@@ -75,7 +75,7 @@ export default function Button({
     info:
       "text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600",
     info_banner:
-      "bg-info-background border border-info-border text-info-foreground shadow-xs ",
+      "bg-info-background border border-info-border text-info-foreground shadow-xs hover:bg-info-background-hover",
     warning:
       "bg-amber-300 hover:bg-amber-500/80 dark:bg-amber-800 dark:hover:bg-amber-900/80",
     secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",

@@ -27,7 +27,7 @@ export default function FileInputButton(props: Readonly<FileInputButtonProps>) {
     <div>
       <label
         htmlFor="file-upload"
-        className={`cursor-pointer flex items-center w-full max-w-md py-2 px-4 rounded-lg bg-info-background border border-info-border shadow-xs`}
+        className={`cursor-pointer flex items-center w-full max-w-md py-2 px-4 rounded-lg bg-info-background hover:bg-info-background-hover border border-info-border shadow-xs`}
       >
         <Icon className="material-symbols-outlined text-info-foreground">
           attach_file
