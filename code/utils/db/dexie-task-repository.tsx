@@ -1,5 +1,5 @@
 import { AgentResponseBody, AgentResponseDataPayload } from "@/types/backend-agent";
-import { LifecycleStageMap, RegistryFieldValues } from "@/types/form";
+import { FormOptionState, FormOptionStateMap, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-utils";
 import { db, DynamicTask } from "@/utils/db/db";
 import { EntityTable } from "dexie";
@@ -9,6 +9,7 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal
 
 export const TASK_SYNC_EVENT: string = "task_sync";
 class DexieTaskRepository {
+    private TASK_KEY: string = "tasks";
     private BATCH_SIZE: number = 500;
 
     /**
@@ -94,6 +95,12 @@ class DexieTaskRepository {
                 data.push(flattenInstance(instance));
             });
         }
+        if (data?.length < Number.parseFloat(limit)) {
+            await this.updateMeta(FormOptionStateMap.COMPLETE, res.data?.currentItemCount);
+        } else {
+            await this.updateMeta(FormOptionStateMap.SYNC, res.data?.currentItemCount);
+        }
+
         return {
             items: data,
             totalItems: res.data?.currentItemCount,
@@ -101,6 +108,27 @@ class DexieTaskRepository {
         }
     }
 
+    /**
+     * Updates the field metadata.
+     * 
+     * @param {FormOptionState} state The current state of the field syncing process.
+     * @param {number} count The total count of data cached.
+    */
+    private async updateMeta(state: FormOptionState, count: number): Promise<void> {
+        await db.metadata.put({
+            field: this.TASK_KEY,
+            state,
+            count,
+            lastUpdated: this.genCurrentTimestamp(),
+        });
+    }
+
+    /**
+     * Generates the current timestamp in seconds.
+    */
+    private genCurrentTimestamp(): number {
+        return Math.floor(Date.now() / 1000);
+    }
 }
 
 export const dexieTaskRepo: DexieTaskRepository = new DexieTaskRepository();
