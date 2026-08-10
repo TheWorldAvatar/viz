@@ -65,6 +65,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                   props.header.column.getToggleSortingHandler()?.(event);
                   tableScrollDescriptor.scrollToTop();
                   tableDescriptor.resetOrder();
+                  tableDescriptor.resetRowSelection();
                 } : undefined}
                 aria-label={props.header.column.columnDef.header as string}
               >
@@ -110,7 +111,7 @@ export default function HeaderCell(props: Readonly<HeaderCellProps>) {
                 filters={props.filters}
                 onSubmission={(selectedOptions: string[]) => {
                   props.header.column.setFilterValue(selectedOptions);
-                  props.table.resetRowSelection();
+                  tableDescriptor.resetRowSelection();
                   props.table.resetPageIndex();
                   tableScrollDescriptor.scrollToTop();
                   tableDescriptor.resetOrder();
