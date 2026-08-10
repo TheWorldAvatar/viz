@@ -20,15 +20,18 @@ interface ExpandableTextCellProps {
 export default function ExpandableTextCell(props: Readonly<ExpandableTextCellProps>) {
     const dict: Dictionary = useDictionary();
     const textRef = useRef<HTMLDivElement>(null);
-    const [isTruncated, setIsTruncated] = useState<boolean>(false);
+    const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     // Truncation is measured on mount, whenever the text changes, and again on collapse
     useEffect(() => {
         const element: HTMLDivElement = textRef.current;
         if (!element || isExpanded) return;
-        // The clamped element overflows its own box whenever the text does not fit.
-        setIsTruncated(element.scrollHeight > element.clientHeight);
+        // line-clamp lays out every line and only hides the ones past the limit, so scrollHeight
+        // stays the height the full text needs rather than the height on screen. 28px is one line at
+        // the text-lg the cell inherits, so anything taller means the text was clipped and needs the
+        // button.
+        setIsOverflowing(element.scrollHeight > 28);
     }, [props.text, isExpanded]);
 
     return (
@@ -41,7 +44,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
             >
                 {props.text}
             </div>
-            {(isExpanded || isTruncated) && (
+            {(isExpanded || isOverflowing) && (
                 <div className="inline-flex align-middle">
                     <Button
                         onClick={(e) => {
