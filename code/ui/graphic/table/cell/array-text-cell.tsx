@@ -15,15 +15,14 @@ interface ArrayTextCellProps {
 export default function ArrayTextCell(props: Readonly<ArrayTextCellProps>) {
     const [currentFieldValue, setCurrentFieldValue] = useState<number>(0);
     const nestedFields: string[] = Object.keys(props.fields[currentFieldValue]);
+    // Joined with newlines so that the collapsed clamp shows only the first field, and expanding
+    // renders each field on its own line
+    const fieldLines: string = nestedFields
+        .map((nestedField) => `${parseWordsForLabels(nestedField)}: ${props.fields[currentFieldValue][nestedField]}`)
+        .join("\n");
 
-    return <div className="flex w-full items-center gap-1">
-        {nestedFields.map((nestedField) => (
-            <ExpandableTextCell
-                key={nestedField}
-                text={parseWordsForLabels(nestedField) + ": " + props.fields[currentFieldValue][nestedField]}
-                className="min-w-0 flex-1"
-            />
-        ))}
+    return <div className="flex w-full items-end gap-1">
+        <ExpandableTextCell text={fieldLines} className="min-w-0 flex-1" />
         {props.fields.length > 1 && <div className="flex shrink-0 items-center gap-1">
             <Button
                 variant="info"

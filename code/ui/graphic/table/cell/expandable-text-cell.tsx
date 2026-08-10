@@ -23,13 +23,13 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
     const [isTruncated, setIsTruncated] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-    // Turnication happens on mount and whenever the text changes
+    // Truncation is measured on mount, whenever the text changes, and again on collapse
     useEffect(() => {
         const element: HTMLDivElement = textRef.current;
-        if (!element) return;
+        if (!element || isExpanded) return;
         // The clamped element overflows its own box whenever the text does not fit.
         setIsTruncated(element.scrollHeight > element.clientHeight);
-    }, [props.text]);
+    }, [props.text, isExpanded]);
 
     return (
         <div className={`${isExpanded ? "" : "flex items-center"} ${props.className ?? ""}`}>
@@ -37,7 +37,7 @@ export default function ExpandableTextCell(props: Readonly<ExpandableTextCellPro
                 ref={textRef}
                 // line-clamp rather than truncate, because the nowrap that truncate applies would make
                 // the text unbreakable and widen the whole column
-                className={`mr-2 min-w-0 text-foreground ${isExpanded ? "inline wrap-break-word whitespace-pre-wrap" : "flex-1 line-clamp-1 break-all"}`}
+                className={`mr-2 min-w-0 whitespace-pre-wrap text-foreground ${isExpanded ? "inline wrap-break-word" : "flex-1 line-clamp-1 break-all"}`}
             >
                 {props.text}
             </div>
