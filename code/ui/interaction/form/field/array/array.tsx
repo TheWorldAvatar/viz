@@ -58,8 +58,8 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
   }
 
   return (
-    <div className="flex flex-col ">
-      <div className="flex flex-col justify-start items-start gap-2 my-2">
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col justify-start items-start gap-2">
         {!props.options?.disabled &&
           (<div className="flex flex-row items-center justify-start gap-2">
             {(Number.isNaN(props.maxSize) || fields.length < props.maxSize) && (
@@ -93,7 +93,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
               />
             )}
           </div>)}
-        <div className="flex flex-wrap gap-4  rounded-lg w-fit">
+        <div className="flex flex-wrap gap-2.5 rounded-lg w-fit">
           {fields.map((field, index) => (
             <button
               aria-label={interpolate(dict.action.viewItem, props.fieldId) + (index + 1)}
@@ -111,8 +111,7 @@ export default function FormArray(props: Readonly<FormArrayProps>) {
         </div>
       </div>
 
-
-      <div className="bg-background flex flex-col w-full p-2 rounded-lg">
+      <div className="bg-background flex flex-col gap-4 w-full p-3 rounded-lg">
         {refreshFlag && <LoadingSpinner size="xl" />}
         {!refreshFlag && (
           <>

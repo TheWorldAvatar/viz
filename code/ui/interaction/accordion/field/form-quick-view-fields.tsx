@@ -20,7 +20,7 @@ export default function FormQuickViewFields(
   props: Readonly<FormQuickViewFieldsProps>
 ) {
   return (
-    <div className="mt-2 space-y-2 text-foreground">
+    <div className="space-y-2 text-foreground">
       {Object.entries(props.quickViewGroups).map(
         ([group, fields], groupIndex) => {
           return (

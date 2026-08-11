@@ -57,11 +57,11 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
 
             {isExpanded && (
                 <div className={`bg-muted border border-border rounded-lg overflow-hidden ${props.disabled ? "opacity-75" : ""}`}>
-                    <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
+                    <div className="px-3 py-2 max-h-64 overflow-y-auto">
                         {sortedDatesWithIndex.map(({ date, originalIndex }, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-between border-b last:border-b-0 border-border"
+                                className="flex items-center justify-between py-1 border-b last:border-b-0 border-border"
                             >
                                 <div className="flex items-center ">
                                     <span aria-label={`${dict.form.dateSelected} ${formatDateValue(date)}`} className="text-sm font-medium text-foreground">
@@ -74,7 +74,7 @@ export default function SelectedDatesDisplay(props: Readonly<SelectedDatesDispla
                                     variant="destructiveOutline"
                                     size="icon"
                                     iconSize="small"
-                                    className="w-8 h-8 mb-1"
+                                    className="w-8 h-8"
                                     onClick={() => handleRemoveDate(originalIndex)}
                                     disabled={props.disabled || props.dates.length === 1}
                                     aria-label={`Remove date ${formatDateValue(date)}`}

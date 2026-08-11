@@ -251,14 +251,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
 
 
   return (
-    <div className="p-3 md:p-8 bg-background border-2 md:border border-border rounded-lg my-4 mx-auto space-y-4">
-      <h2 className="text-xl md:text-2xl  font-bold">
+    <div className="p-4 md:p-6 bg-background border-2 md:border border-border rounded-lg mx-auto space-y-4">
+      <h2 className="text-xl md:text-2xl font-bold">
         {parseWordsForLabels(props.fieldId)}
       </h2>
       {isLoading && <LoadingSpinner size="sm" />}
       {!isLoading && (
         <>
-          <div className="flex flex-col w-full gap-4">
+          <div className="flex flex-col w-full gap-2">
             <label
               className="text-lg font-bold flex gap-2"
               htmlFor="select-input"
@@ -287,20 +287,22 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
             />
           </div>
           {selectedServiceOption === fixedService && (
-            <div className="flex flex-col w-full gap-4">
-              <label className="text-lg font-bold flex gap-4">
-                {dict.form.selectDates}
-                <Tooltip text={dict.form.selectDatesDesc} placement="right">
-                  <Icon className="material-symbols-outlined">{"info"}</Icon>
-                </Tooltip>
-              </label>
-              <DateInput
-                mode="multiple"
-                ariaLabel={dict.form.fixedService}
-                selectedDate={fixedDates}
-                setSelectedDates={handleFixedDatesChange}
-                disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
-              />
+            <div className="flex flex-col w-full space-y-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-lg font-bold flex gap-2">
+                  {dict.form.selectDates}
+                  <Tooltip text={dict.form.selectDatesDesc} placement="right">
+                    <Icon className="material-symbols-outlined">{"info"}</Icon>
+                  </Tooltip>
+                </label>
+                <DateInput
+                  mode="multiple"
+                  ariaLabel={dict.form.fixedService}
+                  selectedDate={fixedDates}
+                  setSelectedDates={handleFixedDatesChange}
+                  disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
+                />
+              </div>
               {fixedDates.length > 0 && (
                 <SelectedDatesDisplay
                   dates={fixedDates}
@@ -343,14 +345,14 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               />
             )}
           {selectedServiceOption === regularService && (
-            <div className="w-full mt-6 ">
-              <div>
+            <div className="w-full space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
                 <span className="text-lg">{dict.form.repeatEvery}</span>
                 <input
                   id={FORM_STATES.RECURRENCE}
                   type={"number"}
                   disabled={props.options?.disabled}
-                  className={`w-12 text-center mx-4 p-2 bg-background text-foreground border border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
+                  className={`w-12 text-center p-2 bg-background text-foreground border border-border rounded-lg ${props.options?.disabled && "cursor-not-allowed"
                     } `}
                   step={"1"}
                   readOnly={formType == FormTypeMap.VIEW || formType == FormTypeMap.DELETE}
@@ -359,7 +361,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                 />
                 <span className="text-lg">{dict.form.week}</span>
               </div>
-              <div className="flex justify-center items-center flex-wrap gap-4 mb-10 mt-10 ">
+              <div className="flex justify-center items-center flex-wrap gap-3">
                 {daysOfWeek.map((dayOfWeek, index) => {
                   return (
                     <FormCheckboxField
@@ -374,8 +376,8 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
               </div>
             </div>
           )}
-          <div className="w-full mt-8">
-            <h1 className="text-xl font-bold mb-2">{dict.form.timeSlot}</h1>
+          <div className="w-full space-y-4">
+            <h3 className="text-xl font-bold">{dict.form.timeSlot}</h3>
             <FormFieldComponent
               field={{
                 "@id": "string",

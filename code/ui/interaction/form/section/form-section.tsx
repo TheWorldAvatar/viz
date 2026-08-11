@@ -28,11 +28,11 @@ export default function FormSection(props: Readonly<FormSectionProps>) {
   const id = useId();
 
   return (
-    <section aria-labelledby={id} className="p-2 md:p-6 flex flex-col justify-center mx-auto border-2 md:border border-border bg-background rounded-lg my-14 md:my-8">
-      <h2 id={id} className=" text-xl md:text-2xl  font-bold">
+    <section aria-labelledby={id} className="p-4 md:p-6 flex flex-col mx-auto border-2 md:border border-border bg-background rounded-lg space-y-4">
+      <h2 id={id} className="text-xl md:text-2xl font-bold">
         {parseWordsForLabels(props.group.label[VALUE_KEY])}
       </h2>
-      <div className="p-2 space-y-2">
+      <div className="space-y-4">
         {!props.group.maxCount ||
           (props.group.maxCount &&
             parseInt(props.group.maxCount?.[VALUE_KEY]) > 1) ? (
