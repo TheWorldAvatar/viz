@@ -12,11 +12,23 @@ export async function POST(
 
     const settings: UISettings = SettingsStore.getUISettings();
     const url: string = settings.links[parseInt(id)]?.url;
+    const keycloakEnabled: boolean = process.env.KEYCLOAK === "true";
+    const bearerToken: string | null = req.headers.get("x-bearer-token");
+
+    if (keycloakEnabled && !bearerToken) {
+      return NextResponse.json(
+        { apiVersion: "1.0.0", error: { code: 401, message: "Unauthorized" } },
+        { status: 401 }
+      );
+    }
 
     const data = await req.formData();
 
     const backendResponse = await fetch(url, {
       method: "POST",
+      headers: {
+        ...(bearerToken ? { Authorization: `Bearer ${bearerToken}` } : {}),
+      },
       body: data,
     });
 
