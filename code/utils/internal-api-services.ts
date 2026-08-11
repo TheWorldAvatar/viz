@@ -23,7 +23,9 @@ export async function healthCheck(): Promise<boolean> {
     });
     return res.status === 200;
   } catch (error: unknown) {
-    console.warn(error);
+    if (!(error instanceof TypeError && error.message === "Failed to fetch")) {
+      console.warn(error);
+    }
     return false;
   }
 }
@@ -217,8 +219,18 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
 export async function queryRegistryAttachmentAPI(contract: string): Promise<ContractDirectory> {
   const url: string = `${prefixedRegistryURL}attachment/${contract}`
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
-  const res = await fetch(url, requestParams);
-  return await res.json();
+  try {
+    const res = await fetch(url, requestParams);
+    return await res.json();
+  } catch (error: unknown) {
+    if (!(error instanceof TypeError && error.message === "Failed to fetch")) {
+      console.warn(error);
+    }
+    return {
+      url: "",
+      files: [],
+    };
+  }
 }
 
 /**
