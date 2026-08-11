@@ -23,6 +23,7 @@ import { useEffect } from "react";
 import PopoverActionButton from "../interaction/action/popover/popover-button";
 import DescriptionList from "../text/field/description-list";
 import LoadingSpinner from "../graphic/loader/spinner";
+import { useConnected } from "@/hooks/useConnected";
 
 interface RegistryGridComponentProps {
   entityType: string;
@@ -39,9 +40,11 @@ export default function RegistryGridComponent(
   props: Readonly<RegistryGridComponentProps>
 ) {
   const dict: Dictionary = useDictionary();
+  const isConnected: boolean = useConnected();
+
   const { isInitialLoading, hasNoActiveFilters, parentRef, data, previewData, columns, currentItemIndex,
     filters, virtualItems, rowVirtualizer, resetFormSession, triggerRefresh, updateFilter, resetFilters
-  } = useRegistryGrid(props.entityType, props.tableColumnOptions);
+  } = useRegistryGrid(props.entityType, isConnected, props.tableColumnOptions);
   const { navigateToDrawer } = useDrawerNavigation();
 
   useEffect(() => {
@@ -109,9 +112,9 @@ export default function RegistryGridComponent(
                       </Icon>
                       {date}
                     </p>
-                    <ViewAttachmentButton
+                    {isConnected && <ViewAttachmentButton
                       id={getId(event_id)}
-                      hideLabel={true} />
+                      hideLabel={true} />}
                   </div>
                 </div>}
                 actions={[<Button

@@ -44,10 +44,12 @@ const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistrySt
  * A custom hook to retrieve grid data into functionalities for the registry.
  *
  * @param {string} entityType Type of entity for rendering.
+ * @param {boolean} isConnected Indicates if the server is connected.
  * @param {TableColumnOption[]} mobileFieldOptions Options for the mobile fields.
  */
 export function useRegistryGrid(
     entityType: string,
+    isConnected: boolean,
     mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
@@ -63,7 +65,6 @@ export function useRegistryGrid(
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
     const [filters, setFilters] = useState<ColumnFilter[]>(localStorageManager.get(TASK_VIEWER_FILTER) ? JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)) : INITIAL_FILTER_STATE);
-    const isConnected: boolean = useConnected();
 
     const updateFilter = (field: string, selectedOptions: string[]) => {
         setFilters(prev => {
