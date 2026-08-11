@@ -5,7 +5,6 @@ import { useDictionary } from "@/hooks/useDictionary";
 import { Dictionary } from "@/types/dictionary";
 import { LifecycleStageMap } from "@/types/form";
 import RegistryFilter from "@/ui/container/registry-filter";
-import LoadingSpinner from "@/ui/graphic/loader/spinner";
 import { EnhancedColumnDef } from "@/ui/graphic/table/registry/registry-table-utils";
 import Accordion from "@/ui/interaction/accordion/accordion";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
@@ -16,7 +15,6 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
 interface FilterMenuProps {
-    isInitialLoading: boolean;
     hasNoActiveFilters: boolean;
     entityType: string;
     columns: EnhancedColumnDef<FieldValues>[];
@@ -28,7 +26,6 @@ interface FilterMenuProps {
 /**
  * This component renders a filter menu.
  *
- * @param {boolean} isInitialLoading Indicates that the menu is on its first render.
  * @param {boolean} hasNoActiveFilters Indicates that there is no active filter.
  * @param {string} entityType Type of entity for rendering.
  * @param {EnhancedColumnDef<FieldValues>[]} columns The list of filter fields.
@@ -77,41 +74,40 @@ export default function FilterMenu(props: Readonly<FilterMenuProps>) {
             <h1 className="text-lg font-semibold">{dict.action.filter}</h1>
         </section>
         <section className={`${props.hasNoActiveFilters ? "max-h-[70vh]" : "max-h-[50vh]"} min-h-0 overflow-y-auto px-1 w-full`}>
-            {props.isInitialLoading ? <LoadingSpinner size="xl" /> :
-                filterableColumns.length === 0 ?
-                    <p className="text-muted-foreground text-center py-2">{dict.message.noTasks}</p> :
-                    filterableColumns.map((column, index) => {
-                        const fieldId: string = column.id;
-                        const fieldTitle: string = column.header.toString();
-                        const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
-                        const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
-                        return <Accordion
-                            key={index}
-                            id={fieldId}
-                            title={fieldTitle}
-                            isActive={currentFilter.length > 0}
+            {filterableColumns.length === 0 ?
+                <p className="text-muted-foreground text-center py-2">{dict.message.noTasks}</p> :
+                filterableColumns.map((column, index) => {
+                    const fieldId: string = column.id;
+                    const fieldTitle: string = column.header.toString();
+                    const targetFilter: ColumnFilter = props.filters.find(filter => filter.id === fieldId);
+                    const currentFilter: string[] = !targetFilter ? [] : (targetFilter.value as string[]);
+                    return <Accordion
+                        key={index}
+                        id={fieldId}
+                        title={fieldTitle}
+                        isActive={currentFilter.length > 0}
+                        disabled={!isConnected}
+                    >
+                        <RegistryFilter
+                            type={props.entityType}
+                            field={fieldId}
+                            fieldType={column.dataType}
+                            lifecycleStage={LifecycleStageMap.OUTSTANDING}
+                            selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
+                            filters={props.filters}
                             disabled={!isConnected}
-                        >
-                            <RegistryFilter
-                                type={props.entityType}
-                                field={fieldId}
-                                fieldType={column.dataType}
-                                lifecycleStage={LifecycleStageMap.OUTSTANDING}
-                                selectedDate={getInitialDateFromLifecycleStage(LifecycleStageMap.OUTSTANDING, false)}
-                                filters={props.filters}
-                                disabled={!isConnected}
-                                className="w-full"
-                                onSubmission={(selectedOptions: string[]) => {
-                                    if (isConnected) {
-                                        props.updateFilter(fieldId, selectedOptions);
-                                        if (selectedOptions.length > 0 || hasOtherActiveFilters(fieldId)) {
-                                            setIsMenuOpen(false);
-                                        }
+                            className="w-full"
+                            onSubmission={(selectedOptions: string[]) => {
+                                if (isConnected) {
+                                    props.updateFilter(fieldId, selectedOptions);
+                                    if (selectedOptions.length > 0 || hasOtherActiveFilters(fieldId)) {
+                                        setIsMenuOpen(false);
                                     }
-                                }}
-                            />
-                        </Accordion>
-                    })}
+                                }
+                            }}
+                        />
+                    </Accordion>
+                })}
         </section>
         <footer className="shrink-0 -mx-2 border-t border-border pt-2 px-3">
             <Button
