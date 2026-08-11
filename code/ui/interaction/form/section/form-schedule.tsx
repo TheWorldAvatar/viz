@@ -301,6 +301,7 @@ export default function FormSchedule(props: Readonly<FormScheduleProps>) {
                   selectedDate={fixedDates}
                   setSelectedDates={handleFixedDatesChange}
                   disabled={formType === FormTypeMap.VIEW || formType === FormTypeMap.DELETE}
+                  disableMobileView={true}
                 />
               </div>
               {fixedDates.length > 0 && (
