@@ -200,7 +200,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     const loadingId: number | string = isOfflineCompletion ? undefined : startLoading();
     try {
       let response: AgentResponseBody;
-      if (task?.id != BULK_IDENTIFIER) {
+      // Do not use task.id here as bulk identifier is ignored in the hook
+      if (props.id != BULK_IDENTIFIER) {
         let action = "";
         if (props.formType === FormTypeMap.DISPATCH) {
           action = "dispatch";
