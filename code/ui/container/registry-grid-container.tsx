@@ -14,6 +14,7 @@ import VirtualCard from "@/ui/interaction/card/virtual-card";
 import FilterMenu from "@/ui/interaction/menu/filter/filter-menu";
 import StatusComponent from "@/ui/text/status/status";
 import {
+  getId,
   interpolate,
   parseWordsForLabels
 } from "@/utils/client-utils";
@@ -109,7 +110,7 @@ export default function RegistryGridComponent(
                       {date}
                     </p>
                     <ViewAttachmentButton
-                      id={event_id}
+                      id={getId(event_id)}
                       hideLabel={true} />
                   </div>
                 </div>}
