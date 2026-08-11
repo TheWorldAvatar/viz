@@ -129,7 +129,7 @@ export default function RegistryGridComponent(
                     resetFormSession();
                     browserStorageManager.set(RegistryStatusMap.BILLABLE_COMPLETED, "false");
                     browserStorageManager.set(RegistryStatusMap.COMPLETED, event_id);
-                    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.COMPLETE}?id=${event_id}`);
+                    navigateToDrawer(Routes.REGISTRY_TASK, `${FormTypeMap.COMPLETE}?id=${getId(event_id)}`);
                   }}
                 />,
                 <PopoverActionButton
