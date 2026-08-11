@@ -37,7 +37,7 @@ export interface GridDescriptor {
     resetFilters: () => void;
 }
 
-const GRID_LIMIT: number = 100;
+const GRID_LIMIT: number = dexieTaskRepo.getInitialBatchSize();
 const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistryStatusMap.ASSIGNED] }];
 
 /**
@@ -56,7 +56,8 @@ export function useRegistryGrid(
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(1);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
-    const [isFetching, setIsFetching] = useState<boolean>(true);
+    // Initialise based on if there are active filters
+    const [hasFiltersChanged, setHasFiltersChanged] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
     const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
@@ -90,6 +91,7 @@ export function useRegistryGrid(
             }
             return updatedFilters;
         });
+        setHasFiltersChanged(true);
         triggerRefresh();
     };
 
@@ -97,12 +99,12 @@ export function useRegistryGrid(
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
         setHasNoActiveFilters(true);
+        setHasFiltersChanged(true);
         triggerRefresh();
     };
 
     const triggerRefresh = () => {
         setIsInitialLoading(true);
-        setIsFetching(true);
     }
 
     const { data, previewData } = useLiveTasks(mobileFields.current, dict);
@@ -135,9 +137,8 @@ export function useRegistryGrid(
             const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
             const sortParams: string = getInitialSortParams([]);
 
-            // Clear data only when connected
-            const tasks: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
-                entityType, "0", GRID_LIMIT.toString(), sortParams, filterParams, isConnected);
+            const tasks: AgentResponseDataPayload = await dexieTaskRepo.syncInitialBatch(
+                entityType, sortParams, filterParams, isConnected, hasFiltersChanged);
 
             const data: FieldValues[] = tasks?.items as FieldValues[];
             // Parsing of columns should only occur once at the start
@@ -154,7 +155,7 @@ export function useRegistryGrid(
             // If total length is equal or more than limit, start a background sync
             const registration: ServiceWorkerRegistration = await navigator.serviceWorker?.ready;
             const targetWorker: ServiceWorker = navigator.serviceWorker?.controller || registration.active;
-            // Do not trigger background sync if there are no active filters
+
             if (data.length >= GRID_LIMIT && targetWorker && !hasNoActiveFilters) {
                 navigator.serviceWorker.controller.postMessage({
                     type: TASK_SYNC_EVENT,
@@ -166,14 +167,14 @@ export function useRegistryGrid(
                 });
             }
 
-            setIsFetching(false);
             setIsInitialLoading(false);
+            setHasFiltersChanged(false);
         }
         // Only fetch data if there are no ongoing fetches, and there are more data to fetch
-        if (isFetching && isConnected) {
+        if (isConnected) {
             fetchData();
         }
-    }, [entityType, isConnected, isFetching, filters, columns?.length, dict]);
+    }, [entityType, isConnected, isInitialLoading, filters, dict]);
 
     return {
         isInitialLoading,

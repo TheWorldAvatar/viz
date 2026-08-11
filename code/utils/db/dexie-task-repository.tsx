@@ -1,7 +1,7 @@
 import { AgentResponseBody, AgentResponseDataPayload, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { IndexedDbState, IndexedDbStateMap, LifecycleStageMap, RegistryFieldValues } from "@/types/form";
 import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-utils";
-import { db, DynamicTask } from "@/utils/db/db";
+import { db, DynamicTask, IndexedDbMetadata } from "@/utils/db/db";
 import { EntityTable } from "dexie";
 import { FieldValues } from "react-hook-form";
 import { getUTCDate } from "../client-utils";
@@ -10,13 +10,22 @@ import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal
 export const TASK_SYNC_EVENT: string = "task_sync";
 class DexieTaskRepository {
     private TASK_KEY: string = "tasks";
+    private INITIAL_BATCH_SIZE: number = 100;
     private BATCH_SIZE: number = 500;
+    private STALE_TIME_S: number = 5 * 60;
 
     /**
      * Retrieves the field key for tasks.
     */
     getFieldKey(): string {
         return this.TASK_KEY;
+    }
+
+    /**
+     * Get the initial batch size.
+     */
+    getInitialBatchSize(): number {
+        return this.INITIAL_BATCH_SIZE;
     }
 
     /**
@@ -39,11 +48,42 @@ class DexieTaskRepository {
     }
 
     /**
+     * Start the sync with the database to get the initial batch for first render.
+     * 
+     * @param {string} entityType The entity type.
+     * @param {string} sortParams The parameters for sorting.
+     * @param {string} filters The parameters for filters.
+     * @param {boolean} isConnected Indicates if the platform is online.
+     * @param {boolean} hasFiltersChanged Indicates if the filters has changed since previous sync.
+     */
+    async syncInitialBatch(entityType: string, sortParams: string, filters: string,
+        isConnected: boolean, hasFiltersChanged: boolean): Promise<AgentResponseDataPayload> {
+        const meta: IndexedDbMetadata = await db.metadata.get(this.TASK_KEY);
+        const table: EntityTable<DynamicTask, "event_id"> = db.tasks;
+
+        // When the device is online, filters have changed, and either no cached metadata exists 
+        // or the cached data exceeds the allowed stale time limit clear and resync the data
+        const reqFetch: boolean = !meta || (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S);
+        if (isConnected && (hasFiltersChanged || reqFetch)) {
+            await table.clear();
+            return await this.fetchTasks(entityType, "0", this.INITIAL_BATCH_SIZE.toString(), sortParams, filters, isConnected);
+        }
+
+        return {
+            items: await table.limit(100).toArray(),
+            totalItems: meta?.count,
+            columns: meta?.columns,
+        }
+    }
+
+    /**
      * Start the sync with the database.
      * 
-     * @param {string[]} fields The list of fields to sync data for.
+     * @param {string} entityType The entity type.
+     * @param {string} sortParams The parameters for sorting.
+     * @param {string} filters The parameters for filters.
      * @param {boolean} isConnected Indicates if the platform is online.
-      */
+     */
     async sync(entityType: string, sortParams: string, filters: string, isConnected: boolean) {
         if (!isConnected) {
             return;
@@ -53,10 +93,14 @@ class DexieTaskRepository {
         // If task has been completed, only grab the new data with the timestamp check
         let hasMore: boolean = true;
         let currentOffset: number = 0;
-        while (hasMore) {
+        const meta: IndexedDbMetadata = await db.metadata.get(this.TASK_KEY);
+        // Trigger fetch only when online, and data is either syncing or stale
+        let isStale: boolean = meta?.state == IndexedDbStateMap.COMPLETE && (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S);
+        const triggerFetch: boolean = isConnected && (meta?.state == IndexedDbStateMap.SYNC || isStale);
+        while (hasMore && triggerFetch) {
             const responsePayload: AgentResponseDataPayload = await dexieTaskRepo.fetchTasks(
                 entityType, Math.floor(currentOffset / this.BATCH_SIZE).toString(), this.BATCH_SIZE.toString(),
-                sortParams, filters, false);
+                sortParams, filters, isConnected);
 
             const nextBatch: FieldValues[] = responsePayload.items as FieldValues[];
             currentOffset += nextBatch.length;
@@ -64,11 +108,22 @@ class DexieTaskRepository {
             if (nextBatch.length < this.BATCH_SIZE) {
                 hasMore = false;
             }
+            // To prevent data clearing after first stale check, but status will change to sync instead
+            isStale = false;
         }
     }
 
-    async fetchTasks(entityType: string, page: string, limit: string,
-        sortParams: string, filters: string, clearData: boolean): Promise<AgentResponseDataPayload> {
+    private async fetchTasks(entityType: string, page: string, limit: string,
+        sortParams: string, filters: string, isConnected: boolean): Promise<AgentResponseDataPayload> {
+        const meta: IndexedDbMetadata = await db.metadata.get(this.TASK_KEY);
+        if (!isConnected) {
+            return {
+                items: [],
+                totalItems: meta?.count,
+                columns: meta?.columns,
+            }
+        }
+
         const apiUrl: string = makeInternalRegistryAPIwithParams(
             LifecycleStageMap.OUTSTANDING,
             entityType,
@@ -84,10 +139,6 @@ class DexieTaskRepository {
         const data: FieldValues[] = [];
         const table: EntityTable<DynamicTask, "event_id"> = db.tasks;
         if (res.data?.items?.length > 0) {
-            // Clear cached data if set required
-            if (clearData) {
-                await table.clear();
-            }
             (res.data?.items as RegistryFieldValues[]).forEach(instance => {
                 data.push(flattenInstance(instance));
             });
