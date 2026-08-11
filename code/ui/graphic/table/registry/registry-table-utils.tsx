@@ -11,7 +11,7 @@ import { ComparisonOperatorMap } from "@/types/table";
 import ExpandableTextCell from "@/ui/graphic/table/cell/expandable-text-cell";
 import StatusComponent from "@/ui/text/status/status";
 import { formatDateValue, formatDatetimeValue, getAfterDelimiter, getId, isValidIRI, parseWordsForLabels } from "@/utils/client-utils";
-import { DEFAULT_MAX_CHARACTER_LENGTH, FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
+import { FLAG_EMOJI, FLAG_KEY, XSD_DATE, XSD_DATETIME, XSD_DECIMAL, XSD_INTEGER } from "@/utils/constants";
 import {
   ColumnDef,
   ColumnFilter,
@@ -159,16 +159,19 @@ export function parseColumnsMetadata(
   for (const col of columns) {
     // Only translate the title, do not translate the accessor key as it is needed for data access and API querying
     const title: string = col.value == FLAG_KEY ? FLAG_EMOJI : parseWordsForLabels(translateLifecycleFields(col.value, dict.title));
-    const minWidth: number = col.value == FLAG_KEY ? title.length : Math.max(
-      title.length * 15,
-      125
-    );
     const isDateColumn: boolean = col.datatype === XSD_DATE;
     const isDateTimeColumn: boolean = col.datatype === XSD_DATETIME;
+    const minWidth: number = col.value == FLAG_KEY
+      ? title.length
+      : isDateTimeColumn
+        ? 210
+        : Math.max(
+          title.length * 15,
+          125
+        );
 
     const configuredWidth: number | undefined = columnOptions?.find((item) => item.name === col.value)?.width;
     const effectiveWidth: number = configuredWidth ?? minWidth;
-    const maxTextLength: number = calculateMaxCharLengthFromWidth(configuredWidth);
 
     results.push({
       id: col.value,
@@ -185,7 +188,7 @@ export function parseColumnsMetadata(
         }
         if (Array.isArray(getValue())) {
           const arrayFields: Record<string, string>[] = getValue() as Record<string, string>[];
-          return <ArrayTextCell fields={arrayFields} maxTextLength={maxTextLength} />
+          return <ArrayTextCell fields={arrayFields} />
         }
         let value: string = getValue() as string;
         if (!value) return "";
@@ -198,7 +201,7 @@ export function parseColumnsMetadata(
         }
 
         if (isValidIRI(value)) {
-          return getAfterDelimiter(value, "/");
+          value = getAfterDelimiter(value, "/");
         }
 
         // Column header name is untranslated so we can directly compare to a string
@@ -209,7 +212,7 @@ export function parseColumnsMetadata(
         }
 
         return (
-          <ExpandableTextCell overrideExpansion={columns.length <= 2} text={value} maxTextLength={maxTextLength} />
+          <ExpandableTextCell text={value} />
         );
       },
       filterFn: multiSelectFilter,
@@ -374,25 +377,6 @@ export function parseTranslatedFieldToOriginal(field: string, titleDict: Record<
     default:
       return field;
   }
-}
-
-/**
- * Calculates the maximum text length to display in a cell based on column width.
- * Uses tunable width-to-character estimation so truncation can be less aggressive.
- *
- * @param {number} width The column width in pixels.
- * @returns {number} The maximum number of characters to display before truncation.
- */
-function calculateMaxCharLengthFromWidth(width: number | undefined): number {
-  if (width === undefined) {
-    return DEFAULT_MAX_CHARACTER_LENGTH;
-  }
-  // 8 is the approximate width of a character in pixels, used to estimate how many characters can fit in a given column width
-  // 6 is the expansion factor that determines how many characters to show based on the column width.
-  // Change this factor based on how aggressive the truncation should be (e.g. 1.5 would be more aggressive, 3 would be less)
-  // The higher the factor, the more characters will be shown before truncation
-  const estimatedLength: number = Math.floor((width / 8) * 1.5);
-  return Math.max(estimatedLength, DEFAULT_MAX_CHARACTER_LENGTH);
 }
 
 /**

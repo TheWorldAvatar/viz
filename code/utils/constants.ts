@@ -16,7 +16,6 @@ export const FLAG_EMOJI: string = "🚩";
 export const SYNC_KEY: string = "sync";
 export const TASK_VIEWER_FILTER: string = "task_view";
 
-export const DEFAULT_MAX_CHARACTER_LENGTH: number = 25;
 export const YEARS_PER_PAGE: number = 12;
 
 export const MAX_SORT_COLUMNS: number = 3;

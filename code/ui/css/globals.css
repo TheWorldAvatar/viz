@@ -60,6 +60,7 @@
 
     /* Background, text, and border for info banners/tooltips */
     --info-background:#eff6ff;
+    --info-background-hover: #d6e8ff;
     --info-foreground: #1447e6;
     --info-border: #bedbff;
 
@@ -137,6 +138,7 @@
     --ring: #ffffff1a;
 
     --info-background: #0d1117;
+    --info-background-hover: #161d27;
     --info-foreground: #51a2ff;
     --info-border: #51a2ff;
 
@@ -212,6 +214,7 @@
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
   --color-info-background: var(--info-background);
+  --color-info-background-hover: var(--info-background-hover);
   --color-info-foreground: var(--info-foreground);
   --color-info-border: var(--info-border);
   --color-links: var(--text-color-links);
