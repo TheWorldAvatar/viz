@@ -14,6 +14,9 @@ interface ToastProps {
   type?: ToastType;
 }
 
+const MESSAGE_PREVIEW_LENGTH: number = 200;
+const MESSAGE_PREVIEW_LINES: number = 3;
+
 /**
  * Sets off a toast notification based on the message and type.
  *
@@ -47,6 +50,20 @@ function Toast(props: Readonly<ToastProps>) {
   const { message, id, type } = props;
   const dict: Dictionary = useDictionary();
   const toastConfig: ToastConfig = getToastConfig(type, dict);
+  const isLongMessage: boolean = (message?.length ?? 0) > MESSAGE_PREVIEW_LENGTH ||
+    (message?.split(/\r?\n/).length ?? 0) > MESSAGE_PREVIEW_LINES;
+
+  const downloadLog = () => {
+    const blob: Blob = new Blob([message ?? ""], { type: "text/plain;charset=utf-8" });
+    const url: string = URL.createObjectURL(blob);
+    const link: HTMLAnchorElement = document.createElement("a");
+    link.href = url;
+    link.download = `toast-${new Date().toISOString().replace(/[:.]/g, "-")}.log`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div
@@ -64,10 +81,20 @@ function Toast(props: Readonly<ToastProps>) {
           </p>
         )}
         <p
-          className={`text-sm hyphens-auto wrap-break-word ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
+          className={`text-sm whitespace-pre-wrap hyphens-auto wrap-break-word ${isLongMessage ? "line-clamp-3" : ""} ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
         >
           {message}
         </p>
+        {isLongMessage && (
+          <Button
+            variant="link"
+            size="sm"
+            className={`!p-0 ${toastConfig.text}`}
+            onClick={downloadLog}
+          >
+            {dict.action.downloadLog}
+          </Button>
+        )}
       </div>
       {type !== "loading" &&
         <Button
