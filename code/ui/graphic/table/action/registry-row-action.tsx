@@ -417,6 +417,7 @@ export default function RegistryRowAction(
               rowId={[props.row.id]}
               recordType={props.recordType}
               triggerRefresh={props.triggerRefresh}
+              additionalAction={handleClickRowAction}
             />
           }
           {isActionAllowed("ACCOUNT_FLAG") && <RowActionButton
