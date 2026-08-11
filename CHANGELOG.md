@@ -2,6 +2,12 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.83.8
+
+### Bug fixes
+
+- Updated the bulk edit dropdown styling so that each dropdown has enough width to display its content clearly without squeezing or unnecessarily truncating the items.
+
 ## 5.83.7
 
 ### Bug fixes
