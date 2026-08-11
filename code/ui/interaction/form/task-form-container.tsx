@@ -89,7 +89,7 @@ export function TaskFormContainerComponent(
             size="icon"
             variant="ghost"
             type="button"
-            tooltipText={dict.action.dismiss}
+            tooltipText={dict.action.close}
             className="rounded-full!"
             onClick={() => router.back()}
           />

@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useDialog } from "@/hooks/float/useDialog";
 
 import Button from "../button";
+import { Dictionary } from "@/types/dictionary";
+import { useDictionary } from "@/hooks/useDictionary";
 
 interface DrawerProps {
   isExternalOpen?: boolean;
@@ -27,6 +29,7 @@ interface DrawerProps {
  * @param setIsExternalOpen Optional external setter for the open state.
  */
 export default function Drawer(props: Readonly<DrawerProps>) {
+  const dict: Dictionary = useDictionary();
   const [isOpen, setIsOpen] = useState(props.isExternalOpen ?? false);
   const dialog = useDialog(props.isExternalOpen ?? isOpen, props.setIsExternalOpen ?? setIsOpen, false, props.onClose);
   const transition = useTransitionStyles(dialog.context, {
@@ -82,14 +85,18 @@ export default function Drawer(props: Readonly<DrawerProps>) {
                     flex flex-col min-h-0
                   "
                 >
-                  <Button
-                    leftIcon="close"
-                    size="icon"
-                    variant="ghost"
-                    type="button"
-                    className="absolute top-2 right-4 !rounded-full"
-                    onClick={() => dialog.setIsOpen(false)}
-                  />
+                  <div className="absolute top-2 right-4">
+                    <Button
+                      leftIcon="close"
+                      size="icon"
+                      variant="ghost"
+                      type="button"
+                      className="!rounded-full"
+                      tooltipText={dict.action.close}
+                      tooltipPosition="left"
+                      onClick={() => dialog.setIsOpen(false)}
+                    />
+                  </div>
                   <div className="px-4 h-full flex flex-col min-h-0">
                     {props.children}
                   </div>
