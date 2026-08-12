@@ -117,24 +117,20 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
   } = useGeocode(addressShapes, props.field, props.form);
 
   return (
-    <div className="mt-6">
+    <div className="space-y-4">
       <h2 className="text-2xl font-bold text-foreground">
         {parseWordsForLabels(props.field.name[VALUE_KEY])}
       </h2>
-      {isFetching && (
-        <div className="mr-2">
-          <LoadingSpinner size="sm" />
-        </div>
-      )}
+      {isFetching && <LoadingSpinner size="sm" />}
 
       {!isFetching && (
         <>
-          <div className="flex items-start gap-2">
+          <div className="flex items-end gap-2">
             {postalCodeShape && (
               <FormFieldComponent field={postalCodeShape} form={props.form} />
             )}
             {(formType == "add" || formType == "edit") && (
-              <div className="mt-12 shrink-0">
+              <div className="shrink-0">
                 <Button
                   leftIcon="place"
                   size="icon"
@@ -154,9 +150,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
           </div>
 
           {hasNoAddressFound && (
-            <div>
-              <ErrorComponent message={dict.message.noAddressFound} />
-            </div>
+            <ErrorComponent message={dict.message.noAddressFound} />
           )}
           {addresses?.length > 1 && showAddressOptions && (
             <div className="flex flex-wrap w-fit gap-2">
@@ -177,7 +171,7 @@ export default function FormGeocoder(props: Readonly<FormGeocoderProps>) {
               ))}
             </div>
           )}
-          <div className="flex flex-wrap w-full">
+          <div className="flex flex-wrap w-full gap-4">
             <GeocodeMapContainer
               form={props.form}
               fieldId={props.field.fieldId}

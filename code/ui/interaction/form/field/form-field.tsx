@@ -31,28 +31,26 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
       ["string", "integer", "decimal"].includes(props.field.datatype)
     ) {
       return (
-        <div className="-p-2 flex flex-col basis-full w-full ">
-          <div className="flex flex-col">
-            {/** Display input min max range only if this is the search form and a numerical value */}
-            {formType == FormTypeMap.SEARCH &&
-              ["integer", "decimal"].includes(props.field.datatype) ? (
-              <FormInputMinMaxField
-                field={props.field}
-                form={props.form}
-                options={{ labelStyle: [styles["form-input-label"]] }}
-              />
-            ) : (
-              <FormInputField
-                field={props.field}
-                form={props.form}
-                options={{
-                  disabled: props.options?.disabled,
-                  inputStyle: [styles["form-input-value"]],
-                  labelStyle: [styles["form-input-label"]],
-                }}
-              />
-            )}
-          </div>
+        <div className="flex flex-col basis-full w-full">
+          {/** Display input min max range only if this is the search form and a numerical value */}
+          {formType == FormTypeMap.SEARCH &&
+            ["integer", "decimal"].includes(props.field.datatype) ? (
+            <FormInputMinMaxField
+              field={props.field}
+              form={props.form}
+              options={{ labelStyle: [styles["form-input-label"]] }}
+            />
+          ) : (
+            <FormInputField
+              field={props.field}
+              form={props.form}
+              options={{
+                disabled: props.options?.disabled,
+                inputStyle: [styles["form-input-value"]],
+                labelStyle: [styles["form-input-label"]],
+              }}
+            />
+          )}
         </div>
       );
     } else if (
@@ -61,31 +59,27 @@ export default function FormFieldComponent(props: Readonly<FormFieldProps>) {
     ) {
       return (
         <div className="flex flex-col basis-full w-full">
-          <div className="flex flex-col m-0 w-full">
-            <FormDateTimePicker
-              field={props.field}
-              form={props.form}
-              options={{
-                ...props.options,
-                labelStyle: [styles["form-input-label"]],
-              }}
-            />
-          </div>
+          <FormDateTimePicker
+            field={props.field}
+            form={props.form}
+            options={{
+              ...props.options,
+              labelStyle: [styles["form-input-label"]],
+            }}
+          />
         </div>
       );
     } else if (props.field.in) {
       return (
-        <div className="flex  flex-col basis-full w-full">
-          <div className="flex flex-col m-0 w-full">
-            <OntologyConceptSelector
-              field={props.field}
-              form={props.form}
-              options={{
-                ...props.options,
-                labelStyle: [styles["form-input-label"]],
-              }}
-            />
-          </div>
+        <div className="flex flex-col basis-full w-full">
+          <OntologyConceptSelector
+            field={props.field}
+            form={props.form}
+            options={{
+              ...props.options,
+              labelStyle: [styles["form-input-label"]],
+            }}
+          />
         </div>
       );
     }

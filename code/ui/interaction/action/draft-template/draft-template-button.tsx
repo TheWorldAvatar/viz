@@ -14,6 +14,7 @@ interface DraftTemplateButtonProps {
     rowId: string[];
     triggerRefresh: () => void;
     resetRowSelection?: () => void;
+    additionalAction?: () => void;
 }
 
 /**
@@ -23,6 +24,7 @@ interface DraftTemplateButtonProps {
  *  @param {string} rowId The ID of the row to draft the template for.
  *  @param triggerRefresh A function to refresh the table when required.
  *  @param resetRowSelection An optional function to reset the row selection in the table.
+ *  @param additionalAction An optional function to run alongside the draft template
  */
 export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonProps>) {
     const dict: Dictionary = useDictionary();
@@ -37,6 +39,7 @@ export default function DraftTemplateButton(props: Readonly<DraftTemplateButtonP
         };
 
         startLoading();
+        props.additionalAction?.();
         const responseBody: AgentResponseBody = await queryInternalApi(
             makeInternalRegistryAPIwithParams(InternalApiIdentifierMap.EVENT, "draft", "copy"),
             "POST",

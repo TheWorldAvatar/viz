@@ -464,7 +464,7 @@ export function FormComponent(props: Readonly<FormComponentProps>) {
   });
 
   return (
-    <form ref={props.formRef} onSubmit={onSubmit}>
+    <form className="space-y-12 md:space-y-6" ref={props.formRef} onSubmit={onSubmit}>
       {form.formState.isLoading && <FormSkeleton />}
       {!form.formState.isLoading &&
         renderFormField(

@@ -103,7 +103,7 @@ export function DependentFormSection(
     // Disable account field on assign price form page
     || (formType === FormTypeMap.ASSIGN_PRICE && props.billingStore?.accountField === props.dependentProp.fieldId);
   return (
-    <div className="rounded-lg my-4">
+    <div className="rounded-lg">
       <div className="flex flex-col w-full gap-2">
         <FormInputContainer
           field={props.dependentProp}

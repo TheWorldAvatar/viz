@@ -19,11 +19,8 @@ export default function FormSearchPeriod(
 ) {
   const dict: Dictionary = useDictionary();
   return (
-    <fieldset
-      className="border border-border"
-      style={{ marginBottom: "1rem" }}
-    >
-      <legend className="mx-1 my-0 p-1 font-bold text-[var(--font-size-secondary-text)]">{dict.title.searchPeriod}</legend>
+    <fieldset className="border border-border px-4 pb-4 space-y-4">
+      <legend className="px-1 font-bold text-sm">{dict.title.searchPeriod}</legend>
       <FormFieldComponent
         field={{
           "@id": "string",

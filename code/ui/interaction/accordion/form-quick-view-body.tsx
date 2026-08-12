@@ -26,7 +26,7 @@ export default function FormQuickViewBody(
       id={`accordion-content-${props.id}`}
       role="region"
       aria-labelledby={`accordion-button-${props.id}`}
-      className={`transition-all duration-300 ease-in-out overflow-hidden bg-muted rounded-lg inset-shadow-sm `}
+      className={`transition-all duration-300 ease-in-out overflow-hidden bg-muted rounded-lg inset-shadow-sm mt-1.5`}
       style={{
         maxHeight: `${contentHeight}px`,
       }}

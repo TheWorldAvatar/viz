@@ -398,6 +398,7 @@ export default function RegistryRowAction(
               className="w-full justify-start"
               label={dict.action.exportAsCsv}
               disabled={isLoading}
+              onComplete={() => setIsActionMenuOpen(false)}
             />}
           {isActionAllowed("VIEW_INVOICE") &&
             <FileDownloadButton
@@ -411,12 +412,14 @@ export default function RegistryRowAction(
               className="w-full justify-start"
               label={dict.action.exportAsPdf}
               disabled={isLoading}
+              onComplete={() => setIsActionMenuOpen(false)}
             />}
           {isActionAllowed("DRAFT_TEMPLATE") &&
             <DraftTemplateButton
               rowId={[props.row.id]}
               recordType={props.recordType}
               triggerRefresh={props.triggerRefresh}
+              additionalAction={handleClickRowAction}
             />
           }
           {isActionAllowed("ACCOUNT_FLAG") && <RowActionButton

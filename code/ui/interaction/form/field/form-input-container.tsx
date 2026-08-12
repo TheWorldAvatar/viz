@@ -46,14 +46,14 @@ export default function FormInputContainer(
       : "";
 
   return (
-    <>
+    <div className="flex flex-col w-full">
       <div className="flex flex-wrap items-center justify-between">
-        <label className={`${labelClassNames} `} htmlFor={props.field.fieldId}>
-          <span className="text-lg font-semibold flex items gap-1.5">
+        <label className={labelClassNames} htmlFor={props.field.fieldId}>
+          <span className="text-lg font-semibold flex gap-1.5">
             {parseWordsForLabels(label)}
             {props.error && "*"}
             <Tooltip text={description} placement="right">
-              <Icon className="material-symbols-outlined ">{"info"}</Icon>
+              <Icon className="material-symbols-outlined">{"info"}</Icon>
             </Tooltip>
           </span>
           {props.formatLabel && (
@@ -62,8 +62,7 @@ export default function FormInputContainer(
         </label>
       </div>
       <div>{props.children}</div>
-
       <FormErrorComponent error={props.error} />
-    </>
+    </div>
   );
 }

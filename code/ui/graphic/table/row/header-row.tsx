@@ -58,6 +58,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
     if (selectedRows.length === 0) {
       return;
     }
+    setIsActionMenuOpen(false);
 
     const contractIds: string[] = selectedRows.map((row) => row.original.id);
     let reqBody: JsonObject;
@@ -122,6 +123,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       variant="ghost"
                       disabled={isLoading}
                       onClick={async () => {
+                        setIsActionMenuOpen(false);
                         await onBulkEditSubmit();
                         tableDescriptor.setIsBulkDispatchEdit(false);
                         props.triggerRefresh();
@@ -163,6 +165,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                               contract: row.original.id,
                               date: row.original.date,
                             }))
+                          setIsActionMenuOpen(false);
                           browserStorageManager.clear();
                           browserStorageManager.set(FormTypeMap.MASS_EDIT, JSON.stringify(tasks));
                           resetFormSession();
@@ -176,6 +179,7 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                       recordType={recordType}
                       triggerRefresh={props.triggerRefresh}
                       resetRowSelection={tableDescriptor.table.resetRowSelection}
+                      additionalAction={() => setIsActionMenuOpen(false)}
                     />
                   )}
                 </div>

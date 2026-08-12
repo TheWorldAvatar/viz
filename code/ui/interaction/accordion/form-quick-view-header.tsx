@@ -82,7 +82,7 @@ export default function FormQuickViewHeader(props: Readonly<FormQuickViewHeaderP
   };
 
   return (
-    <div className="flex justify-between items-center mb-2">
+    <div className="flex justify-between items-center">
       {props.selectedEntityId && <Button
         type="button"
         leftIcon="menu_open"
