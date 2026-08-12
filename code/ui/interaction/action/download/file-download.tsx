@@ -11,6 +11,7 @@ interface FileDownloadButtonProps extends ButtonProps {
   id: string;
   resource: string;
   format: "csv" | "pdf";
+  onComplete?: () => void;
 }
 
 /**
@@ -19,11 +20,13 @@ interface FileDownloadButtonProps extends ButtonProps {
  * @param {string} id The target ID of the resource.
  * @param {string} resource The resource type.
  * @param {"csv" | "pdf"} format The file format (csv or pdf).
+ * @param onComplete An optional function to run after the file download is complete.
  */
 export function FileDownloadButton({
   id,
   resource,
   format,
+  onComplete,
   ...rest
 }: Readonly<FileDownloadButtonProps>) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,6 +40,7 @@ export function FileDownloadButton({
       }
     } finally {
       setLoading(false);
+      onComplete?.();
     }
   };
 
