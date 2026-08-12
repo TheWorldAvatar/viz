@@ -34,6 +34,8 @@ class DexieTaskRepository {
      * @param {string} id Target task identifier.
      */
     async removeTask(id: string): Promise<void> {
+        const meta: IndexedDbMetadata = await db.metadata.get(this.TASK_KEY);
+        await this.updateMeta(meta?.state, meta?.count - 1, meta?.columns);
         await db.tasks.delete(id);
     }
 
