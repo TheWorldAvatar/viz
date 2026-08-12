@@ -4,7 +4,7 @@ import { flattenInstance } from "@/ui/graphic/table/registry/registry-table-util
 import { db, DynamicTask, IndexedDbMetadata } from "@/utils/db/db";
 import { EntityTable } from "dexie";
 import { FieldValues } from "react-hook-form";
-import { getUTCDate } from "../client-utils";
+import { getId, getUTCDate } from "../client-utils";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "../internal-api-services";
 
 export const TASK_SYNC_EVENT: string = "task_sync";
@@ -59,7 +59,7 @@ class DexieTaskRepository {
     async syncInitialBatch(entityType: string, sortParams: string, filters: string,
         isConnected: boolean, hasFiltersChanged: boolean): Promise<AgentResponseDataPayload> {
         const meta: IndexedDbMetadata = await db.metadata.get(this.TASK_KEY);
-        const table: EntityTable<DynamicTask, "event_id"> = db.tasks;
+        const table: EntityTable<DynamicTask, "task_id"> = db.tasks;
 
         // When the device is online, filters have changed, and either no cached metadata exists 
         // or the cached data exceeds the allowed stale time limit clear and resync the data
@@ -137,10 +137,14 @@ class DexieTaskRepository {
         const res: AgentResponseBody = await queryInternalApi(apiUrl);
 
         const data: FieldValues[] = [];
-        const table: EntityTable<DynamicTask, "event_id"> = db.tasks;
+        const table: EntityTable<DynamicTask, "task_id"> = db.tasks;
         if (res.data?.items?.length > 0) {
             (res.data?.items as RegistryFieldValues[]).forEach(instance => {
-                data.push(flattenInstance(instance));
+                const flattenedInstance: FieldValues = flattenInstance(instance);
+                data.push({
+                    task_id: getId(flattenedInstance["event_id"]),
+                    ...flattenedInstance
+                });
             });
             await table.bulkPut(data);
         }

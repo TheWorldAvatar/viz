@@ -3,7 +3,7 @@ import { IndexedDbState } from "@/types/form";
 import { Dexie, type EntityTable } from "dexie";
 
 export interface DynamicTask {
-    event_id: string; // a known primary key
+    task_id: string; // a known primary key
     [key: string]: unknown;
 }
 
@@ -17,13 +17,13 @@ export interface IndexedDbMetadata {
 }
 
 class TWADatabase extends Dexie {
-    tasks!: EntityTable<DynamicTask, "event_id">;
+    tasks!: EntityTable<DynamicTask, "task_id">;
     metadata!: EntityTable<IndexedDbMetadata, "field">;
 
     constructor() {
         super("TWA");
         this.version(1).stores({
-            tasks: "event_id",
+            tasks: "task_id",
             metadata: "field"
         });
     }
