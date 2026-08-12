@@ -122,7 +122,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
-  const { task } = useTaskData(props.id, setIsFetching);
+  const { task } = useTaskData(props.id, isConnected, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 

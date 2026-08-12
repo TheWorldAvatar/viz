@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { useConnected } from "@/hooks/useConnected";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { RegistryStatusMap, RegistryTaskOption, SparqlResponseField } from "@/types/form";
@@ -17,15 +16,16 @@ interface UseTaskDataResult {
  * A custom hook to retrieve task data for a given task ID.
  *
  * @param {string} id The task identifier.
+ * @param {boolean} isConnected Checks if the data is connected.
  * @param {Dispatch<SetStateAction<boolean>>} setIsFetching External state setter for fetching status.
  * @returns {UseTaskDataResult} The task data.
  */
 export function useTaskData(
     id: string,
-    setIsFetching: Dispatch<SetStateAction<boolean>>
+    isConnected: boolean,
+    setIsFetching: Dispatch<SetStateAction<boolean>>,
 ): UseTaskDataResult {
     const [task, setTask] = useState<RegistryTaskOption | null>(null);
-    const isConnected: boolean = useConnected();
 
     useEffect(() => {
         const fetchTask = async (): Promise<void> => {
@@ -67,7 +67,7 @@ export function useTaskData(
         if (id && id != BULK_IDENTIFIER) {
             fetchTask();
         }
-    }, [id, setIsFetching]);
+    }, [id, isConnected, setIsFetching]);
 
     return { task };
 }
