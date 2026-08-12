@@ -17,7 +17,6 @@ import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-v
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useLiveTasks } from "../dexie/useLiveTasks";
-import { useConnected } from "../useConnected";
 import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
@@ -171,9 +170,11 @@ export function useRegistryGrid(
             setIsInitialLoading(false);
             setHasFiltersChanged(false);
         }
-        // Only fetch data if there are no ongoing fetches, and there are more data to fetch
         if (isConnected) {
             fetchData();
+        } else {
+            setIsInitialLoading(false);
+            setHasFiltersChanged(false);
         }
     }, [entityType, isConnected, isInitialLoading, filters, dict]);
 
