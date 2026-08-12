@@ -1,9 +1,9 @@
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { FormOptionState, FormOptionStateMap, FormType, FormTypeMap, LABEL_KEY, LifecycleStageMap, OntologyConcept, useLiveFormOptionReturn } from "@/types/form";
+import { IndexedDbState, IndexedDbStateMap, FormType, FormTypeMap, LABEL_KEY, LifecycleStageMap, OntologyConcept, useLiveFormOptionReturn } from "@/types/form";
 import { SelectOptionType } from "@/ui/interaction/dropdown/simple-selector";
 import { genDefaultSelectOption } from "@/ui/interaction/form/form-utils";
-import { db, FormOptionMetadata } from "@/utils/db/db";
+import { db, IndexedDbMetadata } from "@/utils/db/db";
 import { Collection, type Table } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
@@ -15,14 +15,14 @@ class DexieFormRepository {
     private BATCH_SIZE: number = 500;
     private STALE_TIME_S: number = 5 * 60;
 
-    private fields: Record<string, FormOptionMetadata> = {};
+    private fields: Record<string, IndexedDbMetadata> = {};
 
     /**
      * Get syncing status
      */
     async getIsSyncing(): Promise<boolean> {
-        const meta: FormOptionMetadata = await db.metadata.get(SYNC_KEY);
-        return meta?.state === FormOptionStateMap.SYNC;
+        const meta: IndexedDbMetadata = await db.metadata.get(SYNC_KEY);
+        return meta?.state === IndexedDbStateMap.SYNC;
     }
 
     /**
@@ -34,7 +34,7 @@ class DexieFormRepository {
     registerField(field: string, dependentField?: string): void {
         this.fields[field] = {
             field,
-            state: FormOptionStateMap.PENDING,
+            state: IndexedDbStateMap.PENDING,
             count: 0,
             lastUpdated: this.genCurrentTimestamp(),
             dependentField,
@@ -49,11 +49,11 @@ class DexieFormRepository {
     */
     async syncAccount(accountType: string, isConnected: boolean): Promise<void> {
         this.startSyncStatus();
-        const meta: FormOptionMetadata = await db.metadata.get(accountType);
+        const meta: IndexedDbMetadata = await db.metadata.get(accountType);
         if (meta && (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S)) {
-            await this.updateFieldMeta(accountType, FormOptionStateMap.STALE, 0);
-        } else if (!meta || meta?.state == FormOptionStateMap.PENDING) {
-            await this.updateFieldMeta(accountType, FormOptionStateMap.PENDING, 0);
+            await this.updateFieldMeta(accountType, IndexedDbStateMap.STALE, 0);
+        } else if (!meta || meta?.state == IndexedDbStateMap.PENDING) {
+            await this.updateFieldMeta(accountType, IndexedDbStateMap.PENDING, 0);
         }
 
         this.backgroundSync([accountType], accountType, isConnected, true);
@@ -77,13 +77,13 @@ class DexieFormRepository {
 
         // Stores metadata state if not present
         for (const [field, currentMeta] of Object.entries(this.fields)) {
-            const meta: FormOptionMetadata = await db.metadata.get(field);
+            const meta: IndexedDbMetadata = await db.metadata.get(field);
             // Stale data
             if (meta && (this.genCurrentTimestamp() - meta?.lastUpdated > this.STALE_TIME_S)) {
-                await this.updateFieldMeta(field, FormOptionStateMap.STALE, 0, currentMeta.dependentField);
+                await this.updateFieldMeta(field, IndexedDbStateMap.STALE, 0, currentMeta.dependentField);
                 // If cached data does not exist or is in pending state, resync data
-            } else if (!meta || meta?.state == FormOptionStateMap.PENDING) {
-                await this.updateFieldMeta(field, FormOptionStateMap.PENDING, 0, currentMeta.dependentField);
+            } else if (!meta || meta?.state == IndexedDbStateMap.PENDING) {
+                await this.updateFieldMeta(field, IndexedDbStateMap.PENDING, 0, currentMeta.dependentField);
             }
         }
 
@@ -104,15 +104,15 @@ class DexieFormRepository {
      * Updates the field metadata.
      * 
      * @param {string} field The name of the field.
-     * @param {FormOptionState} state The current state of the field syncing process.
+     * @param {IndexedDbState} state The current state of the field syncing process.
      * @param {number} count The total count of data cached.
      * @param {string} dependentField The name of the dependent field if any. Optional for non-pending state updates.
     */
-    private async updateFieldMeta(field: string, state: FormOptionState, count: number, dependentField?: string): Promise<void> {
+    private async updateFieldMeta(field: string, state: IndexedDbState, count: number, dependentField?: string): Promise<void> {
         let updatedDependentField: string = dependentField;
         // For non-pending states, reuse the previous dependent field
-        if (state != FormOptionStateMap.PENDING) {
-            const meta: FormOptionMetadata = await db.metadata.get(field);
+        if (state != IndexedDbStateMap.PENDING) {
+            const meta: IndexedDbMetadata = await db.metadata.get(field);
             updatedDependentField = meta?.dependentField;
         }
         await db.metadata.put({
@@ -152,7 +152,7 @@ class DexieFormRepository {
         }
 
         const syncPromises: Promise<void>[] = fields.map(async (field) => {
-            const meta: FormOptionMetadata = await db.metadata.get(field);
+            const meta: IndexedDbMetadata = await db.metadata.get(field);
             const table: Table<SelectOptionType, string> = await this.getTable(field);
             const parsedField: string = field.replaceAll(" ", "_");
 
@@ -160,9 +160,9 @@ class DexieFormRepository {
             // If task has been completed, only grab the new data with the timestamp check
             let hasMore: boolean = true;
             // Reset offset for completed or stale data, as the former will grab new data with timestamp while the latter restarts
-            let currentOffset: number = meta?.state === FormOptionStateMap.COMPLETE || meta?.state === FormOptionStateMap.STALE
+            let currentOffset: number = meta?.state === IndexedDbStateMap.COMPLETE || meta?.state === IndexedDbStateMap.STALE
                 ? 0 : await table.count();
-            const timestamp: number = meta?.state === FormOptionStateMap.COMPLETE ? meta?.lastUpdated : null;
+            const timestamp: number = meta?.state === IndexedDbStateMap.COMPLETE ? meta?.lastUpdated : null;
 
             while (hasMore) {
                 const nextBatch: SelectOptionType[] = await this.fetchOptions(parsedField, meta.dependentField,
@@ -170,7 +170,7 @@ class DexieFormRepository {
                     field === accountType && isAccountField, timestamp);
 
                 // For the first batch after data is now stale, clear the data before adding the new batch
-                if (currentOffset == 0 && meta?.state === FormOptionStateMap.STALE) {
+                if (currentOffset == 0 && meta?.state === IndexedDbStateMap.STALE) {
                     await table.clear();
                 }
 
@@ -179,10 +179,10 @@ class DexieFormRepository {
 
                 if (nextBatch.length < this.BATCH_SIZE) {
                     hasMore = false;
-                    await this.updateFieldMeta(field, FormOptionStateMap.COMPLETE, currentOffset);
+                    await this.updateFieldMeta(field, IndexedDbStateMap.COMPLETE, currentOffset);
                     // Only update the meta to sync if its still pending or stale
-                } else if (meta?.state === FormOptionStateMap.PENDING || meta?.state === FormOptionStateMap.STALE) {
-                    await this.updateFieldMeta(field, FormOptionStateMap.SYNC, currentOffset);
+                } else if (meta?.state === IndexedDbStateMap.PENDING || meta?.state === IndexedDbStateMap.STALE) {
+                    await this.updateFieldMeta(field, IndexedDbStateMap.SYNC, currentOffset);
                 }
             };
         });
@@ -289,14 +289,14 @@ class DexieFormRepository {
      * Starts the sync status in field metadata
      */
     private async startSyncStatus(): Promise<void> {
-        await this.updateFieldMeta(SYNC_KEY, FormOptionStateMap.SYNC, 0);
+        await this.updateFieldMeta(SYNC_KEY, IndexedDbStateMap.SYNC, 0);
     }
 
     /**
      * Starts the sync status in field metadata
      */
     private async completeSyncStatus(): Promise<void> {
-        await this.updateFieldMeta(SYNC_KEY, FormOptionStateMap.COMPLETE, 0);
+        await this.updateFieldMeta(SYNC_KEY, IndexedDbStateMap.COMPLETE, 0);
     }
 }
 

@@ -7,6 +7,9 @@ export const useConnected = (): boolean => {
   const [isConnected, setIsConnected] = useState<boolean>(typeof window !== "undefined" ? navigator.onLine : true);
   useEffect(() => {
     const checkConnection = async () => {
+      if (!navigator.onLine) {
+        setIsConnected(false);
+      }
       const isOnline: boolean = await healthCheck();
       setIsConnected(isOnline);
     };
@@ -25,6 +28,6 @@ export const useConnected = (): boolean => {
       window.removeEventListener("online", online);
       window.removeEventListener("offline", offline);
     };
-  }, []);
+  }, [navigator.onLine]);
   return isConnected;
 };

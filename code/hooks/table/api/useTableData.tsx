@@ -93,7 +93,7 @@ export function useTableData(
         }
         const res: AgentResponseBody = await queryInternalApi(apiUrl, undefined, undefined, controller.signal);
         const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
-        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, dict.title, res.data?.columns);
+        const parsedData: FieldValues[] = parseDataForTable(instances, sorting, res.data?.columns);
         setSelectedCount(res.data?.currentItemCount);
         setTotalCount(res.data?.totalItems);
         setInitialInstances(instances);
@@ -108,7 +108,7 @@ export function useTableData(
           // Capped Remainder: fetch the full batch in the background so subsequent pages are instant
           const cappedRemainderRes: AgentResponseBody = await queryInternalApi(buildApiUrl(apiPagination.pageIndex.toString(), apiPagination.pageSize.toString()), undefined, undefined, controller.signal);
           const cappedRemainderInstances: RegistryFieldValues[] = (cappedRemainderRes.data?.items as RegistryFieldValues[]) ?? [];
-          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, dict.title, cappedRemainderRes.data?.columns);
+          const cappedRemainderParsedData: FieldValues[] = parseDataForTable(cappedRemainderInstances, sorting, cappedRemainderRes.data?.columns);
           setInitialInstances(cappedRemainderInstances);
           setData(cappedRemainderParsedData);
           setIsBackgroundLoading(false);

@@ -37,6 +37,7 @@ import { FormSessionContextProvider } from "@/utils/form/FormSessionContext";
 import { makeInternalRegistryAPIwithParams, queryInternalApi, queryInternalTaskFormTemplate } from "@/utils/internal-api-services";
 import PopoverActionButton from "../action/popover/popover-button";
 import { submitOptionalAccrual } from "@/utils/optional-accrual";
+import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
 
 interface TaskFormContainerComponentProps {
   id: string;
@@ -121,7 +122,7 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
   const [formFields, setFormFields] = useState<PropertyShapeOrGroup[]>([]);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState<boolean>(false);
 
-  const { task } = useTaskData(props.id, setIsFetching);
+  const { task } = useTaskData(props.id, isConnected, setIsFetching);
 
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 
@@ -149,8 +150,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     ): Promise<void> => {
       setIsFetching(true);
 
-      localStorageManager.get(eventType);
-
       try {
         let template: FormTemplateType;
         if (!isConnected) {
@@ -175,7 +174,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     // Reset forms when they are changed
     triggerRefresh();
     setFormFields([]);
-
+    // On first render, task is null and should not be extracted until it is ready
+    if (!task) { return; }
     if (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.COMPLETE ||
       props.formType === FormTypeMap.ACCRUAL) {
       getFormTemplate(props.formType, task?.id);
@@ -233,9 +233,13 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
         try {
           response = await submitLifecycleAction(formData, action, isPost);
+          if (props.formType === FormTypeMap.COMPLETE) {
+            await dexieTaskRepo.removeTask(task?.id);
+          }
         } catch (error) {
           if (isOfflineCompletion) {
             setIsDuplicate(false);
+            await dexieTaskRepo.removeTask(task?.id);
             toast(dict.message.offlineQueued, "success");
             handleDrawerClose(() => router.back());
             return;

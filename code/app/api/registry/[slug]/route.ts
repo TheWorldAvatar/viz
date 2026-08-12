@@ -2,7 +2,7 @@ import { AgentResponseBody, InternalApiIdentifier, InternalApiIdentifierMap } fr
 import { FormTypeMap, LifecycleStage, LifecycleStageMap } from "@/types/form";
 import { buildUrl } from "@/utils/client-utils";
 import { FLAG_KEY, SYNC_KEY } from "@/utils/constants";
-import { getBackendApi } from "@/utils/internal-api-services";
+import { getBackendApi } from "@/utils/backend-api-services";
 import { logColours } from "@/utils/logColours";
 import { NextRequest, NextResponse } from "next/server";
 
