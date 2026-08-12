@@ -72,7 +72,7 @@ class DexieTaskRepository {
         }
 
         return {
-            items: await table.limit(100).toArray(),
+            items: await table.limit(this.INITIAL_BATCH_SIZE).toArray(),
             totalItems: meta?.count,
             columns: meta?.columns,
         }
