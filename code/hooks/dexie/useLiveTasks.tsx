@@ -1,11 +1,5 @@
-import { useConnected } from "@/hooks/useConnected";
-import { localStorageManager } from "@/state/browser-storage-manager";
 import { Dictionary } from "@/types/dictionary";
-import { toast } from "@/ui/interaction/action/toast/toast";
-import { interpolate } from "@/utils/client-utils";
-import { TASK_VIEWER_FILTER } from "@/utils/constants";
-import { db, IndexedDbMetadata } from "@/utils/db/db";
-import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
+import { db } from "@/utils/db/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo } from "react";
 import { FieldValues } from "react-hook-form";
@@ -19,17 +13,11 @@ export function useLiveTasks(mobileFields: string[], dict: Dictionary): {
     data: FieldValues[];
     previewData: FieldValues[];
 } {
-    const isOnline: boolean = useConnected();
     const tasks: FieldValues[] = useLiveQuery(() => db.tasks.toArray(),
-        []);
-    const meta: IndexedDbMetadata = useLiveQuery(() => db.metadata.get(dexieTaskRepo.getFieldKey()),
         []);
     return useMemo(() => {
         if (!tasks || tasks.length == 0) return { data: [], previewData: [] };
 
-        if (localStorageManager.get(TASK_VIEWER_FILTER) && meta?.count > 0 && tasks.length != meta?.count && !isOnline) {
-            toast(interpolate(dict.message.showReconnect, String(tasks.length), String(meta?.count)), "error")
-        }
         return {
             data: tasks?.map(instance => {
                 return {
