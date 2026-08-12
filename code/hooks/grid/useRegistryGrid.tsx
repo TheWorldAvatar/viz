@@ -1,24 +1,22 @@
 import { useDictionary } from "@/hooks/useDictionary";
 import { localStorageManager } from "@/state/browser-storage-manager";
-import { AgentResponseBody, ColumnDefinitionResponse } from "@/types/backend-agent";
+import { AgentResponseDataPayload, ColumnDefinitionResponse } from "@/types/backend-agent";
 import { Dictionary } from "@/types/dictionary";
-import { LifecycleStageMap, RegistryFieldValues, RegistryStatusMap } from "@/types/form";
+import { RegistryStatusMap } from "@/types/form";
 import { TableColumnOption } from "@/types/settings";
 import {
     EnhancedColumnDef,
     getInitialSortParams,
     parseColumnFiltersIntoUrlParams,
-    parseColumnsMetadata,
-    parseDataForTable
+    parseColumnsMetadata
 } from "@/ui/graphic/table/registry/registry-table-utils";
-import { getId, getUTCDate } from "@/utils/client-utils";
 import { TASK_VIEWER_FILTER } from "@/utils/constants";
-import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
-import { bulkPutTasks, clearTasks, useLiveTasks } from "@/utils/db/dexie-task-utils";
+import { dexieTaskRepo, TASK_SYNC_EVENT } from "@/utils/db/dexie-task-repository";
 import { ColumnFilter } from "@tanstack/react-table";
 import { ReactVirtualizer, useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { useLiveTasks } from "../dexie/useLiveTasks";
 import useOperationStatus from "../useOperationStatus";
 
 export interface GridDescriptor {
@@ -29,7 +27,6 @@ export interface GridDescriptor {
     previewData: FieldValues[];
     columns: EnhancedColumnDef<FieldValues>[];
     currentItemIndex: number;
-    selectedCount: number;
     filters: ColumnFilter[];
     virtualItems: VirtualItem[];
     rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element>;
@@ -39,37 +36,34 @@ export interface GridDescriptor {
     resetFilters: () => void;
 }
 
-const GRID_LIMIT: number = 100;
+const GRID_LIMIT: number = dexieTaskRepo.getInitialBatchSize();
 const INITIAL_FILTER_STATE: ColumnFilter[] = [{ id: "status", value: [RegistryStatusMap.ASSIGNED] }];
 
 /**
  * A custom hook to retrieve grid data into functionalities for the registry.
  *
  * @param {string} entityType Type of entity for rendering.
+ * @param {boolean} isConnected Indicates if the server is connected.
  * @param {TableColumnOption[]} mobileFieldOptions Options for the mobile fields.
  */
 export function useRegistryGrid(
     entityType: string,
+    isConnected: boolean,
     mobileFieldOptions: TableColumnOption[],
 ): GridDescriptor {
     const dict: Dictionary = useDictionary();
     const { resetFormSession } = useOperationStatus();
 
     const parentRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-    const [page, setPage] = useState<number>(0);
     const [currentItemIndex, setCurrentItemIndex] = useState<number>(1);
-    const [selectedCount, setSelectedCount] = useState<number>(0);
     const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
-    const [isFetching, setIsFetching] = useState<boolean>(false);
-    // Synchronous lock against duplicate fetch triggers: scroll events fire faster
-    // than state re-renders, so the onChange guard cannot rely on isFetching alone
-    const fetchLockRef: React.RefObject<boolean> = useRef<boolean>(false);
-    const [hasMore, setHasMore] = useState<boolean>(true);
-    const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(true);
+    // Initialise based on if there are active filters
+    const [hasFiltersChanged, setHasFiltersChanged] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
+    const [hasNoActiveFilters, setHasNoActiveFilters] = useState<boolean>(!localStorageManager.get(TASK_VIEWER_FILTER));
 
     const mobileFields = useRef<string[]>(mobileFieldOptions ? mobileFieldOptions?.map(option => option.name) : []);
     const [columns, setColumns] = useState<EnhancedColumnDef<FieldValues>[]>([]);
-    const [filters, setFilters] = useState<ColumnFilter[]>(INITIAL_FILTER_STATE);
+    const [filters, setFilters] = useState<ColumnFilter[]>(localStorageManager.get(TASK_VIEWER_FILTER) ? JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)) : INITIAL_FILTER_STATE);
 
     const updateFilter = (field: string, selectedOptions: string[]) => {
         setFilters(prev => {
@@ -97,8 +91,7 @@ export function useRegistryGrid(
             }
             return updatedFilters;
         });
-        setPage(0);
-        setSelectedCount(0);
+        setHasFiltersChanged(true);
         triggerRefresh();
     };
 
@@ -106,31 +99,17 @@ export function useRegistryGrid(
         setFilters(INITIAL_FILTER_STATE);
         localStorageManager.clear();
         setHasNoActiveFilters(true);
-        setPage(0);
-        setSelectedCount(0);
+        setHasFiltersChanged(true);
         triggerRefresh();
     };
 
     const triggerRefresh = () => {
-        if (navigator.onLine) {
-            clearTasks();
-        }
-        setHasMore(true);
         setIsInitialLoading(true);
-        fetchLockRef.current = true;
-        setIsFetching(true);
     }
 
-    const fetchNextPage = () => {
-        fetchLockRef.current = true;
-        setPage((prev) => prev + 1);
-        setIsFetching(true);
-    }
-
-    const { data, previewData } = useLiveTasks(mobileFields.current, selectedCount, dict);
+    const { data, previewData } = useLiveTasks(mobileFields.current, dict);
     const rowVirtualizer: ReactVirtualizer<HTMLDivElement, Element> = useVirtualizer({
-        // If there is always more, virtual items must be 1 more to trigger the refetch
-        count: hasMore ? previewData.length + 1 : previewData.length,
+        count: previewData.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 15, // Low value to prevent auto-trigger the bottom row
@@ -147,12 +126,6 @@ export function useRegistryGrid(
 
             if (dominantItem) {
                 setCurrentItemIndex(dominantItem.index);
-                // Trigger fetch once the user scrolls past the halfway mark of the loaded data.
-                // Scroll events may skip indices (especially on Android momentum scrolling),
-                // so this must be a range check rather than an equality check
-                if (previewData.length > 0 && dominantItem.index >= previewData.length - GRID_LIMIT / 2 && !fetchLockRef.current && hasMore) {
-                    fetchNextPage();
-                }
             }
         }
     });
@@ -160,87 +133,50 @@ export function useRegistryGrid(
     const virtualItems: VirtualItem[] = rowVirtualizer.getVirtualItems();
 
     useEffect(() => {
-        fetchLockRef.current = true;
-        setIsFetching(true);
-        // To prevent hydration effects when reading from storage
-        if (localStorageManager.get(TASK_VIEWER_FILTER)) {
-            setFilters(JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER)));
-            setHasNoActiveFilters(false);
-        }
-    }, []);
-
-    useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            let activeFilters: ColumnFilter[] = filters;
-            if (localStorageManager.get(TASK_VIEWER_FILTER)) {
-                activeFilters = JSON.parse(localStorageManager.get(TASK_VIEWER_FILTER));
-            }
-            const filterParams: string = parseColumnFiltersIntoUrlParams(activeFilters, dict.title.blank, dict.title);
-            const apiUrl: string = makeInternalRegistryAPIwithParams(
-                LifecycleStageMap.OUTSTANDING,
-                entityType,
-                getUTCDate(new Date()).getTime().toString(),
-                page.toString(),
-                GRID_LIMIT.toString(),
-                getInitialSortParams([]),
-                filterParams,
-            );
-            const res: AgentResponseBody = await queryInternalApi(apiUrl);
-            const instances: RegistryFieldValues[] = (res.data?.items as RegistryFieldValues[]) ?? [];
+            const filterParams: string = parseColumnFiltersIntoUrlParams(filters, dict.title.blank, dict.title);
+            const sortParams: string = getInitialSortParams([]);
 
-            let parsedData: FieldValues[] = parseDataForTable(instances, [], dict.title, res.data?.columns).map(instance => {
-                instance.event_id = getId(instance.event_id);
-                return instance;
-            });
-            setSelectedCount(res.data?.currentItemCount);
+            const tasks: AgentResponseDataPayload = await dexieTaskRepo.syncInitialBatch(
+                entityType, sortParams, filterParams, isConnected, hasFiltersChanged);
 
-            // Update cache
-            await bulkPutTasks(parsedData);
-            parsedData = parsedData.map(instance => {
-                // When there are no custom settings, ensure only values with contents are returned
-                if (mobileFields.current.length === 0) return {
-                    // Extract event id to support redirects
-                    event_id: instance.event_id,
-                    ...Object.fromEntries(
-                        Object.entries(instance).filter(([key, value]) => key != "iri" && key != "event_id" && value !== null && value !== undefined)
-                    )
-                };
-                return {
-                    id: instance.id,
-                    event_id: instance.event_id,
-                    date: instance.date,
-                    status: instance.status,
-                    ...Object.fromEntries(
-                        // Filter out undefined fields
-                        mobileFields.current.filter(field => !!instance[field as keyof typeof instance])
-                            .map(field => [field, instance[field as keyof typeof instance]])
-                    )
-                }
-            });
+            const data: FieldValues[] = tasks?.items as FieldValues[];
             // Parsing of columns should only occur once at the start
             if (columns.length === 0) {
                 const columnResponse: ColumnDefinitionResponse[] = mobileFields.current.length === 0 ?
                     // Without any mobile settings, status filters should be hidden
-                    res.data?.columns.filter(col => col.value != "status") :
-                    res.data?.columns.filter(col => mobileFields.current.includes(col.value)
+                    tasks?.columns.filter(col => col.value != "status") :
+                    tasks?.columns.filter(col => mobileFields.current.includes(col.value)
                         || col.value == "id" || col.value == "event_id"
                         || col.value == "date");
                 const columnData: EnhancedColumnDef<FieldValues>[] = parseColumnsMetadata(columnResponse, [], dict);
                 setColumns(columnData);
             }
-            // If total length is smaller than size, there are no more instances to render
-            if (parsedData.length < GRID_LIMIT) {
-                setHasMore(false);
+            // If total length is equal or more than limit, start a background sync
+            const registration: ServiceWorkerRegistration = await navigator.serviceWorker?.ready;
+            const targetWorker: ServiceWorker = navigator.serviceWorker?.controller || registration.active;
+
+            if (data.length >= GRID_LIMIT && targetWorker && !hasNoActiveFilters) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: TASK_SYNC_EVENT,
+                    payload: {
+                        entityType,
+                        sortParams,
+                        filterParams,
+                    },
+                });
             }
-            fetchLockRef.current = false;
-            setIsFetching(false);
+
             setIsInitialLoading(false);
+            setHasFiltersChanged(false);
         }
-        // Only fetch data if there are no ongoing fetches, and there are more data to fetch
-        if (isFetching && hasMore) {
+        if (isConnected) {
             fetchData();
+        } else {
+            setIsInitialLoading(false);
+            setHasFiltersChanged(false);
         }
-    }, [entityType, isFetching, filters]);
+    }, [entityType, isConnected, isInitialLoading, filters, dict]);
 
     return {
         isInitialLoading,
@@ -250,7 +186,6 @@ export function useRegistryGrid(
         previewData,
         columns,
         currentItemIndex,
-        selectedCount,
         filters,
         virtualItems,
         rowVirtualizer,

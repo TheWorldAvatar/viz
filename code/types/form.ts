@@ -27,13 +27,13 @@ export const LifecycleStageMap = {
 } as const;
 export type LifecycleStage = typeof LifecycleStageMap[keyof typeof LifecycleStageMap];
 
-export const FormOptionStateMap = {
+export const IndexedDbStateMap = {
   PENDING: "pending",
   SYNC: "syncing",
   COMPLETE: "complete",
   STALE: "stale",
 } as const;
-export type FormOptionState = typeof FormOptionStateMap[keyof typeof FormOptionStateMap];
+export type IndexedDbState = typeof IndexedDbStateMap[keyof typeof IndexedDbStateMap];
 
 export const FormTypeMap = {
   ADD: "add",
