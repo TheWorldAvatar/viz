@@ -150,8 +150,6 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     ): Promise<void> => {
       setIsFetching(true);
 
-      localStorageManager.get(eventType);
-
       try {
         let template: FormTemplateType;
         if (!isConnected) {
