@@ -17,6 +17,10 @@ interface ToastProps {
 const MESSAGE_PREVIEW_LENGTH: number = 200;
 const MESSAGE_PREVIEW_LINES: number = 3;
 
+const isLongMessage = (message: string): boolean =>
+  message.length > MESSAGE_PREVIEW_LENGTH ||
+  message.split(/\r?\n/).length > MESSAGE_PREVIEW_LINES;
+
 /**
  * Sets off a toast notification based on the message and type.
  *
@@ -26,7 +30,7 @@ const MESSAGE_PREVIEW_LINES: number = 3;
 export function toast(message: string, type: ToastType) {
   return sonnerToast.custom(
     (id) => <Toast id={id} message={message} type={type} />,
-    { duration: type === "error" || type === "loading" ? 1000000000 : 5000 }
+    { duration: type === "error" || type === "loading" || isLongMessage(message) ? 1000000000 : 5000 }
   );
 }
 
@@ -50,8 +54,7 @@ function Toast(props: Readonly<ToastProps>) {
   const { message, id, type } = props;
   const dict: Dictionary = useDictionary();
   const toastConfig: ToastConfig = getToastConfig(type, dict);
-  const isLongMessage: boolean = (message?.length ?? 0) > MESSAGE_PREVIEW_LENGTH ||
-    (message?.split(/\r?\n/).length ?? 0) > MESSAGE_PREVIEW_LINES;
+  const hasLongMessage: boolean = isLongMessage(message ?? "");
 
   const downloadLog = () => {
     const blob: Blob = new Blob([message ?? ""], { type: "text/plain;charset=utf-8" });
@@ -81,11 +84,11 @@ function Toast(props: Readonly<ToastProps>) {
           </p>
         )}
         <p
-          className={`text-sm whitespace-pre-wrap hyphens-auto wrap-break-word ${isLongMessage ? "line-clamp-3" : ""} ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
+          className={`text-sm whitespace-pre-wrap hyphens-auto wrap-break-word ${hasLongMessage ? "line-clamp-3" : ""} ${toastConfig.text} ${toastConfig.title ? "mt-1" : ""}`}
         >
           {message}
         </p>
-        {isLongMessage && (
+        {hasLongMessage && (
           <Button
             variant="link"
             size="sm"
