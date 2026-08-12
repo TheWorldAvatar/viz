@@ -174,7 +174,8 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
     // Reset forms when they are changed
     triggerRefresh();
     setFormFields([]);
-
+    // On first render, task is null and should not be extracted until it is ready
+    if (!task) { return; }
     if (props.formType === FormTypeMap.DISPATCH || props.formType === FormTypeMap.COMPLETE ||
       props.formType === FormTypeMap.ACCRUAL) {
       getFormTemplate(props.formType, task?.id);
