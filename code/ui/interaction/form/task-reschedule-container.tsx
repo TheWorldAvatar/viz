@@ -62,7 +62,7 @@ function TaskFormContents() {
   // State for form data
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const { handleDrawerClose } = useDrawerNavigation();
-  const { task } = useTaskData(id, setIsFetching);
+  const { task } = useTaskData(id, true, setIsFetching);
   const [selectedDate, setSelectedDate] = useState<Date>(task?.date ? new Date(task.date) : new Date());
   const { refreshFlag, triggerRefresh, isLoading, startLoading, stopLoading } = useOperationStatus();
 

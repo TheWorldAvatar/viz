@@ -48,12 +48,12 @@ export const useDictionary = () => {
         return value[lang];
     }, [dict.lang]);
 
-    return {
+    return useMemo(() => ({
         ...dict,
         toNumberDisplay,
         normaliseNumber,
         translate,
-    };
+    }), [dict, toNumberDisplay, normaliseNumber, translate]);
 };
 
 function getNumberSeparators(formatter: Intl.NumberFormat): string[] {

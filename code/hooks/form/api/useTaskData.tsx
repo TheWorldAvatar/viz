@@ -1,12 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { useConnected } from "@/hooks/useConnected";
 import { browserStorageManager } from "@/state/browser-storage-manager";
 import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { RegistryStatusMap, RegistryTaskOption, SparqlResponseField } from "@/types/form";
 import { BULK_IDENTIFIER } from "@/utils/constants";
 import { DynamicTask } from "@/utils/db/db";
-import { getTask } from "@/utils/db/dexie-task-utils";
+import { dexieTaskRepo } from "@/utils/db/dexie-task-repository";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 
 interface UseTaskDataResult {
@@ -17,15 +16,16 @@ interface UseTaskDataResult {
  * A custom hook to retrieve task data for a given task ID.
  *
  * @param {string} id The task identifier.
+ * @param {boolean} isConnected Checks if the data is connected.
  * @param {Dispatch<SetStateAction<boolean>>} setIsFetching External state setter for fetching status.
  * @returns {UseTaskDataResult} The task data.
  */
 export function useTaskData(
     id: string,
-    setIsFetching: Dispatch<SetStateAction<boolean>>
+    isConnected: boolean,
+    setIsFetching: Dispatch<SetStateAction<boolean>>,
 ): UseTaskDataResult {
     const [task, setTask] = useState<RegistryTaskOption | null>(null);
-    const isConnected: boolean = useConnected();
 
     useEffect(() => {
         const fetchTask = async (): Promise<void> => {
@@ -46,7 +46,7 @@ export function useTaskData(
                     }
                 } else {
                     const taskId: string = browserStorageManager.get(RegistryStatusMap.COMPLETED)
-                    const cachedTask: DynamicTask = await getTask(taskId);
+                    const cachedTask: DynamicTask = await dexieTaskRepo.getTask(taskId);
                     item = {
                         id: taskId,
                         contract: cachedTask.id as string,
@@ -67,7 +67,7 @@ export function useTaskData(
         if (id && id != BULK_IDENTIFIER) {
             fetchTask();
         }
-    }, [id, setIsFetching]);
+    }, [id, isConnected, setIsFetching]);
 
     return { task };
 }

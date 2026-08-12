@@ -4,7 +4,7 @@ import path from "path";
 import { ContractDirectory } from "@/types/backend-agent";
 import { FileEntry } from '@/types/settings';
 import { buildUrl } from "@/utils/client-utils";
-import { getBackendApi } from "@/utils/internal-api-services";
+import { getBackendApi } from "@/utils/backend-api-services";
 
 const units: string[] = ["B", "KB", "MB", "GB", "TB"];
 

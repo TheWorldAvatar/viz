@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.84.1
+
+### Changes
+
+- Removed tasks on completion
+- Memoised useDictionary to reduce rerender
+- Hide fail to fetch messages when offline
+- Disable view attachment features in offline mode
+- Refactor to formalise the task id instead of iri as index to prevent consolidation bugs
+
 ## 5.84.0
 
 ### Changes

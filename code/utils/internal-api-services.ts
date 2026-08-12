@@ -1,4 +1,4 @@
-import { AgentResponseBody, BackendApis, ContractDirectory, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
+import { AgentResponseBody, ContractDirectory, FileResponse, InternalApiIdentifier, InternalApiIdentifierMap } from "@/types/backend-agent";
 import { FORM_IDENTIFIER, FormTemplateType, FormType } from "@/types/form";
 import { toast } from "@/ui/interaction/action/toast/toast";
 import { HTTP_METHOD } from "next/dist/server/web/http";
@@ -23,7 +23,9 @@ export async function healthCheck(): Promise<boolean> {
     });
     return res.status === 200;
   } catch (error: unknown) {
-    console.warn(error);
+    if (!(error instanceof TypeError && error.message === "Failed to fetch")) {
+      console.warn(error);
+    }
     return false;
   }
 }
@@ -217,8 +219,18 @@ export async function queryInternalApi(url: string, method?: Omit<HTTP_METHOD, "
 export async function queryRegistryAttachmentAPI(contract: string): Promise<ContractDirectory> {
   const url: string = `${prefixedRegistryURL}attachment/${contract}`
   const requestParams: RequestInit = { cache: "no-store", credentials: "same-origin" };
-  const res = await fetch(url, requestParams);
-  return await res.json();
+  try {
+    const res = await fetch(url, requestParams);
+    return await res.json();
+  } catch (error: unknown) {
+    if (!(error instanceof TypeError && error.message === "Failed to fetch")) {
+      console.warn(error);
+    }
+    return {
+      url: "",
+      files: [],
+    };
+  }
 }
 
 /**
@@ -329,16 +341,4 @@ export function getSafeUrl(rawUrl: string): string | null {
   } catch {
     return null;
   }
-}
-
-/**
- * Get the backend API URL for a given service key.
- * Throws an error if the service is not configured in the environment variables.
- * 
- * @param service The resource identifier representing the backend service.
- */
-export function getBackendApi(service: keyof typeof BackendApis) {
-  const url: string = BackendApis[service];
-  if (!url) throw new Error(`Backend for ${service} not configured.`);
-  return url;
 }
