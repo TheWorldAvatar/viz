@@ -234,6 +234,9 @@ function TaskFormContents(props: Readonly<TaskFormContainerComponentProps>) {
 
         try {
           response = await submitLifecycleAction(formData, action, isPost);
+          if (props.formType === FormTypeMap.COMPLETE) {
+            await dexieTaskRepo.removeTask(task?.id);
+          }
         } catch (error) {
           if (isOfflineCompletion) {
             setIsDuplicate(false);
