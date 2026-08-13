@@ -8,7 +8,7 @@ import useOperationStatus from "@/hooks/useOperationStatus";
 import { addItem, selectItem } from "@/state/context-menu-slice";
 import { Dictionary, LanguageDictionary } from "@/types/dictionary";
 import { LifecycleStage, LifecycleStageMap } from "@/types/form";
-import { ContextItemMap, TableColumnOption } from "@/types/settings";
+import { ContextItemMap, RegistryExportSettings, TableColumnOption } from "@/types/settings";
 import { ContextItemDefinition } from "@/ui/interaction/context-menu/context-item";
 import {
   getAfterDelimiter,
@@ -33,6 +33,7 @@ interface RegistryTableComponentProps {
   message?: LanguageDictionary;
   tableColumnOptions: TableColumnOption[];
   addEntity?: string;
+  exports: RegistryExportSettings[];
 }
 
 /**
@@ -45,6 +46,7 @@ interface RegistryTableComponentProps {
  * @param {LanguageDictionary} message Optional value to display a user-defined message at the table ribbon.
  * @param {TableColumnOption[]} tableColumnOptions Configuration for table column options.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
+ * @param {RegistryExportSettings[]} exports The export options available for this table.
  */
 export default function RegistryTableComponent(
   props: Readonly<RegistryTableComponentProps>
@@ -152,6 +154,7 @@ export default function RegistryTableComponent(
       ) : (
         <RegistryTable
           recordType={props.entityType}
+          exports={props.exports}
           lifecycleStage={props.lifecycleStage}
           disableRowAction={false}
           pricingType={props.pricingType}

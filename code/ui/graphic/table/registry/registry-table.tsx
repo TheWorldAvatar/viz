@@ -14,6 +14,7 @@ import {
 import { TableScrollDescriptor } from "@/hooks/table/useTableScroll";
 import { Dictionary } from "@/types/dictionary";
 import { FORM_IDENTIFIER, FormTemplateType, FormTypeMap, LifecycleStage } from "@/types/form";
+import { RegistryExportSettings } from "@/types/settings";
 import Button from "@/ui/interaction/button";
 import { TableSessionContextProvider } from "@/utils/table/TableSessionContext";
 import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
@@ -39,6 +40,7 @@ interface RegistryTableProps {
   selectedDate?: DateRange;
   tableScrollDescriptor: TableScrollDescriptor
   addEntity?: string;
+  exports: RegistryExportSettings[];
 }
 
 /**
@@ -54,6 +56,7 @@ interface RegistryTableProps {
  * @param triggerRefresh A function to refresh the table when required.
  * @param {TableScrollDescriptor} tableScrollDescriptor A descriptor containing the required table scroll functionalities.
  * @param {string} addEntity Optional entity type that can be added from each row of the current record type.
+ * @param {RegistryExportSettings[]} exports The export options available for this table.
  */
 export default function RegistryTable(props: Readonly<RegistryTableProps>) {
   const dict: Dictionary = useDictionary();
@@ -104,6 +107,7 @@ export default function RegistryTable(props: Readonly<RegistryTableProps>) {
     return (
       <TableSessionContextProvider
         recordType={props.recordType}
+        exports={props.exports}
         lifecycleStage={props.lifecycleStage}
         tableDescriptor={props.tableDescriptor}
         tableScrollDescriptor={props.tableScrollDescriptor}
