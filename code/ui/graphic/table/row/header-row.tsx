@@ -14,6 +14,7 @@ import { AgentResponseBody, InternalApiIdentifierMap } from "@/types/backend-age
 import { Dictionary } from "@/types/dictionary";
 import { FormTypeMap, LifecycleStageMap, RegistryTaskOption } from "@/types/form";
 import { JsonObject } from "@/types/json";
+import FileDownloadButton from "@/ui/interaction/action/download/file-download";
 import DraftTemplateButton from "@/ui/interaction/action/draft-template/draft-template-button";
 import PopoverActionButton from "@/ui/interaction/action/popover/popover-button";
 import { toast } from "@/ui/interaction/action/toast/toast";
@@ -24,7 +25,7 @@ import { BULK_IDENTIFIER, FLAG_KEY } from "@/utils/constants";
 import { makeInternalRegistryAPIwithParams, queryInternalApi } from "@/utils/internal-api-services";
 import HeaderCell from "../cell/header-cell";
 import TableCell from "../cell/table-cell";
-import { EnhancedColumnDef } from "../registry/registry-table-utils";
+import { EnhancedColumnDef, getRowRecordId } from "../registry/registry-table-utils";
 
 interface HeaderRowProps {
   accountType: string;
@@ -173,6 +174,16 @@ export default function HeaderRow(props: Readonly<HeaderRowProps>) {
                         }}
                       />
                     )}
+                  {!tableDescriptor.isBulkDispatchEdit && (
+                    <FileDownloadButton
+                      targetId={tableDescriptor.table.getSelectedRowModel().rows.map((row) =>
+                        getRowRecordId(row.original))}
+                      variant="ghost"
+                      isBulkSelection={true}
+                      disabled={isLoading}
+                      onComplete={() => setIsActionMenuOpen(false)}
+                    />
+                  )}
                   {isPermitted("draftTemplate") && !tableDescriptor.isBulkDispatchEdit && (
                     <DraftTemplateButton
                       rowId={tableDescriptor.table.getSelectedRowModel().rows.map((row) => row.original.id)}
