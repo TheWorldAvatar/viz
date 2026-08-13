@@ -2,6 +2,16 @@
 
 [//]: # 'Note that version headers need to start with "## " characters to be picked up by some automated scripts'
 
+## 5.84.2
+
+### Changes
+
+- UI/UX Improvements
+- Updated colours on active and selected row states so they dont clash with some status colours
+- Updated all spacing between the inputs in the forms
+- Aadded missing tooltips - Refresh table icon , Close button icons
+- Fixed issues with row actions menu not closing after some actions
+
 ## 5.84.1
 
 ### Changes

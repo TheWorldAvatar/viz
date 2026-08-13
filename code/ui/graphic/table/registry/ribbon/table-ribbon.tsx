@@ -289,6 +289,7 @@ export default function TableRibbon(props: Readonly<TableRibbonProps>) {
             size="icon"
             leftIcon="cached"
             variant="outline"
+            tooltipText={dict.action.refresh}
             onClick={triggerRefresh}
           />
         </div>

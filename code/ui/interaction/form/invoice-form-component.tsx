@@ -74,7 +74,7 @@ function InvoiceFormContents(props: Readonly<InvoiceFormComponentProps>) {
                     size="icon"
                     iconSize="small"
                     tooltipPosition="right"
-                    tooltipText={interpolate(dict.action.backTo, props.entityType)}
+                    tooltipText={interpolate(dict.action.backTo, FormTypeMap.INVOICE)}
                 />
                 <h1 className="text-xl font-bold">{`${translateFormType(FormTypeMap.INVOICE, dict).toUpperCase()}`}</h1>
             </header>

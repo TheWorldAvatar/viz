@@ -111,7 +111,7 @@ export default function BranchFormSection(
 
   return (
     <>
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="flex flex-col gap-4">
         <label className="text-md md:text-lg" htmlFor="select-input">
           {dict.message.branchInstruction}:
         </label>

@@ -89,6 +89,11 @@
     --void-background-hover: hsl(270, 60%, 88%);
     --void-foreground: hsl(270, 70%, 25%);
     --void-border: hsl(270, 45%, 85%);
+
+    --row-selected-background: hsl(0, 0%, 82%);
+    --row-selected-background-hover: hsl(0, 0%, 78%);
+    --row-active-background: hsl(156, 40%, 76%);
+    --row-active-background-hover: hsl(156, 40%, 70%);
   }
 }
 
@@ -167,6 +172,11 @@
     --void-background-hover: hsl(270, 50%, 17%);
     --void-foreground: hsl(270, 60%, 92%);
     --void-border: hsl(270, 50%, 38%);
+
+    --row-selected-background: hsl(0, 0%, 20%);
+    --row-selected-background-hover: hsl(0, 0%, 16%);
+    --row-active-background: hsl(156, 40%, 27%);
+    --row-active-background-hover: hsl(156, 40%, 23%);
   }
 }
 
@@ -240,6 +250,10 @@
   --color-void-background-hover: var(--void-background-hover);
   --color-void-foreground: var(--void-foreground);
   --color-void-border: var(--void-border);
+  --color-row-selected-background: var(--row-selected-background);
+  --color-row-selected-background-hover: var(--row-selected-background-hover);
+  --color-row-active-background: var(--row-active-background);
+  --color-row-active-background-hover: var(--row-active-background-hover);
 }
 
 * {

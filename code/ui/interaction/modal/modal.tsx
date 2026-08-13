@@ -10,6 +10,8 @@ import { useDialog } from "@/hooks/float/useDialog";
 
 import { useRouter } from "next/navigation";
 import Button from "../button";
+import { Dictionary } from "@/types/dictionary";
+import { useDictionary } from "@/hooks/useDictionary";
 
 interface ModalProps {
   isOpen: boolean;
@@ -28,6 +30,7 @@ interface ModalProps {
  * @param {string} className Optional styling for the modal.
  */
 export default function Modal(props: Readonly<ModalProps>) {
+  const dict: Dictionary = useDictionary();
   const router = useRouter();
   const dialog = useDialog(props.isOpen, props.setIsOpen, true);
   const transition = useTransitionStyles(dialog.context, {
@@ -69,19 +72,22 @@ export default function Modal(props: Readonly<ModalProps>) {
                   }}
                   className={`relative flex flex-col w-full h-dvh md:h-fit md:w-11/12 xl:w-1/2 mx-auto justify-between py-4 px-4 md:px-8 bg-muted md:border-1 md:shadow-2xl md:border-border md:rounded-xl ${props.className}`}
                 >
-                  <Button
-                    leftIcon="close"
-                    size="icon"
-                    variant="ghost"
-                    className="absolute top-2 right-4 !rounded-full"
-                    onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                      event.preventDefault();
-                      props.setIsOpen(false);
-                      if (props.returnPrevPage) {
-                        router.back();
-                      }
-                    }}
-                  />
+                  <div className="absolute top-2 right-4">
+                    <Button
+                      leftIcon="close"
+                      size="icon"
+                      variant="ghost"
+                      className="!rounded-full"
+                      tooltipText={dict.action.close}
+                      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        event.preventDefault();
+                        props.setIsOpen(false);
+                        if (props.returnPrevPage) {
+                          router.back();
+                        }
+                      }}
+                    />
+                  </div>
                   {props.children}
                 </div>
               </div>

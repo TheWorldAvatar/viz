@@ -52,7 +52,7 @@ export function FormTemplate(props: Readonly<FormComponentProps>) {
   });
 
   return (
-    <form ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
+    <form className="space-y-8 md:space-y-6" ref={props.formRef} onSubmit={form.handleSubmit(props.submitAction)}>
       {form.formState.isLoading ?
         <LoadingSpinner size="xl" /> :
         formFields.filter(field => field[TYPE_KEY].includes(PROPERTY_GROUP_TYPE) || (field as PropertyShape).fieldId != "id")
