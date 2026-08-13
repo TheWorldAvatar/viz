@@ -12,7 +12,6 @@ import { queryFileExportAPI } from "@/utils/internal-api-services";
 interface FileDownloadButtonsProps extends ButtonProps {
   targetId: string | string[];
   isBulkSelection: boolean;
-  disabled?: boolean;
   onComplete?: () => void;
 }
 
