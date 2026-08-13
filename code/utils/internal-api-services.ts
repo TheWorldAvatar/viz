@@ -292,12 +292,15 @@ export async function queryDefaultFileExportAPI(id: string, selectedDate: DateRa
 /**
  * Queries the file export API to retrieve the file download object and name.
  * 
- * @param {string} id The target ID of the resource.
+ * @param {string | string[]} id The target ID(s) of the resource.
  * @param {string} resource The resource type.
  * @param {"csv" | "pdf"} format The file format (csv or pdf).
  */
-export async function queryFileExportAPI(id: string, resource: string, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
-  const searchParams: URLSearchParams = new URLSearchParams({ id, resource });
+export async function queryFileExportAPI(id: string | string[], resource: string, format: "csv" | "pdf"): Promise<FileResponse | undefined> {
+  const searchParams: URLSearchParams = new URLSearchParams({
+    id: Array.isArray(id) ? id.join(",") : id,
+    resource
+  });
   return execFileExportAPI(searchParams, format);
 }
 
